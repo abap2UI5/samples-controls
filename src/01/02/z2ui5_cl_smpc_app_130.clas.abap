@@ -22,12 +22,12 @@ CLASS z2ui5_cl_smpc_app_130 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       busy = abap_false.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -36,7 +36,8 @@ CLASS z2ui5_cl_smpc_app_130 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
@@ -91,11 +92,14 @@ CLASS z2ui5_cl_smpc_app_130 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp1 TYPE xsdboolean.
 
     IF client->get_event( ) = `TOGGLE_BUSY`.
       " original onAction: sets both controls busy, then clears after 5s
       " (setTimeout). The client-side auto-reset is simplified to a toggle.
-      busy = xsdbool( busy = abap_false ).
+      
+      temp1 = boolc( busy = abap_false ).
+      busy = temp1.
     ENDIF.
 
   ENDMETHOD.

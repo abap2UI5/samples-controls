@@ -19,9 +19,9 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -33,14 +33,32 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
     " the item branch of handleMenuItemPress as ONE client expression: skip a
     " parent that only opens its submenu, report a MenuTextFieldItem's VALUE and
     " every other item's text - split over three lines only for the ABAP line limit
-    DATA(item) = `${$parameters>/item}`.
-    DATA(item_message) = |{ item }.getSubmenu() ? '' : (| &&
+    DATA item TYPE string.
+    DATA item_message TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    item = `${$parameters>/item}`.
+    
+    item_message = |{ item }.getSubmenu() ? '' : (| &&
                          |{ item }.getMetadata().getName() === 'sap.ui.unified.MenuTextFieldItem'| &&
                          | ? "'" + { item }.getValue() + "' entered"| &&
                          | : "'" + { item }.getText() + "' pressed")|.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `theMenu` INTO TABLE temp1.
+    INSERT `openBy` INTO TABLE temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `{0}` INTO TABLE temp2.
+    INSERT item_message INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -57,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
                 " the sample opens the Menu anchored to the button via oMenu.open( kbd, button, ... );
                 " sap.ui.unified.Menu has no openBy and open cannot receive the anchor - see pr/ (no-op today)
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = temp1 )
 
                 )->ele( `dependents`
                     )->ele( n = `Menu` ns = `u`
@@ -71,7 +89,7 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
                         " scripts/probes/event-arg-expression-probe.mjs, a class-name ternary
                         " resolves - so the toast text is composed on the client 1:1
                         )->a( n = `itemSelect` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0}` ) ( item_message ) ) )
+                                                                             t_arg = temp2 )
 
                         )->tag( n = `MenuItem` ns = `u`
                             )->a( n = `text` v = `My 1st Item`

@@ -19,9 +19,9 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -30,8 +30,64 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    DATA temp8 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `theMenu` INTO TABLE temp1.
+    INSERT `openBy` INTO TABLE temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `'{0}' pressed` INTO TABLE temp2.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp3.
+    INSERT `show` INTO TABLE temp3.
+    INSERT `'{0}' pressed` INTO TABLE temp3.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp4.
+    INSERT `show` INTO TABLE temp4.
+    INSERT `'{0}' pressed` INTO TABLE temp4.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp5.
+    INSERT `show` INTO TABLE temp5.
+    INSERT `'{0}' pressed` INTO TABLE temp5.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp6.
+    INSERT `show` INTO TABLE temp6.
+    INSERT `'{0}' pressed` INTO TABLE temp6.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp7.
+    INSERT `show` INTO TABLE temp7.
+    INSERT `'{0}' pressed` INTO TABLE temp7.
+    INSERT `${$parameters>/item}.getText()` INTO TABLE temp7.
+    
+    CLEAR temp8.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp8.
+    INSERT `show` INTO TABLE temp8.
+    INSERT `'{0}' entered` INTO TABLE temp8.
+    INSERT `${$parameters>/item}.getValue()` INTO TABLE temp8.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -48,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                 " the sample opens the Menu anchored to the button via oMenu.open( kbd, button, ... );
                 " sap.ui.unified.Menu has no openBy and open cannot receive the anchor - see pr/ (no-op today)
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = temp1 )
 
                 )->ele( `dependents`
                     )->ele( n = `Menu` ns = `u`
@@ -59,11 +115,11 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                             )->a( n = `icon`   v = `sap-icon://save`
                             " compose the toast on the frontend (1:1 with MessageToast.show("'" + item.getText() + "' pressed"))
                             )->a( n = `select` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                             t_arg = temp2 )
                         )->tag( n = `MenuItem` ns = `u`
                             )->a( n = `text`   v = `My 2nd Item`
                             )->a( n = `select` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                             t_arg = temp3 )
 
                         )->ele( n = `MenuItem` ns = `u`
                             )->a( n = `text` v = `My 3rd Item`
@@ -73,11 +129,11 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                                 )->tag( n = `MenuItem` ns = `u`
                                     )->a( n = `text`   v = `1st Sub Item`
                                     )->a( n = `select` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                     t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                                     t_arg = temp4 )
                                 )->tag( n = `MenuItem` ns = `u`
                                     )->a( n = `text`   v = `2nd Sub Item`
                                     )->a( n = `select` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                     t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                                     t_arg = temp5 )
                                 )->tag( n = `MenuItem` ns = `u`
                                     )->a( n = `text`    v = `3rd Sub Item but inactive`
                                     )->a( n = `enabled` v = `false`
@@ -88,11 +144,11 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                             )->a( n = `text`          v = `My 4th Item`
                             )->a( n = `startsSection` v = `true`
                             )->a( n = `select`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                                    t_arg = temp6 )
                         )->tag( n = `MenuItem` ns = `u`
                             )->a( n = `text`   v = `My 5th Item`
                             )->a( n = `select` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' pressed` ) ( `${$parameters>/item}.getText()` ) ) )
+                                                                             t_arg = temp7 )
 
                         )->tag( n = `MenuTextFieldItem` ns = `u`
                             )->a( n = `label`         v = `Find`
@@ -101,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                             )->a( n = `icon`          v = `sap-icon://filter`
                             " 1:1 with MessageToast.show("'" + item.getValue() + "' entered")
                             )->a( n = `select`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'{0}' entered` ) ( `${$parameters>/item}.getValue()` ) ) )
+                                                                                    t_arg = temp8 )
 
                     )->end(
                 )->end(

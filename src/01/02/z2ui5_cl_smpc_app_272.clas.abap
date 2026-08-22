@@ -52,12 +52,12 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -66,12 +66,17 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the original controller element-binds the whole model (bindElement('/')),
     " so its {BillingName} & co are relative to the root; the port seeds the
     " same fields at the model root and binds them ABSOLUTELY - a relative
     " path without a binding context resolves against nothing (AGENTS 5)
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/fieldGroupIds}[0]` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -104,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
                     " indexes it exactly like the original's aFieldGroup[0]
                     " (measured 2026-08-01 - the expression grammar allows [n])
                     )->a( n = `validateFieldGroup` v = client->_event( val   = `VALIDATE_FIELD_GROUP`
-                                                                       t_arg = VALUE #( ( `${$parameters>/fieldGroupIds}[0]` ) ) )
+                                                                       t_arg = temp1 )
 
                     )->ele( n = `content` ns = `f`
 
@@ -373,6 +378,21 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA lv_group TYPE string.
+        DATA temp3 TYPE string.
+        DATA temp4 TYPE string.
+        DATA temp5 TYPE string.
+        DATA temp6 TYPE string.
+        DATA temp7 TYPE string.
+        DATA temp8 TYPE string.
+        DATA temp9 TYPE string.
+        DATA temp10 TYPE string.
+        DATA temp11 TYPE string.
+        DATA temp12 TYPE string.
+        DATA temp13 TYPE string.
+        DATA temp14 TYPE string.
+        DATA temp15 TYPE string.
+        DATA temp16 TYPE string.
 
     CASE client->get_event( ).
 
@@ -380,7 +400,8 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onValidateFieldGroup: mMessageMapping resolves the group to its own
         " strip + type, the strip shows "Group '<g>' Validation:<type>" and
         " the toast names the validated group
-        DATA(lv_group) = client->get_event_arg( ).
+        
+        lv_group = client->get_event_arg( ).
         CASE lv_group.
           WHEN `Billing Information`.
             billing_type    = `Error`.
@@ -425,20 +446,48 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onReset: hide the messages and setData({}) - every bound field back
         " to its initial (empty) value
         hide_messages( ).
-        billingname              = VALUE #( ).
-        billingstreet            = VALUE #( ).
-        billingstreetnumber      = VALUE #( ).
-        billingzipcode           = VALUE #( ).
-        billingcity              = VALUE #( ).
-        billingcountry           = VALUE #( ).
-        discountcode             = VALUE #( ).
-        creditcardvendor         = VALUE #( ).
-        creditcardnumber         = VALUE #( ).
-        creditcardmonth          = VALUE #( ).
-        creditcardyear           = VALUE #( ).
-        creditcardvalidationcode = VALUE #( ).
-        onlinemail               = VALUE #( ).
-        onlinetwitter            = VALUE #( ).
+        
+        CLEAR temp3.
+        billingname              = temp3.
+        
+        CLEAR temp4.
+        billingstreet            = temp4.
+        
+        CLEAR temp5.
+        billingstreetnumber      = temp5.
+        
+        CLEAR temp6.
+        billingzipcode           = temp6.
+        
+        CLEAR temp7.
+        billingcity              = temp7.
+        
+        CLEAR temp8.
+        billingcountry           = temp8.
+        
+        CLEAR temp9.
+        discountcode             = temp9.
+        
+        CLEAR temp10.
+        creditcardvendor         = temp10.
+        
+        CLEAR temp11.
+        creditcardnumber         = temp11.
+        
+        CLEAR temp12.
+        creditcardmonth          = temp12.
+        
+        CLEAR temp13.
+        creditcardyear           = temp13.
+        
+        CLEAR temp14.
+        creditcardvalidationcode = temp14.
+        
+        CLEAR temp15.
+        onlinemail               = temp15.
+        
+        CLEAR temp16.
+        onlinetwitter            = temp16.
         client->message_toast_display( `Reset triggered` ).
 
     ENDCASE.
@@ -457,6 +506,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA lv_default TYPE string.
 
     " the sample's SampleData.json carries a single Email field the view never
     " binds, so every bound input starts empty; the four MessageStrips start
@@ -467,7 +517,8 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
     credit_type   = `Information`.
     online_type   = `Information`.
 
-    DATA(lv_default) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
+    
+    lv_default = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
     billing_text  = lv_default.
     discount_text = lv_default.
     credit_text   = lv_default.

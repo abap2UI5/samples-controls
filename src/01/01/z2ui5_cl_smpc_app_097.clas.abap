@@ -23,11 +23,11 @@ CLASS z2ui5_cl_smpc_app_097 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -36,8 +36,21 @@ CLASS z2ui5_cl_smpc_app_097 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `detail` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `detailDetail` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `detail2` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
@@ -156,17 +169,17 @@ CLASS z2ui5_cl_smpc_app_097 IMPLEMENTATION.
                             )->a( n = `title`     v = `To Detail 1`
                             )->a( n = `type`      v = `Active`
                             )->a( n = `custom:to` v = `detail`
-                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = VALUE #( ( `detail` ) ) )
+                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = temp1 )
                         )->tag( `StandardListItem`
                             )->a( n = `title`     v = `To Detail 2`
                             )->a( n = `type`      v = `Active`
                             )->a( n = `custom:to` v = `detailDetail`
-                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = VALUE #( ( `detailDetail` ) ) )
+                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = temp2 )
                         )->tag( `StandardListItem`
                             )->a( n = `title`     v = `To Detail 3`
                             )->a( n = `type`      v = `Active`
                             )->a( n = `custom:to` v = `detail2`
-                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = VALUE #( ( `detail2` ) ) ) ).
+                            )->a( n = `press`     v = client->_event( val = `NAV_DETAIL` t_arg = temp3 ) ).
 
     client->view_display( view->stringify( ) ).
 
@@ -174,37 +187,73 @@ CLASS z2ui5_cl_smpc_app_097 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
+        DATA temp7 TYPE string_table.
+        DATA temp9 TYPE string_table.
+        DATA temp11 TYPE string_table.
+        DATA temp13 TYPE string.
 
     CASE client->get_event( ).
 
       WHEN `NAV_TO_DETAIL`.
+        
+        CLEAR temp3.
+        INSERT `SplitAppDemo` INTO TABLE temp3.
+        INSERT `to` INTO TABLE temp3.
+        INSERT `detailDetail` INTO TABLE temp3.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `SplitAppDemo` ) ( `to` ) ( `detailDetail` ) ) ).
+                                  t_arg = temp3 ).
 
       WHEN `DETAIL_BACK`.
+        
+        CLEAR temp5.
+        INSERT `SplitAppDemo` INTO TABLE temp5.
+        INSERT `backDetail` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `SplitAppDemo` ) ( `backDetail` ) ) ).
+                                  t_arg = temp5 ).
 
       WHEN `MASTER_BACK`.
+        
+        CLEAR temp7.
+        INSERT `SplitAppDemo` INTO TABLE temp7.
+        INSERT `backMaster` INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `SplitAppDemo` ) ( `backMaster` ) ) ).
+                                  t_arg = temp7 ).
 
       WHEN `GO_TO_MASTER`.
+        
+        CLEAR temp9.
+        INSERT `SplitAppDemo` INTO TABLE temp9.
+        INSERT `toMaster` INTO TABLE temp9.
+        INSERT `master2` INTO TABLE temp9.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `SplitAppDemo` ) ( `toMaster` ) ( `master2` ) ) ).
+                                  t_arg = temp9 ).
 
       WHEN `NAV_DETAIL`.
+        
+        CLEAR temp11.
+        INSERT `SplitAppDemo` INTO TABLE temp11.
+        INSERT `toDetail` INTO TABLE temp11.
+        INSERT client->get_event_arg( ) INTO TABLE temp11.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `SplitAppDemo` ) ( `toDetail` ) ( client->get_event_arg( ) ) ) ).
+                                  t_arg = temp11 ).
 
       WHEN `MODE_BTN`.
         " the original calls setMode( ); mode is a bindable property, so it is
         " bound two-way and only assigned here
-        mode = SWITCH string( mode_idx
-                              WHEN 0 THEN `ShowHideMode`
-                              WHEN 1 THEN `StretchCompressMode`
-                              WHEN 2 THEN `HideMode`
-                              WHEN 3 THEN `PopoverMode` ).
+        
+        CASE mode_idx.
+          WHEN 0.
+            temp13 = `ShowHideMode`.
+          WHEN 1.
+            temp13 = `StretchCompressMode`.
+          WHEN 2.
+            temp13 = `HideMode`.
+          WHEN 3.
+            temp13 = `PopoverMode`.
+        ENDCASE.
+        mode = temp13.
         client->message_toast_display( text = |Split Container mode is changed to: { mode }| duration = `5000` ).
 
     ENDCASE.

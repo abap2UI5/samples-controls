@@ -35,12 +35,12 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -49,7 +49,8 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
@@ -252,6 +253,10 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA temp1 TYPE string_table.
+          DATA temp2 LIKE LINE OF temp1.
+          DATA temp3 TYPE string_table.
+          DATA temp4 LIKE LINE OF temp3.
 
     CASE client->get_event( ).
 
@@ -260,8 +265,15 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
         " field to the last accepted value (business logic server-side)
         IF badgemin >= 1 AND badgemin <= max_accepted.
           min_accepted = badgemin.
+          
+          CLEAR temp1.
+          INSERT `BadgedButton` INTO TABLE temp1.
+          INSERT `setBadgeMinValue` INTO TABLE temp1.
+          
+          temp2 = |{ badgemin }|.
+          INSERT temp2 INTO TABLE temp1.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `BadgedButton` ) ( `setBadgeMinValue` ) ( |{ badgemin }| ) ) ).
+                                    t_arg = temp1 ).
         ELSE.
           badgemin = min_accepted.
         ENDIF.
@@ -272,8 +284,15 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
         " not copied; the accepted path is identical)
         IF badgemax <= 9999 AND badgemax >= min_accepted.
           max_accepted = badgemax.
+          
+          CLEAR temp3.
+          INSERT `BadgedButton` INTO TABLE temp3.
+          INSERT `setBadgeMaxValue` INTO TABLE temp3.
+          
+          temp4 = |{ badgemax }|.
+          INSERT temp4 INTO TABLE temp3.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `BadgedButton` ) ( `setBadgeMaxValue` ) ( |{ badgemax }| ) ) ).
+                                    t_arg = temp3 ).
         ELSE.
           badgemax = max_accepted.
         ENDIF.

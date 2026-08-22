@@ -13,7 +13,7 @@ CLASS z2ui5_cl_smpc_app_093 DEFINITION PUBLIC.
         emp_last_name  TYPE string,
         salary         TYPE p LENGTH 8 DECIMALS 2,
       END OF ty_s_emp.
-    DATA t_employees TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
+    DATA t_employees TYPE STANDARD TABLE OF ty_s_emp WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -35,12 +35,12 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -49,8 +49,18 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE z2ui5_if_client=>ty_s_event_control.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/item}.getName()` INTO TABLE temp1.
+    INSERT `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    temp2-check_prevent_default = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -66,8 +76,8 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
             " MessageBox.confirm decides - the eBP wire cancels the built-in close
             " and transports the tab name + its row index for the server decision
             )->a( n = `itemClose`         v = client->_event( val    = `CLOSE`
-                                                              t_arg  = VALUE #( ( `${$parameters>/item}.getName()` ) ( `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` ) )
-                                                              s_ctrl = VALUE #( check_prevent_default = abap_true ) )
+                                                              t_arg  = temp1
+                                                              s_ctrl = temp2 )
 
             )->ele( `items`
                 )->ele( `TabContainerItem`
@@ -99,11 +109,16 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE z2ui5_cl_smpc_app_093=>ty_s_emp.
 
     CASE client->get_event( ).
       WHEN `ADD`.
         " addNewButtonPressHandler: add a new, empty employee tab
-        APPEND VALUE #( name = `New employee` modified = abap_false ) TO t_employees.
+        
+        CLEAR temp3.
+        temp3-name = `New employee`.
+        temp3-modified = abap_false.
+        APPEND temp3 TO t_employees.
       WHEN `CLOSE`.
         " itemCloseHandler: confirm before closing; the answer comes back as
         " the CLOSE_DECIDE event's action argument
@@ -130,11 +145,32 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
   METHOD model_init.
 
-    t_employees = VALUE #(
-      ( name = `Jean Doe`       emp_first_name = `Jean`     emp_last_name = `Doe`     salary = '1455.22' )
-      ( name = `John Smith`     emp_first_name = `John`     emp_last_name = `Smith`   salary = '1390.77' modified = abap_true )
-      ( name = `Particia Clark` emp_first_name = `Particia` emp_last_name = `Clark`   salary = '1189.00' )
-      ( name = `Tim McAfeed`    emp_first_name = `Tim`      emp_last_name = `McAfeed` salary = '1235.37' ) ).
+    DATA temp4 LIKE t_employees.
+    DATA temp5 LIKE LINE OF temp4.
+    CLEAR temp4.
+    
+    temp5-name = `Jean Doe`.
+    temp5-emp_first_name = `Jean`.
+    temp5-emp_last_name = `Doe`.
+    temp5-salary = '1455.22'.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `John Smith`.
+    temp5-emp_first_name = `John`.
+    temp5-emp_last_name = `Smith`.
+    temp5-salary = '1390.77'.
+    temp5-modified = abap_true.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `Particia Clark`.
+    temp5-emp_first_name = `Particia`.
+    temp5-emp_last_name = `Clark`.
+    temp5-salary = '1189.00'.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `Tim McAfeed`.
+    temp5-emp_first_name = `Tim`.
+    temp5-emp_last_name = `McAfeed`.
+    temp5-salary = '1235.37'.
+    INSERT temp5 INTO TABLE temp4.
+    t_employees = temp4.
 
   ENDMETHOD.
 

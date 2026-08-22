@@ -25,11 +25,11 @@ CLASS z2ui5_cl_smpc_app_136 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,8 +38,24 @@ CLASS z2ui5_cl_smpc_app_136 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp3 TYPE abap_bool.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/expanded}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    
+    IF panel_expanded = abap_true.
+      temp3 = prevent_collapse.
+    ELSE.
+      temp3 = prevent_expand.
+    ENDIF.
+    temp2-check_prevent_default = temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:f`    v = `sap.f`
@@ -58,11 +74,8 @@ CLASS z2ui5_cl_smpc_app_136 IMPLEMENTATION.
                     " panel can only collapse next. So the flag is the switch that
                     " applies to that direction, and the round-trip re-bakes it
                     )->a( n = `toggle` v = client->_event( val    = `TOGGLE`
-                                                           t_arg  = VALUE #( ( `${$parameters>/expanded}` ) )
-                                                           s_ctrl = VALUE #( check_prevent_default =
-                                                             COND #( WHEN panel_expanded = abap_true
-                                                                     THEN prevent_collapse
-                                                                     ELSE prevent_expand ) ) )
+                                                           t_arg  = temp1
+                                                           s_ctrl = temp2 )
 
                     )->ele( n = `mainContent` ns = `f`
                         )->tag( `Button`
@@ -150,13 +163,18 @@ CLASS z2ui5_cl_smpc_app_136 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA expanded TYPE abap_bool.
+      DATA temp1 TYPE xsdboolean.
 
     IF client->get_event( ) = `TOGGLE`.
       " the event still reaches the backend when the veto fired (the framework
       " calls preventDefault synchronously and sends the event anyway), so the
       " branch is the original's: on a vetoed direction, toast and reset that
       " switch; otherwise the panel really toggled and the new state is kept
-      DATA(expanded) = xsdbool( client->get_event_arg( ) = abap_true ).
+      
+      
+      temp1 = boolc( client->get_event_arg( ) = abap_true ).
+      expanded = temp1.
       IF expanded = abap_false AND prevent_collapse = abap_true.
         prevent_collapse = abap_false.
         client->message_toast_display( `I am prevented COLLAPSE event` ).

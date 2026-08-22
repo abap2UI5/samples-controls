@@ -23,13 +23,13 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       " the original never sets showHeaderContent in the view - the UI5 default is true
       show_header_content = abap_true.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,13 +38,18 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " Block->content inlining (app 217/188/178/161 precedent, CAPABILITIES 'Custom
     " BlockBase blocks in a sap.uxap.ObjectPageLayout'): the original blocks and
     " moreBlocks aggregations hold custom BlockBase controls from the sample's
     " SharedBlocks JS - a BlockBase is only a lazy-loading wrapper around a view,
     " so each block's content (a sap.ui.layout.form.SimpleForm) is inlined here.
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.uxap`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
@@ -71,7 +76,7 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
                     )->a( n = `markChanges`                   v = `true`
                     " handleMarkChangesPress: unsaved-changes popover, anchored at the pressed control
                     )->a( n = `markChangesPress`              v = client->_event( val   = `MARK_CHANGES_PRESS`
-                                                                                  t_arg = VALUE #( ( `$event.oSource.sId` ) ) )
+                                                                                  t_arg = temp1 )
                     )->a( n = `objectSubtitle`                v = `Senior Developer`
                     " asset URI absolutized to the OpenUI5 host per the offline asset-URL rule
                     )->a( n = `objectImageURI`                v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_273624.png`
@@ -282,17 +287,22 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp1 TYPE xsdboolean.
+        DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
 
     CASE client->get_event( ).
 
       WHEN `TOGGLE_HEADER_CONTENT`.
         " handlePress: the original toggles the layout's showHeaderContent state
-        show_header_content = xsdbool( show_header_content = abap_false ).
+        
+        temp1 = boolc( show_header_content = abap_false ).
+        show_header_content = temp1.
 
       WHEN `MARK_CHANGES_PRESS`.
         " handleMarkChangesPress: the PopoverUnsavedChanges fragment, built
         " server-side and opened anchored at the pressed header control
-        DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        popover = z2ui5_cl_ui5_view_builder=>factory( ).
         popover->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`

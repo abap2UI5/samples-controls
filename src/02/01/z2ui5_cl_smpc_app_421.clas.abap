@@ -14,12 +14,12 @@ CLASS z2ui5_cl_smpc_app_421 DEFINITION PUBLIC.
              emailsubject TYPE string,
              target       TYPE string,
            END OF ty_s_element.
-    TYPES ty_t_element TYPE STANDARD TABLE OF ty_s_element WITH EMPTY KEY.
+    TYPES ty_t_element TYPE STANDARD TABLE OF ty_s_element WITH DEFAULT KEY.
     TYPES: BEGIN OF ty_s_group,
              heading  TYPE string,
              elements TYPE ty_t_element,
            END OF ty_s_group.
-    TYPES ty_t_group TYPE STANDARD TABLE OF ty_s_group WITH EMPTY KEY.
+    TYPES ty_t_group TYPE STANDARD TABLE OF ty_s_group WITH DEFAULT KEY.
     TYPES: BEGIN OF ty_s_page,
              pageid         TYPE string,
              header         TYPE string,
@@ -31,7 +31,8 @@ CLASS z2ui5_cl_smpc_app_421 DEFINITION PUBLIC.
              description    TYPE string,
              groups         TYPE ty_t_group,
            END OF ty_s_page.
-    DATA t_pages TYPE STANDARD TABLE OF ty_s_page WITH EMPTY KEY.
+    TYPES temp1_e88d5807c6 TYPE STANDARD TABLE OF ty_s_page WITH DEFAULT KEY.
+DATA t_pages TYPE temp1_e88d5807c6.
     DATA back_enabled TYPE abap_bool.
     DATA show_scroll  TYPE abap_bool VALUE abap_true.
 
@@ -51,12 +52,12 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -65,8 +66,22 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `quickViewCard` INTO TABLE temp1.
+    INSERT `navigateBack` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/state}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `${$parameters>/isTopPage} ? 'top' : 'sub'` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -87,7 +102,7 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
                 " onButtonBackClick drives the card 1:1 via navigateBack, roundtrip-free;
                 " afterNavigate below keeps the enabled flag in sync
                 )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                  t_arg = VALUE #( ( `quickViewCard` ) ( `navigateBack` ) ) )
+                                                                  t_arg = temp1 )
                 )->a( n = `class`   v = `sapUiSmallMarginBottom`
 
             )->ele( n = `Grid` ns = `l`
@@ -137,7 +152,7 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
                     )->a( n = `state`  v = `true`
                     )->a( n = `class`  v = `sapUiSmallMarginBottom`
                     )->a( n = `change` v = client->_event( val   = `HEADER_TOGGLE`
-                                                           t_arg = VALUE #( ( `${$parameters>/state}` ) ) )
+                                                           t_arg = temp2 )
                     )->ele( `layoutData`
                         )->tag( n = `GridData` ns = `l`
                             )->a( n = `span` v = `L9 M6 S4`
@@ -161,7 +176,7 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
                     " system normalizes it to abap_bool, so a token is the one form
                     " both runtimes read the same
                     )->a( n = `afterNavigate`         v = client->_event( val   = `AFTER_NAV`
-                                                                          t_arg = VALUE #( ( `${$parameters>/isTopPage} ? 'top' : 'sub'` ) ) )
+                                                                          t_arg = temp3 )
 
                     )->ele( `QuickViewPage`
                         )->a( n = `pageId`      v = `{PAGEID}`
@@ -198,6 +213,10 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE abap_bool.
+        DATA header_on LIKE temp3.
+        FIELD-SYMBOLS <s_page> TYPE z2ui5_cl_smpc_app_421=>ty_s_page.
+        DATA temp1 TYPE xsdboolean.
 
     CASE client->get_event( ).
 
@@ -207,8 +226,12 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
 
       WHEN `HEADER_TOGGLE`.
         " onHeaderSwitchChange: show/clear the first page's header data
-        DATA(header_on) = CONV abap_bool( client->get_event_arg( ) ).
-        ASSIGN t_pages[ 1 ] TO FIELD-SYMBOL(<s_page>).
+        
+        temp3 = client->get_event_arg( ).
+        
+        header_on = temp3.
+        
+        READ TABLE t_pages INDEX 1 ASSIGNING <s_page>.
         IF sy-subrc = 0.
           IF header_on = abap_true.
             <s_page>-iconvisibility = abap_true.
@@ -224,7 +247,9 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
 
       WHEN `AFTER_NAV`.
         " enable the back button while the card is not on its top page (original afterNavigate isTopPage)
-        back_enabled = xsdbool( client->get_event_arg( ) = `sub` ).
+        
+        temp1 = boolc( client->get_event_arg( ) = `sub` ).
+        back_enabled = temp1.
 
     ENDCASE.
 
@@ -238,43 +263,131 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
     " default), elements without an elementType get the enum default 'text', and
     " page 2 seeds iconVisibility=true (Avatar.visible defaults to true where the
     " mock omits the flag)
-    t_pages = VALUE #(
-        ( pageid         = `companyPageId`
-          header         = `Company info`
-          title          = `Adventure Company`
-          titleurl       = `http://sap.com`
-          icon           = `sap-icon://building`
-          iconvisibility = abap_true
-          displayshape   = `Square`
-          description    = `John Doe`
-          groups         = VALUE #(
-              ( heading  = `Contact Details`
-                elements = VALUE #(
-                    ( label = `Phone`   value = `+001 6101 34869-0` elementtype = `phone` target = `_blank` )
-                    ( label = `Address` value = `550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA` elementtype = `text` target = `_blank` ) ) )
-              ( heading  = `Main Contact`
-                elements = VALUE #(
-                    ( label = `Name`   value = `John Doe`               elementtype = `pageLink` pagelinkid = `companyEmployeePageId` target = `_blank` )
-                    ( label = `Mobile` value = `+001 6101 34869-0`      elementtype = `mobile`   target = `_blank` )
-                    ( label = `Phone`  value = `+001 6101 34869-0`      elementtype = `phone`    target = `_blank` )
-                    ( label = `Email`  value = `main.contact@company.com` elementtype = `email`  emailsubject = `Subject` target = `_blank` ) ) ) ) )
-        ( pageid         = `companyEmployeePageId`
-          header         = `Employee Info`
-          title          = `John Doe`
-          icon           = `sap-icon://person-placeholder`
-          iconvisibility = abap_true
-          displayshape   = `Circle`
-          description    = `Department Manager`
-          groups         = VALUE #(
-              ( heading  = `Company`
-                elements = VALUE #(
-                    ( label = `Name`    value = `Adventure Company`              elementtype = `link` url = `http://sap.com` target = `_blank` )
-                    ( label = `Address` value = `Sofia, Boris III, 136A`         elementtype = `text` target = `_blank` )
-                    ( label = `Slogan`  value = `Innovation through technology`  elementtype = `text` target = `_blank` ) ) )
-              ( heading  = `Other`
-                elements = VALUE #(
-                    ( label = `Email` value = `john.doe@sap.com`  elementtype = `email`  emailsubject = `Subject` target = `_blank` )
-                    ( label = `Phone` value = `+359 888 888 888`  elementtype = `mobile` target = `_blank` ) ) ) ) ) ).
+    DATA temp4 LIKE t_pages.
+    DATA temp5 LIKE LINE OF temp4.
+    DATA temp6 TYPE z2ui5_cl_smpc_app_421=>ty_t_group.
+    DATA temp7 LIKE LINE OF temp6.
+    DATA temp10 TYPE z2ui5_cl_smpc_app_421=>ty_t_element.
+    DATA temp11 LIKE LINE OF temp10.
+    DATA temp12 TYPE z2ui5_cl_smpc_app_421=>ty_t_element.
+    DATA temp13 LIKE LINE OF temp12.
+    DATA temp8 TYPE z2ui5_cl_smpc_app_421=>ty_t_group.
+    DATA temp9 LIKE LINE OF temp8.
+    DATA temp14 TYPE z2ui5_cl_smpc_app_421=>ty_t_element.
+    DATA temp15 LIKE LINE OF temp14.
+    DATA temp16 TYPE z2ui5_cl_smpc_app_421=>ty_t_element.
+    DATA temp17 LIKE LINE OF temp16.
+    CLEAR temp4.
+    
+    temp5-pageid = `companyPageId`.
+    temp5-header = `Company info`.
+    temp5-title = `Adventure Company`.
+    temp5-titleurl = `http://sap.com`.
+    temp5-icon = `sap-icon://building`.
+    temp5-iconvisibility = abap_true.
+    temp5-displayshape = `Square`.
+    temp5-description = `John Doe`.
+    
+    CLEAR temp6.
+    
+    temp7-heading = `Contact Details`.
+    
+    CLEAR temp10.
+    
+    temp11-label = `Phone`.
+    temp11-value = `+001 6101 34869-0`.
+    temp11-elementtype = `phone`.
+    temp11-target = `_blank`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-label = `Address`.
+    temp11-value = `550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA`.
+    temp11-elementtype = `text`.
+    temp11-target = `_blank`.
+    INSERT temp11 INTO TABLE temp10.
+    temp7-elements = temp10.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-heading = `Main Contact`.
+    
+    CLEAR temp12.
+    
+    temp13-label = `Name`.
+    temp13-value = `John Doe`.
+    temp13-elementtype = `pageLink`.
+    temp13-pagelinkid = `companyEmployeePageId`.
+    temp13-target = `_blank`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-label = `Mobile`.
+    temp13-value = `+001 6101 34869-0`.
+    temp13-elementtype = `mobile`.
+    temp13-target = `_blank`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-label = `Phone`.
+    temp13-value = `+001 6101 34869-0`.
+    temp13-elementtype = `phone`.
+    temp13-target = `_blank`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-label = `Email`.
+    temp13-value = `main.contact@company.com`.
+    temp13-elementtype = `email`.
+    temp13-emailsubject = `Subject`.
+    temp13-target = `_blank`.
+    INSERT temp13 INTO TABLE temp12.
+    temp7-elements = temp12.
+    INSERT temp7 INTO TABLE temp6.
+    temp5-groups = temp6.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-pageid = `companyEmployeePageId`.
+    temp5-header = `Employee Info`.
+    temp5-title = `John Doe`.
+    temp5-icon = `sap-icon://person-placeholder`.
+    temp5-iconvisibility = abap_true.
+    temp5-displayshape = `Circle`.
+    temp5-description = `Department Manager`.
+    
+    CLEAR temp8.
+    
+    temp9-heading = `Company`.
+    
+    CLEAR temp14.
+    
+    temp15-label = `Name`.
+    temp15-value = `Adventure Company`.
+    temp15-elementtype = `link`.
+    temp15-url = `http://sap.com`.
+    temp15-target = `_blank`.
+    INSERT temp15 INTO TABLE temp14.
+    temp15-label = `Address`.
+    temp15-value = `Sofia, Boris III, 136A`.
+    temp15-elementtype = `text`.
+    temp15-target = `_blank`.
+    INSERT temp15 INTO TABLE temp14.
+    temp15-label = `Slogan`.
+    temp15-value = `Innovation through technology`.
+    temp15-elementtype = `text`.
+    temp15-target = `_blank`.
+    INSERT temp15 INTO TABLE temp14.
+    temp9-elements = temp14.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-heading = `Other`.
+    
+    CLEAR temp16.
+    
+    temp17-label = `Email`.
+    temp17-value = `john.doe@sap.com`.
+    temp17-elementtype = `email`.
+    temp17-emailsubject = `Subject`.
+    temp17-target = `_blank`.
+    INSERT temp17 INTO TABLE temp16.
+    temp17-label = `Phone`.
+    temp17-value = `+359 888 888 888`.
+    temp17-elementtype = `mobile`.
+    temp17-target = `_blank`.
+    INSERT temp17 INTO TABLE temp16.
+    temp9-elements = temp16.
+    INSERT temp9 INTO TABLE temp8.
+    temp5-groups = temp8.
+    INSERT temp5 INTO TABLE temp4.
+    t_pages = temp4.
 
   ENDMETHOD.
 

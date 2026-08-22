@@ -27,12 +27,12 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -41,8 +41,17 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `$event.oSource.sId` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -57,11 +66,11 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
                     )->a( n = `text`         v = `Show Popover`
                     " handlePopoverPress: the popover is built + anchored to the pressed button
                     )->a( n = `press`        v = client->_event( val   = `SHOW_POPOVER`
-                                                                 t_arg = VALUE #( ( `$event.oSource.sId` ) ) )
+                                                                 t_arg = temp1 )
                     )->a( n = `ariaHasPopup` v = `Dialog`
                 )->tag( `Button`
                     )->a( n = `press`        v = client->_event( val   = `SHOW_RESIZABLE`
-                                                                 t_arg = VALUE #( ( `$event.oSource.sId` ) ) )
+                                                                 t_arg = temp2 )
                     )->a( n = `text`         v = `Show Resizable Popover`
                     )->a( n = `ariaHasPopup` v = `Dialog`
 
@@ -74,6 +83,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+        DATA resizable TYPE REF TO z2ui5_cl_ui5_view_builder.
 
     CASE client->get_event( ).
 
@@ -82,7 +93,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
         " popover is built server-side and shown anchored to the pressed button
         " ($event.oSource.sId); bindElement("/ProductCollection/0") is folded to
         " the root-seeded fields (relative {NAME}/{PRODUCTPICURL} resolve there)
-        DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        popover = z2ui5_cl_ui5_view_builder=>factory( ).
         popover->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -113,7 +125,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
       WHEN `SHOW_RESIZABLE`.
         " handleResizablePopoverPress: the resizable variant, same anchoring
-        DATA(resizable) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        resizable = z2ui5_cl_ui5_view_builder=>factory( ).
         resizable->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`

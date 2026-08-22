@@ -24,9 +24,9 @@ CLASS z2ui5_cl_smpc_app_363 DEFINITION PUBLIC.
       BEGIN OF ty_s_name,
         name TYPE string,
       END OF ty_s_name.
-    DATA t_products   TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_suppliers  TYPE STANDARD TABLE OF ty_s_name WITH EMPTY KEY.
-    DATA t_categories TYPE STANDARD TABLE OF ty_s_name WITH EMPTY KEY.
+    DATA t_products   TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+    DATA t_suppliers  TYPE STANDARD TABLE OF ty_s_name WITH DEFAULT KEY.
+    DATA t_categories TYPE STANDARD TABLE OF ty_s_name WITH DEFAULT KEY.
 
     " the Inputs and the Table are bound to DIFFERENT fields on purpose: an
     " Input writes its value back as a STRING, and feeding that into the
@@ -61,12 +61,12 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -75,12 +75,20 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the freeze demo: the three count Inputs are two-way bound and the Table's
     " fixedColumnCount and the rowMode's fixedTopRowCount / fixedBottomRowCount
     " bind the same fields, so the Apply press only clamps them in ABAP - the
     " validation the original does in buttonPress before calling the setters.
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `Details for product with id {0}` INTO TABLE temp1.
+    INSERT `${PRODUCTID}` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`          v = `sap.ui.table`
         )->a( n = `xmlns:rowmodes` v = `sap.ui.table.rowmodes`
@@ -254,10 +262,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
                                     )->a( n = `text`  v = `Show Details`
                                     )->a( n = `press` v = client->follow_up_action(
                                               val   = client->cs_event-control_global
-                                              t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                               ( `show` )
-                                                               ( `Details for product with id {0}` )
-                                                               ( `${PRODUCTID}` ) ) )
+                                              t_arg = temp1 )
 
                             )->end(
                         )->end(
@@ -329,6 +334,9 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE i.
+        DATA temp4 TYPE i.
+        DATA temp5 TYPE i.
 
     IF client->get_event( ) = `APPLY`.
       " buttonPress: read the Inputs the way the original parseInts them, then
@@ -336,13 +344,19 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
       " had to be corrected. A non-numeric entry keeps the last value - the
       " original's parseInt would hand setFixedColumnCount a NaN there.
       IF column_count_text CO ` 0123456789` AND column_count_text IS NOT INITIAL.
-        fixed_column_count = CONV i( column_count_text ).
+        
+        temp3 = column_count_text.
+        fixed_column_count = temp3.
       ENDIF.
       IF top_row_count_text CO ` 0123456789` AND top_row_count_text IS NOT INITIAL.
-        fixed_top_row_count = CONV i( top_row_count_text ).
+        
+        temp4 = top_row_count_text.
+        fixed_top_row_count = temp4.
       ENDIF.
       IF bottom_row_count_text CO ` 0123456789` AND bottom_row_count_text IS NOT INITIAL.
-        fixed_bottom_row_count = CONV i( bottom_row_count_text ).
+        
+        temp5 = bottom_row_count_text.
+        fixed_bottom_row_count = temp5.
       ENDIF.
 
       IF fixed_column_count > cv_total_columns.
@@ -392,296 +406,1816 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
     " the typed CheckBox binding expects, and the two Available formatters of
     " the controller are precomputed into AVAILABLESTATE / AVAILABLEICON, since
     " business logic belongs in the backend.
-    t_products = VALUE #(
-      ( name = `Notebook Basic 15` productid = `HT-1000` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 956 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1000.jpg` heavy = `false` category = `Laptops` deliverydate = 1784764800000 )
-      ( name = `Notebook Basic 17` productid = `HT-1001` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1249 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1001.jpg` heavy = `false` category = `Laptops` deliverydate = 1784419200000 )
-      ( name = `Notebook Basic 18` productid = `HT-1002` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1570 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg` heavy = `false` category = `Laptops` deliverydate = 1784073600000 )
-      ( name = `Notebook Basic 19` productid = `HT-1003` quantity = 15 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 1650 currencycode = `EUR` suppliername = `Smartcards`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1003.jpg` heavy = `false` category = `Laptops` deliverydate = 1783728000000 )
-      ( name = `ITelO Vault` productid = `HT-1007` quantity = 15 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 299 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1007.jpg` heavy = `false` category = `Accessories` deliverydate = 1783382400000 )
-      ( name = `Notebook Professional 15` productid = `HT-1010` quantity = 16 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 1999 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1010.jpg` heavy = `false` category = `Accessories` deliverydate = 1783036800000 )
-      ( name = `Notebook Professional 17` productid = `HT-1011` quantity = 17 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 2299 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1011.jpg` heavy = `false` category = `Laptops` deliverydate = 1782691200000 )
-      ( name = `ITelO Vault Net` productid = `HT-1020` quantity = 14 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 459 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1020.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `ITelO Vault SAT` productid = `HT-1021` quantity = 50 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 149 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1021.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `Comfort Easy` productid = `HT-1022` quantity = 30 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 1679 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1022.jpg` heavy = `false` category = `Accessories` deliverydate = 1781654400000 )
-      ( name = `Comfort Senior` productid = `HT-1023` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 512 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1023.jpg` heavy = `false` category = `Accessories` deliverydate = 1784764800000 )
-      ( name = `Ergo Screen E-I` productid = `HT-1030` quantity = 14 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 230 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1030.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1784419200000 )
-      ( name = `Ergo Screen E-II` productid = `HT-1031` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 285 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1784073600000 )
-      ( name = `Ergo Screen E-III` productid = `HT-1032` quantity = 50 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 345 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1032.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1783728000000 )
-      ( name = `Flat Basic` productid = `HT-1035` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 399 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1035.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1783382400000 )
-      ( name = `Flat Future` productid = `HT-1036` quantity = 22 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 430 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1036.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1783036800000 )
-      ( name = `Flat XL` productid = `HT-1037` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1230 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1037.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1782691200000 )
-      ( name = `Laser Professional Eco` productid = `HT-1040` quantity = 21 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 830 currencycode = `EUR` suppliername = `Alpha Printers`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1040.jpg` heavy = `false` category = `Printers` deliverydate = 1782345600000 )
-      ( name = `Laser Basic` productid = `HT-1041` quantity = 8 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 490 currencycode = `EUR` suppliername = `Alpha Printers`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1041.jpg` heavy = `false` category = `Printers` deliverydate = 1782000000000 )
-      ( name = `Laser Allround` productid = `HT-1042` quantity = 9 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 349 currencycode = `EUR` suppliername = `Alpha Printers`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1042.jpg` heavy = `false` category = `Printers` deliverydate = 1781654400000 )
-      ( name = `Ultra Jet Super Color` productid = `HT-1050` quantity = 17 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 139 currencycode = `EUR` suppliername = `Alpha Printers`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1050.jpg` heavy = `false` category = `Printers` deliverydate = 1784764800000 )
-      ( name = `Ultra Jet Mobile` productid = `HT-1051` quantity = 18 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 99 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1051.jpg` heavy = `false` category = `Printers` deliverydate = 1784419200000 )
-      ( name = `Ultra Jet Super Highspeed` productid = `HT-1052` quantity = 25 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 170 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1052.jpg` heavy = `false` category = `Printers` deliverydate = 1784073600000 )
-      ( name = `Multi Print` productid = `HT-1055` quantity = 16 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 99 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1055.jpg` heavy = `false` category = `Multifunction Printers` deliverydate = 1783728000000 )
-      ( name = `Multi Color` productid = `HT-1056` quantity = 5 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 119 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1056.jpg` heavy = `false` category = `Multifunction Printers` deliverydate = 1783382400000 )
-      ( name = `Cordless Mouse` productid = `HT-1060` quantity = 25 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 9 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1060.jpg` heavy = `false` category = `Mice` deliverydate = 1783036800000 )
-      ( name = `Speed Mouse` productid = `HT-1061` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 7 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1061.jpg` heavy = `false` category = `Mice` deliverydate = 1782691200000 )
-      ( name = `Track Mouse` productid = `HT-1062` quantity = 12 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 11 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1062.jpg` heavy = `false` category = `Mice` deliverydate = 1782345600000 )
-      ( name = `Ergonomic Keyboard` productid = `HT-1063` quantity = 50 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 14 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1063.jpg` heavy = `false` category = `Keyboards` deliverydate = 1782000000000 )
-      ( name = `Internet Keyboard` productid = `HT-1064` quantity = 35 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 16 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1064.jpg` heavy = `false` category = `Keyboards` deliverydate = 1781654400000 )
-      ( name = `Media Keyboard` productid = `HT-1065` quantity = 26 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 26 currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1065.jpg` heavy = `false` category = `Keyboards` deliverydate = 1784764800000 )
-      ( name = `Mousepad` productid = `HT-1066` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `6.99` currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1066.jpg` heavy = `false` category = `Mousepads` deliverydate = 1784419200000 )
-      ( name = `Ergo Mousepad` productid = `HT-1067` quantity = 16 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = `8.99` currencycode = `EUR` suppliername = `Oxynum`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1067.jpg` heavy = `false` category = `Mousepads` deliverydate = 1784073600000 )
-      ( name = `Designer Mousepad` productid = `HT-1068` quantity = 26 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `12.99` currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1068.jpg` heavy = `false` category = `Mousepads` deliverydate = 1783728000000 )
-      ( name = `Universal card reader` productid = `HT-1069` quantity = 22 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 14 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1069.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1783382400000 )
-      ( name = `Proctra X` productid = `HT-1070` quantity = 15 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = `70.9` currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1070.jpg` heavy = `false` category = `Graphic Cards` deliverydate = 1783036800000 )
-      ( name = `Gladiator MX` productid = `HT-1071` quantity = 16 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = `81.7` currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1071.jpg` heavy = `false` category = `Graphic Cards` deliverydate = 1782691200000 )
-      ( name = `Hurricane GX` productid = `HT-1072` quantity = 13 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `101.2` currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1072.jpg` heavy = `false` category = `Graphic Cards` deliverydate = 1782345600000 )
-      ( name = `Hurricane GX/LN` productid = `HT-1073` quantity = 5 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = `139.99` currencycode = `EUR` suppliername = `Smartcards`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1073.jpg` heavy = `false` category = `Graphic Cards` deliverydate = 1782000000000 )
-      ( name = `Photo Scan` productid = `HT-1080` quantity = 8 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 129 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1080.jpg` heavy = `false` category = `Scanners` deliverydate = 1781654400000 )
-      ( name = `Power Scan` productid = `HT-1081` quantity = 11 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 89 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1081.jpg` heavy = `false` category = `Scanners` deliverydate = 1784764800000 )
-      ( name = `Jet Scan Professional` productid = `HT-1082` quantity = 13 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 169 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1082.jpg` heavy = `false` category = `Scanners` deliverydate = 1784419200000 )
-      ( name = `Jet Scan Professional` productid = `HT-1083` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 189 currencycode = `EUR` suppliername = `Printer for All`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1083.jpg` heavy = `false` category = `Scanners` deliverydate = 1784073600000 )
-      ( name = `Copymaster` productid = `HT-1085` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1499 currencycode = `EUR` suppliername = `Alpha Printers`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1085.jpg` heavy = `false` category = `Multifunction Printers` deliverydate = 1783728000000 )
-      ( name = `Surround Sound` productid = `HT-1090` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 39 currencycode = `EUR` suppliername = `Speaker Experts`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1090.jpg` heavy = `false` category = `Speakers` deliverydate = 1783382400000 )
-      ( name = `Blaster Extreme` productid = `HT-1091` quantity = 15 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 26 currencycode = `EUR` suppliername = `Speaker Experts`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1091.jpg` heavy = `false` category = `Speakers` deliverydate = 1783036800000 )
-      ( name = `Sound Booster` productid = `HT-1092` quantity = 50 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 45 currencycode = `EUR` suppliername = `Speaker Experts`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1092.jpg` heavy = `false` category = `Speakers` deliverydate = 1782691200000 )
-      ( name = `Lovely Sound 5.1 Wireless` productid = `HT-1095` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 49 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1095.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `Lovely Sound 5.1` productid = `HT-1096` quantity = 18 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 39 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1096.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `Lovely Sound Stereo` productid = `HT-1097` quantity = 21 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 29 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1097.jpg` heavy = `false` category = `Accessories` deliverydate = 1781654400000 )
-      ( name = `Smart Office` productid = `HT-1100` quantity = 25 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = `89.9` currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1100.jpg` heavy = `false` category = `Software` deliverydate = 1784764800000 )
-      ( name = `Smart Design` productid = `HT-1101` quantity = 26 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `79.9` currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1101.jpg` heavy = `false` category = `Software` deliverydate = 1784419200000 )
-      ( name = `Smart Network` productid = `HT-1102` quantity = 28 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 69 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1102.jpg` heavy = `false` category = `Software` deliverydate = 1784073600000 )
-      ( name = `Smart Multimedia` productid = `HT-1103` quantity = 9 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 77 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1103.jpg` heavy = `false` category = `Software` deliverydate = 1783728000000 )
-      ( name = `Smart Games` productid = `HT-1104` quantity = 13 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 55 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1104.jpg` heavy = `false` category = `Software` deliverydate = 1783382400000 )
-      ( name = `Smart Internet Antivirus` productid = `HT-1105` quantity = 17 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 29 currencycode = `EUR` suppliername = `Brainsoft`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1105.jpg` heavy = `false` category = `Software` deliverydate = 1783036800000 )
-      ( name = `Smart Firewall` productid = `HT-1106` quantity = 19 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 34 currencycode = `EUR` suppliername = `Brainsoft`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1106.jpg` heavy = `false` category = `Software` deliverydate = 1782691200000 )
-      ( name = `Smart Money` productid = `HT-1107` quantity = 18 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = `29.9` currencycode = `EUR` suppliername = `Brainsoft`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1107.jpg` heavy = `false` category = `Software` deliverydate = 1782345600000 )
-      ( name = `PC Lock` productid = `HT-1110` quantity = 14 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `8.9` currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1110.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1782000000000 )
-      ( name = `Notebook Lock` productid = `HT-1111` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `6.9` currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1111.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1781654400000 )
-      ( name = `Web cam reality` productid = `HT-1112` quantity = 27 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 39 currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1784764800000 )
-      ( name = `Screen clean` productid = `HT-1113` quantity = 17 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `2.3` currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1113.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1784419200000 )
-      ( name = `Fabric bag professional` productid = `HT-1114` quantity = 14 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 31 currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1114.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1784073600000 )
-      ( name = `Wireless DSL Router` productid = `HT-1115` quantity = 16 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 49 currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1115.jpg` heavy = `false` category = `Telecommunications` deliverydate = 1783728000000 )
-      ( name = `Wireless DSL Router / Repeater` productid = `HT-1116` quantity = 12 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 59 currencycode = `EUR` suppliername = `Red Point Stores`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1116.jpg` heavy = `false` category = `Telecommunications` deliverydate = 1783382400000 )
-      ( name = `Wireless DSL Router / Repeater and Print Server` productid = `HT-1117` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 69 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1117.jpg` heavy = `false` category = `Telecommunications` deliverydate = 1783036800000 )
-      ( name = `USB Stick` productid = `HT-1118` quantity = 14 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 35 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1118.jpg` heavy = `false` category = `Computer System Accessories` deliverydate = 1782691200000 )
-      ( name = `Travel Adapter` productid = `HT-1119` quantity = 10 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 79 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1119.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `Cordless Bluetooth Keyboard, english international` productid = `HT-1120` quantity = 13 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 29 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1120.jpg` heavy = `false` category = `Keyboards` deliverydate = 1782000000000 )
-      ( name = `Flat XXL` productid = `HT-1137` quantity = 10 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 1430 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1137.jpg` heavy = `false` category = `Flat Screen Monitors` deliverydate = 1781654400000 )
-      ( name = `Pocket Mouse` productid = `HT-1138` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 23 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1138.jpg` heavy = `false` category = `Mice` deliverydate = 1784764800000 )
-      ( name = `PC Power Station` productid = `HT-1210` quantity = 22 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 2399 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1210.jpg` heavy = `false` category = `PCs` deliverydate = 1784419200000 )
-      ( name = `Astro Laptop 1516` productid = `HT-1251` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 989 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1251.jpg` heavy = `false` category = `Laptops` deliverydate = 1784073600000 )
-      ( name = `Astro Phone 6` productid = `HT-1252` quantity = 28 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 649 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1252.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1783728000000 )
-      ( name = `Benda Laptop 1408` productid = `HT-1253` quantity = 27 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 976 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1253.jpg` heavy = `false` category = `Laptops` deliverydate = 1783382400000 )
-      ( name = `Bending Screen 21HD` productid = `HT-1254` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 250 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1254.jpg` heavy = `false` category = `Flat Screens` deliverydate = 1783036800000 )
-      ( name = `Broad Screen 22HD` productid = `HT-1255` quantity = 5 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 270 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1255.jpg` heavy = `false` category = `Flat Screens` deliverydate = 1782691200000 )
-      ( name = `Cerdik Phone 7` productid = `HT-1256` quantity = 19 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 549 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1256.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1782345600000 )
-      ( name = `Cepat Tablet 10.5` productid = `HT-1257` quantity = 17 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 549 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1257.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1782000000000 )
-      ( name = `Cepat Tablet 8` productid = `HT-1258` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 529 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1258.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1781654400000 )
-      ( name = `Server Basic` productid = `HT-1500` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 5000 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1500.jpg` heavy = `false` category = `Servers` deliverydate = 1784764800000 )
-      ( name = `Server Professional` productid = `HT-1501` quantity = 26 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 15000 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1501.jpg` heavy = `false` category = `Servers` deliverydate = 1784419200000 )
-      ( name = `Server Power Pro` productid = `HT-1502` quantity = 34 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 25000 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1502.jpg` heavy = `false` category = `Servers` deliverydate = 1784073600000 )
-      ( name = `Family PC Basic` productid = `HT-1600` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 600 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1600.jpg` heavy = `false` category = `Desktop Computers` deliverydate = 1783728000000 )
-      ( name = `Family PC Pro` productid = `HT-1601` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 900 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1601.jpg` heavy = `false` category = `Desktop Computers` deliverydate = 1783382400000 )
-      ( name = `Gaming Monster` productid = `HT-1602` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1200 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1602.jpg` heavy = `false` category = `Desktop Computers` deliverydate = 1783036800000 )
-      ( name = `Gaming Monster Pro` productid = `HT-1603` quantity = 25 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 1700 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1603.jpg` heavy = `false` category = `Desktop Computers` deliverydate = 1782691200000 )
-      ( name = `7" Widescreen Portable DVD Player w MP3` productid = `HT-2000` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `249.99` currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2000.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `10" Portable DVD player` productid = `HT-2001` quantity = 21 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `449.99` currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2001.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `Portable DVD Player with 9" LCD Monitor` productid = `HT-2002` quantity = 50 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `853.99` currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2002.jpg` heavy = `false` category = `Accessories` deliverydate = 1781654400000 )
-      ( name = `CD/DVD case: 264 sleeves` productid = `HT-2025` quantity = 26 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = `44.99` currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2025.jpg` heavy = `false` category = `Accessories` deliverydate = 1784764800000 )
-      ( name = `Audio/Video Cable Kit - 4m` productid = `HT-2026` quantity = 16 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = `29.99` currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2026.jpg` heavy = `false` category = `Accessories` deliverydate = 1784419200000 )
-      ( name = `Removable CD/DVD Laser Labels` productid = `HT-2027` quantity = 25 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = `8.99` currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2027.jpg` heavy = `false` category = `Accessories` deliverydate = 1784073600000 )
-      ( name = `Beam Breaker B-1` productid = `HT-6100` quantity = 32 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 469 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg` heavy = `false` category = `Accessories` deliverydate = 1783728000000 )
-      ( name = `Beam Breaker B-2` productid = `HT-6101` quantity = 18 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 679 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6101.jpg` heavy = `false` category = `Accessories` deliverydate = 1783382400000 )
-      ( name = `Beam Breaker B-3` productid = `HT-6102` quantity = 16 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 889 currencycode = `EUR` suppliername = `Technocom`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6102.jpg` heavy = `false` category = `Accessories` deliverydate = 1783036800000 )
-      ( name = `Play Movie` productid = `HT-6110` quantity = 15 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 130 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6110.jpg` heavy = `false` category = `Accessories` deliverydate = 1782691200000 )
-      ( name = `Record Movie` productid = `HT-6111` quantity = 24 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 288 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6111.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `ITelo MusicStick` productid = `HT-6120` quantity = 15 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 45 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6120.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `ITelo Jog-Mate` productid = `HT-6121` quantity = 24 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 63 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6121.jpg` heavy = `false` category = `Accessories` deliverydate = 1781654400000 )
-      ( name = `Power Pro Player 40` productid = `HT-6122` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 167 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6122.jpg` heavy = `false` category = `Accessories` deliverydate = 1784764800000 )
-      ( name = `Power Pro Player 80` productid = `HT-6123` quantity = 13 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 299 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6123.jpg` heavy = `false` category = `Accessories` deliverydate = 1784419200000 )
-      ( name = `Flat Watch HD32` productid = `HT-6130` quantity = 16 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1459 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6130.jpg` heavy = `false` category = `Flat Screen TVs` deliverydate = 1784073600000 )
-      ( name = `Flat Watch HD37` productid = `HT-6131` quantity = 14 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1199 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6131.jpg` heavy = `false` category = `Flat Screen TVs` deliverydate = 1783728000000 )
-      ( name = `Flat Watch HD41` productid = `HT-6132` quantity = 13 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 899 currencycode = `EUR` suppliername = `Very Best Screens`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6132.jpg` heavy = `false` category = `Flat Screen TVs` deliverydate = 1783382400000 )
-      ( name = `Copperberry` productid = `HT-7000` quantity = 5 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 549 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7000.jpg` heavy = `false` category = `Accessories` deliverydate = 1783036800000 )
-      ( name = `Silverberry` productid = `HT-7010` quantity = 9 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 549 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7010.jpg` heavy = `false` category = `Accessories` deliverydate = 1782691200000 )
-      ( name = `Goldberry` productid = `HT-7020` quantity = 11 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 549 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7020.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `Platinberry` productid = `HT-7030` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 549 currencycode = `EUR` suppliername = `Fasttech`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7030.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `ITelO FlexTop I4000` productid = `HT-8000` quantity = 11 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 799 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8000.jpg` heavy = `false` category = `Laptops` deliverydate = 1781654400000 )
-      ( name = `ITelO FlexTop I6300c` productid = `HT-8001` quantity = 20 status = `Discontinued` availablestate = `Error` availableicon = `sap-icon://decline` price = 799 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8001.jpg` heavy = `false` category = `Laptops` deliverydate = 1784764800000 )
-      ( name = `ITelO FlexTop I9100` productid = `HT-8002` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1199 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8002.jpg` heavy = `false` category = `Laptops` deliverydate = 1784419200000 )
-      ( name = `ITelO FlexTop I9800` productid = `HT-8003` quantity = 22 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 1388 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8003.jpg` heavy = `false` category = `Laptops` deliverydate = 1784073600000 )
-      ( name = `Smartphone Leather Case` productid = `HT-9991` quantity = 12 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 25 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9991.jpg` heavy = `false` category = `Accessories` deliverydate = 1783728000000 )
-      ( name = `Smartphone Alpha` productid = `HT-9992` quantity = 13 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 599 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9992.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1783382400000 )
-      ( name = `Mini Tablet` productid = `HT-9993` quantity = 10 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 833 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9993.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1783036800000 )
-      ( name = `Camcorder View` productid = `HT-9994` quantity = 50 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 1388 currencycode = `EUR` suppliername = `Ultrasonic United`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9994.jpg` heavy = `false` category = `Accessories` deliverydate = 1782691200000 )
-      ( name = `Tablet Pouch` productid = `HT-9995` quantity = 34 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 20 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9995.jpg` heavy = `false` category = `Accessories` deliverydate = 1782345600000 )
-      ( name = `Tablet Pouch` productid = `HT-9996` quantity = 34 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 20 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9996.jpg` heavy = `false` category = `Accessories` deliverydate = 1782000000000 )
-      ( name = `e-Book Reader ReadMe` productid = `HT-9997` quantity = 23 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 33 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9997.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1781654400000 )
-      ( name = `Smartphone Beta` productid = `HT-9998` quantity = 21 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 30 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9998.jpg` heavy = `false` category = `Smartphones and Tablets` deliverydate = 1784764800000 )
-      ( name = `Maxi Tablet` productid = `HT-9999` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 749 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9999.jpg` heavy = `false` category = `Tablets` deliverydate = 1784419200000 )
-      ( name = `Flyer` productid = `PF-1000` quantity = 33 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 0 currencycode = `EUR` suppliername = `Titanium`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` heavy = `false` category = `Accessories` deliverydate = 1784073600000 )
-      ).
+    DATA temp6 LIKE t_products.
+    DATA temp7 LIKE LINE OF temp6.
+    DATA temp8 LIKE t_suppliers.
+    DATA temp9 LIKE LINE OF temp8.
+    DATA temp10 LIKE t_categories.
+    DATA temp11 LIKE LINE OF temp10.
+    CLEAR temp6.
+    
+    temp7-name = `Notebook Basic 15`.
+    temp7-productid = `HT-1000`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 956.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1000.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Basic 17`.
+    temp7-productid = `HT-1001`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1249.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1001.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Basic 18`.
+    temp7-productid = `HT-1002`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1570.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Basic 19`.
+    temp7-productid = `HT-1003`.
+    temp7-quantity = 15.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1650.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Smartcards`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1003.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO Vault`.
+    temp7-productid = `HT-1007`.
+    temp7-quantity = 15.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 299.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1007.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Professional 15`.
+    temp7-productid = `HT-1010`.
+    temp7-quantity = 16.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1999.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1010.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Professional 17`.
+    temp7-productid = `HT-1011`.
+    temp7-quantity = 17.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 2299.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1011.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO Vault Net`.
+    temp7-productid = `HT-1020`.
+    temp7-quantity = 14.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 459.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1020.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO Vault SAT`.
+    temp7-productid = `HT-1021`.
+    temp7-quantity = 50.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 149.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1021.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Comfort Easy`.
+    temp7-productid = `HT-1022`.
+    temp7-quantity = 30.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1679.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1022.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Comfort Senior`.
+    temp7-productid = `HT-1023`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 512.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1023.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ergo Screen E-I`.
+    temp7-productid = `HT-1030`.
+    temp7-quantity = 14.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 230.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1030.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ergo Screen E-II`.
+    temp7-productid = `HT-1031`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 285.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ergo Screen E-III`.
+    temp7-productid = `HT-1032`.
+    temp7-quantity = 50.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 345.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1032.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat Basic`.
+    temp7-productid = `HT-1035`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 399.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1035.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat Future`.
+    temp7-productid = `HT-1036`.
+    temp7-quantity = 22.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 430.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1036.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat XL`.
+    temp7-productid = `HT-1037`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1230.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1037.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Laser Professional Eco`.
+    temp7-productid = `HT-1040`.
+    temp7-quantity = 21.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 830.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Alpha Printers`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1040.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Laser Basic`.
+    temp7-productid = `HT-1041`.
+    temp7-quantity = 8.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 490.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Alpha Printers`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1041.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Laser Allround`.
+    temp7-productid = `HT-1042`.
+    temp7-quantity = 9.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 349.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Alpha Printers`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1042.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ultra Jet Super Color`.
+    temp7-productid = `HT-1050`.
+    temp7-quantity = 17.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 139.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Alpha Printers`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1050.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ultra Jet Mobile`.
+    temp7-productid = `HT-1051`.
+    temp7-quantity = 18.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 99.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1051.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ultra Jet Super Highspeed`.
+    temp7-productid = `HT-1052`.
+    temp7-quantity = 25.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 170.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1052.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Printers`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Multi Print`.
+    temp7-productid = `HT-1055`.
+    temp7-quantity = 16.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 99.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1055.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Multifunction Printers`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Multi Color`.
+    temp7-productid = `HT-1056`.
+    temp7-quantity = 5.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 119.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1056.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Multifunction Printers`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Cordless Mouse`.
+    temp7-productid = `HT-1060`.
+    temp7-quantity = 25.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 9.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1060.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mice`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Speed Mouse`.
+    temp7-productid = `HT-1061`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 7.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1061.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mice`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Track Mouse`.
+    temp7-productid = `HT-1062`.
+    temp7-quantity = 12.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 11.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1062.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mice`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ergonomic Keyboard`.
+    temp7-productid = `HT-1063`.
+    temp7-quantity = 50.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 14.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1063.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Keyboards`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Internet Keyboard`.
+    temp7-productid = `HT-1064`.
+    temp7-quantity = 35.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 16.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1064.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Keyboards`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Media Keyboard`.
+    temp7-productid = `HT-1065`.
+    temp7-quantity = 26.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 26.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1065.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Keyboards`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Mousepad`.
+    temp7-productid = `HT-1066`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `6.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1066.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mousepads`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Ergo Mousepad`.
+    temp7-productid = `HT-1067`.
+    temp7-quantity = 16.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `8.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Oxynum`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1067.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mousepads`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Designer Mousepad`.
+    temp7-productid = `HT-1068`.
+    temp7-quantity = 26.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `12.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1068.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mousepads`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Universal card reader`.
+    temp7-productid = `HT-1069`.
+    temp7-quantity = 22.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 14.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1069.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Proctra X`.
+    temp7-productid = `HT-1070`.
+    temp7-quantity = 15.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `70.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1070.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Graphic Cards`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Gladiator MX`.
+    temp7-productid = `HT-1071`.
+    temp7-quantity = 16.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `81.7`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1071.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Graphic Cards`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Hurricane GX`.
+    temp7-productid = `HT-1072`.
+    temp7-quantity = 13.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `101.2`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1072.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Graphic Cards`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Hurricane GX/LN`.
+    temp7-productid = `HT-1073`.
+    temp7-quantity = 5.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `139.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Smartcards`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1073.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Graphic Cards`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Photo Scan`.
+    temp7-productid = `HT-1080`.
+    temp7-quantity = 8.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 129.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1080.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Scanners`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Power Scan`.
+    temp7-productid = `HT-1081`.
+    temp7-quantity = 11.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 89.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1081.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Scanners`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Jet Scan Professional`.
+    temp7-productid = `HT-1082`.
+    temp7-quantity = 13.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 169.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1082.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Scanners`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Jet Scan Professional`.
+    temp7-productid = `HT-1083`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 189.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Printer for All`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1083.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Scanners`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Copymaster`.
+    temp7-productid = `HT-1085`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1499.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Alpha Printers`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1085.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Multifunction Printers`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Surround Sound`.
+    temp7-productid = `HT-1090`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 39.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Speaker Experts`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1090.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Speakers`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Blaster Extreme`.
+    temp7-productid = `HT-1091`.
+    temp7-quantity = 15.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 26.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Speaker Experts`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1091.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Speakers`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Sound Booster`.
+    temp7-productid = `HT-1092`.
+    temp7-quantity = 50.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 45.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Speaker Experts`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1092.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Speakers`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Lovely Sound 5.1 Wireless`.
+    temp7-productid = `HT-1095`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 49.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1095.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Lovely Sound 5.1`.
+    temp7-productid = `HT-1096`.
+    temp7-quantity = 18.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 39.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1096.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Lovely Sound Stereo`.
+    temp7-productid = `HT-1097`.
+    temp7-quantity = 21.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 29.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1097.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Office`.
+    temp7-productid = `HT-1100`.
+    temp7-quantity = 25.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `89.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1100.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Design`.
+    temp7-productid = `HT-1101`.
+    temp7-quantity = 26.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `79.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1101.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Network`.
+    temp7-productid = `HT-1102`.
+    temp7-quantity = 28.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 69.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1102.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Multimedia`.
+    temp7-productid = `HT-1103`.
+    temp7-quantity = 9.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 77.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1103.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Games`.
+    temp7-productid = `HT-1104`.
+    temp7-quantity = 13.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 55.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1104.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Internet Antivirus`.
+    temp7-productid = `HT-1105`.
+    temp7-quantity = 17.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 29.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Brainsoft`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1105.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Firewall`.
+    temp7-productid = `HT-1106`.
+    temp7-quantity = 19.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 34.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Brainsoft`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1106.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smart Money`.
+    temp7-productid = `HT-1107`.
+    temp7-quantity = 18.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `29.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Brainsoft`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1107.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Software`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `PC Lock`.
+    temp7-productid = `HT-1110`.
+    temp7-quantity = 14.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `8.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1110.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Notebook Lock`.
+    temp7-productid = `HT-1111`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `6.9`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1111.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Web cam reality`.
+    temp7-productid = `HT-1112`.
+    temp7-quantity = 27.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 39.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Screen clean`.
+    temp7-productid = `HT-1113`.
+    temp7-quantity = 17.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `2.3`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1113.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Fabric bag professional`.
+    temp7-productid = `HT-1114`.
+    temp7-quantity = 14.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 31.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1114.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Wireless DSL Router`.
+    temp7-productid = `HT-1115`.
+    temp7-quantity = 16.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 49.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1115.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Telecommunications`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Wireless DSL Router / Repeater`.
+    temp7-productid = `HT-1116`.
+    temp7-quantity = 12.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 59.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Red Point Stores`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1116.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Telecommunications`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Wireless DSL Router / Repeater and Print Server`.
+    temp7-productid = `HT-1117`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 69.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1117.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Telecommunications`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `USB Stick`.
+    temp7-productid = `HT-1118`.
+    temp7-quantity = 14.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 35.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1118.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Computer System Accessories`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Travel Adapter`.
+    temp7-productid = `HT-1119`.
+    temp7-quantity = 10.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 79.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1119.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Cordless Bluetooth Keyboard, english international`.
+    temp7-productid = `HT-1120`.
+    temp7-quantity = 13.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 29.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1120.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Keyboards`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat XXL`.
+    temp7-productid = `HT-1137`.
+    temp7-quantity = 10.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1430.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1137.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen Monitors`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Pocket Mouse`.
+    temp7-productid = `HT-1138`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 23.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1138.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Mice`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `PC Power Station`.
+    temp7-productid = `HT-1210`.
+    temp7-quantity = 22.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 2399.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1210.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `PCs`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Astro Laptop 1516`.
+    temp7-productid = `HT-1251`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 989.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1251.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Astro Phone 6`.
+    temp7-productid = `HT-1252`.
+    temp7-quantity = 28.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 649.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1252.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Benda Laptop 1408`.
+    temp7-productid = `HT-1253`.
+    temp7-quantity = 27.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 976.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1253.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Bending Screen 21HD`.
+    temp7-productid = `HT-1254`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 250.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1254.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screens`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Broad Screen 22HD`.
+    temp7-productid = `HT-1255`.
+    temp7-quantity = 5.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 270.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1255.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screens`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Cerdik Phone 7`.
+    temp7-productid = `HT-1256`.
+    temp7-quantity = 19.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1256.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Cepat Tablet 10.5`.
+    temp7-productid = `HT-1257`.
+    temp7-quantity = 17.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1257.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Cepat Tablet 8`.
+    temp7-productid = `HT-1258`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 529.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1258.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Server Basic`.
+    temp7-productid = `HT-1500`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 5000.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1500.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Servers`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Server Professional`.
+    temp7-productid = `HT-1501`.
+    temp7-quantity = 26.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 15000.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1501.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Servers`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Server Power Pro`.
+    temp7-productid = `HT-1502`.
+    temp7-quantity = 34.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 25000.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1502.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Servers`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Family PC Basic`.
+    temp7-productid = `HT-1600`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 600.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1600.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Desktop Computers`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Family PC Pro`.
+    temp7-productid = `HT-1601`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 900.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1601.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Desktop Computers`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Gaming Monster`.
+    temp7-productid = `HT-1602`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1200.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1602.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Desktop Computers`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Gaming Monster Pro`.
+    temp7-productid = `HT-1603`.
+    temp7-quantity = 25.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1700.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1603.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Desktop Computers`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `7" Widescreen Portable DVD Player w MP3`.
+    temp7-productid = `HT-2000`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `249.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2000.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `10" Portable DVD player`.
+    temp7-productid = `HT-2001`.
+    temp7-quantity = 21.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `449.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2001.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Portable DVD Player with 9" LCD Monitor`.
+    temp7-productid = `HT-2002`.
+    temp7-quantity = 50.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `853.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2002.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `CD/DVD case: 264 sleeves`.
+    temp7-productid = `HT-2025`.
+    temp7-quantity = 26.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `44.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2025.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Audio/Video Cable Kit - 4m`.
+    temp7-productid = `HT-2026`.
+    temp7-quantity = 16.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = `29.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2026.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Removable CD/DVD Laser Labels`.
+    temp7-productid = `HT-2027`.
+    temp7-quantity = 25.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = `8.99`.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-2027.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Beam Breaker B-1`.
+    temp7-productid = `HT-6100`.
+    temp7-quantity = 32.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 469.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Beam Breaker B-2`.
+    temp7-productid = `HT-6101`.
+    temp7-quantity = 18.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 679.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6101.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Beam Breaker B-3`.
+    temp7-productid = `HT-6102`.
+    temp7-quantity = 16.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 889.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Technocom`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6102.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Play Movie`.
+    temp7-productid = `HT-6110`.
+    temp7-quantity = 15.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 130.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6110.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Record Movie`.
+    temp7-productid = `HT-6111`.
+    temp7-quantity = 24.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 288.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6111.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelo MusicStick`.
+    temp7-productid = `HT-6120`.
+    temp7-quantity = 15.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 45.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6120.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelo Jog-Mate`.
+    temp7-productid = `HT-6121`.
+    temp7-quantity = 24.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 63.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6121.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Power Pro Player 40`.
+    temp7-productid = `HT-6122`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 167.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6122.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Power Pro Player 80`.
+    temp7-productid = `HT-6123`.
+    temp7-quantity = 13.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 299.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6123.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat Watch HD32`.
+    temp7-productid = `HT-6130`.
+    temp7-quantity = 16.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1459.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6130.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen TVs`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat Watch HD37`.
+    temp7-productid = `HT-6131`.
+    temp7-quantity = 14.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1199.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6131.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen TVs`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flat Watch HD41`.
+    temp7-productid = `HT-6132`.
+    temp7-quantity = 13.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 899.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Very Best Screens`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-6132.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Flat Screen TVs`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Copperberry`.
+    temp7-productid = `HT-7000`.
+    temp7-quantity = 5.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7000.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Silverberry`.
+    temp7-productid = `HT-7010`.
+    temp7-quantity = 9.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7010.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Goldberry`.
+    temp7-productid = `HT-7020`.
+    temp7-quantity = 11.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7020.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Platinberry`.
+    temp7-productid = `HT-7030`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 549.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Fasttech`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-7030.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO FlexTop I4000`.
+    temp7-productid = `HT-8000`.
+    temp7-quantity = 11.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 799.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8000.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO FlexTop I6300c`.
+    temp7-productid = `HT-8001`.
+    temp7-quantity = 20.
+    temp7-status = `Discontinued`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 799.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8001.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO FlexTop I9100`.
+    temp7-productid = `HT-8002`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1199.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8002.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `ITelO FlexTop I9800`.
+    temp7-productid = `HT-8003`.
+    temp7-quantity = 22.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 1388.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-8003.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Laptops`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smartphone Leather Case`.
+    temp7-productid = `HT-9991`.
+    temp7-quantity = 12.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 25.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9991.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1783728000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smartphone Alpha`.
+    temp7-productid = `HT-9992`.
+    temp7-quantity = 13.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 599.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9992.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1783382400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Mini Tablet`.
+    temp7-productid = `HT-9993`.
+    temp7-quantity = 10.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 833.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9993.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1783036800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Camcorder View`.
+    temp7-productid = `HT-9994`.
+    temp7-quantity = 50.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 1388.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Ultrasonic United`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9994.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782691200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Tablet Pouch`.
+    temp7-productid = `HT-9995`.
+    temp7-quantity = 34.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 20.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9995.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782345600000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Tablet Pouch`.
+    temp7-productid = `HT-9996`.
+    temp7-quantity = 34.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 20.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9996.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1782000000000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `e-Book Reader ReadMe`.
+    temp7-productid = `HT-9997`.
+    temp7-quantity = 23.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 33.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9997.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1781654400000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Smartphone Beta`.
+    temp7-productid = `HT-9998`.
+    temp7-quantity = 21.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 30.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9998.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Smartphones and Tablets`.
+    temp7-deliverydate = 1784764800000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Maxi Tablet`.
+    temp7-productid = `HT-9999`.
+    temp7-quantity = 20.
+    temp7-status = `Available`.
+    temp7-availablestate = `Success`.
+    temp7-availableicon = `sap-icon://accept`.
+    temp7-price = 749.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9999.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Tablets`.
+    temp7-deliverydate = 1784419200000.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-name = `Flyer`.
+    temp7-productid = `PF-1000`.
+    temp7-quantity = 33.
+    temp7-status = `Out of Stock`.
+    temp7-availablestate = `Error`.
+    temp7-availableicon = `sap-icon://decline`.
+    temp7-price = 0.
+    temp7-currencycode = `EUR`.
+    temp7-suppliername = `Titanium`.
+    temp7-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg`.
+    temp7-heavy = `false`.
+    temp7-category = `Accessories`.
+    temp7-deliverydate = 1784073600000.
+    INSERT temp7 INTO TABLE temp6.
+    t_products = temp6.
 
     " the Suppliers / Categories collections the controller derives from the
     " products for the two in-cell dropdowns - the distinct values, in first
     " appearance order, exactly as the JS loop collects them
-    t_suppliers = VALUE #(
-      ( name = `Very Best Screens` )
-      ( name = `Smartcards` )
-      ( name = `Technocom` )
-      ( name = `Alpha Printers` )
-      ( name = `Printer for All` )
-      ( name = `Oxynum` )
-      ( name = `Fasttech` )
-      ( name = `Ultrasonic United` )
-      ( name = `Speaker Experts` )
-      ( name = `Brainsoft` )
-      ( name = `Red Point Stores` )
-      ( name = `Titanium` )
-      ).
+    
+    CLEAR temp8.
+    
+    temp9-name = `Very Best Screens`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Smartcards`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Technocom`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Alpha Printers`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Printer for All`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Oxynum`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Fasttech`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Ultrasonic United`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Speaker Experts`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Brainsoft`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Red Point Stores`.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-name = `Titanium`.
+    INSERT temp9 INTO TABLE temp8.
+    t_suppliers = temp8.
 
-    t_categories = VALUE #(
-      ( name = `Laptops` )
-      ( name = `Accessories` )
-      ( name = `Flat Screen Monitors` )
-      ( name = `Printers` )
-      ( name = `Multifunction Printers` )
-      ( name = `Mice` )
-      ( name = `Keyboards` )
-      ( name = `Mousepads` )
-      ( name = `Computer System Accessories` )
-      ( name = `Graphic Cards` )
-      ( name = `Scanners` )
-      ( name = `Speakers` )
-      ( name = `Software` )
-      ( name = `Telecommunications` )
-      ( name = `PCs` )
-      ( name = `Smartphones and Tablets` )
-      ( name = `Flat Screens` )
-      ( name = `Servers` )
-      ( name = `Desktop Computers` )
-      ( name = `Flat Screen TVs` )
-      ( name = `Tablets` )
-      ).
+    
+    CLEAR temp10.
+    
+    temp11-name = `Laptops`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Accessories`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Flat Screen Monitors`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Printers`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Multifunction Printers`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Mice`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Keyboards`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Mousepads`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Computer System Accessories`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Graphic Cards`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Scanners`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Speakers`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Software`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Telecommunications`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `PCs`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Smartphones and Tablets`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Flat Screens`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Servers`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Desktop Computers`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Flat Screen TVs`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-name = `Tablets`.
+    INSERT temp11 INTO TABLE temp10.
+    t_categories = temp10.
 
   ENDMETHOD.
 

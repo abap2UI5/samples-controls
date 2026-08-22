@@ -41,12 +41,12 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -55,7 +55,11 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " Navigation: _navTo(page) is the client-side NavContainer.to() - wired
     " roundtrip-free via follow_up_action( control_by_id ). The navigate event
@@ -64,6 +68,19 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     " Blocks: every SharedBlocks BlockBase is inlined with its view content
     " (app 188/217 precedent); the empN> named models the ModelMapping
     " elements feed are folded onto default-model root fields (app 230).
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/toId}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `navigationContainer` INTO TABLE temp2.
+    INSERT `to` INTO TABLE temp2.
+    INSERT `page2` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `navigationContainer` INTO TABLE temp3.
+    INSERT `to` INTO TABLE temp3.
+    INSERT `page1` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`       v = `100%`
         )->a( n = `xmlns`        v = `sap.uxap`
@@ -76,7 +93,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
         )->ele( n = `NavContainer` ns = `m`
             )->a( n = `id`       v = `navigationContainer`
             )->a( n = `navigate` v = client->_event( val   = `NAVIGATE`
-                                                     t_arg = VALUE #( ( `${$parameters>/toId}` ) ) )
+                                                     t_arg = temp1 )
 
             )->ele( n = `Page` ns = `m`
                 )->a( n = `id`    v = `page1`
@@ -94,7 +111,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
                     )->ele( n = `List` ns = `m`
                         )->tag( n = `StandardListItem` ns = `m`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                            t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page2` ) ) )
+                                                                            t_arg = temp2 )
                             )->a( n = `title` v = `To ObjectPage`
                             )->a( n = `type`  v = `Navigation`
 
@@ -113,7 +130,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
                 )->a( n = `title`           v = `Page 2`
                 )->a( n = `showNavButton`   v = `true`
                 )->a( n = `navButtonPress`  v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                          t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page1` ) ) )
+                                                                          t_arg = temp3 )
 
                 )->ele( `ObjectPageLayout`
                     )->a( n = `id`                       v = `ObjectPageLayout`
@@ -786,6 +803,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp3 TYPE string_table.
 
     " onNavigate: when page2 becomes the destination and the checkbox is
     " ticked, the controller calls setSelectedSection(null) so the page
@@ -796,8 +814,13 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     IF client->get_event( ) = `NAVIGATE`
         AND reset_check = abap_true
         AND client->get_event_arg( ) CS `page2`.
+      
+      CLEAR temp3.
+      INSERT `ObjectPageLayout` INTO TABLE temp3.
+      INSERT `setSelectedSection` INTO TABLE temp3.
+      INSERT `` INTO TABLE temp3.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `ObjectPageLayout` ) ( `setSelectedSection` ) ( `` ) ) ).
+                                t_arg = temp3 ).
     ENDIF.
 
   ENDMETHOD.

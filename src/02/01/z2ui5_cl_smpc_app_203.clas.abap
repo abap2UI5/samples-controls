@@ -9,7 +9,7 @@ CLASS z2ui5_cl_smpc_app_203 DEFINITION PUBLIC.
              text TYPE string,
              key  TYPE string,
            END OF ty_s_token.
-    DATA t_tokens  TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
+    DATA t_tokens  TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
     DATA new_token TYPE string.
 
   PROTECTED SECTION.
@@ -28,12 +28,12 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -42,8 +42,52 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/tokens}[0].getKey()` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `Token deleted: {0}` INTO TABLE temp2.
+    INSERT `${$parameters>/tokens}[0].getText()` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `overflowToolbarTokenizer` INTO TABLE temp3.
+    INSERT `removeToken` INTO TABLE temp3.
+    INSERT `${$parameters>/tokens}[0].getId()` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp4.
+    INSERT `show` INTO TABLE temp4.
+    INSERT `Token deleted: {0}` INTO TABLE temp4.
+    INSERT `${$parameters>/tokens}[0].getText()` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `tokenizerMaxWidth` INTO TABLE temp5.
+    INSERT `removeToken` INTO TABLE temp5.
+    INSERT `${$parameters>/tokens}[0].getId()` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp6.
+    INSERT `show` INTO TABLE temp6.
+    INSERT `Token deleted: {0}` INTO TABLE temp6.
+    INSERT `${$parameters>/tokens}[0].getText()` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `tokenizerShowItems` INTO TABLE temp7.
+    INSERT `removeToken` INTO TABLE temp7.
+    INSERT `${$parameters>/tokens}[0].getId()` INTO TABLE temp7.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -62,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                 " adding appends a row, deleting removes the row by its key
                 )->a( n = `tokens`    v = client->_bind( t_tokens )
                 )->a( n = `tokenDelete` v = client->_event( val   = `TOKEN_DELETE`
-                                                            t_arg = VALUE #( ( `${$parameters>/tokens}[0].getKey()` ) ) )
+                                                            t_arg = temp1 )
                 )->ele( `tokens`
                     )->tag( `Token`
                         )->a( n = `text` v = `{TEXT}`
@@ -117,15 +161,10 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         " the toast is composed on the client from the same event
                         )->a( n = `tokenDelete` v = client->follow_up_action(
                                   val   = client->cs_event-control_global
-                                  t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                   ( `show` )
-                                                   ( `Token deleted: {0}` )
-                                                   ( `${$parameters>/tokens}[0].getText()` ) ) ) && `; ` &&
+                                  t_arg = temp2 ) && `; ` &&
                                               client->follow_up_action(
                                   val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `overflowToolbarTokenizer` )
-                                                   ( `removeToken` )
-                                                   ( `${$parameters>/tokens}[0].getId()` ) ) )
+                                  t_arg = temp3 )
                         )->ele( `layoutData`
                             )->tag( `OverflowToolbarLayoutData`
                                 )->a( n = `priority` v = `High`
@@ -191,15 +230,10 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         " the toast is composed on the client from the same event
                         )->a( n = `tokenDelete` v = client->follow_up_action(
                                   val   = client->cs_event-control_global
-                                  t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                   ( `show` )
-                                                   ( `Token deleted: {0}` )
-                                                   ( `${$parameters>/tokens}[0].getText()` ) ) ) && `; ` &&
+                                  t_arg = temp4 ) && `; ` &&
                                               client->follow_up_action(
                                   val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `tokenizerMaxWidth` )
-                                                   ( `removeToken` )
-                                                   ( `${$parameters>/tokens}[0].getId()` ) ) )
+                                  t_arg = temp5 )
                         )->ele( `layoutData`
                             )->tag( `OverflowToolbarLayoutData`
                                 )->a( n = `priority` v = `High`
@@ -353,15 +387,10 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->a( n = `labelText` v = `Show items:`
                         )->a( n = `tokenDelete` v = client->follow_up_action(
                                   val   = client->cs_event-control_global
-                                  t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                   ( `show` )
-                                                   ( `Token deleted: {0}` )
-                                                   ( `${$parameters>/tokens}[0].getText()` ) ) ) && `; ` &&
+                                  t_arg = temp6 ) && `; ` &&
                                               client->follow_up_action(
                                   val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `tokenizerShowItems` )
-                                                   ( `removeToken` )
-                                                   ( `${$parameters>/tokens}[0].getId()` ) ) )
+                                  t_arg = temp7 )
                         )->ele( `layoutData`
                             )->tag( `OverflowToolbarLayoutData`
                                 )->a( n = `priority` v = `High`
@@ -412,6 +441,11 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE z2ui5_cl_smpc_app_203=>ty_s_token.
+        DATA deleted_key TYPE string.
+        DATA temp4 TYPE z2ui5_cl_smpc_app_203=>ty_s_token.
+        DATA temp5 TYPE z2ui5_cl_smpc_app_203=>ty_s_token.
+        DATA deleted LIKE temp4.
 
     CASE client->get_event( ).
 
@@ -422,15 +456,27 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
           client->message_toast_display( `Please enter a token text.` ).
           RETURN.
         ENDIF.
-        INSERT VALUE #( text = new_token
-                        key  = new_token ) INTO TABLE t_tokens.
+        
+        CLEAR temp3.
+        temp3-text = new_token.
+        temp3-key = new_token.
+        INSERT temp3 INTO TABLE t_tokens.
         client->message_toast_display( |Token added: { new_token }| ).
         CLEAR new_token.
 
       WHEN `TOKEN_DELETE`.
         " onTokenDelete: remove the deleted token and toast its text
-        DATA(deleted_key) = client->get_event_arg( ).
-        DATA(deleted) = VALUE #( t_tokens[ key = deleted_key ] OPTIONAL ).
+        
+        deleted_key = client->get_event_arg( ).
+        
+        CLEAR temp4.
+        
+        READ TABLE t_tokens INTO temp5 WITH KEY key = deleted_key.
+        IF sy-subrc = 0.
+          temp4 = temp5.
+        ENDIF.
+        
+        deleted = temp4.
         DELETE t_tokens WHERE key = deleted_key.
         client->message_toast_display( |Token deleted: { deleted-text }| ).
 
@@ -442,10 +488,20 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
   METHOD model_init.
 
     " the three tokens the sample declares on the first tokenizer
-    t_tokens = VALUE #(
-      ( text = `Token 1` key = `0001` )
-      ( text = `Token 2` key = `0002` )
-      ( text = `Token 3` key = `0003` ) ).
+    DATA temp6 LIKE t_tokens.
+    DATA temp7 LIKE LINE OF temp6.
+    CLEAR temp6.
+    
+    temp7-text = `Token 1`.
+    temp7-key = `0001`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Token 2`.
+    temp7-key = `0002`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Token 3`.
+    temp7-key = `0003`.
+    INSERT temp7 INTO TABLE temp6.
+    t_tokens = temp6.
 
   ENDMETHOD.
 

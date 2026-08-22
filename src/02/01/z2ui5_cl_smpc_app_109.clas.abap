@@ -19,7 +19,7 @@ CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
              start_date TYPE string,
              end_date   TYPE string,
            END OF ty_s_appointment.
-    DATA t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    DATA t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
     DATA start_date TYPE string.
 
   PROTECTED SECTION.
@@ -38,12 +38,12 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -52,10 +52,19 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " startDate + CalendarAppointment startDate/endDate are object-typed: the model
     " keeps ISO strings and Formatter.DateCreateObject converts them at the binding
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/weekNumber}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/date}` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core`    v = `sap.ui.core`
@@ -95,9 +104,9 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
                 )->a( n = `viewChange`          v = client->_event( `VIEW_CHANGE` )
                 )->a( n = `selectedDatesChange` v = client->_event( `SELECTED_DATE` )
                 )->a( n = `weekNumberPress`     v = client->_event( val   = `WEEK`
-                                                                    t_arg = VALUE #( ( `${$parameters>/weekNumber}` ) ) )
+                                                                    t_arg = temp1 )
                 )->a( n = `startDateChange`     v = client->_event( val   = `START_DATE`
-                                                                    t_arg = VALUE #( ( `${$parameters>/date}` ) ) )
+                                                                    t_arg = temp2 )
                 )->a( n = `startDate`           v = |\{ path: '{ client->_bind( val = start_date path = abap_true ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `appointments`        v = client->_bind( t_appointments )
 
@@ -165,6 +174,8 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp3 LIKE t_appointments.
+    DATA temp4 LIKE LINE OF temp3.
 
     " the calendar opens in single-day selection, and the button offers to
     " enable the multi-day one - the original's view defaults
@@ -172,18 +183,87 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
     multiselect_tooltip = `Enable multi-day selection`.
 
     start_date = `2018-07-09T00:00:00`.
-    t_appointments = VALUE #(
-      ( title = `Discussion of the plan` text = `` type = `Type01` icon = `` start_date = `2018-07-09T00:00:00` end_date = `2018-07-09T00:00:00` )
-      ( title = `Meet John Miller` text = `` type = `Type05` icon = `` start_date = `2018-07-08T05:00:00` end_date = `2018-07-08T06:00:00` )
-      ( title = `Lunch` text = `canteen` type = `Type05` icon = `` start_date = `2018-07-08T07:00:00` end_date = `2018-07-08T08:00:00` )
-      ( title = `New Product` text = `room 105` type = `Type01` icon = `sap-icon://meeting-room` start_date = `2018-07-08T08:00:00` end_date = `2018-07-08T09:00:00` )
-      ( title = `Discussion with clients for the new release dates` text = `Online meeting` type = `Type08` icon = `` start_date = `2018-07-09T09:00:00` end_date = `2018-07-09T10:00:00` )
-      ( title = `Meeting with the manager` text = `` type = `Type03` icon = `` start_date = `2018-07-06T09:00:00` end_date = `2018-07-06T10:00:00` )
-      ( title = `Daily standup meeting` text = `` type = `Type01` icon = `` start_date = `2018-07-07T10:00:00` end_date = `2018-07-07T10:30:00` )
-      ( title = `Private meeting` text = `` type = `Type03` icon = `` start_date = `2018-07-06T11:30:00` end_date = `2018-07-06T12:00:00` )
-      ( title = `Lunch` text = `` type = `Type05` icon = `` start_date = `2018-07-06T12:00:00` end_date = `2018-07-06T13:00:00` )
-      ( title = `Discussion of the plan` text = `` type = `Type01` icon = `` start_date = `2018-07-16T11:00:00` end_date = `2018-07-16T12:00:00` )
-      ( title = `Lunch` text = `canteen` type = `Type05` icon = `` start_date = `2018-07-16T12:00:00` end_date = `2018-07-16T13:00:00` ) ).
+    
+    CLEAR temp3.
+    
+    temp4-title = `Discussion of the plan`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-09T00:00:00`.
+    temp4-end_date = `2018-07-09T00:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Meet John Miller`.
+    temp4-text = ``.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-08T05:00:00`.
+    temp4-end_date = `2018-07-08T06:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = `canteen`.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-08T07:00:00`.
+    temp4-end_date = `2018-07-08T08:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `New Product`.
+    temp4-text = `room 105`.
+    temp4-type = `Type01`.
+    temp4-icon = `sap-icon://meeting-room`.
+    temp4-start_date = `2018-07-08T08:00:00`.
+    temp4-end_date = `2018-07-08T09:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Discussion with clients for the new release dates`.
+    temp4-text = `Online meeting`.
+    temp4-type = `Type08`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-09T09:00:00`.
+    temp4-end_date = `2018-07-09T10:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Meeting with the manager`.
+    temp4-text = ``.
+    temp4-type = `Type03`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-06T09:00:00`.
+    temp4-end_date = `2018-07-06T10:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Daily standup meeting`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-07T10:00:00`.
+    temp4-end_date = `2018-07-07T10:30:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Private meeting`.
+    temp4-text = ``.
+    temp4-type = `Type03`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-06T11:30:00`.
+    temp4-end_date = `2018-07-06T12:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = ``.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-06T12:00:00`.
+    temp4-end_date = `2018-07-06T13:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Discussion of the plan`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-16T11:00:00`.
+    temp4-end_date = `2018-07-16T12:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = `canteen`.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-start_date = `2018-07-16T12:00:00`.
+    temp4-end_date = `2018-07-16T13:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    t_appointments = temp3.
 
   ENDMETHOD.
 

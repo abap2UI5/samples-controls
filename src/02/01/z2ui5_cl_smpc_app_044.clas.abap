@@ -25,11 +25,11 @@ CLASS z2ui5_cl_smpc_app_044 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,8 +38,17 @@ CLASS z2ui5_cl_smpc_app_044 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `sample1.pdf` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `sample2.pdf` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -64,12 +73,12 @@ CLASS z2ui5_cl_smpc_app_044 IMPLEMENTATION.
                     )->a( n = `id`    v = `image1`
                     )->a( n = `src`   v = c_base_url && `sample1.jpg`
                     )->a( n = `alt`   v = `Example Picture 1`
-                    )->a( n = `press` v = client->_event( val = `SHOW_PDF` t_arg = VALUE #( ( `sample1.pdf` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SHOW_PDF` t_arg = temp1 )
                 )->tag( `Image`
                     )->a( n = `id`    v = `image2`
                     )->a( n = `src`   v = c_base_url && `sample2.jpg`
                     )->a( n = `alt`   v = `Example Picture 2`
-                    )->a( n = `press` v = client->_event( val = `SHOW_PDF` t_arg = VALUE #( ( `sample2.pdf` ) ) ) ).
+                    )->a( n = `press` v = client->_event( val = `SHOW_PDF` t_arg = temp2 ) ).
 
     client->view_display( view->stringify( ) ).
 
@@ -77,13 +86,17 @@ CLASS z2ui5_cl_smpc_app_044 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp3 TYPE string_table.
 
     IF client->get_event( ) = `SHOW_PDF`.
       " original onPress setSource + open(): update the bound source, then the whitelisted open runs after render (t_arg positional: id, method; the view defaults to cs_view-main)
       pdf_source = c_base_url && client->get_event_arg( ).
+      
+      CLEAR temp3.
+      INSERT `pdfViewer` INTO TABLE temp3.
+      INSERT `open` INTO TABLE temp3.
       client->follow_up_action( val   = z2ui5_if_client=>cs_event-control_by_id
-                                t_arg = VALUE #( ( `pdfViewer` )
-                                                 ( `open` ) ) ).
+                                t_arg = temp3 ).
     ENDIF.
 
   ENDMETHOD.

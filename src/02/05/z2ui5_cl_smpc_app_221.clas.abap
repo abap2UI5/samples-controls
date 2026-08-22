@@ -24,11 +24,11 @@ CLASS z2ui5_cl_smpc_app_221 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -37,8 +37,21 @@ CLASS z2ui5_cl_smpc_app_221 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `1` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `2` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `3` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -60,7 +73,7 @@ CLASS z2ui5_cl_smpc_app_221 IMPLEMENTATION.
                 " BINDABLE property - so the reset is a bound value, not a frontend
                 " action (AGENTS "prefer a bindable property")
                 )->a( n = `press` v = client->_event( val   = `HOME_PRESS`
-                                                      t_arg = VALUE #( ( `1` ) ) )
+                                                      t_arg = temp1 )
                 )->a( n = `type` v = `Transparent`
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
@@ -148,7 +161,7 @@ CLASS z2ui5_cl_smpc_app_221 IMPLEMENTATION.
                 " BINDABLE property - so the reset is a bound value, not a frontend
                 " action (AGENTS "prefer a bindable property")
                 )->a( n = `press` v = client->_event( val   = `HOME_PRESS`
-                                                      t_arg = VALUE #( ( `2` ) ) )
+                                                      t_arg = temp2 )
                 )->a( n = `type` v = `Transparent`
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
@@ -272,7 +285,7 @@ CLASS z2ui5_cl_smpc_app_221 IMPLEMENTATION.
                 " BINDABLE property - so the reset is a bound value, not a frontend
                 " action (AGENTS "prefer a bindable property")
                 )->a( n = `press` v = client->_event( val   = `HOME_PRESS`
-                                                      t_arg = VALUE #( ( `3` ) ) )
+                                                      t_arg = temp3 )
                 )->a( n = `type` v = `Transparent`
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`

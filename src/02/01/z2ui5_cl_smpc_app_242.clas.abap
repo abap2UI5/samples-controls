@@ -24,12 +24,12 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       animation = `slide`.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,8 +38,32 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `Navigation to page '{0}' finished` INTO TABLE temp1.
+    INSERT `${$parameters>/to}.getTitle()` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `p1` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `p2` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `p3` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `p4` INTO TABLE temp5.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -61,10 +85,7 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
                 " onNavigationFinished: MessageToast.show("Navigation to page '" + to.getTitle() + "' finished")
                 " - client-composed toast, the {0} placeholder filled by the resolved page title
                 )->a( n = `navigationFinished` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                                                           ( `show` )
-                                                                                           ( `Navigation to page '{0}' finished` )
-                                                                                           ( `${$parameters>/to}.getTitle()` ) ) )
+                                                                             t_arg = temp1 )
 
                 )->ele( `Page`
                     )->a( n = `id`    v = `p1`
@@ -119,7 +140,7 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
             )->ele( `HBox`
                 )->ele( `Button`
                     )->a( n = `text`  v = `To 1`
-                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = VALUE #( ( `p1` ) ) )
+                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = temp2 )
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -136,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
                 )->end(
                 )->ele( `Button`
                     )->a( n = `text`  v = `To 2`
-                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = VALUE #( ( `p2` ) ) )
+                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = temp3 )
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -153,7 +174,7 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
                 )->end(
                 )->ele( `Button`
                     )->a( n = `text`  v = `To 3`
-                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = VALUE #( ( `p3` ) ) )
+                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = temp4 )
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -170,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
                 )->end(
                 )->ele( `Button`
                     )->a( n = `text`  v = `To 4`
-                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = VALUE #( ( `p4` ) ) )
+                    )->a( n = `press` v = client->_event( val = `NAV` t_arg = temp5 )
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -234,6 +255,8 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -241,13 +264,23 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
         " handleNav (with a target): navCon.to( byId(target), animationSelect.getSelectedKey() )
         " - the target page id rides the button's event arg, the transition is the
         " two-way bound Select value applied before this handler runs
+        
+        CLEAR temp3.
+        INSERT `navCon` INTO TABLE temp3.
+        INSERT `to` INTO TABLE temp3.
+        INSERT client->get_event_arg( ) INTO TABLE temp3.
+        INSERT animation INTO TABLE temp3.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `navCon` ) ( `to` ) ( client->get_event_arg( ) ) ( animation ) ) ).
+                                  t_arg = temp3 ).
 
       WHEN `NAV_BACK`.
         " handleNav (no target): navCon.back()
+        
+        CLEAR temp5.
+        INSERT `navCon` INTO TABLE temp5.
+        INSERT `back` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `navCon` ) ( `back` ) ) ).
+                                  t_arg = temp5 ).
 
     ENDCASE.
 

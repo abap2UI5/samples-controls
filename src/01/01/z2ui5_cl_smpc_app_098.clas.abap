@@ -20,11 +20,11 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -33,8 +33,21 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -46,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
 
             )->ele( `ViewSettingsDialog`
                 )->a( n = `id`      v = `vsd`
-                )->a( n = `confirm` v = client->_event( val = `CONFIRM` t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                )->a( n = `confirm` v = client->_event( val = `CONFIRM` t_arg = temp1 )
 
                 )->ele( `sortItems`
                     )->tag( `ViewSettingsItem`
@@ -134,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
                 )->a( n = `title`            v = `Preselected Settings`
                 )->a( n = `sortDescending`   v = `true`
                 )->a( n = `groupDescending`  v = `true`
-                )->a( n = `confirm`          v = client->_event( val = `CONFIRM` t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                )->a( n = `confirm`          v = client->_event( val = `CONFIRM` t_arg = temp2 )
                 )->a( n = `selectedSortItem` v = `sortItem3`
 
                 )->ele( `sortItems`
@@ -232,7 +245,7 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
 
             )->ele( `ViewSettingsDialog`
                 )->a( n = `id`      v = `vsdPreset`
-                )->a( n = `confirm` v = client->_event( val = `CONFIRM` t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                )->a( n = `confirm` v = client->_event( val = `CONFIRM` t_arg = temp3 )
 
                 )->ele( `sortItems`
                     )->tag( `ViewSettingsItem`
@@ -299,27 +312,52 @@ CLASS z2ui5_cl_smpc_app_098 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
+        DATA temp7 TYPE string_table.
+        DATA temp9 TYPE string_table.
+        DATA filter_string TYPE string.
 
     CASE client->get_event( ).
 
       WHEN `OPEN_DIALOG`.
+        
+        CLEAR temp3.
+        INSERT `vsd` INTO TABLE temp3.
+        INSERT `open` INTO TABLE temp3.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `vsd` ) ( `open` ) ) ).
+                                  t_arg = temp3 ).
 
       WHEN `OPEN_FILTER`.
+        
+        CLEAR temp5.
+        INSERT `vsd` INTO TABLE temp5.
+        INSERT `open` INTO TABLE temp5.
+        INSERT `filter` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `vsd` ) ( `open` ) ( `filter` ) ) ).
+                                  t_arg = temp5 ).
 
       WHEN `OPEN_PRESELECTED`.
+        
+        CLEAR temp7.
+        INSERT `vsdPreselected` INTO TABLE temp7.
+        INSERT `open` INTO TABLE temp7.
+        INSERT `filter` INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `vsdPreselected` ) ( `open` ) ( `filter` ) ) ).
+                                  t_arg = temp7 ).
 
       WHEN `OPEN_PRESET`.
+        
+        CLEAR temp9.
+        INSERT `vsdPreset` INTO TABLE temp9.
+        INSERT `open` INTO TABLE temp9.
+        INSERT `filter` INTO TABLE temp9.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `vsdPreset` ) ( `open` ) ( `filter` ) ) ).
+                                  t_arg = temp9 ).
 
       WHEN `CONFIRM`.
-        DATA(filter_string) = client->get_event_arg( ).
+        
+        filter_string = client->get_event_arg( ).
         IF filter_string IS NOT INITIAL.
           client->message_toast_display( filter_string ).
         ENDIF.

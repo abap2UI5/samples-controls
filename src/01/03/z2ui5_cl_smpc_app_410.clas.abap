@@ -20,11 +20,11 @@ CLASS z2ui5_cl_smpc_app_410 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -37,10 +37,14 @@ CLASS z2ui5_cl_smpc_app_410 IMPLEMENTATION.
     " link element in onInit; here it is a core:HTML style tag (apps 026/028
     " idiom), literal braces escaped as \{ \} in a backtick literal because
     " the XMLView binding parser reads unescaped braces as a binding
-    DATA(css) = `<style>.dummyContainer1\{padding:1em;height:4em;background-color:#A9EAFF\}` &&
+    DATA css TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    css = `<style>.dummyContainer1\{padding:1em;height:4em;background-color:#A9EAFF\}` &&
                 `.dummyContainer2\{display:inline-block\}</style>`.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " Block-content inlining (app 187/239/261 precedent): the blocks
     " aggregation holds the sample's own BlockBase control sample:EventingBlock
@@ -52,6 +56,9 @@ CLASS z2ui5_cl_smpc_app_410 IMPLEMENTATION.
     " the main controller answers with a toast naming the event source; that
     " two-hop indirection folds to one press wire, transporting the stand-in
     " outer VBox's runtime id, with the toast composed server-side in on_event.
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.getParent().getParent().sId` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
@@ -95,7 +102,7 @@ CLASS z2ui5_cl_smpc_app_410 IMPLEMENTATION.
                                         )->tag( n = `Button` ns = `m`
                                             )->a( n = `text`  v = `press me to fire an event`
                                             )->a( n = `press` v = client->_event( val   = `DUMMY`
-                                                                                  t_arg = VALUE #( ( `$event.oSource.getParent().getParent().sId` ) ) ) ).
+                                                                                  t_arg = temp1 ) ).
 
     client->view_display( view->stringify( ) ).
 

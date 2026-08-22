@@ -24,14 +24,14 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       slider_value    = 100.
       container_query = `false`.
       info_text       = `Layout size is: `.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -40,7 +40,9 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " onSliderMoved sets the Panel width imperatively - sap.m.Panel has a width
     " property, so it is the bound expression (app 214/270 form).
@@ -48,6 +50,9 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
     " 'true'); the SegmentedButton key and the layout's containerQuery share one
     " two-way bound field, so the switch works client-side without a round-trip.
     " layoutChange round-trips the active layout name into the info Text.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/layout}` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -128,7 +133,7 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
                     )->ele( n = `GridResponsiveLayout` ns = `grid`
                         )->a( n = `containerQuery` v = |\{= ${ client->_bind( container_query ) } === 'true' \}|
                         )->a( n = `layoutChange`   v = client->_event( val   = `LAYOUT_CHANGE`
-                                                                       t_arg = VALUE #( ( `${$parameters>/layout}` ) ) )
+                                                                       t_arg = temp1 )
 
                         )->ele( n = `layoutS` ns = `grid`
                             )->tag( n = `GridSettings` ns = `grid`
@@ -273,14 +278,21 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA lv_layout TYPE string.
+      DATA temp3 TYPE string.
 
     IF client->get_event( ) = `LAYOUT_CHANGE`.
       " onLayoutChange: the info Text names the active GridSettings
       " aggregation; 'layout' covers both M and L
-      DATA(lv_layout) = client->get_event_arg( ).
-      info_text = COND string( WHEN lv_layout = `layout`
-                               THEN `Layout size is: layoutM or layoutL`
-                               ELSE |Layout size is: { lv_layout }| ).
+      
+      lv_layout = client->get_event_arg( ).
+      
+      IF lv_layout = `layout`.
+        temp3 = `Layout size is: layoutM or layoutL`.
+      ELSE.
+        temp3 = |Layout size is: { lv_layout }|.
+      ENDIF.
+      info_text = temp3.
     ENDIF.
 
   ENDMETHOD.

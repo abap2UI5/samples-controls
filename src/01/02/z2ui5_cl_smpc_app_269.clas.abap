@@ -13,7 +13,8 @@ CLASS z2ui5_cl_smpc_app_269 DEFINITION PUBLIC.
              text         TYPE string,
            END OF ty_s_entry.
 
-    DATA t_entrycollection  TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
+    TYPES temp1_33a31fc2c4 TYPE STANDARD TABLE OF ty_s_entry WITH DEFAULT KEY.
+DATA t_entrycollection  TYPE temp1_33a31fc2c4.
     DATA toggle_enabled     TYPE abap_bool.
     DATA show_side_btn      TYPE abap_bool.
     DATA show_side_content  TYPE abap_bool VALUE abap_true.
@@ -34,12 +35,12 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -48,7 +49,11 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " The controller's media model (new JSONModel(Device.system)) is the shared
     " device> model here, so {media>/phone} becomes {device>/system/phone}.
@@ -56,6 +61,19 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
     " control_by_id; the breakpointChanged round-trip keeps the two button
     " flags in sync exactly like updateToggleButtonState /
     " updateShowSideContentButtonVisibility.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/currentBreakpoint}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `DynamicSideContent` INTO TABLE temp2.
+    INSERT `toggle` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `sideContentContainer` INTO TABLE temp3.
+    INSERT `css` INTO TABLE temp3.
+    INSERT `width` INTO TABLE temp3.
+    INSERT `${$parameters>/value} + '%'` INTO TABLE temp3.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns`     v = `sap.m`
@@ -78,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
                     )->a( n = `showSideContent`     v = client->_bind( show_side_content )
                     )->a( n = `sideContentFallDown` v = `BelowM`
                     )->a( n = `breakpointChanged`   v = client->_event( val   = `BREAKPOINT_CHANGED`
-                                                                        t_arg = VALUE #( ( `${$parameters>/currentBreakpoint}` ) ) )
+                                                                        t_arg = temp1 )
 
                     )->ele( `VBox`
                         )->tag( `Title`
@@ -169,7 +187,7 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
                         )->a( n = `id`      v = `toggleButton`
                         )->a( n = `enabled` v = client->_bind( toggle_enabled )
                         )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                          t_arg = VALUE #( ( `DynamicSideContent` ) ( `toggle` ) ) )
+                                                                          t_arg = temp2 )
                     )->tag( `Button`
                         )->a( n = `text`    v = `Open Side Content`
                         )->a( n = `id`      v = `showSideContentButton`
@@ -184,10 +202,7 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
                         " the percentage onto its DOM node like the original jQuery
                         )->a( n = `liveChange` v = client->follow_up_action(
                                   val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `sideContentContainer` )
-                                                   ( `css` )
-                                                   ( `width` )
-                                                   ( `${$parameters>/value} + '%'` ) ) )
+                                  t_arg = temp3 )
                     )->tag( `Text`
                         )->a( n = `id`      v = `DSCWidthHintText`
                         )->a( n = `text`    v = `Best view in full screen`
@@ -201,6 +216,9 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA lv_breakpoint TYPE string.
+        DATA temp1 TYPE xsdboolean.
+        DATA temp2 TYPE xsdboolean.
 
     CASE client->get_event( ).
       WHEN `BREAKPOINT_CHANGED`.
@@ -208,9 +226,14 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
         " updateShowSideContentButtonVisibility: the Open Side Content button
         " shows unless the breakpoint is S (the original additionally hides it
         " while the side content is visible - see the sidecar)
-        DATA(lv_breakpoint) = client->get_event_arg( ).
-        toggle_enabled = xsdbool( lv_breakpoint = `S` ).
-        show_side_btn  = xsdbool( lv_breakpoint <> `S` ).
+        
+        lv_breakpoint = client->get_event_arg( ).
+        
+        temp1 = boolc( lv_breakpoint = `S` ).
+        toggle_enabled = temp1.
+        
+        temp2 = boolc( lv_breakpoint <> `S` ).
+        show_side_btn  = temp2.
 
       WHEN `SIDE_CONTENT_HIDE`.
         " handleSideContentHide: setShowSideContent(false) + re-evaluate the
@@ -232,34 +255,42 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
   METHOD model_init.
 
     " the sample's own feed.json /EntryCollection, all four rows verbatim
-    t_entrycollection = VALUE #(
-      ( author       = `Alexandrina Victoria`
-        authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`
-        type         = `Request`
-        date         = `March 03 2013`
-        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et` &&
-                       ` accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ` &&
-                       `aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod ` &&
-                       `tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, ` &&
-                       `consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo ` &&
-                       `dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam ` &&
-                       `voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut ` &&
-                       `labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.` )
-      ( author       = `George Washington`
-        authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg`
-        type         = `Reply`
-        date         = `March 04 2013`
-        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore` )
-      ( author       = `Alexandrina Victoria`
-        authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`
-        type         = `Request`
-        date         = `March 05 2013`
-        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat` )
-      ( author       = `George Washington`
-        authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg`
-        type         = `Rejection`
-        date         = `March 07 2013`
-        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.` ) ).
+    DATA temp3 LIKE t_entrycollection.
+    DATA temp4 LIKE LINE OF temp3.
+    CLEAR temp3.
+    
+    temp4-author = `Alexandrina Victoria`.
+    temp4-authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`.
+    temp4-type = `Request`.
+    temp4-date = `March 03 2013`.
+    temp4-text = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et` &&
+` accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ` &&
+`aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod ` &&
+`tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, ` &&
+`consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo ` &&
+`dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam ` &&
+`voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut ` &&
+`labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-author = `George Washington`.
+    temp4-authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg`.
+    temp4-type = `Reply`.
+    temp4-date = `March 04 2013`.
+    temp4-text = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-author = `Alexandrina Victoria`.
+    temp4-authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`.
+    temp4-type = `Request`.
+    temp4-date = `March 05 2013`.
+    temp4-text = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-author = `George Washington`.
+    temp4-authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg`.
+    temp4-type = `Rejection`.
+    temp4-date = `March 07 2013`.
+    temp4-text = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`.
+    INSERT temp4 INTO TABLE temp3.
+    t_entrycollection = temp3.
 
   ENDMETHOD.
 

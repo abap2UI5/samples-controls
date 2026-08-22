@@ -24,12 +24,12 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,8 +38,29 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp5 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `${$parameters>/filterString}` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    temp4-prevent_default_expr = |${ client->_bind( val = date_value_state path = abap_true ) } === 'Error'|.
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/valid}` INTO TABLE temp5.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -59,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
             )->ele( `ViewSettingsDialog`
                 )->a( n = `id`      v = `settingsDialog`
                 )->a( n = `confirm` v = client->_event( val   = `CONFIRM`
-                                                        t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                                                        t_arg = temp1 )
 
                 )->ele( `sortItems`
                     )->tag( `ViewSettingsItem`
@@ -235,7 +256,7 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
             )->ele( `ViewSettingsDialog`
                 )->a( n = `id`      v = `settingsDialogCustomTab`
                 )->a( n = `confirm` v = client->_event( val   = `CONFIRM`
-                                                        t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                                                        t_arg = temp2 )
 
                 )->ele( `customTabs`
                     )->ele( `ViewSettingsCustomTab`
@@ -319,11 +340,10 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
             )->ele( `ViewSettingsDialog`
                 )->a( n = `id`          v = `settingsDialogDatePicker`
                 )->a( n = `confirm`     v = client->_event( val   = `CONFIRM`
-                                                            t_arg = VALUE #( ( `${$parameters>/filterString}` ) ) )
+                                                            t_arg = temp3 )
                 )->a( n = `beforeClose` v = client->_event(
                           val    = `BEFORE_CLOSE`
-                          s_ctrl = VALUE #( prevent_default_expr = |${ client->_bind( val  = date_value_state
-                                                                                     path = abap_true ) } === 'Error'| ) )
+                          s_ctrl = temp4 )
 
                 )->ele( `customTabs`
                     )->ele( `ViewSettingsCustomTab`
@@ -341,7 +361,7 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
                                 )->a( n = `valueStateText` v = client->_bind( date_value_state_text )
                                 )->a( n = `change`         v = client->_event(
                                           val   = `DATE_CHANGE`
-                                          t_arg = VALUE #( ( `${$parameters>/valid}` ) ) )
+                                          t_arg = temp5 )
 
                         )->end(
                     )->end(
@@ -369,20 +389,36 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
+        DATA temp7 TYPE string_table.
+        DATA filter_string TYPE string.
 
     CASE client->get_event( ).
 
       WHEN `OPEN_DIALOG`.
+        
+        CLEAR temp3.
+        INSERT `settingsDialog` INTO TABLE temp3.
+        INSERT `open` INTO TABLE temp3.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `settingsDialog` ) ( `open` ) ) ).
+                                  t_arg = temp3 ).
 
       WHEN `OPEN_SINGLE_TAB`.
+        
+        CLEAR temp5.
+        INSERT `settingsDialogCustomTab` INTO TABLE temp5.
+        INSERT `open` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `settingsDialogCustomTab` ) ( `open` ) ) ).
+                                  t_arg = temp5 ).
 
       WHEN `OPEN_DATE_PICKER`.
+        
+        CLEAR temp7.
+        INSERT `settingsDialogDatePicker` INTO TABLE temp7.
+        INSERT `open` INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `settingsDialogDatePicker` ) ( `open` ) ) ).
+                                  t_arg = temp7 ).
 
       WHEN `DATE_CHANGE`.
         " the original validateDate: an unparsable date marks the field
@@ -403,7 +439,8 @@ CLASS z2ui5_cl_smpc_app_297 IMPLEMENTATION.
         ENDIF.
 
       WHEN `CONFIRM`.
-        DATA(filter_string) = client->get_event_arg( ).
+        
+        filter_string = client->get_event_arg( ).
         IF filter_string IS NOT INITIAL.
           client->message_toast_display( filter_string ).
         ENDIF.

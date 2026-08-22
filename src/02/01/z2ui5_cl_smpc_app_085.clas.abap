@@ -10,7 +10,7 @@ CLASS z2ui5_cl_smpc_app_085 DEFINITION PUBLIC.
         text TYPE string,
         key  TYPE string,
       END OF ty_s_token.
-    DATA t_tokens    TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
+    DATA t_tokens    TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
     DATA input_value TYPE string.
     DATA editable    TYPE abap_bool.
 
@@ -30,12 +30,12 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -44,8 +44,13 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.getParameter('tokens')[0].getKey()` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -77,7 +82,7 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
                 )->a( n = `width`       v = `65%`
                 )->a( n = `editable`    v = client->_bind( editable )
                 )->a( n = `tokenDelete` v = client->_event( val   = `DELETE`
-                                                            t_arg = VALUE #( ( `$event.getParameter('tokens')[0].getKey()` ) ) )
+                                                            t_arg = temp1 )
                 )->a( n = `tokens`      v = client->_bind( t_tokens )
 
                 )->tag( `Token`
@@ -118,18 +123,45 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string.
+        DATA text LIKE temp3.
+        DATA temp4 TYPE z2ui5_cl_smpc_app_085=>ty_s_token.
+        DATA key TYPE string.
+        DATA temp5 TYPE z2ui5_cl_smpc_app_085=>ty_s_token-text.
+        DATA temp6 TYPE z2ui5_cl_smpc_app_085=>ty_s_token.
+        DATA deleted_text LIKE temp5.
 
     CASE client->get_event( ).
       WHEN `ADD`.
         " onAddToken: append a Token from the input value (default text if empty), then clear the input
-        DATA(text) = COND #( WHEN input_value IS NOT INITIAL THEN input_value ELSE `One more token` ).
-        APPEND VALUE #( text = text key = text ) TO t_tokens.
+        
+        IF input_value IS NOT INITIAL.
+          temp3 = input_value.
+        ELSE.
+          temp3 = `One more token`.
+        ENDIF.
+        
+        text = temp3.
+        
+        CLEAR temp4.
+        temp4-text = text.
+        temp4-key = text.
+        APPEND temp4 TO t_tokens.
         client->message_toast_display( |Token added: { text }| ).
         input_value = ``.
       WHEN `DELETE`.
         " onTokenDelete: remove the deleted token(s) by key from the bound model; the toast carries the text like the original's oToken.getText()
-        DATA(key) = client->get_event_arg( ).
-        DATA(deleted_text) = VALUE #( t_tokens[ key = key ]-text OPTIONAL ).
+        
+        key = client->get_event_arg( ).
+        
+        CLEAR temp5.
+        
+        READ TABLE t_tokens INTO temp6 WITH KEY key = key.
+        IF sy-subrc = 0.
+          temp5 = temp6-text.
+        ENDIF.
+        
+        deleted_text = temp5.
         DELETE t_tokens WHERE key = key.
         client->message_toast_display( |Token deleted: { deleted_text }| ).
     ENDCASE.
@@ -138,12 +170,23 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp7 LIKE t_tokens.
+    DATA temp8 LIKE LINE OF temp7.
 
     editable = abap_true.
-    t_tokens = VALUE #(
-      ( text = `First token`  key = `1` )
-      ( text = `Second token` key = `2` )
-      ( text = `Third token`  key = `3` ) ).
+    
+    CLEAR temp7.
+    
+    temp8-text = `First token`.
+    temp8-key = `1`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-text = `Second token`.
+    temp8-key = `2`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-text = `Third token`.
+    temp8-key = `3`.
+    INSERT temp8 INTO TABLE temp7.
+    t_tokens = temp7.
 
   ENDMETHOD.
 

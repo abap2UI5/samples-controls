@@ -26,11 +26,11 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -39,7 +39,17 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    DATA temp8 TYPE string_table.
+    DATA temp9 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " The controller creates one ColorPickerPopover per display mode lazily and
     " opens it with openBy(input). abap2UI5 declares all four up front in the
@@ -48,6 +58,41 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
     " idiom of apps 016/060. Each popover's change/liveChange round-trips so
     " the backend can write the value into the Input (handleChange) and the
     " liveChange Text, exactly like the controller does.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/colorString}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/colorString}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `${$parameters>/colorString}` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `${$parameters>/colorString}` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/colorString}` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `oColorPickerPopover` INTO TABLE temp6.
+    INSERT `openBy` INTO TABLE temp6.
+    INSERT `$event.oSource.sId` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `oColorPickerLargePopover` INTO TABLE temp7.
+    INSERT `openBy` INTO TABLE temp7.
+    INSERT `$event.oSource.sId` INTO TABLE temp7.
+    
+    CLEAR temp8.
+    INSERT `oColorPickerSimpplifiedPopover` INTO TABLE temp8.
+    INSERT `openBy` INTO TABLE temp8.
+    INSERT `$event.oSource.sId` INTO TABLE temp8.
+    
+    CLEAR temp9.
+    INSERT `oColorPickerLiveChangePopover` INTO TABLE temp9.
+    INSERT `openBy` INTO TABLE temp9.
+    INSERT `$event.oSource.sId` INTO TABLE temp9.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -64,30 +109,30 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                     )->a( n = `colorString` v = `blue`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `change`      v = client->_event( val   = `CHANGE_D`
-                                                                t_arg = VALUE #( ( `${$parameters>/colorString}` ) ) )
+                                                                t_arg = temp1 )
                 )->tag( n = `ColorPickerPopover` ns = `u`
                     )->a( n = `id`          v = `oColorPickerLargePopover`
                     )->a( n = `colorString` v = `green`
                     )->a( n = `displayMode` v = `Large`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `change`      v = client->_event( val   = `CHANGE_L`
-                                                                t_arg = VALUE #( ( `${$parameters>/colorString}` ) ) )
+                                                                t_arg = temp2 )
                 )->tag( n = `ColorPickerPopover` ns = `u`
                     )->a( n = `id`          v = `oColorPickerSimpplifiedPopover`
                     )->a( n = `colorString` v = `pink`
                     )->a( n = `displayMode` v = `Simplified`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `change`      v = client->_event( val   = `CHANGE_S`
-                                                                t_arg = VALUE #( ( `${$parameters>/colorString}` ) ) )
+                                                                t_arg = temp3 )
                 )->tag( n = `ColorPickerPopover` ns = `u`
                     )->a( n = `id`          v = `oColorPickerLiveChangePopover`
                     )->a( n = `colorString` v = `orange`
                     )->a( n = `displayMode` v = `Large`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `change`      v = client->_event( val   = `CHANGE_LC`
-                                                                t_arg = VALUE #( ( `${$parameters>/colorString}` ) ) )
+                                                                t_arg = temp4 )
                     )->a( n = `liveChange`  v = client->_event( val   = `LIVE_CHANGE`
-                                                                t_arg = VALUE #( ( `${$parameters>/colorString}` ) ) )
+                                                                t_arg = temp5 )
 
             )->end(
 
@@ -125,7 +170,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_d )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp6 )
 
                 )->end(
             )->end(
@@ -142,7 +187,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_l )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerLargePopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp7 )
 
                 )->end(
             )->end(
@@ -159,7 +204,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_s )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerSimpplifiedPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp8 )
 
                 )->end(
             )->end(
@@ -176,7 +221,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_lc )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerLiveChangePopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp9 )
                     )->tag( `Text`
                         )->a( n = `id`   v = `liveChangeText`
                         )->a( n = `text` v = client->_bind( live_change_text )

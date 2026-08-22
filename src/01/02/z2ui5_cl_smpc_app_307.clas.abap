@@ -8,7 +8,7 @@ CLASS z2ui5_cl_smpc_app_307 DEFINITION PUBLIC.
     TYPES: BEGIN OF ty_s_date,
              date TYPE string,
            END OF ty_s_date.
-    DATA selecteddates TYPE STANDARD TABLE OF ty_s_date WITH EMPTY KEY.
+    DATA selecteddates TYPE STANDARD TABLE OF ty_s_date WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     CONSTANTS c_max_dates TYPE i VALUE 31.
@@ -27,11 +27,11 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -44,16 +44,29 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
     " index of the LIVE selectedDates aggregation as yyyy-MM-dd on the client
     " (local parts, not toISOString( ), which would shift the day east of
     " Greenwich) and yields an empty string once the index is past the end
-    DATA(date_args) = VALUE string_table(
-      FOR i = 0 UNTIL i >= c_max_dates
-      ( |$event.oSource.getSelectedDates().length > { i } ? | &&
-        |$event.oSource.getSelectedDates()[{ i }].getStartDate().getFullYear() + '-' + | &&
-        |($event.oSource.getSelectedDates()[{ i }].getStartDate().getMonth() + 1 < 10 ? '0' : '') + | &&
-        |($event.oSource.getSelectedDates()[{ i }].getStartDate().getMonth() + 1) + '-' + | &&
-        |($event.oSource.getSelectedDates()[{ i }].getStartDate().getDate() < 10 ? '0' : '') + | &&
-        |$event.oSource.getSelectedDates()[{ i }].getStartDate().getDate() : ''| ) ).
+    DATA temp1 TYPE string_table.
+    DATA i TYPE i.
+    DATA temp3 LIKE sy-index.
+      DATA temp2 LIKE LINE OF temp1.
+    DATA date_args LIKE temp1.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    CLEAR temp1.
+    
+    i = 0.
+    
+    temp3 = sy-index.
+    WHILE NOT i >= c_max_dates.
+      sy-index = temp3.
+      
+      temp2 = |$event.oSource.getSelectedDates().length > { i } ? | && |$event.oSource.getSelectedDates()[{ i }].getStartDate().getFullYear() + '-' + | && |($event.oSource.getSelectedDates()[{ i }].getStartDate().getMonth() + 1 < 10 ? '0' : '') + | && |($event.oSource.getSelectedDates()[{ i }].getStartDate().getMonth() + 1) + '-' + | && |($event.oSource.getSelectedDates()[{ i }].getStartDate().getDate() < 10 ? '0' : '') + | && |$event.oSource.getSelectedDates()[{ i }].getStartDate().getDate() : ''|.
+      INSERT temp2 INTO TABLE temp1.
+      i = i + 1.
+    ENDWHILE.
+    
+    date_args = temp1.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
@@ -100,6 +113,9 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA day TYPE string.
+          DATA temp4 TYPE z2ui5_cl_smpc_app_307=>ty_s_date.
+        DATA temp5 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -108,11 +124,15 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " each formatted yyyy-MM-dd - here they arrive pre-formatted, one per arg
         CLEAR selecteddates.
         DO c_max_dates TIMES.
-          DATA(day) = client->get_event_arg( sy-index ).
+          
+          day = client->get_event_arg( sy-index ).
           IF day IS INITIAL.
             EXIT.
           ENDIF.
-          INSERT VALUE #( date = day ) INTO TABLE selecteddates.
+          
+          CLEAR temp4.
+          temp4-date = day.
+          INSERT temp4 INTO TABLE selecteddates.
         ENDDO.
 
       WHEN `REMOVE_SELECTION`.
@@ -121,8 +141,12 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " has to be emptied on the control - the model half alone would leave
         " the days highlighted
         CLEAR selecteddates.
+        
+        CLEAR temp5.
+        INSERT `calendar` INTO TABLE temp5.
+        INSERT `removeAllSelectedDates` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `calendar` ) ( `removeAllSelectedDates` ) ) ).
+                                  t_arg = temp5 ).
 
     ENDCASE.
 

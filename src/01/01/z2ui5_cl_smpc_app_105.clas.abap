@@ -10,7 +10,7 @@ CLASS z2ui5_cl_smpc_app_105 DEFINITION PUBLIC.
              description TYPE string,
              type        TYPE string,
            END OF ty_s_message.
-    DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
+    DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -28,12 +28,12 @@ CLASS z2ui5_cl_smpc_app_105 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -42,8 +42,63 @@ CLASS z2ui5_cl_smpc_app_105 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    DATA temp8 TYPE string_table.
+    DATA temp9 TYPE string_table.
+    DATA temp10 TYPE string_table.
+    DATA temp11 TYPE string_table.
+    DATA temp12 TYPE string_table.
+    DATA temp13 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `AddAction` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `EditAction` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `DeleteAction` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `FlagAction` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `FavoriteAction` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `SendEmailAction` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `SendMessageAction` INTO TABLE temp7.
+    
+    CLEAR temp8.
+    INSERT `DiscussInJamAction` INTO TABLE temp8.
+    
+    CLEAR temp9.
+    INSERT `ShareInJamAction` INTO TABLE temp9.
+    
+    CLEAR temp10.
+    INSERT `PrintAction` INTO TABLE temp10.
+    
+    CLEAR temp11.
+    INSERT `semMessagePopover` INTO TABLE temp11.
+    INSERT `toggleBy` INTO TABLE temp11.
+    INSERT `$event.oSource.sId` INTO TABLE temp11.
+    
+    CLEAR temp12.
+    INSERT `$event.oSource.sId` INTO TABLE temp12.
+    
+    CLEAR temp13.
+    INSERT `$event.oSource.sId` INTO TABLE temp13.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`         v = `100%`
         )->a( n = `xmlns:core`     v = `sap.ui.core`
@@ -61,58 +116,58 @@ CLASS z2ui5_cl_smpc_app_105 IMPLEMENTATION.
 
             )->ele( n = `addAction` ns = `semantic`
                 )->tag( n = `AddAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `AddAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp1 )
 
             )->end(
             )->ele( n = `editAction` ns = `semantic`
                 )->tag( n = `EditAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `EditAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp2 )
 
             )->end(
             )->ele( n = `deleteAction` ns = `semantic`
                 )->tag( n = `DeleteAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `DeleteAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp3 )
 
             )->end(
             )->ele( n = `flagAction` ns = `semantic`
                 )->tag( n = `FlagAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `FlagAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp4 )
 
             )->end(
             )->ele( n = `favoriteAction` ns = `semantic`
                 )->tag( n = `FavoriteAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `FavoriteAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp5 )
 
             )->end(
             )->ele( n = `sendEmailAction` ns = `semantic`
                 )->tag( n = `SendEmailAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `SendEmailAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp6 )
 
             )->end(
             )->ele( n = `sendMessageAction` ns = `semantic`
                 )->tag( n = `SendMessageAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `SendMessageAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp7 )
 
             )->end(
             )->ele( n = `discussInJamAction` ns = `semantic`
                 )->tag( n = `DiscussInJamAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `DiscussInJamAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp8 )
 
             )->end(
             )->ele( n = `shareInJamAction` ns = `semantic`
                 )->tag( n = `ShareInJamAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `ShareInJamAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp9 )
 
             )->end(
             )->ele( n = `printAction` ns = `semantic`
                 )->tag( n = `PrintAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = VALUE #( ( `PrintAction` ) ) )
+                    )->a( n = `press` v = client->_event( val = `SEM` t_arg = temp10 )
 
             )->end(
             )->ele( n = `messagesIndicator` ns = `semantic`
                 )->ele( n = `MessagesIndicator` ns = `semantic`
                     )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                    t_arg = VALUE #( ( `semMessagePopover` ) ( `toggleBy` ) ( `$event.oSource.sId` ) ) )
+                                                                    t_arg = temp11 )
 
                     " the original's controller-built MessagePopover over the
                     " message model, declared as a dependent of its anchor
@@ -140,11 +195,11 @@ CLASS z2ui5_cl_smpc_app_105 IMPLEMENTATION.
             )->ele( n = `customFooterContent` ns = `semantic`
                 )->tag( `Button`
                     )->a( n = `text`  v = `CustomFooterBtn`
-                    )->a( n = `press` v = client->_event( val = `PRESS` t_arg = VALUE #( ( `$event.oSource.sId` ) ) )
+                    )->a( n = `press` v = client->_event( val = `PRESS` t_arg = temp12 )
                 )->tag( `OverflowToolbarButton`
                     )->a( n = `icon`  v = `sap-icon://settings`
                     )->a( n = `text`  v = `Settings`
-                    )->a( n = `press` v = client->_event( val = `PRESS` t_arg = VALUE #( ( `$event.oSource.sId` ) ) ) ).
+                    )->a( n = `press` v = client->_event( val = `PRESS` t_arg = temp13 ) ).
 
     client->view_display( view->stringify( ) ).
 
@@ -173,7 +228,14 @@ CLASS z2ui5_cl_smpc_app_105 IMPLEMENTATION.
     " onInit: MessageManager.addMessages( new Message( { message: 'Something
     " wrong happened', type: Error } ) ) - reconciled by the
     " z2ui5.cc.MessageManager bridge control in the view
-    t_messages = VALUE #( ( message = `Something wrong happened` type = `Error` ) ).
+    DATA temp3 LIKE t_messages.
+    DATA temp4 LIKE LINE OF temp3.
+    CLEAR temp3.
+    
+    temp4-message = `Something wrong happened`.
+    temp4-type = `Error`.
+    INSERT temp4 INTO TABLE temp3.
+    t_messages = temp3.
 
   ENDMETHOD.
 

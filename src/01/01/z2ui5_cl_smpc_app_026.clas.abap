@@ -19,9 +19,9 @@ CLASS z2ui5_cl_smpc_app_026 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -34,7 +34,9 @@ CLASS z2ui5_cl_smpc_app_026 IMPLEMENTATION.
     " (see CAPABILITIES.md) - placed before the HBox so it is no flex item
     " literal braces escaped as \{ \} - the XMLView binding parser reads
     " unescaped braces in attribute values as a binding
-    DATA(css) = `<style>.nestedFlexboxes .item1\{padding:1rem;background-color:#d1dbbd\}` &&
+    DATA css TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    css = `<style>.nestedFlexboxes .item1\{padding:1rem;background-color:#d1dbbd\}` &&
                 `.nestedFlexboxes .item2\{padding:1rem;background-color:#7D8A2E\}` &&
                 `.nestedFlexboxes .item3\{padding:1rem;background-color:#C9D787\}` &&
                 `.nestedFlexboxes .item4\{padding:1rem;background-color:#FFFFFF\}` &&
@@ -42,7 +44,8 @@ CLASS z2ui5_cl_smpc_app_026 IMPLEMENTATION.
                 `.nestedFlexboxes .item6\{padding:1rem;background-color:#FF8598\}` &&
                 `.nestedFlexboxes h2\{color:#32363a\}</style>`.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`

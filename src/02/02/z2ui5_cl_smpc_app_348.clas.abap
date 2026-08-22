@@ -26,13 +26,13 @@ CLASS z2ui5_cl_smpc_app_348 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       " the Slider's value="100"
       slider_value = 100.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -41,12 +41,17 @@ CLASS z2ui5_cl_smpc_app_348 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the ResponsiveColumnLayout demo with its eight f:Cards. The Panel width
     " follows the Slider through an expression binding (roundtrip-free), and
     " the layout's layoutChange carries its layout parameter to the backend so
     " the "Current breakpoint" Text shows it, like the original's model write.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/layout}` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`       v = `sap.m`
         )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
@@ -95,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_348 IMPLEMENTATION.
                 )->ele( n = `customLayout` ns = `grid`
                     )->tag( n = `ResponsiveColumnLayout` ns = `grid`
                         )->a( n = `layoutChange` v = client->_event( val   = `LAYOUT_CHANGE`
-                                                                     t_arg = VALUE #( ( `${$parameters>/layout}` ) ) )
+                                                                     t_arg = temp1 )
 
                 )->end(
                 )->ele( n = `Card` ns = `f`

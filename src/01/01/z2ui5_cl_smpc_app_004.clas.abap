@@ -23,11 +23,11 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -36,7 +36,8 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -60,6 +61,8 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
   METHOD on_event.
 
     DATA cancel_pressed TYPE abap_bool.
+        DATA temp1 TYPE string_table.
+          DATA temp3 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -67,14 +70,22 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
         check_busy = abap_true.
         popup_display( ).
         " the original's simulateServerRequest - close the dialog after 3000ms
+        
+        CLEAR temp1.
+        INSERT `TIMER_FINISHED` INTO TABLE temp1.
+        INSERT `3000` INTO TABLE temp1.
         client->follow_up_action( val   = client->cs_event-start_timer
-                                  t_arg = VALUE #( ( `TIMER_FINISHED` ) ( `3000` ) ) ).
+                                  t_arg = temp1 ).
 
       WHEN `TIMER_FINISHED`.
         IF check_busy = abap_true.
+          
+          CLEAR temp3.
+          INSERT `busyDialog` INTO TABLE temp3.
+          INSERT `close` INTO TABLE temp3.
           client->follow_up_action( val   = client->cs_event-control_by_id
                                     view  = client->cs_view-popup
-                                    t_arg = VALUE #( ( `busyDialog` ) ( `close` ) ) ).
+                                    t_arg = temp3 ).
         ENDIF.
 
       WHEN `DIALOG_CLOSED`.
@@ -93,8 +104,13 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
 
   METHOD popup_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp5 TYPE string_table.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/cancelPressed}` INTO TABLE temp5.
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -106,7 +122,7 @@ CLASS z2ui5_cl_smpc_app_004 IMPLEMENTATION.
             )->a( n = `text`             v = `... now loading the data from a far away server`
             )->a( n = `showCancelButton` v = `true`
             )->a( n = `close`            v = client->_event( val   = `DIALOG_CLOSED`
-                                                             t_arg = VALUE #( ( `${$parameters>/cancelPressed}` ) ) ) ).
+                                                             t_arg = temp5 ) ).
 
     client->popup_display( popup->stringify( ) ).
 

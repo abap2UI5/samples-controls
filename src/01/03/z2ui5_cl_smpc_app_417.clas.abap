@@ -24,15 +24,15 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       " the original view starts with showSideContent="false"; the open button
       " is visible until the side content is shown (updateToggleButtonState)
       show_side        = abap_false.
       open_btn_visible = abap_true.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -41,13 +41,18 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the controller's ObjectPageModel (SharedJSONData employee.json) is never
     " bound by any control in this view, so no model is seeded; the side
     " content and the open button are driven through two-way bound properties
     " instead of the controller's imperative setters. style.css is injected as
     " a core:HTML style leaf.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/currentBreakpoint}` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
@@ -67,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
             )->a( n = `containerQuery`      v = `true`
             )->a( n = `showSideContent`     v = client->_bind( show_side )
             )->a( n = `breakpointChanged`   v = client->_event( val   = `BP_CHANGED`
-                                                                t_arg = VALUE #( ( `${$parameters>/currentBreakpoint}` ) ) )
+                                                                t_arg = temp1 )
 
             )->ele( n = `mainContent` ns = `l`
                 )->ele( `ObjectPageLayout`
@@ -231,6 +236,10 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp1 TYPE xsdboolean.
+          DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
+        DATA temp7 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -238,7 +247,9 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
         " updateToggleButtonState: the open button shows on breakpoint S
         " or while the side content is hidden
         breakpoint = client->get_event_arg( ).
-        open_btn_visible = xsdbool( breakpoint = `S` OR show_side = abap_false ).
+        
+        temp1 = boolc( breakpoint = `S` OR show_side = abap_false ).
+        open_btn_visible = temp1.
 
       WHEN `OPEN_SIDE_CONTENT`.
         " handleSCBtnPress branches on the breakpoint: toggle( ) on S, the
@@ -253,22 +264,32 @@ CLASS z2ui5_cl_smpc_app_417 IMPLEMENTATION.
         " itself in the same round-trip and SET_FOCUS targets a button inside
         " the side content that never came up.
         IF breakpoint = `S`.
+          
+          CLEAR temp3.
+          INSERT `DynamicSideContent` INTO TABLE temp3.
+          INSERT `toggle` INTO TABLE temp3.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `DynamicSideContent` ) ( `toggle` ) ) ).
+                                    t_arg = temp3 ).
         ELSE.
           show_side = abap_true.
         ENDIF.
         open_btn_visible = abap_false.
+        
+        CLEAR temp5.
+        INSERT `closeSideContentBtn` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-set_focus
-                                  t_arg = VALUE #( ( `closeSideContentBtn` ) ) ).
+                                  t_arg = temp5 ).
 
       WHEN `CLOSE_SIDE_CONTENT`.
         " handleSideContentHide hides the side content, shows the open button
         " again and moves the focus back to it
         show_side        = abap_false.
         open_btn_visible = abap_true.
+        
+        CLEAR temp7.
+        INSERT `openSideContentBtn` INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-set_focus
-                                  t_arg = VALUE #( ( `openSideContentBtn` ) ) ).
+                                  t_arg = temp7 ).
 
     ENDCASE.
 

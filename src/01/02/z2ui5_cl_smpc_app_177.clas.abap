@@ -22,12 +22,12 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       selected_date = `No Date Selected`.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -36,8 +36,15 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` INTO TABLE temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` INTO TABLE temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
         )->a( n = `xmlns:u`   v = `sap.ui.unified`
@@ -65,10 +72,7 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
                 " travel, not toISOString( ), which would shift the day east of
                 " Greenwich; the length guard reproduces the deselect case
                 )->a( n = `select` v = client->_event( val   = `CAL_SELECT`
-                                                       t_arg = VALUE #(
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                                                       t_arg = temp1 )
 
             )->ele( n = `VerticalLayout` ns = `l`
                 )->tag( `Button`
@@ -91,6 +95,9 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA year TYPE string.
+          DATA temp3 TYPE i.
+          DATA temp1 TYPE i.
 
     CASE client->get_event( ).
 
@@ -99,12 +106,17 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
         " show 'No Date Selected' when the re-click removed the day again - the
         " original's if/else over the selection length, reproduced 1:1 because
         " the length guard travels in the wire (year 0 = nothing selected)
-        DATA(year) = client->get_event_arg( ).
+        
+        year = client->get_event_arg( ).
         IF year IS INITIAL OR year = `0`.
           selected_date = `No Date Selected`.
         ELSE.
-          selected_date = |{ year }-{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |-{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+          
+          temp3 = client->get_event_arg( 2 ).
+          
+          temp1 = client->get_event_arg( 3 ).
+          selected_date = |{ year }-{ temp3 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |-{ temp1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
         ENDIF.
 
       WHEN `SELECT_TODAY`.
