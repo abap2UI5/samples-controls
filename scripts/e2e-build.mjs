@@ -115,6 +115,36 @@ function main() {
   // loudly when its anchors stop matching. See abap2UI5
   // node/setup/patch-abaplint-downport.mjs.
   execSync(`node ${path.join(A2, 'node/setup/patch-abaplint-downport.mjs')}`, { stdio: 'inherit' });
+
+  // ...and the framework's RUNTIME shim, for the same reason: this is the
+  // install the transpiled backend runs on, and the framework applies this
+  // script before every one of its own transpiled runs (auto_transpile, unit,
+  // express). Without it a dynamic `ASSIGN obj->( name )` cannot reach a
+  // PRIVATE attribute - a private ABAP attribute is a JavaScript `#field` in
+  // the transpiled class, which no name lookup sees - and the asXML heap
+  // writer of CALL TRANSFORMATION id reaches EVERY attribute of a
+  // serializable object that way. sy-subrc is 4, the writer's ASSERT dies,
+  // and every roundtrip of an app holding such an object answers HTTP 500
+  // with `ASSERTION_FAILED @ lcl_heap.add_object`, naming neither the class
+  // nor the attribute. A real system serializes private attributes fine, so
+  // nothing else catches it: not ABAP, not abaplint, not the transpiler.
+  //
+  // Six ports paid for the gap - 049, 121, 241, 291, 299, 308, every one of
+  // them binding with `omit_initial_paths`, which makes the client hand in
+  // lcl_initial_paths_filter and its private mt_names. The nightly reported
+  // them for over a week as an assert that names nothing, and the weekly pin
+  // bump then read as "the framework broke six ports" (#181) when the
+  // framework had shipped the shim for it in #2707 and this build was simply
+  // not running it.
+  //
+  // Guarded: a pin older than #2707 has no such script, and there the build
+  // is what it always was.
+  const runtimeShim = path.join(A2, 'node/setup/patch-abaplint-runtime-assign.mjs');
+  if (fs.existsSync(runtimeShim)) {
+    execSync(`node ${runtimeShim}`, { stdio: 'inherit' });
+  } else {
+    console.log(`e2e-build: no patch-abaplint-runtime-assign.mjs at this pin - a serializable class with a PRIVATE attribute will 500 on its first roundtrip`);
+  }
   console.log('e2e-build: downporting the copy to v702 …');
   for (let i = 0; i < 3; i++) fix(`npx abaplint e2e-downport.jsonc --fix`);
   // the framework's two fixups, done in Node so they are portable (BSD/macOS sed
