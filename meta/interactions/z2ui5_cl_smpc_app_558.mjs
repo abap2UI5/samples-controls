@@ -1,6 +1,6 @@
 // the table page, the open-selected flow, the TabContainer it fills — and that
 // the tab page the user is ON survives a view rebuild
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 
 // eB DROPS an event fired while a round trip is in flight (View1.controller.js:
 // `if (AppState.state.isBusy && !ignoreBusy) { BusyIndicator.show(0); return; }`)
@@ -8,8 +8,14 @@ import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 // out on the wire. A press this leg sends while the previous response is still
 // on its way is therefore silently lost, and reads back as a dead control. So
 // every press here waits for the frontend to go idle first.
-const idle = (page) => waitForUi5(page, () => !(window.z2ui5 && window.z2ui5.isBusy),
-  'a round trip never landed — the frontend stayed busy');
+//
+// It waited on `window.z2ui5.isBusy` until 2026-09-08, which is not where that
+// flag lives: `window.z2ui5` is the frontend's PUBLIC global bag (AppState's
+// getGlobal/setGlobal) and isBusy is an internal field of AppState.state. The
+// read was undefined, `!undefined` is true, and the guard returned at once -
+// the quoted line above was right and the code beside it read the wrong
+// object. waitForIdle in lib-e2e.mjs is the real thing.
+const idle = (page) => waitForIdle(page);
 
 const select = async (page, index) => {
   await page.evaluate((i) => {

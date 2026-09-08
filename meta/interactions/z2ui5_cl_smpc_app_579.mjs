@@ -1,5 +1,5 @@
 // the three columns, the two drill-downs and the column-distribution sizes
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await waitForUi5(page, () => {
@@ -13,6 +13,11 @@ export default async (page, expect) => {
     && c.getTwoColumnsMidExpanded() === '25/75/0'), 'the desktop column sizes never reached the layout data');
   await waitForUi5(page, () => ui5All().some((c) => c.getMetadata().getName() === 'sap.f.FlexibleColumnLayoutDataForTablet'
     && c.getThreeColumnsMidExpanded() === '20/60/20'), 'the tablet column sizes never reached the layout data');
+  /* Rendering a FlexibleColumnLayout fires columnResize, which this sample
+     wires to the backend - so the app is still answering a roundtrip of its
+     own here, and View1.eB drops a press fired into that without a word. */
+  await waitForIdle(page);
+
   // pressing a product opens the mid column
   await page.evaluate(() => {
     const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
