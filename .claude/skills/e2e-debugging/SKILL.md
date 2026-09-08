@@ -183,6 +183,24 @@ verdicts below turned out to be harness effects.
   though the Pages build it was written for is gone), and forwarded upstream as
   `pr/open-abap-xml-escaping`. Prefer `READ TABLE` over `tab[ … ]` in an app
   that must run there.
+- **A `follow_up_action( )` queued on the app's FIRST response can be dropped
+  by the frontend, and the port looks broken.** The boot roundtrip is the one
+  roundtrip `eB` does not mark busy (`Server.roundtrip` is called straight
+  from `onInit`), so a control that fires an event while the initial view
+  renders is *not* swallowed by the busy guard: it dispatches request 2, which
+  supersedes the response still building the screen. At pins between
+  abap2UI5#2705 and its fix, that supersede also threw away the response's
+  own `T_CUSTOM`, so an action the backend really did send never ran. Two
+  ports, one cause (measured 2026-09-08): **350** lost its `ICON_POOL /
+  registerFont` — `IconPool.getIconCollectionNames()` stayed `["undefined"]`
+  and the TNT tile had no icon; **534** lost eight `setNextStep` calls — the
+  branching Wizard's two branch points came back at `nextStep=null`. Neither
+  logs anything. Tell it apart from a port defect in one measurement: wrap
+  `Server.responseSuccess` from a `page.addInitScript`, keep the response
+  record, and read `_pendingCustomJs` after the boot settles — it is nulled by
+  `_runPendingCustomJs`, so a **non-null array is the proof that nothing ran
+  it**, and `Server._requestSeq` at that moment says why. Do not paper over it
+  in the interaction: the backend's `t_custom` is in the response.
 - **Locate by what the DOM actually exposes, not by what the control is
   called.** Four shapes measured 2026-08-21, each of which fails as a plain
   30s locator timeout that reads like a broken port: a **Breadcrumbs link**
