@@ -1,5 +1,5 @@
 // the ShellBar over the three columns, and the two drill-downs
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await waitForUi5(page, () => {
@@ -15,6 +15,11 @@ export default async (page, expect) => {
     'the ShellBar never rendered with its nav button hidden');
   await waitForUi5(page, () => ui5All().filter((c) => c.getMetadata().getName() === 'sap.m.MenuItem').length === 2,
     'the ShellBar menu never rendered its two items');
+  /* Rendering a FlexibleColumnLayout fires columnResize, which this sample
+     wires to the backend - so the app is still answering a roundtrip of its
+     own here, and View1.eB drops a press fired into that without a word. */
+  await waitForIdle(page);
+
   // pressing a product opens the mid column
   await page.evaluate(() => {
     const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());

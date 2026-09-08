@@ -8,7 +8,7 @@
 // header hit box in the SinglePlanningCalendar's week header measures zero
 // unthemed headless, and the wire under test starts at the event, not at the
 // gesture (same technique as apps 520/526).
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, waitForIdle } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   const toggle = page.locator('button[title="Enable multi-day selection"]').first();
@@ -23,7 +23,7 @@ export default async (page, expect) => {
       && btn && btn.getTooltip() === 'Disable multi-day selection';
   }, 'the toggle round-trip never reached dateSelectionMode / the tooltip');
 
-  await page.waitForFunction(() => !window.z2ui5 || !window.z2ui5.isBusy);
+  await waitForIdle(page);
   await page.evaluate(`(() => {
     const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all());
     const DateRange = sap.ui.require('sap/ui/unified/DateRange');

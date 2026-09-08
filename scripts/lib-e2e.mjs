@@ -190,3 +190,42 @@ export async function waitForUi5(page, fn, msg, arg) {
     throw new Error(`${msg} — but the check itself failed: ${why.split('\n')[0].slice(0, 140)}`);
   });
 }
+
+/* The app is not answering a roundtrip of its own.
+ *
+ * THE FRONTEND DROPS AN EVENT FIRED WHILE ONE IS IN FLIGHT, and silently:
+ * View1.eB( ) returns early on `AppState.state.isBusy`, showing the busy
+ * indicator and nothing else. No error, no console line, no request. From here
+ * that looks exactly like a wire that was never attached - the press fires,
+ * the listener is there, and the backend simply never hears about it.
+ *
+ * It cost four ports to learn (575, 578, 579, 584, all flexible-column
+ * layouts). Their interactions press a row as soon as the master table has
+ * rendered, and rendering a FlexibleColumnLayout fires columnResize, which
+ * those samples wire to the backend - so the boot roundtrip they start was
+ * still open when the press landed, and the press went nowhere. The failure
+ * read as "pressing a row never opened the mid column", which is true and
+ * says nothing about why.
+ *
+ * So: wait for the app to be idle before driving it. Not `networkidle` -
+ * that is the browser's view and says nothing about a queue this frontend
+ * keeps itself - and not a sleep, which is the same race with a longer fuse.
+ * Two consecutive frames of not-busy, because `isBusy` dips between a
+ * response landing and the next event being queued.
+ */
+export async function waitForIdle(page, { quiet = 400, timeout = 30000 } = {}) {
+  /* SUSTAINED quiet, not a single not-busy reading. `isBusy` dips to false
+     between a response landing and the next event being queued, and a boot
+     that settles a layout fires several in a row - a one-shot check sails
+     through the gap and the press is dropped anyway (measured: isBusy was
+     still true one frame after such a check returned). */
+  const expr = `(() => {
+    const s = sap.ui.require("z2ui5/core/AppState");
+    if (!s || !s.state) return true;             // an older frontend: nothing to wait for
+    window.__a2ui5IdleSince = s.state.isBusy === true ? 0 : (window.__a2ui5IdleSince || Date.now());
+    return window.__a2ui5IdleSince > 0 && Date.now() - window.__a2ui5IdleSince >= ${quiet};
+  })()`;
+  await page.waitForFunction(expr, undefined, { timeout }).catch(() => {
+    throw new Error(`the app never went quiet for ${quiet}ms - it is still answering roundtrips of its own`);
+  });
+}

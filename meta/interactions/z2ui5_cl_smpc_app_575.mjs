@@ -2,7 +2,7 @@
 // column - and the sample's actual subject, the pressed row's index travelling
 // to the backend and coming back as a scrollToIndex control call once the begin
 // column has finished resizing.
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 
 // the row to press. NOT 0: press_index starts at -1 and the ABAP guard is
 // `press_index >= 0`, so a zero would be satisfied by a wire that records
@@ -25,6 +25,11 @@ export default async (page, expect) => {
   }, 'the master table never rendered its rows');
   await waitForUi5(page, () => ui5All().some((c) => c.getMetadata().getName() === 'sap.m.Title'
     && c.getText() === 'Products (123)'), 'the master title never got its total count');
+
+  /* Rendering a FlexibleColumnLayout fires columnResize, which this sample
+     wires to the backend - so the app is still answering a roundtrip of its
+     own here, and View1.eB drops a press fired into that without a word. */
+  await waitForIdle(page);
 
   // scrollToIndex leaves no state on the control - it moves the scroll
   // container, which in the unthemed harness is not a difference worth

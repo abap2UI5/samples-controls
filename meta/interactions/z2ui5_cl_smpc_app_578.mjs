@@ -16,7 +16,7 @@
 // so every probe missed and the trailing `else` navigated the END column.
 // So every leg below that claims something is ON SCREEN carries the rendered
 // filter, and the swap is asserted on the column the `to` is aimed at.
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await waitForUi5(page, () => {
@@ -29,6 +29,11 @@ export default async (page, expect) => {
     return Boolean(t && t.getItems().length === 16
       && t.getDomRef() && document.body.contains(t.getDomRef()));
   }, 'the sixteen categories never rendered on the start page');
+  /* Rendering a FlexibleColumnLayout fires columnResize, which this sample
+     wires to the backend - so the app is still answering a roundtrip of its
+     own here, and View1.eB drops a press fired into that without a word. */
+  await waitForIdle(page);
+
   // pressing a category swaps the begin column and opens the mid one
   await page.evaluate(() => {
     const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
