@@ -42,11 +42,27 @@ verdicts below turned out to be harness effects.
   rebuilt only under `--shard` now, and the lesson outlives the fix: a run you
   are about to trust should print the port count you expect, and a `--only` run
   that reports `0 port(s)` is a harness bug, not a filter that missed.
-- **A PRIVATE instance attribute 500s every roundtrip.** The app's state is
+- **A PRIVATE instance attribute 500s every roundtrip — and the framework
+  ships the shim for it, which this build now applies.** The app's state is
   persisted with `CALL TRANSFORMATION id`, and the transpiled runtime's
   re-implementation walks the class's attributes with a dynamic
   `ASSIGN obj->(name)` — which reaches a PROTECTED attribute and **not** a
-  PRIVATE one. `sy-subrc` is then 4, the serializer asserts, and every
+  PRIVATE one (a private ABAP attribute is a JavaScript `#field` in the
+  transpiled class, invisible to a name lookup).
+  abap2UI5 solved this upstream in #2707 with
+  `node/setup/patch-abaplint-runtime-assign.mjs`, whose second block falls back
+  to the transpiler's `FRIENDS_ACCESS_INSTANCE` — and it applies that script
+  before every one of its own transpiled runs. `e2e-build.mjs` did not, so this
+  backend ran the unpatched runtime and **six FRAMEWORK-side ports died on a
+  framework class**: 049, 121, 241, 291, 299 and 308 all bind with
+  `omit_initial_paths`, which makes the client hand in `lcl_initial_paths_filter`
+  and its private `mt_names`. The nightly reported them for over a week as an
+  assert that names nothing, and the weekly pin bump then read as "the framework
+  broke six ports" (#181) when the shim had been there since #2707 and this
+  build was not running it. It runs it now, guarded — a pin older than #2707 has
+  no such script and says so. **So the rule below is about the CORPUS, not a
+  law of the runtime**, and a fresh red assert is worth checking against the pin
+  first: is the shim there, and did the build apply it? `sy-subrc` is then 4, the serializer asserts, and every
   roundtrip answers `ASSERTION_FAILED` from `lcl_heap.add_object`
   (`kernel_call_transformation`) — with nothing in the message naming the
   attribute. Six ports carried it (604, 607, 617, 618, 619, 623, all a private
