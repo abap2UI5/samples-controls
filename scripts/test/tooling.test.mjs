@@ -816,6 +816,60 @@ test('check-pins: prose asserting a stale pin fails; past-tense prose is history
   }
 });
 
+/*
+ * `--fix` is what bump-a2ui5.yaml calls in the same step that moves
+ * A2UI5_PIN, because moving the pin alone left AGENTS.md naming the previous
+ * commit and every bump pull request born red on this gate - and once, on
+ * 2026-09-09, red on `main`, because the PR's own gate set sat unapproved.
+ *
+ * Three properties, and the last two are the whole reason the fix reuses
+ * PIN_CLAIMS instead of a regex of its own: it must not be able to rewrite
+ * more than the check rejects.
+ */
+test('check-pins --fix: rewrites a stale claim, leaves history and sidecars alone', () => {
+  const { root, pin } = makePinRoot();
+  const status = path.join(root, 'STATUS.md');
+  try {
+    // 1. a stale present-tense claim is rewritten, and the gate then passes
+    fs.writeFileSync(status, '# fixture\n\n`A2UI5_PIN` is still `bf92a79c` (2026-08-14), so the port is blocked.\n');
+    const fixed = runIn(root, 'check-pins.mjs', '--fix');
+    assert.equal(fixed.code, 0, `--fix must leave the policy satisfied\n${fixed.out}`);
+    assert.match(fixed.out, /check-pins --fix: STATUS\.md now cites/);
+    const after = fs.readFileSync(status, 'utf8');
+    assert.match(after, new RegExp(`\`${pin.slice(0, 8)}\``), 'the claim now names the real pin');
+    assert.doesNotMatch(after, /bf92a79c/, 'and no longer the stale one');
+    // the sentence AROUND it is untouched - only the SHA moved
+    assert.match(after, /is still `[0-9a-f]{8}` \(2026-08-14\), so the port is blocked\./);
+    // idempotent: a second pass has nothing to say
+    const again = runIn(root, 'check-pins.mjs', '--fix');
+    assert.equal(again.code, 0);
+    assert.doesNotMatch(again.out, /check-pins --fix:/, 'nothing left to rewrite');
+
+    // 2. a PAST-tense sentence is a record of a run, and --fix must not touch
+    // it - it is not a claim about now, so PIN_CLAIMS never matches it
+    fs.writeFileSync(status, '# fixture\n\nA2UI5_PIN sat at bf92a79c while abap2UI5 main moved 61 commits.\n');
+    const history = runIn(root, 'check-pins.mjs', '--fix');
+    assert.equal(history.code, 0);
+    assert.match(fs.readFileSync(status, 'utf8'), /sat at bf92a79c/, 'history is left as written');
+
+    // 3. a sidecar deviation is prose the gate DOES reject and --fix does NOT
+    // rewrite: it is somebody's measurement of a wire at that commit, and a
+    // machine restating it would claim a measurement nobody made
+    fs.writeFileSync(status, '# fixture\n');
+    writeJson(path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json'), {
+      class: 'z2ui5_cl_smpc_app_001',
+      deviations: [{ type: 'NOTE', what: 'not wired yet: `A2UI5_PIN` is `bf92a79c`, which predates the fix.' }],
+    });
+    const sidecar = runIn(root, 'check-pins.mjs', '--fix');
+    assert.equal(sidecar.code, 1, 'the sidecar claim still fails');
+    assert.match(sidecar.out, /deviations\[0\]\.what: says the pin is `bf92a79c`/);
+    assert.match(fs.readFileSync(path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json'), 'utf8'), /bf92a79c/,
+      'and the sidecar is left for a person to decide');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 /* ----------------------------- generate-status / -catalogue / -keywords /
                                                           pattern-lint       */
 

@@ -371,8 +371,51 @@ const PIN_CLAIMS = [
   new RegExp(`\\b(?:moved|advanced|bumped|set)\\s+${PIN_SUBJECT}\\s+to\\s+\`?\\b([0-9a-f]{7,40})\\b`, 'gi'),
 ];
 
+/* `--fix` rewrites the citations this very check would reject, in the PROSE
+ * markdown only, and writes each file back. It exists so bump-a2ui5.yaml can
+ * move the SENTENCE with the pin in the same commit that moves the pin: the
+ * workflow used to move A2UI5_PIN alone, which left AGENTS.md naming the old
+ * commit and every bump pull request born red on this gate (2026-09-09, the
+ * bump to 9fd5c20b - it reached `main` red, because the PR's own gate set had
+ * not run yet).
+ *
+ * It reuses PIN_CLAIMS rather than carrying a regex of its own, which is the
+ * whole point: a fix that knows a different set of sentences from the check
+ * is a fix that drifts away from it. And because those patterns match only
+ * PRESENT-tense claims (see PIN_VERB), a `--fix` can never rewrite history -
+ * "the pin WAS 725a6ad1" is not a claim about now and matches nothing.
+ *
+ * The SIDECAR prose is deliberately left alone. A `meta/*.json` deviation or
+ * skip reason that cites the pin is a statement about how a wire behaved at
+ * that commit; the person who wrote it has to decide whether the new pin
+ * changes it, and a machine rewriting the SHA would silently restate their
+ * measurement as being about a framework nobody measured.
+ */
+const FIX = process.argv.includes('--fix');
+
 {
   const pin = fs.existsSync(pinFile) ? fs.readFileSync(pinFile, 'utf8').trim().toLowerCase() : '';
+  if (FIX && pin) {
+    for (const rel of PROSE) {
+      const at = path.join(ROOT, rel);
+      if (!fs.existsSync(at)) continue;
+      const before = fs.readFileSync(at, 'utf8');
+      let after = before;
+      for (const re of PIN_CLAIMS) {
+        re.lastIndex = 0;
+        // the whole match is rewritten, not the file globally: the SHA is
+        // replaced only where it stands inside a sentence that CLAIMS it is
+        // the pin, and only to the length that sentence quotes
+        after = after.replace(re, (whole, sha) => (pin.startsWith(sha.toLowerCase())
+          ? whole
+          : whole.replace(sha, pin.slice(0, sha.length))));
+      }
+      if (after !== before) {
+        fs.writeFileSync(at, after);
+        console.log(`check-pins --fix: ${rel} now cites \`${pin.slice(0, 8)}\``);
+      }
+    }
+  }
   const sources = [];
   for (const rel of PROSE) {
     const at = path.join(ROOT, rel);
