@@ -70,6 +70,25 @@ jobs:
         echo "sha=$SHA" >> "$GITHUB_OUTPUT"
         if [ "$SHA" != "$(cat A2UI5_PIN)" ]; then
           echo "$SHA" > A2UI5_PIN
+          # ... and the PROSE that names the pin, in the same commit. Moving
+          # A2UI5_PIN alone left AGENTS.md citing the previous commit, which is
+          # `check_pins` policy 6 - so every bump pull request was born red on
+          # a gate about the very thing this step just did. It reached `main`
+          # that way once (2026-09-09, the bump to 9fd5c20b): the PR's own
+          # gate set sat unapproved, so nothing said so before the merge.
+          # check-pins.mjs --fix owns the patterns, this step does not carry a
+          # regex of its own, and it rewrites only present-tense claims - a
+          # sentence about a state that has passed stays history. It needs no
+          # node_modules (it reads files, and says so when the linter metadata
+          # is unreadable), so it runs here, before `npm ci`.
+          #
+          # `|| true`, and only here: --fix still CHECKS every other policy and
+          # exits 1 on any of them, and under `set -e` that would kill this
+          # step - leaving `changed` unset, which the comment below explains
+          # the run reads as broken rather than as a no-op. The fix is
+          # best-effort; the check is the check_pins job on the pull request,
+          # which reports the same finding where it belongs.
+          node scripts/check-pins.mjs --fix || true
         fi
         # Every step below is gated on this, and it is written only once the
         # resolve has succeeded: a run that dies in the resolve leaves it
