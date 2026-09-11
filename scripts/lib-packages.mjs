@@ -21,6 +21,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { cmpVersion, MIN_UI5 } from './lib-universe.mjs';
 
 // second-level namespace -> library package number. One registry for all four
 // category folders, so sap.m is `01` under src/01 and under src/02 alike.
@@ -92,8 +93,7 @@ function post171Controls() {
   for (const e of JSON.parse(fs.readFileSync(f, 'utf8')).exceptions || []) {
     const since = String(e.decided?.since || '');
     if (!since) continue;
-    const [maj, min] = since.split('.').map(Number);
-    if (maj > 1 || (maj === 1 && min > 71)) postControls.add(e.class);
+    if (cmpVersion(since, MIN_UI5) > 0) postControls.add(e.class);
   }
   return postControls;
 }

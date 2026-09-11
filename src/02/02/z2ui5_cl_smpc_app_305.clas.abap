@@ -100,13 +100,13 @@ CLASS z2ui5_cl_smpc_app_305 IMPLEMENTATION.
       DATA(year) = client->get_event_arg( ).
       IF year IS INITIAL OR year = `0`.
         selected_date = `No Date Selected`.
-        CLEAR last_selected.
+        last_selected = VALUE #( ).
       ELSE.
         DATA(picked) = |{ year }-{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
                        |-{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
         IF picked = last_selected.
           selected_date = `No Date Selected`.
-          CLEAR last_selected.
+          last_selected = VALUE #( ).
           " the original's removeSelectedDate( oSelectedDate ). selectedDates is
           " written by the control itself, so clearing the model alone would
           " leave the day highlighted - the aggregation has to be emptied on the

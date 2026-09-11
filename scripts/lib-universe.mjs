@@ -29,7 +29,6 @@ export function loadUniverseSnapshot() {
   const p = path.join(UI5, 'universe.json');
   return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : null;
 }
-export const UNIVERSE_SNAPSHOT_PATH = path.join(UI5, 'universe.json');
 
 /** ui5/properties.json -> the control catalog ({} when absent/unreadable). */
 export function loadPropertiesControls() {
@@ -63,12 +62,29 @@ export function nonAppFamilyFor(families, { lib, name, entity }) {
     && (f.entityPrefix || f.namePrefix)) || null;
 }
 
+/** The floor every port is held to (AGENTS.md §1): the oldest UI5 release
+ *  abap2UI5 supports. view-gates, generate-derived and lib-packages read it
+ *  from here - it used to be declared in two of them with a "keep in step"
+ *  comment, and compared by four private copies of the comparator below. */
+export const MIN_UI5 = '1.71';
+
+/** Compare two dotted UI5 versions numerically ("1.9" < "1.71" < "1.120");
+ *  a missing segment counts as 0, so "1.71.0" equals "1.71". */
+export function cmpVersion(a, b) {
+  const pa = String(a).split('.').map(Number);
+  const pb = String(b).split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+
 /** The porting scope line (AGENTS.md §1): a control is old enough when it
  *  existed by UI5 1.71 (empty since = older than tracking). */
 export const sinceLeq171 = (since) => {
   if (!since) return true;
-  const m = String(since).match(/^(\d+)\.(\d+)/);
-  return m ? (+m[1] < 1 || (+m[1] === 1 && +m[2] <= 71)) : false;
+  return /^\d+\.\d+/.test(String(since)) ? cmpVersion(since, MIN_UI5) <= 0 : false;
 };
 
 /** Fill a universe sample's null since/deprecated from the control-level

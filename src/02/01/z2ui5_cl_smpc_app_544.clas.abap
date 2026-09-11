@@ -220,7 +220,7 @@ CLASS z2ui5_cl_smpc_app_544 IMPLEMENTATION.
 
       WHEN `BUILT_IN_VIEWS`.
         " handleSelectionFinish: the picked keys become the calendar's built-in views
-        CLEAR t_built_in.
+        t_built_in = VALUE #( ).
         IF client->get_event_arg( ) IS NOT INITIAL.
           SPLIT client->get_event_arg( ) AT `,` INTO TABLE t_built_in.
         ENDIF.

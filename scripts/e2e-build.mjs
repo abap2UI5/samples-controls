@@ -29,6 +29,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { resolveA2UI5 } from './lib-a2ui5.mjs';
 import { isSkippedDir } from './lib/src-tree.mjs';
+import { patchFollowUpAction } from '../web/ci/patch_follow_up_action.mjs';
+import { patchOpenAbapXml } from '../web/ci/patch_open_abap_xml.mjs';
 
 const AIDEMOKIT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -64,12 +66,14 @@ function main() {
   //    z2ui5_if_exit alive as a compatibility member of z2ui5_cl_ui5_user_exit
   //    (and its test double), so dropping it fails the transpile validate for
   //    every port ("Implemented interface Z2UI5_IF_EXIT not found")
-  sh(`cp -r src/. ${downport}/`);
+  fs.cpSync(path.join(A2, 'src'), downport, { recursive: true });
   for (const keep of fs.readdirSync(path.join(A2, 'src/99'))) {
     if (/^z2ui5_if_exit\.intf\./.test(keep)) fs.copyFileSync(path.join(A2, 'src/99', keep), path.join(downport, keep));
   }
-  sh(`rm -rf ${downport}/99`);
-  sh(`cp node/srv/*.abap ${downport}/`);
+  fs.rmSync(path.join(downport, '99'), { recursive: true, force: true });
+  for (const f of fs.readdirSync(path.join(A2, 'node/srv'))) {
+    if (f.endsWith('.abap')) fs.copyFileSync(path.join(A2, 'node/srv', f), path.join(downport, f));
+  }
 
   // 2. ai-demokit ports (both .abap and .clas.xml) — z2ui5_cl_ui5_view_builder
   //    ships with the framework src (abap2UI5 src/02/), copied in step 1
@@ -92,7 +96,7 @@ function main() {
   //     web/ci/patch_follow_up_action.mjs is the single source and carries the
   //     full analysis; it sits under web/ because it was written for the Pages
   //     demo, which was removed 2026-08-19 — this is now its only consumer.
-  execSync(`node ${path.join(AIDEMOKIT, 'web/ci/patch_follow_up_action.mjs')} ${downport}`, { stdio: 'inherit' });
+  patchFollowUpAction(downport);
 
   // 3. downport the copy to v702 (in place, on the copy) — abaplint --fix, a few
   //    passes to settle, then the framework's two sed fixups
@@ -175,7 +179,7 @@ function main() {
     console.log('e2e-build: cloning open-abap-core …');
     sh(`git clone --quiet --depth=1 https://github.com/open-abap/open-abap-core ${lib}`);
   }
-  execSync(`node ${path.join(AIDEMOKIT, 'web/ci/patch_open_abap_xml.mjs')} ${lib}`, { stdio: 'inherit' });
+  patchOpenAbapXml(lib);
 
   const tcfg = JSON.parse(fs.readFileSync(path.join(A2, 'node/setup/abap_transpile.json'), 'utf8'));
   tcfg.libs = tcfg.libs.map((l) => (l.url?.includes('open-abap-core') ? { folder: '/node/open-abap-core' } : l));

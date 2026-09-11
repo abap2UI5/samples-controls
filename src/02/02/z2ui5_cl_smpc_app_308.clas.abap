@@ -193,10 +193,10 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
       IF pressed = abap_true.
         special_days_fill( ).
       ELSE.
-        CLEAR t_special1.
-        CLEAR t_special2.
-        CLEAR t_legend1.
-        CLEAR t_legend2.
+        t_special1 = VALUE #( ).
+        t_special2 = VALUE #( ).
+        t_legend1 = VALUE #( ).
+        t_legend2 = VALUE #( ).
       ENDIF.
     ENDIF.
 
@@ -216,11 +216,10 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
     " early. Same defect and same fix as apps 220 and 017.
     DATA(prefix) = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
 
-    CLEAR t_special1.
-    CLEAR t_special2.
-    CLEAR t_legend1.
-    CLEAR t_legend2.
-
+    t_special1 = VALUE #( ).
+    t_special2 = VALUE #( ).
+    t_legend1 = VALUE #( ).
+    t_legend2 = VALUE #( ).
     DO 10 TIMES.
       DATA(i)    = sy-index.
       DATA(type) = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.

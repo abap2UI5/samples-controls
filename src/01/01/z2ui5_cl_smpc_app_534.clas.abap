@@ -5,10 +5,10 @@ CLASS z2ui5_cl_smpc_app_534 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA selectedshowcase          TYPE string.
-    DATA selectedbackgrounddesign  TYPE string.
-    DATA linearwizardselectedstep  TYPE string.
-    DATA branchingselectedstep     TYPE string.
+    DATA selectedshowcase         TYPE string.
+    DATA selectedbackgrounddesign TYPE string.
+    DATA linearwizardselectedstep TYPE string.
+    DATA branchingselectedstep    TYPE string.
 
     DATA product_name         TYPE string.
     DATA product_name_state   TYPE string.
@@ -19,10 +19,10 @@ CLASS z2ui5_cl_smpc_app_534 DEFINITION PUBLIC.
     DATA product_price        TYPE string.
     DATA product_vat          TYPE abap_bool.
     DATA step2_validated      TYPE abap_bool.
-    DATA path_index           TYPE i.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client     TYPE REF TO z2ui5_if_client.
+    DATA path_index TYPE i.
 
     METHODS view_display.
     METHODS on_event.

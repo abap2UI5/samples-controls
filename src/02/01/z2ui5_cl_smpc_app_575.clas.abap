@@ -500,7 +500,7 @@ CLASS z2ui5_cl_smpc_app_575 IMPLEMENTATION.
         IF query IS INITIAL.
           t_rows = t_products.
         ELSE.
-          CLEAR t_rows.
+          t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
               APPEND product TO t_rows.

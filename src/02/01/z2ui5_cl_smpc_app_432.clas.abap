@@ -105,7 +105,7 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
       " onTokenDelete removes every token the event carries; Clear All fires it
       " once with all of them, the token X with exactly one
       IF del_count >= lines( t_tokens ).
-        CLEAR t_tokens.
+        t_tokens = VALUE #( ).
       ELSE.
         DELETE t_tokens WHERE key = del_key.
       ENDIF.

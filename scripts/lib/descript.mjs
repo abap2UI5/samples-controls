@@ -18,7 +18,7 @@ import fs from 'fs';
 
 /* The five predefined XML entities. `&amp;` goes LAST, so that an escaped
  * `&amp;apos;` becomes the literal text `&apos;` rather than an apostrophe. */
-export const unescapeXml = (s) => s
+const unescapeXml = (s) => s
   .replace(/&lt;/g, '<')
   .replace(/&gt;/g, '>')
   .replace(/&quot;/g, '"')

@@ -146,9 +146,9 @@ CLASS z2ui5_cl_smpc_app_520 IMPLEMENTATION.
 
       WHEN `GROUP_CLOSE`.
         IF group = 1.
-          CLEAR t_group1.
+          t_group1 = VALUE #( ).
         ELSE.
-          CLEAR t_group2.
+          t_group2 = VALUE #( ).
         ENDIF.
 
     ENDCASE.

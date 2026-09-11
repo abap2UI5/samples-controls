@@ -978,7 +978,9 @@ DSAG Leitfaden, then the samples style. Essentials:
 - Always include `PROTECTED SECTION.` and `PRIVATE SECTION.` (keep `PRIVATE`
   empty). Order per section: `TYPES`, then `DATA`, then `METHODS`.
 - Backticks for string literals; string templates (`|...{ }...|`) for
-  concatenation; `VALUE #( )` to reset, never `CLEAR`.
+  concatenation; `VALUE #( )` to reset, never `CLEAR` (pattern-lint
+  `clear-statement` - the sentence stood unenforced while 70 `CLEAR`s
+  accumulated, swept 2026-09-11).
 - Prefix only tables (`t_`) and structures (`s_`); local types `ty_s_` / `ty_t_`.
 - Lifecycle: `check_on_navigated( )` is the DISPLAY branch and
   `check_on_event( )` the event branch, chained with `ELSEIF`. A

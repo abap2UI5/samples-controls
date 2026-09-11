@@ -44,6 +44,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { walkFiles } from './lib/src-tree.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -143,19 +144,17 @@ const ABSENT = (() => {
   return new Map(Object.entries(raw).map(([n, why]) => [n.toLowerCase(), why]));
 })();
 
-const here = (() => {
-  const names = new Set();
-  const walk = (dir) => {
-    if (!fs.existsSync(dir)) return;
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      const f = path.join(dir, e.name);
-      if (e.isDirectory()) walk(f);
-      else if (e.name.endsWith('.clas.abap')) names.add(e.name.replace('.clas.abap', '').toLowerCase());
-    }
-  };
-  walk(path.join(ROOT, 'src'));
-  return names;
-})();
+/* Every class a src/ tree ships, by file name - through the shared walk, so
+ * the git-ignored zz_dev scratch folder is skipped here like in every other
+ * gate (two private walks used to read it, and a class that existed only
+ * there made a prose reference to it pass). */
+function classNames(root) {
+  const src = path.join(root, 'src');
+  if (!fs.existsSync(src)) return new Set();
+  return new Set(walkFiles(src, '.clas.abap').map((f) => path.basename(f, '.clas.abap').toLowerCase()));
+}
+
+const here = classNames(ROOT);
 
 /* Where a sibling repository is, if it is here at all. The environment wins,
  * the way it does for abap2UI5/mcp-server's resolvers - and it has to: a CI runner
@@ -180,19 +179,8 @@ const raw = (repo) => `https://raw.githubusercontent.com/abap2UI5/${repo}/main/S
 /* Every class a checkout ships, by file name. Read once. */
 let frameworkCache = null;
 function frameworkClasses(root) {
-  if (frameworkCache) return frameworkCache;
-  const names = new Set();
-  const walk = (dir) => {
-    if (!fs.existsSync(dir)) return;
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      const f = path.join(dir, e.name);
-      if (e.isDirectory()) walk(f);
-      else if (e.name.endsWith('.clas.abap')) names.add(e.name.replace('.clas.abap', '').toLowerCase());
-    }
-  };
-  walk(path.join(root, 'src'));
-  frameworkCache = names;
-  return names;
+  frameworkCache ??= classNames(root);
+  return frameworkCache;
 }
 const notes = [];
 const catalogues = new Map();

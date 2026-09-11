@@ -27,17 +27,16 @@ CLASS z2ui5_cl_smpc_app_609 DEFINITION PUBLIC.
 
     " the original keeps all_day in a settings> model; abap2UI5 keeps one
     " default model, so it is a field here
-    DATA all_day     TYPE abap_bool.
+    DATA all_day TYPE abap_bool.
 
     " the details popover reads the selected appointment; the modify dialog edits
     " it (or creates a new one when the path is empty)
-    DATA sel_index   TYPE i.
-    DATA sel_title   TYPE string.
-    DATA sel_text    TYPE string.
-    DATA sel_type    TYPE string.
-    DATA sel_start   TYPE string.
-    DATA sel_end     TYPE string.
-    DATA sel_typetxt TYPE string.
+    DATA sel_title    TYPE string.
+    DATA sel_text     TYPE string.
+    DATA sel_type     TYPE string.
+    DATA sel_start    TYPE string.
+    DATA sel_end      TYPE string.
+    DATA sel_typetxt  TYPE string.
     DATA dialog_title TYPE string.
 
     " the modify dialog's date validation: _setDateValueState paints both
@@ -47,7 +46,8 @@ CLASS z2ui5_cl_smpc_app_609 DEFINITION PUBLIC.
     DATA ok_enabled      TYPE abap_bool.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client    TYPE REF TO z2ui5_if_client.
+    DATA sel_index TYPE i.
 
     METHODS view_display.
     METHODS on_event.

@@ -12,10 +12,10 @@ CLASS z2ui5_cl_smpc_app_081 DEFINITION PUBLIC.
         product_pic_url TYPE string,
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA shown      TYPE i.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    DATA shown  TYPE i.
 
     METHODS view_display.
     METHODS on_event.

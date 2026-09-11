@@ -445,7 +445,7 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
       " a LOOP over the same table shifts the rows under the loop's own cursor -
       " on a system it silently SKIPS the row after each deletion, on the
       " transpiled backend it raises TABLE_INVALID_INDEX (2026-08-17).
-      CLEAR lt_keep.
+      lt_keep = VALUE #( ).
       LOOP AT t_products INTO DATA(s_row).
         DATA(compare) = COND decfloat34( WHEN field = `WeightMeasure` THEN s_row-weight_measure ELSE s_row-price ).
         DATA(keep) = SWITCH abap_bool( operator
@@ -571,7 +571,7 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
       CATCH z2ui5_cx_ajson_error.
-        CLEAR result.
+        result = VALUE #( ).
     ENDTRY.
 
   ENDMETHOD.

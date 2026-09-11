@@ -653,7 +653,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
       WHEN `RECURRENCE_TYPE`.
         " onRecurrenceTypeChange clears the parts the picked recurrence does not use
         IF c_rec_type <> `Weekly`.
-          CLEAR c_rec_days.
+          c_rec_days = VALUE #( ).
         ENDIF.
         IF c_rec_type <> `Monthly` AND c_rec_type <> `Yearly`.
           c_rule_type = `DayOfMonth`.
@@ -805,7 +805,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
     c_end         = |{ sy-datlo DATE = ISO }T{ CONV i( now(2) ) + 1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00:00|.
     c_rec_type    = ``.
     c_rec_pattern = `1`.
-    CLEAR c_rec_days.
+    c_rec_days = VALUE #( ).
     c_rec_end     = ``.
     c_rule_type   = `DayOfMonth`.
     c_rule_dom    = `0`.

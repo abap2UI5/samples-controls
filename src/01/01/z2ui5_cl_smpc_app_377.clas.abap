@@ -214,7 +214,7 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
     " a LOOP over the same table shifts the rows under the loop's own cursor -
     " on a system it silently SKIPS the row after each deletion, on the
     " transpiled backend it raises TABLE_INVALID_INDEX (2026-08-17).
-    CLEAR t_products.
+    t_products = VALUE #( ).
     selected_tab = key.
 
     LOOP AT t_all INTO DATA(row).

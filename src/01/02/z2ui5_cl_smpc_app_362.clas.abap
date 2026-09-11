@@ -343,8 +343,7 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
     sort_category     = `None`.
     sort_quantity     = `None`.
     sort_deliverydate = `None`.
-    CLEAR t_sortkeys.
-
+    t_sortkeys = VALUE #( ).
   ENDMETHOD.
 
 

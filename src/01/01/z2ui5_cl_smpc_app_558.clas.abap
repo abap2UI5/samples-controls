@@ -33,25 +33,25 @@ CLASS z2ui5_cl_smpc_app_558 DEFINITION PUBLIC.
       END OF ty_s_tab.
     TYPES ty_t_tab TYPE STANDARD TABLE OF ty_s_tab WITH EMPTY KEY.
 
-    DATA t_products       TYPE ty_t_product.
-    DATA t_tabs           TYPE ty_t_tab.
-    DATA selected_tab     TYPE string.
-    DATA pending_close    TYPE string.
-    DATA open_visible     TYPE abap_bool.
-    DATA edit_visible     TYPE abap_bool VALUE abap_true.
-    DATA save_visible     TYPE abap_bool.
-    DATA cancel_visible   TYPE abap_bool.
-    " _bEditMode of the add-item page
-    DATA add_mode         TYPE abap_bool.
-    DATA add_product_id   TYPE string.
-    DATA add_name         TYPE string.
-    DATA add_supplier     TYPE string.
-    DATA add_price        TYPE p LENGTH 14 DECIMALS 2.
-    DATA add_description  TYPE string.
-    DATA new_counter      TYPE i.
+    DATA t_products     TYPE ty_t_product.
+    DATA t_tabs         TYPE ty_t_tab.
+    DATA open_visible   TYPE abap_bool.
+    DATA edit_visible   TYPE abap_bool VALUE abap_true.
+    DATA save_visible   TYPE abap_bool.
+    DATA cancel_visible TYPE abap_bool.
+    DATA add_name        TYPE string.
+    DATA add_supplier    TYPE string.
+    DATA add_price       TYPE p LENGTH 14 DECIMALS 2.
+    DATA add_description TYPE string.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client         TYPE REF TO z2ui5_if_client.
+    DATA selected_tab   TYPE string.
+    DATA pending_close  TYPE string.
+    " _bEditMode of the add-item page
+    DATA add_mode       TYPE abap_bool.
+    DATA add_product_id TYPE string.
+    DATA new_counter    TYPE i.
 
     " The page the LIVE navCon was last sent to, so a rebuilt view can be sent
     " there again (see view_display). Empty until something navigated, which is
@@ -455,7 +455,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
       WHEN `OPEN_SELECTED`.
         " openSelectedItems: one tab per selected row, filtered by ProductId
-        CLEAR t_tabs.
+        t_tabs = VALUE #( ).
         LOOP AT t_products INTO DATA(product) WHERE selected = abap_true.
           APPEND CORRESPONDING #( product ) TO t_tabs.
         ENDLOOP.
@@ -539,7 +539,9 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " handleNewItemAdd: a fresh edit model on the add page
         new_counter = new_counter + 1.
         add_product_id = |ProductId-{ new_counter }|.
-        CLEAR: add_name, add_supplier, add_description.
+        add_name = VALUE #( ).
+        add_supplier = VALUE #( ).
+        add_description = VALUE #( ).
         add_price = 0.
         add_mode = abap_true.
         nav_page = `addItemPage`.

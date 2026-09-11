@@ -40,10 +40,10 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
              ref    TYPE string,
              parent TYPE string,
            END OF ty_s_flat.
-    DATA t_flat TYPE STANDARD TABLE OF ty_s_flat WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    DATA t_flat TYPE STANDARD TABLE OF ty_s_flat WITH EMPTY KEY.
 
     METHODS view_display.
     METHODS on_event.
@@ -167,7 +167,7 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
         RETURN.
       ENDIF.
       DATA(current) = walker.
-      CLEAR walker.
+      walker = VALUE #( ).
       LOOP AT t_flat INTO DATA(row) WHERE text = current.
         walker = row-parent.
       ENDLOOP.
@@ -178,8 +178,7 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
   METHOD nodes_rebuild.
 
-    CLEAR t_nodes.
-
+    t_nodes = VALUE #( ).
     LOOP AT t_flat INTO DATA(row1) WHERE parent IS INITIAL.
       DATA(node1) = VALUE ty_s_node_level1( text = row1-text ref = row1-ref ).
       DATA(parent1) = row1-text.

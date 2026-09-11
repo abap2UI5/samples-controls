@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_app_509 IMPLEMENTATION.
     IF client->get_event( ) = `SUGGEST`.
 
       DATA(term) = to_upper( client->get_event_arg( ) ).
-      CLEAR t_suggestions.
+      t_suggestions = VALUE #( ).
       IF term IS NOT INITIAL.
         LOOP AT products_all( ) INTO DATA(product).
           IF to_upper( product-name ) CS term.

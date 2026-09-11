@@ -439,8 +439,7 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
         ENDIF.
         INSERT VALUE #( text = new_token key = new_token ) INTO TABLE t_tokens.
         client->message_toast_display( |Token added: { new_token }| ).
-        CLEAR new_token.
-
+        new_token = VALUE #( ).
       WHEN `TOKEN_DELETE`.
         " onTokenDelete: aDeletedTokens.forEach - toast each token's text and
         " remove it. Selecting several tokens and pressing Delete really does
@@ -481,7 +480,7 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
       CATCH z2ui5_cx_ajson_error.
-        CLEAR result.
+        result = VALUE #( ).
     ENDTRY.
 
   ENDMETHOD.

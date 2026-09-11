@@ -29,7 +29,6 @@ CLASS z2ui5_cl_smpc_app_579 DEFINITION PUBLIC.
     " the FlexibleColumnLayout state the router drives in the original
     DATA layout      TYPE string VALUE `OneColumn`.
     DATA total_count TYPE i.
-    DATA descending  TYPE abap_bool.
 
     " the product the mid column shows and the supplier the end column shows
     DATA d_name          TYPE string.
@@ -58,7 +57,8 @@ CLASS z2ui5_cl_smpc_app_579 DEFINITION PUBLIC.
     DATA tablet_three_mid_end    TYPE string VALUE `33/67/0`.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client     TYPE REF TO z2ui5_if_client.
+    DATA descending TYPE abap_bool.
 
     " the router state the original keeps (currentRouteName + the route's
     " arguments): the original routes by INDEX into the mock collections
@@ -659,7 +659,7 @@ CLASS z2ui5_cl_smpc_app_579 IMPLEMENTATION.
         IF query IS INITIAL.
           t_rows = t_products.
         ELSE.
-          CLEAR t_rows.
+          t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
               APPEND product TO t_rows.

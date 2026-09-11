@@ -107,7 +107,7 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " handleCalendarSelect: rebuild the model from EVERY selected date,
         " each formatted yyyy-MM-dd - the day is the first ten characters of
         " the ISO local timestamp the marshalled DateRange carries
-        CLEAR selecteddates.
+        selecteddates = VALUE #( ).
         DATA(ranges) = event_ranges( client->get_event_arg( ) ).
         LOOP AT ranges REFERENCE INTO DATA(lr_range).
           IF strlen( lr_range->startdate ) < 10.
@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " selectedDates is written by the control itself, so the aggregation
         " has to be emptied on the control - the model half alone would leave
         " the days highlighted
-        CLEAR selecteddates.
+        selecteddates = VALUE #( ).
         client->follow_up_action( val   = client->cs_event-control_by_id
                                   t_arg = VALUE #( ( `calendar` ) ( `removeAllSelectedDates` ) ) ).
 
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
       CATCH z2ui5_cx_ajson_error.
-        CLEAR result.
+        result = VALUE #( ).
     ENDTRY.
 
   ENDMETHOD.

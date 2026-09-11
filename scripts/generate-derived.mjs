@@ -54,7 +54,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { checkAbapSource } from '@abap2ui5/linter';
 import { walkFiles } from './lib/src-tree.mjs';
-import { universe } from './lib/ui5-libs.mjs';
+import { loadUniverseSnapshot, cmpVersion, MIN_UI5 } from './lib-universe.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'catalogue-derived.json');
@@ -63,24 +63,9 @@ const CHECK = process.argv.includes('--check');
  * and 636 concatenated lines in a CI log. Off unless someone is watching. */
 const QUIET = process.argv.includes('--quiet') || !process.stdout.isTTY;
 
-/** The floor view-gates holds every port to — and the answer for a port that
- *  needs nothing newer. Keep it in step with view-gates.mjs MIN_UI5. */
-const MIN_UI5 = '1.71';
-
 /** The repository a consumer joins this against. */
 const REPO = 'abap2UI5/samples-controls';
 const REF = 'main';
-
-/** Compare two dotted UI5 versions numerically ("1.9" < "1.71" < "1.120"). */
-function cmpVersion(a, b) {
-  const pa = String(a).split('.').map(Number);
-  const pb = String(b).split('.').map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const d = (pa[i] || 0) - (pb[i] || 0);
-    if (d) return d;
-  }
-  return 0;
-}
 
 /** "1.77.0" / "1.77" -> "1.77" — the minor is what a system is called by. */
 const shortVersion = (v) => String(v).split('.').slice(0, 2).join('.');
@@ -199,7 +184,7 @@ const top = {
   ref: REF,
   catalogue: `https://raw.githubusercontent.com/${REPO}/${REF}/catalogue.json`,
   minUi5: MIN_UI5,
-  ui5Snapshot: universe.release,
+  ui5Snapshot: loadUniverseSnapshot().release,
   releases,
   /* One dictionary, referenced by index from every port: the same 386 control
    * names would otherwise be repeated 636 times. */

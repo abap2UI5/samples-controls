@@ -45,13 +45,12 @@ CLASS z2ui5_cl_smpc_app_361 DEFINITION PUBLIC.
     DATA selection_behavior TYPE string.
     DATA enable_select_all  TYPE abap_bool.
 
+  PROTECTED SECTION.
+    DATA client           TYPE REF TO z2ui5_if_client.
     " the current selection, kept in the model by rowSelectionChange so the
     " three toolbar buttons can report it without reading the control
     DATA selected_indices TYPE string.
     DATA selected_index   TYPE i.
-
-  PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
     METHODS on_event.

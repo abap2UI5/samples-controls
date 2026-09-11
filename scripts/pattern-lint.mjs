@@ -66,6 +66,12 @@ const BASELINE = new Set([]);
 
 const lineOf = (content, idx) => content.slice(0, idx).split('\n').length;
 
+// the backtick, and the VALUE #( ) row/cell shapes ragged-value-table judges -
+// built once here; they used to be rebuilt for every file the rule visited
+const BT = String.fromCharCode(96);
+const VALUE_ROW = new RegExp('^(\\s*)\\(((?: [a-z_0-9]+ = (?:' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+))+) \\)(.*)$');
+const VALUE_CELL = new RegExp('([a-z_0-9]+) = (' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+)', 'g');
+
 const RULES = [
   {
     id: 'event-arg-default-index',
@@ -127,6 +133,37 @@ const RULES = [
     level: 'error',
     doc: 'bare `TYPE TABLE OF` gives an implicit default key — declare it explicitly as `TYPE STANDARD TABLE OF ... WITH EMPTY KEY` (AGENTS §8; slipped the abaplint defaultKey gate, which only catches explicit DEFAULT KEY, in app 034)',
     find: grepLines(/\bTYPE\s+TABLE\s+OF\b/),
+  },
+  {
+    id: 'clear-statement',
+    level: 'error',
+    portsOnly: true,
+    doc: 'reset with `x = VALUE #( ).`, never CLEAR (AGENTS §8) - the sentence stood unenforced while 70 CLEARs in 43 ports accumulated (swept 2026-09-11)',
+    find: grepLines(/^\s*CLEAR\b/),
+  },
+  {
+    id: 'unbound-public-attribute',
+    level: 'error',
+    portsOnly: true,
+    doc: 'a PUBLIC DATA that no binding reaches (_bind( ), b = , a {/NAME} path) belongs in PROTECTED: the round-trip model scan walks every public instance attribute and the draft persists it, so a helper/backup kept public only costs (port-a-sample "Class layout"; 38 such attributes in 23 ports were moved 2026-09-11). A linter candidate - the fact it rests on is a framework fact',
+    find(content) {
+      const [def, impl = ''] = content.split(/^CLASS \w+ IMPLEMENTATION\.$/m);
+      const pub = (def.match(/PUBLIC SECTION\.([\s\S]*?)(PROTECTED SECTION\.|PRIVATE SECTION\.|ENDCLASS)/) || [])[1] || '';
+      const out = [];
+      for (const m of pub.matchAll(/^\s*DATA\s+(\w+)\s/gm)) {
+        const n = m[1];
+        if (n.toLowerCase() === 'client') continue;
+        // the binding forms: an argument of a _bind*( ) call (one level of
+        // nested parentheses, for _bind( val = x ... )), a boolean a( b = x ),
+        // or the attribute named as a model path anywhere in the class
+        const bindCall = new RegExp(`_bind(_\\w+)?\\(([^()]|\\([^()]*\\))*\\b${n}\\b`, 'i');
+        const bBool = new RegExp(`\\bb\\s*=\\s*${n}\\b`, 'i');
+        const pathStr = new RegExp(`[{/]${n}[}/\\s'\`]|/${n}$`, 'i');
+        if (bindCall.test(impl) || bBool.test(impl) || pathStr.test(content)) continue;
+        out.push({ line: lineOf(content, content.indexOf(m[0])), text: `${n} is public but never bound` });
+      }
+      return out;
+    },
   },
   {
     id: 'param-continuation-align',
@@ -216,13 +253,10 @@ const RULES = [
     level: 'error',
     doc: 'VALUE #( ) rows with the same field list are padded into columns, the last cell of a row unpadded (AGENTS §5); node scripts/json-to-abap.mjs emits that form',
     find(content) {
-      const BT = String.fromCharCode(96);
-      const ROW = new RegExp('^(\\s*)\\(((?: [a-z_0-9]+ = (?:' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+))+) \\)(.*)$');
-      const CELL = new RegExp('([a-z_0-9]+) = (' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+)', 'g');
       const parse = (l) => {
-        const m = l.match(ROW);
+        const m = l.match(VALUE_ROW);
         if (!m) return null;
-        const cells = [...m[2].matchAll(CELL)].map((c) => [c[1], c[2]]);
+        const cells = [...m[2].matchAll(VALUE_CELL)].map((c) => [c[1], c[2]]);
         return cells.length ? { indent: m[1], cells, suffix: m[3] } : null;
       };
       const L = content.split('\n');
@@ -260,7 +294,6 @@ const RULES = [
     level: 'error',
     doc: 'a statement outside the view chain that fits in 120 characters is written on ONE line (AGENTS §5)',
     find(content) {
-      const BT = String.fromCharCode(96);
       const BUDGET = 120;
       const balanced = (s) => {
         let par = 0, bt = 0, pipe = 0;

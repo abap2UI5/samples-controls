@@ -441,8 +441,9 @@ const nums = [...sidecarSet]
   .map((c) => Number(c.match(/app_(\d+)$/)?.[1]))
   .filter((n) => Number.isInteger(n))
   .sort((a, b) => a - b);
+const numSet = new Set(nums);
 for (let n = 1; n <= (nums[nums.length - 1] ?? 0); n++) {
-  if (!nums.includes(n) && !KNOWN_GAPS.has(n)) {
+  if (!numSet.has(n) && !KNOWN_GAPS.has(n)) {
     err(`port numbering has a gap at ${String(n).padStart(3, '0')} — renumber the tail (gap-free numbering, regenerate-artefacts)`);
   }
 }

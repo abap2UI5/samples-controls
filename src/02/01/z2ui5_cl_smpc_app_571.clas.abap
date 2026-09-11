@@ -27,10 +27,10 @@ CLASS z2ui5_cl_smpc_app_571 DEFINITION PUBLIC.
     DATA product_indicator TYPE string VALUE `None`.
     DATA price_indicator   TYPE string VALUE `None`.
     DATA dimensions_align  TYPE string VALUE `End`.
-    DATA grouped           TYPE abap_bool.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client  TYPE REF TO z2ui5_if_client.
+    DATA grouped TYPE abap_bool.
 
     METHODS view_display.
     METHODS on_event.

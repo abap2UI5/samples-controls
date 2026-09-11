@@ -217,7 +217,7 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
       CATCH z2ui5_cx_ajson_error.
-        CLEAR result.
+        result = VALUE #( ).
     ENDTRY.
 
   ENDMETHOD.

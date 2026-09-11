@@ -30,9 +30,34 @@ const MAX_PASSES = 5;
 
 /**
  * @param {string} source ABAP source of a class that builds a view
+ * @param {object} [opts]
+ * @param {string[]} [opts.skipMethods] methods whose body carries no chain and
+ *   is held out of the linter passes. The overview's get_catalog( ) is 11,600
+ *   lines of VALUE #( ) rows - 97% of the class - and the rule walked them on
+ *   every pass for nothing: holding the body out took the generator from
+ *   ~5 s to ~0.1 s for a byte-identical class (measured 2026-09-11). The body
+ *   goes back in verbatim, so a chain written into such a method would go
+ *   out unformatted - which the chain gate then reports, as it would today.
  * @returns {string} the same source with every chain in the house layout
  */
-export function formatSource(source) {
+export function formatSource(source, { skipMethods = [] } = {}) {
+  const held = new Map();
+  let out = source;
+  for (const name of skipMethods) {
+    const re = new RegExp(`^  METHOD ${name}\\.\n([\\s\\S]*?)^  ENDMETHOD\\.`, 'm');
+    out = out.replace(re, (_, body) => {
+      held.set(name, body);
+      return `  METHOD ${name}.\n  ENDMETHOD.`;
+    });
+  }
+  const formatted = formatChains(out);
+  return [...held].reduce(
+    (acc, [name, body]) => acc.replace(`  METHOD ${name}.\n  ENDMETHOD.`, `  METHOD ${name}.\n${body}  ENDMETHOD.`),
+    formatted,
+  );
+}
+
+function formatChains(source) {
   let out = source;
   for (let pass = 0; pass < MAX_PASSES; pass++) {
     const { findings } = checkAbapSource(out, { rules: RULES, file: 'overview.clas.abap' });
