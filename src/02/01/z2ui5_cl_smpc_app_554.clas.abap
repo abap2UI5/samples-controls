@@ -215,8 +215,7 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
     scale_factor = 1.
 
     " the view binds /specialDates, which the sample's own model never fills
-    CLEAR t_special_dates.
-
+    t_special_dates = VALUE #( ).
     t_appointments = VALUE #(
       ( title = `Meet John Miller` type = `Type05` start_at = `2018-07-24T08:00:00` end_at = `2018-07-24T08:05:00` )
       ( title = `Discussion of the plan` type = `Type08` start_at = `2018-07-24T08:05:00` end_at = `2018-07-24T08:10:00` )

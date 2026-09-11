@@ -246,7 +246,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
   METHOD model_init.
 
     " the original's UI5Date instances become date strings - parsed by the source patterns / V4 constraints in the view bindings
-    DATA(now) = |{ sy-datum(4) }-{ sy-datum+4(2) }-{ sy-datum+6(2) } { sy-uzeit(2) }:{ sy-uzeit+2(2) }:{ sy-uzeit+4(2) }|.
+    DATA(now) = |{ sy-datum DATE = ISO } { sy-uzeit TIME = ISO }|.
 
     value_dtp2 = `2016-02-18 10:32:30`.
     value_dtp3 = now.

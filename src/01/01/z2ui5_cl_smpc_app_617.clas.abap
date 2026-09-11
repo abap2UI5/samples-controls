@@ -265,7 +265,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
     " a LOOP over the same table shifts the rows under the loop's own cursor -
     " on a system it silently SKIPS the row after each deletion, on the
     " transpiled backend it raises TABLE_INVALID_INDEX (app 298, 2026-08-17)
-    CLEAR lt_keep.
+    lt_keep = VALUE #( ).
     LOOP AT t_products INTO DATA(row) WHERE weightunit = `KG`.
       DATA(measure) = CONV decfloat34( row-weightmeasure ).
       DATA(keep) = SWITCH abap_bool( key

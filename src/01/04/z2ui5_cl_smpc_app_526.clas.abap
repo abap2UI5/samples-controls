@@ -16,13 +16,13 @@ CLASS z2ui5_cl_smpc_app_526 DEFINITION PUBLIC.
            END OF ty_s_row.
     TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
 
-    DATA t_order    TYPE string_table.
     DATA t_contacts TYPE ty_t_row.
     DATA t_products TYPE ty_t_row.
     DATA t_tasks    TYPE ty_t_row.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client  TYPE REF TO z2ui5_if_client.
+    DATA t_order TYPE string_table.
 
     METHODS view_display.
     METHODS on_event.

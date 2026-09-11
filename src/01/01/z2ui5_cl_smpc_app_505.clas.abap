@@ -218,7 +218,7 @@ CLASS z2ui5_cl_smpc_app_505 IMPLEMENTATION.
       WHEN `RESET`.
         " onReset: clear the filter, the overlay and the ComboBox selection
         overlay = abap_false.
-        CLEAR supplier.
+        supplier = VALUE #( ).
         t_products = t_all.
 
     ENDCASE.

@@ -157,11 +157,10 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
         IF validate = abap_true AND text1 IS NOT INITIAL.
           APPEND VALUE #( key = text1 text = |#: { text1 }| ) TO t_tokens1.
         ENDIF.
-        CLEAR value1.
-
+        value1 = VALUE #( ).
       WHEN `VALIDATE2`.
         pending = client->get_event_arg( ).
-        CLEAR value2.
+        value2 = VALUE #( ).
         IF pending IS NOT INITIAL.
           client->message_box_display( text    = |Do you really want to add token "{ pending }"?|
                                        type    = `confirm`
@@ -173,15 +172,13 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
         IF client->get_event_arg( ) = `OK`.
           APPEND VALUE #( key = pending text = pending ) TO t_tokens2.
         ENDIF.
-        CLEAR pending.
-
+        pending = VALUE #( ).
       WHEN `VALIDATE3`.
         DATA(text3) = client->get_event_arg( ).
         IF text3 IS NOT INITIAL.
           APPEND VALUE #( text = text3 ) TO t_tokens3.
         ENDIF.
-        CLEAR value3.
-
+        value3 = VALUE #( ).
     ENDCASE.
 
   ENDMETHOD.

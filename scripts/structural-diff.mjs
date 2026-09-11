@@ -46,6 +46,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { walkFiles } from './lib/src-tree.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
@@ -78,6 +79,8 @@ function parseXml(xml) {
   // that swallows the tag boundary and merges the following sibling into this
   // tag, undercounting it (sap.m.sample.InputWrapping read 2 of 3 core:Items).
   const tagRe = /<([A-Za-z_][\w.:-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)\/?>/g;
+  // one regex for every tag - matchAll clones it, so no lastIndex to reset
+  const attrRe = /([\w.:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
   let m;
   while ((m = tagRe.exec(clean)) !== null) {
     const qname = m[1];
@@ -85,9 +88,7 @@ function parseXml(xml) {
     controls.set(qname, (controls.get(qname) || 0) + 1);
     const set = attrs.get(simpleName(qname)) || new Set();
     const vmap = values.get(simpleName(qname)) || new Map();
-    const attrRe = /([\w.:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
-    let a;
-    while ((a = attrRe.exec(m[2])) !== null) {
+    for (const a of m[2].matchAll(attrRe)) {
       if (a[1].startsWith('xmlns') || IGNORED_ATTRS.has(a[1])) continue;
       set.add(a[1]);
       const vset = vmap.get(a[1]) || new Set();
@@ -167,15 +168,7 @@ function originalViews(sample) {
   const sampleName = sample.includes('.sample.') ? sample.slice(sample.indexOf('.sample.') + '.sample.'.length) : sample;
   const dir = path.join(UI5, lib, sampleName);
   if (!fs.existsSync(dir)) return [];
-  const files = [];
-  const walk = (d) => {
-    for (const name of fs.readdirSync(d)) {
-      const full = path.join(d, name);
-      if (fs.statSync(full).isDirectory()) walk(full);
-      else if (name.endsWith('.view.xml') || name.endsWith('.fragment.xml')) files.push(full);
-    }
-  };
-  walk(dir);
+  const files = walkFiles(dir).filter((f) => f.endsWith('.view.xml') || f.endsWith('.fragment.xml'));
   const manifest = path.join(dir, 'manifest.json');
   if (fs.existsSync(manifest)) {
     try {

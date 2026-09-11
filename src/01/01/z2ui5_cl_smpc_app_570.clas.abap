@@ -27,12 +27,12 @@ CLASS z2ui5_cl_smpc_app_570 DEFINITION PUBLIC.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
-    " onEdit keeps a deepExtend copy so onCancel can put it back
-    DATA t_backup   TYPE ty_t_product.
-    DATA edit_mode  TYPE abap_bool.
+    DATA edit_mode TYPE abap_bool.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client   TYPE REF TO z2ui5_if_client.
+    " onEdit keeps a deepExtend copy so onCancel can put it back
+    DATA t_backup TYPE ty_t_product.
 
     METHODS view_display.
     METHODS on_event.

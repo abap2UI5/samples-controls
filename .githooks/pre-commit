@@ -21,6 +21,9 @@ node "$DIR/scripts/generate-coverage.mjs" >/dev/null
 node "$DIR/scripts/generate-status.mjs" >/dev/null
 node "$DIR/scripts/generate-samples-md.mjs" >/dev/null
 node "$DIR/scripts/generate-catalogue.mjs" >/dev/null
+# the gate and meta_valid diff catalogue-derived.json as well - a commit made
+# through this hook left it stale until 2026-09-11
+node "$DIR/scripts/generate-derived.mjs" --quiet >/dev/null
 
 git add -- \
   "$DIR/src/z2ui5_cl_smpc_app_000.clas.abap" \
@@ -29,4 +32,5 @@ git add -- \
   "$DIR/README.md" \
   "$DIR/STATUS.md" \
   "$DIR/SAMPLES.md" \
-  "$DIR/catalogue.json"
+  "$DIR/catalogue.json" \
+  "$DIR/catalogue-derived.json"

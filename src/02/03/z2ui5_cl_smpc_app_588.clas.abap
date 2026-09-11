@@ -12,15 +12,15 @@ CLASS z2ui5_cl_smpc_app_588 DEFINITION PUBLIC.
         picture TYPE string,
       END OF ty_s_employee.
 
+    DATA t_employees TYPE STANDARD TABLE OF ty_s_employee WITH EMPTY KEY.
+
+  PROTECTED SECTION.
+    DATA client           TYPE REF TO z2ui5_if_client.
     " bEditMode of the controller: it decides whether beforeNavigate is vetoed
     DATA edit_mode        TYPE abap_bool.
     " oSelectedSection / oPreviousSelectedSection - section ids rather than refs
     DATA selected_section TYPE string.
     DATA previous_section TYPE string.
-    DATA t_employees      TYPE STANDARD TABLE OF ty_s_employee WITH EMPTY KEY.
-
-  PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
     METHODS popup_confirm_display.

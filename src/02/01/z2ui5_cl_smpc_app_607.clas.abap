@@ -18,19 +18,19 @@ CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
            END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA t_products    TYPE ty_t_product.
-    DATA slider_value  TYPE i VALUE 100.
-    DATA search_query  TYPE string.
-    DATA grouped       TYPE abap_bool.
-    DATA descending    TYPE abap_bool.
-    DATA toggle_state  TYPE abap_bool.
+    DATA t_products   TYPE ty_t_product.
+    DATA slider_value TYPE i VALUE 100.
+    DATA search_query TYPE string.
+    DATA descending   TYPE abap_bool.
+    DATA toggle_state TYPE abap_bool.
+
+  PROTECTED SECTION.
+    DATA client           TYPE REF TO z2ui5_if_client.
+    DATA grouped          TYPE abap_bool.
     " set by filters_apply, so a rebuilt view knows an ordering is in force.
     " It cannot be derived from grouped/descending: RESET clears both and still
     " applies a Name-ascending sorter, exactly as fnApplyFiltersAndOrdering does
     DATA ordering_applied TYPE abap_bool.
-
-  PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
 
     " PROTECTED, not PRIVATE: the app's state is serialized into the draft with
     " CALL TRANSFORMATION id, and the transpiled runtime's re-implementation of
@@ -292,7 +292,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
 
       WHEN `RESET`.
         " onReset: clears the search field and both flags, then re-applies
-        CLEAR search_query.
+        search_query = VALUE #( ).
         grouped    = abap_false.
         descending = abap_false.
         filters_apply( ).

@@ -22,22 +22,15 @@ CLASS z2ui5_cl_smpc_app_578 DEFINITION PUBLIC.
            END OF ty_s_supplier.
     TYPES ty_t_supplier TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
 
-    DATA t_products   TYPE ty_t_product.
-    DATA t_rows       TYPE ty_t_product.
-    DATA t_suppliers  TYPE ty_t_supplier.
+    DATA t_products  TYPE ty_t_product.
+    DATA t_rows      TYPE ty_t_product.
+    DATA t_suppliers TYPE ty_t_supplier.
     " /ProductCollectionStats/Filters/0/values - the categories page of the
     " begin column, which this sample starts on
     DATA t_categories TYPE ty_t_supplier.
 
     " the FlexibleColumnLayout state the router drives in the original
-    DATA layout      TYPE string VALUE `OneColumn`.
-    DATA total_count TYPE i.
-    DATA descending  TYPE abap_bool.
-
-    " the beginColumnPages page the LIVE FlexibleColumnLayout was last sent to.
-    " A column position is control state, not model state, so view_display( )
-    " loses it (app 585 idiom); this field is what lets it be re-issued
-    DATA begin_page  TYPE string.
+    DATA layout TYPE string VALUE `OneColumn`.
 
     " the product the mid column shows and the supplier the end column shows
     DATA d_name          TYPE string.
@@ -51,7 +44,13 @@ CLASS z2ui5_cl_smpc_app_578 DEFINITION PUBLIC.
     DATA dd_text         TYPE string.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client      TYPE REF TO z2ui5_if_client.
+    DATA total_count TYPE i.
+    DATA descending  TYPE abap_bool.
+    " the beginColumnPages page the LIVE FlexibleColumnLayout was last sent to.
+    " A column position is control state, not model state, so view_display( )
+    " loses it (app 585 idiom); this field is what lets it be re-issued
+    DATA begin_page  TYPE string.
 
     " the router state the original keeps (currentRouteName + the route's
     " arguments): the category travels as its NAME (URL-encoded, spaces as
@@ -674,7 +673,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
         IF query IS INITIAL.
           t_rows = t_products.
         ELSE.
-          CLEAR t_rows.
+          t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
               APPEND product TO t_rows.
@@ -715,7 +714,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     " the right-hand name of a WHERE resolves to the COLUMN, so the local
     " one must not share it (apps 520/524)
     DATA(sel_category) = iv_category.
-    CLEAR t_rows.
+    t_rows = VALUE #( ).
     LOOP AT t_products INTO DATA(row) WHERE category = sel_category.
       APPEND row TO t_rows.
     ENDLOOP.
@@ -756,8 +755,8 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
         layout = `OneColumn`.
         " back on the categories page - the list route targets List.view
         IF begin_page IS NOT INITIAL.
-          CLEAR begin_page.
-          CLEAR route_category.
+          begin_page = VALUE #( ).
+          route_category = VALUE #( ).
           client->follow_up_action( val   = client->cs_event-control_by_id
                                     t_arg = VALUE #( ( `fcl` ) ( `to` ) ( `categoriesPage` ) ) ).
         ENDIF.
@@ -796,8 +795,8 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
         route  = `list`.
         layout = lt_seg[ 1 ].
         IF begin_page IS NOT INITIAL.
-          CLEAR begin_page.
-          CLEAR route_category.
+          begin_page = VALUE #( ).
+          route_category = VALUE #( ).
           client->follow_up_action( val   = client->cs_event-control_by_id
                                     t_arg = VALUE #( ( `fcl` ) ( `to` ) ( `categoriesPage` ) ) ).
         ENDIF.

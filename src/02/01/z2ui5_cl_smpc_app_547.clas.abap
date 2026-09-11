@@ -37,23 +37,23 @@ CLASS z2ui5_cl_smpc_app_547 DEFINITION PUBLIC.
     DATA start_date TYPE string.
 
     " the details popover and the create/edit dialog, folded to fields
-    DATA sel_row      TYPE i.
-    DATA sel_index    TYPE i.
-    DATA sel_title    TYPE string.
-    DATA sel_info     TYPE string.
-    DATA sel_start    TYPE string.
-    DATA sel_end      TYPE string.
-    DATA d_mode       TYPE string.
-    DATA d_person     TYPE string.
-    DATA d_interval   TYPE abap_bool.
-    DATA d_title      TYPE string.
-    DATA d_info       TYPE string.
-    DATA d_start      TYPE string.
-    DATA d_end        TYPE string.
+    DATA sel_title     TYPE string.
+    DATA sel_info      TYPE string.
+    DATA sel_start     TYPE string.
+    DATA sel_end       TYPE string.
+    DATA d_person      TYPE string.
+    DATA d_interval    TYPE abap_bool.
+    DATA d_title       TYPE string.
+    DATA d_info        TYPE string.
+    DATA d_start       TYPE string.
+    DATA d_end         TYPE string.
     DATA d_start_state TYPE string.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client    TYPE REF TO z2ui5_if_client.
+    DATA sel_row   TYPE i.
+    DATA sel_index TYPE i.
+    DATA d_mode    TYPE string.
 
     METHODS view_display.
     METHODS on_event.

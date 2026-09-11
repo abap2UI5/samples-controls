@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_504 IMPLEMENTATION.
         " the validator's switch: c/d become themselves, e becomes f, a and f are
         " added after a delay and b is rejected after one
         DATA(text) = client->get_event_arg( ).
-        CLEAR value.
+        value = VALUE #( ).
         CASE text.
           WHEN `c` OR `d`.
             token_add( text ).

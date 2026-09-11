@@ -27,7 +27,7 @@ import path from 'path';
  */
 
 /** Directory NAMES (not paths) skipped anywhere under `src/`. */
-export const SKIPPED_DIRS = new Set(['zz_dev']);
+const SKIPPED_DIRS = new Set(['zz_dev']);
 
 /** True when a directory entry must not be walked into. */
 export const isSkippedDir = (name) => SKIPPED_DIRS.has(name);

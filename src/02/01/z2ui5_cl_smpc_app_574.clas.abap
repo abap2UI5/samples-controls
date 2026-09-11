@@ -17,9 +17,8 @@ CLASS z2ui5_cl_smpc_app_574 DEFINITION PUBLIC.
            END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA t_products     TYPE ty_t_product.
     " the rows the search leaves visible; T_PRODUCTS stays the full set
-    DATA t_rows         TYPE ty_t_product.
+    DATA t_rows TYPE ty_t_product.
 
     " the ui> view model of the sample
     DATA total_count    TYPE i.
@@ -27,10 +26,11 @@ CLASS z2ui5_cl_smpc_app_574 DEFINITION PUBLIC.
     DATA show_total     TYPE abap_bool VALUE abap_true.
     DATA extended_view  TYPE abap_bool.
     DATA select_mode    TYPE string VALUE `Default`.
-    DATA new_counter    TYPE i.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client      TYPE REF TO z2ui5_if_client.
+    DATA t_products  TYPE ty_t_product.
+    DATA new_counter TYPE i.
 
     METHODS view_display.
     METHODS on_event.
@@ -222,7 +222,7 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
         IF query IS INITIAL.
           t_rows = t_products.
         ELSE.
-          CLEAR t_rows.
+          t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query
                 OR to_upper( product-suppliername ) CS query OR to_upper( product-productid ) CS query.

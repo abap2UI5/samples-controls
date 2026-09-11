@@ -6,15 +6,13 @@
  * cannot disagree about a port's library. Factored out of the search-index
  * generator, where the comments below were written.
  */
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { loadUniverseSnapshot } from '../lib-universe.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-
-/** The committed sample universe — every demo kit sample of the focused
- *  OpenUI5 libraries, with the release the snapshot was taken from. */
-export const universe = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui5', 'universe.json'), 'utf8'));
+/* The committed sample universe, through the one loader (lib-universe): the
+ * libraries below are derived from it at import time. Consumers that want
+ * the snapshot itself call loadUniverseSnapshot( ) - this module used to
+ * export its own parse of the same file. */
+const universe = loadUniverseSnapshot();
 
 /* Every UI5 library a control in this corpus can come from. A control name is
  * mapped to its library by LONGEST prefix, because the namespace is not the

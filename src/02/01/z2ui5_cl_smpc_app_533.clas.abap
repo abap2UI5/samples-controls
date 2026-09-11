@@ -21,11 +21,11 @@ CLASS z2ui5_cl_smpc_app_533 DEFINITION PUBLIC.
     DATA product_vat          TYPE abap_bool.
     DATA step2_validated      TYPE abap_bool.
     DATA next_enabled         TYPE abap_bool VALUE abap_true.
-    DATA current_step         TYPE string.
     DATA step_index           TYPE i.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client       TYPE REF TO z2ui5_if_client.
+    DATA current_step TYPE string.
 
     METHODS view_display.
     METHODS on_event.

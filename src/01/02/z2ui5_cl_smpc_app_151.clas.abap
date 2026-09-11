@@ -103,7 +103,7 @@ CLASS z2ui5_cl_smpc_app_151 IMPLEMENTATION.
         " the original. The port keeps writing the server date (= today), which
         " is what the button visibly does here; the calendar focus itself is not
         " moved (focusDate takes a Date OBJECT no wire can construct)
-        selected_date = |{ sy-datum+0(4) }-{ sy-datum+4(2) }-{ sy-datum+6(2) }|.
+        selected_date = |{ sy-datum DATE = ISO }|.
 
     ENDCASE.
 

@@ -32,6 +32,7 @@ import { fileURLToPath } from 'url';
 import { checkFiles } from '@abap2ui5/linter';
 import { severityOf } from '@abap2ui5/linter/findings';
 import { badgeEndpoint, runStats } from '@abap2ui5/linter/report';
+import { cmpVersion, MIN_UI5 } from './lib-universe.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
@@ -46,7 +47,6 @@ if (process.argv.includes('--only') && !ONLY) {
 }
 
 /** The version floor every port is held to. */
-const MIN_UI5 = '1.71';
 
 /* The metadata snapshot the linter judges against, read here so a sidecar's
  * CLAIM about a member's @since can be checked against the same source the
@@ -67,15 +67,7 @@ function memberSince(control, member) {
 }
 
 /** Is `since` at or below the floor, i.e. NOT post-1.71? */
-function withinFloor(since) {
-  const a = String(since).split('.').map(Number);
-  const b = MIN_UI5.split('.').map(Number);
-  for (let i = 0; i < Math.max(a.length, b.length); i++) {
-    const x = a[i] || 0; const y = b[i] || 0;
-    if (x !== y) return x < y;
-  }
-  return true;
-}
+const withinFloor = (since) => cmpVersion(since, MIN_UI5) <= 0;
 
 /* Version findings are the ones a deviation may excuse: using a member the
  * original sample uses is fidelity, and the porting policy allows it as long

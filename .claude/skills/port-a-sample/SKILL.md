@@ -39,7 +39,9 @@ CLASS z2ui5_cl_smpc_app_<n> DEFINITION PUBLIC.       " lowercase, not FINAL
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
     " ONLY bound DATA belongs in PUBLIC: the round-trip model scan walks the
     " public instance attributes, so every non-bound helper/backup kept here
-    " just slows the binding search. Put such state in PROTECTED (see below).
+    " just slows the binding search. Put such state in PROTECTED (see below);
+    " pattern-lint's unbound-public-attribute fails a public DATA no binding
+    " reaches (38 of them sat in 23 ports until the 2026-09-11 sweep).
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.

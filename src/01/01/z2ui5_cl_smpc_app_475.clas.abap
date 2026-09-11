@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_475 IMPLEMENTATION.
         value_state_text = `Please enter a valid country!`.
       ELSE.
         value_state      = `None`.
-        CLEAR value_state_text.
+        value_state_text = VALUE #( ).
       ENDIF.
 
     ENDIF.

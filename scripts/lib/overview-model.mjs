@@ -9,17 +9,10 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { cmpVersion, MIN_UI5 } from '../lib-universe.mjs';
 
-// compare dotted UI5 versions ("1.86" > "1.77"); '' (unknown / since forever) is lowest
-const verCmp = (a, b) => {
-  const pa = String(a).split('.').map(Number), pb = String(b).split('.').map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const d = (pa[i] || 0) - (pb[i] || 0);
-    if (d) return d;
-  }
-  return 0;
-};
-const verMax = (a, b) => (!a ? b : !b ? a : verCmp(a, b) >= 0 ? a : b);
+// the larger of two dotted UI5 versions; '' (unknown / since forever) is lowest
+const verMax = (a, b) => (!a ? b : !b ? a : cmpVersion(a, b) >= 0 ? a : b);
 
 /**
  * @param {object}   o
@@ -66,7 +59,7 @@ for (const mf of fs.readdirSync(META)) {
     for (const mm of d.what.matchAll(/\b(\d+\.\d+(?:\.\d+)?)\b/g)) release = verMax(release, mm[1]);
   }
   // a since value is coloured orange when it is newer than UI5 1.71
-  const overOneSeven = (v) => v !== '' && verCmp(v, '1.71') > 0;
+  const overOneSeven = (v) => v !== '' && cmpVersion(v, MIN_UI5) > 0;
   const ui5Only = !inOpenUI5(m.entity);
   const isDeprecated = !!dep;
   // "newer than 1.71 (2020)": the sample needs a release above 1.71 - either a

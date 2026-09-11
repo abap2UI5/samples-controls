@@ -898,7 +898,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
     " fine); a REDUCE #( ) is left standing and reaches the v702 gate as a
     " parser_error. p LENGTH 8 DECIMALS 2 cannot be named inline, so the sum
     " is accumulated here instead
-    CLEAR productstotalprice.
+    productstotalprice = VALUE #( ).
     LOOP AT productcollection INTO DATA(row).
       productstotalprice = productstotalprice + row-price.
     ENDLOOP.

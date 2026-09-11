@@ -12,12 +12,12 @@ CLASS z2ui5_cl_smpc_app_438 DEFINITION PUBLIC.
            END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA t_products    TYPE ty_t_product.
-    DATA search        TYPE string.
-    DATA product_count TYPE i.
+    DATA t_products TYPE ty_t_product.
+    DATA search     TYPE string.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client        TYPE REF TO z2ui5_if_client.
+    DATA product_count TYPE i.
 
     METHODS view_display.
     METHODS on_event.
@@ -124,7 +124,7 @@ CLASS z2ui5_cl_smpc_app_438 IMPLEMENTATION.
       product_count = product_count + 1.
     ENDIF.
 
-    CLEAR t_products.
+    t_products = VALUE #( ).
     LOOP AT all INTO DATA(product) TO product_count.
       IF search IS INITIAL OR to_upper( product-name ) CS to_upper( search ).
         INSERT product INTO TABLE t_products.

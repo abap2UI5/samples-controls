@@ -132,7 +132,7 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
         DATA(year) = client->get_event_arg( ).
         IF year IS INITIAL OR year = `0`.
           selected_date = `No Date Selected`.
-          CLEAR t_selected.
+          t_selected = VALUE #( ).
         ELSE.
           DATA(month) = |{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
           DATA(day)   = |{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
@@ -140,7 +140,7 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
           IF picked = selected_date.
             " the same day again - the original's removeSelectedDate branch
             selected_date = `No Date Selected`.
-            CLEAR t_selected.
+            t_selected = VALUE #( ).
           ELSE.
             selected_date = picked.
             t_selected    = VALUE #( ( start = |{ year }{ month }{ day }| ) ).
@@ -151,7 +151,7 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
         " handleSelectToday: removeAllSelectedDates + addSelectedDate( today ).
         " Re-stating the bound aggregation with one row IS both calls, so the
         " highlight really moves - the server date is today
-        selected_date = |{ sy-datum+0(4) }-{ sy-datum+4(2) }-{ sy-datum+6(2) }|.
+        selected_date = |{ sy-datum DATE = ISO }|.
         t_selected    = VALUE #( ( start = |{ sy-datum }| ) ).
 
     ENDCASE.

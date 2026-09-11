@@ -354,7 +354,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    CLEAR t_pages.
+    t_pages = VALUE #( ).
     LOOP AT t_images INTO DATA(image) TO num_images.
       INSERT image INTO TABLE t_pages.
     ENDLOOP.

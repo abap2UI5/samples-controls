@@ -71,6 +71,6 @@ const { abap, xml } = emitOverview({ apps, CLASS });
  * which cannot know the base column of the statement they land in. Run the
  * result through the same formatter the corpus is checked with, so generated
  * code carries the layout rule instead of quietly reintroducing the drift. */
-fs.writeFileSync(OUT_ABAP, formatSource(abap));
+fs.writeFileSync(OUT_ABAP, formatSource(abap, { skipMethods: ['get_catalog'] }));
 fs.writeFileSync(OUT_XML, xml);
 console.log(`${CLASS}: ${apps.length} apps across ${new Set(apps.map((a) => a.control)).size} controls`);

@@ -323,7 +323,7 @@ const meta = {
 function collect(dir, base = dir, out = []) {
   for (const n of fs.readdirSync(dir)) {
     const full = path.join(dir, n);
-    if (isSkippedDir(name)) continue;
+    if (isSkippedDir(n)) continue;
     if (fs.statSync(full).isDirectory()) collect(full, base, out);
     else out.push(path.relative(base, full));
   }

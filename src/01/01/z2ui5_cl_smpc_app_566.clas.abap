@@ -30,20 +30,20 @@ CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
            END OF ty_s_crumb.
     TYPES ty_t_crumb TYPE STANDARD TABLE OF ty_s_crumb WITH EMPTY KEY.
 
-    DATA t_nodes  TYPE ty_t_node.
     DATA t_rows   TYPE ty_t_node.
     DATA t_crumbs TYPE ty_t_crumb.
 
     " where the drill-down currently is
-    DATA cur_level    TYPE i VALUE 1.
-    DATA cur_supplier TYPE string.
-    DATA cur_category TYPE string.
+    DATA cur_level TYPE i VALUE 1.
     " the Order model: count + hasCounts
-    DATA order_count  TYPE i.
-    DATA has_counts   TYPE abap_bool.
+    DATA order_count TYPE i.
+    DATA has_counts  TYPE abap_bool.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client       TYPE REF TO z2ui5_if_client.
+    DATA t_nodes      TYPE ty_t_node.
+    DATA cur_supplier TYPE string.
+    DATA cur_category TYPE string.
 
     METHODS view_display.
     METHODS on_event.
@@ -207,7 +207,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
   METHOD rows_refresh.
 
     " _setAggregation rebinds the table to the branch the user drilled into
-    CLEAR t_rows.
+    t_rows = VALUE #( ).
     LOOP AT t_nodes INTO DATA(node).
       CASE cur_level.
         WHEN 1.

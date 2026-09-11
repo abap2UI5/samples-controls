@@ -145,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_139 IMPLEMENTATION.
         " addSelectedDate takes a DateRange CONTROL no wire can construct: true
         " of the METHOD, and beside the point, since selectedDates is a bindable
         " aggregation (app 220 binds disabledDates, the same type).
-        selected_date = |{ sy-datum+0(4) }-{ sy-datum+4(2) }-{ sy-datum+6(2) }|.
+        selected_date = |{ sy-datum DATE = ISO }|.
         t_selected    = VALUE #( ( start = |{ sy-datum }| ) ).
 
     ENDCASE.

@@ -70,6 +70,19 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
 const UI5 = path.join(ROOT, 'ui5');
 const MOCK = path.join(UI5, 'mock');
+/* The shared demo-kit mocks, read and parsed ONCE: every port asks the same
+ * files the same two questions (is it referenced by name, by a top-level
+ * key), and reading them inside the 620-port loop was a third of the run. */
+const MOCKS = fs.existsSync(MOCK)
+  ? fs.readdirSync(MOCK).filter((f) => f.endsWith('.json')).map((name) => {
+    const text = fs.readFileSync(path.join(MOCK, name), 'utf8');
+    let doc = null;
+    try { doc = JSON.parse(text); } catch { /* not JSON */ }
+    const keys = doc && typeof doc === 'object' && !Array.isArray(doc)
+      ? Object.keys(doc).filter((k) => k.length >= 4) : [];
+    return { name, base: path.basename(name, '.json'), text, doc, keys };
+  })
+  : [];
 const REPORT = process.argv.includes('--report');
 
 const ASSET_RE = /([\w./:\-]+\.(?:jpg|jpeg|png|gif|svg|webp|bmp|ico|mp3|mp4|pdf))\b/gi;
@@ -202,19 +215,10 @@ for (const mf of fs.readdirSync(META).sort()) {
   // by a top-level collection key (a view binding `/ProductCollection` never
   // names products.json: the demo kit runner injects that default model, so
   // match the mock's own top-level keys against the archived sample texts)
-  if (fs.existsSync(MOCK)) {
-    for (const mock of fs.readdirSync(MOCK)) {
-      if (!mock.endsWith('.json')) continue;
-      const mockText = fs.readFileSync(path.join(MOCK, mock), 'utf8');
-      let referenced = corpusTexts.some((t) => t.includes(mock));
-      if (!referenced) {
-        try {
-          const keys = Object.keys(JSON.parse(mockText)).filter((k) => k.length >= 4);
-          referenced = keys.some((k) => corpusTexts.some((t) => t.includes(k)));
-        } catch { /* not an object mock */ }
-      }
-      if (referenced) corpusTexts.push(mockText);
-    }
+  for (const mock of MOCKS) {
+    const referenced = corpusTexts.some((t) => t.includes(mock.name))
+      || mock.keys.some((k) => corpusTexts.some((t) => t.includes(k)));
+    if (referenced) corpusTexts.push(mock.text);
   }
   const corpusTokens = new Set();
   const corpusBasenames = new Set();
@@ -266,12 +270,10 @@ for (const mf of fs.readdirSync(META).sort()) {
   // shared mocks — reading corpusDocs.length inside it made the fallback add
   // exactly one arbitrary mock (whichever came first in readdirSync order)
   const hadOwnDocs = corpusDocs.length > 0;
-  if (fs.existsSync(MOCK)) {
-    for (const mock of fs.readdirSync(MOCK)) {
-      if (!mock.endsWith('.json')) continue;
-      if (corpusTexts.some((t) => t.includes(mock)) || !hadOwnDocs) {
-        try { corpusDocs.push({ name: path.basename(mock, '.json'), doc: JSON.parse(fs.readFileSync(path.join(MOCK, mock), 'utf8')) }); } catch { /* */ }
-      }
+  for (const mock of MOCKS) {
+    if (mock.doc === null) continue;
+    if (corpusTexts.some((t) => t.includes(mock.name)) || !hadOwnDocs) {
+      corpusDocs.push({ name: mock.base, doc: mock.doc });
     }
   }
   const arrays = [];

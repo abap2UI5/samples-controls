@@ -13,16 +13,16 @@ CLASS z2ui5_cl_smpc_app_269 DEFINITION PUBLIC.
              text         TYPE string,
            END OF ty_s_entry.
 
-    DATA t_entrycollection  TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
-    DATA toggle_enabled     TYPE abap_bool.
-    DATA show_side_btn      TYPE abap_bool.
-    DATA show_side_content  TYPE abap_bool VALUE abap_true.
-    " the last breakpoint the control reported - updateShowSideContentButtonVisibility
-    " reads getCurrentBreakpoint( ) in EVERY call site, not only in the event handler
-    DATA breakpoint         TYPE string.
+    DATA t_entrycollection TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
+    DATA toggle_enabled    TYPE abap_bool.
+    DATA show_side_btn     TYPE abap_bool.
+    DATA show_side_content TYPE abap_bool VALUE abap_true.
 
   PROTECTED SECTION.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client     TYPE REF TO z2ui5_if_client.
+    " the last breakpoint the control reported - updateShowSideContentButtonVisibility
+    " reads getCurrentBreakpoint( ) in EVERY call site, not only in the event handler
+    DATA breakpoint TYPE string.
 
     METHODS view_display.
     METHODS on_event.

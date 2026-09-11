@@ -405,9 +405,8 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
   METHOD button_severity_set.
 
     " buttonTypeFormatter / buttonIconFormatter: Error > Warning > Success > Info
-    CLEAR btn_icon.
-    CLEAR btn_type.
-
+    btn_icon = VALUE #( ).
+    btn_type = VALUE #( ).
     LOOP AT t_messages INTO DATA(msg).
       CASE msg-type.
         WHEN `Error`.

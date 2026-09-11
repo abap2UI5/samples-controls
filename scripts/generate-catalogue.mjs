@@ -29,7 +29,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { readDescript } from './lib/descript.mjs';
 import { walkFiles } from './lib/src-tree.mjs';
-import { universe, libraryOf, descriptLibrary } from './lib/ui5-libs.mjs';
+import { libraryOf, descriptLibrary } from './lib/ui5-libs.mjs';
+import { loadUniverseSnapshot } from './lib-universe.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -113,7 +114,7 @@ const top = {
     LIVE_TEST: 'an interaction still to be confirmed in a running system',
     NOTE: 'a documented difference from the original',
   },
-  ui5Snapshot: universe.release,
+  ui5Snapshot: loadUniverseSnapshot().release,
   counts: { entries: entries.length, byStatus },
 };
 
