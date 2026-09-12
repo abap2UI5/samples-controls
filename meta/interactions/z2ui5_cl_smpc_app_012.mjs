@@ -6,7 +6,8 @@
 // NavContainer comes `back` — the 2026-08-31 routing wire
 import { waitForUi5, ui5All, waitForIdle } from '../../scripts/lib-e2e.mjs';
 
-const onPage = (suffix) => () => {
+// runs in the PAGE (stringified), so the wanted page travels as the arg
+const onPage = (suffix) => {
   const nav = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.App' && !c.bIsDestroyed && c.getDomRef());
   const cur = nav && nav.getCurrentPage();
   return !!cur && cur.getId().endsWith(suffix);
@@ -21,7 +22,9 @@ export default async (page, expect) => {
       && t.getItems().every((i) => i.getBindingContext().getProperty('CATEGORY') === 'Laptops');
   }, 'the binding_call filter never narrowed the table to Laptops');
   await waitForIdle(page);
-  const boxes = page.locator('.sapMListTbl .sapMListTblRow .sapMCb');
+  // the header row carries the select-all box and ALSO the sapMListTblRow
+  // class, so scope to the item rows (a select-all click made it Compare (11))
+  const boxes = page.locator('.sapMListTbl .sapMLIB.sapMListTblRow .sapMCb');
   if ((await boxes.count()) < 2) throw new Error('the MultiSelect table rendered no row checkboxes');
   await boxes.nth(0).click();
   await waitForIdle(page);
@@ -30,7 +33,7 @@ export default async (page, expect) => {
   await expect(compare, 'the Compare (2) button the SELECTION round trip makes visible').toBeVisibleEnabled();
   await waitForIdle(page);
   await compare.click();
-  await waitForUi5(page, onPage('page-comparison'), 'COMPARE never navigated the App to the comparison page');
+  await waitForUi5(page, onPage, 'COMPARE never navigated the App to the comparison page', 'page-comparison');
   await expect(page.locator('.sapFDynamicPage'), 'the comparison page title').toContainText('Second Page');
   await waitForUi5(page, () => ui5All().some((c) => c.getMetadata().getName() === 'sap.m.Carousel' && c.getId().endsWith('carousel-expanded') && c.getPages().length === 2),
     'the comparison Carousel did not fill with the two selected products');

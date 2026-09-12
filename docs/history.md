@@ -7,6 +7,58 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-12 — the shared ProductCollection exists once, and the Form family's comments say less
+
+Measured before the change: the demo kit's shared `ProductCollection` mock
+(`ui5/mock/products.json`, 123 rows, 20 columns) was inlined as a `VALUE #( )`
+literal in 125 port classes — 15,256 lines carrying an `HT-####` product id,
+8.8 % of the corpus, one duplicated table. The rule that a port keeps the full
+row set (`port-a-sample`) stays; the duplication went:
+
+- **`src/z2ui5_cl_smpc_mock`** is the second root-level class beside the
+  overview app and, like it, not a port (AGENTS §3): `products( )` returns
+  every row and every column of the JSON, typed once, in three
+  `VALUE #( BASE result )` chunks of at most 30,000 characters (the largest
+  statement is 30,076 characters against the 75,000 budget; 692 lines; the
+  rows are wrapped at the same five field boundaries, the longest line 210).
+  It carries an ABAP Doc header and nothing a port carries — and every gate
+  skips or sees it by shape (no `z2ui5_if_app`, not in a `src/cc/ll/`
+  package), so no generator or gate gained a name list for it.
+- **58 ports project it** with
+  `VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) )`,
+  9,484 lines removed (app 014 also lost the LOOP that rebuilt
+  `productpicurl` per row — the provider's value is the same URL). A script
+  compared every port's product literal against the JSON first; the 64 other
+  carriers stay inline for a reason each: 27 type a numeric column as
+  `string` (a packed projection would render `30.0` where the original shows
+  `30`; five of those also inline `weight_state`), 11 add a demo-only column
+  (`deliverydate`, `availablestate`, `unread`, `picurl`, …), 9 hold a
+  subset, 8 an edited or differently ordered row set (apps 356-360's
+  `AD-1000` set, app 010's own modified `products.json`, 233's three
+  sub-collections), 6 seed the single `/ProductCollection/0` record, and
+  three more are ragged or three-block tables.
+- **The row-wise shape is the 7.02 constraint, measured, not assumed**: a
+  table-level `CORRESPONDING #( )` downports to a `MOVE-CORRESPONDING` between
+  tables and abaplint's v702 check answers `MOVE-CORRESPONDING with tables
+  possible from v740sp05`. The `FOR … ( CORRESPONDING #( ) )` form and a
+  `LOOP … APPEND CORRESPONDING #( )` both downport to 0 issues; the one-liner
+  won.
+- **`data-fidelity` gates both ends**: the provider 1:1 against
+  `ui5/mock/products.json` (numbers included, no deviation escape, a single
+  wrong value fails the run by name and in every consumer), a consuming port
+  as if it had inlined the projected rows; a fixture test covers both.
+  `e2e-changed` maps a provider change to its 58 consumers instead of `all`,
+  which would have handed them to the nightly. `7bit_ascii` excludes the
+  provider and no longer needs to exclude apps 558/572/575/578 — the source of
+  that list is abap2UI5's `app-rules.json`, changed there first.
+- **The sap.ui.layout Form family (apps 312–337)** stays generator output,
+  but `scripts/form-family-to-abap.mjs` no longer writes thirteen identical
+  explanation lines into each of the 26 classes: one line per method names
+  `Page.controller.js` and points at the sidecar, whose three family NOTEs
+  (the fragment swap, the Edit clone, the `/SupplierCollection/0` flatten)
+  every one of the 26 already carried. 172 lines fewer; the byte-identity
+  test still holds.
+
 ## 2026-09-12 — the tooling half of the style sweep: five rules, a third linter config, and the overview says its catalogue is data
 
 Run alongside the corpus sweeps (TYPES layout, view-chain unrolling, the

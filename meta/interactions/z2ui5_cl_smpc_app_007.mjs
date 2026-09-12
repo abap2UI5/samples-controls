@@ -11,7 +11,8 @@
 // does not, so that leg stays with the human live check
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
-const parent = (sel, partial) => () => {
+// runs in the PAGE (stringified), so the wanted pair travels as the arg
+const parent = ({ sel, partial }) => {
   const p = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.CheckBox' && c.getText() === 'select / deselect all' && c.getDomRef());
   return !!p && p.getSelected() === sel && p.getPartiallySelected() === partial;
 };
@@ -19,11 +20,11 @@ const tick = (page, text) => page.locator('.sapMCb').filter({ hasText: new RegEx
 
 export default async (page, expect) => {
   await expect(page.locator('body'), 'the question').toContainText('Which languages(s) do you speak?');
-  await waitForUi5(page, parent(true, true), 'the parent did not boot selected+partial from the seeded true/false/true');
+  await waitForUi5(page, parent, 'the parent did not boot selected+partial from the seeded true/false/true', { sel: true, partial: true });
   await tick(page, 'German');
-  await waitForUi5(page, parent(true, false), 'ticking German did not clear the parent\'s partiallySelected expression');
+  await waitForUi5(page, parent, 'ticking German did not clear the parent\'s partiallySelected expression', { sel: true, partial: false });
   await tick(page, 'English');
   await tick(page, 'German');
   await tick(page, 'French');
-  await waitForUi5(page, parent(false, true), 'unticking all three did not clear the parent\'s selected expression');
+  await waitForUi5(page, parent, 'unticking all three did not clear the parent\'s selected expression', { sel: false, partial: true });
 };

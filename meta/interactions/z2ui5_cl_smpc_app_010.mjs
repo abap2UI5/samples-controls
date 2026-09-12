@@ -4,7 +4,8 @@
 import { waitForIdle } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
-  const row = page.locator('.sapMListTbl .sapMListTblRow').first();
+  // the header row carries sapMListTblRow too — scope to the item rows
+  const row = page.locator('.sapMListTbl .sapMLIB.sapMListTblRow').first();
   await expect(row, 'the first product row').toBeVisibleEnabled();
   await expect(page.locator('.sapMListTbl'), 'the sorted product rows').toContainText('Notebook Basic 15');
   await waitForIdle(page);

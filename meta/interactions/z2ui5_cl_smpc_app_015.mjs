@@ -5,7 +5,8 @@
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
-  await expect(page.locator('.sapMTree').first(), 'the Tree').toBeVisible();
+  // a sap.m.Tree renders with the List's sapMList class; its rows are sapMTreeItemBase
+  await expect(page.locator('.sapMTreeItemBase').first(), 'the Tree rows').toBeVisible();
   await waitForUi5(page, () => {
     const inputs = ui5All().filter((c) => c.getMetadata().getName() === 'sap.m.Input' && c.getBindingContext() && c.getDomRef());
     const v = inputs.map((i) => i.getValue());

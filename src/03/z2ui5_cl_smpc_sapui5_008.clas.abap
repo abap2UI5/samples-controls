@@ -1,4 +1,4 @@
-" @keywords networkgraph.graph quickview quickviewpage avatar quickviewgroup quickviewgroupelement graph layeredlayout node elementattribute actionbutton nodeimage
+" @keywords networkgraph.graph graph layeredlayout node elementattribute actionbutton nodeimage line quickview quickviewpage avatar quickviewgroup
 " @summary sap.suite.ui.commons.networkgraph.Graph expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
 " @origin sap.suite.ui.commons.networkgraph.Graph - https://ui5.sap.com/#/entity/sap.suite.ui.commons.networkgraph.Graph (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.commons - networkgraph.Graph</p>

@@ -10,7 +10,8 @@
 // the human live check
 import { waitForUi5, ui5All, revealInOverflow } from '../../scripts/lib-e2e.mjs';
 
-const infoVisible = (want) => () => {
+// runs in the PAGE (stringified), so the wanted flag travels as the arg
+const infoVisible = (want) => {
   const t = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.Table' && c.getDomRef());
   return !!t && !!t.getInfoToolbar() && t.getInfoToolbar().getVisible() === want;
 };
@@ -29,10 +30,10 @@ export default async (page, expect) => {
   const toggle = page.getByRole('button', { name: 'Hide/Show InfoToolbar' }).first();
   await revealInOverflow(page, toggle);
   await toggle.click();
-  await waitForUi5(page, infoVisible(false), 'pressing the ToggleButton did not hide the infoToolbar through the !pressed expression');
+  await waitForUi5(page, infoVisible, 'pressing the ToggleButton did not hide the infoToolbar through the !pressed expression', false);
   await revealInOverflow(page, toggle);
   await toggle.click();
-  await waitForUi5(page, infoVisible(true), 'pressing the ToggleButton again did not show the infoToolbar');
+  await waitForUi5(page, infoVisible, 'pressing the ToggleButton again did not show the infoToolbar', true);
   // the popin layout ComboBox: typing a matching item text commits its key
   const combo = page.locator('[id$="idPopinLayout-inner"]').first();
   await revealInOverflow(page, combo);

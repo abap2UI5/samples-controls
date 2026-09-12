@@ -4,7 +4,8 @@
 import { dispatchMouse, waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
-  const tree = page.locator('.sapMTree');
+  // a sap.m.Tree renders with the List's sapMList class, not a sapMTree one
+  const tree = page.locator('.sapMList');
   await expect(tree, 'the root Node1').toContainText('Node1');
   await expect(tree, 'the root Node2').toContainText('Node2');
   const before = await page.locator('.sapMTreeItemBase').count();
