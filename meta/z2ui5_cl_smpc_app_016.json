@@ -12,7 +12,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-08-02",
-    "note": "verified in a running system - human live check 2026-08-02 (maintainer), re-check after the 2026-07-22 roundtrip-free rework: each anchor opens the hidden DatePicker and picking a date toasts the value. Live-checked reference example for: frontend action (openBy/domRef), $event.oSource.sId anchor transport, POST_171 discipline"
+    "note": "verified in a running system - human live check 2026-08-02 (maintainer), re-check after the 2026-07-22 roundtrip-free rework: each anchor opens the hidden DatePicker and picking a date toasts the value. Live-checked reference example for: frontend action (openBy/domRef), $event.oSource.sId anchor transport, POST_171 discipline. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_016.mjs: the three anchors render with press listeners and the HiddenDP DatePicker exists with hideInput and its change wire - the openBy gesture itself loops in Popover.onfocusin headless, so the pick and the 'Date selected' toast stay with the human check)"
   },
   "deviations": [
     {

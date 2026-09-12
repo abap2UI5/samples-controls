@@ -1,5 +1,6 @@
 " @keywords ganttchartcontainer shell messagestrip scrollcontainer containertoolbar ganttchartwithtable proportionzoomstrategy timehorizon treetable column customdata text
 " @summary sap.gantt.GanttChartContainer expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.gantt.GanttChartContainer - https://ui5.sap.com/#/entity/sap.gantt.GanttChartContainer (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.gantt - GanttChartContainer</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -56,7 +57,7 @@ CLASS z2ui5_cl_smpc_sapui5_014 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS data_read.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -67,19 +68,18 @@ CLASS z2ui5_cl_smpc_sapui5_014 IMPLEMENTATION.
 
     me->client = client.
     IF client->check_on_init( ).
-
       mv_export_config = `{"columnKey": "OBJECTNAME", `      &&
                          `"leadingProperty": "OBJECTNAME", ` &&
                          `"dataType": "string", `            &&
                          `"wrap": true}`.
-      data_read( ).
+      model_init( ).
       view_display( ).
-
     ELSEIF client->check_on_navigated( ).
       view_display( ).
     ENDIF.
 
   ENDMETHOD.
+
 
   METHOD view_display.
 
@@ -207,7 +207,8 @@ CLASS z2ui5_cl_smpc_sapui5_014 IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD data_read.
+
+  METHOD model_init.
 
     s_root = VALUE #(
         children = VALUE #(
@@ -290,4 +291,5 @@ CLASS z2ui5_cl_smpc_sapui5_014 IMPLEMENTATION.
                     endtime    = `2018-11-29T17:00:00` ) ) ) ) ).
 
   ENDMETHOD.
+
 ENDCLASS.

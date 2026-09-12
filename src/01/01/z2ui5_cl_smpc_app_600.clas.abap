@@ -6,34 +6,35 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the depth in Tree.json, 1 = a root node
     TYPES:
-      BEGIN OF ty_s_node_level5,
+      BEGIN OF ty_s_leaf,
         text TYPE string,
         ref  TYPE string,
-      END OF ty_s_node_level5,
-      BEGIN OF ty_s_node_level4,
+      END OF ty_s_leaf,
+      BEGIN OF ty_s_great_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level5 WITH EMPTY KEY,
-      END OF ty_s_node_level4,
-      BEGIN OF ty_s_node_level3,
+        nodes TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+      END OF ty_s_great_grandchild,
+      BEGIN OF ty_s_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level4 WITH EMPTY KEY,
-      END OF ty_s_node_level3,
-      BEGIN OF ty_s_node_level2,
+        nodes TYPE STANDARD TABLE OF ty_s_great_grandchild WITH EMPTY KEY,
+      END OF ty_s_grandchild,
+      BEGIN OF ty_s_child,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level3 WITH EMPTY KEY,
-      END OF ty_s_node_level2,
-      BEGIN OF ty_s_node_level1,
+        nodes TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+      END OF ty_s_child,
+      BEGIN OF ty_s_root,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level2 WITH EMPTY KEY,
-      END OF ty_s_node_level1.
+        nodes TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      END OF ty_s_root.
 
     " what the view binds - rebuilt from the flat table after every drop
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_node_level1 WITH EMPTY KEY.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
     " the hierarchy the drop rewrites: one row per node, parent by text
     TYPES:
@@ -183,19 +184,19 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
     t_nodes = VALUE #( ).
     LOOP AT t_flat INTO DATA(row1) WHERE parent IS INITIAL.
-      DATA(node1) = VALUE ty_s_node_level1( text = row1-text ref = row1-ref ).
+      DATA(node1) = VALUE ty_s_root( text = row1-text ref = row1-ref ).
       DATA(parent1) = row1-text.
 
       LOOP AT t_flat INTO DATA(row2) WHERE parent = parent1.
-        DATA(node2) = VALUE ty_s_node_level2( text = row2-text ref = row2-ref ).
+        DATA(node2) = VALUE ty_s_child( text = row2-text ref = row2-ref ).
         DATA(parent2) = row2-text.
 
         LOOP AT t_flat INTO DATA(row3) WHERE parent = parent2.
-          DATA(node3) = VALUE ty_s_node_level3( text = row3-text ref = row3-ref ).
+          DATA(node3) = VALUE ty_s_grandchild( text = row3-text ref = row3-ref ).
           DATA(parent3) = row3-text.
 
           LOOP AT t_flat INTO DATA(row4) WHERE parent = parent3.
-            DATA(node4) = VALUE ty_s_node_level4( text = row4-text ref = row4-ref ).
+            DATA(node4) = VALUE ty_s_great_grandchild( text = row4-text ref = row4-ref ).
             DATA(parent4) = row4-text.
 
             LOOP AT t_flat INTO DATA(row5) WHERE parent = parent4.

@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-27",
-    "note": "verified in a running system 2026-07-27 - sap.ui.table RowModes renders the regenerated 123-row set; rowMode switching works"
+    "note": "verified in a running system 2026-07-27 - sap.ui.table RowModes renders the regenerated 123-row set; rowMode switching works. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_164.mjs: the rows binding carries the 123-row set, the table boots in Fixed, and picking Auto from the row-mode control (a Select inside the footer's overflow popover at the smoke's viewport) switches the Table rowMode through the shared bound field)"
   },
   "deviations": [
     {

@@ -201,7 +201,8 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
-                                    )->a( n = `value`            v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna.`
+                                    )->a( n = `value`            v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. ` &&
+                                                                     `Cras quis arcu magna.`
                                     )->a( n = `announcementText` v = `Lorem ipsum`
 
                             )->end(
@@ -346,7 +347,8 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                          `,"path":"/specialDate"},"legendItem":{"template":{"category":"{category}","text":"{text}","type":"{type}"},"path":"/legendItem"}` &&
                          `,"moreItems":{"actions":[{"type":"Navigation","enabled":true,"url":"http://sap.com"}]}}}}`.
 
-    manifest_stackedcolumn = `{"_version":"1.81.0","sap.app":{"id":"sample.CardsLayout.model.Analytical","type":"card"},"sap.card":{"type":"Analytical","header":{"type":"Numeric","data":{"json":{"n":"43.2","u":"%","trend":"Down","valueColor":` &&
+    manifest_stackedcolumn = `{"_version":"1.81.0","sap.app":{"id":"sample.CardsLayout.model.Analytical","type":"card"},"sap.card":{"type":"Analytical","header":{"type":"Numeric","data":{"json":{"n":"43.2","u":"%","trend":"Down","valueC` &&
+                             `olor":` &&
                               `"Good"}},"title":"Failure Breakdown - Q1, 2019","mainIndicator":{"number":"{n}","unit":"{u}","trend":"{trend}","state":"{valueColor}"}` &&
                               `},"content":{"chartType":"StackedColumn","legend":{"visible":true,"position":"Bottom","alignment":"Left"},"plotArea":{"dataLabel":{"visible":false,"showTotal":false}` &&
                               `,"categoryAxisText":{"visible":false},"valueAxisText":{"visible":false}},"title":{"visible":false},"measureAxis":"valueAxis","dimensionAxis":"categoryAxis","data":{"json":{"list":[{"Category":"Weather",` &&
@@ -369,7 +371,8 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                       ` Callifornia","info":"236","infoState":"None"}]},"item":{"icon":{"src":"{icon}"},"title":{"value":"{name}"},"description":{"value":"{description}"}` &&
                       `,"info":{"value":"{info}","state":"{infoState}"}}}}}`.
 
-    manifest_list2 = `{"_version":"1.81.0","sap.app":{"id":"sample.CardsLayout.model.list2","type":"card"},"sap.card":{"type":"List","header":{"title":"Incidents in the last 24 hours","subtitle":"Suddent storm wind damaged 3 polinating hives",` &&
+    manifest_list2 = `{"_version":"1.81.0","sap.app":{"id":"sample.CardsLayout.model.list2","type":"card"},"sap.card":{"type":"List","header":{"title":"Incidents in the last 24 hours","subtitle":"Suddent storm wind damaged 3 polinating ` &&
+                     `hives",` &&
                       `"icon":{"src":"https://sdk.openui5.org/test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/CompanyLogo.png"}` &&
                       `},"content":{"data":{"json":[{"name":"Alain Chevalier","icon":"https://sdk.openui5.org/test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_1.png","description":"On Site"}` &&
                       `,{"name":"Yolanda Barrueco","icon":"https://sdk.openui5.org/test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_2.png","description":"Travelling to Idaho"}` &&

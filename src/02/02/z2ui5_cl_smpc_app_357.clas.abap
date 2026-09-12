@@ -500,7 +500,7 @@ CLASS z2ui5_cl_smpc_app_357 IMPLEMENTATION.
       ( name = `Smartphone Beta` productid = `HT-9998` category = `Smartphones` suppliername = `Meliva` price = `699.0` currencycode = `EUR` width = `0.48` height = `0.05` depth = `0.31`
         dimunit = `M` )
       ( name = `Maxi Tablet` productid = `HT-9999` category = `Tablets` suppliername = `Mexican Oil Trading Company` price = `749.0` currencycode = `MXN` width = `0.48` height = `0.05` depth = `0.31`
-        dimunit = `M` ).
+        dimunit = `M` ) ).
 
   ENDMETHOD.
 

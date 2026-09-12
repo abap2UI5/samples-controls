@@ -6,40 +6,41 @@ CLASS z2ui5_cl_smpc_app_015 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the depth in Tree.json, 1 = a root node
     TYPES:
-      BEGIN OF ty_s_node5,
+      BEGIN OF ty_s_leaf,
         text TYPE string,
         ref  TYPE string,
-      END OF ty_s_node5.
-    TYPES ty_t_node5 TYPE STANDARD TABLE OF ty_s_node5 WITH EMPTY KEY.
+      END OF ty_s_leaf.
+    TYPES ty_t_leaf TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY.
     TYPES:
-      BEGIN OF ty_s_node4,
+      BEGIN OF ty_s_great_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE ty_t_node5,
-      END OF ty_s_node4.
-    TYPES ty_t_node4 TYPE STANDARD TABLE OF ty_s_node4 WITH EMPTY KEY.
+        nodes TYPE ty_t_leaf,
+      END OF ty_s_great_grandchild.
+    TYPES ty_t_great_grandchild TYPE STANDARD TABLE OF ty_s_great_grandchild WITH EMPTY KEY.
     TYPES:
-      BEGIN OF ty_s_node3,
+      BEGIN OF ty_s_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE ty_t_node4,
-      END OF ty_s_node3.
-    TYPES ty_t_node3 TYPE STANDARD TABLE OF ty_s_node3 WITH EMPTY KEY.
+        nodes TYPE ty_t_great_grandchild,
+      END OF ty_s_grandchild.
+    TYPES ty_t_grandchild TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY.
     TYPES:
-      BEGIN OF ty_s_node2,
+      BEGIN OF ty_s_child,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE ty_t_node3,
-      END OF ty_s_node2.
-    TYPES ty_t_node2 TYPE STANDARD TABLE OF ty_s_node2 WITH EMPTY KEY.
+        nodes TYPE ty_t_grandchild,
+      END OF ty_s_child.
+    TYPES ty_t_child TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY.
     TYPES:
-      BEGIN OF ty_s_node1,
+      BEGIN OF ty_s_root,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE ty_t_node2,
-      END OF ty_s_node1.
-    DATA t_tree TYPE STANDARD TABLE OF ty_s_node1 WITH EMPTY KEY.
+        nodes TYPE ty_t_child,
+      END OF ty_s_root.
+    DATA t_tree TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.

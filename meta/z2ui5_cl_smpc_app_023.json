@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port"
+    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_023.mjs: clicking the first FeedContent raises the client-composed 'The feed content is pressed.' toast, and the second renders its value 999)"
   },
   "deviations": []
 }

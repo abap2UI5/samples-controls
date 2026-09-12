@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-08-02",
-    "note": "verified in a running system - human live check 2026-08-02 (maintainer): all anchors open the hideInput picker and the change toast carries the picked value."
+    "note": "verified in a running system - human live check 2026-08-02 (maintainer): all anchors open the hideInput picker and the change toast carries the picked value. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_256.mjs: the three anchors render with press listeners and the HiddenDRS DateRangeSelection exists with hideInput and its change wire - the openBy gesture loops in Popover.onfocusin headless, so the pick and its toast stay with the human check)"
   },
   "deviations": [
     {

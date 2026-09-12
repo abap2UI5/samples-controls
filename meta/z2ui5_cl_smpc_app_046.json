@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_046.mjs: the ScrollContainer renders as a vertical scroller and the Image width resolves the device> expression to 100em)"
   },
   "deviations": [
     {

@@ -663,7 +663,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
       ( productid = `HT-9999` name = `Maxi Tablet` suppliername = `Titanium` width = `48` depth = `31` height = `4.5` dimunit = `cm` weightmeasure = `3.8` weightunit = `KG` price = `749`
         currencycode = `EUR` )
       ( productid = `PF-1000` name = `Flyer` suppliername = `Titanium` width = `46` depth = `30` height = `3` dimunit = `cm` weightmeasure = `0.01` weightunit = `KG` price = `0`
-        currencycode = `EUR` ).
+        currencycode = `EUR` ) ).
 
   ENDMETHOD.
 

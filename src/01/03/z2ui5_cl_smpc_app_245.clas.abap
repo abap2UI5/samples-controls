@@ -522,7 +522,7 @@ CLASS z2ui5_cl_smpc_app_245 IMPLEMENTATION.
       ( suppliername = `Titanium` name = `Maxi Tablet` productid = `HT-9999` width = `48` depth = `31` height = `4.5` dimunit = `cm` weightmeasure = `3.8` weightunit = `KG` price = `749`
         currencycode = `EUR` )
       ( suppliername = `Titanium` name = `Flyer` productid = `PF-1000` width = `46` depth = `30` height = `3` dimunit = `cm` weightmeasure = `0.01` weightunit = `KG` price = `0`
-        currencycode = `EUR` ).
+        currencycode = `EUR` ) ).
 
     " weightState is business logic (parseFloat + Success/Warning/Error
     " thresholds) - computed in ABAP per the thin-frontend principle, not in a

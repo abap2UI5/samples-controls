@@ -12,7 +12,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_044.mjs: the PDFViewer dependent boots with an empty source, a real click on image1 round-trips SHOW_PDF so the bound source ends in sample1.pdf and the control_by_id open follow-up opens the 'My Custom Title' Dialog - the PDF body itself cannot render headless, which UI5 reports in its own text)"
   },
   "deviations": [
     {

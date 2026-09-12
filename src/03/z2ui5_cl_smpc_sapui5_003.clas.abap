@@ -1,5 +1,6 @@
 " @keywords interactivebarchart shell tabcontainer tab grid link text griddata flexbox interactivebarchartbar verticallayout
 " @summary sap.suite.ui.microchart.InteractiveBarChart expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.suite.ui.microchart.InteractiveBarChart - https://ui5.sap.com/#/entity/sap.suite.ui.microchart.InteractiveBarChart/sample/sap.suite.ui.microchart.sample.InteractiveBarChart (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.microchart - InteractiveBarChart</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -27,6 +28,18 @@ CLASS z2ui5_cl_smpc_sapui5_003 DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
+
+  METHOD z2ui5_if_app~main.
+
+    me->client = client.
+    IF client->check_on_navigated( ).
+      view_display( ).
+    ELSEIF client->check_on_event( ).
+      on_event( ).
+    ENDIF.
+
+  ENDMETHOD.
+
 
   METHOD view_display.
 
@@ -179,17 +192,6 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
                                  ).
 
     client->view_display( view->stringify( ) ).
-
-  ENDMETHOD.
-
-  METHOD z2ui5_if_app~main.
-
-    me->client = client.
-    IF client->check_on_navigated( ).
-      view_display( ).
-    ELSEIF client->check_on_event( ).
-      on_event( ).
-    ENDIF.
 
   ENDMETHOD.
 

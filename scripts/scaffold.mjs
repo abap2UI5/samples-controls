@@ -26,6 +26,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { libFolder, catFolder, CAT_CTEXT, LIB_CTEXT } from './lib-packages.mjs';
 import { isSkippedDir } from './lib/src-tree.mjs';
+import { clipAtWord } from './lib/clip.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
@@ -297,7 +298,7 @@ const clasXml = `﻿<?xml version="1.0" encoding="utf-8"?>
    <VSEOCLASS>
     <CLSNAME>${cls.toUpperCase()}</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>${lib} - ${name}</DESCRIPT>
+    <DESCRIPT>${clipAtWord(`${lib} - ${name}`, 60)}</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>

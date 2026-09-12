@@ -607,7 +607,7 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
       ( name = `Maxi Tablet` category = `Tablets` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9999.jpg` available = abap_true
         availablestate = `Success` status = `Available` price = 749 currencycode = `EUR` quantity = 20 )
       ( name = `Flyer` category = `Accessories` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` available = abap_false
-        availablestate = `Error` status = `Out of Stock` price = 0 currencycode = `EUR` quantity = 33 ).
+        availablestate = `Error` status = `Out of Stock` price = 0 currencycode = `EUR` quantity = 33 ) ).
 
   ENDMETHOD.
 

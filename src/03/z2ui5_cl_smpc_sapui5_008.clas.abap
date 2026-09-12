@@ -1,5 +1,6 @@
-" @keywords networkgraph.graph quickview quickviewpage avatar quickviewgroup quickviewgroupelement graph layeredlayout node elementattribute actionbutton nodeimage
+" @keywords networkgraph.graph graph layeredlayout node elementattribute actionbutton nodeimage line quickview quickviewpage avatar quickviewgroup
 " @summary sap.suite.ui.commons.networkgraph.Graph expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.suite.ui.commons.networkgraph.Graph - https://ui5.sap.com/#/entity/sap.suite.ui.commons.networkgraph.Graph (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.commons - networkgraph.Graph</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -45,12 +46,12 @@ CLASS z2ui5_cl_smpc_sapui5_008 DEFINITION PUBLIC.
       END OF ty_s_json1.
     DATA mt_data TYPE ty_s_json1.
 
+    METHODS view_display.
+    METHODS on_event.
     METHODS detail_popover
       IMPORTING
         id   TYPE string
         node TYPE ty_s_nodes2.
-    METHODS on_event.
-    METHODS view_display.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -60,78 +61,76 @@ ENDCLASS.
 
 CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
-  METHOD detail_popover.
+  METHOD z2ui5_if_app~main.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    me->client = client.
+    IF client->check_on_init( ).
+      mt_data = VALUE #( nodes             = VALUE #( ( id = `Dinter`
+                                            title          = `Sophie Dinter`
+                                            src            = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_IngallsB.jpg`
+                                            attributes     = VALUE #( ( label = 35 value = `` ) )
+                                            team           = 13
+                                            location       = `Walldorf`
+                                            position       = `lobal Solutions Manager`
+                                            email          = `sophie.dinter@example.com`
+                                            phone          = `+000 423 230 000`
+                                          )
+                                          ( id         = `Ninsei`
+                                            title      = `Yamasaki Ninsei`
+                                            src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_GordonR.jpg`
+                                            attributes = VALUE #( ( label = 9 value = `` ) )
+                                            supervisor = `Dinter`
+                                            team       = 9
+                                            location   = `Walldorf`
+                                            position   = `Lead Markets Manage`
+                                            email      = `yamasaki.ninsei@example.com`
+                                            phone      = `+000 423 230 002`
+                                         )
+                                         ( id         = `Mills`
+                                           title      = `Henry Mills`
+                                           src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_MillerM.jpg`
+                                           attributes = VALUE #( ( label = 4 value = `` ) )
+                                           supervisor = `Ninsei`
+                                           team       = 4
+                                           location   = `Praha`
+                                           position   = `Sales Manager`
+                                           email      = `henry.mills@example.com`
+                                           phone      = `+000 423 232 003`
+                                        )
+                                        ( id         = `Polak`
+                                          title      = `Adam Polak`
+                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_PlatteR.jpg`
+                                          supervisor = `Mills`
+                                          location   = `Praha`
+                                          position   = `Marketing Specialist`
+                                          email      = `adam.polak@example.com`
+                                          phone      = `+000 423 232 004`
+                                       )
+                                       ( id          = `Sykorova`
+                                          title      = `Vlasta Sykorova`
+                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_SpringS.jpg`
+                                          supervisor = `Mills`
+                                          location   = `Praha`
+                                          position   = `Human Assurance Officer`
+                                          email      = `vlasta.sykorova@example.com`
+                                          phone      = `+000 423 232 005`
+                                       )
+                                     )
+                                     lines = VALUE #( ( from = `Dinter` to = `Ninsei` )
+                                                      ( from = `Ninsei` to = `Mills` )
+                                                      ( from = `Mills`  to = `Polak` )
+                                                      ( from = `Mills`  to = `Sykorova` )
+                                    ) ).
 
-    DATA(group) = view->ele( n = `FragmentDefinition` ns = `core`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-
-        )->ele( `QuickView`
-            )->a( n = `placement` v = `Left`
-
-            )->ele( `QuickViewPage`
-                )->a( n = `header` v = `Employee`
-                )->a( n = `title`       t = node-title
-                )->a( n = `description` t = node-position
-
-                )->ele( `avatar`
-                    )->tag( `Avatar`
-                        )->a( n = `src`          t = node-src
-                        )->a( n = `displayShape` v = `Square`
-
-                )->end(
-
-                )->ele( `QuickViewGroup`
-                    )->a( n = `heading` v = `Contact Detail`
-
-                    )->tag( `QuickViewGroupElement`
-                        )->a( n = `label` v = `Location`
-                        )->a( n = `value` t = node-location
-                    )->tag( `QuickViewGroupElement`
-                        )->a( n = `label` v = `Mobile`
-                        )->a( n = `value` t = node-phone
-                        )->a( n = `type` v = `phone`
-                    )->tag( `QuickViewGroupElement`
-                        )->a( n = `label` v = `Email`
-                        )->a( n = `value`        t = node-email
-                        )->a( n = `type` v = `email`
-                        )->a( n = `emailSubject` t = |Contact{ node-id }|
-
-                )->end( ).
-
-    IF node-team IS NOT INITIAL.
-      group->ele( `QuickViewGroup`
-          )->a( n = `heading` v = `Team`
-
-          )->tag( `QuickViewGroupElement`
-              )->a( n = `label` v = `Size`
-              )->a( n = `value` t = CONV string( node-team ) ).
+      view_display( ).
+    ELSEIF client->check_on_navigated( ).
+      view_display( ).
     ENDIF.
 
-    client->popover_display( xml = view->stringify( ) by_id = id ).
+    on_event( ).
 
   ENDMETHOD.
 
-  METHOD on_event.
-
-    CASE client->get_event( ).
-      WHEN `LINE_PRESS`.
-        client->message_toast_display( `LINE_PRESSED` ).
-
-      WHEN `DETAIL_POPOVER`.
-        DATA(t_arg) = client->get( )-t_event_arg.
-
-        READ TABLE mt_data-nodes INTO DATA(s_node) WITH KEY id = t_arg[ 2 ].
-
-        IF sy-subrc = 0.
-          detail_popover( id   = t_arg[ 1 ]
-                          node = s_node ).
-        ENDIF.
-    ENDCASE.
-
-  ENDMETHOD.
 
   METHOD view_display.
 
@@ -223,76 +222,78 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_app~main.
 
-    me->client = client.
+  METHOD on_event.
 
-    IF client->check_on_init( ).
+    CASE client->get_event( ).
+      WHEN `LINE_PRESS`.
+        client->message_toast_display( `LINE_PRESSED` ).
 
-      mt_data = VALUE #( nodes             = VALUE #( ( id = `Dinter`
-                                            title          = `Sophie Dinter`
-                                            src            = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_IngallsB.jpg`
-                                            attributes     = VALUE #( ( label = 35 value = `` ) )
-                                            team           = 13
-                                            location       = `Walldorf`
-                                            position       = `lobal Solutions Manager`
-                                            email          = `sophie.dinter@example.com`
-                                            phone          = `+000 423 230 000`
-                                          )
-                                          ( id         = `Ninsei`
-                                            title      = `Yamasaki Ninsei`
-                                            src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_GordonR.jpg`
-                                            attributes = VALUE #( ( label = 9 value = `` ) )
-                                            supervisor = `Dinter`
-                                            team       = 9
-                                            location   = `Walldorf`
-                                            position   = `Lead Markets Manage`
-                                            email      = `yamasaki.ninsei@example.com`
-                                            phone      = `+000 423 230 002`
-                                         )
-                                         ( id         = `Mills`
-                                           title      = `Henry Mills`
-                                           src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_MillerM.jpg`
-                                           attributes = VALUE #( ( label = 4 value = `` ) )
-                                           supervisor = `Ninsei`
-                                           team       = 4
-                                           location   = `Praha`
-                                           position   = `Sales Manager`
-                                           email      = `henry.mills@example.com`
-                                           phone      = `+000 423 232 003`
-                                        )
-                                        ( id         = `Polak`
-                                          title      = `Adam Polak`
-                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_PlatteR.jpg`
-                                          supervisor = `Mills`
-                                          location   = `Praha`
-                                          position   = `Marketing Specialist`
-                                          email      = `adam.polak@example.com`
-                                          phone      = `+000 423 232 004`
-                                       )
-                                       ( id          = `Sykorova`
-                                          title      = `Vlasta Sykorova`
-                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_SpringS.jpg`
-                                          supervisor = `Mills`
-                                          location   = `Praha`
-                                          position   = `Human Assurance Officer`
-                                          email      = `vlasta.sykorova@example.com`
-                                          phone      = `+000 423 232 005`
-                                       )
-                                     )
-                                     lines = VALUE #( ( from = `Dinter` to = `Ninsei` )
-                                                      ( from = `Ninsei` to = `Mills` )
-                                                      ( from = `Mills`  to = `Polak` )
-                                                      ( from = `Mills`  to = `Sykorova` )
-                                    ) ).
+      WHEN `DETAIL_POPOVER`.
+        DATA(t_arg) = client->get( )-t_event_arg.
 
-      view_display( ).
-    ELSEIF client->check_on_navigated( ).
-      view_display( ).
+        READ TABLE mt_data-nodes INTO DATA(s_node) WITH KEY id = t_arg[ 2 ].
 
+        IF sy-subrc = 0.
+          detail_popover( id   = t_arg[ 1 ]
+                          node = s_node ).
+        ENDIF.
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD detail_popover.
+
+    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+
+    DATA(group) = view->ele( n = `FragmentDefinition` ns = `core`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+
+        )->ele( `QuickView`
+            )->a( n = `placement` v = `Left`
+
+            )->ele( `QuickViewPage`
+                )->a( n = `header` v = `Employee`
+                )->a( n = `title`       t = node-title
+                )->a( n = `description` t = node-position
+
+                )->ele( `avatar`
+                    )->tag( `Avatar`
+                        )->a( n = `src`          t = node-src
+                        )->a( n = `displayShape` v = `Square`
+
+                )->end(
+
+                )->ele( `QuickViewGroup`
+                    )->a( n = `heading` v = `Contact Detail`
+
+                    )->tag( `QuickViewGroupElement`
+                        )->a( n = `label` v = `Location`
+                        )->a( n = `value` t = node-location
+                    )->tag( `QuickViewGroupElement`
+                        )->a( n = `label` v = `Mobile`
+                        )->a( n = `value` t = node-phone
+                        )->a( n = `type` v = `phone`
+                    )->tag( `QuickViewGroupElement`
+                        )->a( n = `label` v = `Email`
+                        )->a( n = `value`        t = node-email
+                        )->a( n = `type` v = `email`
+                        )->a( n = `emailSubject` t = |Contact{ node-id }|
+
+                )->end( ).
+
+    IF node-team IS NOT INITIAL.
+      group->ele( `QuickViewGroup`
+          )->a( n = `heading` v = `Team`
+
+          )->tag( `QuickViewGroupElement`
+              )->a( n = `label` v = `Size`
+              )->a( n = `value` t = CONV string( node-team ) ).
     ENDIF.
 
-    on_event( ).
+    client->popover_display( xml = view->stringify( ) by_id = id ).
 
   ENDMETHOD.
 

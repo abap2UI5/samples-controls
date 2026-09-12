@@ -63,6 +63,7 @@ CLASS z2ui5_cl_smpc_app_474 IMPLEMENTATION.
                     )->a( n = `justifyContent` v = `Center`
                     )->a( n = `alignItems`     v = `Center`
 
+                    " `<a >` with the space is the original's own &lt;a &gt; - not a stripped href
                     )->tag( n = `HTML` ns = `core`
                         )->a( n = `content` v = `<a >Item 1</a>`
                     )->tag( n = `HTML` ns = `core`

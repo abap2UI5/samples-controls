@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_039.mjs: F4 on the MultiComboBox opens the picker with 11 GroupHeaderListItems in SUPPLIERNAME order from Alpha Printers to Ultrasonic United, with the products grouped under them)"
   },
   "deviations": [
     {

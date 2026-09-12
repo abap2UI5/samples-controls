@@ -12,7 +12,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_042.mjs: the ObjectStatus grid renders and pressing the active 'Damaged' status round-trips STATUS_PRESSED, the popup_display 'Error description' Dialog shows its text and OK's popup_close closes it)"
   },
   "deviations": [
     {

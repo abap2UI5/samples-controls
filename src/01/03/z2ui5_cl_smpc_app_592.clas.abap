@@ -47,10 +47,10 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
     " same Address form - which is the sample: lazy loading WITHOUT custom blocks
     DATA(sections) = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns`     v = `sap.uxap`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -114,7 +114,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
 
                           )->ele( n = `VBox` ns = `m`
                               )->a( n = `class` v = `sapUiSmallMargin`
-                              )->ele( n = `SimpleForm` ns = `f`
+                              )->ele( n = `SimpleForm` ns = `form`
                                   )->a( n = `maxContainerCols` v = `2`
                                   )->a( n = `editable`         v = `false`
                                   )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -128,7 +128,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                   )->a( n = `width`            v = `auto`
                                   )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
 
-                                  )->ele( n = `content` ns = `f`
+                                  )->ele( n = `content` ns = `form`
                                       )->tag( n = `Label` ns = `m`
                                           )->a( n = `text` v = `Name`
                                       )->tag( n = `Text` ns = `m`

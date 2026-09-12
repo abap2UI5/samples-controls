@@ -55,10 +55,7 @@ CLASS z2ui5_cl_smpc_app_306 IMPLEMENTATION.
         " rule behind it has to come with it. \{ \} escaped: the XMLView parser
         " reads an unescaped brace as a binding
         )->tag( n = `HTML` ns = `core`
-            )->a( n = `content` v = `<style>.viewPadding\{padding:1rem\}` &&
-                                    `.sap-phone .viewPadding\{padding:0rem\}` &&
-                                    `.sap-phone .sapUiCal\{position:relative\}` &&
-                                    `.labelMarginLeft\{margin:1rem\}</style>`
+            )->a( n = `content` v = `<style>.viewPadding\{padding:1rem\}.sap-phone .viewPadding\{padding:0rem\}.sap-phone .sapUiCal\{position:relative\}.labelMarginLeft\{margin:1rem\}</style>`
         )->ele( n = `VerticalLayout` ns = `l`
 
             )->tag( n = `Calendar` ns = `u`
@@ -69,12 +66,18 @@ CLASS z2ui5_cl_smpc_app_306 IMPLEMENTATION.
                 " shift the day east of Greenwich
                 )->a( n = `select`            v = client->_event( val   = `CAL_SELECT`
                                                                   t_arg = VALUE #(
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getFullYear() : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getMonth() + 1 : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getDate() : 0` ) ) )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? ` &&
+                                                                      `$event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && ` &&
+                                                                      `$event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() ` &&
+                                                                      `: 0` )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getFullYear() ` &&
+                                                                      `: 0` )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && ` &&
+                                                                      `$event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getMonth() + 1 : 0` )
+                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getDate() : ` &&
+                                                                      `0` ) ) )
                 )->a( n = `intervalSelection` v = `true`
                 " weekNumberSelect is @since 1.56 on Calendar (1.60 is the Month
                 " event of the same name) - the weekDays DateRange and the week

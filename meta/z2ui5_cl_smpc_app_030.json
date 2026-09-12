@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_030.mjs: the IconTabBar resolves the device> expression to expanded on desktop, the bound Products list renders with a counter per row, and clicking the Attachments filter shows 'Attachments go here ...' with selectedKey attachments)"
   },
   "deviations": [
     {

@@ -103,6 +103,104 @@ test('data-fidelity: invented value and unknown asset fail, verbatim data passes
   }
 });
 
+/*
+ * The shared mock provider (AGENTS §3): a port that projects
+ * z2ui5_cl_smpc_mock=>products( ) is judged as if it had inlined the rows,
+ * and the provider itself is compared 1:1 with ui5/mock/products.json —
+ * numbers included, which the port-level comparison deliberately skips.
+ * Built on a copy of the fixture root so the goldens above stay untouched.
+ */
+test('data-fidelity: a provider-fed port is judged through the provider, and the provider 1:1 against its mock', () => {
+  const root = makeFixtureRoot();
+  try {
+    fs.mkdirSync(path.join(root, 'ui5', 'mock'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ui5', 'mock', 'products.json'), JSON.stringify({
+      ProductCollection: [
+        { ProductId: 'HT-1000', Name: 'Notebook Basic 15', DateOfSale: '2017-03-26', Price: 956, Width: 30 },
+        { ProductId: 'HT-1001', Name: 'Notebook Basic 17', Price: 1249, Width: 29 },
+      ],
+    }));
+    const provider = path.join(root, 'src', 'z2ui5_cl_smpc_mock.clas.abap');
+    fs.writeFileSync(provider, `CLASS z2ui5_cl_smpc_mock DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid  TYPE string,
+        name       TYPE string,
+        dateofsale TYPE string,
+        price      TYPE p LENGTH 8 DECIMALS 2,
+        width      TYPE p LENGTH 4 DECIMALS 1,
+      END OF ty_s_product.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    CLASS-METHODS products RETURNING VALUE(result) TYPE ty_t_product.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS z2ui5_cl_smpc_mock IMPLEMENTATION.
+  METHOD products.
+    result = VALUE #(
+      ( productid = \`HT-1000\` name = \`Notebook Basic 15\` dateofsale = \`2017-03-26\` price = \`956\` width = \`30\` ) ).
+    result = VALUE #( BASE result
+      ( productid = \`HT-1001\` name = \`Notebook Basic 17\` dateofsale = \`\` price = \`1249\` width = \`29\` ) ).
+  ENDMETHOD.
+ENDCLASS.
+`);
+    fs.writeFileSync(path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_003.clas.abap'), `CLASS z2ui5_cl_smpc_app_003 DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES z2ui5_if_app.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid TYPE string,
+        name      TYPE string,
+        price     TYPE p LENGTH 8 DECIMALS 2,
+      END OF ty_s_product.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products TYPE ty_t_product.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS z2ui5_cl_smpc_app_003 IMPLEMENTATION.
+  METHOD z2ui5_if_app~main.
+    t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) ).
+  ENDMETHOD.
+ENDCLASS.
+`);
+    fs.writeFileSync(path.join(root, 'meta', 'z2ui5_cl_smpc_app_003.json'), JSON.stringify({
+      class: 'z2ui5_cl_smpc_app_003', sample: 'sap.m.sample.FixtureProvider', entity: 'sap.m.List',
+      file: 'src/01/z2ui5_cl_smpc_app_003.clas.abap', batch: 'b01',
+      audit: { frontend_action: false, event_t_arg: false }, status: 'generated', checked: null, deviations: [],
+    }));
+
+    // the verbatim provider passes, and the port is counted as judged through it
+    let r = run(root, 'data-fidelity.mjs');
+    assert.ok(!r.out.includes('z2ui5_cl_smpc_mock:'), `the verbatim provider must produce no finding:\n${r.out}`);
+    assert.ok(!r.out.includes('z2ui5_cl_smpc_app_003:'), `the provider-fed port must produce no finding:\n${r.out}`);
+    assert.match(r.out, /3 ports checked \(1 via z2ui5_cl_smpc_mock, itself compared 1:1 with ui5\/mock\/products\.json\)/);
+
+    // a wrong string AND a wrong number in the provider fail by name — and the
+    // port that projects the row is reported like an inlined table would be
+    fs.writeFileSync(provider, fs.readFileSync(provider, 'utf8')
+      .replace('`Notebook Basic 17`', '`Notebook Basic 99`').replace('price = `1249`', 'price = `1250`'));
+    r = run(root, 'data-fidelity.mjs');
+    assert.equal(r.code, 1);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: row 2 field `name` = "Notebook Basic 99" but ui5\/mock\/products\.json row has "Notebook Basic 17"/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: row 2 field `price` = "1250" but ui5\/mock\/products\.json row has 1249/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_app_003: table row 2 field `name` = "Notebook Basic 99"/);
+
+    // a column the provider drops, and a row it lacks, are shape errors of their own
+    fs.writeFileSync(provider, fs.readFileSync(provider, 'utf8')
+      .replace('        width      TYPE p LENGTH 4 DECIMALS 1,\n', '')
+      .replace(/    result = VALUE #\( BASE result[\s\S]*?\)\.\n/, ''));
+    r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: column `Width` of ui5\/mock\/products\.json is missing from ty_s_product/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: 1 rows but ui5\/mock\/products\.json ProductCollection has 2/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('generate-coverage: golden api.md and README coverage block', () => {
   const root = makeFixtureRoot();
   try {
@@ -253,6 +351,32 @@ test('abap-scope: a path in neither list, and an empty list, run the downport', 
 
   assert.equal(reachesAbap([]).run, true, 'no file list means CI could not tell - run');
   assert.equal(reachesAbap(['']).run, true, 'an empty line is not a file list either');
+});
+
+/* ------------------------------------------------- json-to-abap.mjs */
+
+/*
+ * AGENTS §8 names this emitter as the one that writes the two-line TYPES
+ * layout (`TYPES:` alone, then `BEGIN OF`), the form pattern-lint's
+ * `types-layout` holds the corpus to. An emitter that drifts back to
+ * `TYPES: BEGIN OF` on one line would put every scaffolded port straight
+ * into the lint's error list, so the shape is pinned here character for
+ * character - the TYPE column aligned, the table type on the same statement.
+ */
+test('json-to-abap: rowsToAbapType emits the two-line TYPES layout with an aligned TYPE column', async () => {
+  const { rowsToAbapType, inferFields } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const fields = inferFields([{ ProductId: 'HT-1000', Name: 'Notebook', Price: 956 }]);
+  assert.equal(rowsToAbapType(fields, 'ty_s_product', 'ty_t_product'),
+    [
+      '    TYPES:',
+      '      BEGIN OF ty_s_product,',
+      '        productid TYPE string,',
+      '        name      TYPE string,',
+      '        price     TYPE i,',
+      '      END OF ty_s_product,',
+      '      ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.',
+    ].join('\n'));
+  assert.doesNotMatch(rowsToAbapType(fields), /TYPES: BEGIN OF/, 'the one-line form is the layout the corpus retired');
 });
 
 /* ------------------------------------------- form-family-to-abap.mjs */
@@ -1021,19 +1145,36 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
     r = lint(inMain('    DATA(is_selected) = abap_true.'));
     assert.equal(r.code, 0, `is_selected is a boolean\'s English name, not a prefix\n${r.out}`);
 
-    // line-headroom: a line within 15 of 255 warns and does not fail
-    r = lint(inMain(`    " ${'x'.repeat(241)}`));
+    // line-headroom: a CODE line within 15 of 255 warns and does not fail; a
+    // full-line comment does not - the generated `" @summary` / `" @origin`
+    // headers are clipped at 255 by their own generators (AGENTS §8)
+    r = lint(inMain(`    DATA(long) = \`${'x'.repeat(227)}\`.`));
     assert.equal(r.code, 0, 'headroom is a warning');
     assert.match(r.out, /WARN .*\[line-headroom\] 247 characters/);
+    r = lint(`" @summary ${'x'.repeat(244)}\n${base}`);
+    assert.doesNotMatch(r.out, /line-headroom/, 'a header comment line is outside the rule');
 
-    // unrolled-chain-repetition: the same chain line 41 times in one method warns, 40 do not
-    // (the fixture's xmlns attribute already normalises to the same key, so it counts as one)
-    const rep = (n) => Array.from({ length: n }, () => '                )->a( n = `text` v = `hello`').join('\n');
-    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(40)}\n                )->a( n = \`t\` v = \`h\` ).`));
-    assert.equal(r.code, 0, 'repetition is a warning');
-    assert.match(r.out, /WARN .*\[unrolled-chain-repetition\] view_display: 41 x \)->a\( n = `~` v = `~`/);
-    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(39)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    // unrolled-chain-repetition: the same 5-line BLOCK (values masked, names
+    // kept) 41 times in one method fails, 40 do not - and 41 identical single
+    // lines do not, because a form view with 189 Labels is not an unrolled loop
+    const block = (i) => [
+      '                )->tag( `Button`',
+      '                    )->a( n = `id` v = `btn' + i + '`',
+      '                    )->a( n = `text` v = `Button ' + i + '`',
+      '                    )->a( n = `press` v = `x`',
+      '                    )->a( n = `type` v = `Default`',
+    ].join('\n');
+    const blocks = (n) => Array.from({ length: n }, (_, i) => block(i)).join('\n');
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${blocks(41)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.equal(r.code, 1, 'an unrolled block over the budget fails');
+    assert.match(r.out, /ERROR .*\[unrolled-chain-repetition\] view_display: a 5-line block repeats 41 x/);
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${blocks(40)}\n                )->a( n = \`t\` v = \`h\` ).`));
     assert.ok(!/unrolled-chain-repetition/.test(r.out), '40 is the budget, not over it');
+    // a long run of varied lines (a form view: many controls, no period) stays under the budget
+    const names = ['text', 'tooltip', 'width', 'class', 'visible', 'enabled', 'design'];
+    const varied = (n) => Array.from({ length: n }, (_, i) => '                )->a( n = `' + names[i % names.length] + '` v = `v`').join('\n');
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${varied(120)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.ok(!/unrolled-chain-repetition/.test(r.out), 'varied lines are content, not an unrolled loop');
 
     // statement-too-long: one statement over the budget fails, and the finding names the method
     r = lint(inMain(`    DATA(blob) = \`${'x'.repeat(76000)}\`.`));
@@ -1128,6 +1269,28 @@ test('e2e-changed: a port, its sidecar and its interaction module all name the p
 
   // the overview app is a port for this purpose — it sits directly under src/
   assert.deepEqual(portsToRun(['src/z2ui5_cl_smpc_app_000.clas.abap']).classes, ['z2ui5_cl_smpc_app_000']);
+});
+
+test('e2e-changed: the shared mock provider boots its consumers, not `all`', async () => {
+  const { portsToRun, providerConsumers } = await import('../e2e-changed.mjs');
+
+  // the consumers are read off src/; injected here so the test owns its corpus
+  const consumers = () => ['z2ui5_cl_smpc_app_014', 'z2ui5_cl_smpc_app_009'];
+  const r = portsToRun(['src/z2ui5_cl_smpc_mock.clas.abap'], { consumers });
+  assert.equal(r.all, false, 'a provider change reaches a known subset, not every port');
+  assert.deepEqual(r.classes, ['z2ui5_cl_smpc_app_009', 'z2ui5_cl_smpc_app_014']);
+  assert.match(r.reason, /2 of them consumers of z2ui5_cl_smpc_mock/);
+
+  // unioned with the ports the change touches directly, still sorted
+  assert.deepEqual(
+    portsToRun(['src/z2ui5_cl_smpc_mock.clas.abap', 'src/01/01/z2ui5_cl_smpc_app_462.clas.abap'], { consumers }).classes,
+    ['z2ui5_cl_smpc_app_009', 'z2ui5_cl_smpc_app_014', 'z2ui5_cl_smpc_app_462'],
+  );
+
+  // the real reader finds the consumers by the call they write, and only ports
+  const real = providerConsumers();
+  assert.ok(real.length > 0, 'the corpus has consumers of the provider');
+  assert.ok(real.every((c) => /^z2ui5_cl_smpc_app_\d+$/.test(c)));
 });
 
 test('e2e-changed: prose and generated artefacts boot nothing', async () => {

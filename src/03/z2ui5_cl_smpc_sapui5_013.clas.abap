@@ -1,5 +1,6 @@
 " @keywords ganttchartwithtable messagestrip ganttchartcontainer proportionzoomstrategy timehorizon treetable column text ganttrowsettings task
 " @summary sap.gantt.GanttChartWithTable expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.gantt.GanttChartWithTable - https://ui5.sap.com/#/entity/sap.gantt.GanttChartWithTable (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.gantt - GanttChartWithTable</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -45,7 +46,7 @@ CLASS z2ui5_cl_smpc_sapui5_013 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS data_read.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -56,15 +57,14 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
 
     me->client = client.
     IF client->check_on_init( ).
-
-      data_read( ).
+      model_init( ).
       view_display( ).
-
     ELSEIF client->check_on_navigated( ).
       view_display( ).
     ENDIF.
 
   ENDMETHOD.
+
 
   METHOD view_display.
 
@@ -164,7 +164,8 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD data_read.
+
+  METHOD model_init.
 
     s_root = VALUE #(
         children = VALUE #(
@@ -184,4 +185,5 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
                                          endtime   = `2018-11-27T09:00:00` ) ) ) ) ) ) ).
 
   ENDMETHOD.
+
 ENDCLASS.

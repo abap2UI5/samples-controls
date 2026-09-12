@@ -8,13 +8,13 @@ CLASS z2ui5_cl_smpc_app_451 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_emp,
-        name           TYPE string,
+        name         TYPE string,
         empfirstname TYPE string,
         emplastname  TYPE string,
-        position       TYPE string,
-        icon           TYPE string,
-        modified       TYPE abap_bool,
-        salary         TYPE p LENGTH 8 DECIMALS 2,
+        position     TYPE string,
+        icon         TYPE string,
+        modified     TYPE abap_bool,
+        salary       TYPE p LENGTH 8 DECIMALS 2,
       END OF ty_s_emp.
     TYPES ty_t_emp TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
 

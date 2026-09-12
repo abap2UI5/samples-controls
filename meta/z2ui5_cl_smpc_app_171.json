@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-27",
-    "note": "verified in a running system 2026-07-27 - nested transactionAmount/size + currency bindings resolve at runtime (u:Currency renders values)"
+    "note": "verified in a running system 2026-07-27 - nested transactionAmount/size + currency bindings resolve at runtime (u:Currency renders values) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_171.mjs: the nested transactionAmount/size + currency paths resolve into a u:Currency per row (560.67 EUR, USD) and the Float-typed exchange rate renders 0.85654)"
   },
   "deviations": [
     {

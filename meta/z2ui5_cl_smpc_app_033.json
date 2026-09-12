@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-19",
-    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the Currency composite binding renders the formatted price per currency (raw binding-info string over PRICE TYPE p)."
+    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the Currency composite binding renders the formatted price per currency (raw binding-info string over PRICE TYPE p). **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_033.mjs: the emphasized Link renders in the product column, the Currency composite over the packed PRICE renders 956.00 and the sorted rows render)"
   },
   "deviations": [
     {

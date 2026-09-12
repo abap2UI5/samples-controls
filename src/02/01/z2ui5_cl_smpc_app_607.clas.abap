@@ -23,12 +23,14 @@ CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
     DATA t_products   TYPE ty_t_product.
     DATA slider_value TYPE i VALUE 100.
     DATA search_query TYPE string.
-    DATA descending   TYPE abap_bool.
     DATA toggle_state TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client           TYPE REF TO z2ui5_if_client.
     DATA grouped          TYPE abap_bool.
+    " the sort direction the binding_call sorter is rebuilt with - class
+    " state no view binds, so it stays out of the model
+    DATA descending       TYPE abap_bool.
     " set by filters_apply, so a rebuilt view knows an ordering is in force.
     " It cannot be derived from grouped/descending: RESET clears both and still
     " applies a Name-ascending sorter, exactly as fnApplyFiltersAndOrdering does

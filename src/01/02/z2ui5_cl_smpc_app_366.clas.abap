@@ -14,42 +14,43 @@ CLASS z2ui5_cl_smpc_app_366 DEFINITION PUBLIC.
     " node keeps all FIVE of its own fields (NodeID, HierarchyLevel, Description,
     " ParentNodeID, DrillState); four of them are rendered as columns, and the
     " fifth - ParentNodeID - is what the nesting replaces, carried but not shown
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the mock's own HierarchyLevel (Nodes.json), 0 = a root node
     TYPES:
-      BEGIN OF ty_s_node3,
+      BEGIN OF ty_s_leaf,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-      END OF ty_s_node3,
-      ty_t_node3 TYPE STANDARD TABLE OF ty_s_node3 WITH EMPTY KEY,
-      BEGIN OF ty_s_node2,
+      END OF ty_s_leaf,
+      ty_t_leaf TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+      BEGIN OF ty_s_grandchild,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node3,
-      END OF ty_s_node2,
-      ty_t_node2 TYPE STANDARD TABLE OF ty_s_node2 WITH EMPTY KEY,
-      BEGIN OF ty_s_node1,
+        children       TYPE ty_t_leaf,
+      END OF ty_s_grandchild,
+      ty_t_grandchild TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+      BEGIN OF ty_s_child,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node2,
-      END OF ty_s_node1,
-      ty_t_node1 TYPE STANDARD TABLE OF ty_s_node1 WITH EMPTY KEY,
-      BEGIN OF ty_s_node0,
+        children       TYPE ty_t_grandchild,
+      END OF ty_s_child,
+      ty_t_child TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      BEGIN OF ty_s_root,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node1,
-      END OF ty_s_node0.
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_node0 WITH EMPTY KEY.
+        children       TYPE ty_t_child,
+      END OF ty_s_root.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.

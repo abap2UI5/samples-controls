@@ -19,8 +19,7 @@ CLASS z2ui5_cl_smpc_app_331 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    " handleEditPress clones the record so Cancel can restore it - the clone is
-    " not bound, so it stays out of the round-trip model scan
+    " the record clone Page.controller.js keeps for Cancel - see the sidecar
     DATA backup_suppliername TYPE string.
     DATA backup_street       TYPE string.
     DATA backup_housenumber  TYPE string.
@@ -59,8 +58,7 @@ CLASS z2ui5_cl_smpc_app_331 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    " _showFormFragment swaps the Page content between the Display and the Change
-    " fragment; both are inlined here and switched by one bound flag instead
+    " both fragments Page.controller.js swaps in and out, inlined - see the sidecar
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -254,11 +252,10 @@ CLASS z2ui5_cl_smpc_app_331 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " the Edit/Save/Cancel handlers of Page.controller.js - see the sidecar
     CASE client->get_event( ).
 
       WHEN `EDIT`.
-        " handleEditPress: clone the record, then show the Change form and the
-        " Save/Cancel buttons
         backup_suppliername = suppliername.
         backup_street       = street.
         backup_housenumber  = housenumber.
@@ -270,11 +267,9 @@ CLASS z2ui5_cl_smpc_app_331 IMPLEMENTATION.
         edit_mode           = abap_true.
 
       WHEN `SAVE`.
-        " handleSavePress: keep the edited values, back to the Display form
         edit_mode = abap_false.
 
       WHEN `CANCEL`.
-        " handleCancelPress: restore the cloned record, back to the Display form
         suppliername = backup_suppliername.
         street       = backup_street.
         housenumber  = backup_housenumber.
@@ -292,8 +287,7 @@ CLASS z2ui5_cl_smpc_app_331 IMPLEMENTATION.
 
   METHOD model_init.
 
-    " the original binds /SupplierCollection/0 of the shared demo supplier.json;
-    " flattened here to top-level fields the form binds absolutely
+    " the row 0 Page.controller.js element-binds, flattened - see the sidecar
     suppliername = `Red Point Stores`.
     street       = `Main St`.
     housenumber  = `1618`.

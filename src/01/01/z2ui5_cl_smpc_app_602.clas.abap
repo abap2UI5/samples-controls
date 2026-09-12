@@ -6,33 +6,34 @@ CLASS z2ui5_cl_smpc_app_602 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the depth in Tree.json, 1 = a root node
     TYPES:
-      BEGIN OF ty_s_node_level5,
+      BEGIN OF ty_s_leaf,
         text TYPE string,
         ref  TYPE string,
-      END OF ty_s_node_level5,
-      BEGIN OF ty_s_node_level4,
+      END OF ty_s_leaf,
+      BEGIN OF ty_s_great_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level5 WITH EMPTY KEY,
-      END OF ty_s_node_level4,
-      BEGIN OF ty_s_node_level3,
+        nodes TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+      END OF ty_s_great_grandchild,
+      BEGIN OF ty_s_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level4 WITH EMPTY KEY,
-      END OF ty_s_node_level3,
-      BEGIN OF ty_s_node_level2,
+        nodes TYPE STANDARD TABLE OF ty_s_great_grandchild WITH EMPTY KEY,
+      END OF ty_s_grandchild,
+      BEGIN OF ty_s_child,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level3 WITH EMPTY KEY,
-      END OF ty_s_node_level2,
-      BEGIN OF ty_s_node_level1,
+        nodes TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+      END OF ty_s_child,
+      BEGIN OF ty_s_root,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level2 WITH EMPTY KEY,
-      END OF ty_s_node_level1.
+        nodes TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      END OF ty_s_root.
 
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_node_level1 WITH EMPTY KEY.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.

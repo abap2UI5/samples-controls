@@ -54,6 +54,27 @@
  * matcher that can say WHICH array a block belongs to, not a third branch
  * here.
  *
+ * THE SHARED PROVIDER (2026-09-12) — src/z2ui5_cl_smpc_mock.clas.abap holds
+ * the demo kit's shared ProductCollection ONCE (all 123 rows, every column of
+ * ui5/mock/products.json), and a port that binds it projects the rows onto
+ * its own row type with `CORRESPONDING #( z2ui5_cl_smpc_mock=>products( ) )`
+ * instead of inlining them. Two things follow for this gate:
+ *
+ *   - the provider is parsed once (like the shared mocks) and compared 1:1
+ *     against ui5/mock/products.json: every row, every column, numbers
+ *     included (numerically), a column the JSON omits must be empty, the
+ *     column set must be the JSON's key set, and ProductPicUrl may only
+ *     differ by the sanctioned host-absolutization. There is no deviation
+ *     escape for it - it has no sidecar - so a wrong value there fails the
+ *     run by name;
+ *   - a port whose source calls `z2ui5_cl_smpc_mock=>products( )` is judged
+ *     AS IF it had inlined the provider's rows projected onto the fields its
+ *     own structure types declare: that projection is pushed into the port's
+ *     VALUE-block list and goes through the same best-array matching and
+ *     positional comparison as an inlined table. It is the accounting that
+ *     keeps a converted port visible to the gate (and to --report), not a
+ *     second check of the data - the provider check above is that.
+ *
  * Residual value-level review beyond tables (scalar folds): --report prints,
  * per port, the mock string values that never appear in the ABAP source, as
  * a scannable audit worksheet — informational only.
@@ -133,7 +154,13 @@ const restoreLiterals = (s, lits) => s.replace(/\x00(\d+)\x00/g, (_, n) => lits[
 // (string values only; rows = the block's depth-1 `( … )` groups; nested
 // parens inside a row — nested tables/structures — are masked out). All
 // scanning happens on the literal-protected text.
-function parseValueBlocks(abap) {
+// `bare` also captures unquoted cell values (a number, abap_true) — used for
+// the provider only, whose numeric columns are compared numerically; a port's
+// blocks stay string-only so no verdict on an inlined table moves.
+// `minRows` is the table threshold (a one-row VALUE is a structure, not a
+// table, for a port); the provider's chunks are read down to a single row,
+// so a short last chunk cannot silently drop out of the 1:1 comparison.
+function parseValueBlocks(abap, { bare = false, minRows = 2 } = {}) {
   const { text, lits } = protectLiterals(abap);
   const blocks = [];
   for (const m of text.matchAll(/VALUE\s+#?\s*\(/g)) {
@@ -153,7 +180,7 @@ function parseValueBlocks(abap) {
       if (body[i] === '(') { if (d === 0) start = i; d++; }
       else if (body[i] === ')') { d--; if (d === 0 && start >= 0) rows.push(body.slice(start + 1, i)); }
     }
-    if (rows.length < 2) continue;
+    if (rows.length < minRows) continue;
     const parsed = [];
     for (const rowText of rows) {
       // mask nested paren groups (nested VALUE/structs) — literals are safe
@@ -163,6 +190,9 @@ function parseValueBlocks(abap) {
       const row = {};
       for (const p of masked.matchAll(/(\w+)\s*=\s*(\x00\d+\x00(?:\s*&&\s*\x00\d+\x00)*)/g)) {
         row[normName(p[1])] = abapString(restoreLiterals(p[2], lits));
+      }
+      if (bare) {
+        for (const p of masked.matchAll(/(\w+)\s*=\s*([^\s()\x00]+)/g)) row[normName(p[1])] = p[2];
       }
       parsed.push(row);
     }
@@ -190,8 +220,63 @@ function mockArrays(doc, name) {
   return out;
 }
 
+// the field names a class declares in its structure types (BEGIN OF … END OF),
+// normalized — the row type a provider-fed port projects onto
+function structFields(abap) {
+  const out = new Set();
+  for (const m of abap.matchAll(/BEGIN OF\s+\w+\s*,([\s\S]*?)END OF\s+\w+/g)) {
+    for (const c of m[1].matchAll(/^\s*(\w+)\s+TYPE\b/gm)) out.add(normName(c[1]));
+  }
+  return out;
+}
+
+// values compare equal modulo the sanctioned host-absolutization
+// (mock `test-resources/…` seeded as `https://sdk.openui5.org/test-resources/…`)
+const sameValue = (a, b) => a === b || normalize(a) === normalize(b);
+
+// --- the shared provider: parsed once, compared 1:1 against its mock -------
+const PROVIDER = 'z2ui5_cl_smpc_mock';
+const PROVIDER_CALL = `${PROVIDER}=>products(`;
+const PROVIDER_FILE = path.join(ROOT, 'src', `${PROVIDER}.clas.abap`);
+const PROVIDER_MOCK = 'products';          // ui5/mock/products.json …
+const PROVIDER_ARRAY = 'ProductCollection'; // … and the array it mirrors
+let provider = null; // { rows: [{field: value}], fields: Set }
+if (fs.existsSync(PROVIDER_FILE)) {
+  const src = fs.readFileSync(PROVIDER_FILE, 'utf8');
+  // every `result = VALUE #( … )` / `VALUE #( BASE result … )` chunk, in order
+  const rows = parseValueBlocks(src, { bare: true, minRows: 1 }).flat();
+  const fields = structFields(src);
+  provider = { rows, fields };
+  const mockRows = MOCKS.find((m) => m.base === PROVIDER_MOCK)?.doc?.[PROVIDER_ARRAY];
+  if (!Array.isArray(mockRows)) {
+    err(`${PROVIDER}: ui5/mock/${PROVIDER_MOCK}.json has no ${PROVIDER_ARRAY} array to compare the provider against`);
+  } else {
+    const mockKeys = new Map();
+    for (const r of mockRows) for (const k of Object.keys(r)) if (!mockKeys.has(normName(k))) mockKeys.set(normName(k), k);
+    for (const f of fields) if (!mockKeys.has(f)) err(`${PROVIDER}: field \`${f}\` is not a column of ui5/mock/${PROVIDER_MOCK}.json ${PROVIDER_ARRAY} — the provider carries the mock's columns and nothing else`);
+    for (const [f, k] of mockKeys) if (!fields.has(f)) err(`${PROVIDER}: column \`${k}\` of ui5/mock/${PROVIDER_MOCK}.json is missing from ty_s_product — the provider carries EVERY column`);
+    if (rows.length !== mockRows.length) {
+      err(`${PROVIDER}: ${rows.length} rows but ui5/mock/${PROVIDER_MOCK}.json ${PROVIDER_ARRAY} has ${mockRows.length} — the provider is the full row set, in the mock's order`);
+    }
+    rows.forEach((row, i) => {
+      const mock = mockRows[i];
+      if (!mock) return;
+      for (const [f, k] of mockKeys) {
+        const mv = mock[k];
+        const av = row[f];
+        const bad = (want) => err(`${PROVIDER}: row ${i + 1} field \`${f}\` = ${JSON.stringify(av ?? '')} but ui5/mock/${PROVIDER_MOCK}.json row has ${want} — the provider is compared 1:1, fix the value`);
+        if (mv === undefined || mv === null) { if (av !== undefined && av !== '') bad('no such property (the field stays empty)'); continue; }
+        if (typeof mv === 'string') { if (av === undefined || !sameValue(av, mv)) bad(JSON.stringify(mv)); continue; }
+        if (typeof mv === 'number') { if (av === undefined || Number(av) !== mv) bad(String(mv)); continue; }
+        if (typeof mv === 'boolean') { if (av !== (mv ? 'abap_true' : 'abap_false')) bad(String(mv)); }
+      }
+    });
+  }
+}
+
 let portsChecked = 0;
 let skipped = 0;
+let viaProvider = 0;
 for (const mf of fs.readdirSync(META).sort()) {
   if (!mf.endsWith('.json')) continue;
   const meta = JSON.parse(fs.readFileSync(path.join(META, mf), 'utf8'));
@@ -286,6 +371,18 @@ for (const mf of fs.readdirSync(META).sort()) {
     }
   }
   const blocks = parseValueBlocks(abap);
+  // a provider-fed port is judged as if it had inlined the provider's rows
+  // projected onto the fields its own structure types declare
+  if (abap.includes(PROVIDER_CALL)) {
+    if (!provider) {
+      err(`${meta.class}: calls ${PROVIDER}=>products( ) but src/${PROVIDER}.clas.abap is not there`);
+    } else {
+      viaProvider++;
+      const own = structFields(abap);
+      const fields = [...provider.fields].filter((f) => own.has(f));
+      blocks.push(provider.rows.map((r) => Object.fromEntries(fields.map((f) => [f, r[f]]))));
+    }
+  }
   const declaredLc = declared.toLowerCase();
   /* A VALUE is specific enough to match loosely — "Notebook Basic 15" occurs in
    * a deviation only because somebody meant it. A bare FIELD NAME is not:
@@ -326,10 +423,6 @@ for (const mf of fs.readdirSync(META).sort()) {
     const overlap = bestOverlap;
     const keyByNorm = new Map();
     for (const r of arr.rows) for (const k of Object.keys(r)) if (!keyByNorm.has(normName(k))) keyByNorm.set(normName(k), k);
-
-    // values compare equal modulo the sanctioned host-absolutization
-    // (mock `test-resources/…` seeded as `https://sdk.openui5.org/test-resources/…`)
-    const sameValue = (a, b) => a === b || normalize(a) === normalize(b);
 
     if (block.length === arr.rows.length) {
       // full inline — positional row/field string comparison
@@ -375,7 +468,10 @@ for (const mf of fs.readdirSync(META).sort()) {
         else if (v && typeof v === 'object') Object.values(v).forEach(collect);
         else if (typeof v === 'string' && v.length >= 3 && !/[{}<>]/.test(v)) vals.add(v);
       })(doc);
-      for (const v of vals) if (!abap.includes(v)) missing.push(v);
+      // a provider-fed port carries the ProductCollection values in the
+      // provider's source, so that is where the worksheet looks for them
+      const hay = abap.includes(PROVIDER_CALL) && provider ? abap + fs.readFileSync(PROVIDER_FILE, 'utf8') : abap;
+      for (const v of vals) if (!hay.includes(v)) missing.push(v);
     }
     if (missing.length) {
       console.log(`REPORT ${meta.class}: ${missing.length} mock string value(s) not found in the ABAP source (fold/subset or drift — verify): ${missing.slice(0, 8).map((v) => JSON.stringify(v)).join(', ')}${missing.length > 8 ? ', …' : ''}`);
@@ -383,5 +479,7 @@ for (const mf of fs.readdirSync(META).sort()) {
   }
 }
 
-console.log(`data-fidelity: ${portsChecked} ports checked, ${skipped} skipped (declared), ${errors} error(s).`);
+console.log(`data-fidelity: ${portsChecked} ports checked`
+  + (provider ? ` (${viaProvider} via ${PROVIDER}, itself compared 1:1 with ui5/mock/${PROVIDER_MOCK}.json)` : '')
+  + `, ${skipped} skipped (declared), ${errors} error(s).`);
 process.exit(errors ? 1 : 0);

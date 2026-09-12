@@ -6,42 +6,43 @@ CLASS z2ui5_cl_smpc_app_603 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the mock's own HierarchyLevel (Nodes.json), 0 = a root node
     TYPES:
-      BEGIN OF ty_s_node3,
+      BEGIN OF ty_s_leaf,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-      END OF ty_s_node3,
-      ty_t_node3 TYPE STANDARD TABLE OF ty_s_node3 WITH EMPTY KEY,
-      BEGIN OF ty_s_node2,
+      END OF ty_s_leaf,
+      ty_t_leaf TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+      BEGIN OF ty_s_grandchild,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node3,
-      END OF ty_s_node2,
-      ty_t_node2 TYPE STANDARD TABLE OF ty_s_node2 WITH EMPTY KEY,
-      BEGIN OF ty_s_node1,
+        children       TYPE ty_t_leaf,
+      END OF ty_s_grandchild,
+      ty_t_grandchild TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+      BEGIN OF ty_s_child,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node2,
-      END OF ty_s_node1,
-      ty_t_node1 TYPE STANDARD TABLE OF ty_s_node1 WITH EMPTY KEY,
-      BEGIN OF ty_s_node0,
+        children       TYPE ty_t_grandchild,
+      END OF ty_s_child,
+      ty_t_child TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      BEGIN OF ty_s_root,
         nodeid         TYPE i,
         hierarchylevel TYPE i,
         description    TYPE string,
         parentnodeid   TYPE string,
         drillstate     TYPE string,
-        children       TYPE ty_t_node1,
-      END OF ty_s_node0.
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_node0 WITH EMPTY KEY.
+        children       TYPE ty_t_child,
+      END OF ty_s_root.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -77,7 +78,8 @@ CLASS z2ui5_cl_smpc_app_603 IMPLEMENTATION.
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc` ).
 
     root->tag( `MessageStrip`
-        )->a( n = `text`            v = `Currently only a limited amount of data is supported for sap.m.Tree. Please consider to consume the same amount of data as in List based controls, or use sap.ui.table.TreeTable to display large amount of data.`
+        )->a( n = `text`            v = `Currently only a limited amount of data is supported for sap.m.Tree. Please consider to consume the same amount of data as in List based controls, or use sap.ui.table.TreeTable to display large ` &&
+                                        `amount of data.`
         )->a( n = `showIcon`        v = `true`
         )->a( n = `showCloseButton` v = `true`
         )->a( n = `class`           v = `sapUiMediumMarginBottom` ).

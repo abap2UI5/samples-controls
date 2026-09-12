@@ -1,5 +1,6 @@
 " @keywords radialmicrochart shell tabcontainer tab grid link verticallayout horizontallayout
 " @summary sap.suite.ui.microchart.RadialMicroChart expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.suite.ui.microchart.RadialMicroChart - https://ui5.sap.com/#/entity/sap.suite.ui.microchart.RadialMicroChart/sample/sap.suite.ui.microchart.sample.RadialMicroChart (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.microchart - RadialMicroChart</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -20,8 +21,8 @@ CLASS z2ui5_cl_smpc_sapui5_004 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_event.
     METHODS view_display.
+    METHODS on_event.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -39,14 +40,6 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD on_event.
-
-    IF client->get_event( ) = `RADIAL_PRESS`.
-      client->message_toast_display( `press - a radial chart was clicked` ).
-    ENDIF.
-
-  ENDMETHOD.
 
   METHOD view_display.
 
@@ -134,6 +127,15 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
                                         )->a( n = `valueColor` v = `Critical` ).
 
     client->view_display( view->stringify( ) ).
+
+  ENDMETHOD.
+
+
+  METHOD on_event.
+
+    IF client->get_event( ) = `RADIAL_PRESS`.
+      client->message_toast_display( `press - a radial chart was clicked` ).
+    ENDIF.
 
   ENDMETHOD.
 

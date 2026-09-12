@@ -641,7 +641,7 @@ CLASS z2ui5_cl_smpc_app_218 IMPLEMENTATION.
         ( productid = `PF-1000` category = `Accessories` maincategory = `Computer Systems` taxtarifcode = `1` suppliername = `Titanium` weightmeasure = `0.01` weightunit = `KG`
           description = `Flyer for our product palette` name = `Flyer`
           dateofsale = `` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` status = `Out of Stock` quantity = 33 uom = `PC` currencycode = `EUR` price = `0` width = `46`
-          depth = `30` height = `3` dimunit = `cm` ).
+          depth = `30` height = `3` dimunit = `cm` ) ).
 
   ENDMETHOD.
 

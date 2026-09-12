@@ -42,6 +42,10 @@
     {
       "type": "NOTE",
       "what": "Residual, recorded 2026-08-23: the Toggle button's INITIAL enablement is not reproduced. _updateToggleButtonState has two call sites upstream - handleBreakpointChanged and onAfterRendering - and only the first is wired. DynamicSideContent fires breakpointChanged from _setBreakpointFromWidth only when the new breakpoint differs from the previous one, and _currentBreakpoint is undefined on the first determination, so the event never fires for the initial layout. An app opened at breakpoint S therefore starts with the Toggle button disabled - the one breakpoint where toggle( ) does anything - until the container crosses a breakpoint and comes back. There is no declarative substitute: S is the CONTAINER's breakpoint (containerQuery), not a device media range. Same residual as app 138."
+    },
+    {
+      "type": "NOTE",
+      "what": "the five wikimedia asset URLs (the Avatar icon and the authorpicurl column) are served over https here where the original writes http://upload.wikimedia.org: an abap2UI5 app is served over TLS, and a browser blocks an http image on a TLS page as mixed content, so the http form would render nothing; wikimedia serves the same files on https. The linter reports the http form as insecure-asset-url from 0.7 on."
     }
   ]
 }

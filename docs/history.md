@@ -7,6 +7,139 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-12 — the ecosystem review, implemented: what 622 ports asked of the framework, the linter and themselves
+
+One session, three repositories, one question — with the portable backlog at
+zero, what should this corpus improve? The analysis (three parallel reads:
+the linter's rule catalogue against the corpus, the IMPROVISED/NOTE
+deviations against the framework API, and 25 ports read as sample code)
+became this change. Numbers are the day's tree.
+
+**samples-controls — the corpus.** 173,937 → 161,528 lines under `src/01`
+and `src/02` with every port still rendering what it rendered (`view-gates
+--strict` with the render gate on: 622 ports, 0 failing; structural-diff 0
+undeclared; data-fidelity 0 errors; abaplint standard and cloud 0 issues):
+
+- the 382 standing pattern-lint layout warnings are 0 and the three rules
+  are errors, as is `chain-house-layout`; the warning channel carries signal
+  again;
+- `statement-too-long` (75,000; the kernel limit stays unmeasured, app 012's
+  72k `model_init` is live-verified), `unrolled-chain-repetition` (a 5-line
+  block over 40 times — it counted single lines first and read a form view
+  with 189 Labels as a loop), `types-layout`, `hungarian-prefix` and
+  `line-headroom` (> 240; header comments exempt) hold five §8 sentences
+  that stood unenforced;
+- the unroll pass: app 599's 359 identical Buttons are a `DO` over a
+  sub-handle (2,851 → 264 lines, the view chain 182,335 → under 2,000
+  characters), 592, 593, 263, 588, 594, 596, 620 and 343 the same idiom
+  (343's render proven byte-identical on the transpiled backend); seven
+  uxap/toolbar classes stay unrolled on purpose, their blocks differ;
+- the style sweep: Hungarian prefixes gone (466 `lv_` in 36 ports), one
+  `TYPES` layout (167 vs 140 classes), the retired `{PRODUCT_ID}` bindings
+  migrated, method declarations in implementation order (47), apps 119/120
+  in the corpus blank-line style, one canonical prefix per namespace (`f`
+  was `sap.f` in 46 classes and `sap.ui.layout.form` in 59), src/03 on the
+  port lifecycle names with an `@origin` line, the 26 clipped DESCRIPTs and
+  the status word in every `@origin` line spelled out;
+- `structural-diff` compares controls by namespace URI + local name, so a
+  canonical prefix is fine and a `List` under `xmlns="sap.uxap"` still is
+  not `m:List`;
+- the overview app has a version gate of its own (`check:overview`), its
+  `get_catalog( )` is declared data to the linter, `sap-icon://information`
+  (@1.80) is `message-information` — and the red `chain-format` on main
+  since #191 is green, together with the emitter writing `a( t = )` where
+  #191 had edited the generated class by hand;
+- `z2ui5_cl_smpc_mock=>products( )` holds the ProductCollection once: 58
+  ports project it (`VALUE #( FOR … ( CORRESPONDING #( … ) ) )` — the
+  table-level form does not downport), `HT-####` lines 15,256 → 7,279,
+  data-fidelity compares the provider 1:1 with products.json and each
+  consumer through its projection; 64 carriers stay inline, 27 of them
+  because they type a numeric column as `string` (a decision recorded in
+  STATUS.md);
+- the Form family 312–337 keeps 26 generated classes and loses its
+  thirteen repeated family comments (10,016 → 9,844 lines);
+- 42 `checked` ports without an e2e interaction module get one (the rung
+  with the most claimed verification carried the least proof), each run
+  against the transpiled backend;
+- STATUS.md carries the hold-out set as the generator KPI, and two probes
+  cluster the 1,915 NOTEs by idiom and list every statement over a size
+  (`note-cluster`, `statement-length`).
+
+**abap2UI5/linter 0.7 (unreleased): nine rules**, measured on this corpus
+before shipping — `unused-namespace-declaration` (92 classes, fixable),
+`undefined-css-class` (15), `external-link-without-target` (3),
+`insecure-asset-url` (12), and five promoted out of pattern-lint
+(`unbound-public-attribute`, `default-key-table`, `abapdoc-html-tag`,
+`event-arg-default-index`, `client-handle-capture`); two of the promoted
+ones found what the copies here had missed (a path regex matching inside a
+comment in 557/607, the plain assignment form of a captured handle). The six
+pattern-lint copies stay until the bump that gates them (`scripts/pattern-lint.mjs`
+header). The three real findings are fixed here ahead of it; app 269's
+wikimedia assets are https.
+
+**abap2UI5 — `check_queue_last`** on the event wire: the last event fired
+while a round-trip is in flight is kept and dispatched after the response
+instead of dropped, which is what 48 ports' `liveChange` NOTEs are about
+(app 280 measured `abc` → `a`). Usable here from the pin that carries it.
+
+Not done, on purpose: an app base class (declined 2026-08-11 — the ten-line
+dispatcher is the lesson), a shared helper for the Form family (one chain
+per view, structural-diff per port), and every other framework API the
+analysis proposed — those wait for a maintainer read (`docs/history.md` is
+not where they live; the proposals went to the session's report).
+
+## 2026-09-12 — the shared ProductCollection exists once, and the Form family's comments say less
+
+Measured before the change: the demo kit's shared `ProductCollection` mock
+(`ui5/mock/products.json`, 123 rows, 20 columns) was inlined as a `VALUE #( )`
+literal in 125 port classes — 15,256 lines carrying an `HT-####` product id,
+8.8 % of the corpus, one duplicated table. The rule that a port keeps the full
+row set (`port-a-sample`) stays; the duplication went:
+
+- **`src/z2ui5_cl_smpc_mock`** is the second root-level class beside the
+  overview app and, like it, not a port (AGENTS §3): `products( )` returns
+  every row and every column of the JSON, typed once, in three
+  `VALUE #( BASE result )` chunks of at most 30,000 characters (the largest
+  statement is 30,076 characters against the 75,000 budget; 692 lines; the
+  rows are wrapped at the same five field boundaries, the longest line 210).
+  It carries an ABAP Doc header and nothing a port carries — and every gate
+  skips or sees it by shape (no `z2ui5_if_app`, not in a `src/cc/ll/`
+  package), so no generator or gate gained a name list for it.
+- **58 ports project it** with
+  `VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) )`,
+  9,484 lines removed (app 014 also lost the LOOP that rebuilt
+  `productpicurl` per row — the provider's value is the same URL). A script
+  compared every port's product literal against the JSON first; the 64 other
+  carriers stay inline for a reason each: 27 type a numeric column as
+  `string` (a packed projection would render `30.0` where the original shows
+  `30`; five of those also inline `weight_state`), 11 add a demo-only column
+  (`deliverydate`, `availablestate`, `unread`, `picurl`, …), 9 hold a
+  subset, 8 an edited or differently ordered row set (apps 356-360's
+  `AD-1000` set, app 010's own modified `products.json`, 233's three
+  sub-collections), 6 seed the single `/ProductCollection/0` record, and
+  three more are ragged or three-block tables.
+- **The row-wise shape is the 7.02 constraint, measured, not assumed**: a
+  table-level `CORRESPONDING #( )` downports to a `MOVE-CORRESPONDING` between
+  tables and abaplint's v702 check answers `MOVE-CORRESPONDING with tables
+  possible from v740sp05`. The `FOR … ( CORRESPONDING #( ) )` form and a
+  `LOOP … APPEND CORRESPONDING #( )` both downport to 0 issues; the one-liner
+  won.
+- **`data-fidelity` gates both ends**: the provider 1:1 against
+  `ui5/mock/products.json` (numbers included, no deviation escape, a single
+  wrong value fails the run by name and in every consumer), a consuming port
+  as if it had inlined the projected rows; a fixture test covers both.
+  `e2e-changed` maps a provider change to its 58 consumers instead of `all`,
+  which would have handed them to the nightly. `7bit_ascii` excludes the
+  provider and no longer needs to exclude apps 558/572/575/578 — the source of
+  that list is abap2UI5's `app-rules.json`, changed there first.
+- **The sap.ui.layout Form family (apps 312–337)** stays generator output,
+  but `scripts/form-family-to-abap.mjs` no longer writes thirteen identical
+  explanation lines into each of the 26 classes: one line per method names
+  `Page.controller.js` and points at the sidecar, whose three family NOTEs
+  (the fragment swap, the Edit clone, the `/SupplierCollection/0` flatten)
+  every one of the 26 already carried. 172 lines fewer; the byte-identity
+  test still holds.
+
 ## 2026-09-12 — the tooling half of the style sweep: five rules, a third linter config, and the overview says its catalogue is data
 
 Run alongside the corpus sweeps (TYPES layout, view-chain unrolling, the

@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed); incl. the phone-emulation device> check. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_031.mjs: the four Background-mode Images resolve the device> expression to 10em and the injected .imageContainer background rgb(169, 234, 255) applies)"
   },
   "deviations": [
     {

@@ -21,11 +21,14 @@ port sidecar (or the overview app) and that every module can actually FAIL
 (`expect(`, a `throw`, or a lib-e2e helper — see below).
 
 It also reports **interaction coverage** as an advisory, over the PORT SET and
-split by the status ladder: 289 of 622 ports (46%) have no module here, and
-the split runs opposite to the ladder — 42 of 59 `checked` and 192 of 355
-`reviewed`, against 55 of 208 `generated`. The rungs that claim the most
-verification carry the least automated proof of it. It stays an advisory (289
-gaps cannot become a hard gate without failing every batch commit), and the
+split by the status ladder: 247 of 622 ports (40%) have no module here —
+0 of 59 `checked` (the 42 gaps on that rung were closed on 2026-09-12, see
+"the checked rung closed" below), 192 of 355 `reviewed` and 55 of 208
+`generated`. Until then the split ran opposite to the ladder — 42 of 59
+`checked` had no module — so the rung that claimed the most verification
+carried the least automated proof of it; `reviewed` still does. It stays an
+advisory (247 gaps cannot become a hard gate without failing every batch
+commit), and the
 number is printed so the debt is visible rather than implied. Until 2026-08-28
 this advisory counted only ports with an open LIVE_TEST deviation, which made
 it structurally dead the day that backlog reached 0: the source list was empty,
@@ -39,19 +42,27 @@ port that only carries that class. Covered so far (one line per class,
 the per-port modules here):
   client-composed toast (_event_client MESSAGE_TOAST, $event.*/$source>/
     $parameters> args, {N} templates, {N?a:b} conditional): 003 005
-    049 061 074 076 080 134 156 198 (008's palette squares render a
+    049 061 074 076 080 134 156 198 015 023 028 (008's palette squares render a
     zero-height box headless, so its colorSelect toast stays uncovered;
     016's hideInput DatePicker openBy loops in Popover.onfocusin headless
     — the calendar opens, but the focus-restore bounces off the hidden
     input — so its check stays with the human live run, 091 covers the
     hidden-picker openBy class)
-  popup_display / dependents dialog: 019 103 104 236
+  popup_display / dependents dialog: 019 103 104 236 010 014 042 (the
+    three checked-rung ones, 2026-09-12: a Navigation row, a row Link and an
+    active ObjectStatus each open a controller-built Dialog rebuilt as a
+    fragment, and its OK/Close is a popup_close frontend action)
   popover_display (anchored by_id, BIND_ELEMENT, fragment rebuild):
     094 112 170 229 243
   anchored open via control_by_id openBy/toggleBy: 060 066 067 091 227
-  two-way bound property flipped on a round-trip: 128 130 133 177
+  two-way bound property flipped on a round-trip: 128 130 133 177 021
+    (a bound ENUM, the DraftIndicator state) 047 (selectedKey -> toast +
+    bound preview text) 085 (a bound tokens aggregation grown and shrunk)
   frontend-action chains (BUSY_INDICATOR+START_TIMER, NavContainer.to,
-    FileUploader upload guard): 147 242 246
+    FileUploader upload guard): 147 242 246 004 (START_TIMER ->
+    TIMER_FINISHED -> control_by_id close on the POPUP view, asserted as the
+    BusyDialog going away on its own) 044 (control_by_id open on a
+    dependents PDFViewer after the bound source round-tripped)
   KEYBOARD_SHORTCUT combo → backend event: 232
   live control state that must survive a view rebuild: 022 235 557 (the
     compound binding_call filter) 249 (setBadgeMinValue/MaxValue, which are
@@ -150,7 +161,8 @@ the per-port modules here):
   268 covers only the anchored ColorPickerPopover open — picking a colour
     needs the picker's own zero-size-headless controls
   "controller sets a width from a slider": 144 (round-trip) 176 213 214
-    (expression binding) — one shared assertion, sliderDrivenWidth()
+    (expression binding) — one shared assertion, sliderDrivenWidth(); 053
+    (three toolbars on one {= value + '%'} expression, step 20 -> 80%)
   the device branch resolved server-side: 173
   a bound record/aggregation really resolving against the SERIALIZED model
     (render-smoke only ever sees a mocked one): 206 209 226, and 225 for a
@@ -163,10 +175,14 @@ the per-port modules here):
   controller-built Dialogs as popup_display fragments: 273 274
   OverflowToolbar controls ARE drivable — open the overflow popover
     ("Additional Options") first, then click inside it: 174 207 247
-    (2026-08-01; an overflowed SegmentedButton renders as a Select there,
+    (2026-08-01; an overflowed SegmentedButton renders as a Select there —
+    164's footer row-mode SegmentedButton is one, picked from that Select's
+    picker on 2026-09-12 —
     and the binding TEMPLATE sits in the Element registry next to the real
     rows, so filter on getBindingContext() before asserting over rows)
-  round-trip that opens a MessageBox: 101 (the wizard Cancel)
+  round-trip that opens a MessageBox: 101 (the wizard Cancel) 278 (six
+    typed message_box_display boxes, and the onclose action of the
+    two-action one carried back as ACTION_SELECTED into a toast)
   a11y announce round-trip writing a bound Text: 141
   u:Currency over inlined arrays: 196
   client-side growing (no wire at all): 276
@@ -469,7 +485,60 @@ the per-port modules here):
     watching the leg go red — for 535/560 that is the `branch_payment( )`
     / `branch_delivery( )` pair called from `view_display( )`, for 575 the
     `WHEN COLUMN_RESIZE` arm — see "still open"
-  still open: 353's four drag & drop wires (HTML5 dnd, which Playwright's
+  the checked rung closed (2026-09-12): the 42 `checked` ports without a
+    module — the rung with the most claimed verification and the least
+    automated proof — got one each, re-proving what the human note says was
+    verified. The classes new with that batch, beyond the lines above:
+    a static or display-only port whose render had never been SEEN by the
+    nightly (001 002 020 026 027 031 033 034 041 046 171 — each asserts the
+    bound values, the element-bound relative paths or the control count,
+    never just "something rendered"); an injected core:HTML <style> proven
+    by a COMPUTED style, which is the only thing that separates a rule that
+    applied from markup that merely carries the class (026's rgb(209, 219,
+    189) on .item1, 028's float:left, 031's rgb(169, 234, 255)); a device>
+    model expression resolved client-side and read off the control (030's
+    expanded, 031's 10em, 046's 100em); expression bindings over two-way
+    bound fields re-evaluated with NO round trip (007's tri-state parent,
+    009's !pressed infoToolbar and the popinLayout ComboBox, 053's widths,
+    140's six backgroundColorSet cells, 164's rowMode) — each driven TWICE
+    or in both directions where a latched flag would pass once; the
+    JSONModel sizeLimit read as a fact rather than fought (034's counters
+    over 100 rows, 039's eleven supplier groups stopping inside the U's —
+    the original renders the same 100); a group sorter in a raw binding-info
+    string (039, opened with F4 on the focused input); the z2ui5.cc
+    MultiInputExt companion's validator turning free text into a token
+    (040, next to the bound suggestions with their NAME sorter); a typed
+    DateInterval/DateTime binding committed with Enter so the change wire
+    ROUND-TRIPS $event.oSource.sId into a bound Text (017 018); a Carousel
+    scrolled by ArrowRight on its focused root (006); a Tree expanded through
+    dispatchMouse on its 0-box expander (054); the z2ui5.cc.MessageManager
+    bridge fed by a SAVE round trip and read off Messaging.getMessageModel
+    FIRST, the app-529 order (065); the app-owned hash routing wire —
+    hash_set writing #/Page2 after the NavContainer `to`, and browser Back
+    round-tripping HASH_CHANGED into the `back` (012, the 2026-08-31 wire
+    driven by the nightly for the first time); a FeedInput post INSERTed at
+    index 1 with a server-composed timestamp (024) and a FeedListItem
+    actions sheet whose Delete carries `indexOfItem` through the event arg
+    (025). Three measurements worth keeping: a sap.m.Tree renders with the
+    List's sapMList class and no sapMTree one; the table HEADER row carries
+    sapMListTblRow too, so "the first row" is the select-all box unless you
+    scope to .sapMLIB.sapMListTblRow (012's first draft selected all eleven
+    Laptops); and three controls that DO keep a box unthemed and take a
+    real click while a dispatched one dies on the DOM node — the icon Button
+    in a CustomTreeItem (015), the FeedInput post button (024) and a
+    sap.m.Image whose src the harness does not serve (044). And the hidden
+    picker openBy class (016 256 257) asserts its wire STATICALLY — the
+    three anchors with press listeners, the hideInput control with its
+    change listener — for the reason in "still open" below
+  still open: the BOOLEAN t_arg legs of the checked rung (2026-09-12) —
+    004's cancel word (${$parameters>/cancelPressed}), 007's PARENT_CLICKED,
+    009's STICKY_SELECT, 017's and 018's valueState over
+    ${$parameters>/valid}: each rides on a JSON boolean the transpiled
+    runtime hands the backend as the string 'true' where `= abap_true`
+    cannot match (the app-108/099/421 divergence), so a correct port reads
+    wrong in the harness and right on a real system. Those legs stay with
+    the human live check; their modules say so and drive everything else.
+    353's four drag & drop wires (HTML5 dnd, which Playwright's
     dragTo cannot produce for sap.ui.table's pointer extension - dispatching
     the DataTransfer events by hand would test the harness), 354's
     column-filter leg (see above), 233's confirm leg (neither click nor Enter on a dialog row

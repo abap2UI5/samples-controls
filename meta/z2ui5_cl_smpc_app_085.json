@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-27",
-    "note": "verified in a running system 2026-07-27 - Tokenizer add appends, delete removes by key, texts correct"
+    "note": "verified in a running system 2026-07-27 - Tokenizer add appends, delete removes by key, texts correct. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_085.mjs: 'Add Token' round-trips ADD so the typed text becomes a token, toasts and clears the bound input; focusing that token and pressing Delete round-trips DELETE with its key so it is removed and 'Token deleted' toasts)"
   },
   "deviations": [
     {
