@@ -1,5 +1,6 @@
 " @keywords gridcontainer grid container sap.f gridcontainerdraganddrop scrollcontainer draginfo griddropinfo gridcontainersettings gridcontaineritemlayoutdata imagecontent header
 " @summary This sample represents GridContainer with enabled Drag and Drop functionality.
+" @origin sap.f.sample.GridContainerDragAndDrop - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainerDragAndDrop (status: generated)
 CLASS z2ui5_cl_smpc_app_526 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

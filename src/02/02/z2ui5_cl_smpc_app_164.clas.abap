@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table rowmodes named model overflowtoolbar title column label text link segmentedbutton
 " @summary Example for the different row modes
+" @origin sap.ui.table.sample.RowModes - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowModes (status: checked)
 CLASS z2ui5_cl_smpc_app_164 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords switch sap.m off switches types custom text vbox hbox flexitemdata
 " @summary "Some say it is only a switch, I say it is one of the most stylish controls in the universe of mobile UI controls." (unknown developer)
+" @origin sap.m.sample.Switch - https://sdk.openui5.org/entity/sap.m.Switch/sample/sap.m.sample.Switch (status: reviewed)
 CLASS z2ui5_cl_smpc_app_050 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

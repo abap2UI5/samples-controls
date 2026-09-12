@@ -1,5 +1,6 @@
 " @keywords breadcrumbs sap.m breadcrumb trail separator verticallayout link hbox label select item
 " @summary Breadcrumbs is useful for displaying link hierarchy
+" @origin sap.m.sample.Breadcrumbs - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.Breadcrumbs (status: checked)
 CLASS z2ui5_cl_smpc_app_003 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords dialog sap.m confirm reject submit order dialogs verticallayout button text label textarea
 " @summary Creating a dialog with confirm and reject options that replaces the confirmDialog functionality.
+" @origin sap.m.sample.DialogConfirm - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogConfirm (status: checked)
 CLASS z2ui5_cl_smpc_app_019 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

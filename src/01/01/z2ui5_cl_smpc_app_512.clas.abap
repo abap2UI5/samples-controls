@@ -1,5 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputmodelupdate verticallayout label item multiinputext list standardlistitem
 " @summary This sample illustrates how the model bound to the MultiInput can be updated upon token creation or deletion.
+" @origin sap.m.sample.MultiInputModelUpdate - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputModelUpdate (status: generated)
 CLASS z2ui5_cl_smpc_app_512 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

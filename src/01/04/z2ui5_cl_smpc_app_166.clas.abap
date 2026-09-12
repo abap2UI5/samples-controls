@@ -1,5 +1,6 @@
 " @keywords semanticpage semantic sap.f.semantic title text horizontallayout verticallayout objectattribute objectstatus messagemanager table column
 " @summary This sample demonstrates the use of a DraftIndicator in the footer area.
+" @origin sap.f.sample.SemanticPage - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPage (status: reviewed)
 CLASS z2ui5_cl_smpc_app_166 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

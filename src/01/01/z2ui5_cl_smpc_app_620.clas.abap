@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbartabdensitymode panel label radiobuttongroup radiobutton icontabfilter text
 " @summary In this example, the Icon Tab Bar is used in different tab density modes.
+" @origin sap.m.sample.IconTabBarTabDensityMode - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarTabDensityMode (status: generated)
 CLASS z2ui5_cl_smpc_app_620 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

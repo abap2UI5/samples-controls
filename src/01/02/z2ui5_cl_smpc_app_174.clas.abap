@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table rowhighlights overflowtoolbar title toolbarspacer label select item togglebutton rowsettings column
 " @summary Shows how row highlights and alternating row colors can be used.
+" @origin sap.ui.table.sample.RowHighlights - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowHighlights (status: reviewed)
 CLASS z2ui5_cl_smpc_app_174 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table selection label select item overflowtoolbar title toolbarspacer button switch column
 " @summary Selection example showing selection modes and selection behaviors of table.
+" @origin sap.ui.table.sample.Selection - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Selection (status: reviewed)
 CLASS z2ui5_cl_smpc_app_361 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

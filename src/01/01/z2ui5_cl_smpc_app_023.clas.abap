@@ -1,5 +1,6 @@
 " @keywords feedcontent feed content sap.m displays tile containing text
 " @summary Shows the tile containing the text of the feed, a subheader, and a numeric value.
+" @origin sap.m.sample.FeedContent - https://sdk.openui5.org/entity/sap.m.FeedContent/sample/sap.m.sample.FeedContent (status: checked)
 CLASS z2ui5_cl_smpc_app_023 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabfilter icontabseparator table overflowtoolbar label column text
 " @summary In this example, the Icon Tab Bar is used to apply filters on a table and display the count of the items for each view.
+" @origin sap.m.sample.IconTabBar - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_377 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

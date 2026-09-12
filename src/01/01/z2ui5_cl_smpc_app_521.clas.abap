@@ -1,5 +1,6 @@
 " @keywords input sap.m inputkeyvalue verticallayout label listitem text selectdialog standardlistitem
 " @summary This sample illustrates how the Input works with key and value values, when the data is available via list of suggestions.
+" @origin sap.m.sample.InputKeyValue - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputKeyValue (status: generated)
 CLASS z2ui5_cl_smpc_app_521 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

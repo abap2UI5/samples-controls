@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagebeforenavigate objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary Object Page demonstrating how beforeNavigate event can be used to prevent default navigation behaviour
+" @origin sap.uxap.sample.ObjectPageBeforeNavigate - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageBeforeNavigate (status: generated)
 CLASS z2ui5_cl_smpc_app_588 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

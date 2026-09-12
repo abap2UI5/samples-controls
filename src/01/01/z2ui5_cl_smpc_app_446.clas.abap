@@ -1,5 +1,6 @@
 " @keywords link sap.m linksubtle table toolbar title column text columnlistitem objectidentifier
 " @summary Subtle links should be used to indicate less important links in tables with a large number of links. In this example all columns contain links, only the first column is non-subtle.
+" @origin sap.m.sample.LinkSubtle - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.LinkSubtle (status: generated)
 CLASS z2ui5_cl_smpc_app_446 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

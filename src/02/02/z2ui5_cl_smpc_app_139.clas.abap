@@ -1,5 +1,6 @@
 " @keywords calendar sap.ui.unified single day html verticallayout daterange button horizontallayout label text
 " @summary Calendar where the user can select a single day
+" @origin sap.ui.unified.sample.CalendarSingleDaySelection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSingleDaySelection (status: reviewed)
 CLASS z2ui5_cl_smpc_app_139 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form480_12120dual bar button vbox title responsivegridlayout formcontainer formelement text input
 " @summary Form with two groups, gets a two-column layout whenever possible.
+" @origin sap.ui.layout.sample.Form480_12120Dual - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form480_12120Dual (status: reviewed)
 CLASS z2ui5_cl_smpc_app_318 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

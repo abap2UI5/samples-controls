@@ -1,5 +1,6 @@
 " @keywords calendar sap.ui.unified calendarmultiplemonth verticallayout daterange horizontallayout button label text
 " @summary Calendar with more than one month
+" @origin sap.ui.unified.sample.CalendarMultipleMonth - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarMultipleMonth (status: reviewed)
 CLASS z2ui5_cl_smpc_app_304 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

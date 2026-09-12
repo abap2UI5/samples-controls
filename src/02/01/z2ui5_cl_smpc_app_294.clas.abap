@@ -1,5 +1,6 @@
 " @keywords messageview message sap.m messageviewwithgrouping overflowtoolbar button toolbarspacer dialog bar text messageitem link
 " @summary A sample with Message View and inside a Dialog and grouping of items
+" @origin sap.m.sample.MessageViewWithGrouping - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewWithGrouping (status: reviewed)
 CLASS z2ui5_cl_smpc_app_294 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

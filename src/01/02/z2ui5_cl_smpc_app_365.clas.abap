@@ -1,5 +1,6 @@
 " @keywords treetable tree table sap.ui.table treetable.hierarchymaintenancejsontreebinding overflowtoolbar title button toolbarspacer dragdropinfo column label
 " @summary Shows how hierarchy maintenance can be done using drag and drop.
+" @origin sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding - https://sdk.openui5.org/entity/sap.ui.table.TreeTable/sample/sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding (status: reviewed)
 CLASS z2ui5_cl_smpc_app_365 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

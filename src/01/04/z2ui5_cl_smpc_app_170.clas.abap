@@ -1,5 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpagefreestyle dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber
 " @summary Dynamic Page freestyle example with a responsive sap.m.Table in the content area, showing that each control can be placed in the title and the header content areas.
+" @origin sap.f.sample.DynamicPageFreeStyle - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageFreeStyle (status: reviewed)
 CLASS z2ui5_cl_smpc_app_170 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

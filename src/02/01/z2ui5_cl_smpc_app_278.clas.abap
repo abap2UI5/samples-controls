@@ -1,5 +1,6 @@
 " @keywords messagebox message box sap.m verticallayout text button
 " @summary MessageBox is an easy way of displaying a message-type dialog to the user. You can display different types of dialogs: - Types of message (Alert, Confirmation, etc.) - Initial focus can be set to the buttons or the controls used in the message
+" @origin sap.m.sample.MessageBox - https://sdk.openui5.org/entity/sap.m.MessageBox/sample/sap.m.sample.MessageBox (status: checked)
 CLASS z2ui5_cl_smpc_app_278 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords semanticpage semantic sap.f.semantic semanticpagefreestyle title breadcrumbs link image text horizontallayout verticallayout objectattribute
 " @summary This sample demonstrates a SemanticPage with all semantic-specific actions both in the title and in the footer areas.
+" @origin sap.f.sample.SemanticPageFreeStyle - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPageFreeStyle (status: generated)
 CLASS z2ui5_cl_smpc_app_529 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

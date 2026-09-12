@@ -1,5 +1,6 @@
 " @keywords splitter sap.ui.layout html app button splitterlayoutdata horizontallayout text verticallayout hbox checkbox input
 " @summary Splitter where you can change contentAreas and their sizes live
+" @origin sap.ui.layout.sample.Splitter - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter (status: reviewed)
 CLASS z2ui5_cl_smpc_app_351 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

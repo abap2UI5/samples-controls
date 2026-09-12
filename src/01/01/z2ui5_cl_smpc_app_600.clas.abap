@@ -1,5 +1,6 @@
 " @keywords tree sap.m treednd dragdropinfo standardtreeitem
 " @summary This example shows drag-and-drop capability.
+" @origin sap.m.sample.TreeDnD - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeDnD (status: generated)
 CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

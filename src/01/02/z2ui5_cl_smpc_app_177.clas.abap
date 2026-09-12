@@ -1,5 +1,6 @@
 " @keywords calendardateinterval calendar date interval sap.ui.unified calendardateintervalbasic html verticallayout daterange button horizontallayout label
 " @summary CalendarDateInterval with 14 days and single day selection
+" @origin sap.ui.unified.sample.CalendarDateIntervalBasic - https://sdk.openui5.org/entity/sap.ui.unified.CalendarDateInterval/sample/sap.ui.unified.sample.CalendarDateIntervalBasic (status: reviewed)
 CLASS z2ui5_cl_smpc_app_177 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

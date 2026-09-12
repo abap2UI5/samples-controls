@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendaroneline vbox title togglebutton overflowtoolbarlayoutdata badgecustomdata select item
 " @summary PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area.
+" @origin sap.m.sample.PlanningCalendarOneLine - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarOneLine (status: generated)
 CLASS z2ui5_cl_smpc_app_539 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

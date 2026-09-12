@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarinlineicons icontabfilter text
 " @summary This sample illustrates tab icons for inline mode.
+" @origin sap.m.sample.IconTabBarInlineIcons - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarInlineIcons (status: generated)
 CLASS z2ui5_cl_smpc_app_467 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

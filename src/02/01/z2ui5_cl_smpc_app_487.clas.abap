@@ -1,5 +1,6 @@
 " @keywords panel sap.m panelsticky text
 " @summary Panels can also have a sticky header. [since rel. 1.117]
+" @origin sap.m.sample.PanelSticky - https://sdk.openui5.org/entity/sap.m.Panel/sample/sap.m.sample.PanelSticky (status: generated)
 CLASS z2ui5_cl_smpc_app_487 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

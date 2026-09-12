@@ -1,5 +1,6 @@
 " @keywords selectlist select list sap.m selectlistwithicons listitem
 " @summary A SelectList with icons.
+" @origin sap.m.sample.SelectListWithIcons - https://sdk.openui5.org/entity/sap.m.SelectList/sample/sap.m.sample.SelectListWithIcons (status: reviewed)
 CLASS z2ui5_cl_smpc_app_211 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

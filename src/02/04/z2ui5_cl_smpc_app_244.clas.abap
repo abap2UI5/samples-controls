@@ -1,5 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpageresponsiveavatar dynamicpagetitle breadcrumbs link hbox title objectmarker text flexbox
 " @summary Dynamic Page demonstrating the breakpointChange event to adjust Avatar sizes responsively based on breakpoints.
+" @origin sap.f.sample.DynamicPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageResponsiveAvatar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_244 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

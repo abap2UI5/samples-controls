@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarresponsivepadding icontabfilter icontabseparator table overflowtoolbar label column
 " @summary This example demonstrates the Icon Tab Bar's support for paddings that depend on the width of its container
+" @origin sap.m.sample.IconTabBarResponsivePadding - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarResponsivePadding (status: generated)
 CLASS z2ui5_cl_smpc_app_619 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

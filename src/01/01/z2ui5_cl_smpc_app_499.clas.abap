@@ -1,5 +1,6 @@
 " @keywords list sap.m listselectionsearch overflowtoolbar searchfield label standardlistitem
 " @summary When searching a list with multi selection the previously selected items will stay selected. This is managed by the list control for you.
+" @origin sap.m.sample.ListSelectionSearch - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListSelectionSearch (status: generated)
 CLASS z2ui5_cl_smpc_app_499 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

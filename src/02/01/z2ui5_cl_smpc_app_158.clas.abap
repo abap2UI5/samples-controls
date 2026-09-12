@@ -1,5 +1,6 @@
 " @keywords flexbox flex box sap.m gap vbox panel button
 " @summary You can add gap between rows and columns.
+" @origin sap.m.sample.FlexBoxGap - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxGap (status: reviewed)
 CLASS z2ui5_cl_smpc_app_158 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

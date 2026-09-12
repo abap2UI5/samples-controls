@@ -1,5 +1,6 @@
 " @keywords quickview quick sap.m quickviewnavorigin button quickviewpage avatar quickviewgroup quickviewgroupelement
 " @summary QuickView using navOrigin parameter when navigating.
+" @origin sap.m.sample.QuickViewNavOrigin - https://sdk.openui5.org/entity/sap.m.QuickView/sample/sap.m.sample.QuickViewNavOrigin (status: generated)
 CLASS z2ui5_cl_smpc_app_532 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

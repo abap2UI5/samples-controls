@@ -1,5 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistboxcontainergrouping slider panel toolbar title toolbarspacer searchfield gridboxlayout
 " @summary This sample illustrates subgroups with headers, custom header and lazy loading of GridList items.
+" @origin sap.f.sample.GridListBoxContainerGrouping - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBoxContainerGrouping (status: reviewed)
 CLASS z2ui5_cl_smpc_app_176 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

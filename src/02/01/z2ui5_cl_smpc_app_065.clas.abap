@@ -1,5 +1,6 @@
 " @keywords messagepopover message popover sap.m handling vbox simpleform title label input select item
 " @summary The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover.
+" @origin sap.m.sample.MessagePopoverMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverMessageHandling (status: checked)
 CLASS z2ui5_cl_smpc_app_065 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

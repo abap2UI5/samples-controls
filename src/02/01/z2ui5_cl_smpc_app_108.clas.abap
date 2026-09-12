@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m single-row day planner vbox title togglebutton planningcalendarrow calendarappointment
 " @summary PlanningCalendar with only one row without row header. On click on an interval a new appointment is created.
+" @origin sap.m.sample.PlanningCalendarSingle - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarSingle (status: generated)
 CLASS z2ui5_cl_smpc_app_108 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

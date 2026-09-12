@@ -1,5 +1,6 @@
 " @keywords blocklayout block layout sap.ui.layout blocklayoutlinktitle simpleform label slider segmentedbutton segmentedbuttonitem messagestrip verticallayout
 " @summary The BlockLayout Cells can have links as titles. The link text overwrites the title text.
+" @origin sap.ui.layout.sample.BlockLayoutLinkTitle - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutLinkTitle (status: reviewed)
 CLASS z2ui5_cl_smpc_app_223 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords table sap.m tablednd hbox button overflowtoolbar title menu menuitem column text dropinfo
 " @summary Shows the different kinds of drag-and-drop capabilities across view boundaries along with custom context menu alternatives to perform these action.
+" @origin sap.m.sample.TableDnD - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableDnD (status: generated)
 CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbardragdrop simpleform label stepinput icontabfilter text
 " @summary This example shows how the tab filters can be reordered and nested with drag and drop. Works only on desktop devices.
+" @origin sap.m.sample.IconTabBarDragDrop - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarDragDrop (status: generated)
 CLASS z2ui5_cl_smpc_app_506 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

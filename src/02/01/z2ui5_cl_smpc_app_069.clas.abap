@@ -1,5 +1,6 @@
 " @keywords radiobutton radio button sap.m groups value states wrapping vbox label radiobuttongroup hbox
 " @summary Typically the Radio Button is used by other controls. E.g. the List uses it for the single selection. But you can also use the Radio Buttons control directly, to allow selection of exactly one of multiple options.
+" @origin sap.m.sample.RadioButton - https://sdk.openui5.org/entity/sap.m.RadioButton/sample/sap.m.sample.RadioButton (status: reviewed)
 CLASS z2ui5_cl_smpc_app_069 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

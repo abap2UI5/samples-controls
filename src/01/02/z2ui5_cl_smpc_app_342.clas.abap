@@ -1,5 +1,6 @@
 " @keywords card sap.ui.integration.widgets lazyloading simpleform label input checkbox button gridcontainer gridcontaineritemlayoutdata
 " @summary dataMode:'Auto' activates lazy loading behavior of an integration card
+" @origin sap.ui.integration.sample.LazyLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.LazyLoading (status: reviewed)
 CLASS z2ui5_cl_smpc_app_342 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

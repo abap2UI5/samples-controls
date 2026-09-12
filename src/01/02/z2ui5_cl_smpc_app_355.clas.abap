@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table menus menu menuitem overflowtoolbar title toolbarspacer togglebutton column label text
 " @summary Example which focuses the handling of the table related Menus
+" @origin sap.ui.table.sample.Menus - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Menus (status: reviewed)
 CLASS z2ui5_cl_smpc_app_355 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

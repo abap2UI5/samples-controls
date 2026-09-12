@@ -1,5 +1,6 @@
 " @keywords menu sap.m shown another openby vbox button menuitem
 " @summary This control is used to show a menu in both desktop and mobile.
+" @origin sap.m.sample.Menu - https://sdk.openui5.org/entity/sap.m.Menu/sample/sap.m.sample.Menu (status: checked)
 CLASS z2ui5_cl_smpc_app_060 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

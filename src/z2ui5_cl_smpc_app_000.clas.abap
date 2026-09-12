@@ -2383,8 +2383,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                ` are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_556.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DatePicker`                      name = `DatePickerMassEdit`                            class = `z2ui5_cl_smpc_app_556` path = `src/01/01/z2ui5_cl_smpc_app_556.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22.0`
         notes = lv_text1 ) ).
 
@@ -5178,7 +5178,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.OverflowToolbar`                 name = `ToolbarDesign`                                 class = `z2ui5_cl_smpc_app_086` path = `src/01/01/z2ui5_cl_smpc_app_086.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.28`
         notes = `NOTE: the Select ``change`` handlers onSelectDesign/onSelectStyle (setDesign/setStyle) become two-way bound design/style; bActionContext (design != Info) becomes an expression binding on the Buttons'` &&
                  ` visible.` )
@@ -8776,8 +8776,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.ui.core`        control = `sap.ui.core.theming.Parameters`        name = `BasicThemeParameters`                          class = `z2ui5_cl_smpc_app_131` path = `src/01/02/z2ui5_cl_smpc_app_131.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         notes = `NOTE: The sample itself is just a MessageStrip + Link pointing at the Theme Parameter Toolbox (the real demo content lives in that external tool); reproduced 1:1. The Link href is the original's` &&
                  ` host-relative 'test-resources/sap/m/demokit/theming/webapp/index.html' rewritten to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/demokit/theming/webapp/index.html per the runtime` &&
                  ` asset-URL rule (an abap2UI5 system does not serve the demokit path; app 152 precedent).` ) ).
@@ -12459,8 +12459,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                ` it.`.
     result = VALUE #( BASE result
       ( module = `sap.uxap`           control = `sap.uxap.ObjectPageSubSection`         name = `ObjectPageSubSectionWithActions`               class = `z2ui5_cl_smpc_app_178` path = `src/01/03/z2ui5_cl_smpc_app_178.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.26`
         notes = lv_text1 ) ).
 

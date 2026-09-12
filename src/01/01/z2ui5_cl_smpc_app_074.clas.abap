@@ -1,5 +1,6 @@
 " @keywords objectlistitem object list item sap.m status attributes currency objectstatus objectattribute
 " @summary The Object List Item has many possibilities to provide a quick overview for an object within a list.
+" @origin sap.m.sample.ObjectListItem - https://sdk.openui5.org/entity/sap.m.ObjectListItem/sample/sap.m.sample.ObjectListItem (status: reviewed)
 CLASS z2ui5_cl_smpc_app_074 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

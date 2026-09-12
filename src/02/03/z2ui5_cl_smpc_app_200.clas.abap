@@ -1,5 +1,6 @@
 " @keywords headerfacetpattern header facet pattern sap.uxap objectpagesectionshowtitle objectpagelayout objectpagedynamicheadertitle title hbox avatar vbox
 " @summary ObjectPage sample that demonstrates the combination of header facets and showTitle properties of sections and subsections.
+" @origin sap.uxap.sample.ObjectPageSectionShowTitle - https://sdk.openui5.org/entity/sap.uxap.HeaderFacetPattern/sample/sap.uxap.sample.ObjectPageSectionShowTitle (status: reviewed)
 CLASS z2ui5_cl_smpc_app_200 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -20,7 +20,7 @@
  * Button, no Page id="page") rather than guessing.
  *
  * Regenerating apps 312..337 reproduces the committed classes BYTE FOR BYTE,
- * below their two generated header lines. Re-check that after touching this
+ * below their generated header lines. Re-check that after touching this
  * file — it is the only thing that keeps the claim true, and it was NOT true
  * between 2026-08-16 and 2026-08-21: four corpus-wide sweeps had moved the
  * ports on without this emitter (`ele`/`tag` replaced `open`/`leaf`,
@@ -29,9 +29,9 @@
  * methods that do not exist and the "regenerating is safe" line here and in
  * AGENTS.md pointed at a class that could not activate.
  *
- * The two header lines are NOT emitted here: `npm run keywords` and
+ * The header lines are NOT emitted here: `npm run keywords`, `npm run origin` and
  * `npm run summary` write them from meta/<class>.json and the built controls.
- * Regenerate, put those two lines back on top, then run them.
+ * Regenerate, put those lines back on top, then run them.
  *
  * Not part of `npm run gates`; the generated file is reviewed and committed
  * like any hand-written port, and its sidecar is written by hand.

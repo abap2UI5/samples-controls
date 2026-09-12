@@ -1,5 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputvaluestates verticallayout label
 " @summary This sample illustrates the different value states of the sap.m.MultiInput control.
+" @origin sap.m.sample.MultiInputValueStates - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputValueStates (status: reviewed)
 CLASS z2ui5_cl_smpc_app_386 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

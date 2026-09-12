@@ -1,5 +1,6 @@
 " @keywords notificationlistgroup notification list group sap.m notificationlistgrouplazyloading vbox notificationlist flexitemdata button notificationlistitem
 " @summary Notification List Group with lazy loading of the notifications.
+" @origin sap.m.sample.NotificationListGroupLazyLoading - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroupLazyLoading (status: generated)
 CLASS z2ui5_cl_smpc_app_520 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

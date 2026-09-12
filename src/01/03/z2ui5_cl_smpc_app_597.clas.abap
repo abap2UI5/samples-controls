@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagexml objectpageheader button verticallayout link horizontallayout label objectpagesection
 " @summary An ObjectPageLayout declared in one XML view - header title, header content and five sections whose blocks come from four different block namespaces - rather than assembled in a controller.
+" @origin sap.uxap.sample.ObjectPageXML - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageXML (status: generated)
 CLASS z2ui5_cl_smpc_app_597 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

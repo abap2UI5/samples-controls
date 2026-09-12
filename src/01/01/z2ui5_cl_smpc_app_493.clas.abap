@@ -1,5 +1,6 @@
 " @keywords combobox combo box sap.m comboboxlazyloading listitem
 " @summary Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips.
+" @origin sap.m.sample.ComboBoxLazyLoading - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxLazyLoading (status: generated)
 CLASS z2ui5_cl_smpc_app_493 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

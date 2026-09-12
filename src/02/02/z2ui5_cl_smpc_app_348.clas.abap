@@ -1,5 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridresponsivecolumnlayout togglebutton slider panel toolbar title text responsivecolumnlayout card responsivecolumnitemlayoutdata
 " @summary Example of using ResponsiveColumnLayout.
+" @origin sap.ui.layout.sample.GridResponsiveColumnLayout - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveColumnLayout (status: reviewed)
 CLASS z2ui5_cl_smpc_app_348 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

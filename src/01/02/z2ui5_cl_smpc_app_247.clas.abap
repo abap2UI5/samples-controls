@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table columnresizing overflowtoolbar title column label text link segmentedbutton segmentedbuttonitem
 " @summary Example for column resizing
+" @origin sap.ui.table.sample.ColumnResizing - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.ColumnResizing (status: reviewed)
 CLASS z2ui5_cl_smpc_app_247 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

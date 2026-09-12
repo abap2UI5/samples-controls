@@ -1,5 +1,6 @@
 " @keywords messagepopover message popover sap.m list overflowtoolbar button messageitem link toolbarspacer
 " @summary MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message.
+" @origin sap.m.sample.MessagePopover - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopover (status: checked)
 CLASS z2ui5_cl_smpc_app_066 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

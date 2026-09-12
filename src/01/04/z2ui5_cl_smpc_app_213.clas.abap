@@ -1,5 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistbreakpoints slider panel toolbar title gridresponsivelayout gridsettings gridlistitem
 " @summary This sample illustrates how to configure the responsive settings for different container sizes.
+" @origin sap.f.sample.GridListBreakPoints - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBreakPoints (status: reviewed)
 CLASS z2ui5_cl_smpc_app_213 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

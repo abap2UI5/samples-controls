@@ -1,5 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutcolumnresize objectpagelayout objectpagedynamicheadertitle title objectpagesection objectpagesubsection button
 " @summary FlexibleColumnLayout where the app programmatically scrolls to some item within the newly navigated column, once the column is fully resized
+" @origin sap.f.sample.FlexibleColumnLayoutColumnResize - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutColumnResize (status: generated)
 CLASS z2ui5_cl_smpc_app_577 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

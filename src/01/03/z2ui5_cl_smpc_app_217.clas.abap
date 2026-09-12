@@ -1,5 +1,6 @@
 " @keywords objectpageheader object header sap.uxap kpiobjectpageheader objectpagelayout objectpageheaderactionbutton verticallayout label objectnumber objectattribute objectpagesection
 " @summary This is an example of an ObjectPageHeader containing mainly KPIs.
+" @origin sap.uxap.sample.KPIObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.KPIObjectPageHeader (status: reviewed)
 CLASS z2ui5_cl_smpc_app_217 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

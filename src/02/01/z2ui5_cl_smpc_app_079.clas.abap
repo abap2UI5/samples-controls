@@ -1,5 +1,6 @@
 " @keywords title sap.m embedded link list toolbar toolbarspacer button standardlistitem
 " @summary This sample shows how to add a link to a title.
+" @origin sap.m.sample.TitleLink - https://sdk.openui5.org/entity/sap.m.Title/sample/sap.m.sample.TitleLink (status: reviewed)
 CLASS z2ui5_cl_smpc_app_079 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

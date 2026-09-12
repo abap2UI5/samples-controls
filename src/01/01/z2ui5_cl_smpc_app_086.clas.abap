@@ -1,5 +1,6 @@
 " @keywords overflowtoolbar overflow toolbar sap.m design style selection simpleform label select item button
 " @summary The Design and Style properties can be used to specify the visual design of the OverflowToolbar/Toolbar.
+" @origin sap.m.sample.ToolbarDesign - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.ToolbarDesign (status: reviewed)
 CLASS z2ui5_cl_smpc_app_086 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords flexbox flex box sap.m flexboxcols html verticallayout text flexitemdata
 " @summary You can create balanced areas with Flex Box, such as these columns with equal height regardless of content.
+" @origin sap.m.sample.FlexBoxCols - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxCols (status: generated)
 CLASS z2ui5_cl_smpc_app_426 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

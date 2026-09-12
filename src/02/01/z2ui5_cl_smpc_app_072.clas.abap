@@ -1,5 +1,6 @@
 " @keywords objectnumber object number sap.m states inverted interactive styles verticallayout label horizontallayout panel
 " @summary The object number is a small building block representing an important, numerical attribute of an object together with it's unit. Often it is used in the last column of a table.
+" @origin sap.m.sample.ObjectNumber - https://sdk.openui5.org/entity/sap.m.ObjectNumber/sample/sap.m.sample.ObjectNumber (status: reviewed)
 CLASS z2ui5_cl_smpc_app_072 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

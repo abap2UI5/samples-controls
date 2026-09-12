@@ -1,5 +1,6 @@
 " @keywords table sap.m tablelayout overflowtoolbar title toolbarspacer checkbox button column text columnlistitem dialog
 " @summary You can use fixedLayout property to define the layout algorithm to be used for the table cells, rows, and columns. When fixedLayout property is set to false, the width of the table and its cells depends on the content thereof.
+" @origin sap.m.sample.TableLayout - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableLayout (status: generated)
 CLASS z2ui5_cl_smpc_app_572 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

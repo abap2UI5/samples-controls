@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table rowaction overflowtoolbar title toolbarspacer select item togglebutton column label text
 " @summary Shows how row actions can be used.
+" @origin sap.ui.table.sample.RowAction - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowAction (status: reviewed)
 CLASS z2ui5_cl_smpc_app_359 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

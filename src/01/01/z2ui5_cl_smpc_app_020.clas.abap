@@ -1,5 +1,6 @@
 " @keywords displaylistitem display list item sap.m represent label verticallayout
 " @summary Use the Display List Item for showing name/value pairs.
+" @origin sap.m.sample.DisplayListItem - https://sdk.openui5.org/entity/sap.m.DisplayListItem/sample/sap.m.sample.DisplayListItem (status: checked)
 CLASS z2ui5_cl_smpc_app_020 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

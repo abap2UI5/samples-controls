@@ -1,5 +1,6 @@
 " @keywords grid sap.ui.layout gridproperties html verticallayout messagestrip title formattedtext slider
 " @summary You can see how the different properties of the sap.ui.layout.Grid affect it's final appearance.
+" @origin sap.ui.layout.sample.GridProperties - https://sdk.openui5.org/entity/sap.ui.layout.Grid/sample/sap.ui.layout.sample.GridProperties (status: reviewed)
 CLASS z2ui5_cl_smpc_app_345 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputvalidators vbox label hbox token checkbox
 " @summary MultiInput uses validators to accept, decline and change tokens.
+" @origin sap.m.sample.MultiInputValidators - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputValidators (status: generated)
 CLASS z2ui5_cl_smpc_app_501 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

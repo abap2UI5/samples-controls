@@ -1,5 +1,6 @@
 " @keywords carousel sap.m carouselwithdisplayoptions label slider panel carousellayout image radiobuttongroup radiobutton switch input
 " @summary The Carousel has options for the arrows placement, page indicator placement and page indicator visibility.
+" @origin sap.m.sample.CarouselWithDisplayOptions - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithDisplayOptions (status: generated)
 CLASS z2ui5_cl_smpc_app_604 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

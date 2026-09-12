@@ -1,5 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationoverlaymode app toolpage shellbar avatar navcontainer scrollcontainer vbox
 " @summary SideNavigation in a responsive popover.
+" @origin sap.tnt.sample.SideNavigationOverlayMode - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationOverlayMode (status: reviewed)
 CLASS z2ui5_cl_smpc_app_301 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

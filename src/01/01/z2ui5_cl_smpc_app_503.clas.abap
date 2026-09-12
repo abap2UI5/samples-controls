@@ -1,5 +1,6 @@
 " @keywords input sap.m inputkeyvaluetabularsuggestions verticallayout label column columnlistitem text
 " @summary This sample illustrates how the Input works with key and value values, when the data is provided with table-like suggestions.
+" @origin sap.m.sample.InputKeyValueTabularSuggestions - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputKeyValueTabularSuggestions (status: generated)
 CLASS z2ui5_cl_smpc_app_503 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

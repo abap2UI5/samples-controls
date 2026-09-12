@@ -1,5 +1,6 @@
 " @keywords tableselectdialog table select dialog sap.m product row columnlistitem objectidentifier text objectnumber column
 " @summary Similar to the Select Dialog, the Table Select Dialog presents selectable items in a table-based dialog, with filter functions. You can have single select or multi select mode.
+" @origin sap.m.sample.TableSelectDialog - https://sdk.openui5.org/entity/sap.m.TableSelectDialog/sample/sap.m.sample.TableSelectDialog (status: reviewed)
 CLASS z2ui5_cl_smpc_app_104 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

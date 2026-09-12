@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarwithlegend dynamicsidecontent vbox label select item togglebutton planningcalendarrow
 " @summary PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections. For each sap.m.PlanningCalendarRow in the sap.m.
+" @origin sap.m.sample.PlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWithLegend (status: generated)
 CLASS z2ui5_cl_smpc_app_541 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

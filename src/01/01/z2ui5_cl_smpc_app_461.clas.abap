@@ -1,5 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputmaxtokens verticallayout label item
 " @summary Number of Tokens in MultiInput cannot exceed the maxToken number.
+" @origin sap.m.sample.MultiInputMaxTokens - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputMaxTokens (status: generated)
 CLASS z2ui5_cl_smpc_app_461 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

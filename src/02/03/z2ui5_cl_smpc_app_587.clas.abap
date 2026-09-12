@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap anchorbarwithnumbers objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary This example shows how to visualize numbers in parenthesis after the corresponding section titles in the AnchorBar
+" @origin sap.uxap.sample.AnchorBarWithNumbers - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.AnchorBarWithNumbers (status: generated)
 CLASS z2ui5_cl_smpc_app_587 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
