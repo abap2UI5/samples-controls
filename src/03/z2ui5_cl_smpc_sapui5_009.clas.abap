@@ -1,5 +1,6 @@
 " @keywords statusindicator.statusindicator html shell panel text slider responsivescale flexbox statusindicator propertythreshold shapegroup libraryshape
 " @summary sap.suite.ui.commons.statusindicator.StatusIndicator expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.suite.ui.commons.statusindicator.StatusIndicator - https://ui5.sap.com/#/entity/sap.suite.ui.commons.statusindicator.StatusIndicator (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.commons - statusindicator.StatusIndicator</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -24,87 +25,26 @@ CLASS z2ui5_cl_smpc_sapui5_009 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS initialize.
     METHODS view_display.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
 
 CLASS z2ui5_cl_smpc_sapui5_009 IMPLEMENTATION.
 
-  METHOD initialize.
+  METHOD z2ui5_if_app~main.
 
-    mv_slider_value = 0.
-
-    mt_shapes = VALUE #(
-                        ( id = `arrow_down` )
-                        ( id = `arrow_left` )
-                        ( id = `arrow_right` )
-                        ( id = `arrow_up` )
-                        ( id = `attention_1` )
-                        ( id = `attention_2` )
-                        ( id = `building` )
-                        ( id = `bulb` )
-                        ( id = `bull` )
-                        ( id = `calendar` )
-                        ( id = `car` )
-                        ( id = `cart` )
-                        ( id = `cereals` )
-                        ( id = `circle` )
-                        ( id = `clock` )
-                        ( id = `cloud` )
-                        ( id = `conveyor` )
-                        ( id = `desk` )
-                        ( id = `document` )
-                        ( id = `documents` )
-                        ( id = `dollar` )
-                        ( id = `donut` )
-                        ( id = `drop` )
-                        ( id = `envelope` )
-                        ( id = `euro` )
-                        ( id = `factory` )
-                        ( id = `female` )
-                        ( id = `fish` )
-                        ( id = `flag` )
-                        ( id = `folder_1` )
-                        ( id = `folder_2` )
-                        ( id = `gear` )
-                        ( id = `heart` )
-                        ( id = `honey` )
-                        ( id = `house` )
-                        ( id = `information` )
-                        ( id = `letter` )
-                        ( id = `lung` )
-                        ( id = `machine` )
-                        ( id = `male` )
-                        ( id = `pen` )
-                        ( id = `person` )
-                        ( id = `pin` )
-                        ( id = `plane` )
-                        ( id = `printer` )
-                        ( id = `progress` )
-                        ( id = `question` )
-                        ( id = `robot` )
-                        ( id = `sandclock` )
-                        ( id = `speed` )
-                        ( id = `stomach` )
-                        ( id = `success` )
-                        ( id = `tank_diesel` )
-                        ( id = `tank_lpg` )
-                        ( id = `thermo` )
-                        ( id = `tool` )
-                        ( id = `transfusion` )
-                        ( id = `travel` )
-                        ( id = `turnip` )
-                        ( id = `vehicle_construction` )
-                        ( id = `vehicle_tank` )
-                        ( id = `vehicle_tractor` )
-                        ( id = `vehicle_truck_1` )
-                        ( id = `vehicle_truck_2` )
-                        ( id = `vehicle_truck_3` )
-                        ( id = `warehouse` ) ).
+    me->client = client.
+    IF client->check_on_init( ).
+      model_init( ).
+      view_display( ).
+    ELSEIF client->check_on_navigated( ).
+      view_display( ).
+    ENDIF.
 
   ENDMETHOD.
+
 
   METHOD view_display.
 
@@ -196,17 +136,78 @@ CLASS z2ui5_cl_smpc_sapui5_009 IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_app~main.
 
-    me->client = client.
-    IF client->check_on_init( ).
+  METHOD model_init.
 
-      initialize( ).
-      view_display( ).
-    ELSEIF client->check_on_navigated( ).
-      view_display( ).
+    mv_slider_value = 0.
 
-    ENDIF.
+    mt_shapes = VALUE #(
+                        ( id = `arrow_down` )
+                        ( id = `arrow_left` )
+                        ( id = `arrow_right` )
+                        ( id = `arrow_up` )
+                        ( id = `attention_1` )
+                        ( id = `attention_2` )
+                        ( id = `building` )
+                        ( id = `bulb` )
+                        ( id = `bull` )
+                        ( id = `calendar` )
+                        ( id = `car` )
+                        ( id = `cart` )
+                        ( id = `cereals` )
+                        ( id = `circle` )
+                        ( id = `clock` )
+                        ( id = `cloud` )
+                        ( id = `conveyor` )
+                        ( id = `desk` )
+                        ( id = `document` )
+                        ( id = `documents` )
+                        ( id = `dollar` )
+                        ( id = `donut` )
+                        ( id = `drop` )
+                        ( id = `envelope` )
+                        ( id = `euro` )
+                        ( id = `factory` )
+                        ( id = `female` )
+                        ( id = `fish` )
+                        ( id = `flag` )
+                        ( id = `folder_1` )
+                        ( id = `folder_2` )
+                        ( id = `gear` )
+                        ( id = `heart` )
+                        ( id = `honey` )
+                        ( id = `house` )
+                        ( id = `information` )
+                        ( id = `letter` )
+                        ( id = `lung` )
+                        ( id = `machine` )
+                        ( id = `male` )
+                        ( id = `pen` )
+                        ( id = `person` )
+                        ( id = `pin` )
+                        ( id = `plane` )
+                        ( id = `printer` )
+                        ( id = `progress` )
+                        ( id = `question` )
+                        ( id = `robot` )
+                        ( id = `sandclock` )
+                        ( id = `speed` )
+                        ( id = `stomach` )
+                        ( id = `success` )
+                        ( id = `tank_diesel` )
+                        ( id = `tank_lpg` )
+                        ( id = `thermo` )
+                        ( id = `tool` )
+                        ( id = `transfusion` )
+                        ( id = `travel` )
+                        ( id = `turnip` )
+                        ( id = `vehicle_construction` )
+                        ( id = `vehicle_tank` )
+                        ( id = `vehicle_tractor` )
+                        ( id = `vehicle_truck_1` )
+                        ( id = `vehicle_truck_2` )
+                        ( id = `vehicle_truck_3` )
+                        ( id = `warehouse` ) ).
 
   ENDMETHOD.
 

@@ -1,5 +1,6 @@
 " @keywords processflow shell processflownode processflowlaneheader
 " @summary sap.suite.ui.commons.ProcessFlow expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.suite.ui.commons.ProcessFlow - https://ui5.sap.com/#/entity/sap.suite.ui.commons.ProcessFlow (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.suite.ui.commons - ProcessFlow</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -44,9 +45,9 @@ CLASS z2ui5_cl_smpc_sapui5_006 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_event.
-    METHODS set_data.
     METHODS view_display.
+    METHODS on_event.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -55,14 +56,10 @@ CLASS z2ui5_cl_smpc_sapui5_006 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
 
-    me->client     = client.
-
+    me->client = client.
     IF client->check_on_init( ).
-
-      set_data( ).
-
+      model_init( ).
       view_display( ).
-      RETURN.
     ELSEIF client->check_on_navigated( ).
       view_display( ).
     ELSEIF client->check_on_event( ).
@@ -71,38 +68,6 @@ CLASS z2ui5_cl_smpc_sapui5_006 IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD on_event.
-
-    IF client->get_event( ) = `NODE_PRESS`.
-      " the wire carries no argument, so the press is all this knows. To act
-      " on the node itself, add a t_arg to the _event( ) call in view_display
-      " and read it back with client->get_event_arg( ).
-      client->message_toast_display( `nodePress - a process flow node was clicked` ).
-    ENDIF.
-
-  ENDMETHOD.
-
-  METHOD set_data.
-
-    mt_nodes = VALUE #( ( id = `1` lane = `0` title = `Sales Order 1` titleabbreviation = `SO 1` children = VALUE #( ( 10 ) ( 11 ) ( 12 ) ) state = `Positive` statetext = `OK status` focused = abap_true
-                          highlighted = abap_false texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
-                        ( id = `10` lane = `1` title = `Outbound Delivery 40` titleabbreviation = `OD 40` state = `Positive` statetext = `OK status` focused = abap_true highlighted = abap_false
-                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
-                        ( id = `11` lane = `1` title = `Outbound Delivery 43` titleabbreviation = `OD 43` children = VALUE #( ( 21 ) ) state = `Neutral` statetext = `OK status` focused = abap_true highlighted = abap_false
-                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
-                        ( id = `12` lane = `1` title = `Outbound Delivery 45` titleabbreviation = `OD 45` children = VALUE #( ( 20 ) ) state = `Neutral` focused = abap_false highlighted = abap_false
-                         texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
-                        ( id = `20` lane = `2` title = `Invoice 9` titleabbreviation = `I 9` state = `Positive` statetext = `OK status` focused = abap_false highlighted = abap_false
-                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
-                        ( id = `21` lane = `2` title = `Invoice Planned` titleabbreviation = `IP` state = `PlannedNegative` focused = abap_false highlighted = abap_false
-                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) ) ).
-
-    mt_lanes = VALUE #( ( id = `0` icon = `sap-icon://order-status` label = `Order Processing` position = 0 )
-                        ( id = `1` icon = `sap-icon://monitor-payments` label = `Delivery Processing` position = 1 )
-                        ( id = `2` icon = `sap-icon://payment-approval` label = `Invoicing` position = 2 ) ).
-
-  ENDMETHOD.
 
   METHOD view_display.
 
@@ -153,6 +118,40 @@ CLASS z2ui5_cl_smpc_sapui5_006 IMPLEMENTATION.
                             )->a( n = `position` v = `{POSITION}` ).
 
     client->view_display( view->stringify( ) ).
+
+  ENDMETHOD.
+
+
+  METHOD on_event.
+
+    IF client->get_event( ) = `NODE_PRESS`.
+      " the wire carries no argument, so the press is all this knows. To act
+      " on the node itself, add a t_arg to the _event( ) call in view_display
+      " and read it back with client->get_event_arg( ).
+      client->message_toast_display( `nodePress - a process flow node was clicked` ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD model_init.
+
+    mt_nodes = VALUE #( ( id = `1` lane = `0` title = `Sales Order 1` titleabbreviation = `SO 1` children = VALUE #( ( 10 ) ( 11 ) ( 12 ) ) state = `Positive` statetext = `OK status` focused = abap_true
+                          highlighted = abap_false texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
+                        ( id = `10` lane = `1` title = `Outbound Delivery 40` titleabbreviation = `OD 40` state = `Positive` statetext = `OK status` focused = abap_true highlighted = abap_false
+                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
+                        ( id = `11` lane = `1` title = `Outbound Delivery 43` titleabbreviation = `OD 43` children = VALUE #( ( 21 ) ) state = `Neutral` statetext = `OK status` focused = abap_true highlighted = abap_false
+                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
+                        ( id = `12` lane = `1` title = `Outbound Delivery 45` titleabbreviation = `OD 45` children = VALUE #( ( 20 ) ) state = `Neutral` focused = abap_false highlighted = abap_false
+                         texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
+                        ( id = `20` lane = `2` title = `Invoice 9` titleabbreviation = `I 9` state = `Positive` statetext = `OK status` focused = abap_false highlighted = abap_false
+                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) )
+                        ( id = `21` lane = `2` title = `Invoice Planned` titleabbreviation = `IP` state = `PlannedNegative` focused = abap_false highlighted = abap_false
+                        texts = VALUE #( ( `Sales Order Document Overdue long text for the wrap up all the aspects` ) ( `Not cleared` ) ) ) ).
+
+    mt_lanes = VALUE #( ( id = `0` icon = `sap-icon://order-status` label = `Order Processing` position = 0 )
+                        ( id = `1` icon = `sap-icon://monitor-payments` label = `Delivery Processing` position = 1 )
+                        ( id = `2` icon = `sap-icon://payment-approval` label = `Invoicing` position = 2 ) ).
 
   ENDMETHOD.
 

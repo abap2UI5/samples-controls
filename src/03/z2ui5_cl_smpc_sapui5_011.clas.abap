@@ -1,5 +1,6 @@
 " @keywords barcodescannerbutton shell simpleform label input
 " @summary sap.ndc.BarcodeScannerButton expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.ndc.BarcodeScannerButton - https://ui5.sap.com/#/entity/sap.ndc.BarcodeScannerButton (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.ndc - BarcodeScannerButton</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -30,7 +31,6 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
       mv_scan_type  = t_arg[ 2 ].
       "implement further processing here...
       "...
-      RETURN.
     ENDIF.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).

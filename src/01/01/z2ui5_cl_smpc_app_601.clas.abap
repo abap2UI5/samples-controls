@@ -6,6 +6,7 @@ CLASS z2ui5_cl_smpc_app_601 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the depth in Tree.json, 1 = a root node
     TYPES:
       BEGIN OF ty_s_node_level5,
         text TYPE string,

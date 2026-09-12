@@ -6,6 +6,7 @@ CLASS z2ui5_cl_smpc_app_496 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    " one structure per nesting depth (ABAP has no recursive types) - the number is the depth the controller's loadData( iLevel ) builds, 1 = a root node
     TYPES:
       BEGIN OF ty_s_node_level6,
         text  TYPE string,

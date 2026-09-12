@@ -1,5 +1,6 @@
 " @keywords analyticmap shell mapcontainer containercontent spots spot routes route legend legenditem
 " @summary sap.ui.vbm.AnalyticMap expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.ui.vbm.AnalyticMap - https://ui5.sap.com/#/entity/sap.ui.vbm.AnalyticMap (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.ui.vbm - AnalyticMap</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -59,7 +60,6 @@ CLASS z2ui5_cl_smpc_sapui5_010 IMPLEMENTATION.
     " roundtrip re-displays it - including the navigated one. The IF only
     " seeds the model, which has to happen once.
     IF client->check_on_init( ).
-
       mt_spot = VALUE #(
         ( pos = `9.98336;53.55024;0`         contentoffset = `0;-6` scale = `1;1;1` key = `Hamburg`     tooltip = `Hamburg`     type = `Default` icon = `factory` )
         ( pos = `11.5820;48.1351;0`          contentoffset = `0;-5` scale = `1;1;1` key = `Munich`      tooltip = `Munich`      type = `Default` icon = `factory` )

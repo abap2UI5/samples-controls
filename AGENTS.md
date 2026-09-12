@@ -1024,6 +1024,29 @@ DSAG Leitfaden, then the samples style. Essentials:
   `clear-statement` - the sentence stood unenforced while 70 `CLEAR`s
   accumulated, swept 2026-09-11).
 - Prefix only tables (`t_`) and structures (`s_`); local types `ty_s_` / `ty_t_`.
+  **No Hungarian prefix anywhere else** — `lv_`/`lt_`/`ls_`/`iv_`/`ev_`/`rv_`/
+  `cv_`/`it_`/`et_`/`lr_`/`lc_` on a local, a parameter, a constant or an
+  attribute are the SAP-classic prefixes this repo retired (pattern-lint
+  `hungarian-prefix`; 56 classes carried 700+ of them until 2026-09-12). A
+  boolean predicate such as `is_copy` is a name, not a prefix, and a framework
+  parameter (`ev_container`) is not ours to rename.
+- **A structure type opens on two lines**: `TYPES:` alone on its line,
+  `BEGIN OF ty_s_x,` two columns further in, the components two more with
+  their `TYPE` column aligned, `END OF ty_s_x.` under the `BEGIN` (pattern-lint
+  `types-layout`; `scripts/json-to-abap.mjs` emits the form). `TYPES: BEGIN OF`
+  on one line is the other layout the corpus mixed until 2026-09-12.
+- **A model field mirrors the original JSON key verbatim** — `SupplierName` →
+  `suppliername`, never `supplier_name` (the `port-a-sample` recipe; 71 classes
+  still carried underscored mirrors until 2026-09-12). A port-invented helper
+  field with no original key (`weight_state`, `start_at`) keeps its own name.
+- **METHODS are declared in the order they are implemented** — main first,
+  `model_init` last (pattern-lint `main-not-first` / `model-init-last`), and the
+  DEFINITION lists them in that same order, so it reads as the table of
+  contents of the implementation (51 classes declared them in another order
+  until 2026-09-12). The `src/03` collection uses the same lifecycle names
+  (`model_init`, `view_display`, `on_event`) and carries the port's `" @origin`
+  line below `@summary`, with the status `collection - SAPUI5-only,
+  hand-written, not a port`.
 - Lifecycle: `check_on_navigated( )` is the DISPLAY branch and
   `check_on_event( )` the event branch, chained with `ELSEIF`. A
   `check_on_init( )` branch comes FIRST and only when something must happen
@@ -1037,8 +1060,14 @@ DSAG Leitfaden, then the samples style. Essentials:
   cell of a row stays unpadded so no spaces pile up before the closing `)`.
   A padded row that would break the 255-character limit is wrapped instead — at
   the same field boundaries in EVERY row (app 571 is the reference: 123 rows,
-  all `3+4+4`). Rows with differing field lists (an optional field, a nested
-  child table) have no column to align and are left alone.
+  all `3+4+4`), and a wrapped row is **not** padded inside its groups: that is
+  571's shape, and padding a wrapped block is what carried apps 012/218/358
+  past the 75,000-character `statement-too-long` budget on 2026-09-12. The
+  headroom rule is `line-headroom`: no code line over 240 characters, 15 short
+  of abaplint's hard 255 (478 lines sat in that band until 2026-09-12); a
+  chain line repeated over 40 times in one method is `unrolled-chain-repetition`
+  (all three pattern-lint). Rows with differing field lists (an optional
+  field, a nested child table) have no column to align and are left alone.
   `scripts/json-to-abap.mjs` emits the padded form; `pattern-lint`'s
   `ragged-value-table` catches a hand-written one that drifted.
 - **A call that fits on one line goes on one line** (budget 120 characters).
@@ -1047,6 +1076,29 @@ DSAG Leitfaden, then the samples style. Essentials:
   is 71 characters. Outside the view chain only — the chain has its own layout
   (`view-chain-layout`), and a wrapped `t_arg` list stays wrapped, hanging under
   its first element.
+- **One canonical prefix per XML namespace, corpus-wide** — the `xmlns:`
+  declarations and every `ns = \`…\`` use follow this table, whatever the
+  original view declared:
+
+  | Namespace | Prefix | | Namespace | Prefix |
+  |-----------|--------|-|-----------|--------|
+  | `sap.m` (when not the default) | `m` | | `sap.ui.unified` | `u` |
+  | `sap.ui.core` | `core` | | `sap.f` | `f` |
+  | `sap.ui.core.mvc` | `mvc` | | `sap.f.cards` | `card` |
+  | `sap.ui.layout` | `l` | | `sap.ui.table` | `table` |
+  | `sap.ui.layout.form` | `form` | | `sap.ui.table.rowmodes` | `trm` |
+  | `sap.ui.layout.cssgrid` | `grid` | | `sap.ui.table.plugins` | `tp` |
+  | `sap.ui.integration.widgets` | `w` | | `sap.m.plugins` | `plugins` |
+  | `sap.tnt` | `tnt` | | `sap.uxap` | `uxap` |
+
+  Majority spelling won each row on 2026-09-12, with two decisions: `f` is
+  reserved for `sap.f`, so `sap.ui.layout.form` — which 59 classes had as `f`
+  against 47 classes' `sap.f` — is `form`. This trades one-to-one fidelity of
+  the *prefix* for corpus-wide readability (a maintainer-visible decision,
+  revertible per row); it is safe for the gates because `structural-diff`
+  resolves every prefix to its namespace URI before comparing — a prefix is
+  not a control. Only namespace prefixes are touched: a `core:require`
+  value, a `class` or an `id` string is content.
 - Build views with `z2ui5_cl_ui5_view_builder` (see the `port-a-sample` guide — the only
   view builder used in this repo; the class itself lives in the **abap2UI5 core
   repo** under *its* `src/02/` — not this repo's `src/02/`, which is the

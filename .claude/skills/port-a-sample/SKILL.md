@@ -35,8 +35,13 @@ CLASS z2ui5_cl_smpc_app_<n> DEFINITION PUBLIC.       " lowercase, not FINAL
     INTERFACES z2ui5_if_app.
     " local types for the model data (ty_s_ / ty_t_) + the DATA that back the
     " bindings live here, so the framework can serialise them across round-trips
-    TYPES: BEGIN OF ty_s_item, ... END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        ...
+      END OF ty_s_item.          " `TYPES:` alone, then BEGIN OF - never `TYPES: BEGIN OF` on one line (pattern-lint types-layout)
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    " names carry no Hungarian prefix (lv_/iv_/lt_/ls_/rv_/…, pattern-lint hungarian-prefix): only a
+    " table is t_ and a structure s_; a boolean predicate such as is_copy is a name, not a prefix
     " ONLY bound DATA belongs in PUBLIC: the round-trip model scan walks the
     " public instance attributes, so every non-bound helper/backup kept here
     " just slows the binding search. Put such state in PROTECTED (see below);
@@ -79,7 +84,10 @@ ENDMETHOD.
   usually holds a large `VALUE #( )` block of mock data; keeping it at the
   bottom stops that data from interrupting the reading flow of the dispatcher,
   view and event methods. pattern-lint checks that main comes first and that
-  model_init comes last.
+  model_init comes last. **The DEFINITION declares the methods in that same
+  order** — the declaration block is the table of contents of the
+  implementation (51 classes declared them in another order until the
+  2026-09-12 sweep).
 - A sample with **nothing to seed** drops the `check_on_init( )` branch
   altogether, and a **fully static** one (no data, no events — app 051's class)
   drops `on_event` with it, down to:
@@ -137,9 +145,10 @@ camelCase key mirrors verbatim — do not insert underscores**: `SupplierName` �
 field `suppliername`, binding `{SUPPLIERNAME}` (never `SUPPLIER_NAME`) — a corpus
 convention. (structural-diff would tolerate either — its `normBind` lower-cases
 **and** strips underscores — so this is for consistency, not to satisfy the
-gate. **The worked references 022/040 predate this convention and still use
-`SUPPLIER_NAME`/`PRODUCT_ID` — do not copy their underscored field names; the
-spec wins.**)
+gate. The corpus was migrated to it on 2026-09-12 — 71 classes, the worked
+references 022/040 among them, so `productid`/`suppliername` is what you will
+copy; a port-invented helper field with no original key, `weight_state` or
+`start_at`, keeps its own name.)
 Keep the
 data verbatim from the sample — **the full row set, no subsetting**: inline every
 row of the referenced mock array (e.g. all 123 `/ProductCollection` rows of
@@ -172,7 +181,10 @@ Two exceptions, both of them real:
 - **A padded row that would break the 255-character limit is wrapped instead** —
   at the SAME field boundaries in every row, so the columns still read down the
   page. App 571 is the reference: 123 rows, every one of them `3+4+4` (identity /
-  dimensions / weight+price). Padding is then applied inside each group.
+  dimensions / weight+price). The wrapped rows are **not** padded inside their
+  groups — that is 571's shape, and padding a wrapped block is what carried
+  apps 012/218/358 past the 75,000-character `statement-too-long` budget on
+  2026-09-12 (`line-headroom` warns at 240, both pattern-lint).
 - **Rows whose field list differs are left alone.** Where one row carries a
   `key` and the next does not, or some rows nest a child table
   (app 585's `t_navigation`), there is no column to align — that is different
@@ -264,7 +276,12 @@ arrows line up:
 | `a( n v )` | one `name="value"` | add an attribute to the control just added | the same node |
 
 Arguments: `n` = tag name, `ns` = namespace **prefix** (literal `f`, `l`, `core`,
-`mvc` — omitted for the default `sap.m` namespace).
+`mvc` — omitted for the default `sap.m` namespace). The prefix is the corpus'
+**canonical** one for that namespace (the table in AGENTS.md §8: `l` for
+sap.ui.layout, `core` for sap.ui.core, `form` for sap.ui.layout.form, `f` for
+sap.f, `u` for sap.ui.unified, …), not whatever the original happened to
+declare — `structural-diff` resolves every prefix to its namespace URI on both
+sides, so only the namespace has to match.
 
 **Attributes go through `a( n = `key` v = `value` )`**, chained right after the
 control's `ele`/`tag`. `a` always targets that control (the last-added child,
@@ -629,17 +646,22 @@ these entries.
   control name** — `<plugins.MultiSelectionPlugin>` under a `sap.ui.table`
   default `xmlns` (and `<m:plugins.PasteProvider>`) resolves as
   `sap.ui.table.plugins.MultiSelectionPlugin` / `sap.m.plugins.PasteProvider`.
-  The builder has no such form, so declare a real prefix
-  (`xmlns:tp="sap.ui.table.plugins"`) and write `tp:MultiSelectionPlugin`;
-  structural-diff compares the qualified name, so name the swap in a
-  deviation (app 360).
+  The builder has no such form, so declare a real prefix — the canonical
+  `tp` for `sap.ui.table.plugins` (AGENTS.md §8 table) — and write
+  `tp:MultiSelectionPlugin`. `structural-diff` resolves both prefixes to
+  their namespace URI, so `tp:MultiSelectionPlugin` IS the original's
+  `plugins.MultiSelectionPlugin` and needs no deviation (app 360; it needed one
+  while the gate still compared the prefix as written).
 
 - **The default namespace is not always `sap.m`.** A `sap.uxap` / `sap.ui.table`
   sample often declares its own library as `xmlns` and gives **`sap.m` the
-  prefix** (`xmlns:m="sap.m"`, `<m:List>`). Copy that assignment as-is:
-  `structural-diff` compares the **qualified** control name, so a `List`
-  written without `ns` in such a view is a different control from the
-  original's `m:List` and is reported in both directions (app 293).
+  prefix** (`xmlns:m="sap.m"`, `<m:List>`). Keep the NAMESPACE assignment —
+  which library is the default and which ones are prefixed — and use the
+  canonical prefixes for the prefixed ones (AGENTS.md §8 table).
+  `structural-diff` resolves prefixes to namespace URIs, so the prefix spelling
+  is free but the namespace is not: a `List` written without `ns` in a view
+  whose default `xmlns` is `sap.uxap` is `sap.uxap.List`, a different control
+  from the original's `m:List`, and is reported in both directions (app 293).
 
 - **One builder chain per view — in this repository.** A port mirrors one
   original XML file, so it gets one method with one chain per fragment, exactly

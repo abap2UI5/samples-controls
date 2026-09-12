@@ -1,5 +1,6 @@
 " @keywords ui5.controls.vizframe shell dynamicpage dynamicpagetitle title dynamicpageheader button filterbar filtergroupitem combobox item vizframe
 " @summary sap.viz.ui5.controls.VizFrame expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.
+" @origin sap.viz.ui5.controls.VizFrame - https://ui5.sap.com/#/entity/sap.viz.ui5.controls.VizFrame (status: collection - SAPUI5-only, hand-written, not a port)
 "! <p class="shorttext">sap.viz - ui5.controls.VizFrame</p>
 "!
 "! SAPUI5-only control: it ships with SAPUI5, not with OpenUI5, so there is no
@@ -45,114 +46,31 @@ CLASS z2ui5_cl_smpc_sapui5_012 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
+    METHODS view_display.
     METHODS on_event.
-    METHODS on_init.
-    METHODS on_rendering.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
 
 CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
 
-  METHOD on_event.
+  METHOD z2ui5_if_app~main.
 
-    CASE client->get_event( ).
-      WHEN `EVT_DATA_SELECT`.
-        client->message_toast_display( client->get_event_arg( ) ).
-      WHEN `EVT_VIZTYPE_CHANGE`.
-        ms_screen-viztype = ms_screen-viztypesel.
-        on_rendering( ).
-    ENDCASE.
-
-  ENDMETHOD.
-
-  METHOD on_init.
-
-    " ---------- Set vizframe chart data --------------------------------------------------------------
-    mt_data_chart = VALUE #( ( week    = `Week 1 - 4`
-                               revenue = `431000.22`
-                               cost    = `230000.00` )
-                             ( week    = `Week 5 - 8`
-                               revenue = `494000.30`
-                               cost    = `238000.00` )
-                             ( week    = `Week 9 - 12`
-                               revenue = `491000.17`
-                               cost    = `221000.00` )
-                             ( week    = `Week 13 - 16`
-                               revenue = `536000.34`
-                               cost    = `280000.00` ) ).
-    " ---------- Set vizframe properties (optional) ---------------------------------------------------
-    mv_prop = |\{| && |\n| &&
-      |"plotArea": \{| && |\n| &&
-        |"dataLabel": \{| && |\n| &&
-            |"formatString": "",| && |\n| &&
-            |"visible": true| && |\n| &&
-        |\}| && |\n| &&
-      |\},| && |\n| &&
-      |"valueAxis": \{| && |\n| &&
-        |"label": \{| && |\n| &&
-            |"formatString": ""| && |\n| &&
-        |\},| && |\n| &&
-        |"title": \{| && |\n| &&
-            |"visible": true| && |\n| &&
-        |\}| && |\n| &&
-      |\},| && |\n| &&
-      |"categoryAxis": \{| && |\n| &&
-        |"title": \{| && |\n| &&
-            |"visible": true| && |\n| &&
-        |\}| && |\n| &&
-      |\},| && |\n| &&
-      |"title": \{| && |\n| &&
-        |"visible": true,| && |\n| &&
-        |"text": "Vizframe Charts for 2UI5"| && |\n| &&
-      |\}| && |\n| &&
-      |\}|.
-
-    " ---------- Set vizframe feed item values for value axis -----------------------------------------
-    mt_feed_values = VALUE #( ( `Revenue` )
-                              ( `Cost` ) ).
-
-    " ---------- Set viz type default -----------------------------------------------------------------
-    ms_screen-viztype    = `column`.
-    ms_screen-viztypesel = `column`.
-
-    " ---------- Set VizFrame types -------------------------------------------------------------------
-    mt_viztypes = VALUE #( ( n = `column`
-                             v = `column` )
-                           ( n = `bar`
-                             v = `bar` )
-                           ( n = `stacked_bar`
-                             v = `stacked_bar` )
-                           ( n = `stacked_column`
-                             v = `stacked_column` )
-                           ( n = `line`
-                             v = `line` )
-                           ( n = `combination`
-                             v = `combination` )
-                           ( n = `bullet`
-                             v = `bullet` )
-                           ( n = `vertical_bullet`
-                             v = `vertical_bullet` )
-                           ( n = `100_stacked_bar`
-                             v = `100_stacked_bar` )
-                           ( n = `100_stacked_column`
-                             v = `100_stacked_column` )
-                           ( n = `stacked_combination`
-                             v = `stacked_combination` )
-                           ( n = `horizontal_stacked_combination`
-                             v = `horizontal_stacked_combination` )
-                           ( n = `waterfall`
-                             v = `waterfall` )
-                           ( n = `horizontal_waterfall`
-                             v = `horizontal_waterfall` )
-                           ( n = `area`
-                             v = `area` )
-                           ( n = `radar`
-                             v = `radar` ) ).
+    me->client = client.
+    IF client->check_on_init( ).
+      model_init( ).
+      view_display( ).
+    ELSEIF client->check_on_navigated( ).
+      view_display( ).
+    ELSEIF client->check_on_event( ).
+      on_event( ).
+    ENDIF.
 
   ENDMETHOD.
 
-  METHOD on_rendering.
+
+  METHOD view_display.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
@@ -270,17 +188,103 @@ CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_app~main.
 
-    me->client = client.
-    IF client->check_on_init( ).
-      on_init( ).
-      on_rendering( ).
-    ELSEIF client->check_on_navigated( ).
-      on_rendering( ).
-    ELSE.
-      on_event( ).
-    ENDIF.
+  METHOD on_event.
+
+    CASE client->get_event( ).
+      WHEN `EVT_DATA_SELECT`.
+        client->message_toast_display( client->get_event_arg( ) ).
+      WHEN `EVT_VIZTYPE_CHANGE`.
+        ms_screen-viztype = ms_screen-viztypesel.
+        view_display( ).
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD model_init.
+
+    " ---------- Set vizframe chart data --------------------------------------------------------------
+    mt_data_chart = VALUE #( ( week    = `Week 1 - 4`
+                               revenue = `431000.22`
+                               cost    = `230000.00` )
+                             ( week    = `Week 5 - 8`
+                               revenue = `494000.30`
+                               cost    = `238000.00` )
+                             ( week    = `Week 9 - 12`
+                               revenue = `491000.17`
+                               cost    = `221000.00` )
+                             ( week    = `Week 13 - 16`
+                               revenue = `536000.34`
+                               cost    = `280000.00` ) ).
+    " ---------- Set vizframe properties (optional) ---------------------------------------------------
+    mv_prop = |\{| && |\n| &&
+      |"plotArea": \{| && |\n| &&
+        |"dataLabel": \{| && |\n| &&
+            |"formatString": "",| && |\n| &&
+            |"visible": true| && |\n| &&
+        |\}| && |\n| &&
+      |\},| && |\n| &&
+      |"valueAxis": \{| && |\n| &&
+        |"label": \{| && |\n| &&
+            |"formatString": ""| && |\n| &&
+        |\},| && |\n| &&
+        |"title": \{| && |\n| &&
+            |"visible": true| && |\n| &&
+        |\}| && |\n| &&
+      |\},| && |\n| &&
+      |"categoryAxis": \{| && |\n| &&
+        |"title": \{| && |\n| &&
+            |"visible": true| && |\n| &&
+        |\}| && |\n| &&
+      |\},| && |\n| &&
+      |"title": \{| && |\n| &&
+        |"visible": true,| && |\n| &&
+        |"text": "Vizframe Charts for 2UI5"| && |\n| &&
+      |\}| && |\n| &&
+      |\}|.
+
+    " ---------- Set vizframe feed item values for value axis -----------------------------------------
+    mt_feed_values = VALUE #( ( `Revenue` )
+                              ( `Cost` ) ).
+
+    " ---------- Set viz type default -----------------------------------------------------------------
+    ms_screen-viztype    = `column`.
+    ms_screen-viztypesel = `column`.
+
+    " ---------- Set VizFrame types -------------------------------------------------------------------
+    mt_viztypes = VALUE #( ( n = `column`
+                             v = `column` )
+                           ( n = `bar`
+                             v = `bar` )
+                           ( n = `stacked_bar`
+                             v = `stacked_bar` )
+                           ( n = `stacked_column`
+                             v = `stacked_column` )
+                           ( n = `line`
+                             v = `line` )
+                           ( n = `combination`
+                             v = `combination` )
+                           ( n = `bullet`
+                             v = `bullet` )
+                           ( n = `vertical_bullet`
+                             v = `vertical_bullet` )
+                           ( n = `100_stacked_bar`
+                             v = `100_stacked_bar` )
+                           ( n = `100_stacked_column`
+                             v = `100_stacked_column` )
+                           ( n = `stacked_combination`
+                             v = `stacked_combination` )
+                           ( n = `horizontal_stacked_combination`
+                             v = `horizontal_stacked_combination` )
+                           ( n = `waterfall`
+                             v = `waterfall` )
+                           ( n = `horizontal_waterfall`
+                             v = `horizontal_waterfall` )
+                           ( n = `area`
+                             v = `area` )
+                           ( n = `radar`
+                             v = `radar` ) ).
 
   ENDMETHOD.
 
