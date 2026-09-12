@@ -133,7 +133,7 @@ CLASS z2ui5_cl_smpc_app_454 IMPLEMENTATION.
             )->a( n = `multiSelect`  v = `true`
             " the two buttons differ only in these two properties
             )->a( n = `growing`      b = growing
-            )->a( n = `initialFocus` v = COND #( WHEN growing = abap_true THEN `SearchField` ELSE `List` )
+            )->a( n = `initialFocus` t = COND #( WHEN growing = abap_true THEN `SearchField` ELSE `List` )
             )->a( n = `items`        v = |\{ path : '{ client->_bind_path( t_products ) }', sorter : \{ path : 'NAME', descending : false \} \}|
 
             )->ele( `columns`

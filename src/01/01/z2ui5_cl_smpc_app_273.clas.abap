@@ -133,16 +133,16 @@ CLASS z2ui5_cl_smpc_app_273 IMPLEMENTATION.
 
         )->ele( `Dialog`
             )->a( n = `type`  v = `Message`
-            )->a( n = `title` v = title ).
+            )->a( n = `title` t = title ).
 
     " the default dialog is the only one the original builds without a state
     IF state IS NOT INITIAL.
-      dialog->a( n = `state` v = state ).
+      dialog->a( n = `state` t = state ).
     ENDIF.
 
     dialog->ele( `content`
         )->tag( `Text`
-            )->a( n = `text` v = text
+            )->a( n = `text` t = text
 
     )->end(
         )->ele( `beginButton`

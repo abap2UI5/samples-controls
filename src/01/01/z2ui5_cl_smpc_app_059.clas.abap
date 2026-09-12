@@ -52,14 +52,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `HT-6100.jpg`
+                        )->a( n = `src`          t = base && `HT-6100.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `HT-6100-large.jpg`
+                                    )->a( n = `imageSrc` t = base && `HT-6100-large.jpg`
                                     )->a( n = `alt`      v = `Beamer`
                                     )->a( n = `title`    v = `This is a beamer`
                                     )->a( n = `subtitle` v = `This is beamer's description`
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `Beamer`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -82,14 +82,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `HT-6120.jpg`
+                        )->a( n = `src`          t = base && `HT-6120.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `HT-6120-large.jpg`
+                                    )->a( n = `imageSrc` t = base && `HT-6120-large.jpg`
                                     )->a( n = `alt`      v = `USB`
                                     )->a( n = `title`    v = `This is a USB`
                                     )->a( n = `subtitle` v = `This is USB's description`
@@ -102,7 +102,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `USB`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -112,14 +112,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `HT-7777.jpg`
+                        )->a( n = `src`          t = base && `HT-7777.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `HT-7777-large.jpg`
+                                    )->a( n = `imageSrc` t = base && `HT-7777-large.jpg`
                                     )->a( n = `alt`      v = `Speakers`
                                     )->a( n = `title`    v = `These are speakers`
                                     )->a( n = `subtitle` v = `This is speakers' description`
@@ -132,7 +132,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `Speakers`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -142,14 +142,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `nature/ALotOfElephants_small.jpg`
+                        )->a( n = `src`          t = base && `nature/ALotOfElephants_small.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `nature/ALotOfElephants.jpg`
+                                    )->a( n = `imageSrc` t = base && `nature/ALotOfElephants.jpg`
                                     )->a( n = `alt`      v = `Nature image`
                                     )->a( n = `title`    v = `This is a sample image`
                                     )->a( n = `subtitle` v = `This is a place for description`
@@ -162,7 +162,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `Nature image`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -172,14 +172,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `nature/flatFish.jpg`
+                        )->a( n = `src`          t = base && `nature/flatFish.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `nature/flatFish.jpg`
+                                    )->a( n = `imageSrc` t = base && `nature/flatFish.jpg`
                                     )->a( n = `alt`      v = `Nature image`
                                     )->a( n = `title`    v = `This is a sample image`
                                     )->a( n = `subtitle` v = `This is a place for description`
@@ -192,7 +192,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `Nature image`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -202,14 +202,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `nature/horses.jpg`
+                        )->a( n = `src`          t = base && `nature/horses.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `nature/horses.jpg`
+                                    )->a( n = `imageSrc` t = base && `nature/horses.jpg`
                                     )->a( n = `alt`      v = `Nature image`
                                     )->a( n = `title`    v = `This is a sample image`
                                     )->a( n = `subtitle` v = `This is a place for description`
@@ -222,7 +222,7 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                         )->tag( `Title`
                             )->a( n = `text` v = `Nature image`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -232,14 +232,14 @@ CLASS z2ui5_cl_smpc_app_059 IMPLEMENTATION.
                 )->ele( `HBox`
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->ele( `Image`
-                        )->a( n = `src`          v = base && `nature/elephant.jpg`
+                        )->a( n = `src`          t = base && `nature/elephant.jpg`
                         )->a( n = `decorative`   v = `false`
                         )->a( n = `width`        v = `170px`
                         )->a( n = `densityAware` v = `false`
                         )->ele( `detailBox`
                             )->ele( `LightBox`
                                 )->tag( `LightBoxItem`
-                                    )->a( n = `imageSrc` v = base && `nature/image_does_not_exist.jpg`
+                                    )->a( n = `imageSrc` t = base && `nature/image_does_not_exist.jpg`
                                     )->a( n = `alt`      v = `Nature image`
                                     )->a( n = `title`    v = `This is a sample image`
                                     )->a( n = `subtitle` v = `This is a place for description`

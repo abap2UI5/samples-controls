@@ -60,7 +60,7 @@ CLASS z2ui5_cl_smpc_app_399 IMPLEMENTATION.
                         )->a( n = `text`  v = `Image:`
                         )->a( n = `class` v = `sapUiSmallMarginBottom`
                     )->tag( `Image`
-                        )->a( n = `src`   v = pic1
+                        )->a( n = `src`   t = pic1
                         )->a( n = `width` v = image_width
 
                 )->end(
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_399 IMPLEMENTATION.
                     )->tag( `Image`
                         " ariaDetails is newer than the 1.71 floor - kept for the 1:1 port (POST_171)
                         )->a( n = `ariaDetails` v = `detailsActiveImage`
-                        )->a( n = `src`         v = pic3
+                        )->a( n = `src`         t = pic3
                         )->a( n = `width`       v = image_width
                         )->a( n = `decorative`  v = `false`
                         )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
@@ -84,7 +84,7 @@ CLASS z2ui5_cl_smpc_app_399 IMPLEMENTATION.
                         )->a( n = `text`  v = `Image using SVG format:`
                         )->a( n = `class` v = `sapUiSmallMarginBottom`
                     )->tag( `Image`
-                        )->a( n = `src` v = svg_logo
+                        )->a( n = `src` t = svg_logo
 
                 )->end(
                 )->ele( `VBox`
@@ -92,7 +92,7 @@ CLASS z2ui5_cl_smpc_app_399 IMPLEMENTATION.
                         )->a( n = `text`  v = `Image displaying inline SVG:`
                         )->a( n = `class` v = `sapUiSmallMarginBottom`
                     )->tag( `Image`
-                        )->a( n = `src`  v = svg_logo
+                        )->a( n = `src`  t = svg_logo
                         " POST-1.71: sap.m.ImageMode.InlineSvg. The enum VALUE
                         " carries no @since of its own, so no gate can see it -
                         " measured against the tags instead: at 1.71.0 ImageMode

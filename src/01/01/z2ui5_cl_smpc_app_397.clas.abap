@@ -54,7 +54,7 @@ CLASS z2ui5_cl_smpc_app_397 IMPLEMENTATION.
             )->ele( `content`
                 )->ele( n = `HorizontalLayout` ns = `l`
                     )->tag( `Image`
-                        )->a( n = `src`   v = pic1
+                        )->a( n = `src`   t = pic1
                         )->a( n = `width` v = `10em`
 
                 )->end(

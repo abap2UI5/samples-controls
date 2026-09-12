@@ -123,7 +123,7 @@ CLASS z2ui5_cl_smpc_app_561 IMPLEMENTATION.
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Dialog`
-            )->a( n = `title` v = title ).
+            )->a( n = `title` t = title ).
 
     IF sized = abap_true.
       dialog->a( n = `contentWidth`  v = `550px`
