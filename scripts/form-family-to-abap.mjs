@@ -29,6 +29,13 @@
  * methods that do not exist and the "regenerating is safe" line here and in
  * AGENTS.md pointed at a class that could not activate.
  *
+ * The comments it writes are deliberately thin: one line per method naming the
+ * shared Page.controller.js and pointing at the sidecar. Until 2026-09-12 it
+ * wrote thirteen identical lines into every one of the 26 classes explaining
+ * the FAMILY (what handleEditPress clones, what _showFormFragment swaps) -
+ * explanations of a shared controller, not of the port, so they belong in
+ * the sidecar's NOTE deviations, which every one of the 26 carries.
+ *
  * The header lines are NOT emitted here: `npm run keywords`, `npm run origin` and
  * `npm run summary` write them from meta/<class>.json and the built controls.
  * Regenerate, put those lines back on top, then run them.
@@ -195,8 +202,7 @@ function build(sampleDir, cls) {
     n.attrs = n.attrs.filter(([a]) => a !== 'visible' && a !== 'enabled');
     if (id === 'edit' && hadEnabled) {
       n.attrs.push(['enabled', 'true']);
-      n.attrComment = { enabled: ['the original enables Edit once the mock request completes;',
-                                  'the ABAP model is seeded synchronously, so it starts enabled'] };
+      n.attrComment = { enabled: ['enabled from the start (Page.controller.js waits for the mock request) - see the sidecar'] };
     }
     n.attrs.push(['visible', id === 'edit' ? ' D' : ' C']);
     // keep press last so it reads like the original
@@ -260,8 +266,7 @@ ${pub}
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    " handleEditPress clones the record so Cancel can restore it - the clone is
-    " not bound, so it stays out of the round-trip model scan
+    " the record clone Page.controller.js keeps for Cancel - see the sidecar
 ${bak}
 
     METHODS view_display.
@@ -293,8 +298,7 @@ CLASS ${cls} IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    " _showFormFragment swaps the Page content between the Display and the Change
-    " fragment; both are inlined here and switched by one bound flag instead
+    " both fragments Page.controller.js swaps in and out, inlined - see the sidecar
 ${body.join('\n')}
 
     client->view_display( view->stringify( ) ).${initExtra}
@@ -304,20 +308,17 @@ ${body.join('\n')}
 
   METHOD on_event.
 
+    " the Edit/Save/Cancel handlers of Page.controller.js - see the sidecar
     CASE client->get_event( ).
 
       WHEN \`EDIT\`.
-        " handleEditPress: clone the record, then show the Change form and the
-        " Save/Cancel buttons
 ${save}
         ${'edit_mode'.padEnd(bw)} = abap_true.
 
       WHEN \`SAVE\`.
-        " handleSavePress: keep the edited values, back to the Display form
         edit_mode = abap_false.
 
       WHEN \`CANCEL\`.
-        " handleCancelPress: restore the cloned record, back to the Display form
 ${rest}
         ${pad('edit_mode')} = abap_false.
 
@@ -328,8 +329,7 @@ ${rest}
 
   METHOD model_init.
 
-    " the original binds /SupplierCollection/0 of the shared demo supplier.json;
-    " flattened here to top-level fields the form binds absolutely
+    " the row 0 Page.controller.js element-binds, flattened - see the sidecar
 ${seed}
 
   ENDMETHOD.

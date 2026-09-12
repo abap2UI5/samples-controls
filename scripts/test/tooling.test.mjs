@@ -103,6 +103,104 @@ test('data-fidelity: invented value and unknown asset fail, verbatim data passes
   }
 });
 
+/*
+ * The shared mock provider (AGENTS §3): a port that projects
+ * z2ui5_cl_smpc_mock=>products( ) is judged as if it had inlined the rows,
+ * and the provider itself is compared 1:1 with ui5/mock/products.json —
+ * numbers included, which the port-level comparison deliberately skips.
+ * Built on a copy of the fixture root so the goldens above stay untouched.
+ */
+test('data-fidelity: a provider-fed port is judged through the provider, and the provider 1:1 against its mock', () => {
+  const root = makeFixtureRoot();
+  try {
+    fs.mkdirSync(path.join(root, 'ui5', 'mock'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ui5', 'mock', 'products.json'), JSON.stringify({
+      ProductCollection: [
+        { ProductId: 'HT-1000', Name: 'Notebook Basic 15', DateOfSale: '2017-03-26', Price: 956, Width: 30 },
+        { ProductId: 'HT-1001', Name: 'Notebook Basic 17', Price: 1249, Width: 29 },
+      ],
+    }));
+    const provider = path.join(root, 'src', 'z2ui5_cl_smpc_mock.clas.abap');
+    fs.writeFileSync(provider, `CLASS z2ui5_cl_smpc_mock DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid  TYPE string,
+        name       TYPE string,
+        dateofsale TYPE string,
+        price      TYPE p LENGTH 8 DECIMALS 2,
+        width      TYPE p LENGTH 4 DECIMALS 1,
+      END OF ty_s_product.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    CLASS-METHODS products RETURNING VALUE(result) TYPE ty_t_product.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS z2ui5_cl_smpc_mock IMPLEMENTATION.
+  METHOD products.
+    result = VALUE #(
+      ( productid = \`HT-1000\` name = \`Notebook Basic 15\` dateofsale = \`2017-03-26\` price = \`956\` width = \`30\` ) ).
+    result = VALUE #( BASE result
+      ( productid = \`HT-1001\` name = \`Notebook Basic 17\` dateofsale = \`\` price = \`1249\` width = \`29\` ) ).
+  ENDMETHOD.
+ENDCLASS.
+`);
+    fs.writeFileSync(path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_003.clas.abap'), `CLASS z2ui5_cl_smpc_app_003 DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES z2ui5_if_app.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid TYPE string,
+        name      TYPE string,
+        price     TYPE p LENGTH 8 DECIMALS 2,
+      END OF ty_s_product.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products TYPE ty_t_product.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS z2ui5_cl_smpc_app_003 IMPLEMENTATION.
+  METHOD z2ui5_if_app~main.
+    t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) ).
+  ENDMETHOD.
+ENDCLASS.
+`);
+    fs.writeFileSync(path.join(root, 'meta', 'z2ui5_cl_smpc_app_003.json'), JSON.stringify({
+      class: 'z2ui5_cl_smpc_app_003', sample: 'sap.m.sample.FixtureProvider', entity: 'sap.m.List',
+      file: 'src/01/z2ui5_cl_smpc_app_003.clas.abap', batch: 'b01',
+      audit: { frontend_action: false, event_t_arg: false }, status: 'generated', checked: null, deviations: [],
+    }));
+
+    // the verbatim provider passes, and the port is counted as judged through it
+    let r = run(root, 'data-fidelity.mjs');
+    assert.ok(!r.out.includes('z2ui5_cl_smpc_mock:'), `the verbatim provider must produce no finding:\n${r.out}`);
+    assert.ok(!r.out.includes('z2ui5_cl_smpc_app_003:'), `the provider-fed port must produce no finding:\n${r.out}`);
+    assert.match(r.out, /3 ports checked \(1 via z2ui5_cl_smpc_mock, itself compared 1:1 with ui5\/mock\/products\.json\)/);
+
+    // a wrong string AND a wrong number in the provider fail by name — and the
+    // port that projects the row is reported like an inlined table would be
+    fs.writeFileSync(provider, fs.readFileSync(provider, 'utf8')
+      .replace('`Notebook Basic 17`', '`Notebook Basic 99`').replace('price = `1249`', 'price = `1250`'));
+    r = run(root, 'data-fidelity.mjs');
+    assert.equal(r.code, 1);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: row 2 field `name` = "Notebook Basic 99" but ui5\/mock\/products\.json row has "Notebook Basic 17"/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: row 2 field `price` = "1250" but ui5\/mock\/products\.json row has 1249/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_app_003: table row 2 field `name` = "Notebook Basic 99"/);
+
+    // a column the provider drops, and a row it lacks, are shape errors of their own
+    fs.writeFileSync(provider, fs.readFileSync(provider, 'utf8')
+      .replace('        width      TYPE p LENGTH 4 DECIMALS 1,\n', '')
+      .replace(/    result = VALUE #\( BASE result[\s\S]*?\)\.\n/, ''));
+    r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: column `Width` of ui5\/mock\/products\.json is missing from ty_s_product/);
+    assert.match(r.out, /ERROR z2ui5_cl_smpc_mock: 1 rows but ui5\/mock\/products\.json ProductCollection has 2/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('generate-coverage: golden api.md and README coverage block', () => {
   const root = makeFixtureRoot();
   try {
@@ -1158,6 +1256,28 @@ test('e2e-changed: a port, its sidecar and its interaction module all name the p
 
   // the overview app is a port for this purpose — it sits directly under src/
   assert.deepEqual(portsToRun(['src/z2ui5_cl_smpc_app_000.clas.abap']).classes, ['z2ui5_cl_smpc_app_000']);
+});
+
+test('e2e-changed: the shared mock provider boots its consumers, not `all`', async () => {
+  const { portsToRun, providerConsumers } = await import('../e2e-changed.mjs');
+
+  // the consumers are read off src/; injected here so the test owns its corpus
+  const consumers = () => ['z2ui5_cl_smpc_app_014', 'z2ui5_cl_smpc_app_009'];
+  const r = portsToRun(['src/z2ui5_cl_smpc_mock.clas.abap'], { consumers });
+  assert.equal(r.all, false, 'a provider change reaches a known subset, not every port');
+  assert.deepEqual(r.classes, ['z2ui5_cl_smpc_app_009', 'z2ui5_cl_smpc_app_014']);
+  assert.match(r.reason, /2 of them consumers of z2ui5_cl_smpc_mock/);
+
+  // unioned with the ports the change touches directly, still sorted
+  assert.deepEqual(
+    portsToRun(['src/z2ui5_cl_smpc_mock.clas.abap', 'src/01/01/z2ui5_cl_smpc_app_462.clas.abap'], { consumers }).classes,
+    ['z2ui5_cl_smpc_app_009', 'z2ui5_cl_smpc_app_014', 'z2ui5_cl_smpc_app_462'],
+  );
+
+  // the real reader finds the consumers by the call they write, and only ports
+  const real = providerConsumers();
+  assert.ok(real.length > 0, 'the corpus has consumers of the provider');
+  assert.ok(real.every((c) => /^z2ui5_cl_smpc_app_\d+$/.test(c)));
 });
 
 test('e2e-changed: prose and generated artefacts boot nothing', async () => {

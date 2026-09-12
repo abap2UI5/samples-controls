@@ -17,8 +17,10 @@
 "! port follows, which scripts/data-fidelity.mjs sanctions).
 "!
 "! A port that binds the ProductCollection keeps its own narrow row type and
-"! projects the rows onto it:
-"!   t_products = CORRESPONDING #( z2ui5_cl_smpc_mock=>products( ) ).
+"! projects the rows onto it, row by row - a table-level CORRESPONDING would
+"! downport to a MOVE-CORRESPONDING between tables, which 7.02 has not got:
+"!   t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( )
+"!                         ( CORRESPONDING #( s_product ) ) ).
 "! then computes any port-invented column (weight_state) in a LOOP. Data
 "! fidelity is gated in both places: scripts/data-fidelity.mjs compares this
 "! class 1:1 against ui5/mock/products.json, and judges a port calling
