@@ -1,6 +1,6 @@
 " @keywords card sap.ui.integration.widgets lazyloading simpleform label input checkbox button gridcontainer gridcontaineritemlayoutdata
 " @summary dataMode:'Auto' activates lazy loading behavior of an integration card
-" @origin sap.ui.integration.sample.LazyLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.LazyLoading (status: reviewed)
+" @origin sap.ui.integration.sample.LazyLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.LazyLoading (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_342 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -131,7 +131,7 @@ CLASS z2ui5_cl_smpc_app_342 IMPLEMENTATION.
     " the controller's aSamples array - ten manifests with the grid width each
     " card gets. Kept local: it is never bound, so it does not belong in the
     " model that travels on every round-trip
-    DATA(lt_samples) = VALUE ty_t_card(
+    DATA(t_samples) = VALUE ty_t_card(
         ( key = `list1`       columns = 6 manifest = `listManifest1.json` )
         ( key = `list2`       columns = 6 manifest = `listManifest2.json` )
         ( key = `list3`       columns = 5 manifest = `listManifestAll.json` )
@@ -146,20 +146,20 @@ CLASS z2ui5_cl_smpc_app_342 IMPLEMENTATION.
     " the manifests are loaded BY URL: sap.ui.integration.widgets.Card reads a
     " string manifest as a manifest URL (Card.createManifest), so pointing at
     " the sample's own manifest files is the 1:1 form here
-    DATA(lv_base) = `https://sdk.openui5.org/test-resources/sap/ui/integration/demokit/sample/LazyLoading/manifests/`.
+    DATA(base) = `https://sdk.openui5.org/test-resources/sap/ui/integration/demokit/sample/LazyLoading/manifests/`.
 
     t_cards = VALUE #( ).
     " the length term, not just the character one - `99999999999` is all
     " digits and overflows CONV i
-    DATA(lv_count) = COND i( WHEN numberofcards CO ` 0123456789` AND numberofcards IS NOT INITIAL
+    DATA(count) = COND i( WHEN numberofcards CO ` 0123456789` AND numberofcards IS NOT INITIAL
                              AND strlen( condense( numberofcards ) ) <= 9
                              THEN CONV i( numberofcards ) ).
 
-    DO lv_count TIMES.
-      DATA(ls_sample) = lt_samples[ ( sy-index - 1 ) MOD lines( lt_samples ) + 1 ].
-      INSERT VALUE #( key      = ls_sample-key
-                      columns  = ls_sample-columns
-                      manifest = lv_base && ls_sample-manifest
+    DO count TIMES.
+      DATA(s_sample) = t_samples[ ( sy-index - 1 ) MOD lines( t_samples ) + 1 ].
+      INSERT VALUE #( key      = s_sample-key
+                      columns  = s_sample-columns
+                      manifest = base && s_sample-manifest
                       datamode = COND #( WHEN datamode_active = abap_true THEN `Active` ELSE `Auto` ) )
              INTO TABLE t_cards.
     ENDDO.

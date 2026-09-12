@@ -1,20 +1,21 @@
 " @keywords tabcontainer tab container sap.m tabcontainericons tabcontaineritem form title responsivegridlayout formcontainer formelement text
 " @summary This example shows how you can add additional text and an Icon to the tabs in TabContainer.
-" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: generated)
+" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_451 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_emp,
-             name           TYPE string,
-             emp_first_name TYPE string,
-             emp_last_name  TYPE string,
-             position       TYPE string,
-             icon           TYPE string,
-             modified       TYPE abap_bool,
-             salary         TYPE p LENGTH 8 DECIMALS 2,
-           END OF ty_s_emp.
+    TYPES:
+      BEGIN OF ty_s_emp,
+        name           TYPE string,
+        empfirstname TYPE string,
+        emplastname  TYPE string,
+        position       TYPE string,
+        icon           TYPE string,
+        modified       TYPE abap_bool,
+        salary         TYPE p LENGTH 8 DECIMALS 2,
+      END OF ty_s_emp.
     TYPES ty_t_emp TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
 
     DATA t_employees TYPE ty_t_emp.
@@ -57,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -84,54 +85,54 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
                     )->a( n = `modified`       v = `{MODIFIED}`
 
                     )->ele( `content`
-                        )->ele( n = `Form` ns = `f`
+                        )->ele( n = `Form` ns = `form`
                             )->a( n = `editable` v = `false`
 
-                            )->ele( n = `title` ns = `f`
+                            )->ele( n = `title` ns = `form`
                                 )->tag( n = `Title` ns = `core`
                                     )->a( n = `text` v = `Employee`
 
                             )->end(
-                            )->ele( n = `layout` ns = `f`
-                                )->tag( n = `ResponsiveGridLayout` ns = `f`
+                            )->ele( n = `layout` ns = `form`
+                                )->tag( n = `ResponsiveGridLayout` ns = `form`
 
                             )->end(
-                            )->ele( n = `FormContainer` ns = `f`
+                            )->ele( n = `FormContainer` ns = `form`
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `First Name`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
-                                            )->a( n = `text` v = `{EMP_FIRST_NAME}`
+                                            )->a( n = `text` v = `{EMPFIRSTNAME}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Last Name`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
-                                            )->a( n = `text` v = `{EMP_LAST_NAME}`
+                                            )->a( n = `text` v = `{EMPLASTNAME}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Position`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{POSITION}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Salary`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{SALARY} EUR` ).
 
@@ -178,13 +179,13 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
     " the four employees the controller seeds, verbatim (the first icon is the
     " sample's own image, re-hosted on the demo kit host)
     t_employees = VALUE #(
-      ( name = `Jean Doe`       emp_first_name = `Jean`     emp_last_name = `Doe`     position = `Senior Developer`
+      ( name = `Jean Doe`       empfirstname = `Jean`     emplastname = `Doe`     position = `Senior Developer`
         icon = `https://sdk.openui5.org/test-resources/sap/m/images/Woman_04.png` salary = '1455.22' )
-      ( name = `John Smith`     emp_first_name = `John`     emp_last_name = `Smith`   position = `Developer`
+      ( name = `John Smith`     empfirstname = `John`     emplastname = `Smith`   position = `Developer`
         icon = `sap-icon://notes` salary = '1390.77' modified = abap_true )
-      ( name = `Particia Clark` emp_first_name = `Particia` emp_last_name = `Clark`   position = `Developer`
+      ( name = `Particia Clark` empfirstname = `Particia` emplastname = `Clark`   position = `Developer`
         icon = `sap-icon://group` salary = '1189.00' )
-      ( name = `Tim McAfeed`    emp_first_name = `Tim`      emp_last_name = `McAfeed` position = `Junior Developer`
+      ( name = `Tim McAfeed`    empfirstname = `Tim`      emplastname = `McAfeed` position = `Junior Developer`
         icon = `sap-icon://group` salary = '1235.37' ) ).
 
   ENDMETHOD.

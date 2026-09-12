@@ -1,6 +1,6 @@
 " @keywords select sap.m selectwithicons listitem
 " @summary Illustrates the usage of a Select with icons
-" @origin sap.m.sample.SelectWithIcons - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithIcons (status: reviewed)
+" @origin sap.m.sample.SelectWithIcons - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithIcons (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_205 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

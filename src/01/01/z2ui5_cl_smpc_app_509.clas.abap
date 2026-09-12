@@ -1,14 +1,15 @@
 " @keywords input sap.m inputsuggestionsopensearch verticallayout label item
 " @summary If you need to use an Open Search Provider (OSP) to supply possible values, you can do this with the Input control's suggest event, and build the suggestionItems dynamically according to the results of the Open Search call.
-" @origin sap.m.sample.InputSuggestionsOpenSearch - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputSuggestionsOpenSearch (status: generated)
+" @origin sap.m.sample.InputSuggestionsOpenSearch - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputSuggestionsOpenSearch (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_509 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_suggestions TYPE ty_t_product.

@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table rowaction overflowtoolbar title toolbarspacer select item togglebutton column label text
 " @summary Shows how row actions can be used.
-" @origin sap.ui.table.sample.RowAction - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowAction (status: reviewed)
+" @origin sap.ui.table.sample.RowAction - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowAction (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_359 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -76,12 +76,12 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
     " once and drives their visible flags plus rowActionCount from the backend,
     " so the Select switches the row actions without any control construction.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -112,7 +112,7 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
                                 )->a( n = `selectedKey` v = client->_bind( mode_key )
                                 )->a( n = `change`      v = client->_event( `MODE_CHANGE` )
 
-                                )->tag( n = `Item` ns = `c`
+                                )->tag( n = `Item` ns = `core`
                                     )->a( n = `key`  v = `{KEY}`
                                     )->a( n = `text` v = `{TEXT}`
 
@@ -265,7 +265,7 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
     IF client->get_event( ) = `MODE_CHANGE`.
       " onBehaviourModeChange -> switchState: the picked mode decides the
       " row action count and which items are shown
-      DATA(lv_was_none) = xsdbool( row_action_count = 0 ).
+      DATA(was_none) = xsdbool( row_action_count = 0 ).
       mode_apply( ).
       " switchState always calls setRowActionTemplate BEFORE setRowActionCount,
       " and that ordering is load-bearing: the template setter ends in an
@@ -282,7 +282,7 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
       " Reachable without anything exotic: pick "No Actions", leave and come
       " back - check_on_navigated rebuilds the view with mode_key still 'None',
       " so every row is created actionless and no later switch brings them back.
-      IF lv_was_none = abap_true AND row_action_count > 0.
+      IF was_none = abap_true AND row_action_count > 0.
         view_display( ).
       ENDIF.
     ENDIF.

@@ -1,6 +1,6 @@
 " @keywords dynamicsidecontent dynamic side content sap.ui.layout html title text toolbar button slider
 " @summary Attaches side content area which is next to the main content of the page on larger screens taking different ratios between the two on different screen sizes and on phone size screens the side content area falls down under the main content area.
-" @origin sap.ui.layout.sample.DynamicSideContent - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContent (status: reviewed)
+" @origin sap.ui.layout.sample.DynamicSideContent - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContent (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_138 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -44,10 +44,10 @@ CLASS z2ui5_cl_smpc_app_138 IMPLEMENTATION.
     " control method exists: sap.m.Page has no width property, so the width goes
     " onto the container's DOM node, like the original's jQuery .width( )
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         " the sample's own style.css - the view carries sapUiDSCExplored and the rule behind it has to come with it (apps 122/124/133)
@@ -76,16 +76,16 @@ CLASS z2ui5_cl_smpc_app_138 IMPLEMENTATION.
                         )->a( n = `text`  v = `Main content`
                     )->tag( `Text`
                         )->a( n = `text` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ` &&
-                                         `ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint ` &&
-                                         `occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+                                             `ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint ` &&
+                                             `occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
                     )->ele( n = `sideContent` ns = `l`
                         )->tag( `Title`
                             )->a( n = `level` v = `H1`
                             )->a( n = `text`  v = `Side content`
                         )->tag( `Text`
                             )->a( n = `text` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ` &&
-                                             `ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint ` &&
-                                             `occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+                                                 `ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint ` &&
+                                                 `occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
 
                     )->end(
                 )->end(

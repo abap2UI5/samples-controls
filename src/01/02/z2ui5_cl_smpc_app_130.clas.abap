@@ -1,6 +1,6 @@
 " @keywords sap.ui.core busyindicator toolbar button panel toolbarspacer text icon
 " @summary A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels.
-" @origin sap.ui.core.sample.ControlBusyIndicator - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.ControlBusyIndicator (status: reviewed)
+" @origin sap.ui.core.sample.ControlBusyIndicator - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.ControlBusyIndicator (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_130 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

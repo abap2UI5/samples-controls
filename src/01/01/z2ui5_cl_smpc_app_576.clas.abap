@@ -1,23 +1,24 @@
 " @keywords table sap.m tableverticalalignment overflowtoolbar title column text columnlistitem objectidentifier input objectnumber
 " @summary This is a good example of how to vertically align different elements within a Table's ColumnListItem row template.
-" @origin sap.m.sample.TableVerticalAlignment - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableVerticalAlignment (status: generated)
+" @origin sap.m.sample.TableVerticalAlignment - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableVerticalAlignment (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_576 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             quantity      TYPE i,
-             uom           TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState, computed in the backend (thin frontend)
-             weight_state  TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        quantity      TYPE i,
+        uom           TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState, computed in the backend (thin frontend)
+        weight_state  TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

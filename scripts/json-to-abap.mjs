@@ -96,14 +96,18 @@ export function rowsToAbapValue(rows, fields = inferFields(rows), { indent = 6, 
   return varName ? `${varName} = ${value}.` : value;
 }
 
-// TYPES BEGIN OF … block matching the fields (handy for the scaffolder / a
-// port's DATA section)
+// TYPES statement matching the fields (handy for the scaffolder / a port's
+// PUBLIC section) in the corpus' two-line layout (AGENTS §8): `TYPES:` alone
+// on its line, `BEGIN OF` two columns further in, the components two more,
+// the TYPE column aligned across the block. `TYPES: BEGIN OF` on one line is
+// the other layout the corpus mixed until 2026-09-12 (pattern-lint
+// `types-layout`).
 export function rowsToAbapType(fields, structName = 'ty_row', tableName = null) {
   const w = Math.max(...fields.map((f) => f.abap.length));
   const lines = fields.map((f) => `        ${f.abap.padEnd(w)} TYPE ${f.type},`);
-  let out = `      BEGIN OF ${structName},\n${lines.join('\n')}\n      END OF ${structName},`;
-  if (tableName) out += `\n      ${tableName} TYPE STANDARD TABLE OF ${structName} WITH EMPTY KEY,`;
-  return out;
+  let out = `    TYPES:\n      BEGIN OF ${structName},\n${lines.join('\n')}\n      END OF ${structName}`;
+  if (tableName) out += `,\n      ${tableName} TYPE STANDARD TABLE OF ${structName} WITH EMPTY KEY`;
+  return out + '.';
 }
 
 // ---------- CLI ----------

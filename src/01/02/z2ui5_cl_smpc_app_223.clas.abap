@@ -1,6 +1,6 @@
 " @keywords blocklayout block layout sap.ui.layout blocklayoutlinktitle simpleform label slider segmentedbutton segmentedbuttonitem messagestrip verticallayout
 " @summary The BlockLayout Cells can have links as titles. The link text overwrites the title text.
-" @origin sap.ui.layout.sample.BlockLayoutLinkTitle - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutLinkTitle (status: reviewed)
+" @origin sap.ui.layout.sample.BlockLayoutLinkTitle - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutLinkTitle (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_223 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -80,9 +80,9 @@ CLASS z2ui5_cl_smpc_app_223 IMPLEMENTATION.
         )->end(
 
         )->tag( `MessageStrip`
-            )->a( n = `type` v = `Warning`
-            )->a( n = `text` v = `Note: Usage of Disabled, Emphasized or Subtle links as titles is not recommended. ` &&
-                                 `Dark background designs, for example Accent, are not fully supported with regards to Accessibility when used with links as titles.`
+            )->a( n = `type`  v = `Warning`
+            )->a( n = `text`  v = `Note: Usage of Disabled, Emphasized or Subtle links as titles is not recommended. ` &&
+                                  `Dark background designs, for example Accent, are not fully supported with regards to Accessibility when used with links as titles.`
             )->a( n = `class` v = `sapUiSmallMarginBeginEnd sapUiSmallMarginTop`
 
         )->ele( n = `VerticalLayout` ns = `l`

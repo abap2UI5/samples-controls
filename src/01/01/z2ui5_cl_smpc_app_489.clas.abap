@@ -1,6 +1,6 @@
 " @keywords segmentedbutton segmented button sap.m segmentedbuttondialog verticallayout dialog segmentedbuttonitem
 " @summary Segmented Button used in Dialog component
-" @origin sap.m.sample.SegmentedButtonDialog - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonDialog (status: generated)
+" @origin sap.m.sample.SegmentedButtonDialog - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonDialog (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_489 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

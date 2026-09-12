@@ -90,6 +90,26 @@ for (const p of ports) {
   else if (!sinceLeq171(since)) outOfScope.push(`${p.class} (${p.sample} — control @since ${since})`);
 }
 
+// --- the hold-out set: the generator KPI ---------------------------------------
+// With the portable backlog at zero, the one number that still measures the
+// GENERATOR is the hold-out regeneration probe (TRAINING.md "Measuring
+// progress"): ui5/holdout.json reserves samples that are never used as prompt
+// references and never enter a batch; a probe generates them from scratch
+// and scores the run. A hold-out that has been ported is SPENT - it is an
+// ordinary port from then on (never promoted to `checked`), and the only
+// record of what it measured is the probe section in docs/history.md. Three
+// facts, all derivable: how many are reserved, how many are spent (a sidecar
+// names the sample), and where the results are written (the journal's
+// hold-out probe headings). None of them was visible anywhere.
+const HOLDOUT = path.join(ROOT, 'ui5', 'holdout.json');
+const holdout = fs.existsSync(HOLDOUT) ? (JSON.parse(fs.readFileSync(HOLDOUT, 'utf8')).samples || []) : [];
+const spent = ports.filter((p) => holdout.includes(p.sample)).sort((a, b) => a.class.localeCompare(b.class));
+const spentChecked = spent.filter((p) => p.status === 'checked');
+const HISTORY = path.join(ROOT, 'docs', 'history.md');
+const probeSections = fs.existsSync(HISTORY)
+  ? [...fs.readFileSync(HISTORY, 'utf8').matchAll(/^## (.*hold-?out.*probe.*)$/gim)].map((m) => m[1].trim())
+  : [];
+
 // --- render -------------------------------------------------------------------
 const devLine = Object.keys(devCount).sort()
   .map((t) => `${devCount[t]} ${t}`)
@@ -112,6 +132,13 @@ lines.push(`| Open LIVE_TESTs | **${liveTestPorts.size} ports** carry at least o
 const skipLine = HATCHES.map((h) => `${skipCount[h]} ${h.replace('_', '-')}`).join(' · ');
 lines.push(`| Declared gate skips | ${skipLine} (each re-verified per run — a stale skip FAILS) |`);
 lines.push(`| Out-of-scope ported samples | ${outOfScope.length === 0 ? 'none' : outOfScope.map((s) => `\`${s}\``).join(' · ')}${outOfScope.length ? ' — all decided KEEP permanently 2026-07-30 (per-app rationale in ui5/scope-exceptions.json, revertible); the source-backed scope gate stays hard for NEW undecided entries' : ''} |`);
+const spentLine = spent.length
+  ? `**${spent.length}** spent as measurements (now ordinary ports: ${spent.map((p) => p.class.replace('z2ui5_cl_smpc_app_', '')).join(', ')})`
+  : '**0** spent';
+const probeLine = probeSections.length
+  ? `${probeSections.length} probe section(s) in [docs/history.md](docs/history.md): ${probeSections.map((s) => `"${s}"`).join(' · ')}`
+  : 'no probe section in docs/history.md yet';
+lines.push(`| Hold-out set (generator KPI) | **${holdout.length}** reserved samples in \`ui5/holdout.json\` · ${spentLine}${spentChecked.length ? ` · **${spentChecked.length} promoted to \`checked\` — a hold-out port must never be** (${spentChecked.map((p) => p.class).join(', ')})` : ''} · results: ${probeLine} — the measurement TRAINING.md "Measuring progress" defines, and the one number that still measures the generator with the portable backlog closed |`);
 lines.push('');
 lines.push('_Coverage per library (ported / in scope) is generated into the [README](README.md#coverage); one row per sample in [api.md](api.md)._');
 

@@ -1,20 +1,21 @@
 " @keywords table sap.m tablednd hbox button overflowtoolbar title menu menuitem column text dropinfo
 " @summary Shows the different kinds of drag-and-drop capabilities across view boundaries along with custom context menu alternatives to perform these action.
-" @origin sap.m.sample.TableDnD - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableDnD (status: generated)
+" @origin sap.m.sample.TableDnD - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableDnD (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name     TYPE string,
-             category TYPE string,
-             quantity TYPE i,
-             " Utils.ranking: 0 keeps the row in Available, anything above puts it
-             " in Selected and orders it there (descending)
-             rank     TYPE i,
-             selected TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name     TYPE string,
+        category TYPE string,
+        quantity TYPE i,
+        " Utils.ranking: 0 keeps the row in Available, anything above puts it
+        " in Selected and orders it there (descending)
+        rank     TYPE i,
+        selected TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     CONSTANTS c_rank_default TYPE i VALUE 1024.
@@ -25,7 +26,6 @@ CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS products_table IMPORTING node     TYPE REF TO z2ui5_cl_ui5_view_builder
                                      selected TYPE abap_bool.
     METHODS move_to_selected.
@@ -34,6 +34,7 @@ CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
     METHODS rank_after_drop IMPORTING dragged  TYPE string
                                       dropped  TYPE string
                                       position TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -62,11 +63,11 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(box) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:dnd` v = `sap.ui.core.dnd`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:dnd`  v = `sap.ui.core.dnd`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
 
         )->ele( `Page`
             )->a( n = `showHeader`      v = `false`
@@ -212,8 +213,8 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
           )->a( n = `groupName`         v = `available2selected`
           )->a( n = `sourceAggregation` v = `items`
           )->tag( n = `DropInfo` ns = `dnd`
-              )->a( n = `groupName`         v = `selected2available`
-              )->a( n = `drop`              v = client->_event( val = `DROP_AVAILABLE` arg = `${$parameters>/draggedControl}.getBindingContext().getProperty('NAME')` ) ).
+              )->a( n = `groupName` v = `selected2available`
+              )->a( n = `drop`      v = client->_event( val = `DROP_AVAILABLE` arg = `${$parameters>/draggedControl}.getBindingContext().getProperty('NAME')` ) ).
     ENDIF.
 
     table->ele( `items`

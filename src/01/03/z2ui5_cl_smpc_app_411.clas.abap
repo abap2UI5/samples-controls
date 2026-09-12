@@ -1,6 +1,6 @@
 " @keywords modelmapping model mapping sap.uxap mpmodelmapping simpleform title text
 " @summary Use of dynamic model mapping
-" @origin sap.uxap.sample.MPModelMapping - https://sdk.openui5.org/entity/sap.uxap.ModelMapping/sample/sap.uxap.sample.MPModelMapping (status: reviewed)
+" @origin sap.uxap.sample.MPModelMapping - https://sdk.openui5.org/entity/sap.uxap.ModelMapping/sample/sap.uxap.sample.MPModelMapping (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_411 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -47,12 +47,12 @@ CLASS z2ui5_cl_smpc_app_411 IMPLEMENTATION.
     " ModelMappingBlock's own view content (a SimpleForm) is inlined and the
     " Contact> fields are bound on the root ({/FIRSTNAME} / {/LASTNAME}).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
-        )->ele( n = `SimpleForm` ns = `forms`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `maxContainerCols` v = `2`
             )->a( n = `editable`         v = `false`
             )->a( n = `layout`           v = `ResponsiveGridLayout`

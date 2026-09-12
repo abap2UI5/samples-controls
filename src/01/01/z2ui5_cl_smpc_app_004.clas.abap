@@ -1,6 +1,6 @@
 " @keywords busydialog busy dialog sap.m indicate verticallayout button
 " @summary A Busy Dialog blocks the user interface until the currently running operation has been finished. No other activities can be started in parallel.
-" @origin sap.m.sample.BusyDialog - https://sdk.openui5.org/entity/sap.m.BusyDialog/sample/sap.m.sample.BusyDialog (status: checked)
+" @origin sap.m.sample.BusyDialog - https://sdk.openui5.org/entity/sap.m.BusyDialog/sample/sap.m.sample.BusyDialog (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_004 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

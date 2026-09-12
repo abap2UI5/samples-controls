@@ -1,6 +1,6 @@
 " @keywords input sap.m types verticallayout label
 " @summary Input type corresponds to the type attribute of the HTML input tag. On touch devices, it controls the keyboard layout. On desktop, the effect of this setting is browser dependent.
-" @origin sap.m.sample.InputTypes - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputTypes (status: reviewed)
+" @origin sap.m.sample.InputTypes - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputTypes (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_159 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

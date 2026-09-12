@@ -1,16 +1,17 @@
 " @keywords list sap.m listgrowing standardlistitem
 " @summary The Growing feature helps if your content is too big to be loaded/shown at once. It paginates the content into smaller chunks - aka pages - which are loaded/shown one after another. Random access to pages (e.
-" @origin sap.m.sample.ListGrowing - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListGrowing (status: checked)
+" @origin sap.m.sample.ListGrowing - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListGrowing (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_276 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_product.
+    TYPES:
+      BEGIN OF ty_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_product.
     DATA t_products TYPE STANDARD TABLE OF ty_product WITH EMPTY KEY.
 
   PROTECTED SECTION.

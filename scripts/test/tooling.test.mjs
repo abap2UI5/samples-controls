@@ -989,6 +989,112 @@ test('pattern-lint: an ABAP Doc header on a port is an error, and the clean fixt
   }
 });
 
+/*
+ * The five rules of 2026-09-12. Each one is exercised on the clean fixture
+ * port by injecting exactly the shape it exists for, and its counter-shape
+ * where the rule has one (the two-line TYPES, a boolean's `is_` name) - so
+ * the test holds the rule's BOUNDARY, not just that it fires.
+ */
+test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian names, line headroom', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
+  const inMain = (code) => base.replace('    me->client = client.', `    me->client = client.\n${code}`);
+  try {
+    // types-layout: the one-line form fails, the two-line form passes
+    let r = lint(base.replace('  PROTECTED SECTION.\n',
+      '  PROTECTED SECTION.\n    TYPES: BEGIN OF ty_s_row,\n             text TYPE string,\n           END OF ty_s_row.\n'));
+    assert.equal(r.code, 1, '`TYPES: BEGIN OF` on one line must fail');
+    assert.match(r.out, /ERROR .*\[types-layout\]/);
+    r = lint(base.replace('  PROTECTED SECTION.\n',
+      '  PROTECTED SECTION.\n    TYPES:\n      BEGIN OF ty_s_row,\n        text TYPE string,\n      END OF ty_s_row.\n'));
+    assert.equal(r.code, 0, `the two-line form is the layout\n${r.out}`);
+
+    // hungarian-prefix: a local lv_ fails, a parameter is_ fails, a boolean named is_… does not
+    r = lint(inMain('    DATA(lv_count) = 1.'));
+    assert.equal(r.code, 1);
+    assert.match(r.out, /\[hungarian-prefix\] lv_count/);
+    r = lint(base.replace('    METHODS view_display.',
+      '    METHODS view_display.\n    METHODS helper\n      IMPORTING\n        is_row TYPE string.'));
+    assert.match(r.out, /\[hungarian-prefix\] is_row/, 'is_ on a PARAMETER is the classic prefix');
+    r = lint(inMain('    DATA(is_selected) = abap_true.'));
+    assert.equal(r.code, 0, `is_selected is a boolean\'s English name, not a prefix\n${r.out}`);
+
+    // line-headroom: a line within 15 of 255 warns and does not fail
+    r = lint(inMain(`    " ${'x'.repeat(241)}`));
+    assert.equal(r.code, 0, 'headroom is a warning');
+    assert.match(r.out, /WARN .*\[line-headroom\] 247 characters/);
+
+    // unrolled-chain-repetition: the same chain line 41 times in one method warns, 40 do not
+    // (the fixture's xmlns attribute already normalises to the same key, so it counts as one)
+    const rep = (n) => Array.from({ length: n }, () => '                )->a( n = `text` v = `hello`').join('\n');
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(40)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.equal(r.code, 0, 'repetition is a warning');
+    assert.match(r.out, /WARN .*\[unrolled-chain-repetition\] view_display: 41 x \)->a\( n = `~` v = `~`/);
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(39)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.ok(!/unrolled-chain-repetition/.test(r.out), '40 is the budget, not over it');
+
+    // statement-too-long: one statement over the budget fails, and the finding names the method
+    r = lint(inMain(`    DATA(blob) = \`${'x'.repeat(76000)}\`.`));
+    assert.equal(r.code, 1, 'a statement over STATEMENT_BUDGET must fail');
+    assert.match(r.out, /ERROR .*\[statement-too-long\] z2ui5_if_app~main: 7601\d characters, 1 lines/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * The hold-out row: three facts, all derived. The fixture's holdout.json is
+ * empty, so the row says 0 reserved; reserving the fixture's own sample makes
+ * it SPENT (a sidecar names it), and a probe heading in docs/history.md is
+ * where the result is said to be recorded.
+ */
+test('generate-status: the hold-out row counts reserved, spent and recorded probes', () => {
+  const { root } = makeMetaRoot(['generate-status.mjs']);
+  try {
+    fs.writeFileSync(path.join(root, 'STATUS.md'), '# fixture\n\n<!-- state:start -->\n<!-- state:end -->\n');
+    let r = runIn(root, 'generate-status.mjs');
+    assert.equal(r.code, 0, `${r.out}${r.errout}`);
+    let out = fs.readFileSync(path.join(root, 'STATUS.md'), 'utf8');
+    assert.match(out, /\| Hold-out set \(generator KPI\) \| \*\*0\*\* reserved samples in `ui5\/holdout.json` · \*\*0\*\* spent · results: no probe section in docs\/history.md yet/);
+
+    writeJson(path.join(root, 'ui5', 'holdout.json'), { samples: ['sap.m.sample.FixtureGood', 'sap.m.sample.NeverPorted'] });
+    fs.mkdirSync(path.join(root, 'docs'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'docs', 'history.md'),
+      '# journal\n\n## Hold-out probe #1 (2026-01-01) — fixture baseline\n\ntext\n\n## Batch b01 — not a probe\n');
+    r = runIn(root, 'generate-status.mjs');
+    assert.equal(r.code, 0, `${r.out}${r.errout}`);
+    out = fs.readFileSync(path.join(root, 'STATUS.md'), 'utf8');
+    assert.match(out, /\*\*2\*\* reserved samples/);
+    assert.match(out, /\*\*1\*\* spent as measurements \(now ordinary ports: 001\)/, 'a ported hold-out is spent');
+    assert.match(out, /1 probe section\(s\) in \[docs\/history.md\]\(docs\/history.md\): "Hold-out probe #1 \(2026-01-01\) — fixture baseline"/);
+    assert.ok(!/promoted to `checked`/.test(out), 'the fixture port is generated, so no warning');
+
+    // regenerating is a no-op: the block is a function of meta/, holdout.json and the journal
+    const before = out;
+    runIn(root, 'generate-status.mjs');
+    assert.equal(fs.readFileSync(path.join(root, 'STATUS.md'), 'utf8'), before, 'idempotent');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/* ----------------------------------------------------------- lib/clip.mjs */
+
+test('clipAtWord: cuts at a whole word, marks the cut, leaves a fitting text alone', async () => {
+  const { clipAtWord } = await import('../lib/clip.mjs');
+  assert.equal(clipAtWord('sap.m.Input - This example shows different input value states', 60),
+    'sap.m.Input - This example shows different input value...');
+  assert.equal(clipAtWord('short', 60), 'short', 'a text that fits is untouched');
+  assert.equal(clipAtWord('x'.repeat(60), 60), 'x'.repeat(60), 'exactly the limit fits');
+  assert.equal(clipAtWord('x'.repeat(61), 60), `${'x'.repeat(57)}...`, 'no space: a hard cut, still marked');
+  assert.equal(clipAtWord('a word, and then more', 12), 'a word...', 'trailing punctuation before the marker goes');
+  for (const n of [10, 40, 60, 255]) {
+    assert.ok(clipAtWord('the quick brown fox jumps over the lazy dog '.repeat(10), n).length <= n, `never longer than ${n}`);
+  }
+});
+
 /* ------------------------------------------------------- e2e-changed.mjs */
 
 /*

@@ -1,17 +1,18 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarinlineicons icontabfilter text
 " @summary This sample illustrates tab icons for inline mode.
-" @origin sap.m.sample.IconTabBarInlineIcons - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarInlineIcons (status: generated)
+" @origin sap.m.sample.IconTabBarInlineIcons - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarInlineIcons (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_467 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_tab,
-             key     TYPE i,
-             text    TYPE string,
-             content TYPE string,
-             icon    TYPE string,
-           END OF ty_s_tab.
+    TYPES:
+      BEGIN OF ty_s_tab,
+        key     TYPE i,
+        text    TYPE string,
+        content TYPE string,
+        icon    TYPE string,
+      END OF ty_s_tab.
     TYPES ty_t_tab TYPE STANDARD TABLE OF ty_s_tab WITH EMPTY KEY.
 
     DATA t_tabs TYPE ty_t_tab.
@@ -53,10 +54,10 @@ CLASS z2ui5_cl_smpc_app_467 IMPLEMENTATION.
         " onInit adds the 12 IconTabFilters in a loop - a bound items aggregation
         " over the same 12 rows, which is the abap2UI5 form of addItem( )
         )->ele( `IconTabBar`
-            )->a( n = `id`    v = `idIconTabBar`
-            )->a( n = `class` v = `sapUiResponsiveContentPadding`
+            )->a( n = `id`         v = `idIconTabBar`
+            )->a( n = `class`      v = `sapUiResponsiveContentPadding`
             )->a( n = `headerMode` v = `Inline`
-            )->a( n = `items` v = client->_bind( t_tabs )
+            )->a( n = `items`      v = client->_bind( t_tabs )
 
             )->ele( `items`
                 )->ele( `IconTabFilter`

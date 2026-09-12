@@ -1,6 +1,6 @@
 " @keywords navcontainer nav container sap.m html vbox overflowtoolbar button hbox flexitemdata customdata select
 " @summary The Nav Container stacks multiple pages and offers an API to switch between them with some animation. Typically application developers would use the App control which inherits from NavContainer.
-" @origin sap.m.sample.NavContainer - https://sdk.openui5.org/entity/sap.m.NavContainer/sample/sap.m.sample.NavContainer (status: reviewed)
+" @origin sap.m.sample.NavContainer - https://sdk.openui5.org/entity/sap.m.NavContainer/sample/sap.m.sample.NavContainer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_242 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -55,10 +55,10 @@ CLASS z2ui5_cl_smpc_app_242 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `NavContainer`
-                )->a( n = `id`     v = `navCon`
-                )->a( n = `width`  v = `98%`
-                )->a( n = `height` v = `16em`
-                )->a( n = `class`  v = `navContainerControl sapUiSmallMarginBottom`
+                )->a( n = `id`                 v = `navCon`
+                )->a( n = `width`              v = `98%`
+                )->a( n = `height`             v = `16em`
+                )->a( n = `class`              v = `navContainerControl sapUiSmallMarginBottom`
                 " onNavigationFinished: MessageToast.show("Navigation to page '" + to.getTitle() + "' finished")
                 " - client-composed toast, the {0} placeholder filled by the resolved page title
                 )->a( n = `navigationFinished` v = client->follow_up_action( val   = client->cs_event-control_global

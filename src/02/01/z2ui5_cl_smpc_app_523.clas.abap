@@ -1,20 +1,21 @@
 " @keywords table sap.m tableselectcopy cellselector overflowtoolbar title toolbarspacer checkbox column text columnlistitem objectidentifier
 " @summary This example demonstrates how the Table data can be copied to the clipboard via CopyProvider plugin.
-" @origin sap.m.sample.TableSelectCopy - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableSelectCopy (status: generated)
+" @origin sap.m.sample.TableSelectCopy - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableSelectCopy (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_523 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             quantity     TYPE string,
-             uom          TYPE string,
-             price        TYPE p LENGTH 8 DECIMALS 2,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        quantity     TYPE string,
+        uom          TYPE string,
+        price        TYPE p LENGTH 8 DECIMALS 2,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products  TYPE ty_t_product.
@@ -95,9 +96,9 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
 
             )->ele( `columns`
                 )->ele( `Column`
-                    )->a( n = `width`         v = `16em`
-                    )->a( n = `app:bindings`  v = `ProductId,Name`
-                    )->a( n = `app:template`  v = `\{1\}\n\{0\}`
+                    )->a( n = `width`        v = `16em`
+                    )->a( n = `app:bindings` v = `ProductId,Name`
+                    )->a( n = `app:template` v = `\{1\}\n\{0\}`
 
                     )->tag( `Text`
                         )->a( n = `text` v = `Product`

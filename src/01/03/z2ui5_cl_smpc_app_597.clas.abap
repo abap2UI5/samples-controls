@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagexml objectpageheader button verticallayout link horizontallayout label objectpagesection
 " @summary An ObjectPageLayout declared in one XML view - header title, header content and five sections whose blocks come from four different block namespaces - rather than assembled in a controller.
-" @origin sap.uxap.sample.ObjectPageXML - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageXML (status: generated)
+" @origin sap.uxap.sample.ObjectPageXML - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageXML (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_597 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -61,13 +61,13 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
     " (sap.uxap.testblocks.*) or in a Headers sample that is not published - so
     " their content is improvised; see the sidecar, which says exactly which
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -90,32 +90,34 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->a( n = `type`    v = `Emphasized`
                             )->a( n = `tooltip` v = `show state`
                             )->a( n = `press`   v = client->_event( `SHOW_STATE` )
+
                     )->end(
                 )->end(
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `+33 6 4512 5158`
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `DeniseSmith@sap.com`
 
-                    )->ele( n = `HorizontalLayout` ns = `layout`
+                    )->ele( n = `HorizontalLayout` ns = `l`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text`   v = `twitter`
                             )->a( n = `target` v = `_blank`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text`   v = `LinkedIn`
                             )->a( n = `target` v = `_blank`
+
                     )->end(
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Personal description`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `id` v = `headerDescription`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Personal description (2)`
@@ -123,10 +125,11 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->a( n = `text` v = `Personal description (3)`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Personal description (4)`
+
                     )->end(
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `id`   v = `headerRole`
                         )->a( n = `text` v = `Role Specific info`
@@ -136,6 +139,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `id`   v = `headerRole2`
                         )->a( n = `text` v = `Role Specific info 2`
+
                 )->end(
             )->end(
 
@@ -154,7 +158,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->ele( `blocks`
                                 " bl:GeneralInfo (improvised - see sidecar), with the
                                 " MyEmployee record its ModelMapping names
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->tag( n = `Title` ns = `core`
@@ -171,6 +175,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Location`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = client->_bind( emp_location )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -186,18 +191,19 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                     )->a( n = `type`    v = `Transparent`
                                     )->a( n = `tooltip` v = `action`
                                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
                                 )->tag( n = `Button` ns = `m`
                                     )->a( n = `icon`    v = `sap-icon://edit`
                                     )->a( n = `type`    v = `Transparent`
                                     )->a( n = `tooltip` v = `edit`
                                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+
                             )->end(
 
                             )->ele( `blocks`
                                 " sample:MultiViewBlock, its Collapsed view
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -209,10 +215,11 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
 
                                 " sample:MultiViewBlock, its Collapsed view
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -224,12 +231,13 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
 
                             )->ele( `moreBlocks`
                                 " sample:MultiViewBlock, its Collapsed view
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -241,6 +249,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -260,7 +269,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->ele( `blocks`
                                 " bl:GeneralInfo (improvised - see sidecar), the same
                                 " block a second time, with the same ModelMapping
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->tag( n = `Title` ns = `core`
@@ -277,6 +286,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Location`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = client->_bind( emp_location )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -288,7 +298,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
 
                             )->ele( `blocks`
                                 " edit:SimpleEdit (improvised - see sidecar)
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->tag( n = `Title` ns = `core`
@@ -301,10 +311,11 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = client->_bind( emp_job )
+
                                 )->end(
 
                                 " mb:MixedBlock (improvised - see sidecar)
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->tag( n = `Title` ns = `core`
@@ -317,12 +328,13 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = client->_bind( emp_job )
+
                                 )->end(
                             )->end(
 
                             )->ele( `moreBlocks`
                                 " sample:MultiViewBlock, its Collapsed view
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -334,6 +346,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
                         )->end(

@@ -1,16 +1,17 @@
 " @keywords headercontainer header container sap.m headercontainerlazyloading objectheader objectattribute objectstatus objectmarker numericcontent
 " @summary The header container with lazy loading functionality on pressing the scroll button.
-" @origin sap.m.sample.HeaderContainerLazyLoading - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerLazyLoading (status: generated)
+" @origin sap.m.sample.HeaderContainerLazyLoading - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerLazyLoading (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_605 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_content,
-             value  TYPE string,
-             color  TYPE string,
-             growth TYPE string,
-           END OF ty_s_content.
+    TYPES:
+      BEGIN OF ty_s_content,
+        value  TYPE string,
+        color  TYPE string,
+        growth TYPE string,
+      END OF ty_s_content.
     TYPES ty_t_content TYPE STANDARD TABLE OF ty_s_content WITH EMPTY KEY.
 
     " the ObjectHeader's binding="{/ProductCollection/}" folded onto root fields
@@ -75,6 +76,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                 )->tag( `ObjectAttribute`
                     )->a( n = `title` v = `Manufacturer`
                     )->a( n = `text`  v = client->_bind( suppliername )
+
             )->end(
 
             )->ele( `statuses`
@@ -82,6 +84,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                     )->a( n = `title` v = `Approval`
                     )->a( n = `text`  v = `Pending`
                     )->a( n = `state` v = `Warning`
+
             )->end(
 
             )->ele( `markers`
@@ -89,6 +92,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                     )->a( n = `type` v = `Flagged`
                 )->tag( `ObjectMarker`
                     )->a( n = `type` v = `Favorite`
+
             )->end(
 
             )->ele( `headerContainer`
@@ -107,7 +111,8 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                             )->a( n = `valueColor` v = `{COLOR}`
                             )->a( n = `indicator`  v = `{GROWTH}`
                             )->a( n = `press`      v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                  t_arg = VALUE #( ( `MESSAGE_BOX` ) ( `alert` ) ( `Link was clicked!` ) ) )
+                                                                                 t_arg = VALUE #( ( `MESSAGE_BOX` ) ( `alert` ) ( `Link was clicked!` ) ) )
+
                     )->end(
                 )->end(
             )->end(

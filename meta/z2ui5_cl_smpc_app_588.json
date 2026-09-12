@@ -51,6 +51,10 @@
     {
       "type": "NOTE",
       "what": "The Connections subsection carries title=\"Connections\" as the original does. The port's ObjectPageLayout subtree was built from app 263, whose own sample has no title on that subsection, so the attribute was lost in the copy. structural-diff cannot see it: attribute presence is a union per control TYPE, and other ObjectPageSubSection instances do carry title."
+    },
+    {
+      "type": "NOTE",
+      "what": "The six ConnectionsBlock Panels are built in a loop (the app 520 idiom): one DO 6 TIMES over a sub-handle of the Connections blocks aggregation, each Panel binding its t_employees row with client->_bind( tab / tab_index ) on the row index sy-index gives. structural-diff therefore reads the port as dynamic - control counts built in a loop cannot match statically. The rendered view is identical to the unrolled form it replaced (both expanded and diffed, 2026-09-12): a rewrite of the source, not of the behaviour, so the status is untouched."
     }
   ]
 }

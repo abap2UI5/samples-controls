@@ -1,6 +1,6 @@
 " @keywords input sap.m inputchecked verticallayout label button
 " @summary Input checks are handled via the validation of the data binding. In this example there are two inputs that are validated (a) while the user types and (b) when the user continues the process.
-" @origin sap.m.sample.InputChecked - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputChecked (status: generated)
+" @origin sap.m.sample.InputChecked - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputChecked (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_622 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -86,6 +86,7 @@ CLASS z2ui5_cl_smpc_app_622 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `text`  v = `Submit`
                 )->a( n = `press` v = client->_event( `SUBMIT` )
+
         )->end( ).
 
     client->view_display( view->stringify( ) ).

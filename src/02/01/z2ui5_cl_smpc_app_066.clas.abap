@@ -1,6 +1,6 @@
 " @keywords messagepopover message popover sap.m list overflowtoolbar button messageitem link toolbarspacer
 " @summary MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message.
-" @origin sap.m.sample.MessagePopover - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopover (status: checked)
+" @origin sap.m.sample.MessagePopover - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopover (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_066 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -72,8 +72,8 @@ CLASS z2ui5_cl_smpc_app_066 IMPLEMENTATION.
 
                         )->ele( `dependents`
                             )->ele( `MessagePopover`
-                                )->a( n = `id`              v = `messagePopover`
-                                )->a( n = `items`           v = client->_bind( t_messages )
+                                )->a( n = `id`               v = `messagePopover`
+                                )->a( n = `items`            v = client->_bind( t_messages )
                                 )->a( n = `activeTitlePress` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Active title is pressed` ) ) )
 

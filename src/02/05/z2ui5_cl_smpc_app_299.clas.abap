@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationactions vbox button navigationlist navigationlistitem dialog label input
 " @summary SideNavigation with a quick create action button.
-" @origin sap.tnt.sample.SideNavigationActions - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationActions (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationActions - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationActions (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_299 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -10,11 +10,12 @@ CLASS z2ui5_cl_smpc_app_299 DEFINITION PUBLIC.
     DATA create_name TYPE string.
     DATA create_icon TYPE string.
 
-    TYPES: BEGIN OF ty_s_nav_item,
-             text     TYPE string,
-             icon     TYPE string,
-             expanded TYPE abap_bool,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        text     TYPE string,
+        icon     TYPE string,
+        expanded TYPE abap_bool,
+      END OF ty_s_nav_item.
     DATA t_nav_items TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.

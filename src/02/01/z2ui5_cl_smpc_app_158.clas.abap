@@ -1,6 +1,6 @@
 " @keywords flexbox flex box sap.m gap vbox panel button
 " @summary You can add gap between rows and columns.
-" @origin sap.m.sample.FlexBoxGap - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxGap (status: reviewed)
+" @origin sap.m.sample.FlexBoxGap - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxGap (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_158 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -42,7 +42,7 @@ CLASS z2ui5_cl_smpc_app_158 IMPLEMENTATION.
                 )->ele( `FlexBox`
                     )->a( n = `alignItems` v = `Start`
                     " gap is @since 1.134 - kept 1:1 (POST_171)
-                    )->a( n = `gap` v = `30px`
+                    )->a( n = `gap`        v = `30px`
                     )->a( n = `width`      v = `170px`
                     )->a( n = `wrap`       v = `Wrap`
                     )->tag( `Button`
@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_158 IMPLEMENTATION.
                 )->ele( `FlexBox`
                     )->a( n = `alignItems` v = `Start`
                     " columnGap is @since 1.134 - kept 1:1 (POST_171)
-                    )->a( n = `columnGap` v = `30px`
+                    )->a( n = `columnGap`  v = `30px`
                     )->a( n = `width`      v = `170px`
                     )->a( n = `wrap`       v = `Wrap`
                     )->tag( `Button`
@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_158 IMPLEMENTATION.
                 )->ele( `FlexBox`
                     )->a( n = `alignItems` v = `Start`
                     " rowGap is @since 1.134 - kept 1:1 (POST_171)
-                    )->a( n = `rowGap` v = `30px`
+                    )->a( n = `rowGap`     v = `30px`
                     )->a( n = `width`      v = `100px`
                     )->a( n = `wrap`       v = `Wrap`
                     )->tag( `Button`

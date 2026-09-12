@@ -1,30 +1,31 @@
 " @keywords table sap.m tableeditable overflowtoolbar toolbarspacer button overflowtoolbarlayoutdata title column text columnlistitem input
 " @summary Table with edit/display togglable scenario.
-" @origin sap.m.sample.TableEditable - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableEditable (status: generated)
+" @origin sap.m.sample.TableEditable - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableEditable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_570 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             quantity      TYPE string,
-             uom           TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState, computed in the backend (thin frontend)
-             weight_state  TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             " PRICE stays packed for the read-only template's Currency composite
-             " binding, so the EDITABLE cell binds this string mirror instead. A
-             " packed cell cannot take the write-back: delta_apply_field ends in
-             " CATCH cx_root ##NO_HANDLER ("skip just this cell"), so 1,250.00 was
-             " dropped with no error and a lone - or a cleared cell became 0.00
-             " (both measured). A string cell always arrives, and SAVE parses it
-             price_text    TYPE string,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        quantity      TYPE string,
+        uom           TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState, computed in the backend (thin frontend)
+        weight_state  TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        " PRICE stays packed for the read-only template's Currency composite
+        " binding, so the EDITABLE cell binds this string mirror instead. A
+        " packed cell cannot take the write-back: delta_apply_field ends in
+        " CATCH cx_root ##NO_HANDLER ("skip just this cell"), so 1,250.00 was
+        " dropped with no error and a lone - or a cleared cell became 0.00
+        " (both measured). A string cell always arrives, and SAVE parses it
+        price_text    TYPE string,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -218,15 +219,15 @@ CLASS z2ui5_cl_smpc_app_570 IMPLEMENTATION.
   METHOD on_event.
 
     " the first row SAVE could not parse, if any - see the SAVE branch
-    DATA lv_bad TYPE string.
+    DATA bad TYPE string.
 
     CASE client->get_event( ).
 
       WHEN `EDIT`.
         " onEdit: seed the string mirror from the packed price, keep a copy for
         " Cancel, then rebind to the editable template
-        LOOP AT t_products REFERENCE INTO DATA(lr_seed).
-          lr_seed->price_text = |{ lr_seed->price }|.
+        LOOP AT t_products REFERENCE INTO DATA(seed).
+          seed->price_text = |{ seed->price }|.
         ENDLOOP.
         t_backup = t_products.
         edit_mode = abap_true.
@@ -237,31 +238,31 @@ CLASS z2ui5_cl_smpc_app_570 IMPLEMENTATION.
         " framework - decides. A cell that does not convert keeps its old price,
         " its text is put back from that price, and the app STAYS in edit mode
         " with a toast: the entry is never discarded behind the user's back
-        LOOP AT t_products REFERENCE INTO DATA(lr_prod).
-          DATA(lv_txt) = condense( lr_prod->price_text ).
+        LOOP AT t_products REFERENCE INTO DATA(prod).
+          DATA(txt) = condense( prod->price_text ).
           " three terms, not just the character one: CA demands a real digit so a
           " lone `-` or `.` cannot reach the assignment (it used to land as 0.00),
           " and the length term keeps a long digit run from overflowing the target
-          DATA(lv_ok) = xsdbool( lv_txt IS NOT INITIAL
-                             AND lv_txt CO `0123456789.-`
-                             AND lv_txt CA `0123456789`
-                             AND strlen( lv_txt ) <= 15 ).
-          IF lv_ok = abap_true.
+          DATA(ok) = xsdbool( txt IS NOT INITIAL
+                             AND txt CO `0123456789.-`
+                             AND txt CA `0123456789`
+                             AND strlen( txt ) <= 15 ).
+          IF ok = abap_true.
             TRY.
-                lr_prod->price = lv_txt.
+                prod->price = txt.
               CATCH cx_root.
-                lv_ok = abap_false.
+                ok = abap_false.
             ENDTRY.
           ENDIF.
-          IF lv_ok = abap_false AND lv_bad IS INITIAL.
-            lv_bad = |{ lr_prod->name }: '{ lv_txt }'|.
+          IF ok = abap_false AND bad IS INITIAL.
+            bad = |{ prod->name }: '{ txt }'|.
           ENDIF.
-          lr_prod->price_text = |{ lr_prod->price }|.
+          prod->price_text = |{ prod->price }|.
         ENDLOOP.
-        IF lv_bad IS INITIAL.
+        IF bad IS INITIAL.
           edit_mode = abap_false.
         ELSE.
-          client->message_toast_display( |Not a number, the old price was kept - { lv_bad }| ).
+          client->message_toast_display( |Not a number, the old price was kept - { bad }| ).
         ENDIF.
         view_display( ).
 

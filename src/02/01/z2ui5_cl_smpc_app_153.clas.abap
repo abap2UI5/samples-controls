@@ -1,6 +1,6 @@
 " @keywords maskinput mask input sap.m rules app simpleform label maskinputrule
 " @summary The sap.m.MaskInput control allows users to easily enter data in a certain format and in a fixed-width input (for example: date, time, credit card number, and others).
-" @origin sap.m.sample.MaskInput - https://sdk.openui5.org/entity/sap.m.MaskInput/sample/sap.m.sample.MaskInput (status: reviewed)
+" @origin sap.m.sample.MaskInput - https://sdk.openui5.org/entity/sap.m.MaskInput/sample/sap.m.sample.MaskInput (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_153 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -56,9 +56,9 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `Unique ID`
                     )->ele( `MaskInput`
-                        )->a( n = `mask`             v = `~~~~~~~~~~`
+                        )->a( n = `mask`              v = `~~~~~~~~~~`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `All characters allowed`
+                        )->a( n = `placeholder`       v = `All characters allowed`
                         )->ele( `rules`
                             )->tag( `MaskInputRule`
                                 )->a( n = `maskFormatSymbol` v = `~`
@@ -69,9 +69,9 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `Promo code`
                     )->ele( `MaskInput`
-                        )->a( n = `mask`             v = `**********`
+                        )->a( n = `mask`              v = `**********`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `Latin characters (case insensitive) and numbers`
+                        )->a( n = `placeholder`       v = `Latin characters (case insensitive) and numbers`
                         )->ele( `rules`
                             )->tag( `MaskInputRule`
 
@@ -80,11 +80,11 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `Phone number`
                     )->tag( `MaskInput`
-                        )->a( n = `mask`             v = `(999) 999 999999`
+                        )->a( n = `mask`              v = `(999) 999 999999`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `Enter twelve-digit number`
+                        )->a( n = `placeholder`       v = `Enter twelve-digit number`
                         " showClearIcon is @since 1.96 - kept 1:1 (POST_171)
-                        )->a( n = `showClearIcon`    v = `true`
+                        )->a( n = `showClearIcon`     v = `true`
 
                 )->end(
 
@@ -96,10 +96,10 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `Serial number`
                     )->ele( `MaskInput`
-                        )->a( n = `mask`             v = `CCCC-CCCC-CCCC-CCCC-CCCC`
+                        )->a( n = `mask`              v = `CCCC-CCCC-CCCC-CCCC-CCCC`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `Enter digits and capital letters`
-                        )->a( n = `showClearIcon`    v = client->_bind( showclearicon )
+                        )->a( n = `placeholder`       v = `Enter digits and capital letters`
+                        )->a( n = `showClearIcon`     v = client->_bind( showclearicon )
                         )->ele( `rules`
                             )->tag( `MaskInputRule`
                                 )->a( n = `maskFormatSymbol` v = `C`
@@ -110,10 +110,10 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `Product activation key`
                     )->ele( `MaskInput`
-                        )->a( n = `mask`             v = `SAP-CCCCC-CCCCC`
+                        )->a( n = `mask`              v = `SAP-CCCCC-CCCCC`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `Starts with 'SAP' followed by digits and capital letters`
-                        )->a( n = `showClearIcon`    v = client->_bind( showclearicon )
+                        )->a( n = `placeholder`       v = `Starts with 'SAP' followed by digits and capital letters`
+                        )->a( n = `showClearIcon`     v = client->_bind( showclearicon )
                         )->ele( `rules`
                             )->tag( `MaskInputRule`
                                 )->a( n = `maskFormatSymbol` v = `C`
@@ -124,10 +124,10 @@ CLASS z2ui5_cl_smpc_app_153 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = `ISBN`
                     )->tag( `MaskInput`
-                        )->a( n = `mask`             v = `999-99-999-9999-9`
+                        )->a( n = `mask`              v = `999-99-999-9999-9`
                         )->a( n = `placeholderSymbol` v = `_`
-                        )->a( n = `placeholder`      v = `Enter thirteen-digit number`
-                        )->a( n = `showClearIcon`    v = client->_bind( showclearicon ) ).
+                        )->a( n = `placeholder`       v = `Enter thirteen-digit number`
+                        )->a( n = `showClearIcon`     v = client->_bind( showclearicon ) ).
 
     client->view_display( view->stringify( ) ).
 

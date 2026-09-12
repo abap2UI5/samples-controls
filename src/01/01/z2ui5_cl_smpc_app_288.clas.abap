@@ -1,6 +1,6 @@
 " @keywords pdfviewer sap.m pdfviewerembedded scrollcontainer flexbox button flexitemdata
 " @summary A PDF viewer embedded in another control.
-" @origin sap.m.sample.PDFViewerEmbedded - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerEmbedded (status: reviewed)
+" @origin sap.m.sample.PDFViewerEmbedded - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerEmbedded (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_288 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

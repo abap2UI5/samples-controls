@@ -1,6 +1,6 @@
 " @keywords select sap.m selectwithwrappeditemtext item
 " @summary Illustrates how the text in items wrap.
-" @origin sap.m.sample.SelectWithWrappedItemText - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithWrappedItemText (status: reviewed)
+" @origin sap.m.sample.SelectWithWrappedItemText - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithWrappedItemText (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_374 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,8 +8,8 @@ CLASS z2ui5_cl_smpc_app_374 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        product_id TYPE string,
-        name       TYPE string,
+        productid TYPE string,
+        name      TYPE string,
       END OF ty_s_product.
     DATA t_products  TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA t_products2 TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
@@ -56,7 +56,7 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
             )->a( n = `items`         v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
             )->tag( n = `Item` ns = `core`
-                )->a( n = `key`  v = `{PRODUCT_ID}`
+                )->a( n = `key`  v = `{PRODUCTID}`
                 )->a( n = `text` v = `{NAME}`
 
         )->end(
@@ -68,7 +68,7 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
             )->a( n = `items`         v = |\{ path: '{ client->_bind_path( t_products2 ) }', sorter: \{ path: 'NAME' \} \}|
 
             )->tag( n = `Item` ns = `core`
-                )->a( n = `key`  v = `{PRODUCT_ID}`
+                )->a( n = `key`  v = `{PRODUCTID}`
                 )->a( n = `text` v = `{NAME}` ).
 
     client->view_display( view->stringify( ) ).
@@ -80,19 +80,19 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
 
     " Data of the inline JSON model defined in the original sample controller
     t_products = VALUE #(
-      ( product_id = `HT-1001` name = `Select option 1` )
-      ( product_id = `HT-1002` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry.` )
-      ( product_id = `HT-1003` name = `Select option 3` )
-      ( product_id = `HT-1007` name = `Select option 4` )
-      ( product_id = `HT-1010` name = `Select option 5` ) ).
+      ( productid = `HT-1001` name = `Select option 1` )
+      ( productid = `HT-1002` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry.` )
+      ( productid = `HT-1003` name = `Select option 3` )
+      ( productid = `HT-1007` name = `Select option 4` )
+      ( productid = `HT-1010` name = `Select option 5` ) ).
 
     t_products2 = VALUE #(
-      ( product_id = `key1` name = `Select option 1` )
-      ( product_id = `key2` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. ` &&
+      ( productid = `key1` name = `Select option 1` )
+      ( productid = `key2` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. ` &&
                                    `Lorem Ipsum is simply dummy text of the printing and typesetting industry.` )
-      ( product_id = `key3` name = `Select option 3` )
-      ( product_id = `key4` name = `Select option 4` )
-      ( product_id = `key5` name = `Select option 5` ) ).
+      ( productid = `key3` name = `Select option 3` )
+      ( productid = `key4` name = `Select option 4` )
+      ( productid = `key5` name = `Select option 5` ) ).
 
   ENDMETHOD.
 

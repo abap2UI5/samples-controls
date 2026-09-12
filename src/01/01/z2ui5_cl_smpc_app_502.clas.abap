@@ -1,22 +1,23 @@
 " @keywords objectheader object header sap.m objectheadertitlesel objectattribute responsivepopover list standardlistitem
 " @summary This is a Object Header with a title selection. This can be used to switch between variants of the business object being shown.
-" @origin sap.m.sample.ObjectHeaderTitleSel - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleSel (status: generated)
+" @origin sap.m.sample.ObjectHeaderTitleSel - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleSel (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_502 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             price         TYPE p LENGTH 8 DECIMALS 2,
-             currencycode  TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -78,8 +79,8 @@ CLASS z2ui5_cl_smpc_app_502 IMPLEMENTATION.
             )->a( n = `titleSelectorPress` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                          t_arg = VALUE #( ( `myPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
             )->a( n = `number`             v = |\{ parts:[\{path:'{ client->_bind_path( sel_price ) }'\},| &&
-                                                |\{path:'{ client->_bind_path( sel_currencycode ) }'\}],| &&
-                                                | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                               |\{path:'{ client->_bind_path( sel_currencycode ) }'\}],| &&
+                                               | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
             )->a( n = `numberUnit`         v = client->_bind( sel_currencycode )
             )->a( n = `class`              v = `sapUiResponsivePadding--header`
 

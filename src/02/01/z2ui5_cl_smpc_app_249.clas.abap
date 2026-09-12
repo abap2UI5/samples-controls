@@ -1,6 +1,6 @@
 " @keywords button sap.m buttonwithbadge verticallayout toolbar title badgecustomdata flexbox text stepinput input select
 " @summary Button with a Badge attached
-" @origin sap.m.sample.ButtonWithBadge - https://sdk.openui5.org/entity/sap.m.Button/sample/sap.m.sample.ButtonWithBadge (status: reviewed)
+" @origin sap.m.sample.ButtonWithBadge - https://sdk.openui5.org/entity/sap.m.Button/sample/sap.m.sample.ButtonWithBadge (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_249 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -64,17 +64,17 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `Page`
             )->a( n = `title` v = `Button with Badge`
 
             )->ele( `content`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->a( n = `class` v = `sapUiContentPadding`
                     )->a( n = `width` v = `100%`
 
@@ -252,7 +252,7 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
                         )->a( n = `class`    v = `sapUiTinyMargin`
                         )->a( n = `wrapping` v = `true`
                         )->a( n = `text`     v = `2. If an application developer wants to control more precisely the value and appearance of the Badge, ` &&
-                                                   `that can be done as it is presented in this sample, but the constraints mentioned in (1) cannot be exceeded!`
+                                                 `that can be done as it is presented in this sample, but the constraints mentioned in (1) cannot be exceeded!`
                     )->tag( `Text`
                         )->a( n = `class`    v = `sapUiTinyMargin`
                         )->a( n = `wrapping` v = `true`

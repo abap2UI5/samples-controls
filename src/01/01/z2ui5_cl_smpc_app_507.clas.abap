@@ -1,18 +1,19 @@
 " @keywords input sap.m inputgrouping verticallayout label item column columnlistitem
 " @summary Items in the Input could be grouped by a property
-" @origin sap.m.sample.InputGrouping - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputGrouping (status: generated)
+" @origin sap.m.sample.InputGrouping - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputGrouping (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_507 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             price        TYPE p LENGTH 8 DECIMALS 2,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        price        TYPE p LENGTH 8 DECIMALS 2,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

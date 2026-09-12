@@ -1,6 +1,6 @@
 " @keywords objectpagedynamicheadertitle object dynamic header title sap.uxap objectpageheaderbackgrounddesign objectpagelayout breadcrumbs link text horizontallayout
 " @summary This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar.
-" @origin sap.uxap.sample.ObjectPageHeaderBackgroundDesign - https://sdk.openui5.org/entity/sap.uxap.ObjectPageDynamicHeaderTitle/sample/sap.uxap.sample.ObjectPageHeaderBackgroundDesign (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageHeaderBackgroundDesign - https://sdk.openui5.org/entity/sap.uxap.ObjectPageDynamicHeaderTitle/sample/sap.uxap.sample.ObjectPageHeaderBackgroundDesign (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_258 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -40,12 +40,12 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
     " that SimpleForm is inlined here directly - the html:div font-size wrapper
     " is dropped (see the sidecar).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                        v = `ObjectPageLayout`
@@ -104,10 +104,10 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->a( n = `allowWrapping` v = `true`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiMediumMarginEnd`
 
                         )->tag( n = `ObjectAttribute` ns = `m`
@@ -122,7 +122,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
 
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->tag( n = `ObjectAttribute` ns = `m`
                             )->a( n = `title` v = `Availability`
                         )->tag( n = `ObjectStatus` ns = `m`
@@ -146,7 +146,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -166,7 +166,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -200,7 +200,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -228,7 +228,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -255,7 +255,7 @@ CLASS z2ui5_cl_smpc_app_258 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`

@@ -1,34 +1,37 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarwithlegend dynamicsidecontent vbox togglebutton singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview
 " @summary SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control. The calendar also shows the daily working hours.
-" @origin sap.m.sample.SinglePlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithLegend (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithLegend (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_553 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_special,
-             start_at      TYPE string,
-             end_at        TYPE string,
-             type          TYPE string,
-             secondarytype TYPE string,
-             color         TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_at      TYPE string,
+        end_at        TYPE string,
+        type          TYPE string,
+        secondarytype TYPE string,
+        color         TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_legend,
-             text  TYPE string,
-             type  TYPE string,
-             color TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        text  TYPE string,
+        type  TYPE string,
+        color TYPE string,
+      END OF ty_s_legend.
     TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
 
     DATA t_appointments      TYPE ty_t_appointment.
@@ -36,7 +39,7 @@ CLASS z2ui5_cl_smpc_app_553 DEFINITION PUBLIC.
     DATA t_legend_items      TYPE ty_t_legend.
     DATA t_legend_appt_items TYPE ty_t_legend.
 
-    DATA start_date   TYPE string.
+    DATA startdate    TYPE string.
     DATA legend_shown TYPE abap_bool.
     DATA full_day     TYPE abap_bool.
 
@@ -72,12 +75,12 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:l`       v = `sap.ui.layout`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( n = `DynamicSideContent` ns = `l`
             )->a( n = `id`                    v = `DynamicSideContent`
@@ -99,7 +102,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     " toggleFullDay flips setFullDay; the property is bindable, so
                     " the ToggleButton and the calendar share the flag
                     )->a( n = `fullDay`      v = client->_bind( full_day )
-                    )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                    )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                     )->a( n = `appointments` v = client->_bind( t_appointments )
                     )->a( n = `specialDates` v = client->_bind( t_special_dates )
                     )->a( n = `legend`       v = `SinglePlanningCalendarLegend`
@@ -128,9 +131,9 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->end(
 
                     )->ele( `specialDates`
-                        )->tag( n = `DateTypeRange` ns = `unified`
-                            )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
-                            )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
+                        )->tag( n = `DateTypeRange` ns = `u`
+                            )->a( n = `startDate`     v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
+                            )->a( n = `endDate`       v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                             )->a( n = `type`          v = `{TYPE}`
                             )->a( n = `secondaryType` v = `{SECONDARYTYPE}`
                             )->a( n = `color`         v = `{COLOR}`
@@ -138,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->end(
 
                     )->ele( `appointments`
-                        )->tag( n = `CalendarAppointment` ns = `unified`
+                        )->tag( n = `CalendarAppointment` ns = `u`
                             )->a( n = `title`     v = `{TITLE}`
                             )->a( n = `text`      v = `{TEXT}`
                             )->a( n = `type`      v = `{TYPE}`
@@ -162,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->a( n = `class`            v = `sapUiSmallMarginTop`
 
                     )->ele( `items`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `color`   v = `{COLOR}`
@@ -170,7 +173,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `appointmentItems`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `tooltip` v = `{TEXT}` ).
@@ -182,7 +185,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date   = `2018-07-09T00:00:00`.
+    startdate   = `2018-07-09T00:00:00`.
     legend_shown = abap_false.
     full_day     = abap_false.
 

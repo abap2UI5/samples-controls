@@ -59,7 +59,7 @@ export default async (page, expect) => {
   /*
    * The NavContainer's position is live control state: view_display( ) destroys
    * the MAIN slot and XMLView.create rebuilds it, so pageContainer comes back
-   * on its initialPage="page2" — while `selected_key`, two-way bound to the
+   * on its initialPage="page2" — while `selectedkey`, two-way bound to the
    * SideNavigation's selectedKey AND written by the ITEM_SELECT branch, is
    * class state that survives. Before the fix the restored app highlighted
    * page1 in the side navigation while the main area showed page2, which is the
@@ -82,14 +82,14 @@ export default async (page, expect) => {
    */
   const origin = new URL(page.url()).origin;
   const before = await state(page);
-  if (before.key !== 'page1') throw new Error(`the itemSelect round trip never wrote selected_key (got ${before.key})`);
+  if (before.key !== 'page1') throw new Error(`the itemSelect round trip never wrote selectedkey (got ${before.key})`);
   if (!before.draft) throw new Error('no draft id on the response — the restore URL cannot be built');
 
   await boot(page, `${origin}/?app_start=z2ui5_cl_smpc_app_585#/z2ui5-xapp-state=${before.draft}`);
   const restored = await state(page);
 
   if (restored.key !== 'page1') {
-    throw new Error(`the restored draft lost the bound selected_key (${restored.key}) — this leg can no longer see the asymmetry it guards`);
+    throw new Error(`the restored draft lost the bound selectedkey (${restored.key}) — this leg can no longer see the asymmetry it guards`);
   }
   if (!/page1$/.test(restored.page || '')) {
     throw new Error(`the rebuilt view shows ${restored.page} while the SideNavigation still reads ${restored.key} — view_display( ) did not re-issue the NavContainer position`);

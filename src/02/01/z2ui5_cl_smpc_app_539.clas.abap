@@ -1,38 +1,41 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendaroneline vbox title togglebutton overflowtoolbarlayoutdata badgecustomdata select item
 " @summary PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area.
-" @origin sap.m.sample.PlanningCalendarOneLine - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarOneLine (status: generated)
+" @origin sap.m.sample.PlanningCalendarOneLine - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarOneLine (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_539 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_appointments TYPE ty_t_appointment,
-             t_headers      TYPE ty_t_header,
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_appointments TYPE ty_t_appointment,
+        t_headers      TYPE ty_t_header,
 
-             selected       TYPE abap_bool,
-           END OF ty_s_person.
+        selected       TYPE abap_bool,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA start_date     TYPE string.
@@ -75,11 +78,11 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
     " calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -104,19 +107,19 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                             ( `$event.oSource.getSelectedAppointments().length` )
                             ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 )->a( n = `intervalSelect`                v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                                         val   = `INTERVAL_SELECT`
+                                         t_arg = VALUE #(
+                                           ( `${$parameters>/startDate}.getFullYear()` )
+                                           ( `${$parameters>/startDate}.getMonth() + 1` )
+                                           ( `${$parameters>/startDate}.getDate()` )
+                                           ( `${$parameters>/startDate}.getHours()` )
+                                           ( `${$parameters>/startDate}.getMinutes()` )
+                                           ( `${$parameters>/endDate}.getFullYear()` )
+                                           ( `${$parameters>/endDate}.getMonth() + 1` )
+                                           ( `${$parameters>/endDate}.getDate()` )
+                                           ( `${$parameters>/endDate}.getHours()` )
+                                           ( `${$parameters>/endDate}.getMinutes()` )
+                                           ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`
@@ -166,12 +169,12 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                         )->a( n = `icon`            v = `{PIC}`
                         )->a( n = `title`           v = `{NAME}`
                         )->a( n = `text`            v = `{ROLE}`
-                        )->a( n = `selected`     v = `{SELECTED}`
+                        )->a( n = `selected`        v = `{SELECTED}`
                         )->a( n = `appointments`    v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
                         )->a( n = `intervalHeaders` v = `{path: 'T_HEADERS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`
@@ -182,7 +185,7 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

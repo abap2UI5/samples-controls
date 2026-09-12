@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table aggregations hbox icon title overflowtoolbar toolbarspacer searchfield facetfilter facetfilterlist facetfilteritem
 " @summary Example which shows the different aggregations of the table
-" @origin sap.ui.table.sample.Aggregations - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Aggregations (status: reviewed)
+" @origin sap.ui.table.sample.Aggregations - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Aggregations (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_352 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -38,7 +38,7 @@ CLASS z2ui5_cl_smpc_app_352 DEFINITION PUBLIC.
     DATA t_filters TYPE STANDARD TABLE OF ty_s_filter WITH EMPTY KEY.
 
     " the original's `ui>` model
-    DATA filter_value TYPE string.
+    DATA filtervalue TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -83,12 +83,12 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
     " listClose event only has to tell the backend to read them (the app-022
     " idiom).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -105,7 +105,7 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
                     )->ele( `extension`
                         )->ele( n = `HBox` ns = `m`
                             )->ele( n = `items` ns = `m`
-                                )->tag( n = `Icon` ns = `c`
+                                )->tag( n = `Icon` ns = `core`
                                     )->a( n = `src`  v = `sap-icon://cart`
                                     )->a( n = `alt`  v = `Cart`
                                     )->a( n = `size` v = `1.25rem`
@@ -128,7 +128,7 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
 
                             )->tag( n = `SearchField` ns = `m`
                                 )->a( n = `placeholder` v = `Filter`
-                                )->a( n = `value`       v = client->_bind( filter_value )
+                                )->a( n = `value`       v = client->_bind( filtervalue )
                                 )->a( n = `search`      v = client->_event( `SEARCH` )
                                 )->a( n = `width`       v = `15rem`
 
@@ -263,19 +263,19 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
 
       WHEN `FACET_RESET`.
         " handleFacetFilterReset: clear every facet selection
-        LOOP AT t_filters REFERENCE INTO DATA(lr_filter).
-          LOOP AT lr_filter->values REFERENCE INTO DATA(lr_value).
-            lr_value->selected = abap_false.
+        LOOP AT t_filters REFERENCE INTO DATA(filter).
+          LOOP AT filter->values REFERENCE INTO DATA(value).
+            value->selected = abap_false.
           ENDLOOP.
         ENDLOOP.
         filter_apply( ).
 
       WHEN `CLEAR_FILTERS`.
         " clearAllFilters: the noData Link resets both filters at once
-        filter_value = ``.
-        LOOP AT t_filters REFERENCE INTO lr_filter.
-          LOOP AT lr_filter->values REFERENCE INTO lr_value.
-            lr_value->selected = abap_false.
+        filtervalue = ``.
+        LOOP AT t_filters REFERENCE INTO filter.
+          LOOP AT filter->values REFERENCE INTO value.
+            value->selected = abap_false.
           ENDLOOP.
         ENDLOOP.
         filter_apply( ).
@@ -298,34 +298,34 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
     " on a system it silently SKIPS the row after each deletion, and on the
     " transpiled backend it raises TABLE_INVALID_INDEX (found by the e2e
     " interaction, 2026-08-17). Building the keep list has neither problem.
-    IF filter_value IS NOT INITIAL.
-      DATA(lv_query) = to_upper( filter_value ).
-      DATA(lt_keep) = VALUE ty_t_product( ).
-      LOOP AT t_products INTO DATA(ls_row).
-        IF to_upper( ls_row-name ) CS lv_query OR to_upper( ls_row-status ) CS lv_query.
-          APPEND ls_row TO lt_keep.
+    IF filtervalue IS NOT INITIAL.
+      DATA(query) = to_upper( filtervalue ).
+      DATA(t_keep) = VALUE ty_t_product( ).
+      LOOP AT t_products INTO DATA(s_row).
+        IF to_upper( s_row-name ) CS query OR to_upper( s_row-status ) CS query.
+          APPEND s_row TO t_keep.
         ENDIF.
       ENDLOOP.
-      t_products = lt_keep.
+      t_products = t_keep.
     ENDIF.
 
-    LOOP AT t_filters INTO DATA(ls_filter).
-      DATA(lt_selected) = VALUE string_table( FOR value IN ls_filter-values
+    LOOP AT t_filters INTO DATA(s_filter).
+      DATA(t_selected) = VALUE string_table( FOR value IN s_filter-values
                                               WHERE ( selected = abap_true )
                                               ( value-text ) ).
-      IF lt_selected IS INITIAL.
+      IF t_selected IS INITIAL.
         CONTINUE.
       ENDIF.
-      DATA(lt_facet_keep) = VALUE ty_t_product( ).
-      LOOP AT t_products INTO DATA(ls_product).
-        DATA(lv_value) = COND string( WHEN ls_filter-type = `Category`
-                                      THEN ls_product-category
-                                      ELSE ls_product-suppliername ).
-        IF line_exists( lt_selected[ table_line = lv_value ] ).
-          APPEND ls_product TO lt_facet_keep.
+      DATA(t_facet_keep) = VALUE ty_t_product( ).
+      LOOP AT t_products INTO DATA(s_product).
+        DATA(row_value) = COND string( WHEN s_filter-type = `Category`
+                                      THEN s_product-category
+                                      ELSE s_product-suppliername ).
+        IF line_exists( t_selected[ table_line = row_value ] ).
+          APPEND s_product TO t_facet_keep.
         ENDIF.
       ENDLOOP.
-      t_products = lt_facet_keep.
+      t_products = t_facet_keep.
     ENDLOOP.
 
   ENDMETHOD.

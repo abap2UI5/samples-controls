@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt tags vbox button navigationlist navigationlistitem objectstatus navigationlistgroup
 " @summary SideNavigation with tags for status indicators and metadata.
-" @origin sap.tnt.sample.SideNavigationWithTags - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationWithTags (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationWithTags - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationWithTags (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_132 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

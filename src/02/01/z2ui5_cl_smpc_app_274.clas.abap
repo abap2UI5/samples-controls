@@ -1,22 +1,22 @@
 " @keywords dialog sap.m dialogfullscreen verticallayout button list standardlistitem
 " @summary A dialog that can be toggled to fullscreen mode through a header button, by double-clicking the header, or by using the 'Shift+Ctrl+F' keyboard shortcut.
-" @origin sap.m.sample.DialogFullScreen - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogFullScreen (status: checked)
+" @origin sap.m.sample.DialogFullScreen - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogFullScreen (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_274 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_product,
-             name     TYPE string,
-             quantity TYPE i,
-           END OF ty_product.
+    TYPES:
+      BEGIN OF ty_product,
+        name     TYPE string,
+        quantity TYPE i,
+      END OF ty_product.
     DATA t_products TYPE STANDARD TABLE OF ty_product WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS popup_products_display
       IMPORTING
@@ -24,6 +24,7 @@ CLASS z2ui5_cl_smpc_app_274 DEFINITION PUBLIC.
         draggable TYPE abap_bool
         sized     TYPE abap_bool
         begin_ok  TYPE abap_bool.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

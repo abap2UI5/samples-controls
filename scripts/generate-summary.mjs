@@ -53,6 +53,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { walkFiles } from './lib/src-tree.mjs';
+import { clipAtWord } from './lib/clip.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHECK = process.argv.includes('--check');
@@ -123,8 +124,10 @@ function fit(text, budget = BUDGET) {
   const head = text.slice(0, budget);
   const sentence = lastSentenceEnd(head);              // last sentence end that fits
   if (sentence >= FLOOR) return head.slice(0, sentence + 1);
-  const word = head.slice(0, budget - 3).lastIndexOf(' ');
-  return `${head.slice(0, word)}...`;
+  /* the word-boundary fallback is the shared one (scripts/lib/clip.mjs), so
+   * a summary and a DESCRIPT that had to be cut mid-sentence are cut the
+   * same way: at the last whole word, marked with `...`, never mid-word */
+  return clipAtWord(text, budget);
 }
 
 const DESCRIPTIONS = path.join(ROOT, 'ui5', 'descriptions.json');

@@ -2,11 +2,12 @@ CLASS z2ui5_cl_smpc_app_002 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
-    TYPES: BEGIN OF ty_s_prod,
-             name  TYPE string,
-             city  TYPE string,
-             image TYPE string,
-           END OF ty_s_prod.
+    TYPES:
+      BEGIN OF ty_s_prod,
+        name  TYPE string,
+        city  TYPE string,
+        image TYPE string,
+      END OF ty_s_prod.
     TYPES ty_t_prod TYPE STANDARD TABLE OF ty_s_prod WITH EMPTY KEY.
     DATA t_prod TYPE ty_t_prod.
   PROTECTED SECTION.

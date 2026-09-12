@@ -1,12 +1,12 @@
 " @keywords inputmodelupdate input model update sap.m late binding app vbox text button
 " @summary The sample demonstrates how to rebind a control to a different data source after a certain delay.
-" @origin sap.m.sample.InputModelUpdate - https://sdk.openui5.org/entity/sap.m.InputModelUpdate/sample/sap.m.sample.InputModelUpdate (status: reviewed)
+" @origin sap.m.sample.InputModelUpdate - https://sdk.openui5.org/entity/sap.m.InputModelUpdate/sample/sap.m.sample.InputModelUpdate (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_102 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA current_value TYPE string VALUE `Martin`.
+    DATA currentvalue TYPE string VALUE `Martin`.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -41,7 +41,7 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `App`
             )->ele( `Page`
@@ -53,7 +53,7 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
                         )->a( n = `text`  v = `For more details about this sample code and its intended use case, please refer to the description and comments provided within the code.`
                     )->tag( `Input`
                         )->a( n = `id`         v = `inputArtistName`
-                        )->a( n = `value`      v = client->_bind( current_value )
+                        )->a( n = `value`      v = client->_bind( currentvalue )
                         )->a( n = `liveChange` v = client->_event( `LIVE_CHANGE` )
                     )->tag( `Button`
                         )->a( n = `press` v = client->_event( `REBIND` )
@@ -75,8 +75,8 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
 
       WHEN `REBIND_DONE`.
         " original dataReceived: if the input is still untouched, bind it to Employees(1)/FirstName
-        IF current_value = initial_value.
-          current_value = `Nancy`.
+        IF currentvalue = initial_value.
+          currentvalue = `Nancy`.
         ENDIF.
 
     ENDCASE.

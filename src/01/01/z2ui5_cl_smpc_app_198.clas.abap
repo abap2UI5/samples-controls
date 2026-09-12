@@ -1,6 +1,6 @@
 " @keywords objectlistitem object list item sap.m objectlistitemmarkers objectstatus objectattribute objectmarker
 " @summary This sample shows the different states of an Object List Item, which can be set using the markers aggregation.
-" @origin sap.m.sample.ObjectListItemMarkers - https://sdk.openui5.org/entity/sap.m.ObjectListItem/sample/sap.m.sample.ObjectListItemMarkers (status: reviewed)
+" @origin sap.m.sample.ObjectListItemMarkers - https://sdk.openui5.org/entity/sap.m.ObjectListItem/sample/sap.m.sample.ObjectListItemMarkers (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_198 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

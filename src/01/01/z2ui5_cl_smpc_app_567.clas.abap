@@ -1,25 +1,27 @@
 " @keywords table sap.m tablecolumnwidth messagestrip toolbar title toolbarspacer checkbox column input columnlistitem text
 " @summary While defining the column width you can use percent values but you should be careful with them. Click to see some traps and tipps.
-" @origin sap.m.sample.TableColumnWidth - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableColumnWidth (status: generated)
+" @origin sap.m.sample.TableColumnWidth - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableColumnWidth (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_567 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             suppliername TYPE string,
-             description  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        suppliername TYPE string,
+        description  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_column,
-             width          TYPE string,
-             header         TYPE string,
-             demandpopin    TYPE abap_bool,
-             minscreenwidth TYPE string,
-             styleclass     TYPE string,
-           END OF ty_s_column.
+    TYPES:
+      BEGIN OF ty_s_column,
+        width          TYPE string,
+        header         TYPE string,
+        demandpopin    TYPE abap_bool,
+        minscreenwidth TYPE string,
+        styleclass     TYPE string,
+      END OF ty_s_column.
     TYPES ty_t_column TYPE STANDARD TABLE OF ty_s_column WITH EMPTY KEY.
 
     DATA t_products     TYPE ty_t_product.
@@ -72,8 +74,8 @@ CLASS z2ui5_cl_smpc_app_567 IMPLEMENTATION.
             )->a( n = `showIcon` v = `true`
 
         )->ele( `Table`
-            )->a( n = `id`   v = `table`
-            )->a( n = `mode` v = `MultiSelect`
+            )->a( n = `id`          v = `table`
+            )->a( n = `mode`        v = `MultiSelect`
             " setFixedLayout( selected ? 'Strict' : true ) - the property takes a
             " boolean OR the string Strict, so the expression yields both
             )->a( n = `fixedLayout` v = |\{= ${ client->_bind( strict_layout ) } ? 'Strict' : true \}|

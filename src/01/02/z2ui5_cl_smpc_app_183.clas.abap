@@ -1,6 +1,6 @@
 " @keywords datetime date time sap.ui.model.type typedatetime simpleform label datetimepicker input text
 " @summary This sample explains the formatting options of the DateTime type.
-" @origin sap.ui.core.sample.TypeDateTime - https://sdk.openui5.org/entity/sap.ui.model.type.DateTime/sample/sap.ui.core.sample.TypeDateTime (status: reviewed)
+" @origin sap.ui.core.sample.TypeDateTime - https://sdk.openui5.org/entity/sap.ui.model.type.DateTime/sample/sap.ui.core.sample.TypeDateTime (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_183 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

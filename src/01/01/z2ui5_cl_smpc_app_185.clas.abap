@@ -1,6 +1,6 @@
 " @keywords whitespacepattern whitespace pattern sap.m messagestrip link form responsivegridlayout formcontainer formelement input listitem
 " @summary Renders whitespaces properly within controls
-" @origin sap.m.sample.WhitespacePattern - https://sdk.openui5.org/entity/sap.m.WhitespacePattern/sample/sap.m.sample.WhitespacePattern (status: reviewed)
+" @origin sap.m.sample.WhitespacePattern - https://sdk.openui5.org/entity/sap.m.WhitespacePattern/sample/sap.m.sample.WhitespacePattern (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_185 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `MessageStrip`
             )->a( n = `text`  v = `More information could be found on the following page:`
@@ -65,11 +65,11 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
             )->end(
         )->end(
 
-        )->ele( n = `Form` ns = `f`
+        )->ele( n = `Form` ns = `form`
             )->a( n = `editable` v = `true`
 
-            )->ele( n = `layout` ns = `f`
-                )->tag( n = `ResponsiveGridLayout` ns = `f`
+            )->ele( n = `layout` ns = `form`
+                )->tag( n = `ResponsiveGridLayout` ns = `form`
                     )->a( n = `labelSpanXL`             v = `4`
                     )->a( n = `labelSpanL`              v = `3`
                     )->a( n = `labelSpanM`              v = `4`
@@ -86,13 +86,13 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `formContainers` ns = `f`
-                )->ele( n = `FormContainer` ns = `f`
-                    )->ele( n = `formElements` ns = `f`
-                        )->ele( n = `FormElement` ns = `f`
+            )->ele( n = `formContainers` ns = `form`
+                )->ele( n = `FormContainer` ns = `form`
+                    )->ele( n = `formElements` ns = `form`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.Input`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->ele( `Input`
                                     )->a( n = `placeholder`     v = `Type 'Text'`
                                     )->a( n = `showSuggestion`  v = `true`
@@ -109,10 +109,10 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.MultiInput`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->ele( `MultiInput`
                                     )->a( n = `placeholder`     v = `Type 'Text'`
                                     )->a( n = `showSuggestion`  v = `true`
@@ -129,14 +129,14 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.MultiComboBox`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->ele( `MultiComboBox`
-                                    )->a( n = `placeholder`          v = `Type 'Text'`
-                                    )->a( n = `showSecondaryValues`  v = `true`
-                                    )->a( n = `items`                v = client->_bind( t_items )
+                                    )->a( n = `placeholder`         v = `Type 'Text'`
+                                    )->a( n = `showSecondaryValues` v = `true`
+                                    )->a( n = `items`               v = client->_bind( t_items )
 
                                     )->tag( n = `ListItem` ns = `core`
                                         )->a( n = `key`            v = `{KEY}`
@@ -151,11 +151,11 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
             )->end(
         )->end(
 
-        )->ele( n = `Form` ns = `f`
+        )->ele( n = `Form` ns = `form`
             )->a( n = `editable` v = `false`
 
-            )->ele( n = `layout` ns = `f`
-                )->tag( n = `ResponsiveGridLayout` ns = `f`
+            )->ele( n = `layout` ns = `form`
+                )->tag( n = `ResponsiveGridLayout` ns = `form`
                     )->a( n = `labelSpanXL`             v = `4`
                     )->a( n = `labelSpanL`              v = `3`
                     )->a( n = `labelSpanM`              v = `4`
@@ -172,13 +172,13 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `formContainers` ns = `f`
-                )->ele( n = `FormContainer` ns = `f`
-                    )->ele( n = `formElements` ns = `f`
-                        )->ele( n = `FormElement` ns = `f`
+            )->ele( n = `formContainers` ns = `form`
+                )->ele( n = `FormContainer` ns = `form`
+                    )->ele( n = `formElements` ns = `form`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.Token`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->tag( `Token`
                                     )->a( n = `text` v = |\{ path: '{ client->_bind_path( t_items ) }/9/TEXT' \}|
                                     )->a( n = `key`  v = |\{ path: '{ client->_bind_path( t_items ) }/9/KEY' \}|
@@ -186,40 +186,40 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.Text`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->tag( `ObjectStatus`
                                     )->a( n = `text` v = |\{ path: '{ client->_bind_path( t_items ) }/9/TEXT' \}|
 
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.ObjectNumber`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->tag( `ObjectNumber`
                                     )->a( n = `number` v = |\{ path: '{ client->_bind_path( t_items ) }/9/TEXT' \}|
 
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.Title`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->tag( `Title`
                                     )->a( n = `text` v = |\{ path: '{ client->_bind_path( t_items ) }/9/TEXT' \}|
 
                             )->end(
                         )->end(
 
-                        )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `FormElement` ns = `form`
                             )->a( n = `label` v = `sap.m.Label`
 
-                            )->ele( n = `fields` ns = `f`
+                            )->ele( n = `fields` ns = `form`
                                 )->tag( `Label`
                                     )->a( n = `text` v = |\{ path: '{ client->_bind_path( t_items ) }/9/TEXT' \}| ).
 
@@ -236,24 +236,24 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
     " whitespaces stay visible. abap2UI5 is a thin frontend, so that
     " presentation transform is applied here in ABAP (identical output) and the
     " view binds the finished text.
-    CONSTANTS lc_nbsp TYPE string VALUE ` `.
+    CONSTANTS nbsp TYPE string VALUE ` `.
 
-    DATA(lv_repl) = ` ` && lc_nbsp.
-    DATA lv_inverted TYPE i.
-    DATA lv_text TYPE string.
-    DATA lv_add  TYPE string.
+    DATA(repl) = ` ` && nbsp.
+    DATA inverted   TYPE i.
+    DATA text       TYPE string.
+    DATA additional TYPE string.
 
     DO 10 TIMES.
-      DATA(lv_i) = sy-index.
-      lv_inverted = 11 - lv_i.
+      DATA(i) = sy-index.
+      inverted = 11 - i.
 
-      lv_text = |Text with { repeat( val = ` ` occ = lv_i - 1 ) }{ lv_i } whitespaces|.
-      lv_add  = |Additional text with { repeat( val = ` ` occ = lv_inverted - 1 ) }{ lv_inverted } whitespaces|.
+      text       = |Text with { repeat( val = ` ` occ = i - 1 ) }{ i } whitespaces|.
+      additional = |Additional text with { repeat( val = ` ` occ = inverted - 1 ) }{ inverted } whitespaces|.
 
-      REPLACE ALL OCCURRENCES OF `  ` IN lv_text WITH lv_repl.
-      REPLACE ALL OCCURRENCES OF `  ` IN lv_add  WITH lv_repl.
+      REPLACE ALL OCCURRENCES OF `  ` IN text WITH repl.
+      REPLACE ALL OCCURRENCES OF `  ` IN additional WITH repl.
 
-      APPEND VALUE #( key = lv_i text = lv_text additionaltext = lv_add ) TO t_items.
+      APPEND VALUE #( key = i text = text additionaltext = additional ) TO t_items.
     ENDDO.
 
   ENDMETHOD.

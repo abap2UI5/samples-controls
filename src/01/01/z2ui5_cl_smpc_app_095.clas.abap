@@ -1,6 +1,6 @@
 " @keywords timepickersliders time picker sliders sap.m pick vbox button text dialog
 " @summary TimePickerSliders used in a Dialog.
-" @origin sap.m.sample.TimePickerSliders - https://sdk.openui5.org/entity/sap.m.TimePickerSliders/sample/sap.m.sample.TimePickerSliders (status: reviewed)
+" @origin sap.m.sample.TimePickerSliders - https://sdk.openui5.org/entity/sap.m.TimePickerSliders/sample/sap.m.sample.TimePickerSliders (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_095 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

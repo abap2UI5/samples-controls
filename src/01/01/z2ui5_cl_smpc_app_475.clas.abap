@@ -1,15 +1,16 @@
 " @keywords combobox combo box sap.m comboboxvalidation verticallayout label item
 " @summary The combo box control could be restricted to allow selection only from the items in the list.
-" @origin sap.m.sample.ComboBoxValidation - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValidation (status: generated)
+" @origin sap.m.sample.ComboBoxValidation - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValidation (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_475 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.

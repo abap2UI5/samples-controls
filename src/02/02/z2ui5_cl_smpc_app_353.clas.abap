@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table dnd hbox overflowtoolbar title contextmenusetting menu menuitem column text draginfo
 " @summary Shows various drag-and-drop capabilities along with custom context menu alternatives for each action.
-" @origin sap.ui.table.sample.DnD - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.DnD (status: reviewed)
+" @origin sap.ui.table.sample.DnD - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.DnD (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_353 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -79,7 +79,7 @@ CLASS z2ui5_cl_smpc_app_353 IMPLEMENTATION.
         )->a( n = `xmlns:plugins` v = `sap.m.plugins`
         )->a( n = `xmlns:dnd`     v = `sap.ui.core.dnd`
         )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:c`       v = `sap.ui.core`
+        )->a( n = `xmlns:core`    v = `sap.ui.core`
         )->a( n = `xmlns:m`       v = `sap.m`
         )->a( n = `height`        v = `100%`
 
@@ -365,27 +365,27 @@ CLASS z2ui5_cl_smpc_app_353 IMPLEMENTATION.
 
       WHEN `MOVE_UP`.
         IF selected_2 > 1 AND selected_2 <= lines( t_selected ).
-          DATA(ls_row) = t_selected[ selected_2 ].
+          DATA(s_row) = t_selected[ selected_2 ].
           DELETE t_selected INDEX selected_2.
-          INSERT ls_row INTO t_selected INDEX selected_2 - 1.
+          INSERT s_row INTO t_selected INDEX selected_2 - 1.
           selected_2 = selected_2 - 1.
         ENDIF.
 
       WHEN `MOVE_DOWN`.
         IF selected_2 >= 1 AND selected_2 < lines( t_selected ).
-          ls_row = t_selected[ selected_2 ].
+          s_row = t_selected[ selected_2 ].
           DELETE t_selected INDEX selected_2.
-          INSERT ls_row INTO t_selected INDEX selected_2 + 1.
+          INSERT s_row INTO t_selected INDEX selected_2 + 1.
           selected_2 = selected_2 + 1.
         ENDIF.
 
       WHEN `DROP_TO_1`.
         " onDropTable1: whatever was dragged out of the selected table goes
         " back to the available one
-        DATA(lv_from) = CONV i( client->get_event_arg( ) ) + 1.
-        IF lv_from >= 1 AND lv_from <= lines( t_selected ).
-          available_restore( t_selected[ lv_from ] ).
-          DELETE t_selected INDEX lv_from.
+        DATA(from_ix) = CONV i( client->get_event_arg( ) ) + 1.
+        IF from_ix >= 1 AND from_ix <= lines( t_selected ).
+          available_restore( t_selected[ from_ix ] ).
+          DELETE t_selected INDEX from_ix.
         ENDIF.
 
       WHEN `DROP_TO_2`.
@@ -393,38 +393,38 @@ CLASS z2ui5_cl_smpc_app_353 IMPLEMENTATION.
         " computes a Rank between the two neighbours, which with an ordered
         " table is simply the insert index. The fourth argument says whether
         " the drag started INSIDE table 2 (a reorder) or came from table 1
-        lv_from = CONV i( client->get_event_arg( ) ) + 1.
-        DATA(lv_to) = CONV i( client->get_event_arg( 2 ) ) + 1.
-        DATA(lv_after) = xsdbool( client->get_event_arg( 3 ) = `After` ).
-        DATA(lv_internal) = client->get_event_arg( 4 ).
+        from_ix = CONV i( client->get_event_arg( ) ) + 1.
+        DATA(to_ix) = CONV i( client->get_event_arg( 2 ) ) + 1.
+        DATA(drop_after) = xsdbool( client->get_event_arg( 3 ) = `After` ).
+        DATA(internal) = client->get_event_arg( 4 ).
 
-        IF lv_internal = abap_true.
-          IF lv_from < 1 OR lv_from > lines( t_selected ).
+        IF internal = abap_true.
+          IF from_ix < 1 OR from_ix > lines( t_selected ).
             RETURN.
           ENDIF.
-          ls_row = t_selected[ lv_from ].
-          DELETE t_selected INDEX lv_from.
-          IF lv_from < lv_to.
-            lv_to = lv_to - 1.
+          s_row = t_selected[ from_ix ].
+          DELETE t_selected INDEX from_ix.
+          IF from_ix < to_ix.
+            to_ix = to_ix - 1.
           ENDIF.
         ELSE.
-          IF lv_from < 1 OR lv_from > lines( t_available ).
+          IF from_ix < 1 OR from_ix > lines( t_available ).
             RETURN.
           ENDIF.
-          ls_row = t_available[ lv_from ].
-          DELETE t_available INDEX lv_from.
+          s_row = t_available[ from_ix ].
+          DELETE t_available INDEX from_ix.
         ENDIF.
 
-        IF lv_after = abap_true.
-          lv_to = lv_to + 1.
+        IF drop_after = abap_true.
+          to_ix = to_ix + 1.
         ENDIF.
-        IF lv_to < 1.
-          lv_to = 1.
+        IF to_ix < 1.
+          to_ix = 1.
         ENDIF.
-        IF lv_to > lines( t_selected ) + 1.
-          lv_to = lines( t_selected ) + 1.
+        IF to_ix > lines( t_selected ) + 1.
+          to_ix = lines( t_selected ) + 1.
         ENDIF.
-        INSERT ls_row INTO t_selected INDEX lv_to.
+        INSERT s_row INTO t_selected INDEX to_ix.
 
     ENDCASE.
 

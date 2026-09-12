@@ -1,6 +1,6 @@
 " @keywords calendar sap.ui.unified calendarsingleintervalselection html verticallayout horizontallayout label text
 " @summary Calendar where the user can select an interval or entire week (either by selecting its week number or by using SHIFT + Space).
-" @origin sap.ui.unified.sample.CalendarSingleIntervalSelection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSingleIntervalSelection (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarSingleIntervalSelection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSingleIntervalSelection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_306 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -42,11 +42,11 @@ CLASS z2ui5_cl_smpc_app_306 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `class`     v = `viewPadding`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `class`      v = `viewPadding`
 
         )->a( n = `xmlns:core` v = `sap.ui.core`
 

@@ -1,6 +1,6 @@
 " @keywords feedinput feed input sap.m allows user list feedlistitem
 " @summary This sample shows you how to build a complete feed user interface by combining a FeedInput with a list of FeedListItems.
-" @origin sap.m.sample.Feed - https://sdk.openui5.org/entity/sap.m.FeedInput/sample/sap.m.sample.Feed (status: checked)
+" @origin sap.m.sample.Feed - https://sdk.openui5.org/entity/sap.m.FeedInput/sample/sap.m.sample.Feed (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_024 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,11 +8,11 @@ CLASS z2ui5_cl_smpc_app_024 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_entry,
-        author         TYPE string,
-        author_pic_url TYPE string,
-        type           TYPE string,
-        date           TYPE string,
-        text           TYPE string,
+        author       TYPE string,
+        authorpicurl TYPE string,
+        type         TYPE string,
+        date         TYPE string,
+        text         TYPE string,
       END OF ty_s_entry.
     DATA t_entries TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
 
@@ -63,7 +63,7 @@ CLASS z2ui5_cl_smpc_app_024 IMPLEMENTATION.
 
             )->tag( `FeedListItem`
                 )->a( n = `sender`                   v = `{AUTHOR}`
-                )->a( n = `icon`                     v = `{AUTHOR_PIC_URL}`
+                )->a( n = `icon`                     v = `{AUTHORPICURL}`
                 )->a( n = `senderPress`              v = client->_event( val = `SENDER_PRESS` arg = `${$source>/sender}` )
                 )->a( n = `iconPress`                v = client->_event( val = `ICON_PRESS` arg = `${$source>/sender}` )
                 )->a( n = `info`                     v = `{TYPE}`
@@ -87,11 +87,11 @@ CLASS z2ui5_cl_smpc_app_024 IMPLEMENTATION.
         DATA(meridiem) = COND string( WHEN hour < 12 THEN `AM` ELSE `PM` ).
         hour = COND #( WHEN hour MOD 12 = 0 THEN 12 ELSE hour MOD 12 ).
         DATA(date_formatted) = |{ month_names[ sy-datum+4(2) ] } { CONV i( sy-datum+6(2) ) }, { sy-datum(4) }, { hour }:{ sy-uzeit+2(2) }:{ sy-uzeit+4(2) } { meridiem }|.
-        INSERT VALUE #( author         = `Alexandrina Victoria`
-                        author_pic_url = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`
-                        type           = `Reply`
-                        date           = date_formatted
-                        text           = client->get_event_arg( ) )
+        INSERT VALUE #( author       = `Alexandrina Victoria`
+                        authorpicurl = `http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg`
+                        type         = `Reply`
+                        date         = date_formatted
+                        text         = client->get_event_arg( ) )
                INTO t_entries INDEX 1.
 
       WHEN `SENDER_PRESS`.
@@ -108,31 +108,31 @@ CLASS z2ui5_cl_smpc_app_024 IMPLEMENTATION.
   METHOD model_init.
 
     t_entries = VALUE #(
-      ( author         = `Alexandrina Victoria`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
-        type           = `Request`
-        date           = `March 03 2013`
-        text           = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.` &&
+      ( author       = `Alexandrina Victoria`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
+        type         = `Request`
+        date         = `March 03 2013`
+        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. ` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. ` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. ` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. ` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.` )
-      ( author         = `George Washington`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
-        type           = `Reply`
-        date           = `March 04 2013`
-        text           = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore` )
-      ( author         = `Alexandrina Victoria`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
-        type           = `Request`
-        date           = `March 05 2013`
-        text           = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat` )
-      ( author         = `George Washington`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
-        type           = `Rejection`
-        date           = `March 07 2013`
-        text           = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.` ) ).
+      ( author       = `George Washington`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
+        type         = `Reply`
+        date         = `March 04 2013`
+        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore` )
+      ( author       = `Alexandrina Victoria`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
+        type         = `Request`
+        date         = `March 05 2013`
+        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat` )
+      ( author       = `George Washington`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
+        type         = `Rejection`
+        date         = `March 07 2013`
+        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.` ) ).
 
   ENDMETHOD.
 

@@ -39,13 +39,13 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`  v = `true`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:webc`    v = `sap.ui.webc.main`
-        )->a( n = `xmlns:layout`  v = `sap.ui.layout`
-        )->a( n = `xmlns:mchart`  v = `sap.suite.ui.microchart`
+        )->a( n = `displayBlock` v = `true`
+        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:webc`   v = `sap.ui.webc.main`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:mchart` v = `sap.suite.ui.microchart`
 
         )->ele( `Shell`
             )->ele( `Page`
@@ -58,7 +58,7 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
                         )->a( n = `text`     v = `Donut Chart`
                         )->a( n = `selected` v = client->_bind( tab_donut_active )
 
-                        )->ele( n = `Grid` ns = `layout`
+                        )->ele( n = `Grid` ns = `l`
                             )->a( n = `defaultSpan` v = `XL6 L6 M6 S12`
 
                             )->tag( `Link`
@@ -71,7 +71,7 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -116,7 +116,7 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -210,7 +210,7 @@ CLASS z2ui5_cl_smpc_sapui5_001 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(

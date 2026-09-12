@@ -12,8 +12,9 @@ CLASS z2ui5_cl_smpc_sapui5_009 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_shape,
-       id TYPE string,
+    TYPES:
+      BEGIN OF ty_s_shape,
+        id TYPE string,
       END OF ty_s_shape.
 
     DATA mv_slider_value TYPE i.

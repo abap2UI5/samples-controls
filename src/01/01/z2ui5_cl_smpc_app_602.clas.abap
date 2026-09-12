@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeexpandto text toolbarspacer select item button standardtreeitem
 " @summary This example shows the initial expand state and how to collapse all nodes.
-" @origin sap.m.sample.TreeExpandTo - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandTo (status: generated)
+" @origin sap.m.sample.TreeExpandTo - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandTo (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_602 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -101,6 +101,7 @@ CLASS z2ui5_cl_smpc_app_602 IMPLEMENTATION.
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `4`
                         )->a( n = `text` v = `4`
+
                 )->end(
             )->end(
 
@@ -109,6 +110,7 @@ CLASS z2ui5_cl_smpc_app_602 IMPLEMENTATION.
                 )->a( n = `text`  v = `collapse all nodes`
                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                 t_arg = VALUE #( ( `Tree` ) ( `collapseAll` ) ) )
+
         )->end(
     )->end( ).
 
@@ -119,6 +121,7 @@ CLASS z2ui5_cl_smpc_app_602 IMPLEMENTATION.
 
         )->tag( `StandardTreeItem`
             )->a( n = `title` v = `{TEXT}`
+
     )->end( ).
 
     " onInit does tree.expandToLevel( 1 ), which is what the Select's own

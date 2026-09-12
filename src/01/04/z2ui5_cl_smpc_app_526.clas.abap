@@ -1,20 +1,21 @@
 " @keywords gridcontainer grid container sap.f gridcontainerdraganddrop scrollcontainer draginfo griddropinfo gridcontainersettings gridcontaineritemlayoutdata imagecontent header
 " @summary This sample represents GridContainer with enabled Drag and Drop functionality.
-" @origin sap.f.sample.GridContainerDragAndDrop - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainerDragAndDrop (status: generated)
+" @origin sap.f.sample.GridContainerDragAndDrop - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainerDragAndDrop (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_526 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_row,
-             name        TYPE string,
-             description TYPE string,
-             icon        TYPE string,
-             state       TYPE string,
-             info        TYPE string,
-             infostate   TYPE string,
-             title       TYPE string,
-           END OF ty_s_row.
+    TYPES:
+      BEGIN OF ty_s_row,
+        name        TYPE string,
+        description TYPE string,
+        icon        TYPE string,
+        state       TYPE string,
+        info        TYPE string,
+        infostate   TYPE string,
+        title       TYPE string,
+      END OF ty_s_row.
     TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
 
     DATA t_contacts TYPE ty_t_row.

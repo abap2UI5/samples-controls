@@ -1,6 +1,6 @@
 " @keywords imagecontent image content sap.m icon profile logo tile
 " @summary Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip.
-" @origin sap.m.sample.ImageContent - https://sdk.openui5.org/entity/sap.m.ImageContent/sample/sap.m.sample.ImageContent (status: reviewed)
+" @origin sap.m.sample.ImageContent - https://sdk.openui5.org/entity/sap.m.ImageContent/sample/sap.m.sample.ImageContent (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_056 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

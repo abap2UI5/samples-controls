@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationoverlaymode app toolpage shellbar avatar navcontainer scrollcontainer vbox
 " @summary SideNavigation in a responsive popover.
-" @origin sap.tnt.sample.SideNavigationOverlayMode - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationOverlayMode (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationOverlayMode - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationOverlayMode (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_301 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -358,21 +358,21 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
       WHEN `ITEM_SELECT`.
         " original onItemSelect: reads the item key, writes the target page's
         " Text and navigates the NavContainer there, then closes the popover
-        DATA(lv_key) = client->get_event_arg( ).
-        DATA(lv_selectable) = CONV abap_bool( client->get_event_arg( 2 ) ).
+        DATA(key) = client->get_event_arg( ).
+        DATA(selectable) = CONV abap_bool( client->get_event_arg( 2 ) ).
 
-        IF lv_key IS NOT INITIAL AND lv_selectable = abap_true.
+        IF key IS NOT INITIAL AND selectable = abap_true.
           " the highlight has to survive the popover being rebuilt on the next
           " open, so the key goes into the model the fragment binds
-          selectedkey = lv_key.
-          DATA(lv_text) = |Fired event to load page { replace( val = lv_key sub = `page` with = `` ) }|.
-          IF lv_key = `home`.
-            home_text = lv_text.
+          selectedkey = key.
+          DATA(text) = |Fired event to load page { replace( val = key sub = `page` with = `` ) }|.
+          IF key = `home`.
+            home_text = text.
           ELSE.
-            page_text = lv_text.
+            page_text = text.
           ENDIF.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( lv_key ) ) ).
+                                    t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( key ) ) ).
         ENDIF.
 
         client->popover_destroy( ).

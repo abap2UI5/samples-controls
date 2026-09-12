@@ -1,6 +1,6 @@
 " @keywords carousel sap.m carouselwithmorepages simpleform label input switch title carousellayout scrollcontainer card header
 " @summary The customLayout aggregation determines how many pages are displayed in Carousel's visible area.
-" @origin sap.m.sample.CarouselWithMorePages - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithMorePages (status: reviewed)
+" @origin sap.m.sample.CarouselWithMorePages - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithMorePages (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_252 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -20,7 +20,7 @@ CLASS z2ui5_cl_smpc_app_252 DEFINITION PUBLIC.
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA pages_count    TYPE i.
+    DATA pagescount     TYPE i.
     DATA scroll_visible TYPE abap_bool.
 
   PROTECTED SECTION.
@@ -53,14 +53,14 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`     v = `sap.f`
-        )->a( n = `xmlns:cards` v = `sap.f.cards`
-        )->a( n = `xmlns:l`     v = `sap.ui.layout`
-        )->a( n = `xmlns:lf`    v = `sap.ui.layout.form`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`      v = `sap.f`
+        )->a( n = `xmlns:card`   v = `sap.f.cards`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `height`       v = `100%`
         " the Input's value has to carry a TYPE, or the two-way write-back
         " stores the typed text as a STRING and CarouselLayout.visiblePagesCount
         " (an int property) throws on every keystroke - validateProperty casts
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
             )->a( n = `title` v = `Carousel With customLayout aggregation Sample`
             )->a( n = `class` v = `sapUiResponsiveContentPadding`
 
-            )->ele( n = `SimpleForm` ns = `lf`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `labelSpanL` v = `6`
                 )->a( n = `labelSpanM` v = `6`
                 )->a( n = `editable`   v = `true`
@@ -84,7 +84,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
                 " field - the toggles drive the carousel client-side (007/128)
                 )->tag( `Input`
                     )->a( n = `type`            v = `Number`
-                    )->a( n = `value`           v = |\{ path: '{ client->_bind_path( pages_count ) }', type: 'IntegerType' \}|
+                    )->a( n = `value`           v = |\{ path: '{ client->_bind_path( pagescount ) }', type: 'IntegerType' \}|
                     )->a( n = `valueLiveUpdate` v = `true`
                     )->a( n = `width`           v = `320px`
                 )->tag( `Label`
@@ -107,7 +107,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
 
                 )->ele( `customLayout`
                     )->tag( `CarouselLayout`
-                        )->a( n = `visiblePagesCount` v = client->_bind( pages_count )
+                        )->a( n = `visiblePagesCount` v = client->_bind( pagescount )
                         " OnScrollModeChange folded into the binding (declared)
                         )->a( n = `scrollMode`        v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
 
@@ -120,7 +120,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
 
                     )->ele( n = `Card` ns = `f`
                         )->ele( n = `header` ns = `f`
-                            )->tag( n = `Header` ns = `cards`
+                            )->tag( n = `Header` ns = `card`
                                 )->a( n = `title`            v = `{NAME}`
                                 )->a( n = `subtitle`         v = `{STATUS}`
                                 )->a( n = `iconSrc`          v = `{PRODUCTPICURL}`
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
     " desktop leg. The mirror collapses that pair to the single string 'combi',
     " which is why it has to be named here - checking 'tablet' alone would give
     " such a machine 2 pages where the sample gives 4
-    pages_count    = COND #(
+    pagescount    = COND #(
         WHEN client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-desktop
           OR client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-combi  THEN 4
         WHEN client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-tablet  THEN 2

@@ -1,6 +1,6 @@
-" @keywords toolbar sap.m items shrink expand too slider messagestrip label toolbarspacer button searchfield
+" @keywords toolbar sap.m items shrink expand slider messagestrip label toolbarspacer button searchfield toolbarlayoutdata
 " @summary Toolbar items can shrink/expand when the toolbar is resized. This behavior is enabled/disabled via the ToolbarLayoutData layout. It is also possible to set min/max width for shrinkable items.
-" @origin sap.m.sample.ToolbarShrinkable - https://sdk.openui5.org/entity/sap.m.Toolbar/sample/sap.m.sample.ToolbarShrinkable (status: checked)
+" @origin sap.m.sample.ToolbarShrinkable - https://sdk.openui5.org/entity/sap.m.Toolbar/sample/sap.m.sample.ToolbarShrinkable (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_053 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_smpc_app_053 IMPLEMENTATION.
 
             )->tag( `MessageStrip`
                 )->a( n = `text`  v = `By default, Toolbar items are shrinkable if they have percent-based width (e.g. Input, Slider)` &&
-                                        ` or implement the IShrinkable interface (e.g. Text, Label).`
+                                      ` or implement the IShrinkable interface (e.g. Text, Label).`
                 )->a( n = `class` v = `sapUiTinyMargin`
 
             )->ele( `Toolbar`
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_053 IMPLEMENTATION.
 
             )->tag( `MessageStrip`
                 )->a( n = `text`  v = `You can determine to what extent an item shrinks by setting minWidth/maxWidth via ToolbarLayoutData.` &&
-                                        ` By default, minWidth is 48px in the Blue Crystal theme.`
+                                      ` By default, minWidth is 48px in the Blue Crystal theme.`
                 )->a( n = `class` v = `sapUiTinyMargin`
 
             )->ele( `Toolbar`

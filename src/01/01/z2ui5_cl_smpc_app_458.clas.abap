@@ -1,15 +1,16 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxtwocolumnslayout verticallayout listitem
 " @summary Use the dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems.
-" @origin sap.m.sample.MultiComboBoxTwoColumnsLayout - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxTwoColumnsLayout (status: generated)
+" @origin sap.m.sample.MultiComboBoxTwoColumnsLayout - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxTwoColumnsLayout (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_458 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid TYPE string,
-             name      TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid TYPE string,
+        name      TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

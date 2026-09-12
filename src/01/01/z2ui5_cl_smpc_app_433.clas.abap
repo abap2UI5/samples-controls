@@ -1,6 +1,6 @@
 " @keywords containerpadding container padding sap.ui.core containerpaddingandmargin messagestrip scrollcontainer horizontallayout image flexitemdata
 " @summary By combining the margin and padding concepts you can flexibly design your application layout without having to write any custom CSS.
-" @origin sap.m.sample.ContainerPaddingAndMargin - https://sdk.openui5.org/entity/sap.ui.core.ContainerPadding/sample/sap.m.sample.ContainerPaddingAndMargin (status: generated)
+" @origin sap.m.sample.ContainerPaddingAndMargin - https://sdk.openui5.org/entity/sap.ui.core.ContainerPadding/sample/sap.m.sample.ContainerPaddingAndMargin (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_433 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -62,8 +62,8 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_s
-                    )->a( n = `class`        v = `sapUiSmallMarginEnd`
+                    )->a( n = `width` v = width_s
+                    )->a( n = `class` v = `sapUiSmallMarginEnd`
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -75,8 +75,8 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_m
-                    )->a( n = `class`        v = `sapUiSmallMarginEnd`
+                    )->a( n = `width` v = width_m
+                    )->a( n = `class` v = `sapUiSmallMarginEnd`
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -88,7 +88,7 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_l
+                    )->a( n = `width` v = width_l
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`

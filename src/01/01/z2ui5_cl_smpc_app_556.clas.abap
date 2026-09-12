@@ -1,17 +1,18 @@
 " @keywords datepicker date picker sap.m datepickermassedit vbox table toolbar title toolbarspacer button column
 " @summary Using calendar in a dialog for changing dates in mass editing scenario.
-" @origin sap.m.sample.DatePickerMassEdit - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerMassEdit (status: generated)
+" @origin sap.m.sample.DatePickerMassEdit - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerMassEdit (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_556 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             suppliername TYPE string,
-             dateofsale   TYPE string,
-             selected     TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        suppliername TYPE string,
+        dateofsale   TYPE string,
+        selected     TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products    TYPE ty_t_product.
@@ -22,8 +23,8 @@ CLASS z2ui5_cl_smpc_app_556 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_date_display.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -59,9 +60,9 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `Table`
-                )->a( n = `id`    v = `selectionTable`
-                )->a( n = `mode`  v = `MultiSelect`
-                )->a( n = `items` v = client->_bind( t_products )
+                )->a( n = `id`              v = `selectionTable`
+                )->a( n = `mode`            v = `MultiSelect`
+                )->a( n = `items`           v = client->_bind( t_products )
                 " handleTableSelectionChange only enables the button when at least
                 " one row is selected; the row flag is bound two-way, so the
                 " selection reaches the backend and the button reads it from there
@@ -130,9 +131,9 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
 
     " the dialog and its Calendar are built in the controller (new Dialog({ ... }))
     popup->ele( n = `FragmentDefinition` ns = `core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
 
         )->ele( `Dialog`
             )->a( n = `title` v = `Select New Date`
@@ -152,7 +153,7 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `Calendar` ns = `unified`
+            )->ele( n = `Calendar` ns = `u`
                 )->a( n = `width`  v = `100%`
                 )->a( n = `select` v = client->_event(
                           val   = `CALENDAR_SELECT`

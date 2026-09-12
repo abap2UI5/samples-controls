@@ -39,8 +39,35 @@
  *                              parse either — and the linter carries that as
  *                              abap-date-formatter-mismatch.
  *
+ * The 2026-09-12 round promoted five more into the linter - unbound-public-
+ * attribute, default-key-table, abapdoc-html-tag, event-arg-default-index and
+ * client-handle-capture (abap2UI5/linter commit 7174bae, unreleased at the
+ * time of writing) - and taught event-without-handler the single-branch IF
+ * dispatcher form that dead-event-wire existed to know. All six rules STAY
+ * here until the linter release carrying them reaches package-lock.json and
+ * view_gates gates them; the bump PR deletes them from this file in the same
+ * change (one rule set, two enforcement points is the drift this header
+ * warns against, and a week of it is the price of not gating on a release).
+ * Two of the promoted rules found what the copies here missed: the path
+ * regex of unbound-public-attribute matched inside a comment (apps 557/607),
+ * and client-handle-capture never saw the plain assignment form.
+ *
  * Do NOT re-add a rule here that the linter can express — one rule set, two enforcement
  * points was exactly how the editor and CI drifted apart before.
+ *
+ * The 2026-09-12 round added five, every one of them corpus policy and none
+ * of them a fact about abap2UI5 views:
+ *   statement-too-long        -> a statement budget the kernel enforces and
+ *                                nobody offline can measure (see the constant)
+ *   unrolled-chain-repetition -> the same chain line dozens of times in one
+ *                                method: a subtree that wanted a binding
+ *   types-layout              -> one of the two TYPES layouts the corpus had
+ *                                mixed (140 vs 167 classes), now the two-line one
+ *   hungarian-prefix          -> §8's "prefix only t_ and s_", enforced
+ *   line-headroom             -> a line within 15 characters of abaplint's 255
+ * and promoted the three layout rules (no-blank-before-end, blank-between-ends,
+ * param-continuation-align) from warn to error: their 382 findings were cleared
+ * the day before, and a warning nobody fails on is how they had accumulated.
  *
  * Levels: 'error' rules fail the run (exit 1) unless the exact file is listed
  * in BASELINE (a known, still-open backlog finding — see STATUS.md); 'warn'
@@ -55,9 +82,49 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { walkFiles } from './lib/src-tree.mjs';
+import { statements, methodAt } from './lib/abap-statements.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
+
+/* statement-too-long: the budget, in characters of source, for ONE statement.
+ *
+ * UNMEASURED. ABAP's maximum statement length is enforced by the kernel at
+ * activation and is written down nowhere anyone here can read; the linters
+ * do not model it, the transpiler does not model it, and a port that crosses
+ * it looks fine in every gate until a human pulls it into a system. The two
+ * data points the repository has (regenerate-artefacts guide, 2026-08):
+ *   ~226,000  a single VALUE #( ) FAILED on a real system - the overview
+ *             app's catalogue, since chunked at CHUNK_CHARS 3000 in
+ *             scripts/lib/overview-emit.mjs
+ *    73,997   app 012's model_init PASSES - status `checked`, live-verified;
+ *             app 033's 63,234-character one likewise
+ * So the budget sits just above the largest LIVE-VERIFIED statement, and
+ * what it fails is exactly what nothing has ever seen activate: a port whose
+ * whole view chain is one statement (app 599 at ~182,000 characters, app 592
+ * at ~83,000 on 2026-09-12 - the unroll sweep is bringing them down). Raise
+ * it only with a new live data point, never to let a port through;
+ * scripts/probes/statement-length-probe.mjs lists what an activation test
+ * has to cover. */
+const STATEMENT_BUDGET = 75000;
+
+/* unrolled-chain-repetition: how often the same chain line (backtick literals
+ * replaced by a placeholder) may recur inside ONE method before it reads as an
+ * unrolled loop - a bound aggregation with one template, or a helper per
+ * subtree, is what a repeated subtree wants. 40 is the 2026-09-12 first cut;
+ * `)->end(` lines are not counted, they carry no content. */
+const REPEAT_BUDGET = 40;
+
+/* line-headroom: abaplint holds a line to 255 characters (`line_length`), and
+ * a padded VALUE #( ) row that sits within 15 of it breaks on the next field
+ * that grows by a word. */
+const LINE_HEADROOM = 240;
+
+/* hungarian-prefix: the SAP-classic prefixes AGENTS §8 retired ("prefix only
+ * tables t_ and structures s_"). `is_` / `es_` are judged on PARAMETERS only:
+ * `DATA(is_selected)` is a boolean's English name, not a prefix. */
+const HUNGARIAN = '(?:lv|lt|ls|iv|ev|rv|cv|it|et)_\\w+';
+const HUNGARIAN_PARAM = '(?:lv|lt|ls|iv|ev|rv|cv|it|et|is|es)_\\w+';
 
 // known, still-open findings (tracked in STATUS.md) — 'rule-id|repo-relative-file'
 // empty since 2026-07-28: the six dead-event-wire entries of the review sweep
@@ -167,7 +234,7 @@ const RULES = [
   },
   {
     id: 'param-continuation-align',
-    level: 'warn',
+    level: 'error',
     doc: 'a t_arg continuation line must start in the same column as the val parameter above it — human-taught alignment fix, 2026-07-16 (apps 007/008)',
     find(content) {
       const out = [];
@@ -185,7 +252,7 @@ const RULES = [
   },
   {
     id: 'blank-between-ends',
-    level: 'warn',
+    level: 'error',
     doc: 'blank line between two )->end( lines — §5 formatting: none after an end or between ends (a blank before the next ele/tag sibling block is fine)',
     find(content) {
       const out = [];
@@ -197,7 +264,7 @@ const RULES = [
   },
   {
     id: 'no-blank-before-end',
-    level: 'warn',
+    level: 'error',
     doc: 'a )->end( must be preceded by a blank line (or another end) — §5 formatting: a blank before every end',
     find(content) {
       const out = [];
@@ -349,6 +416,95 @@ const RULES = [
           break;
         }
       }
+      return out;
+    },
+  },
+  {
+    id: 'statement-too-long',
+    level: 'error',
+    doc: `a single ABAP statement over ${STATEMENT_BUDGET} characters — the kernel's limit is unmeasured, the largest live-verified statement is ~74k (see STATEMENT_BUDGET); split it: a VALUE #( BASE … ) append, a bound aggregation with one template, a helper per subtree`,
+    find(content) {
+      const out = [];
+      for (const s of statements(content)) {
+        const text = s.text.trim();
+        if (text.length <= STATEMENT_BUDGET) continue;
+        const at = s.start + (s.text.length - s.text.trimStart().length);
+        out.push({ line: lineOf(content, at),
+                   text: `${methodAt(content, at) || 'outside a method'}: ${text.length} characters, ${text.split('\n').length} lines` });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'unrolled-chain-repetition',
+    level: 'warn',
+    doc: `the same chain line (literals ignored) more than ${REPEAT_BUDGET} times in one method reads as an unrolled loop — bind the repeated subtree to a table with one template, or build it in a helper (AGENTS §8)`,
+    find(content) {
+      const out = [];
+      let method = null;
+      let counts = new Map();
+      const flush = () => {
+        for (const [key, e] of counts) {
+          if (e.n > REPEAT_BUDGET) out.push({ line: e.first, text: `${method}: ${e.n} x ${key.slice(0, 70)}` });
+        }
+        counts = new Map();
+      };
+      content.split('\n').forEach((l, i) => {
+        const m = l.match(/^\s*METHOD\s+(\S+?)\s*\.\s*$/);
+        if (m) { method = m[1]; return; }
+        if (/^\s*ENDMETHOD\s*\./.test(l)) { flush(); method = null; return; }
+        if (!method || !l.includes(')->') || /\)->end\(/.test(l)) return;
+        const key = l.trim().replace(/`(?:``|[^`])*`/g, '`~`');
+        const e = counts.get(key) || { n: 0, first: i + 1 };
+        e.n += 1;
+        counts.set(key, e);
+      });
+      return out;
+    },
+  },
+  {
+    // The corpus carried both layouts for a structure type - 140 classes with
+    // `TYPES:` alone on its line and `BEGIN OF` on the next, 167 with the two
+    // on one line, three mixing them (2026-09-12). One layout, the two-line
+    // one, which is what the style sweep and the three emitters now write.
+    id: 'types-layout',
+    level: 'error',
+    doc: 'a structure type opens on two lines — `TYPES:` alone, then `BEGIN OF ty_s_x,` on the next (AGENTS §8); `TYPES: BEGIN OF` on one line is the other layout the corpus mixed until 2026-09-12',
+    find: grepLines(/^\s*TYPES:?\s+BEGIN OF\b/),
+  },
+  {
+    id: 'hungarian-prefix',
+    level: 'error',
+    doc: 'locals and parameters carry no Hungarian prefix — only tables are t_ and structures s_ (AGENTS §8); lv_/lt_/ls_/iv_/ev_/rv_/cv_/it_/et_ (and is_/es_ on a parameter) are the SAP-classic prefixes the guide retired',
+    find(content) {
+      const out = [];
+      const seen = new Set();
+      const hit = (idx, name) => {
+        const key = `${idx}|${name}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        out.push({ line: lineOf(content, idx), text: name });
+      };
+      // declarations: DATA(x) / FINAL(x) / DATA x / DATA: x / FOR x IN
+      const DECL = new RegExp(`\\b(?:DATA|FINAL)\\(\\s*(${HUNGARIAN})\\s*\\)|^\\s*DATA:?\\s+(${HUNGARIAN})\\b|\\bFOR\\s+(${HUNGARIAN})\\s+IN\\b`, 'gmi');
+      for (const m of content.matchAll(DECL)) hit(m.index, m[1] || m[2] || m[3]);
+      // parameters: every `name TYPE` / `VALUE(name)` inside a METHODS statement
+      const PARAM = new RegExp(`\\b!?(${HUNGARIAN_PARAM})\\s+(?:TYPE|LIKE)\\b|\\bVALUE\\(\\s*(${HUNGARIAN_PARAM})\\s*\\)`, 'gi');
+      for (const m of content.matchAll(/^\s*(?:CLASS-)?METHODS\s+[\s\S]*?\.[ \t]*$/gm)) {
+        for (const p of m[0].matchAll(PARAM)) hit(m.index + p.index, p[1] || p[2]);
+      }
+      return out;
+    },
+  },
+  {
+    id: 'line-headroom',
+    level: 'warn',
+    doc: `a line over ${LINE_HEADROOM} characters sits within ${255 - LINE_HEADROOM} of abaplint's 255 hard limit — re-wrap the padded VALUE row at the same field boundary in EVERY row (AGENTS §8; app 571 is the reference)`,
+    find(content) {
+      const out = [];
+      content.split('\n').forEach((l, i) => {
+        if (l.length > LINE_HEADROOM) out.push({ line: i + 1, text: `${l.length} characters` });
+      });
       return out;
     },
   },

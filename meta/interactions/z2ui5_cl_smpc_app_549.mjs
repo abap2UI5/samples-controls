@@ -37,7 +37,7 @@ export default async (page, expect) => {
   }, 'the modify dialog pickers never parsed the bound ISO value (valueFormat)');
 
   // handleCheckBoxSelect zeroes both times (_setHoursToZero) — without the
-  // ALL_DAY wire an "all-day" appointment was saved as 09:00-10:00
+  // ALLDAY wire an "all-day" appointment was saved as 09:00-10:00
   await page.evaluate(() => {
     const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
     const cb = reg.find((c) => c.getMetadata().getName() === 'sap.m.CheckBox'
@@ -48,5 +48,5 @@ export default async (page, expect) => {
   await waitForUi5(page, () => {
     const dp = ui5All().filter((c) => c.getMetadata().getName() === 'sap.m.DatePicker');
     return dp.length === 2 && dp.every((c) => /T00:00:00$/.test(c.getValue()));
-  }, 'ticking All-day never rewrote the two times to midnight (ALL_DAY)');
+  }, 'ticking All-day never rewrote the two times to midnight (ALLDAY)');
 };

@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarsubtabs label icontabfilter text
 " @summary This sample illustrates nested tabs with or without own content in their root-level tab.
-" @origin sap.m.sample.IconTabBarSubTabs - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarSubTabs (status: reviewed)
+" @origin sap.m.sample.IconTabBarSubTabs - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarSubTabs (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_382 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

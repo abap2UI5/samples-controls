@@ -1,6 +1,6 @@
 " @keywords list sap.m listitemtypes overflowtoolbar title toolbarspacer label select item standardlistitem
 " @summary You can use the 'type' property of any list item, which inherits from ListItemBase control, to demonstrate all possible types (see sap.m.ListType).
-" @origin sap.m.sample.ListItemTypes - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListItemTypes (status: reviewed)
+" @origin sap.m.sample.ListItemTypes - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListItemTypes (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_207 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

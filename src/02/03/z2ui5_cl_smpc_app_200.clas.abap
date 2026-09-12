@@ -1,6 +1,6 @@
 " @keywords headerfacetpattern header facet pattern sap.uxap objectpagesectionshowtitle objectpagelayout objectpagedynamicheadertitle title hbox avatar vbox
 " @summary ObjectPage sample that demonstrates the combination of header facets and showTitle properties of sections and subsections.
-" @origin sap.uxap.sample.ObjectPageSectionShowTitle - https://sdk.openui5.org/entity/sap.uxap.HeaderFacetPattern/sample/sap.uxap.sample.ObjectPageSectionShowTitle (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageSectionShowTitle - https://sdk.openui5.org/entity/sap.uxap.HeaderFacetPattern/sample/sap.uxap.sample.ObjectPageSectionShowTitle (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_200 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -34,12 +34,12 @@ CLASS z2ui5_cl_smpc_app_200 IMPLEMENTATION.
     " robot.png avatar assets rewritten from the sample's relative
     " ./test-resources path to the sdk.openui5.org host (offline asset rule)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`      v = `100%`
-        )->a( n = `xmlns`       v = `sap.uxap`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`     v = `sap.m`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -212,11 +212,11 @@ CLASS z2ui5_cl_smpc_app_200 IMPLEMENTATION.
                             )->a( n = `showTitle` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
-                                    )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
-                                    )->a( n = `layout`   v = `ColumnLayout`
-                                    )->a( n = `columnsM` v = `2`
-                                    )->a( n = `columnsL` v = `3`
+                                )->ele( n = `SimpleForm` ns = `form`
+                                    )->a( n = `class`     v = `sapUxAPObjectPageSubSectionAlignContent`
+                                    )->a( n = `layout`    v = `ColumnLayout`
+                                    )->a( n = `columnsM`  v = `2`
+                                    )->a( n = `columnsL`  v = `3`
                                     )->a( n = `columnsXL` v = `4`
 
                                     )->tag( n = `Title` ns = `core`
@@ -438,11 +438,11 @@ CLASS z2ui5_cl_smpc_app_200 IMPLEMENTATION.
                             )->a( n = `title` v = `Contact Information`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
-                                    )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
-                                    )->a( n = `layout`   v = `ColumnLayout`
-                                    )->a( n = `columnsM` v = `2`
-                                    )->a( n = `columnsL` v = `3`
+                                )->ele( n = `SimpleForm` ns = `form`
+                                    )->a( n = `class`     v = `sapUxAPObjectPageSubSectionAlignContent`
+                                    )->a( n = `layout`    v = `ColumnLayout`
+                                    )->a( n = `columnsM`  v = `2`
+                                    )->a( n = `columnsL`  v = `3`
                                     )->a( n = `columnsXL` v = `4`
 
                                     )->tag( n = `Title` ns = `core`

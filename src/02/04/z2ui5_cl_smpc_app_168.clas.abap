@@ -1,6 +1,6 @@
 " @keywords gridcontainer grid container sap.f scrollcontainer togglebutton panel hbox label switch text gridcontainersettings
 " @summary This sample represents the general usage of GridContainer.
-" @origin sap.f.sample.GridContainer - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainer (status: reviewed)
+" @origin sap.f.sample.GridContainer - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_168 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -96,14 +96,14 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `width` v = `8rem`
                         )->a( n = `class` v = `sapUiSmallMarginBegin`
-                        )->a( n = `text` v = `Snap to Row:`
+                        )->a( n = `text`  v = `Snap to Row:`
 " change wire dropped (declared): state is two-way bound and the
 " grid binds snapToRow to the same field - the 007/128 pattern
                     )->tag( `Switch`
                         )->a( n = `state` v = client->_bind( snap_to_row )
                     )->tag( `Text`
                         )->a( n = `class` v = `sapUiTinyMarginBeginEnd`
-                        )->a( n = `text` v = `(Should the items stretch to fill the rows which they occupy, or not. If turned on the items will stretch.)`
+                        )->a( n = `text`  v = `(Should the items stretch to fill the rows which they occupy, or not. If turned on the items will stretch.)`
 
                 )->end(
                 )->ele( `HBox`
@@ -111,12 +111,12 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `width` v = `8rem`
                         )->a( n = `class` v = `sapUiSmallMarginBegin`
-                        )->a( n = `text` v = `Allow dense fill:`
+                        )->a( n = `text`  v = `Allow dense fill:`
                     )->tag( `Switch`
                         )->a( n = `state` v = client->_bind( allow_dense_fill )
                     )->tag( `Text`
                         )->a( n = `class` v = `sapUiTinyMarginBeginEnd`
-                        )->a( n = `text` v = `(Smaller items will take up all of the available space, ignoring their order.)`
+                        )->a( n = `text`  v = `(Smaller items will take up all of the available space, ignoring their order.)`
 
                 )->end(
                 )->ele( `HBox`
@@ -124,12 +124,12 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `width` v = `8rem`
                         )->a( n = `class` v = `sapUiSmallMarginBegin`
-                        )->a( n = `text` v = `Inline block layout:`
+                        )->a( n = `text`  v = `Inline block layout:`
                     )->tag( `Switch`
                         )->a( n = `state` v = client->_bind( inline_block_layout )
                     )->tag( `Text`
                         )->a( n = `class` v = `sapUiTinyMarginBeginEnd`
-                        )->a( n = `text` v = `(Makes the grid items act like an inline-block elements.)`
+                        )->a( n = `text`  v = `(Makes the grid items act like an inline-block elements.)`
 
                 )->end(
             )->end(
@@ -137,8 +137,8 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
             )->ele( `Panel`
                 )->tag( `Text`
                     )->a( n = `class` v = `sapUiSmallMarginBegin`
-                    )->a( n = `id` v = `columnsCountText`
-                    )->a( n = `text` v = client->_bind( columns_text )
+                    )->a( n = `id`    v = `columnsCountText`
+                    )->a( n = `text`  v = client->_bind( columns_text )
 
             )->end(
 
@@ -176,24 +176,24 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                 )->a( n = `columnsChange`     v = client->_event( val = `COLUMNS_CHANGE` arg = `${$parameters>/columns}` )
                 )->ele( n = `layout` ns = `f`
                     )->tag( n = `GridContainerSettings` ns = `f`
-                        )->a( n = `rowSize` v = `84px`
+                        )->a( n = `rowSize`    v = `84px`
                         )->a( n = `columnSize` v = `84px`
-                        )->a( n = `gap` v = `8px`
+                        )->a( n = `gap`        v = `8px`
 
                 )->end(
                 )->ele( n = `layoutXS` ns = `f`
                     )->tag( n = `GridContainerSettings` ns = `f`
-                        )->a( n = `rowSize` v = `70px`
+                        )->a( n = `rowSize`    v = `70px`
                         )->a( n = `columnSize` v = `70px`
-                        )->a( n = `gap` v = `8px`
+                        )->a( n = `gap`        v = `8px`
 
                 )->end(
 
                 )->ele( `GenericTile`
-                    )->a( n = `header` v = `Sales Fulfillment Application Title`
+                    )->a( n = `header`    v = `Sales Fulfillment Application Title`
                     )->a( n = `subheader` v = `Subtitle`
-                    )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.oSource.getMetadata().getName()` ) ) )
+                    )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.oSource.getMetadata().getName()` ) ) )
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
                             )->a( n = `minRows` v = `2`
@@ -201,7 +201,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `TileContent`
-                        )->a( n = `unit` v = `EUR`
+                        )->a( n = `unit`   v = `EUR`
                         )->a( n = `footer` v = `Current Quarter`
                         )->tag( `ImageContent`
                             )->a( n = `src` v = `sap-icon://home-share`
@@ -220,7 +220,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `GenericTile`
-                    )->a( n = `header` v = `Manage Activity Master Data Type`
+                    )->a( n = `header`    v = `Manage Activity Master Data Type`
                     )->a( n = `subheader` v = `Subtitle`
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
@@ -252,9 +252,9 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->end(
                     )->ele( n = `content` ns = `f`
                         )->ele( `VBox`
-                            )->a( n = `height`          v = `115px`
-                            )->a( n = `class`           v = `sapUiSmallMargin`
-                            )->a( n = `justifyContent`  v = `SpaceBetween`
+                            )->a( n = `height`         v = `115px`
+                            )->a( n = `class`          v = `sapUiSmallMargin`
+                            )->a( n = `justifyContent` v = `SpaceBetween`
                             )->ele( `HBox`
                                 )->a( n = `justifyContent` v = `SpaceBetween`
                                 )->ele( `ComboBox`
@@ -263,7 +263,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                                     " sorter kept 1:1 from the original binding-info (CAPABILITIES 'Binding sorter')
                                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( cities ) }', sorter: \{ path: 'TEXT' \} \}|
                                     )->tag( n = `Item` ns = `core`
-                                        )->a( n = `key` v = `{KEY}`
+                                        )->a( n = `key`  v = `{KEY}`
                                         )->a( n = `text` v = `{TEXT}`
 
                                 )->end(
@@ -272,7 +272,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                                     )->a( n = `placeholder` v = `To City`
                                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( cities ) }', sorter: \{ path: 'TEXT' \} \}|
                                     )->tag( n = `Item` ns = `core`
-                                        )->a( n = `key` v = `{KEY}`
+                                        )->a( n = `key`  v = `{KEY}`
                                         )->a( n = `text` v = `{TEXT}`
 
                                 )->end(
@@ -280,7 +280,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                             )->ele( `HBox`
                                 )->a( n = `justifyContent` v = `SpaceBetween`
                                 )->tag( `DatePicker`
-                                    )->a( n = `width` v = `186px`
+                                    )->a( n = `width`       v = `186px`
                                     )->a( n = `placeholder` v = `Choose Date ...`
                                 )->tag( `Button`
                                     )->a( n = `text` v = `Book`
@@ -301,7 +301,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `GenericTile`
-                    )->a( n = `header` v = `Cumulative Totals`
+                    )->a( n = `header`    v = `Cumulative Totals`
                     )->a( n = `subheader` v = `Subtitle`
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
@@ -310,7 +310,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `TileContent`
-                        )->a( n = `unit` v = `Unit`
+                        )->a( n = `unit`   v = `Unit`
                         )->a( n = `footer` v = `Footer Text`
                         )->tag( `NumericContent`
                             )->a( n = `value` v = `12`
@@ -319,7 +319,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `GenericTile`
-                    )->a( n = `header` v = `Travel and Expenses`
+                    )->a( n = `header`    v = `Travel and Expenses`
                     )->a( n = `subheader` v = `Access Concur`
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
@@ -343,7 +343,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->end(
                     )->ele( n = `header` ns = `f`
                         )->tag( n = `Header` ns = `card`
-                            )->a( n = `title` v = `Project Cloud Transformation`
+                            )->a( n = `title`    v = `Project Cloud Transformation`
                             )->a( n = `subtitle` v = `Revenue per Product | EUR`
 
                     )->end(
@@ -359,14 +359,14 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                                         )->a( n = `class` v = `sapUiSmallMarginBegin sapUiSmallMarginTopBottom`
                                         )->tag( `Title`
                                             )->a( n = `level` v = `H3`
-                                            )->a( n = `text` v = `{TITLE}`
+                                            )->a( n = `text`  v = `{TITLE}`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{SUBTITLE}`
 
                                     )->end(
                                     )->tag( `ObjectStatus`
                                         )->a( n = `class` v = `sapUiTinyMargin`
-                                        )->a( n = `text` v = `{REVENUE}`
+                                        )->a( n = `text`  v = `{REVENUE}`
                                         )->a( n = `state` v = `{STATUSSCHEMA}`
 
                                 )->end(
@@ -376,7 +376,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `GenericTile`
-                    )->a( n = `header` v = `Success Map`
+                    )->a( n = `header`    v = `Success Map`
                     )->a( n = `subheader` v = `Access Success Map`
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
@@ -385,7 +385,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `TileContent`
-                        )->a( n = `unit` v = `EUR`
+                        )->a( n = `unit`   v = `EUR`
                         )->a( n = `footer` v = `Current Quarter`
                         )->tag( `ImageContent`
                             )->a( n = `src` v = `sap-icon://map-3`
@@ -402,7 +402,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `TileContent`
-                        )->a( n = `unit` v = `EUR`
+                        )->a( n = `unit`   v = `EUR`
                         )->a( n = `footer` v = `Current Quarter`
                         )->tag( `ImageContent`
                             )->a( n = `src` v = `sap-icon://check-availability`

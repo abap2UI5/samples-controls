@@ -1,6 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpagefreestyle dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber
 " @summary Dynamic Page freestyle example with a responsive sap.m.Table in the content area, showing that each control can be placed in the title and the header content areas.
-" @origin sap.f.sample.DynamicPageFreeStyle - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageFreeStyle (status: reviewed)
+" @origin sap.f.sample.DynamicPageFreeStyle - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageFreeStyle (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_170 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -64,11 +64,11 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
     " sorter + Currency composite type bindings 1:1. The controller's Card popover
     " (onPressOpenPopover) is shown via popover_display on both wired presses.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`   v = `sap.f`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `height`    v = `100%`
 
         )->ele( n = `DynamicPage` ns = `f`
             )->a( n = `id`                       v = `dynamicPageId`
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
                             )->a( n = `press` v = client->_event( val = `OPEN_POPOVER` arg = `$event.oSource.sId` )
                             )->ele( `layoutData`
                                 )->tag( `OverflowToolbarLayoutData`
-                                    )->a( n = `priority`                  v = `AlwaysOverflow`
+                                    )->a( n = `priority`                   v = `AlwaysOverflow`
                                     )->a( n = `closeOverflowOnInteraction` v = `false`
 
                             )->end(
@@ -187,10 +187,10 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
             )->ele( n = `header` ns = `f`
                 )->ele( n = `DynamicPageHeader` ns = `f`
                     )->a( n = `pinnable` v = `true`
-                    )->ele( n = `HorizontalLayout` ns = `layout`
+                    )->ele( n = `HorizontalLayout` ns = `l`
                         )->a( n = `allowWrapping` v = `true`
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->a( n = `class` v = `sapUiMediumMarginEnd`
                             )->tag( `ObjectAttribute`
                                 )->a( n = `title` v = `Location`
@@ -204,7 +204,7 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
 
                         )->end(
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->tag( `ObjectAttribute`
                                 )->a( n = `title` v = `Availability`
                             )->tag( `ObjectStatus`

@@ -1,18 +1,19 @@
 " @keywords shellbar shell bar sap.f shellbarproductswitch avatar responsivepopover productswitch productswitchitem
 " @summary Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state.
-" @origin sap.f.sample.ShellBarProductSwitch - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarProductSwitch (status: generated)
+" @origin sap.f.sample.ShellBarProductSwitch - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarProductSwitch (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_583 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             src       TYPE string,
-             title     TYPE string,
-             subtitle  TYPE string,
-             targetsrc TYPE string,
-             target    TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        src       TYPE string,
+        title     TYPE string,
+        subtitle  TYPE string,
+        targetsrc TYPE string,
+        target    TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items TYPE ty_t_item.
@@ -21,8 +22,8 @@ CLASS z2ui5_cl_smpc_app_583 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popover_display IMPORTING by_id TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -51,16 +52,16 @@ CLASS z2ui5_cl_smpc_app_583 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.f`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`     v = `sap.f`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
 
         )->ele( `ShellBar`
-            )->a( n = `homeIcon`            v = `https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg.adapt.svg/1493030643828.svg`
-            )->a( n = `showCopilot`         v = `true`
-            )->a( n = `showProductSwitcher` v = `true`
+            )->a( n = `homeIcon`               v = `https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg.adapt.svg/1493030643828.svg`
+            )->a( n = `showCopilot`            v = `true`
+            )->a( n = `showProductSwitcher`    v = `true`
             " fnOpen anchors the popover on the product-switcher button the event ships
             )->a( n = `productSwitcherPressed` v = client->_event( val = `OPEN_SWITCHER` arg = `${$parameters>/button}.getId()` )
 

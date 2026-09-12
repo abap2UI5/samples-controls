@@ -1,12 +1,12 @@
 " @keywords image sap.m imageerrorwithillustration verticallayout grid vbox button flexitemdata illustratedmessage
 " @summary Handle errors using the sap.m.IllustratedMessage with the error event.
-" @origin sap.m.sample.ImageErrorWithIllustration - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.ImageErrorWithIllustration (status: checked)
+" @origin sap.m.sample.ImageErrorWithIllustration - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.ImageErrorWithIllustration (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_279 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA has_error TYPE abap_bool.
+    DATA haserror TYPE abap_bool.
     DATA image_src TYPE string.
 
   PROTECTED SECTION.
@@ -65,7 +65,7 @@ CLASS z2ui5_cl_smpc_app_279 IMPLEMENTATION.
                             )->ele( `Image`
                                 )->a( n = `load`    v = client->_event( `LOAD` )
                                 )->a( n = `error`   v = client->_event( `ERROR` )
-                                )->a( n = `visible` v = |\{= !${ client->_bind( has_error ) } \}|
+                                )->a( n = `visible` v = |\{= !${ client->_bind( haserror ) } \}|
                                 )->a( n = `src`     v = client->_bind( image_src )
                                 " the controller's phone branch stays a branch: the device model
                                 " decides the size in the frontend, the original resolved it once at onInit
@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_app_279 IMPLEMENTATION.
                                 )->a( n = `description`      v = `Image was not found`
                                 )->a( n = `title`            v = `Not Found`
                                 )->a( n = `illustrationType` v = `sapIllus-ErrorScreen`
-                                )->a( n = `visible`          v = |\{= ${ client->_bind( has_error ) } \}| ).
+                                )->a( n = `visible`          v = |\{= ${ client->_bind( haserror ) } \}| ).
 
     client->view_display( view->stringify( ) ).
 
@@ -96,11 +96,11 @@ CLASS z2ui5_cl_smpc_app_279 IMPLEMENTATION.
 
       WHEN `LOAD`.
 
-        has_error = abap_false.
+        haserror = abap_false.
 
       WHEN `ERROR`.
 
-        has_error = abap_true.
+        haserror = abap_true.
 
       WHEN `SET_SRC`.
 

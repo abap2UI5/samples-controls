@@ -1,6 +1,6 @@
 " @keywords splitter sap.ui.layout splitter4 app button splitterlayoutdata
 " @summary Simple splitter example with three content areas
-" @origin sap.ui.layout.sample.Splitter4 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter4 (status: reviewed)
+" @origin sap.ui.layout.sample.Splitter4 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter4 (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_340 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

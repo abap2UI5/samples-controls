@@ -1,6 +1,6 @@
 " @keywords card sap.ui.integration.widgets cardsloading simpleform label input button gridcontainer gridcontaineritemlayoutdata
 " @summary Different types of cards types and their loading placeholder
-" @origin sap.ui.integration.sample.CardsLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardsLoading (status: reviewed)
+" @origin sap.ui.integration.sample.CardsLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardsLoading (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_341 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -246,9 +246,9 @@ CLASS z2ui5_cl_smpc_app_341 IMPLEMENTATION.
         LOOP AT VALUE string_table( ( `listTest` ) ( `list` ) ( `error` ) ( `all` )
                                     ( `descriptionTitle` ) ( `iconTitle` ) ( `table` )
                                     ( `analytical` ) ( `calendar` ) ( `object` )
-                                    ( `timeline` ) ) INTO DATA(lv_card_id).
+                                    ( `timeline` ) ) INTO DATA(card_id).
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( lv_card_id ) ( `refresh` ) ) ).
+                                    t_arg = VALUE #( ( card_id ) ( `refresh` ) ) ).
         ENDLOOP.
       ENDIF.
     ENDIF.

@@ -12,41 +12,45 @@ CLASS z2ui5_cl_smpc_sapui5_008 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_attributes3,
-             label TYPE i,
-             value TYPE string,
-           END OF ty_s_attributes3.
+    TYPES:
+      BEGIN OF ty_s_attributes3,
+        label TYPE i,
+        value TYPE string,
+      END OF ty_s_attributes3.
     TYPES ty_t_attributes3 TYPE STANDARD TABLE OF ty_s_attributes3 WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_nodes2,
-             id         TYPE string,
-             title      TYPE string,
-             src        TYPE string,
-             attributes TYPE ty_t_attributes3,
-             team       TYPE i,
-             supervisor TYPE string,
-             location   TYPE string,
-             position   TYPE string,
-             email      TYPE string,
-             phone      TYPE string,
-           END OF ty_s_nodes2.
-    TYPES: BEGIN OF ty_s_lines4,
-             from TYPE string,
-             to   TYPE string,
-           END OF ty_s_lines4.
+    TYPES:
+      BEGIN OF ty_s_nodes2,
+        id         TYPE string,
+        title      TYPE string,
+        src        TYPE string,
+        attributes TYPE ty_t_attributes3,
+        team       TYPE i,
+        supervisor TYPE string,
+        location   TYPE string,
+        position   TYPE string,
+        email      TYPE string,
+        phone      TYPE string,
+      END OF ty_s_nodes2.
+    TYPES:
+      BEGIN OF ty_s_lines4,
+        from TYPE string,
+        to   TYPE string,
+      END OF ty_s_lines4.
     TYPES ty_t_nodes2 TYPE STANDARD TABLE OF ty_s_nodes2 WITH EMPTY KEY.
     TYPES ty_t_lines4 TYPE STANDARD TABLE OF ty_s_lines4 WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_json1,
-             nodes TYPE ty_t_nodes2,
-             lines TYPE ty_t_lines4,
-           END OF ty_s_json1.
+    TYPES:
+      BEGIN OF ty_s_json1,
+        nodes TYPE ty_t_nodes2,
+        lines TYPE ty_t_lines4,
+      END OF ty_s_json1.
     DATA mt_data TYPE ty_s_json1.
 
-    METHODS on_event.
-    METHODS view_display.
     METHODS detail_popover
       IMPORTING
         id   TYPE string
         node TYPE ty_s_nodes2.
+    METHODS on_event.
+    METHODS view_display.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -68,7 +72,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
             )->a( n = `placement` v = `Left`
 
             )->ele( `QuickViewPage`
-                )->a( n = `header`      v = `Employee`
+                )->a( n = `header` v = `Employee`
                 )->a( n = `title`       t = node-title
                 )->a( n = `description` t = node-position
 
@@ -88,11 +92,11 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label` v = `Mobile`
                         )->a( n = `value` t = node-phone
-                        )->a( n = `type`  v = `phone`
+                        )->a( n = `type` v = `phone`
                     )->tag( `QuickViewGroupElement`
-                        )->a( n = `label`        v = `Email`
+                        )->a( n = `label` v = `Email`
                         )->a( n = `value`        t = node-email
-                        )->a( n = `type`         v = `email`
+                        )->a( n = `type` v = `email`
                         )->a( n = `emailSubject` t = |Contact{ node-id }|
 
                 )->end( ).
@@ -117,13 +121,13 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
         client->message_toast_display( `LINE_PRESSED` ).
 
       WHEN `DETAIL_POPOVER`.
-        DATA(lt_arg) = client->get( )-t_event_arg.
+        DATA(t_arg) = client->get( )-t_event_arg.
 
-        READ TABLE mt_data-nodes INTO DATA(ls_node) WITH KEY id = lt_arg[ 2 ].
+        READ TABLE mt_data-nodes INTO DATA(s_node) WITH KEY id = t_arg[ 2 ].
 
         IF sy-subrc = 0.
-          detail_popover( id   = lt_arg[ 1 ]
-                          node = ls_node ).
+          detail_popover( id   = t_arg[ 1 ]
+                          node = s_node ).
         ENDIF.
     ENDCASE.
 
@@ -134,12 +138,12 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`      v = `true`
-        )->a( n = `height`            v = `100%`
-        )->a( n = `xmlns`             v = `sap.m`
-        )->a( n = `xmlns:mvc`         v = `sap.ui.core.mvc`
+        )->a( n = `displayBlock`       v = `true`
+        )->a( n = `height`             v = `100%`
+        )->a( n = `xmlns`              v = `sap.m`
+        )->a( n = `xmlns:mvc`          v = `sap.ui.core.mvc`
         )->a( n = `xmlns:networkgraph` v = `sap.suite.ui.commons.networkgraph`
-        )->a( n = `xmlns:nglayout`    v = `sap.suite.ui.commons.networkgraph.layout`
+        )->a( n = `xmlns:nglayout`     v = `sap.suite.ui.commons.networkgraph.layout`
 
         )->ele( `Page`
             )->a( n = `title`          v = `abap2UI5 - Network Graph - Org Tree`

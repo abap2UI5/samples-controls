@@ -1,6 +1,6 @@
 " @keywords tree sap.m treednd dragdropinfo standardtreeitem
 " @summary This example shows drag-and-drop capability.
-" @origin sap.m.sample.TreeDnD - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeDnD (status: generated)
+" @origin sap.m.sample.TreeDnD - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeDnD (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -36,11 +36,12 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
     DATA t_nodes TYPE STANDARD TABLE OF ty_s_node_level1 WITH EMPTY KEY.
 
     " the hierarchy the drop rewrites: one row per node, parent by text
-    TYPES: BEGIN OF ty_s_flat,
-             text   TYPE string,
-             ref    TYPE string,
-             parent TYPE string,
-           END OF ty_s_flat.
+    TYPES:
+      BEGIN OF ty_s_flat,
+        text   TYPE string,
+        ref    TYPE string,
+        parent TYPE string,
+      END OF ty_s_flat.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -49,11 +50,11 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
     METHODS view_display.
     METHODS on_event.
     METHODS node_drop.
-    METHODS model_init.
-    METHODS nodes_rebuild.
     METHODS is_descendant IMPORTING node          TYPE string
                                     ancestor      TYPE string
                           RETURNING VALUE(result) TYPE abap_bool.
+    METHODS nodes_rebuild.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -106,13 +107,14 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
                     )->a( n = `dragStart`         v = client->_event(
                         val    = `DRAG_START`
                         s_ctrl = VALUE #( prevent_default_expr =
-                            `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` &&
-                            `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1` ) )
+                                                      `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` &&
+                                                      `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1` ) )
                     " onDrop moves the dragged node under the dropped one; the two
                     " node texts are what travels (app 569 idiom)
                     )->a( n = `drop`              v = client->_event( val   = `DROP_NODE`
                                                                       t_arg = VALUE #( ( `${$parameters>/draggedControl}.getTitle()` )
                                                                                        ( `${$parameters>/droppedControl}.getTitle()` ) ) )
+
             )->end(
 
             )->tag( `StandardTreeItem`

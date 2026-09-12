@@ -1,6 +1,6 @@
 " @keywords objectpageheader object header sap.uxap objectpageheaderwithallcontrols objectpagelayout objectpageheaderactionbutton breadcrumbs link verticallayout objectstatus text
 " @summary This is an example of an ObjectPageHeader containing all possible controls in it.
-" @origin sap.uxap.sample.ObjectPageHeaderWithAllControls - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ObjectPageHeaderWithAllControls (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageHeaderWithAllControls - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ObjectPageHeaderWithAllControls (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_415 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -58,13 +58,13 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
     " around a view, so each block's content (a sap.ui.layout.form.SimpleForm)
     " is inlined directly here.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -142,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `ObjectStatus` ns = `m`
                         )->a( n = `title` v = `User ID`
                         )->a( n = `text`  v = `12345678`
@@ -183,7 +183,7 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
                     )->a( n = `showValue`    v = `true`
                     )->a( n = `state`        v = `None`
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `PC, Unrestricted-Use Stock`
                     )->tag( n = `ObjectNumber` ns = `m`
@@ -193,8 +193,8 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleS` v = `false`
 
@@ -208,8 +208,8 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleM` v = `false`
 
@@ -223,8 +223,8 @@ CLASS z2ui5_cl_smpc_app_415 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleL` v = `false`
 

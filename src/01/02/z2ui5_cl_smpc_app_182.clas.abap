@@ -1,6 +1,6 @@
 " @keywords time sap.ui.model.type typetimeastime simpleform label timepicker text
 " @summary This sample explains the formatting options of the Time type.
-" @origin sap.ui.core.sample.TypeTimeAsTime - https://sdk.openui5.org/entity/sap.ui.model.type.Time/sample/sap.ui.core.sample.TypeTimeAsTime (status: reviewed)
+" @origin sap.ui.core.sample.TypeTimeAsTime - https://sdk.openui5.org/entity/sap.ui.model.type.Time/sample/sap.ui.core.sample.TypeTimeAsTime (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_182 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageheaderexpanded objectpagedynamicheadertitle title text button overflowtoolbarbutton flexbox verticallayout
 " @summary This is an example of an ObjectPage with property alwaysShowContentHeader set to true. In this case the HeaderContent won't snap on a desktop.
-" @origin sap.uxap.sample.ObjectPageHeaderExpanded - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageHeaderExpanded (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageHeaderExpanded - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageHeaderExpanded (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_260 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -37,18 +37,18 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
     " each of these views is a static SimpleForm, so the view content is
     " inlined here 1:1.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`      v = `100%`
-        )->a( n = `xmlns`       v = `sap.uxap`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`     v = `sap.m`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:l`     v = `sap.ui.layout`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
-            )->a( n = `id`                        v = `ObjectPageLayout`
+            )->a( n = `id`                          v = `ObjectPageLayout`
             )->a( n = `preserveHeaderStateOnScroll` v = `true`
-            )->a( n = `upperCaseAnchorBar`        v = `false`
+            )->a( n = `upperCaseAnchorBar`          v = `false`
 
             )->ele( `headerTitle`
                 )->ele( `ObjectPageDynamicHeaderTitle`
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " goals:GoalsBlock inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -191,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:BlockPhoneNumber inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
 
@@ -209,7 +209,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockSocial inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -234,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockAdresses inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `width`    v = `100%`
@@ -256,7 +256,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                                 " columnLayout='1' has no counterpart here - and neither
                                 " do PersonalBlockPart1's and Part2's below, which this
                                 " comment used to leave out)
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
 
@@ -279,7 +279,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:PersonalBlockPart1 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -296,7 +296,7 @@ CLASS z2ui5_cl_smpc_app_260 IMPLEMENTATION.
                             )->ele( `moreBlocks`
 
                                 " personal:PersonalBlockPart2 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 

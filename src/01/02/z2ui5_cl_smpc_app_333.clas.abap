@@ -1,6 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform_column_onegroup bar button vbox label text input columnelementdata
 " @summary Form with one single group in a fullscreen app using the ColumnLayout control with default settings as layout.
-" @origin sap.ui.layout.sample.SimpleForm_Column_oneGroup - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm_Column_oneGroup (status: reviewed)
+" @origin sap.ui.layout.sample.SimpleForm_Column_oneGroup - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm_Column_oneGroup (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_333 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -62,7 +62,7 @@ CLASS z2ui5_cl_smpc_app_333 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Page`
@@ -102,13 +102,13 @@ CLASS z2ui5_cl_smpc_app_333 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = |\{= !${ client->_bind( edit_mode ) }\}|
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`       v = `SimpleFormDisplayColumn_oneGroup`
                         )->a( n = `editable` v = `false`
                         )->a( n = `layout`   v = `ColumnLayout`
                         )->a( n = `title`    v = `Address`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Name`
                             )->tag( `Text`
@@ -137,13 +137,13 @@ CLASS z2ui5_cl_smpc_app_333 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = client->_bind( edit_mode )
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`       v = `SimpleFormChangeColumn_oneGroup`
                         )->a( n = `editable` v = `true`
                         )->a( n = `layout`   v = `ColumnLayout`
                         )->a( n = `title`    v = `Address`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Name`
                             )->tag( `Input`
@@ -158,7 +158,7 @@ CLASS z2ui5_cl_smpc_app_333 IMPLEMENTATION.
                                 )->a( n = `value` v = client->_bind( housenumber )
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `ColumnElementData` ns = `f`
+                                    )->tag( n = `ColumnElementData` ns = `form`
                                         )->a( n = `cellsSmall` v = `2`
                                         )->a( n = `cellsLarge` v = `1`
 
@@ -171,7 +171,7 @@ CLASS z2ui5_cl_smpc_app_333 IMPLEMENTATION.
                                 )->a( n = `value` v = client->_bind( zipcode )
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `ColumnElementData` ns = `f`
+                                    )->tag( n = `ColumnElementData` ns = `form`
                                         )->a( n = `cellsSmall` v = `3`
                                         )->a( n = `cellsLarge` v = `2`
 

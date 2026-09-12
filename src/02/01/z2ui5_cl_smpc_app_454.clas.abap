@@ -1,25 +1,26 @@
 " @keywords tableselectdialog table select dialog sap.m tableselectdialoggrowing verticallayout button customdata column text columnlistitem
 " @summary Table Select Dialog can be created with property growing set to true or false.
-" @origin sap.m.sample.TableSelectDialogGrowing - https://sdk.openui5.org/entity/sap.m.TableSelectDialog/sample/sap.m.sample.TableSelectDialogGrowing (status: generated)
+" @origin sap.m.sample.TableSelectDialogGrowing - https://sdk.openui5.org/entity/sap.m.TableSelectDialog/sample/sap.m.sample.TableSelectDialogGrowing (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_454 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE p LENGTH 8 DECIMALS 2,
-             weightunit    TYPE string,
-             weightstate   TYPE string,
-             price         TYPE p LENGTH 8 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE p LENGTH 8 DECIMALS 2,
+        weightunit    TYPE string,
+        weightstate   TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -127,15 +128,15 @@ CLASS z2ui5_cl_smpc_app_454 IMPLEMENTATION.
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `TableSelectDialog`
-            )->a( n = `id`           v = `myDialog`
-            )->a( n = `noDataText`   v = `No Products Found`
-            )->a( n = `title`        v = `Select Product`
-            )->a( n = `search`       v = client->_event( val = `SEARCH` arg = `${$parameters>/value}` )
-            )->a( n = `multiSelect`  v = `true`
+            )->a( n = `id`          v = `myDialog`
+            )->a( n = `noDataText`  v = `No Products Found`
+            )->a( n = `title`       v = `Select Product`
+            )->a( n = `search`      v = client->_event( val = `SEARCH` arg = `${$parameters>/value}` )
+            )->a( n = `multiSelect` v = `true`
             " the two buttons differ only in these two properties
-            )->a( n = `growing`      b = growing
+            )->a( n = `growing`     b = growing
             )->a( n = `initialFocus` t = COND #( WHEN growing = abap_true THEN `SearchField` ELSE `List` )
-            )->a( n = `items`        v = |\{ path : '{ client->_bind_path( t_products ) }', sorter : \{ path : 'NAME', descending : false \} \}|
+            )->a( n = `items` v = |\{ path : '{ client->_bind_path( t_products ) }', sorter : \{ path : 'NAME', descending : false \} \}|
 
             )->ele( `columns`
                 )->ele( `Column`

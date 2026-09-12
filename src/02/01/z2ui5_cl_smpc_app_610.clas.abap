@@ -1,23 +1,24 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendardnd vbox hbox label switch singleplanningcalendardayview singleplanningcalendarworkweekview
 " @summary SinglePlanningCalendar with enabled drag and drop functionality, allowing to create appointments with dragging and dropping, to change the start and end date of appointments by selecting and dragging their top or bottom end, and to copy and...
-" @origin sap.m.sample.SinglePlanningCalendarDND - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDND (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarDND - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDND (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_610 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title    TYPE string,
-             text     TYPE string,
-             type     TYPE string,
-             icon     TYPE string,
-             start_at TYPE string,
-             end_at   TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title    TYPE string,
+        text     TYPE string,
+        type     TYPE string,
+        icon     TYPE string,
+        start_at TYPE string,
+        end_at   TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
+    DATA startdate      TYPE string.
 
     " the original keeps these three in a settings> model; abap2UI5 keeps one
     " default model, so they are fields the Switches and the calendar share
@@ -71,11 +72,11 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
     " The drag, resize and create wires carry the interval's LOCAL date parts
     " (a UTC toISOString( ) would shift the day) - app 549 idiom
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -91,6 +92,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsDragAndDrop`
                         )->a( n = `state` v = client->_bind( enable_dnd )
+
                 )->end(
 
                 )->ele( `VBox`
@@ -101,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsResize`
                         )->a( n = `state` v = client->_bind( enable_resize )
+
                 )->end(
 
                 )->ele( `VBox`
@@ -110,6 +113,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsCreate`
                         )->a( n = `state` v = client->_bind( enable_create )
+
                 )->end(
             )->end(
 
@@ -121,52 +125,52 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                 )->a( n = `enableAppointmentsResize`      v = client->_bind( enable_resize )
                 )->a( n = `enableAppointmentsCreate`      v = client->_bind( enable_create )
                 )->a( n = `appointments`                  v = client->_bind( t_appointments )
-                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
 
                 )->a( n = `appointmentDrop`               v = client->_event(
-                          val   = `APPT_DROP`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` )
-                            ( `${$parameters>/copy} ? 'X' : ''` ) ) )
+                                        val   = `APPT_DROP`
+                                        t_arg = VALUE #(
+                                          ( `${$parameters>/startDate}.getFullYear()` )
+                                          ( `${$parameters>/startDate}.getMonth() + 1` )
+                                          ( `${$parameters>/startDate}.getDate()` )
+                                          ( `${$parameters>/startDate}.getHours()` )
+                                          ( `${$parameters>/startDate}.getMinutes()` )
+                                          ( `${$parameters>/endDate}.getFullYear()` )
+                                          ( `${$parameters>/endDate}.getMonth() + 1` )
+                                          ( `${$parameters>/endDate}.getDate()` )
+                                          ( `${$parameters>/endDate}.getHours()` )
+                                          ( `${$parameters>/endDate}.getMinutes()` )
+                                          ( `${$parameters>/appointment}.getBindingContext().getPath()` )
+                                          ( `${$parameters>/copy} ? 'X' : ''` ) ) )
 
                 )->a( n = `appointmentResize`             v = client->_event(
-                          val   = `APPT_RESIZE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
+                                      val   = `APPT_RESIZE`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` )
+                                        ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
 
                 )->a( n = `appointmentCreate`             v = client->_event(
-                          val   = `APPT_CREATE_DND`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` ) ) )
+                                      val   = `APPT_CREATE_DND`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` ) ) )
 
                 )->ele( `views`
                     )->tag( `SinglePlanningCalendarDayView`
@@ -178,16 +182,18 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `SinglePlanningCalendarWeekView`
                         )->a( n = `key`   v = `WeekView`
                         )->a( n = `title` v = `Week`
+
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`
                         )->a( n = `icon`      v = `{ICON}`
                         )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
+
                 )->end(
             )->end(
         )->end( ).
@@ -305,7 +311,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
   METHOD model_init.
 
     " onInit's startDate and its 36 appointments, all on the 2018-07 week
-    start_date = `2018-07-09T00:00:00`.
+    startdate = `2018-07-09T00:00:00`.
 
     t_appointments = VALUE #(
       ( title    = `Meet John Miller`

@@ -1,17 +1,17 @@
 " @keywords messagestrip message strip sap.m strips formatted text verticallayout link
 " @summary A sample MessageStrip that shows status messages with additional formatting.
-" @origin sap.m.sample.MessageStripWithEnableFormattedText - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.MessageStripWithEnableFormattedText (status: reviewed)
+" @origin sap.m.sample.MessageStripWithEnableFormattedText - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.MessageStripWithEnableFormattedText (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_062 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA default_text        TYPE string.
-    DATA error_text          TYPE string.
-    DATA warning_text        TYPE string.
-    DATA success_text        TYPE string.
-    DATA inline_icons_unicode TYPE string.
-    DATA inline_icons_helper  TYPE string.
+    DATA default_text       TYPE string.
+    DATA error_text         TYPE string.
+    DATA warning_text       TYPE string.
+    DATA success_text       TYPE string.
+    DATA inlineiconsunicode TYPE string.
+    DATA inlineiconshelper  TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_062 IMPLEMENTATION.
                 )->end(
 
                 )->tag( `MessageStrip`
-                    )->a( n = `text`                v = client->_bind( inline_icons_unicode )
+                    )->a( n = `text`                v = client->_bind( inlineiconsunicode )
                     )->a( n = `type`                v = `Warning`
                     )->a( n = `enableFormattedText` v = `true`
                     )->a( n = `showIcon`            v = `true`
@@ -114,7 +114,7 @@ CLASS z2ui5_cl_smpc_app_062 IMPLEMENTATION.
                     )->a( n = `class`               v = `sapUiMediumMarginBottom`
                 )->tag( `MessageStrip`
                     " the controller-built inline-icon string is stored with icon placeholders and expanded by Formatter.expandInlineIcons (see sidecar)
-                    )->a( n = `text`                v = |\{ path: '{ client->_bind_path( inline_icons_helper ) }', formatter: 'Formatter.expandInlineIcons' \}|
+                    )->a( n = `text`                v = |\{ path: '{ client->_bind_path( inlineiconshelper ) }', formatter: 'Formatter.expandInlineIcons' \}|
                     )->a( n = `type`                v = `Success`
                     )->a( n = `enableFormattedText` v = `true`
                     )->a( n = `showIcon`            v = `true`
@@ -137,11 +137,11 @@ CLASS z2ui5_cl_smpc_app_062 IMPLEMENTATION.
 
     success_text = `<strong>Success</strong> with default icon and close button:`.
 
-    inline_icons_unicode = `System status: <span class='sapMMsgStripInlineIcon'>&#xe1b4;</span> critical error detected ` &&
+    inlineiconsunicode = `System status: <span class='sapMMsgStripInlineIcon'>&#xe1b4;</span> critical error detected ` &&
                            `<span class='sapMMsgStripInlineIcon'>&#xe049;</span> in module ` &&
                            `<span class='sapMMsgStripInlineIcon'>&#xe126;</span> configuration.`.
 
-    inline_icons_helper = `<strong>Deployment successful!</strong> %%icon:sap-icon://message-success%% All services ` &&
+    inlineiconshelper = `<strong>Deployment successful!</strong> %%icon:sap-icon://message-success%% All services ` &&
                           `%%icon:sap-icon://sys-enter-2%% are running. <em>Check status</em> ` &&
                           `%%icon:sap-icon://stethoscope%%`.
 

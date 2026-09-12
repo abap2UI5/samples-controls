@@ -1,25 +1,26 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarsnappingheader vbox hbox label select listitem item
 " @summary SinglePlanningCalendar showing the modes for snapping the header part of the calendar.
-" @origin sap.m.sample.SinglePlanningCalendarSnappingHeader - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarSnappingHeader (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarSnappingHeader - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarSnappingHeader (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_551 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
-    DATA sticky_mode    TYPE string.
+    DATA startdate      TYPE string.
+    DATA stickymode     TYPE string.
     DATA first_day      TYPE string.
 
   PROTECTED SECTION.
@@ -54,11 +55,11 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -75,7 +76,7 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
                     " abap2UI5 keeps one default model, so it is a field here
                     )->ele( `Select`
                         )->a( n = `id`          v = `stickyModeSelect`
-                        )->a( n = `selectedKey` v = client->_bind( sticky_mode )
+                        )->a( n = `selectedKey` v = client->_bind( stickymode )
 
                         )->tag( n = `ListItem` ns = `core`
                             )->a( n = `text` v = `None`
@@ -130,15 +131,15 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
             )->end(
 
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`                    v = `SPC1`
-                )->a( n = `class`                 v = `sapUiSmallMarginTop`
-                )->a( n = `title`                 v = `My Calendar`
-                )->a( n = `startDate`             v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `stickyMode`            v = client->_bind( sticky_mode )
+                )->a( n = `id`             v = `SPC1`
+                )->a( n = `class`          v = `sapUiSmallMarginTop`
+                )->a( n = `title`          v = `My Calendar`
+                )->a( n = `startDate`      v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `stickyMode`     v = client->_bind( stickymode )
                 " firstDayOfWeek is an INT property and the Select's key is a string,
                 " so the expression multiplies by 1 - the Number( ) the original calls
-                )->a( n = `firstDayOfWeek`        v = |\{= ${ client->_bind( first_day ) } * 1 \}|
-                )->a( n = `appointments`          v = client->_bind( t_appointments )
+                )->a( n = `firstDayOfWeek` v = |\{= ${ client->_bind( first_day ) } * 1 \}|
+                )->a( n = `appointments`   v = client->_bind( t_appointments )
 
                 )->ele( `views`
                     )->tag( `SinglePlanningCalendarDayView`
@@ -157,7 +158,7 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`
@@ -172,8 +173,8 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date  = `2018-07-09T00:00:00`.
-    sticky_mode = `None`.
+    startdate  = `2018-07-09T00:00:00`.
+    stickymode = `None`.
     first_day   = `-1`.
 
     t_appointments = VALUE #(

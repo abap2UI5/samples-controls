@@ -1,18 +1,19 @@
 " @keywords multiinput multi input sap.m multiinputgrouping verticallayout item column label columnlistitem multiinputext
 " @summary Items in the MultiInput could be grouped by a property
-" @origin sap.m.sample.MultiInputGrouping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputGrouping (status: generated)
+" @origin sap.m.sample.MultiInputGrouping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputGrouping (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_613 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             price        TYPE string,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        price        TYPE string,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -47,10 +48,10 @@ CLASS z2ui5_cl_smpc_app_613 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(layout) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`       v = `sap.m`
+        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:l`     v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
 
         )->ele( n = `VerticalLayout` ns = `l`
@@ -144,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_613 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(

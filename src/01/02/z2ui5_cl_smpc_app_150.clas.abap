@@ -1,6 +1,6 @@
 " @keywords codeeditor code editor sap.ui.codeeditor icontabheader icontabfilter
 " @summary Example how to use CodeEditor with IconTabHeader to create a tab-based experience.
-" @origin sap.ui.codeeditor.sample.CodeEditorIconTabHeader - https://sdk.openui5.org/entity/sap.ui.codeeditor.CodeEditor/sample/sap.ui.codeeditor.sample.CodeEditorIconTabHeader (status: reviewed)
+" @origin sap.ui.codeeditor.sample.CodeEditorIconTabHeader - https://sdk.openui5.org/entity/sap.ui.codeeditor.CodeEditor/sample/sap.ui.codeeditor.sample.CodeEditorIconTabHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_150 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -69,8 +69,8 @@ CLASS z2ui5_cl_smpc_app_150 IMPLEMENTATION.
             )->a( n = `height` v = `300px`
             )->a( n = `type`   v = `javascript`
             )->a( n = `value`  v = |\{= ${ client->_bind( selected_key ) } === 'A' ? ${ client->_bind( code_a ) }| &&
-                                    | : (${ client->_bind( selected_key ) } === 'B' ? ${ client->_bind( code_b ) }| &&
-                                    | : ${ client->_bind( code_init ) }) \}| ).
+                                   | : (${ client->_bind( selected_key ) } === 'B' ? ${ client->_bind( code_b ) }| &&
+                                   | : ${ client->_bind( code_init ) }) \}| ).
 
     client->view_display( view->stringify( ) ).
 

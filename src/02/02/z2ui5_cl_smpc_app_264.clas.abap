@@ -1,18 +1,19 @@
 " @keywords filter sap.ui.model boundfilters.filterbar table title toolbar label input toolbarspacer button column text
 " @summary This sample shows how bound filters work in a filter bar. As the user enters values, a toolbar with filter inputs instantly filters the customer table. It also demonstrates how to use the filter API to change the bound filters programmatically.
-" @origin sap.ui.core.sample.BoundFilters.FilterBar - https://sdk.openui5.org/entity/sap.ui.model.Filter/sample/sap.ui.core.sample.BoundFilters.FilterBar (status: reviewed)
+" @origin sap.ui.core.sample.BoundFilters.FilterBar - https://sdk.openui5.org/entity/sap.ui.model.Filter/sample/sap.ui.core.sample.BoundFilters.FilterBar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_264 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_teammember,
-             firstname  TYPE string,
-             lastname   TYPE string,
-             age        TYPE i,
-             department TYPE string,
-             location   TYPE string,
-           END OF ty_s_teammember.
+    TYPES:
+      BEGIN OF ty_s_teammember,
+        firstname  TYPE string,
+        lastname   TYPE string,
+        age        TYPE i,
+        department TYPE string,
+        location   TYPE string,
+      END OF ty_s_teammember.
 
     DATA t_teammembers      TYPE STANDARD TABLE OF ty_s_teammember WITH EMPTY KEY.
     DATA departmentprefix   TYPE string.
@@ -58,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_264 IMPLEMENTATION.
     " time, so the toggle event redraws the view with the other boundFilters
     " list instead of calling ListBinding.filter (app 241 precedent). Only the
     " fragment is composed here - every client->_bind( ) call stays inline.
-    DATA(lv_boundfilters) = COND string(
+    DATA(boundfilters) = COND string(
       WHEN showorganizational = abap_true
       THEN |\{ path: 'LOCATION', operator: 'StartsWith', value1: '{ client->_bind( locationprefix ) }' \}, | &&
            |\{ path: 'DEPARTMENT', operator: 'StartsWith', value1: '{ client->_bind( departmentprefix ) }' \}|
@@ -66,19 +67,19 @@ CLASS z2ui5_cl_smpc_app_264 IMPLEMENTATION.
            |\{ path: 'LASTNAME', operator: 'StartsWith', value1: '{ client->_bind( lastname ) }' \}| ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `class`       v = `sapUiSizeCompact`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:table` v = `sap.ui.table`
-        )->a( n = `xmlns:rm`    v = `sap.ui.table.rowmodes`
+        )->a( n = `class`        v = `sapUiSizeCompact`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:table`  v = `sap.ui.table`
+        )->a( n = `xmlns:trm`    v = `sap.ui.table.rowmodes`
         " use odata types as they map empty input to null
         )->a( n = `core:require` v = `{StringType: 'sap/ui/model/odata/type/String'}`
 
         )->ele( n = `Table` ns = `table`
             )->a( n = `id`   v = `myTable`
             )->a( n = `rows` v = |\{ path: '{ client->_bind_path( t_teammembers ) }', | &&
-                                 |boundFilters: [{ lv_boundfilters }] \}|
+                                 |boundFilters: [{ boundfilters }] \}|
 
             )->ele( n = `extension` ns = `table`
                 )->tag( `Title`

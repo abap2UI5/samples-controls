@@ -1,6 +1,6 @@
 " @keywords image sap.m vbox hbox text
 " @summary Images are faster than words and attract people's attention. Images can also have an active state or be used in SVG format.
-" @origin sap.m.sample.Image - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.Image (status: reviewed)
+" @origin sap.m.sample.Image - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.Image (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_399 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -74,10 +74,10 @@ CLASS z2ui5_cl_smpc_app_399 IMPLEMENTATION.
                         " ariaDetails is newer than the 1.71 floor - kept for the 1:1 port (POST_171)
                         )->a( n = `ariaDetails` v = `detailsActiveImage`
                         )->a( n = `src`         t = pic3
-                        )->a( n = `width`       v = image_width
-                        )->a( n = `decorative`  v = `false`
-                        )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The image has been pressed` ) ) )
+                        )->a( n = `width`      v = image_width
+                        )->a( n = `decorative` v = `false`
+                        )->a( n = `press`      v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The image has been pressed` ) ) )
 
                 )->end(
                 )->ele( `VBox`

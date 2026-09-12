@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardmarginssinglesided panel text
 " @summary Clear the space to the left, right, top or bottom of your control.
-" @origin sap.m.sample.StandardMarginsSingleSided - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsSingleSided (status: generated)
+" @origin sap.m.sample.StandardMarginsSingleSided - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsSingleSided (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_430 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid layout html slider panel overflowtoolbar title griditemlayoutdata
 " @summary CSSGrid example for page layout.
-" @origin sap.ui.layout.sample.CSSGrid - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.CSSGrid (status: reviewed)
+" @origin sap.ui.layout.sample.CSSGrid - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.CSSGrid (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_124 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageformfocusableinput objectpagedynamicheadertitle breadcrumbs link title flexbox avatar text
 " @summary Object Page that focuses its first editable input in the currently selected section.
-" @origin sap.uxap.sample.ObjectPageFormFocusableInput - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormFocusableInput (status: generated)
+" @origin sap.uxap.sample.ObjectPageFormFocusableInput - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormFocusableInput (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_590 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -35,13 +35,13 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
     " each hold one blockcolor:BlockBlue, a BlockBase around a view whose whole
     " body is a coloured html:div - inlined as the text it shows (see sidecar)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -56,6 +56,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 )->a( n = `text` v = `Page 1 a very long link`
                             )->tag( n = `Link` ns = `m`
                                 )->a( n = `text` v = `Page 2 long link`
+
                         )->end(
                     )->end(
 
@@ -63,6 +64,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `Denise Smith`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
 
                     )->ele( `snappedHeading`
@@ -75,22 +77,26 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                             )->tag( n = `Title` ns = `m`
                                 )->a( n = `text`     v = `Denise Smith`
                                 )->a( n = `wrapping` v = `true`
+
                         )->end(
                     )->end(
 
                     )->ele( `snappedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `expandedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `actions`
@@ -102,6 +108,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                             )->a( n = `text`  v = `Focus`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                             t_arg = VALUE #( ( `nameInput` ) ( `focus` ) ) )
+
                     )->end(
                 )->end(
             )->end(
@@ -116,23 +123,24 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
                         )->a( n = `displaySize` v = `L`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `+33 6 4512 5158`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `DeniseSmith@sap.com`
 
-                        )->ele( n = `HorizontalLayout` ns = `layout`
+                        )->ele( n = `HorizontalLayout` ns = `l`
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/linkedin.png`
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src`   v = `https://sdk.openui5.org/test-resources/sap/uxap/images/Twitter.png`
                                 )->a( n = `class` v = `sapUiSmallMarginBegin`
+
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Hello! I am Denise and I use UxAP`
@@ -143,13 +151,15 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                             )->tag( n = `ProgressIndicator` ns = `m`
                                 )->a( n = `percentValue` v = `30`
                                 )->a( n = `displayValue` v = `30%`
+
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `San Jose, USA`
+
                     )->end(
                 )->end(
             )->end(
@@ -166,6 +176,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -181,6 +192,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -196,6 +208,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -211,6 +224,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -226,6 +240,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -241,6 +256,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                 " blockcolor:BlockBlue - a bare coloured html:div
                                 )->tag( n = `Text` ns = `m`
                                     )->a( n = `text` v = `Arbitrary block content...`
+
                             )->end(
                         )->end(
                     )->end(
@@ -253,14 +269,14 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->ele( `ObjectPageSubSection`
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `f`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable`  v = `true`
                                     )->a( n = `layout`    v = `ColumnLayout`
                                     )->a( n = `columnsM`  v = `2`
                                     )->a( n = `columnsL`  v = `3`
                                     )->a( n = `columnsXL` v = `4`
 
-                                    )->ele( n = `content` ns = `f`
+                                    )->ele( n = `content` ns = `form`
                                         )->tag( n = `Label` ns = `m`
                                             )->a( n = `text` v = `Name`
                                         " the Focus button's target: the first editable
@@ -273,9 +289,10 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
 
                                         )->ele( n = `Input` ns = `m`
                                             )->ele( n = `layoutData` ns = `m`
-                                                )->tag( n = `ColumnElementData` ns = `f`
+                                                )->tag( n = `ColumnElementData` ns = `form`
                                                     )->a( n = `cellsSmall` v = `2`
                                                     )->a( n = `cellsLarge` v = `1`
+
                                             )->end(
                                         )->end(
 
@@ -284,9 +301,10 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
 
                                         )->ele( n = `Input` ns = `m`
                                             )->ele( n = `layoutData` ns = `m`
-                                                )->tag( n = `ColumnElementData` ns = `f`
+                                                )->tag( n = `ColumnElementData` ns = `form`
                                                     )->a( n = `cellsSmall` v = `3`
                                                     )->a( n = `cellsLarge` v = `2`
+
                                             )->end(
                                         )->end(
 
@@ -306,6 +324,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                                 )->tag( n = `Item` ns = `core`
                                                     )->a( n = `text` v = `USA`
                                                     )->a( n = `key`  v = `USA`
+
                                             )->end(
                                         )->end(
 
@@ -340,6 +359,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                                             )->a( n = `text` v = `Fax`
                                         )->tag( n = `Input` ns = `m`
                                             )->a( n = `type` v = `Tel`
+
                                     )->end(
                                 )->end(
                             )->end(

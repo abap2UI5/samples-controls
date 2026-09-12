@@ -1,18 +1,19 @@
 " @keywords notificationlistgroup notification list group sap.m notificationlistgrouplazyloading vbox notificationlist flexitemdata button notificationlistitem
 " @summary Notification List Group with lazy loading of the notifications.
-" @origin sap.m.sample.NotificationListGroupLazyLoading - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroupLazyLoading (status: generated)
+" @origin sap.m.sample.NotificationListGroupLazyLoading - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroupLazyLoading (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_520 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_notification,
-             group    TYPE i,
-             id       TYPE i,
-             title    TYPE string,
-             datetime TYPE string,
-             priority TYPE string,
-           END OF ty_s_notification.
+    TYPES:
+      BEGIN OF ty_s_notification,
+        group    TYPE i,
+        id       TYPE i,
+        title    TYPE string,
+        datetime TYPE string,
+        priority TYPE string,
+      END OF ty_s_notification.
     TYPES ty_t_notification TYPE STANDARD TABLE OF ty_s_notification WITH EMPTY KEY.
 
     DATA t_group1 TYPE ty_t_notification.

@@ -1,15 +1,16 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxmaxpickerheight verticallayout label item
 " @summary Limit the picker popup height using maxPickerHeight property
-" @origin sap.m.sample.MultiComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxMaxPickerHeight (status: generated)
+" @origin sap.m.sample.MultiComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxMaxPickerHeight (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_495 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items TYPE ty_t_item.
@@ -75,10 +76,10 @@ CLASS z2ui5_cl_smpc_app_495 IMPLEMENTATION.
                         )->a( n = `text`     v = `MultiComboBox with maxPickerHeight='300px'`
                         )->a( n = `labelFor` v = `idMultiComboBox300px`
                     )->ele( `MultiComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idMultiComboBox300px`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idMultiComboBox300px`
                         )->a( n = `maxPickerHeight` v = `300px`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`
@@ -90,10 +91,10 @@ CLASS z2ui5_cl_smpc_app_495 IMPLEMENTATION.
                         )->a( n = `text`     v = `MultiComboBox with maxPickerHeight='15rem'`
                         )->a( n = `labelFor` v = `idMultiComboBox15rem`
                     )->ele( `MultiComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idMultiComboBox15rem`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idMultiComboBox15rem`
                         )->a( n = `maxPickerHeight` v = `15rem`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`
@@ -105,12 +106,12 @@ CLASS z2ui5_cl_smpc_app_495 IMPLEMENTATION.
                         )->a( n = `text`     v = `MultiComboBox with maxPickerHeight='150px' and value state`
                         )->a( n = `labelFor` v = `idMultiComboBoxWithValueState`
                     )->ele( `MultiComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idMultiComboBoxWithValueState`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idMultiComboBoxWithValueState`
                         )->a( n = `maxPickerHeight` v = `150px`
                         )->a( n = `valueState`      v = `Information`
                         )->a( n = `valueStateText`  v = `The maxPickerHeight property limits the picker popup height. When items exceed this height, the picker becomes scrollable.`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`

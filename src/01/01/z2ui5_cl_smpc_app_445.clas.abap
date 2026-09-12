@@ -1,6 +1,6 @@
 " @keywords text sap.m texthyphenation simpleform label switch slider panel title blocklayout blocklayoutrow blocklayoutcell
 " @summary The Text control has a property allowing hyphenation.
-" @origin sap.m.sample.TextHyphenation - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextHyphenation (status: generated)
+" @origin sap.m.sample.TextHyphenation - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextHyphenation (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_445 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -41,11 +41,11 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `xmlns:l`      v = `sap.ui.layout`
         )->a( n = `displayBlock` v = `true`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `adjustLabelSpan` v = `false`
@@ -82,9 +82,9 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
                 )->a( n = `id`           v = `text0`
                 )->a( n = `wrappingType` v = wrapping_type
                 )->a( n = `text`         v = `An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the ` &&
-                                         `tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's ` &&
-                                         `API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are` &&
-                                         ` table rows and cells, or the content of a table cell.`
+                                             `tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's ` &&
+                                             `API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are` &&
+                                             ` table rows and cells, or the content of a table cell.`
 
         )->end(
 
@@ -105,9 +105,9 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
                         )->a( n = `id`           v = `text1`
                         )->a( n = `wrappingType` v = wrapping_type
                         )->a( n = `text`         v = `An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the ` &&
-                                             `tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's ` &&
-                                             `API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are` &&
-                                             ` table rows and cells, or the content of a table cell.`
+                                                     `tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's ` &&
+                                                     `API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are` &&
+                                                     ` table rows and cells, or the content of a table cell.`
 
                 )->end(
 
@@ -118,9 +118,9 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
                         )->a( n = `id`           v = `text2`
                         )->a( n = `wrappingType` v = wrapping_type
                         )->a( n = `text`         v = `An association is a type of relation between two UI element types which is independent of the parent-child relationship within the` &&
-                                             ` tree structure. Directed outgoing associations to a target of cardinality 0..1 are supported. They represent a loose coupling ` &&
-                                             `only and are thus implemented by storing the target element instance's ID. The most prominent example is the association between a` &&
-                                             ` label and its field.`
+                                                     ` tree structure. Directed outgoing associations to a target of cardinality 0..1 are supported. They represent a loose coupling ` &&
+                                                     `only and are thus implemented by storing the target element instance's ID. The most prominent example is the association between a` &&
+                                                     ` label and its field.`
 
                 )->end(
 
@@ -131,9 +131,9 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
                         )->a( n = `id`           v = `text3`
                         )->a( n = `wrappingType` v = wrapping_type
                         )->a( n = `text`         v = `In contrast to synchronous processing this processing mode does not keep the browser thread busy but does the processing in the ` &&
-                                             `background and continues with the next task. Code can be executed asynchronously and a callback function is triggered when a ` &&
-                                             `certain condition is met. Similarly, a file can be loaded asynchronously. Asynchronous processing is highly recommended for ` &&
-                                             `performance reasons and to not freeze the UI.`
+                                                     `background and continues with the next task. Code can be executed asynchronously and a callback function is triggered when a ` &&
+                                                     `certain condition is met. Similarly, a file can be loaded asynchronously. Asynchronous processing is highly recommended for ` &&
+                                                     `performance reasons and to not freeze the UI.`
 
                 )->end(
 

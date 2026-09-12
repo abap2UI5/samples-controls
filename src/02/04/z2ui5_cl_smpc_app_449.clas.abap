@@ -1,6 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutlandmarkinfo flexiblecolumnlayoutaccessiblelandmarkinfo button vbox
 " @summary Flexible Column Layout where the first and the last columns have custom Landmark Info
-" @origin sap.f.sample.FlexibleColumnLayoutLandmarkInfo - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutLandmarkInfo (status: generated)
+" @origin sap.f.sample.FlexibleColumnLayoutLandmarkInfo - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutLandmarkInfo (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_449 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -72,8 +72,8 @@ CLASS z2ui5_cl_smpc_app_449 IMPLEMENTATION.
 
             )->ele( n = `midColumnPages` ns = `f`
                 )->ele( `Page`
-                    )->a( n = `id`               v = `detailPage`
-                    )->a( n = `title`            v = `Middle Column`
+                    )->a( n = `id`    v = `detailPage`
+                    )->a( n = `title` v = `Middle Column`
 
                     )->ele( `VBox`
                         )->tag( `Button`

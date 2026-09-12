@@ -1,6 +1,6 @@
 " @keywords text sap.m textemptyindicator panel simpleform label switch
 " @summary The Text control has a property allowing an empty text indicator to be displayed.
-" @origin sap.m.sample.TextEmptyIndicator - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextEmptyIndicator (status: generated)
+" @origin sap.m.sample.TextEmptyIndicator - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextEmptyIndicator (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_439 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -34,7 +34,7 @@ CLASS z2ui5_cl_smpc_app_439 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `displayBlock` v = `true`
 
         )->ele( `Panel`
@@ -42,7 +42,7 @@ CLASS z2ui5_cl_smpc_app_439 IMPLEMENTATION.
             )->a( n = `headerText` v = `emptyIndicatorMode:'On`
             )->a( n = `width`      v = `100%`
 
-            )->ele( n = `SimpleForm` ns = `f`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `layout`          v = `ResponsiveGridLayout`
                 )->a( n = `editable`        v = `true`
                 )->a( n = `adjustLabelSpan` v = `false`
@@ -67,7 +67,7 @@ CLASS z2ui5_cl_smpc_app_439 IMPLEMENTATION.
             )->a( n = `headerText` v = `emptyIndicatorMode:'Auto'`
             )->a( n = `width`      v = `100%`
 
-            )->ele( n = `SimpleForm` ns = `f`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `layout`          v = `ResponsiveGridLayout`
                 )->a( n = `editable`        v = `true`
                 )->a( n = `adjustLabelSpan` v = `false`

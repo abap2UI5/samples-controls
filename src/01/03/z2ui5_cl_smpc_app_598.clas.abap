@@ -1,6 +1,6 @@
 " @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionmultiview objectpagelayout objectpageheader objectpagesection simpleform
 " @summary This example shows how blocks can be laid out automatically by the Object Page when their size is not specified.
-" @origin sap.uxap.sample.ObjectPageSubSectionMultiView - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionMultiView (status: generated)
+" @origin sap.uxap.sample.ObjectPageSubSectionMultiView - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionMultiView (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_598 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -35,10 +35,10 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
     " all one BlockBase, sample:BlockEmpty, around an EMPTY SimpleForm - the
     " sample lays out 1..6 of them per subsection to show the automatic layout
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`      v = `100%`
-        )->a( n = `xmlns`       v = `sap.uxap`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -48,6 +48,7 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                 )->tag( `ObjectPageHeader`
                     )->a( n = `objectTitle`    v = `Automatic layout of blocks`
                     )->a( n = `objectSubtitle` v = `This example shows how blocks can be laid out automatically by the Object Page when their size is not specified`
+
             )->end(
 
             )->ele( `sections`
@@ -61,7 +62,7 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
@@ -75,14 +76,14 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
@@ -96,21 +97,21 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
@@ -124,28 +125,28 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
@@ -159,35 +160,35 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
@@ -201,42 +202,42 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
 
                                 " sample:BlockEmpty inlined - an empty SimpleForm
-                                )->tag( n = `SimpleForm` ns = `forms`
+                                )->tag( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `title`            v = ` `
                                     )->a( n = `editable`         v = `false`

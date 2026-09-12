@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeodata standardtreeitem
 " @summary This example shows Tree with OData service.
-" @origin sap.m.sample.TreeOData - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeOData (status: generated)
+" @origin sap.m.sample.TreeOData - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeOData (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_603 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -90,6 +90,7 @@ CLASS z2ui5_cl_smpc_app_603 IMPLEMENTATION.
 
         )->tag( `StandardTreeItem`
             )->a( n = `title` v = `{DESCRIPTION}`
+
     )->end( ).
 
     client->view_display( view->stringify( ) ).

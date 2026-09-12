@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeexpandmulti overflowtoolbar title toolbarspacer button multicombobox item togglebutton standardtreeitem
 " @summary This example shows how to expand/collapse multiple nodes and demonstrates the sticky header toolbar and info toolbar options.
-" @origin sap.m.sample.TreeExpandMulti - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandMulti (status: generated)
+" @origin sap.m.sample.TreeExpandMulti - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandMulti (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_601 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -124,6 +124,7 @@ CLASS z2ui5_cl_smpc_app_601 IMPLEMENTATION.
                                 )->tag( n = `Item` ns = `core`
                                     )->a( n = `text` v = `Info Toolbar`
                                     )->a( n = `key`  v = `InfoToolbar`
+
                             )->end(
                         )->end(
 
@@ -134,6 +135,7 @@ CLASS z2ui5_cl_smpc_app_601 IMPLEMENTATION.
                             )->a( n = `id`      v = `toggleInfoToolbar`
                             )->a( n = `text`    v = `Hide/Show InfoToolbar`
                             )->a( n = `pressed` v = client->_bind( hide_info )
+
                     )->end(
                 )->end(
             )->end(
@@ -144,6 +146,7 @@ CLASS z2ui5_cl_smpc_app_601 IMPLEMENTATION.
                     )->ele( `content`
                         )->tag( `Title`
                             )->a( n = `text` v = `Tree's info toolbar`
+
                     )->end(
                 )->end(
             )->end(

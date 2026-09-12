@@ -1,6 +1,6 @@
 " @keywords bar sap.m header sub footer bars button overflowtoolbar searchfield vbox text toolbarspacer
 " @summary Each screen of a mobile application is typically represented by a 'Page' consisting of a header, a scrollable content area and optionally a footer. The standard header offers a navigation button and a title.
-" @origin sap.m.sample.Page - https://sdk.openui5.org/entity/sap.m.Bar/sample/sap.m.sample.Page (status: checked)
+" @origin sap.m.sample.Page - https://sdk.openui5.org/entity/sap.m.Bar/sample/sap.m.sample.Page (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_002 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

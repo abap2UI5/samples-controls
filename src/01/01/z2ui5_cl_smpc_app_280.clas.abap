@@ -1,14 +1,14 @@
 " @keywords textarea text area sap.m textareavalueupdate simpleform label switch
 " @summary Since 1.30 the value property of sap.m.TextArea is not updated on every keystroke, but first when the user presses Enter or leaves the input. The change was necessary to fully support the standard UI5 data binding with formatters and types.
-" @origin sap.m.sample.TextAreaValueUpdate - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaValueUpdate (status: checked)
+" @origin sap.m.sample.TextAreaValueUpdate - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaValueUpdate (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_280 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA value_live_update TYPE abap_bool.
-    DATA input_value       TYPE string.
-    DATA get_value         TYPE string.
+    DATA valueliveupdate TYPE abap_bool.
+    DATA inputvalue      TYPE string.
+    DATA get_value       TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -53,14 +53,14 @@ CLASS z2ui5_cl_smpc_app_280 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `ValueLiveUpdate`
             )->tag( `Switch`
-                )->a( n = `state` v = client->_bind( value_live_update )
+                )->a( n = `state` v = client->_bind( valueliveupdate )
 
             )->tag( `Label`
                 )->a( n = `text` v = `Type here`
             )->tag( `TextArea`
                 )->a( n = `id`              v = `TypeHere`
-                )->a( n = `value`           v = client->_bind( input_value )
-                )->a( n = `valueLiveUpdate` v = client->_bind( value_live_update )
+                )->a( n = `value`           v = client->_bind( inputvalue )
+                )->a( n = `valueLiveUpdate` v = client->_bind( valueliveupdate )
                 )->a( n = `liveChange`      v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/value}` )
 
             )->tag( `Label`
@@ -73,7 +73,7 @@ CLASS z2ui5_cl_smpc_app_280 IMPLEMENTATION.
                 )->a( n = `text` v = `model.getProperty()`
             )->tag( `Text`
                 )->a( n = `id`   v = `getProperty`
-                )->a( n = `text` v = client->_bind( input_value ) ).
+                )->a( n = `text` v = client->_bind( inputvalue ) ).
 
     client->view_display( view->stringify( ) ).
 

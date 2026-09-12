@@ -1,24 +1,25 @@
 " @keywords table sap.m tableicolumnheadermenu menu quicksort quicksortitem actionitem quickaction button overflowtoolbar title column
 " @summary This example demonstrates an implementation of the IColumnHeaderMenu interface with the sap.m.Menu as a breakout scenario.
-" @origin sap.m.sample.TableIColumnHeaderMenu - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableIColumnHeaderMenu (status: generated)
+" @origin sap.m.sample.TableIColumnHeaderMenu - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableIColumnHeaderMenu (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_571 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -34,9 +35,9 @@ CLASS z2ui5_cl_smpc_app_571 DEFINITION PUBLIC.
     DATA grouped TYPE abap_bool.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS table_sort IMPORTING field      TYPE string
                                  descending TYPE abap_bool.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.

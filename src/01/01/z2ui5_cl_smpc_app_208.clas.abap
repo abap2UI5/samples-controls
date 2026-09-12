@@ -1,6 +1,6 @@
 " @keywords standardlistitem standard list item sap.m standardlistiteminfo
 " @summary This list item offers a standardized user interface for list content with title and info.
-" @origin sap.m.sample.StandardListItemInfo - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemInfo (status: reviewed)
+" @origin sap.m.sample.StandardListItemInfo - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemInfo (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_208 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -196,8 +196,8 @@ CLASS z2ui5_cl_smpc_app_208 IMPLEMENTATION.
     " the original's '.formatter.status' maps Status -> a ValueState in the
     " frontend; abap2UI5 is a thin frontend, so the info state is derived here
     " in the backend and bound directly (infoState="{INFOSTATE}")
-    LOOP AT t_products REFERENCE INTO DATA(lr_product).
-      lr_product->infostate = SWITCH #( lr_product->status
+    LOOP AT t_products REFERENCE INTO DATA(product).
+      product->infostate = SWITCH #( product->status
         WHEN `Available`    THEN `Success`
         WHEN `Out of Stock` THEN `Warning`
         WHEN `Discontinued` THEN `Error`

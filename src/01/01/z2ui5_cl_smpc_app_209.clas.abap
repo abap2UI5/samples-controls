@@ -1,6 +1,6 @@
 " @keywords objectheader object header sap.m objectheaderresponsivev objectattribute objectmarker objectstatus
 " @summary This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes.
-" @origin sap.m.sample.ObjectHeaderResponsiveV - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveV (status: reviewed)
+" @origin sap.m.sample.ObjectHeaderResponsiveV - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveV (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_209 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeselection overflowtoolbar title toolbarspacer select item standardtreeitem
 " @summary This example shows different selection modes of Tree.
-" @origin sap.m.sample.TreeSelection - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeSelection (status: generated)
+" @origin sap.m.sample.TreeSelection - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeSelection (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_437 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords standardlistitem standard list item sap.m standardlistitemwrapping toolbar title toolbarspacer togglebutton
 " @summary This sample demonstrates the wrapping behavior of the title text and the description text. In desktop mode, the character limit is set to 300 characters, whereas in the phone mode, the character limit is set to 100 characters.
-" @origin sap.m.sample.StandardListItemWrapping - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemWrapping (status: reviewed)
+" @origin sap.m.sample.StandardListItemWrapping - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemWrapping (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_376 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

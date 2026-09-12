@@ -1,50 +1,54 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarviews vbox title label select item datetyperange planningcalendarview
 " @summary PlanningCalendar with custom views to set number of hours, days and months and change view description. It illustrates both built-in and custom views. Sub-intervals are shown. Custom non-working days and hours are set.
-" @origin sap.m.sample.PlanningCalendarViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarViews (status: generated)
+" @origin sap.m.sample.PlanningCalendarViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarViews (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
     TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-             aria      TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+        aria      TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             " nonWorkingDays / nonWorkingHours are int[] properties: a table of
-             " STRINGS serializes to ['5','6'] and UI5 rejects it ("is of type
-             " object, expected int[]"), so both are integer tables
-             t_free_days    TYPE ty_t_int,
-             t_free_hours   TYPE ty_t_int,
-             t_appointments TYPE ty_t_appointment,
-             t_headers      TYPE ty_t_header,
-             selected       TYPE abap_bool,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        " nonWorkingDays / nonWorkingHours are int[] properties: a table of
+        " STRINGS serializes to ['5','6'] and UI5 rejects it ("is of type
+        " object, expected int[]"), so both are integer tables
+        t_free_days    TYPE ty_t_int,
+        t_free_hours   TYPE ty_t_int,
+        t_appointments TYPE ty_t_appointment,
+        t_headers      TYPE ty_t_header,
+        selected       TYPE abap_bool,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_special,
-             start_at TYPE string,
-             type     TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_at TYPE string,
+        type     TYPE string,
+      END OF ty_s_special.
     DATA t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA start_date  TYPE string.
@@ -87,11 +91,11 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
     " calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -113,30 +117,30 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
                 " setBuiltInViews - a bindable string[] property, bound here
                 )->a( n = `builtInViews`              v = client->_bind( t_built_in )
                 )->a( n = `appointmentSelect`         v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleIntervalSelect: in the nonWorking view it toggles the special
                 " date, otherwise it pushes a 'new appointment' into the row it hit
                 " (or into every selected row). The interval's start/end travel as
                 " their LOCAL parts - a UTC toISOString( ) would shift the day
                 )->a( n = `intervalSelect`            v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                                     val   = `INTERVAL_SELECT`
+                                     t_arg = VALUE #(
+                                       ( `${$parameters>/startDate}.getFullYear()` )
+                                       ( `${$parameters>/startDate}.getMonth() + 1` )
+                                       ( `${$parameters>/startDate}.getDate()` )
+                                       ( `${$parameters>/startDate}.getHours()` )
+                                       ( `${$parameters>/startDate}.getMinutes()` )
+                                       ( `${$parameters>/endDate}.getFullYear()` )
+                                       ( `${$parameters>/endDate}.getMonth() + 1` )
+                                       ( `${$parameters>/endDate}.getDate()` )
+                                       ( `${$parameters>/endDate}.getHours()` )
+                                       ( `${$parameters>/endDate}.getMinutes()` )
+                                       ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
                 )->a( n = `showEmptyIntervalHeaders`  v = `false`
 
                 )->ele( `toolbarContent`
@@ -167,7 +171,7 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `specialDates`
-                    )->tag( n = `DateTypeRange` ns = `unified`
+                    )->tag( n = `DateTypeRange` ns = `u`
                         )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `type`      v = `{TYPE}`
 
@@ -213,14 +217,14 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
                         )->a( n = `icon`            v = `{PIC}`
                         )->a( n = `title`           v = `{NAME}`
                         )->a( n = `text`            v = `{ROLE}`
-                        )->a( n = `selected`     v = `{SELECTED}`
+                        )->a( n = `selected`        v = `{SELECTED}`
                         )->a( n = `nonWorkingDays`  v = `{T_FREE_DAYS}`
                         )->a( n = `nonWorkingHours` v = `{T_FREE_HOURS}`
                         )->a( n = `appointments`    v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
                         )->a( n = `intervalHeaders` v = `{path: 'T_HEADERS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate`    v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`      v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`         v = `{PIC}`
@@ -232,7 +236,7 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

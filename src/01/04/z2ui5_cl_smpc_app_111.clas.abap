@@ -1,15 +1,16 @@
 " @keywords gridlist grid list sap.f layout slider panel toolbar title gridlistitem vbox flexitemdata
 " @summary A GridList with the default grid layout, resized live with a slider to show how the grid reflows.
-" @origin sap.f.sample.GridListBasic - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBasic (status: reviewed)
+" @origin sap.f.sample.GridListBasic - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBasic (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_111 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             title    TYPE string,
-             subtitle TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        title    TYPE string,
+        subtitle TYPE string,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
     DATA slider_value TYPE i.
 

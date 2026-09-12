@@ -1,6 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutlandmarkinfoarrow flexiblecolumnlayoutaccessiblelandmarkinfo button vbox
 " @summary Flexible Column Layout where the all the arrows have custom Landmark Info
-" @origin sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow (status: generated)
+" @origin sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_450 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -74,8 +74,8 @@ CLASS z2ui5_cl_smpc_app_450 IMPLEMENTATION.
 
             )->ele( n = `midColumnPages` ns = `f`
                 )->ele( `Page`
-                    )->a( n = `id`               v = `detailPage`
-                    )->a( n = `title`            v = `Middle Column`
+                    )->a( n = `id`    v = `detailPage`
+                    )->a( n = `title` v = `Middle Column`
 
                     )->ele( `VBox`
                         )->tag( `Button`

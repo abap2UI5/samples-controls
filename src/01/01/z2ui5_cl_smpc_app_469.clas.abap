@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardmarginscollapse panel text
 " @summary See how adjacent margins collapse to a single margin.
-" @origin sap.m.sample.StandardMarginsCollapse - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsCollapse (status: generated)
+" @origin sap.m.sample.StandardMarginsCollapse - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsCollapse (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_469 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

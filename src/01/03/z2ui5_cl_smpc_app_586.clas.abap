@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap anchorbar objectpagedynamicheadertitle title objectpagesection objectpagesubsection simpleform label text
 " @summary AnchorBar has a different behavior based on the device
-" @origin sap.uxap.sample.AnchorBar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.AnchorBar (status: generated)
+" @origin sap.uxap.sample.AnchorBar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.AnchorBar (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_586 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -35,11 +35,11 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
     " aggregation holds one sample:mySimpleBlock, a BlockBase wrapper around the
     " static mySimpleBlock.view.xml - its SimpleForm is inlined 1:1 below
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -51,10 +51,12 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `AnchorBar sample`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `AnchorBar sample`
+
                     )->end(
                 )->end(
             )->end(
@@ -63,6 +65,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                 )->tag( n = `Title` ns = `m`
                     )->a( n = `text`       v = `This example explains how the Anchor Bar is built based on page content`
                     )->a( n = `titleStyle` v = `H6`
+
             )->end(
 
             )->ele( `sections`
@@ -76,7 +79,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = `Subsection 1.1 `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -84,14 +87,15 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
                         )->ele( `ObjectPageSubSection`
-                            )->a( n = `id`             v = `section1_SS2`
-                            )->a( n = `title`          v = `Subsection 1.2 `
+                            )->a( n = `id`    v = `section1_SS2`
+                            )->a( n = `title` v = `Subsection 1.2 `
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -99,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -108,6 +113,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                     )->a( n = `titleUppercase` v = `false`
                     )->a( n = `id`             v = `section2`
                     )->a( n = `title`          v = `Section 2`
+
                 )->end(
                 )->ele( `ObjectPageSection`
                     )->a( n = `titleUppercase` v = `false`
@@ -119,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -127,6 +133,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -142,7 +149,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = `Subsection 4.1 `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -150,6 +157,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -165,7 +173,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -173,6 +181,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -188,7 +197,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -196,6 +205,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -211,7 +221,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -219,6 +229,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -232,7 +243,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -240,6 +251,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -253,7 +265,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -261,6 +273,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -274,7 +287,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -282,6 +295,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -295,7 +309,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -303,6 +317,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -316,7 +331,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -324,6 +339,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -337,7 +353,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -345,6 +361,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -358,7 +375,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -366,6 +383,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -379,7 +397,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
                                     )->a( n = `editable`         v = `false`
@@ -387,6 +405,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(

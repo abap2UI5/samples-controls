@@ -1,6 +1,6 @@
 " @keywords blocklayout block layout sap.ui.layout backgrounds html vbox hbox label select item blocklayoutrow
 " @summary Block Layout in which all cells use the same background color set and different color shade.
-" @origin sap.ui.layout.sample.BlockLayoutCustomBackground - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutCustomBackground (status: checked)
+" @origin sap.ui.layout.sample.BlockLayoutCustomBackground - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutCustomBackground (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_140 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -40,7 +40,7 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns`      v = `sap.m`
 
 
@@ -138,7 +138,7 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                         )->a( n = `title`                v = `Simple Form (Shade C)`
                         )->a( n = `backgroundColorSet`   v = client->_bind( colorset )
                         )->a( n = `backgroundColorShade` v = `ShadeC`
-                        )->ele( n = `SimpleForm` ns = `f`
+                        )->ele( n = `SimpleForm` ns = `form`
                             )->a( n = `editable`         v = `true`
                             )->a( n = `backgroundDesign` v = `Transparent`
                             )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -158,8 +158,8 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                                 )->a( n = `text` v = `sap.m.Text`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, ` &&
-                                             `faucibus suscipit metus. Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. ` &&
-                                             `Aliquam in sapien sit amet tortor laoreet feugiat id in ligula.`
+                                                     `faucibus suscipit metus. Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. ` &&
+                                                     `Aliquam in sapien sit amet tortor laoreet feugiat id in ligula.`
 
                         )->end(
                     )->end(
@@ -173,9 +173,9 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                         )->a( n = `backgroundColorShade` v = `ShadeD`
                         )->tag( `Text`
                             )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. ` &&
-                                             `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
-                                             `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
-                                             `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
+                                                 `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
+                                                 `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
+                                                 `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
 
                     )->end(
                 )->end(
@@ -188,9 +188,9 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                         )->a( n = `backgroundColorShade` v = `ShadeE`
                         )->tag( `Text`
                             )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. ` &&
-                                             `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
-                                             `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
-                                             `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
+                                                 `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
+                                                 `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
+                                                 `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
 
                     )->end(
                 )->end(
@@ -202,9 +202,9 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                         )->a( n = `backgroundColorShade` v = `ShadeF`
                         )->tag( `Text`
                             )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. ` &&
-                                             `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
-                                             `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
-                                             `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
+                                                 `Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat ` &&
+                                                 `fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis ` &&
+                                                 `tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
     client->view_display( view->stringify( ) ).
 

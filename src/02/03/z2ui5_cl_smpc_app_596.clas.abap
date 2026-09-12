@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagetabnavigationmode objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary Object Page sample showing a layout where the navigation is Tab based (one Tab per section) rather than having all of the sections visible at the same time.
-" @origin sap.uxap.sample.ObjectPageTabNavigationMode - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageTabNavigationMode (status: generated)
+" @origin sap.uxap.sample.ObjectPageTabNavigationMode - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageTabNavigationMode (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_596 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -44,7 +44,7 @@ CLASS z2ui5_cl_smpc_app_596 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    view->ele( n = `View` ns = `mvc`
+    DATA(blocks) = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`       v = `100%`
         )->a( n = `xmlns`        v = `sap.uxap`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
@@ -643,80 +643,26 @@ CLASS z2ui5_cl_smpc_app_596 IMPLEMENTATION.
                             )->a( n = `id`             v = `connectionsSS1`
                             )->a( n = `titleUppercase` v = `false`
 
-                            )->ele( `blocks`
+                            )->ele( `blocks` ).
 
-                                " connections:ConnectionsBlock inlined -
-                                " six Panels over emp1>..emp6>, which
-                                " are the six rows of one table
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 1 ]-picture tab = t_employees tab_index = 1 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-name tab = t_employees tab_index = 1 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-job tab = t_employees tab_index = 1 )
+    " connections:ConnectionsBlock inlined -
+    " six Panels over emp1>..emp6>, which
+    " are the six rows of one table
+    DO 6 TIMES.
+      DATA(row_no) = sy-index.
 
-                                    )->end(
-                                )->end(
+      blocks->ele( n = `Panel` ns = `m`
+          )->ele( n = `VBox` ns = `m`
+              )->tag( n = `Image` ns = `m`
+                  )->a( n = `src` v = client->_bind( val = t_employees[ row_no ]-picture tab = t_employees tab_index = row_no )
+              )->tag( n = `Label` ns = `m`
+                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-name tab = t_employees tab_index = row_no )
+              )->tag( n = `Label` ns = `m`
+                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-job tab = t_employees tab_index = row_no )
 
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 2 ]-picture tab = t_employees tab_index = 2 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-name tab = t_employees tab_index = 2 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-job tab = t_employees tab_index = 2 )
-
-                                    )->end(
-                                )->end(
-
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 3 ]-picture tab = t_employees tab_index = 3 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 3 ]-name tab = t_employees tab_index = 3 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 3 ]-job tab = t_employees tab_index = 3 )
-
-                                    )->end(
-                                )->end(
-
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 4 ]-picture tab = t_employees tab_index = 4 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 4 ]-name tab = t_employees tab_index = 4 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 4 ]-job tab = t_employees tab_index = 4 )
-
-                                    )->end(
-                                )->end(
-
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 5 ]-picture tab = t_employees tab_index = 5 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 5 ]-name tab = t_employees tab_index = 5 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 5 ]-job tab = t_employees tab_index = 5 )
-
-                                    )->end(
-                                )->end(
-
-                                )->ele( n = `Panel` ns = `m`
-                                    )->ele( n = `VBox` ns = `m`
-                                        )->tag( n = `Image` ns = `m`
-                                            )->a( n = `src` v = client->_bind( val = t_employees[ 6 ]-picture tab = t_employees tab_index = 6 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 6 ]-name tab = t_employees tab_index = 6 )
-                                        )->tag( n = `Label` ns = `m`
-                                            )->a( n = `text` v = client->_bind( val = t_employees[ 6 ]-job tab = t_employees tab_index = 6 )
-        ).
+          )->end(
+      )->end( ).
+    ENDDO.
 
     client->view_display( view->stringify( ) ).
 

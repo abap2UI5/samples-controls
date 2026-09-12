@@ -1,35 +1,37 @@
 " @keywords overflowtoolbartokenizer overflow toolbar tokenizer sap.m token text input button verticallayout label overflowtoolbarlayoutdata
 " @summary Tokenizer integration with sap.m.OverflowToolbar
-" @origin sap.m.sample.OverflowToolbarTokenizer - https://sdk.openui5.org/entity/sap.m.OverflowToolbarTokenizer/sample/sap.m.sample.OverflowToolbarTokenizer (status: reviewed)
+" @origin sap.m.sample.OverflowToolbarTokenizer - https://sdk.openui5.org/entity/sap.m.OverflowToolbarTokenizer/sample/sap.m.sample.OverflowToolbarTokenizer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_203 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_token,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_token.
+    TYPES:
+      BEGIN OF ty_s_token,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_token.
     DATA t_tokens  TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
     DATA new_token TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    TYPES: BEGIN OF ty_s_event_token,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_event_token.
+    TYPES:
+      BEGIN OF ty_s_event_token,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_event_token.
     TYPES ty_t_event_token TYPE STANDARD TABLE OF ty_s_event_token WITH EMPTY KEY.
 
+    METHODS view_display.
+
+    METHODS on_event.
     METHODS event_tokens
       IMPORTING
         val           TYPE string
       RETURNING
         VALUE(result) TYPE ty_t_event_token.
-
-    METHODS view_display.
-    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -67,13 +69,13 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
             " sap.m.OverflowToolbarTokenizer is @ui5-experimental-since 1.139 (no plain @since tag,
             " invisible to scope-of/property gate) - out of 1.71 scope, see the sidecar deviation
             )->ele( `OverflowToolbarTokenizer`
-                )->a( n = `id`        v = `toolbarTokenizer`
-                )->a( n = `width`     v = `50%`
-                )->a( n = `labelText` v = `Tokenizer in sap.m.Toolbar:`
+                )->a( n = `id`          v = `toolbarTokenizer`
+                )->a( n = `width`       v = `50%`
+                )->a( n = `labelText`   v = `Tokenizer in sap.m.Toolbar:`
                 " this is the tokenizer onAddToken/onTokenDelete work on, so its three
                 " static tokens are folded into a bound aggregation (the app-085 pattern):
                 " adding appends a row, deleting removes the row by its key
-                )->a( n = `tokens`    v = client->_bind( t_tokens )
+                )->a( n = `tokens`      v = client->_bind( t_tokens )
                 " onTokenDelete iterates ALL deleted tokens - the event carries the
                 " whole selection, not one token - so the ARRAY travels and ABAP
                 " loops. The frontend marshals each control into its properties
@@ -124,9 +126,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `overflowToolbarTokenizer`
-                        )->a( n = `width`     v = `75%`
-                        )->a( n = `labelText` v = `Filter by:`
+                        )->a( n = `id`          v = `overflowToolbarTokenizer`
+                        )->a( n = `width`       v = `75%`
+                        )->a( n = `labelText`   v = `Filter by:`
                         " onTokenDelete removes the token and toasts its text. The token is
                         " static here, so the wire removes it by ID - removeAggregation accepts
                         " an id (measured, scripts/probes/event-arg-expression-probe.mjs) - and
@@ -197,10 +199,10 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `tokenizerMaxWidth`
-                        )->a( n = `width`     v = `45%`
-                        )->a( n = `maxWidth`  v = `85%`
-                        )->a( n = `labelText` v = `Random label text:`
+                        )->a( n = `id`          v = `tokenizerMaxWidth`
+                        )->a( n = `width`       v = `45%`
+                        )->a( n = `maxWidth`    v = `85%`
+                        )->a( n = `labelText`   v = `Random label text:`
                         " onTokenDelete removes the token and toasts its text. The token is
                         " static here, so the wire removes it by ID - removeAggregation accepts
                         " an id (measured, scripts/probes/event-arg-expression-probe.mjs) - and
@@ -364,9 +366,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `tokenizerShowItems`
-                        )->a( n = `width`     v = `35%`
-                        )->a( n = `labelText` v = `Show items:`
+                        )->a( n = `id`          v = `tokenizerShowItems`
+                        )->a( n = `width`       v = `35%`
+                        )->a( n = `labelText`   v = `Show items:`
                         )->a( n = `tokenDelete` v = client->follow_up_action(
                                   val   = client->cs_event-control_global
                                   t_arg = VALUE #( ( `MESSAGE_TOAST` )
@@ -446,9 +448,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
         " remove it. Selecting several tokens and pressing Delete really does
         " deliver several: Tokenizer fires with getSelectedTokens( ) when there
         " is a selection, and with the focused token otherwise
-        LOOP AT event_tokens( client->get_event_arg( ) ) REFERENCE INTO DATA(lr_del).
-          client->message_toast_display( |Token deleted: { lr_del->text }| ).
-          DELETE t_tokens WHERE key = lr_del->key.
+        LOOP AT event_tokens( client->get_event_arg( ) ) REFERENCE INTO DATA(del).
+          client->message_toast_display( |Token deleted: { del->text }| ).
+          DELETE t_tokens WHERE key = del->key.
         ENDLOOP.
 
     ENDCASE.
@@ -458,13 +460,13 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
 
   METHOD event_tokens.
 
-    DATA(lv_json) = condense( val ).
-    IF lv_json IS INITIAL.
+    DATA(json) = condense( val ).
+    IF json IS INITIAL.
       RETURN.
     ENDIF.
 
-    IF lv_json(1) <> `[`.
-      lv_json = |[{ lv_json }]|.
+    IF json(1) <> `[`.
+      json = |[{ json }]|.
     ENDIF.
 
     TRY.
@@ -476,7 +478,7 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
         " outside the released API (src/02); there is no released JSON reader
         " to use instead, the same reasoning as apps 103/298
         " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( lv_json
+        z2ui5_cl_ajson=>parse( json
           )->to_abap_corresponding_only(
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above

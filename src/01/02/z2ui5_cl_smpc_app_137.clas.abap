@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table multi-level column headers overflowtoolbar title label text input
 " @summary Example for multi-header of table
-" @origin sap.ui.table.sample.MultiHeader - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiHeader (status: reviewed)
+" @origin sap.ui.table.sample.MultiHeader - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_137 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -58,10 +58,10 @@ CLASS z2ui5_cl_smpc_app_137 IMPLEMENTATION.
 
             )->ele( n = `content` ns = `m`
                 )->ele( `Table`
-                    )->a( n = `id`                v = `table1`
-                    )->a( n = `ariaLabelledBy`    v = `title`
-                    )->a( n = `selectionMode`     v = `MultiToggle`
-                    )->a( n = `rows`              v = client->_bind( modeldata )
+                    )->a( n = `id`                 v = `table1`
+                    )->a( n = `ariaLabelledBy`     v = `title`
+                    )->a( n = `selectionMode`      v = `MultiToggle`
+                    )->a( n = `rows`               v = client->_bind( modeldata )
                     )->a( n = `enableColumnFreeze` v = `true`
 
                     )->ele( `extension`
@@ -160,7 +160,7 @@ CLASS z2ui5_cl_smpc_app_137 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `Column`
-                            )->a( n = `width` v = `8rem`
+                            )->a( n = `width`  v = `8rem`
                             )->a( n = `hAlign` v = `End`
                             )->ele( `multiLabels`
                                 )->tag( n = `Label` ns = `m`

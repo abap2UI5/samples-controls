@@ -1,6 +1,6 @@
 " @keywords sap.m pagelistreporticontabbar vbox simpleform title label text flexitemdata icontabbar icontabfilter analyticaltable auto
 " @summary This page shows flexible sizing with an Icon Tab Bar: The upper part extends with its content, but doesn't react to viewport changes. The Icon Tab Bar reacts to the viewport size. The table inside takes the available space.
-" @origin sap.m.sample.PageListReportIconTabBar - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageListReportIconTabBar (status: reviewed)
+" @origin sap.m.sample.PageListReportIconTabBar - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageListReportIconTabBar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_406 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,13 +32,13 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:t`   v = `sap.ui.table`
-        )->a( n = `xmlns:trm` v = `sap.ui.table.rowmodes`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`       v = `sap.m`
+        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:table` v = `sap.ui.table`
+        )->a( n = `xmlns:trm`   v = `sap.ui.table.rowmodes`
+        )->a( n = `xmlns:form`  v = `sap.ui.layout.form`
+        )->a( n = `height`      v = `100%`
 
         )->ele( `Page`
             )->a( n = `title`           v = `Title`
@@ -49,7 +49,7 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
                 )->ele( `VBox`
                     )->a( n = `fitContainer` v = `true`
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`         v = `SimpleFormDisplay480`
                         )->a( n = `editable`   v = `false`
                         )->a( n = `layout`     v = `ResponsiveGridLayout`
@@ -61,8 +61,8 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
                         )->a( n = `columnsL`   v = `2`
                         )->a( n = `columnsM`   v = `2`
 
-                        )->ele( n = `content` ns = `f`
-                            )->tag( n = `Title` ns = `c`
+                        )->ele( n = `content` ns = `form`
+                            )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Office`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Name`
@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
                                 )->a( n = `text` v = `Country`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Germany`
-                            )->tag( n = `Title` ns = `c`
+                            )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Online`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Web`
@@ -93,7 +93,7 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
 
                         )->end(
 
-                        )->ele( n = `layoutData` ns = `f`
+                        )->ele( n = `layoutData` ns = `form`
                             )->tag( `FlexItemData`
                                 )->a( n = `shrinkFactor`     v = `0`
                                 )->a( n = `backgroundDesign` v = `Solid`
@@ -120,17 +120,17 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `content`
-                            )->ele( n = `AnalyticalTable` ns = `t`
+                            )->ele( n = `AnalyticalTable` ns = `table`
                                 )->a( n = `selectionMode` v = `MultiToggle`
 
-                                )->ele( n = `rowMode` ns = `t`
+                                )->ele( n = `rowMode` ns = `table`
                                     " sap.ui.table rowmodes.Auto (@since 1.119) - kept 1:1, see the POST_171 deviation
                                     )->tag( n = `Auto` ns = `trm`
                                         )->a( n = `rowContentHeight` v = `32`
 
                                 )->end(
 
-                                )->ele( n = `extension` ns = `t`
+                                )->ele( n = `extension` ns = `table`
                                     )->ele( `OverflowToolbar`
                                         )->tag( `ToolbarSpacer`
                                         )->tag( `SearchField`
@@ -160,11 +160,11 @@ CLASS z2ui5_cl_smpc_app_406 IMPLEMENTATION.
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `columns` ns = `t`
-                                    )->tag( n = `AnalyticalColumn` ns = `t`
-                                    )->tag( n = `AnalyticalColumn` ns = `t`
-                                    )->tag( n = `AnalyticalColumn` ns = `t`
-                                    )->tag( n = `AnalyticalColumn` ns = `t`
+                                )->ele( n = `columns` ns = `table`
+                                    )->tag( n = `AnalyticalColumn` ns = `table`
+                                    )->tag( n = `AnalyticalColumn` ns = `table`
+                                    )->tag( n = `AnalyticalColumn` ns = `table`
+                                    )->tag( n = `AnalyticalColumn` ns = `table`
 
                                 )->end(
                             )->end(

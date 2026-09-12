@@ -1,6 +1,6 @@
 " @keywords sap.m standard responsive css classes objectheader objectattribute objectstatus icontabbar icontabfilter simpleform title
 " @summary This page implements the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes.
-" @origin sap.m.sample.PageStandardClasses - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageStandardClasses (status: reviewed)
+" @origin sap.m.sample.PageStandardClasses - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageStandardClasses (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_089 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,15 +8,15 @@ CLASS z2ui5_cl_smpc_app_089 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        name           TYPE string,
-        price          TYPE p LENGTH 8 DECIMALS 2,
-        currency_code  TYPE string,
-        weight_measure TYPE string,
-        weight_unit    TYPE string,
-        width          TYPE string,
-        depth          TYPE string,
-        height         TYPE string,
-        dim_unit       TYPE string,
+        name          TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
       END OF ty_s_product.
     DATA s_product TYPE ty_s_product.
 
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -67,15 +67,15 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                 )->ele( `ObjectHeader`
                     )->a( n = `title`            v = `{NAME}`
                     )->a( n = `backgroundDesign` v = `Solid`
-                    )->a( n = `number`           v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCY_CODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
-                    )->a( n = `numberUnit`       v = `{CURRENCY_CODE}`
+                    )->a( n = `number`           v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                    )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
                     )->ele( `attributes`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Weight`
-                            )->a( n = `text`  v = `{WEIGHT_MEASURE} {WEIGHT_UNIT}`
+                            )->a( n = `text`  v = `{WEIGHTMEASURE} {WEIGHTUNIT}`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Dimensions`
-                            )->a( n = `text`  v = `{WIDTH} x {DEPTH} X {HEIGHT} {DIM_UNIT}`
+                            )->a( n = `text`  v = `{WIDTH} x {DEPTH} X {HEIGHT} {DIMUNIT}`
 
                     )->end(
                     )->ele( `statuses`
@@ -96,9 +96,9 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                         )->ele( `IconTabFilter`
                             )->a( n = `key`  v = `info`
                             )->a( n = `text` v = `Info`
-                            )->ele( n = `SimpleForm` ns = `f`
+                            )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `layout` v = `ResponsiveGridLayout`
-                                )->ele( n = `title` ns = `f`
+                                )->ele( n = `title` ns = `form`
                                     )->tag( n = `Title` ns = `core`
                                         )->a( n = `text` v = `A Form`
 
@@ -127,10 +127,10 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                     )->end(
                 )->end(
 
-                )->ele( n = `SimpleForm` ns = `f`
+                )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `layout` v = `ResponsiveGridLayout`
                     )->a( n = `class`  v = `sapUiForceWidthAuto sapUiResponsiveMargin`
-                    )->ele( n = `title` ns = `f`
+                    )->ele( n = `title` ns = `form`
                         )->tag( n = `Title` ns = `core`
                             )->a( n = `text` v = `A Form`
 
@@ -167,12 +167,12 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
   METHOD model_init.
 
     " the bound record /ProductCollection/0 (Notebook Basic 15) of ui5/mock/products.json, verbatim
-    s_product = VALUE #( name           = `Notebook Basic 15`
-                         price          = '956.00'
-                         currency_code  = `EUR`
-                         weight_measure = `4.2` weight_unit = `KG`
+    s_product = VALUE #( name         = `Notebook Basic 15`
+                         price        = '956.00'
+                         currencycode = `EUR`
+                         weightmeasure = `4.2` weightunit = `KG`
                          width          = `30`  depth       = `18`
-                         height         = `3`   dim_unit    = `cm` ).
+                         height         = `3`   dimunit    = `cm` ).
 
   ENDMETHOD.
 

@@ -1,6 +1,6 @@
 " @keywords messagepopover message popover sap.m handling vbox simpleform title label input select item
 " @summary The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover.
-" @origin sap.m.sample.MessagePopoverMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverMessageHandling (status: checked)
+" @origin sap.m.sample.MessagePopoverMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverMessageHandling (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_065 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_065 DEFINITION PUBLIC.
         name          TYPE string,
         street_name   TYPE string,
         street_number TYPE string,
-        zip_code      TYPE string,
+        zipcode       TYPE string,
         zip_city      TYPE string,
         country       TYPE string,
         email         TYPE string,
@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
         )->a( n = `xmlns`       v = `sap.m`
         )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:f`     v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`  v = `sap.ui.layout.form`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
 
         )->ele( `Page`
@@ -97,15 +97,15 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->a( n = `items` v = client->_bind( t_forms )
 
-                    )->ele( n = `SimpleForm` ns = `f`
-                        )->a( n = `editable` v = `true`
-                        )->a( n = `layout`   v = `ColumnLayout`
-                        )->a( n = `title`    v = `Personal`
-                        )->a( n = `columnsM` v = `2`
-                        )->a( n = `columnsL` v = `2`
+                    )->ele( n = `SimpleForm` ns = `form`
+                        )->a( n = `editable`  v = `true`
+                        )->a( n = `layout`    v = `ColumnLayout`
+                        )->a( n = `title`     v = `Personal`
+                        )->a( n = `columnsM`  v = `2`
+                        )->a( n = `columnsL`  v = `2`
                         )->a( n = `columnsXL` v = `2`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Information`
                             )->tag( `Label`
@@ -123,7 +123,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                             )->tag( `Label`
                                 )->a( n = `text` v = `ZIP Code/City`
                             )->tag( `Input`
-                                )->a( n = `value` v = `{ path: 'ZIP_CODE', type: 'sap.ui.model.type.Integer' }`
+                                )->a( n = `value` v = `{ path: 'ZIPCODE', type: 'sap.ui.model.type.Integer' }`
                             )->tag( `Input`
                                 )->a( n = `value` v = `{ZIP_CITY}`
                             )->tag( `Label`
@@ -167,15 +167,15 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->a( n = `items` v = client->_bind( t_employment )
 
-                    )->ele( n = `SimpleForm` ns = `f`
-                        )->a( n = `editable` v = `true`
-                        )->a( n = `layout`   v = `ColumnLayout`
-                        )->a( n = `title`    v = `Personal`
-                        )->a( n = `columnsM` v = `2`
-                        )->a( n = `columnsL` v = `2`
+                    )->ele( n = `SimpleForm` ns = `form`
+                        )->a( n = `editable`  v = `true`
+                        )->a( n = `layout`    v = `ColumnLayout`
+                        )->a( n = `title`     v = `Personal`
+                        )->a( n = `columnsM`  v = `2`
+                        )->a( n = `columnsL`  v = `2`
                         )->a( n = `columnsXL` v = `2`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Information`
                             )->tag( `Label`
@@ -231,9 +231,9 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
 
                         )->ele( `dependents`
                             )->ele( `MessagePopover`
-                                )->a( n = `id`              v = `messagePopover`
-                                )->a( n = `items`           v = `{message>/}`
-                                )->a( n = `groupItems`      v = `true`
+                                )->a( n = `id`               v = `messagePopover`
+                                )->a( n = `items`            v = `{message>/}`
+                                )->a( n = `groupItems`       v = `true`
                                 " activeTitlePress is a MessagePopover event (not MessageItem); it ships the
                                 " pressed message's target control id so the handler can scroll+focus it
                                 )->a( n = `activeTitlePress` v = client->_event( val = `ACTIVE_TITLE` arg = `${$parameters>/item}.getBindingContext('message').getObject().getControlIds()[0]` )
@@ -278,14 +278,14 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
         " original: activeTitlePress scrolls to the message's target control, closes the popover
         " and focuses the control; the full control id travels from the pressed MessageItem's
         " message object (getControlIds()[0]) and the frontend SCROLL_INTO_VIEW + SET_FOCUS act on it
-        DATA(lv_control_id) = client->get_event_arg( ).
-        IF lv_control_id IS NOT INITIAL.
+        DATA(control_id) = client->get_event_arg( ).
+        IF control_id IS NOT INITIAL.
           client->follow_up_action( val   = client->cs_event-scroll_into_view
-                                    t_arg = VALUE #( ( lv_control_id ) ) ).
+                                    t_arg = VALUE #( ( control_id ) ) ).
           client->follow_up_action( val   = client->cs_event-control_by_id
                                     t_arg = VALUE #( ( `messagePopover` ) ( `close` ) ) ).
           client->follow_up_action( val   = client->cs_event-set_focus
-                                    t_arg = VALUE #( ( lv_control_id ) ) ).
+                                    t_arg = VALUE #( ( control_id ) ) ).
         ENDIF.
 
       WHEN `SAVE`.
@@ -299,8 +299,8 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
         IF lines( t_forms ) >= 7.
           " John Miller  -> /T_FORMS/4/NAME
           t_forms[ 5 ]-name     = ``.
-          " Stefan Bosch -> /T_FORMS/5/ZIP_CODE
-          t_forms[ 6 ]-zip_code = `AAA`.
+          " Stefan Bosch -> /T_FORMS/5/ZIPCODE
+          t_forms[ 6 ]-zipcode = `AAA`.
           " Maria Fontes -> /T_FORMS/6/EMAIL
           t_forms[ 7 ]-email    = `MariaFontes.com`.
         ENDIF.
@@ -311,7 +311,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
           ( message = `A mandatory field is required` type = `Error` additionaltext = `Name`
             target = `/T_FORMS/4/NAME` )
           ( message = `Enter a number with no decimal places` type = `Error` additionaltext = `ZIP Code/City`
-            target = `/T_FORMS/5/ZIP_CODE` )
+            target = `/T_FORMS/5/ZIPCODE` )
           ( message = `Enter a valid value` type = `Error` additionaltext = `Email`
             target = `/T_FORMS/6/EMAIL` )
           ( message = `The value should not exceed 40` type = `Warning` additionaltext = `Standard Weekly Hours`
@@ -320,8 +320,8 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
         " the message group (Personal, <section>) is a domain classification, so
         " it is computed in the backend (thin frontend) and rides on the Message
         " code field - the original derives it in its controller's getGroupName.
-        LOOP AT t_messages REFERENCE INTO DATA(lr_msg).
-          lr_msg->code = COND #( WHEN lr_msg->additionaltext = `Email`
+        LOOP AT t_messages REFERENCE INTO DATA(msg).
+          msg->code = COND #( WHEN msg->additionaltext = `Email`
                                  THEN `Personal, Contact`
                                  ELSE `Personal, Information` ).
         ENDLOOP.
@@ -343,28 +343,28 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
 
     t_forms = VALUE #(
       ( name = `Julie Armstrong` street_name = `Mainstreet` street_number = `1278`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Julie.Armstrong@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `Denise Smith` street_name = `Mainstreet` street_number = `1567`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Denise.Smith@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `Richard Wilson` street_name = `Mainstreet` street_number = `2984`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Richard.Wilson@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `Gerd Becker` street_name = `Mainstreet` street_number = `3614`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Gerd.Becker@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `John Miller` street_name = `Mainstreet` street_number = `1618`
-        zip_code = `AAA` zip_city = `Maintown` country = `Germany`
+        zipcode = `AAA` zip_city = `Maintown` country = `Germany`
         email = `John.Miller@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `Stefan Bosch` street_name = `Mainstreet` street_number = `4864`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Stefan.Bosch@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` )
       ( name = `Maria Fontes` street_name = `Mainstreet` street_number = `4864`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `MariaFontescompany.com` )
       ( name = `Antonio Ferrari` street_name = `Mainstreet` street_number = `2598`
-        zip_code = `12345` zip_city = `Maintown` country = `Germany`
+        zipcode = `12345` zip_city = `Maintown` country = `Germany`
         email = `Antonio.Ferrari@company.com` phone_number = `+1 (610) 661-1000` phone_time = `12:00` website = `n/a` ) ).
 
     t_employment = VALUE #(

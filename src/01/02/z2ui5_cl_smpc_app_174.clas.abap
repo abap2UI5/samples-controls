@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table rowhighlights overflowtoolbar title toolbarspacer label select item togglebutton rowsettings column
 " @summary Shows how row highlights and alternating row colors can be used.
-" @origin sap.ui.table.sample.RowHighlights - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowHighlights (status: reviewed)
+" @origin sap.ui.table.sample.RowHighlights - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowHighlights (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_174 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -61,12 +61,12 @@ CLASS z2ui5_cl_smpc_app_174 IMPLEMENTATION.
     " toolbar Select and ToggleButtons two-way bind the selection mode, the
     " alternate row colors and the highlight-visibility flag directly.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`         v = `sap.ui.table`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:m`       v = `sap.m`
-        )->a( n = `height`        v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -175,7 +175,7 @@ CLASS z2ui5_cl_smpc_app_174 IMPLEMENTATION.
                             )->tag( n = `Label` ns = `m`
                                 )->a( n = `text` v = `Price`
                             )->ele( `template`
-                                )->tag( n = `Currency` ns = `unified`
+                                )->tag( n = `Currency` ns = `u`
                                     )->a( n = `value`    v = `{PRICE}`
                                     )->a( n = `currency` v = `{CURRENCYCODE}`
 

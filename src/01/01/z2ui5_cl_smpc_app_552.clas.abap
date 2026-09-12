@@ -1,24 +1,25 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarwithcustomviews vbox singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview calendarappointment
 " @summary SinglePlanningCalendar showing the provided predefined views and custom views.
-" @origin sap.m.sample.SinglePlanningCalendarWithCustomViews - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithCustomViews (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarWithCustomViews - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithCustomViews (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_552 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
+    DATA startdate      TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -52,18 +53,18 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
 
             )->ele( `SinglePlanningCalendar`
                 )->a( n = `id`           v = `SPC1`
                 )->a( n = `title`        v = `My Calendar`
-                )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `appointments` v = client->_bind( t_appointments )
 
                 " onInit adds five views: three built-in ones and two JS subclasses
@@ -84,7 +85,7 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`
@@ -99,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date = `2018-07-09T00:00:00`.
+    startdate = `2018-07-09T00:00:00`.
 
     t_appointments = VALUE #(
       ( title = `Meet John Miller` type = `Type05` start_at = `2018-07-08T05:00:00` end_at = `2018-07-08T06:00:00` )

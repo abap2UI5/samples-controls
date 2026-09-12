@@ -1,6 +1,6 @@
 " @keywords fileuploader file uploader sap.ui.unified fileuploadercomplex html verticallayout fileuploaderparameter button
 " @summary File Uploader Example with Parameters
-" @origin sap.ui.unified.sample.FileUploaderComplex - https://sdk.openui5.org/entity/sap.ui.unified.FileUploader/sample/sap.ui.unified.sample.FileUploaderComplex (status: reviewed)
+" @origin sap.ui.unified.sample.FileUploaderComplex - https://sdk.openui5.org/entity/sap.ui.unified.FileUploader/sample/sap.ui.unified.sample.FileUploaderComplex (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_246 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -37,11 +37,11 @@ CLASS z2ui5_cl_smpc_app_246 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `class`     v = `viewPadding`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `class`      v = `viewPadding`
 
         )->a( n = `xmlns:core` v = `sap.ui.core`
 

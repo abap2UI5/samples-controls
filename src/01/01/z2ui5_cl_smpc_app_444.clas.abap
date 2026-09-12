@@ -1,18 +1,19 @@
 " @keywords notificationlistgroup notification list group sap.m maxnumberofnotificationsreached vbox flexitemdata button notificationlistitem
 " @summary Notification List Group with max number of notifications reached. The group will render the max amount of notificatons, depending on device type allowed and then show a warning messge.
-" @origin sap.m.sample.MaxNumberOfNotificationsReached - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.MaxNumberOfNotificationsReached (status: generated)
+" @origin sap.m.sample.MaxNumberOfNotificationsReached - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.MaxNumberOfNotificationsReached (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_444 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_notification,
-             id       TYPE i,
-             title    TYPE string,
-             datetime TYPE string,
-             priority TYPE string,
-             unread   TYPE abap_bool,
-           END OF ty_s_notification.
+    TYPES:
+      BEGIN OF ty_s_notification,
+        id       TYPE i,
+        title    TYPE string,
+        datetime TYPE string,
+        priority TYPE string,
+        unread   TYPE abap_bool,
+      END OF ty_s_notification.
     TYPES ty_t_notification TYPE STANDARD TABLE OF ty_s_notification WITH EMPTY KEY.
 
     DATA t_notifications TYPE ty_t_notification.

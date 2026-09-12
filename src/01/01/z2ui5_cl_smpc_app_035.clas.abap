@@ -1,6 +1,6 @@
 " @keywords list sap.m empty indicates state
 " @summary If the list is empty it indicates this state by displaying a message text.
-" @origin sap.m.sample.ListNoData - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNoData (status: reviewed)
+" @origin sap.m.sample.ListNoData - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNoData (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_035 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

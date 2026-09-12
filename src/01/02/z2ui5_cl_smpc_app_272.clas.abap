@@ -1,6 +1,6 @@
 " @keywords sap.ui.core fieldgroup simpleform title label input griddata select item combobox messagestrip toolbar
 " @summary A control's field group id can be used to define a virtual group of fields that should be validated together.
-" @origin sap.ui.core.sample.FieldGroup - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.FieldGroup (status: checked)
+" @origin sap.ui.core.sample.FieldGroup - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.FieldGroup (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_272 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -40,9 +40,9 @@ CLASS z2ui5_cl_smpc_app_272 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS hide_messages.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `height`     v = `100%`
 
@@ -87,18 +87,18 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
             )->ele( `content`
 
-                )->ele( n = `SimpleForm` ns = `f`
-                    )->a( n = `id`               v = `FieldGroupView`
-                    )->a( n = `maxContainerCols` v = `2`
-                    )->a( n = `editable`         v = `true`
-                    )->a( n = `layout`           v = `ResponsiveGridLayout`
-                    )->a( n = `title`            v = `Shopping Cart - Checkout`
-                    )->a( n = `labelSpanL`       v = `4`
-                    )->a( n = `labelSpanM`       v = `4`
-                    )->a( n = `emptySpanL`       v = `0`
-                    )->a( n = `emptySpanM`       v = `0`
-                    )->a( n = `columnsL`         v = `2`
-                    )->a( n = `columnsM`         v = `2`
+                )->ele( n = `SimpleForm` ns = `form`
+                    )->a( n = `id`                 v = `FieldGroupView`
+                    )->a( n = `maxContainerCols`   v = `2`
+                    )->a( n = `editable`           v = `true`
+                    )->a( n = `layout`             v = `ResponsiveGridLayout`
+                    )->a( n = `title`              v = `Shopping Cart - Checkout`
+                    )->a( n = `labelSpanL`         v = `4`
+                    )->a( n = `labelSpanM`         v = `4`
+                    )->a( n = `emptySpanL`         v = `0`
+                    )->a( n = `emptySpanM`         v = `0`
+                    )->a( n = `columnsL`           v = `2`
+                    )->a( n = `columnsM`           v = `2`
                     " onValidateFieldGroup: the event carries the ids of the
                     " group that lost focus. The parameter reaches the backend
                     " as the JSON array (["Billing Information"]), so the arg
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
                     " (measured 2026-08-01 - the expression grammar allows [n])
                     )->a( n = `validateFieldGroup` v = client->_event( val = `VALIDATE_FIELD_GROUP` arg = `${$parameters>/fieldGroupIds}[0]` )
 
-                    )->ele( n = `content` ns = `f`
+                    )->ele( n = `content` ns = `form`
 
                         )->tag( n = `Title` ns = `core`
                             )->a( n = `text` v = `Billing Information`
@@ -380,26 +380,26 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onValidateFieldGroup: mMessageMapping resolves the group to its own
         " strip + type, the strip shows "Group '<g>' Validation:<type>" and
         " the toast names the validated group
-        DATA(lv_group) = client->get_event_arg( ).
-        CASE lv_group.
+        DATA(group) = client->get_event_arg( ).
+        CASE group.
           WHEN `Billing Information`.
             billing_type    = `Error`.
-            billing_text    = |Group '{ lv_group }' Validation:Error|.
+            billing_text    = |Group '{ group }' Validation:Error|.
             billing_visible = abap_true.
           WHEN `Credit Card`.
             credit_type    = `Information`.
-            credit_text    = |Group '{ lv_group }' Validation:Information|.
+            credit_text    = |Group '{ group }' Validation:Information|.
             credit_visible = abap_true.
           WHEN `Online`.
             online_type    = `Warning`.
-            online_text    = |Group '{ lv_group }' Validation:Warning|.
+            online_text    = |Group '{ group }' Validation:Warning|.
             online_visible = abap_true.
           WHEN `Discount Code`.
             discount_type    = `Success`.
-            discount_text    = |Group '{ lv_group }' Validation:Success|.
+            discount_text    = |Group '{ group }' Validation:Success|.
             discount_visible = abap_true.
         ENDCASE.
-        client->message_toast_display( text = |Validation of field group '{ lv_group }' triggered.| duration = `500` ).
+        client->message_toast_display( text = |Validation of field group '{ group }' triggered.| duration = `500` ).
 
       WHEN `CLOSE_BILLING`.
         billing_visible = abap_false.
@@ -467,11 +467,11 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
     credit_type   = `Information`.
     online_type   = `Information`.
 
-    DATA(lv_default) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
-    billing_text  = lv_default.
-    discount_text = lv_default.
-    credit_text   = lv_default.
-    online_text   = lv_default.
+    DATA(default_text) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
+    billing_text  = default_text.
+    discount_text = default_text.
+    credit_text   = default_text.
+    online_text   = default_text.
 
   ENDMETHOD.
 

@@ -1,16 +1,17 @@
 " @keywords standardlistitem standard list item sap.m standardlistitemicon
 " @summary This list item offers a standardized user interface for list content with title, description and icon.
-" @origin sap.m.sample.StandardListItemIcon - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemIcon (status: generated)
+" @origin sap.m.sample.StandardListItemIcon - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemIcon (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_468 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

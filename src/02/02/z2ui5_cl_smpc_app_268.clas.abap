@@ -1,6 +1,6 @@
 " @keywords colorpickerpopover color picker popover sap.ui.unified table column text columnlistitem label input
 " @summary Example of ColorPicker in a popover using the thin wrapper control sap.ui.unified.ColorPickerPopover.
-" @origin sap.ui.unified.sample.ColorPickerPopover - https://sdk.openui5.org/entity/sap.ui.unified.ColorPickerPopover/sample/sap.ui.unified.sample.ColorPickerPopover (status: reviewed)
+" @origin sap.ui.unified.sample.ColorPickerPopover - https://sdk.openui5.org/entity/sap.ui.unified.ColorPickerPopover/sample/sap.ui.unified.sample.ColorPickerPopover (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_268 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

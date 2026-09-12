@@ -1,6 +1,6 @@
 " @keywords input sap.m inputdescription verticallayout invisibletext
 " @summary This sample illustrates the usage of the description with input fields, e.g. description for units of measurements and currencies.
-" @origin sap.m.sample.InputDescription - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputDescription (status: reviewed)
+" @origin sap.m.sample.InputDescription - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputDescription (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_367 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -54,13 +54,13 @@ CLASS z2ui5_cl_smpc_app_367 IMPLEMENTATION.
                 )->a( n = `fieldWidth`  v = `60px`
                 )->a( n = `class`       v = `sapUiSmallMarginBottom`
             )->tag( `Input`
-                )->a( n = `value`          v = `220.00`
-                )->a( n = `description`    v = `EUR`
-                )->a( n = `width`          v = `250px`
-                )->a( n = `fieldWidth`     v = `80%`
+                )->a( n = `value`         v = `220.00`
+                )->a( n = `description`   v = `EUR`
+                )->a( n = `width`         v = `250px`
+                )->a( n = `fieldWidth`    v = `80%`
                 " showClearIcon is UI5 1.94 - kept for the 1:1 port (POST_171)
-                )->a( n = `showClearIcon`  v = `true`
-                )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                )->a( n = `showClearIcon` v = `true`
+                )->a( n = `class`         v = `sapUiSmallMarginBottom`
             )->tag( `Input`
                 )->a( n = `value`       v = `007`
                 )->a( n = `description` v = `Bastian Schweinsteiger`

@@ -1,6 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpagewithstickysubheader dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber
 " @summary Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area.
-" @origin sap.f.sample.DynamicPageWithStickySubheader - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageWithStickySubheader (status: reviewed)
+" @origin sap.f.sample.DynamicPageWithStickySubheader - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageWithStickySubheader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_238 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -64,11 +64,11 @@ CLASS z2ui5_cl_smpc_app_238 IMPLEMENTATION.
     " table keeps the original sorter + Currency composite type bindings 1:1.
     " The GenericTag press opens the Card popover fragment anchored to the tag.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`   v = `sap.f`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `height`    v = `100%`
 
         )->ele( n = `DynamicPage` ns = `f`
             )->a( n = `id`                       v = `dynamicPageId`
@@ -174,10 +174,10 @@ CLASS z2ui5_cl_smpc_app_238 IMPLEMENTATION.
             )->ele( n = `header` ns = `f`
                 )->ele( n = `DynamicPageHeader` ns = `f`
                     )->a( n = `pinnable` v = `true`
-                    )->ele( n = `HorizontalLayout` ns = `layout`
+                    )->ele( n = `HorizontalLayout` ns = `l`
                         )->a( n = `allowWrapping` v = `true`
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->a( n = `class` v = `sapUiMediumMarginEnd`
                             )->tag( `ObjectAttribute`
                                 )->a( n = `title` v = `Location`
@@ -191,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_238 IMPLEMENTATION.
 
                         )->end(
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->tag( `ObjectAttribute`
                                 )->a( n = `title` v = `Availability`
                             )->tag( `ObjectStatus`

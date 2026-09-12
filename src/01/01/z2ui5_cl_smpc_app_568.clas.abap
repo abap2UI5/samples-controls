@@ -1,17 +1,18 @@
 " @keywords table sap.m tablecontextualwidthstatic messagestrip overflowtoolbar button column label columnlistitem
 " @summary This example shows the container-based pop-in behavior. The container has static width.
-" @origin sap.m.sample.TableContextualWidthStatic - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableContextualWidthStatic (status: generated)
+" @origin sap.m.sample.TableContextualWidthStatic - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableContextualWidthStatic (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_568 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_person,
-             firstname TYPE string,
-             lastname  TYPE string,
-             birthdate TYPE string,
-             gender    TYPE string,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        firstname TYPE string,
+        lastname  TYPE string,
+        birthdate TYPE string,
+        gender    TYPE string,
+      END OF ty_s_person.
     TYPES ty_t_person TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA t_people         TYPE ty_t_person.

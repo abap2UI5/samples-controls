@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabseparator label icontabfilter text
 " @summary This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line.
-" @origin sap.m.sample.IconTabSeparator - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabSeparator (status: reviewed)
+" @origin sap.m.sample.IconTabSeparator - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabSeparator (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_383 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

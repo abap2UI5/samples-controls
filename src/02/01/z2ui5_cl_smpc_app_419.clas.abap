@@ -1,6 +1,6 @@
 " @keywords menu sap.m menuselectable vbox button menuitem menuitemgroup
 " @summary Some menu items can be added to groups to allow single or multiple item selection.
-" @origin sap.m.sample.MenuSelectable - https://sdk.openui5.org/entity/sap.m.Menu/sample/sap.m.sample.MenuSelectable (status: generated)
+" @origin sap.m.sample.MenuSelectable - https://sdk.openui5.org/entity/sap.m.Menu/sample/sap.m.sample.MenuSelectable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_419 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords draftindicator draft indicator sap.m sap.m.label verticallayout button
 " @summary The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel.
-" @origin sap.m.sample.DraftIndicator - https://sdk.openui5.org/entity/sap.m.DraftIndicator/sample/sap.m.sample.DraftIndicator (status: checked)
+" @origin sap.m.sample.DraftIndicator - https://sdk.openui5.org/entity/sap.m.DraftIndicator/sample/sap.m.sample.DraftIndicator (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_021 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

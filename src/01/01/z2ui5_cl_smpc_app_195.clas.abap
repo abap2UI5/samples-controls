@@ -1,6 +1,6 @@
 " @keywords list sap.m listfooter standardlistitem
 " @summary With the 'footerText' property you can set a message that is shown at the very end of the list.
-" @origin sap.m.sample.ListFooter - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListFooter (status: reviewed)
+" @origin sap.m.sample.ListFooter - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListFooter (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_195 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

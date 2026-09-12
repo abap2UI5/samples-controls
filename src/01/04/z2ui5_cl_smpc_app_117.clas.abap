@@ -1,22 +1,24 @@
 " @keywords card sap.f fiori header vbox hbox combobox item datepicker button list customlistitem
 " @summary This sample illustrates how to specify the predefined header and the content of the Card control.
-" @origin sap.f.sample.Card - https://sdk.openui5.org/entity/sap.f.Card/sample/sap.f.sample.Card (status: reviewed)
+" @origin sap.f.sample.Card - https://sdk.openui5.org/entity/sap.f.Card/sample/sap.f.sample.Card (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_117 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_city,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_city.
-    TYPES: BEGIN OF ty_s_product,
-             title        TYPE string,
-             subtitle     TYPE string,
-             revenue      TYPE string,
-             status       TYPE string,
-             statusschema TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_city,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_city.
+    TYPES:
+      BEGIN OF ty_s_product,
+        title        TYPE string,
+        subtitle     TYPE string,
+        revenue      TYPE string,
+        status       TYPE string,
+        statusschema TYPE string,
+      END OF ty_s_product.
     DATA t_cities   TYPE STANDARD TABLE OF ty_s_city WITH EMPTY KEY.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
@@ -123,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_117 IMPLEMENTATION.
                                       t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                        ( `show` )
                                                        ( `By pressing the 'Book' button a new application can be opened where the actual booking happens. ` &&
-                                                         `This can be in the same window, in a new tab or in a dialog.` ) ) )
+                                                  `This can be in the same window, in a new tab or in a dialog.` ) ) )
                             )->a( n = `type`  v = `Emphasized`
                             )->a( n = `class` v = `sapUiTinyMarginBegin`
 

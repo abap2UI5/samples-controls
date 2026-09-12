@@ -1,6 +1,6 @@
-" @keywords list sap.m counter item quickly shows many standardlistitem
+" @keywords list sap.m counter item quickly shows standardlistitem
 " @summary The counter of an item quickly shows how many detail entries are related, without having to navigate to the detail page.
-" @origin sap.m.sample.ListCounter - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListCounter (status: checked)
+" @origin sap.m.sample.ListCounter - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListCounter (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_034 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

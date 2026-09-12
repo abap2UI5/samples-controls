@@ -1,16 +1,17 @@
 " @keywords pulltorefresh pull refresh sap.m refreshresponsive bar searchfield list standardlistitem
 " @summary An 'Responsive Refresh' can be achieved by the combination of a Search Field's refresh button and a Pull To Refresh, both of which appear depending on whether the device is touch-enabled. A growing stream of backend data is simulated here.
-" @origin sap.m.sample.RefreshResponsive - https://sdk.openui5.org/entity/sap.m.PullToRefresh/sample/sap.m.sample.RefreshResponsive (status: generated)
+" @origin sap.m.sample.RefreshResponsive - https://sdk.openui5.org/entity/sap.m.PullToRefresh/sample/sap.m.sample.RefreshResponsive (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_438 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -68,11 +69,11 @@ CLASS z2ui5_cl_smpc_app_438 IMPLEMENTATION.
                         " the original's own device model (isNoTouch / isTouch) folds onto
                         " the framework's raw device> model
                         )->tag( `SearchField`
-                            )->a( n = `id`                 v = `searchField`
-                            )->a( n = `showRefreshButton`  v = `{= !${device>/support/touch} }`
-                            )->a( n = `value`              v = client->_bind( search )
-                            )->a( n = `search`             v = client->_event( `REFRESH` )
-                            )->a( n = `width`              v = `100%`
+                            )->a( n = `id`                v = `searchField`
+                            )->a( n = `showRefreshButton` v = `{= !${device>/support/touch} }`
+                            )->a( n = `value`             v = client->_bind( search )
+                            )->a( n = `search`            v = client->_event( `REFRESH` )
+                            )->a( n = `width`             v = `100%`
 
                     )->end(
                 )->end(

@@ -1,6 +1,6 @@
 " @keywords calendardateinterval calendar date interval sap.ui.unified calendardateintervalbasic html verticallayout daterange button horizontallayout label
 " @summary CalendarDateInterval with 14 days and single day selection
-" @origin sap.ui.unified.sample.CalendarDateIntervalBasic - https://sdk.openui5.org/entity/sap.ui.unified.CalendarDateInterval/sample/sap.ui.unified.sample.CalendarDateIntervalBasic (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarDateIntervalBasic - https://sdk.openui5.org/entity/sap.ui.unified.CalendarDateInterval/sample/sap.ui.unified.sample.CalendarDateIntervalBasic (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_177 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -51,13 +51,13 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `class`     v = `viewPadding`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `class`        v = `viewPadding`
 
-        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
         " the selectedDates formatter has to be loaded, or the XMLView parser
         " rejects the binding with "formatter function ... not found"
         )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
@@ -84,11 +84,11 @@ CLASS z2ui5_cl_smpc_app_177 IMPLEMENTATION.
                 " mode Month._selectDay never leaves selectedDates empty - the
                 " original's deselect is its CONTROLLER removing the DateRange, and
                 " that is reproduced in on_event against the bound aggregation
-                )->a( n = `select` v = client->_event( val   = `CAL_SELECT`
-                                                       t_arg = VALUE #(
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                )->a( n = `select`        v = client->_event( val   = `CAL_SELECT`
+                                                              t_arg = VALUE #(
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
 
                 )->ele( n = `selectedDates` ns = `u`
                     )->tag( n = `DateRange` ns = `u`

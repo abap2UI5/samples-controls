@@ -1,6 +1,6 @@
 " @keywords tabcontainer tab container sap.m editable employee tabs tabcontaineritem label input
 " @summary The sap.m.TabContainer allows for working with multiple tabs.
-" @origin sap.m.sample.TabContainer - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainer (status: reviewed)
+" @origin sap.m.sample.TabContainer - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_093 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,16 +8,16 @@ CLASS z2ui5_cl_smpc_app_093 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_emp,
-        name           TYPE string,
-        modified       TYPE abap_bool,
-        emp_first_name TYPE string,
-        emp_last_name  TYPE string,
+        name         TYPE string,
+        modified     TYPE abap_bool,
+        empfirstname TYPE string,
+        emplastname  TYPE string,
         " SALARY carries no typed binding anywhere - the original binds it into a
         " plain Input over a JSONModel that holds whatever the user types. A packed
         " field cannot: a table cell that fails to convert is swallowed by
         " delta_apply_field's "skip just this cell", so an entry like 1,455.22 was
         " discarded without an error and the browser kept showing it (measured)
-        salary         TYPE string,
+        salary       TYPE string,
       END OF ty_s_emp.
     DATA t_employees TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
 
@@ -83,11 +83,11 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
                         )->tag( `Label`
                             )->a( n = `text` v = `First Name:`
                         )->tag( `Input`
-                            )->a( n = `value` v = `{EMP_FIRST_NAME}`
+                            )->a( n = `value` v = `{EMPFIRSTNAME}`
                         )->tag( `Label`
                             )->a( n = `text` v = `Last Name:`
                         )->tag( `Input`
-                            )->a( n = `value` v = `{EMP_LAST_NAME}`
+                            )->a( n = `value` v = `{EMPLASTNAME}`
                         )->tag( `Label`
                             )->a( n = `text` v = `Salary:`
                         )->tag( `Input`
@@ -140,10 +140,10 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
       " the seeds are the digits UI5 renders today: the packed field serialized as a
       " JSON NUMBER, so 1189.00 reached the browser as 1189 - and the original's
       " salary: 1189.00 is likewise the JS number 1189, so both render 1189
-      ( name = `Jean Doe`       emp_first_name = `Jean`     emp_last_name = `Doe`     salary = `1455.22` )
-      ( name = `John Smith`     emp_first_name = `John`     emp_last_name = `Smith`   salary = `1390.77` modified = abap_true )
-      ( name = `Particia Clark` emp_first_name = `Particia` emp_last_name = `Clark`   salary = `1189` )
-      ( name = `Tim McAfeed`    emp_first_name = `Tim`      emp_last_name = `McAfeed` salary = `1235.37` ) ).
+      ( name = `Jean Doe`       empfirstname = `Jean`     emplastname = `Doe`     salary = `1455.22` )
+      ( name = `John Smith`     empfirstname = `John`     emplastname = `Smith`   salary = `1390.77` modified = abap_true )
+      ( name = `Particia Clark` empfirstname = `Particia` emplastname = `Clark`   salary = `1189` )
+      ( name = `Tim McAfeed`    empfirstname = `Tim`      emplastname = `McAfeed` salary = `1235.37` ) ).
 
   ENDMETHOD.
 

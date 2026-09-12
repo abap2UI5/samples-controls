@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarrecurringitem vbox overflowtoolbar button toolbarseparator recurringnonworkingperiod timerange
 " @summary SinglePlanningCalendar with recurring calendar items
-" @origin sap.m.sample.SinglePlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarRecurringItem (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarRecurringItem (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -9,35 +9,37 @@ CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
     " RecurrenceRule.days is an int[]: a table of STRINGS serializes to ['1','2']
     " and UI5 rejects it, so the day tables are integer tables
     TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             title             TYPE string,
-             text              TYPE string,
-             type              TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-             ruletype          TYPE string,
-             ruledayofmonth    TYPE i,
-             ruleweekofmonth   TYPE string,
-             ruledayofweek     TYPE i,
-             rulemonth         TYPE i,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        title             TYPE string,
+        text              TYPE string,
+        type              TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+        ruletype          TYPE string,
+        ruledayofmonth    TYPE i,
+        ruleweekofmonth   TYPE string,
+        ruledayofweek     TYPE i,
+        rulemonth         TYPE i,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_non_working,
-             date_at           TYPE string,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             valueformat       TYPE string,
-             title             TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-           END OF ty_s_non_working.
+    TYPES:
+      BEGIN OF ty_s_non_working,
+        date_at           TYPE string,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        valueformat       TYPE string,
+        title             TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+      END OF ty_s_non_working.
     TYPES ty_t_non_working TYPE STANDARD TABLE OF ty_s_non_working WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
@@ -64,8 +66,8 @@ CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_create_display.
+    METHODS on_event.
     METHODS create_reset.
     METHODS model_init.
 
@@ -97,11 +99,11 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -125,8 +127,8 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                 )->a( n = `title`             v = `My Calendar`
                 " handleViewChange only toasts a constant text - composed on the client
                 )->a( n = `viewChange`        v = client->follow_up_action(
-                          val   = client->cs_event-control_global
-                          t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
+                                 val   = client->cs_event-control_global
+                                 t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
                 )->a( n = `startDate`         v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
                 " ROOT-level aggregations: the path has to be the model path
                 " client->_bind_path( ) resolves to. A bare 'T_' is
@@ -138,7 +140,7 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                 )->a( n = `appointments`      v = |\{ path: '{ client->_bind_path( t_appointments ) }', templateShareable: false \}|
 
                 )->ele( `nonWorkingPeriods`
-                    )->ele( n = `RecurringNonWorkingPeriod` ns = `unified`
+                    )->ele( n = `RecurringNonWorkingPeriod` ns = `u`
                         )->a( n = `date`              v = `{ path: 'DATE_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `recurrenceType`    v = |\{= $\{RECURRENCETYPE\} \|\| null \}|
                         " setRecurrencePattern raises "recurrencePattern must be >= 1" here too,
@@ -147,15 +149,15 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                         )->a( n = `recurrencePattern` v = `{= ${RECURRENCEPATTERN} || 1 }`
                         )->a( n = `recurrenceEndDate` v = `{ path: 'RECURRENCEENDDATE', formatter: 'Formatter.DateCreateObject' }`
 
-                        )->ele( n = `timeRange` ns = `unified`
-                            )->tag( n = `TimeRange` ns = `unified`
+                        )->ele( n = `timeRange` ns = `u`
+                            )->tag( n = `TimeRange` ns = `u`
                                 )->a( n = `start`       v = `{START_AT}`
                                 )->a( n = `end`         v = `{END_AT}`
                                 )->a( n = `valueFormat` v = `{VALUEFORMAT}`
 
                         )->end(
-                        )->ele( n = `recurrenceRule` ns = `unified`
-                            )->tag( n = `RecurrenceRule` ns = `unified`
+                        )->ele( n = `recurrenceRule` ns = `u`
+                            )->tag( n = `RecurrenceRule` ns = `u`
                                 )->a( n = `days` v = `{T_RECURRENCE_DAY}`
 
                         )->end(
@@ -163,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->ele( n = `RecurringCalendarAppointment` ns = `unified`
+                    )->ele( n = `RecurringCalendarAppointment` ns = `u`
                         )->a( n = `startDate`         v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `endDate`           v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `title`             v = `{TITLE}`
@@ -173,8 +175,8 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                         )->a( n = `recurrencePattern` v = `{RECURRENCEPATTERN}`
                         )->a( n = `recurrenceEndDate` v = `{ path: 'RECURRENCEENDDATE', formatter: 'Formatter.DateCreateObject' }`
 
-                        )->ele( n = `recurrenceRule` ns = `unified`
-                            )->tag( n = `RecurrenceRule` ns = `unified`
+                        )->ele( n = `recurrenceRule` ns = `u`
+                            )->tag( n = `RecurrenceRule` ns = `u`
                                 )->a( n = `days`        v = `{T_RECURRENCE_DAY}`
                                 )->a( n = `type`        v = |\{= $\{RULETYPE\} \|\| null \}|
                                 )->a( n = `dayOfMonth`  v = `{RULEDAYOFMONTH}`
@@ -306,14 +308,14 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                         " empty value a cleared picker sends (the app-549/609 reasoning)
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd HH:mm`
-                        )->a( n = `value` v = client->_bind( c_start )
+                        )->a( n = `value`         v = client->_bind( c_start )
                     )->tag( `Label`
                         )->a( n = `text` v = `End`
                     )->tag( `DateTimePicker`
                         " see the Start picker above - same contract
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd HH:mm`
-                        )->a( n = `value` v = client->_bind( c_end )
+                        )->a( n = `value`         v = client->_bind( c_end )
 
                     )->tag( n = `Title` ns = `core`
                         )->a( n = `text` v = `Recurrence (optional)`
@@ -415,24 +417,24 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text`    v = `On day`
                         )->a( n = `visible` v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                 |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
+                                                |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
                     )->tag( `Input`
                         )->a( n = `value`       v = client->_bind( c_rule_dom )
                         )->a( n = `type`        v = `Number`
                         )->a( n = `width`       v = `80px`
                         )->a( n = `visible`     v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                     |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
+                                                    |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
                         )->a( n = `placeholder` v = `e.g. 15`
 
                     )->tag( `Label`
                         )->a( n = `text`    v = `On the`
                         )->a( n = `visible` v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                 |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
+                                                |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
 
                     )->ele( `HBox`
                         )->a( n = `alignItems` v = `Center`
                         )->a( n = `visible`    v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                     |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
+                                                   |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
 
                         )->ele( `Select`
                             )->a( n = `selectedKey` v = client->_bind( c_rule_wom )
@@ -534,7 +536,7 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                         )->a( n = `text`    v = `Until`
                         )->a( n = `visible` v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
                     )->tag( `DatePicker`
-                        )->a( n = `visible` v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
+                        )->a( n = `visible`       v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
                         " the original binds this typed too (sap.ui.model.type.Date,
                         " pattern 'yyyy-MM-dd'); valueFormat carries the same contract
                         " without raising on the empty value this field seeds with.
@@ -542,7 +544,7 @@ CLASS z2ui5_cl_smpc_app_555 IMPLEMENTATION.
                         " recurrenceenddate matches the port's own seeded rows
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd`
-                        )->a( n = `value`   v = client->_bind( c_rec_end )
+                        )->a( n = `value`         v = client->_bind( c_rec_end )
 
                 )->end(
             )->end(

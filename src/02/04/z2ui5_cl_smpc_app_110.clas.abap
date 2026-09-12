@@ -1,6 +1,6 @@
 " @keywords shellbar shell bar sap.f application header menu menuitem avatar
 " @summary Shell Bar example showing the control title as part of a mega menu, configurable by the app developer.
-" @origin sap.f.sample.ShellBar - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBar (status: reviewed)
+" @origin sap.f.sample.ShellBar - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_110 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,11 +32,11 @@ CLASS z2ui5_cl_smpc_app_110 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.f`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.f`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `height`    v = `100%`
 
         )->ele( `ShellBar`
             )->a( n = `title`               v = `Application Title`

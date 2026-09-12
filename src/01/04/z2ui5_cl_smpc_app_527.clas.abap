@@ -1,16 +1,17 @@
 " @keywords gridcontainer grid container sap.f gridcontainerdraganddropfromlist scrollcontainer togglebutton hbox list draginfo dropinfo standardlistitem
 " @summary This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer.
-" @origin sap.f.sample.GridContainerDragAndDropFromList - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainerDragAndDropFromList (status: generated)
+" @origin sap.f.sample.GridContainerDragAndDropFromList - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainerDragAndDropFromList (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_527 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             title   TYPE string,
-             rows    TYPE i,
-             columns TYPE i,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        title   TYPE string,
+        rows    TYPE i,
+        columns TYPE i,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_list TYPE ty_t_item.
@@ -105,11 +106,11 @@ CLASS z2ui5_cl_smpc_app_527 IMPLEMENTATION.
                 )->end(
 
                 )->ele( n = `GridContainer` ns = `f`
-                    )->a( n = `id`         v = `grid1`
-                    )->a( n = `class`      v = `sapUiSmallMargin`
-                    )->a( n = `width`      v = `100%`
-                    )->a( n = `snapToRow`  v = `true`
-                    )->a( n = `items`      v = client->_bind( t_grid )
+                    )->a( n = `id`        v = `grid1`
+                    )->a( n = `class`     v = `sapUiSmallMargin`
+                    )->a( n = `width`     v = `100%`
+                    )->a( n = `snapToRow` v = `true`
+                    )->a( n = `items`     v = client->_bind( t_grid )
 
                     )->ele( n = `dragDropConfig` ns = `f`
                         )->tag( n = `DragInfo` ns = `dnd`

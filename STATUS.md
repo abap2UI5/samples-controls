@@ -18,10 +18,11 @@ TRAINING.md; for what abap2UI5 can express see CAPABILITIES.md._
 | Ports | **622** sidecars in `meta/` (src/01 OpenUI5 <= 1.71: 401 · src/02 OpenUI5 > 1.71: 221) |
 | Per library | sap.f: 36 · sap.m: 393 · sap.tnt: 17 · sap.ui: 131 · sap.uxap: 45 |
 | Status ladder | 208 `generated` · 355 `reviewed` · 59 `checked` (live-verified) |
-| Deviations | 10 DROPPED_171 · 162 IMPROVISED · 1908 NOTE · 300 POST_171 |
+| Deviations | 10 DROPPED_171 · 162 IMPROVISED · 1915 NOTE · 300 POST_171 |
 | Open LIVE_TESTs | **0 ports** carry at least one `LIVE_TEST` deviation — the automated close path is the e2e interaction harness (AGENTS §6 `e2e_smoke`) |
 | Declared gate skips | 2 structural-diff · 6 render-smoke · 0 data-fidelity · 3 property-gate (each re-verified per run — a stale skip FAILS) |
 | Out-of-scope ported samples | `z2ui5_cl_smpc_app_121 (sap.m.sample.UploadSet — deprecated)` · `z2ui5_cl_smpc_app_136 (sap.f.sample.SidePanelSingle — control @since 1.107)` · `z2ui5_cl_smpc_app_141 (sap.ui.core.sample.InvisibleMessage — control @since 1.78)` · `z2ui5_cl_smpc_app_165 (sap.f.sample.ProductSwitchNavigation — control @since 1.72)` · `z2ui5_cl_smpc_app_203 (sap.m.sample.OverflowToolbarTokenizer — control @since 1.139)` — all decided KEEP permanently 2026-07-30 (per-app rationale in ui5/scope-exceptions.json, revertible); the source-backed scope gate stays hard for NEW undecided entries |
+| Hold-out set (generator KPI) | **24** reserved samples in `ui5/holdout.json` · **12** spent as measurements (now ordinary ports: 098, 100, 101, 103, 153, 154, 210, 212, 229, 237, 242, 243) · results: 2 probe section(s) in [docs/history.md](docs/history.md): "Hold-out probe #2 (2026-07-26) — fidelity way up, syntax is the new frontier" · "Hold-out regeneration probe #1 (2026-07-19) — baseline set" — the measurement TRAINING.md "Measuring progress" defines, and the one number that still measures the generator with the portable backlog closed |
 
 _Coverage per library (ported / in scope) is generated into the [README](README.md#coverage); one row per sample in [api.md](api.md)._
 

@@ -1,15 +1,16 @@
 " @keywords selectdialog select dialog sap.m selectdialoglazyloading button standardlistitem
 " @summary Select Dialog lazy loading example with JSON model.
-" @origin sap.m.sample.SelectDialogLazyLoading - https://sdk.openui5.org/entity/sap.m.SelectDialog/sample/sap.m.sample.SelectDialogLazyLoading (status: generated)
+" @origin sap.m.sample.SelectDialogLazyLoading - https://sdk.openui5.org/entity/sap.m.SelectDialog/sample/sap.m.sample.SelectDialogLazyLoading (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_422 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name        TYPE string,
-             description TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name        TYPE string,
+        description TYPE string,
+      END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
   PROTECTED SECTION.

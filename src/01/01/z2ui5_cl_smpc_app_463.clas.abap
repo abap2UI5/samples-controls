@@ -1,15 +1,16 @@
 " @keywords combobox combo box sap.m comboboxdefaultfiltering vbox label listitem
 " @summary The default filtering is 'starts with per term', which filters by the beginning of every word in every column. Autocomplete (type-ahead) works only for the first column, the leading value.
-" @origin sap.m.sample.ComboBoxDefaultFiltering - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxDefaultFiltering (status: generated)
+" @origin sap.m.sample.ComboBoxDefaultFiltering - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxDefaultFiltering (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_463 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.

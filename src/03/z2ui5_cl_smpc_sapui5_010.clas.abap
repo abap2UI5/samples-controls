@@ -33,10 +33,11 @@ CLASS z2ui5_cl_smpc_sapui5_010 DEFINITION PUBLIC.
         linewidth   TYPE string,
       END OF ty_s_route.
 
-    TYPES: BEGIN OF ty_s_legend,
-             text  TYPE string,
-             color TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        text  TYPE string,
+        color TYPE string,
+      END OF ty_s_legend.
 
     DATA mt_spot TYPE STANDARD TABLE OF ty_s_spot WITH EMPTY KEY.
 

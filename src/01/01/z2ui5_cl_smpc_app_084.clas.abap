@@ -1,6 +1,6 @@
 " @keywords urlhelper sap.m tel sms email url triggers list displaylistitem
 " @summary The URL Helper can be used to easily trigger a phone's native apps like Email, Telephone and SMS. It can be used with any UI control but typically an active Display List Item is chosen.
-" @origin sap.m.sample.UrlHelper - https://sdk.openui5.org/entity/sap.m.URLHelper/sample/sap.m.sample.UrlHelper (status: generated)
+" @origin sap.m.sample.UrlHelper - https://sdk.openui5.org/entity/sap.m.URLHelper/sample/sap.m.sample.UrlHelper (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_084 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,11 +8,11 @@ CLASS z2ui5_cl_smpc_app_084 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_supplier,
-        supplier_name TYPE string,
-        tel           TYPE string,
-        sms           TYPE string,
-        email         TYPE string,
-        url           TYPE string,
+        suppliername TYPE string,
+        tel          TYPE string,
+        sms          TYPE string,
+        email        TYPE string,
+        url          TYPE string,
       END OF ty_s_supplier.
     DATA s_supplier TYPE ty_s_supplier.
 
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_smpc_app_084 IMPLEMENTATION.
         )->a( n = `xmlns`     v = `sap.m`
 
         )->ele( `List`
-            )->a( n = `headerText` v = `{SUPPLIER_NAME}`
+            )->a( n = `headerText` v = `{SUPPLIERNAME}`
             " element binding kept 1:1 - a one-record structure /S_SUPPLIER instead of {/SupplierCollection/0}
             )->a( n = `binding`    v = client->_bind( s_supplier )
 
@@ -93,11 +93,11 @@ CLASS z2ui5_cl_smpc_app_084 IMPLEMENTATION.
   METHOD model_init.
 
     " the bound record /SupplierCollection/0 (Red Point Stores) of ui5/mock/supplier.json, verbatim
-    s_supplier = VALUE #( supplier_name = `Red Point Stores`
-                          tel           = `+49 6227 747474`
-                          sms           = `+49 173 123456`
-                          email         = `john.smith@sap.com`
-                          url           = `http://www.sap.com` ).
+    s_supplier = VALUE #( suppliername = `Red Point Stores`
+                          tel          = `+49 6227 747474`
+                          sms          = `+49 173 123456`
+                          email        = `john.smith@sap.com`
+                          url          = `http://www.sap.com` ).
 
   ENDMETHOD.
 

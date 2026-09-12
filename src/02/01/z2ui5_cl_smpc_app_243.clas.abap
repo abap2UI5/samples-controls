@@ -1,6 +1,6 @@
 " @keywords responsivepopover responsive popover sap.m verticallayout button image overflowtoolbar toolbarspacer
 " @summary The Responsive Popover is an abstraction of Popover and Dialog. On the phone a Dialog will be shown. On tablet and desktop a Popover is shown.
-" @origin sap.m.sample.ResponsivePopover - https://sdk.openui5.org/entity/sap.m.ResponsivePopover/sample/sap.m.sample.ResponsivePopover (status: reviewed)
+" @origin sap.m.sample.ResponsivePopover - https://sdk.openui5.org/entity/sap.m.ResponsivePopover/sample/sap.m.sample.ResponsivePopover (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_243 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -126,11 +126,11 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
             )->a( n = `xmlns:core` v = `sap.ui.core`
 
             )->ele( `ResponsivePopover`
-                )->a( n = `id`                 v = `myFooterPopover`
-                )->a( n = `title`              v = client->_bind( name )
-                )->a( n = `class`              v = `sapUiContentPadding`
-                )->a( n = `placement`          v = `Bottom`
-                )->a( n = `contentWidth`       v = `320px`
+                )->a( n = `id`                  v = `myFooterPopover`
+                )->a( n = `title`               v = client->_bind( name )
+                )->a( n = `class`               v = `sapUiContentPadding`
+                )->a( n = `placement`           v = `Bottom`
+                )->a( n = `contentWidth`        v = `320px`
                 )->a( n = `horizontalScrolling` v = `false`
 
                 )->ele( `content`

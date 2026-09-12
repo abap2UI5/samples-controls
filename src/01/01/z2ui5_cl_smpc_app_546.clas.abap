@@ -1,27 +1,29 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendardnd vbox title label select item planningcalendarrow calendarappointment
 " @summary PlanningCalendar with draggable appointments. The sample represents three possible roles. If you are logged as an Admin, you can move appointments both within the same row and between different rows without any restrictions.
-" @origin sap.m.sample.PlanningCalendarDnD - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarDnD (status: generated)
+" @origin sap.m.sample.PlanningCalendarDnD - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarDnD (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_546 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_appointments TYPE ty_t_appointment,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_appointments TYPE ty_t_appointment,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA start_date TYPE string.
@@ -33,7 +35,6 @@ CLASS z2ui5_cl_smpc_app_546 DEFINITION PUBLIC.
 
     METHODS view_display.
     METHODS on_event.
-    METHODS model_init.
     METHODS iso_of
       IMPORTING first         TYPE i
       RETURNING VALUE(result) TYPE string.
@@ -47,6 +48,7 @@ CLASS z2ui5_cl_smpc_app_546 DEFINITION PUBLIC.
                 start_at      TYPE string
                 end_at        TYPE string
       RETURNING VALUE(result) TYPE abap_bool.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -85,11 +87,11 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
     " (a UTC toISOString( ) would shift the day) plus the binding paths that name
     " the row and the appointment
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -154,37 +156,37 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
                                     ( `${$parameters>/copy} ? 'X' : ''` )
                                     ( `${$parameters>/calendarRow}.getTitle()` ) ) )
                         )->a( n = `appointmentResize`             v = client->_event(
-                                  val   = `APPT_RESIZE`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
+                                              val   = `APPT_RESIZE`
+                                              t_arg = VALUE #(
+                                                ( `${$parameters>/startDate}.getFullYear()` )
+                                                ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                ( `${$parameters>/startDate}.getDate()` )
+                                                ( `${$parameters>/startDate}.getHours()` )
+                                                ( `${$parameters>/startDate}.getMinutes()` )
+                                                ( `${$parameters>/endDate}.getFullYear()` )
+                                                ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                ( `${$parameters>/endDate}.getDate()` )
+                                                ( `${$parameters>/endDate}.getHours()` )
+                                                ( `${$parameters>/endDate}.getMinutes()` )
+                                                ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
                         )->a( n = `appointmentCreate`             v = client->_event(
-                                  val   = `APPT_CREATE`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
+                                              val   = `APPT_CREATE`
+                                              t_arg = VALUE #(
+                                                ( `${$parameters>/startDate}.getFullYear()` )
+                                                ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                ( `${$parameters>/startDate}.getDate()` )
+                                                ( `${$parameters>/startDate}.getHours()` )
+                                                ( `${$parameters>/startDate}.getMinutes()` )
+                                                ( `${$parameters>/endDate}.getFullYear()` )
+                                                ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                ( `${$parameters>/endDate}.getDate()` )
+                                                ( `${$parameters>/endDate}.getHours()` )
+                                                ( `${$parameters>/endDate}.getMinutes()` )
+                                                ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
                         )->a( n = `appointments`                  v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

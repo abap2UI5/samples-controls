@@ -1,6 +1,6 @@
 " @keywords viewsettingsdialog settings dialog sap.m viewsettingsdialogcustomfilterdetails viewsettingsfilteritem viewsettingsitem verticallayout button
 " @summary You can filter the items in the filter details page using different string filter operators.
-" @origin sap.m.sample.ViewSettingsDialogCustomFilterDetails - https://sdk.openui5.org/entity/sap.m.ViewSettingsDialog/sample/sap.m.sample.ViewSettingsDialogCustomFilterDetails (status: reviewed)
+" @origin sap.m.sample.ViewSettingsDialogCustomFilterDetails - https://sdk.openui5.org/entity/sap.m.ViewSettingsDialog/sample/sap.m.sample.ViewSettingsDialogCustomFilterDetails (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_296 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

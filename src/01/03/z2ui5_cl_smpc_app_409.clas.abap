@@ -1,6 +1,6 @@
 " @keywords blockbase block base sap.uxap blockbaseblockinblock objectpagelayout objectpageheader objectpagesection objectpagesubsection html
 " @summary Uses a block in a view of another block
-" @origin sap.uxap.sample.BlockBaseBlockInBlock - https://sdk.openui5.org/entity/sap.uxap.BlockBase/sample/sap.uxap.sample.BlockBaseBlockInBlock (status: reviewed)
+" @origin sap.uxap.sample.BlockBaseBlockInBlock - https://sdk.openui5.org/entity/sap.uxap.BlockBase/sample/sap.uxap.sample.BlockBaseBlockInBlock (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_409 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

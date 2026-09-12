@@ -1,6 +1,6 @@
 " @keywords fixflex fix flex sap.ui.layout fixflexminflexsize objectheader objectattribute objectstatus objectmarker table overflowtoolbar title
 " @summary Shows a FixFlex control where the minFlexSize is set to 400px.
-" @origin sap.ui.layout.sample.FixFlexMinFlexSize - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexMinFlexSize (status: reviewed)
+" @origin sap.ui.layout.sample.FixFlexMinFlexSize - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexMinFlexSize (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_215 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

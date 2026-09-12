@@ -1,6 +1,6 @@
 " @keywords pdfviewer sap.m pdfviewermultiple scrollcontainer flexbox button flexitemdata
 " @summary Two PDF viewer frames displayed side by side. The second frame has the property isTrustedSource set to false which opens the PDF viewer with the displayType set to Link
-" @origin sap.m.sample.PDFViewerMultiple - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerMultiple (status: generated)
+" @origin sap.m.sample.PDFViewerMultiple - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerMultiple (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_442 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

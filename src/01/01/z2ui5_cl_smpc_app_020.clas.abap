@@ -1,6 +1,6 @@
 " @keywords displaylistitem display list item sap.m represent label verticallayout
 " @summary Use the Display List Item for showing name/value pairs.
-" @origin sap.m.sample.DisplayListItem - https://sdk.openui5.org/entity/sap.m.DisplayListItem/sample/sap.m.sample.DisplayListItem (status: checked)
+" @origin sap.m.sample.DisplayListItem - https://sdk.openui5.org/entity/sap.m.DisplayListItem/sample/sap.m.sample.DisplayListItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_020 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,12 +8,12 @@ CLASS z2ui5_cl_smpc_app_020 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_supplier,
-        supplier_name TYPE string,
-        street        TYPE string,
-        house_number  TYPE string,
-        zip_code      TYPE string,
-        city          TYPE string,
-        country       TYPE string,
+        suppliername TYPE string,
+        street       TYPE string,
+        housenumber  TYPE string,
+        zipcode      TYPE string,
+        city         TYPE string,
+        country      TYPE string,
       END OF ty_s_supplier.
     DATA t_suppliers TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
 
@@ -63,13 +63,13 @@ CLASS z2ui5_cl_smpc_app_020 IMPLEMENTATION.
 
                     )->tag( `DisplayListItem`
                         )->a( n = `label` v = `Name`
-                        )->a( n = `value` v = `{SUPPLIER_NAME}`
+                        )->a( n = `value` v = `{SUPPLIERNAME}`
                     )->tag( `DisplayListItem`
                         )->a( n = `label` v = `Street`
-                        )->a( n = `value` v = `{STREET} {HOUSE_NUMBER}`
+                        )->a( n = `value` v = `{STREET} {HOUSENUMBER}`
                     )->tag( `DisplayListItem`
                         )->a( n = `label` v = `City`
-                        )->a( n = `value` v = `{ZIP_CODE} {CITY}`
+                        )->a( n = `value` v = `{ZIPCODE} {CITY}`
                         )->a( n = `type`  v = `Navigation`
                     )->tag( `DisplayListItem`
                         )->a( n = `label` v = `Country`
@@ -85,12 +85,12 @@ CLASS z2ui5_cl_smpc_app_020 IMPLEMENTATION.
 
     " the single record of the shared mock supplier.json /SupplierCollection, bound columns only
     t_suppliers = VALUE #(
-      ( supplier_name = `Red Point Stores`
-        street        = `Main St`
-        house_number  = `1618`
-        zip_code      = `31415`
-        city          = `Maintown`
-        country       = `Germany` ) ).
+      ( suppliername = `Red Point Stores`
+        street       = `Main St`
+        housenumber  = `1618`
+        zipcode      = `31415`
+        city         = `Maintown`
+        country      = `Germany` ) ).
 
   ENDMETHOD.
 

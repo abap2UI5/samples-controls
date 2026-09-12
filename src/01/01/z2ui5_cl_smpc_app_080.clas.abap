@@ -1,6 +1,6 @@
 " @keywords togglebutton toggle button sap.m bars pressed states bar title hbox flexitemdata
 " @summary Toggle Buttons can be toggled between pressed and normal state.
-" @origin sap.m.sample.ToggleButton - https://sdk.openui5.org/entity/sap.m.ToggleButton/sample/sap.m.sample.ToggleButton (status: reviewed)
+" @origin sap.m.sample.ToggleButton - https://sdk.openui5.org/entity/sap.m.ToggleButton/sample/sap.m.sample.ToggleButton (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_080 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -33,9 +33,9 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
 
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`     v = `sap.m`
 
         )->ele( `Page`
             )->a( n = `title` v = `Page`

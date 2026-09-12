@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeicon overflowtoolbar title toolbarspacer togglebutton menu menuitem
 " @summary Tree item with icon. This example also shows the context menu for the items in the Tree control.
-" @origin sap.m.sample.TreeIcon - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeIcon (status: generated)
+" @origin sap.m.sample.TreeIcon - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeIcon (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_436 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

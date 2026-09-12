@@ -1,6 +1,6 @@
 " @keywords objectpagedynamicheadertitle object dynamic header title sap.uxap objectpageprogressratingindicators objectpagelayout hbox vbox avatar label
 " @summary ObjectPage sample with header content arranged using containers, called facets, ProgressIndicator and RatingIndicator.
-" @origin sap.uxap.sample.ObjectPageProgressRatingIndicators - https://sdk.openui5.org/entity/sap.uxap.ObjectPageDynamicHeaderTitle/sample/sap.uxap.sample.ObjectPageProgressRatingIndicators (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageProgressRatingIndicators - https://sdk.openui5.org/entity/sap.uxap.ObjectPageDynamicHeaderTitle/sample/sap.uxap.sample.ObjectPageProgressRatingIndicators (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_259 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -38,13 +38,13 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
     " SimpleForm (or layout) - so the view content is inlined here 1:1, keeping
     " the block's own class attribute where the original sets one.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -169,9 +169,9 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
 
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Top-design high-quality coffee mug - ideal for a comforting moment; `
-                                              && `Pack: 6; material: Porcelain - durable dishwasher and microwave-safe `
-                                              && `porcelain that cleans easily and is ideal for everyday service. `
-                                              && `Comes in two bright colors.`
+                                                 && `Pack: 6; material: Porcelain - durable dishwasher and microwave-safe `
+                                                 && `porcelain that cleans easily and is ideal for everyday service. `
+                                                 && `Comes in two bright colors.`
 
                     )->end(
                 )->end(
@@ -191,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " goals:GoalsBlock inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -229,7 +229,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:BlockPhoneNumber inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`  v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
@@ -248,7 +248,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockSocial inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `labelSpanL`       v = `4`
@@ -274,7 +274,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockAdresses inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->a( n = `editable` v = `false`
@@ -296,7 +296,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 " personal:BlockMailing inlined (the block's own
                                 " columnLayout='1' is a BlockBase property and
                                 " has no counterpart on the inlined form)
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`  v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
@@ -320,7 +320,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:PersonalBlockPart1 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -338,7 +338,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `moreBlocks`
 
                                 " personal:PersonalBlockPart2 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -370,7 +370,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " employment:BlockJobInfoPart1 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -409,7 +409,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockJobInfoPart2 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -442,16 +442,16 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockJobInfoPart3 inlined
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->a( n = `class` v = `sapUiSmallMarginTop`
 
-                                    )->ele( n = `VerticalLayout` ns = `layout`
+                                    )->ele( n = `VerticalLayout` ns = `l`
                                         )->tag( n = `Label` ns = `m`
                                             )->a( n = `text` v = `Manager`
 
-                                        )->ele( n = `HorizontalLayout` ns = `layout`
-                                            )->ele( n = `content` ns = `layout`
-                                                )->ele( n = `VerticalLayout` ns = `layout`
+                                        )->ele( n = `HorizontalLayout` ns = `l`
+                                            )->ele( n = `content` ns = `l`
+                                                )->ele( n = `VerticalLayout` ns = `l`
                                                     )->tag( n = `Text` ns = `m`
                                                         )->a( n = `text` v = `James Smith`
                                                     )->tag( n = `Text` ns = `m`
@@ -473,7 +473,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " employment:BlockEmpDetailPart1 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -503,7 +503,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                             )->ele( `moreBlocks`
 
                                 " employment:BlockEmpDetailPart2 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -536,7 +536,7 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockEmpDetailPart3 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`

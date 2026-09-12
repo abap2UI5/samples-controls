@@ -1,53 +1,56 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationsearch toolpage toolheader button image title text toolbarspacer
 " @summary SideNavigation with a search field in the filter section and filterable navigation items.
-" @origin sap.tnt.sample.SideNavigationSearch - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationSearch (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationSearch - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationSearch (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_407 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_sub_item,
-             title        TYPE string,
-             key          TYPE string,
-             href         TYPE string,
-             target       TYPE string,
-             ariahaspopup TYPE string,
-             design       TYPE string,
-             tagtext      TYPE string,
-             tagstate     TYPE string,
-             enabled      TYPE abap_bool,
-             selectable   TYPE abap_bool,
-           END OF ty_s_sub_item.
+    TYPES:
+      BEGIN OF ty_s_sub_item,
+        title        TYPE string,
+        key          TYPE string,
+        href         TYPE string,
+        target       TYPE string,
+        ariahaspopup TYPE string,
+        design       TYPE string,
+        tagtext      TYPE string,
+        tagstate     TYPE string,
+        enabled      TYPE abap_bool,
+        selectable   TYPE abap_bool,
+      END OF ty_s_sub_item.
     TYPES ty_t_sub_item TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_nav_item,
-             title        TYPE string,
-             icon         TYPE string,
-             key          TYPE string,
-             href         TYPE string,
-             target       TYPE string,
-             ariahaspopup TYPE string,
-             design       TYPE string,
-             tagtext      TYPE string,
-             tagstate     TYPE string,
-             enabled      TYPE abap_bool,
-             expanded     TYPE abap_bool,
-             hasexpander  TYPE abap_bool,
-             selectable   TYPE abap_bool,
-             items        TYPE ty_t_sub_item,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        title        TYPE string,
+        icon         TYPE string,
+        key          TYPE string,
+        href         TYPE string,
+        target       TYPE string,
+        ariahaspopup TYPE string,
+        design       TYPE string,
+        tagtext      TYPE string,
+        tagstate     TYPE string,
+        enabled      TYPE abap_bool,
+        expanded     TYPE abap_bool,
+        hasexpander  TYPE abap_bool,
+        selectable   TYPE abap_bool,
+        items        TYPE ty_t_sub_item,
+      END OF ty_s_nav_item.
     TYPES ty_t_nav_item TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_fixed_item,
-             title        TYPE string,
-             icon         TYPE string,
-             key          TYPE string,
-             href         TYPE string,
-             target       TYPE string,
-             ariahaspopup TYPE string,
-             design       TYPE string,
-             tagtext      TYPE string,
-             tagstate     TYPE string,
-             selectable   TYPE abap_bool,
-           END OF ty_s_fixed_item.
+    TYPES:
+      BEGIN OF ty_s_fixed_item,
+        title        TYPE string,
+        icon         TYPE string,
+        key          TYPE string,
+        href         TYPE string,
+        target       TYPE string,
+        ariahaspopup TYPE string,
+        design       TYPE string,
+        tagtext      TYPE string,
+        tagstate     TYPE string,
+        selectable   TYPE abap_bool,
+      END OF ty_s_fixed_item.
     TYPES ty_t_fixed_item TYPE STANDARD TABLE OF ty_s_fixed_item WITH EMPTY KEY.
 
     DATA side_expanded  TYPE abap_bool.
@@ -69,15 +72,15 @@ CLASS z2ui5_cl_smpc_app_407 DEFINITION PUBLIC.
 
     METHODS view_display.
     METHODS on_event.
-    METHODS popup_quick_create.
     METHODS navigate_to
       IMPORTING key TYPE string.
+    METHODS popup_quick_create.
     METHODS apply_filter.
     METHODS filter_items
-      IMPORTING it_items        TYPE ty_t_nav_item
-      RETURNING VALUE(rt_items) TYPE ty_t_nav_item.
+      IMPORTING t_items       TYPE ty_t_nav_item
+      RETURNING VALUE(result) TYPE ty_t_nav_item.
     METHODS count_matches
-      RETURNING VALUE(rv_count) TYPE i.
+      RETURNING VALUE(result) TYPE i.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -564,9 +567,9 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
 
   METHOD filter_items.
 
-    LOOP AT it_items INTO DATA(s_item).
+    LOOP AT t_items INTO DATA(s_item).
       IF s_item-title CS search_value OR s_item-tagtext CS search_value.
-        APPEND s_item TO rt_items.
+        APPEND s_item TO result.
         CONTINUE.
       ENDIF.
       DATA(t_children) = VALUE ty_t_sub_item( ).
@@ -577,7 +580,7 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
       ENDLOOP.
       IF t_children IS NOT INITIAL.
         s_item-items = t_children.
-        APPEND s_item TO rt_items.
+        APPEND s_item TO result.
       ENDIF.
     ENDLOOP.
 
@@ -589,29 +592,29 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
     " _countItems: a recursive title-only count over the UNFILTERED
     " navigation + fixedNavigation rows - group titles count too
     IF `Home` CS search_value.
-      rv_count = 1.
+      result = 1.
     ENDIF.
     IF `Business Operations` CS search_value.
-      rv_count = rv_count + 1.
+      result = result + 1.
     ENDIF.
     IF `System & Administration` CS search_value.
-      rv_count = rv_count + 1.
+      result = result + 1.
     ENDIF.
     DATA(t_grouped) = t_group1_full.
     APPEND LINES OF t_group2_full TO t_grouped.
     LOOP AT t_grouped INTO DATA(s_item).
       IF s_item-title CS search_value.
-        rv_count = rv_count + 1.
+        result = result + 1.
       ENDIF.
       LOOP AT s_item-items INTO DATA(s_child).
         IF s_child-title CS search_value.
-          rv_count = rv_count + 1.
+          result = result + 1.
         ENDIF.
       ENDLOOP.
     ENDLOOP.
     LOOP AT t_fixed_full INTO DATA(s_fixed).
       IF s_fixed-title CS search_value.
-        rv_count = rv_count + 1.
+        result = result + 1.
       ENDIF.
     ENDLOOP.
 

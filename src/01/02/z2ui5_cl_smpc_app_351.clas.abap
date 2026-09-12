@@ -1,6 +1,6 @@
 " @keywords splitter sap.ui.layout html app button splitterlayoutdata horizontallayout text verticallayout hbox checkbox input
 " @summary Splitter where you can change contentAreas and their sizes live
-" @origin sap.ui.layout.sample.Splitter - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter (status: reviewed)
+" @origin sap.ui.layout.sample.Splitter - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_351 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -219,19 +219,19 @@ CLASS z2ui5_cl_smpc_app_351 IMPLEMENTATION.
         " is an integer; the original parses it with parseInt in the handler,
         " here the parse happens in ABAP over the whole (already two-way
         " returned) table - no per-row index has to travel
-        LOOP AT t_areas REFERENCE INTO DATA(lr_area).
+        LOOP AT t_areas REFERENCE INTO DATA(area).
           " the length term, not just the character one - `99999999999` is all
           " digits and overflows CONV i
-          lr_area->minsize = COND i( WHEN lr_area->minsize_text CO ` 0123456789`
-                                     AND strlen( condense( lr_area->minsize_text ) ) <= 9
-                                     THEN CONV i( lr_area->minsize_text ) ).
+          area->minsize = COND i( WHEN area->minsize_text CO ` 0123456789`
+                                     AND strlen( condense( area->minsize_text ) ) <= 9
+                                     THEN CONV i( area->minsize_text ) ).
         ENDLOOP.
 
     ENDCASE.
 
     " every area row carries its own option row, so the titles follow the table
-    LOOP AT t_areas REFERENCE INTO DATA(lr_row).
-      lr_row->title = |ContentArea #{ sy-tabix }|.
+    LOOP AT t_areas REFERENCE INTO DATA(row).
+      row->title = |ContentArea #{ sy-tabix }|.
     ENDLOOP.
 
 

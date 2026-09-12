@@ -1,15 +1,16 @@
 " @keywords combobox combo box sap.m comboboxmaxpickerheight verticallayout label item
 " @summary Limit the picker popup height using maxPickerHeight property
-" @origin sap.m.sample.ComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxMaxPickerHeight (status: generated)
+" @origin sap.m.sample.ComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxMaxPickerHeight (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_494 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items TYPE ty_t_item.
@@ -75,10 +76,10 @@ CLASS z2ui5_cl_smpc_app_494 IMPLEMENTATION.
                         )->a( n = `text`     v = `ComboBox with maxPickerHeight='300px'`
                         )->a( n = `labelFor` v = `idComboBox300px`
                     )->ele( `ComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idComboBox300px`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idComboBox300px`
                         )->a( n = `maxPickerHeight` v = `300px`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`
@@ -90,10 +91,10 @@ CLASS z2ui5_cl_smpc_app_494 IMPLEMENTATION.
                         )->a( n = `text`     v = `ComboBox with maxPickerHeight='15rem'`
                         )->a( n = `labelFor` v = `idComboBox15rem`
                     )->ele( `ComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idComboBox15rem`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idComboBox15rem`
                         )->a( n = `maxPickerHeight` v = `15rem`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`
@@ -105,12 +106,12 @@ CLASS z2ui5_cl_smpc_app_494 IMPLEMENTATION.
                         )->a( n = `text`     v = `ComboBox with maxPickerHeight='150px' and value state`
                         )->a( n = `labelFor` v = `idComboBoxWithValueState`
                     )->ele( `ComboBox`
-                        )->a( n = `class` v = `sapUiSmallMarginBottom`
-                        )->a( n = `id`    v = `idComboBoxWithValueState`
+                        )->a( n = `class`           v = `sapUiSmallMarginBottom`
+                        )->a( n = `id`              v = `idComboBoxWithValueState`
                         )->a( n = `maxPickerHeight` v = `150px`
                         )->a( n = `valueState`      v = `Information`
                         )->a( n = `valueStateText`  v = `The maxPickerHeight property limits the picker popup height. When items exceed this height, the picker becomes scrollable.`
-                        )->a( n = `items` v = client->_bind( t_items )
+                        )->a( n = `items`           v = client->_bind( t_items )
 
                         )->tag( n = `Item` ns = `core`
                             )->a( n = `key`  v = `{KEY}`

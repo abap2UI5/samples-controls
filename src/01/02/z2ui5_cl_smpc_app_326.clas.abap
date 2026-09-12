@@ -1,6 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform354wide bar button vbox label text input griddata
 " @summary Form with one single group in a fullscreen app for long labels and fields, so some more space is available on medium screens (4:7:0).
-" @origin sap.ui.layout.sample.SimpleForm354wide - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm354wide (status: reviewed)
+" @origin sap.ui.layout.sample.SimpleForm354wide - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm354wide (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_326 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -62,7 +62,7 @@ CLASS z2ui5_cl_smpc_app_326 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Page`
@@ -102,7 +102,7 @@ CLASS z2ui5_cl_smpc_app_326 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = |\{= !${ client->_bind( edit_mode ) }\}|
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`                      v = `SimpleFormDisplay354wide`
                         )->a( n = `editable`                v = `false`
                         )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_app_326 IMPLEMENTATION.
                         )->a( n = `columnsM`                v = `1`
                         )->a( n = `singleContainerFullSize` v = `false`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Full name of the contact`
                             )->tag( `Text`
@@ -150,7 +150,7 @@ CLASS z2ui5_cl_smpc_app_326 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = client->_bind( edit_mode )
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`                      v = `SimpleFormChange354wide`
                         )->a( n = `editable`                v = `true`
                         )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -169,7 +169,7 @@ CLASS z2ui5_cl_smpc_app_326 IMPLEMENTATION.
                         )->a( n = `columnsM`                v = `1`
                         )->a( n = `singleContainerFullSize` v = `false`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( `Label`
                                 )->a( n = `text` v = `Full name of the contact`
                             )->tag( `Input`

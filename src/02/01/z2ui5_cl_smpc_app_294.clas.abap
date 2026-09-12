@@ -1,6 +1,6 @@
 " @keywords messageview message sap.m messageviewwithgrouping overflowtoolbar button toolbarspacer dialog bar text messageitem link
 " @summary A sample with Message View and inside a Dialog and grouping of items
-" @origin sap.m.sample.MessageViewWithGrouping - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewWithGrouping (status: reviewed)
+" @origin sap.m.sample.MessageViewWithGrouping - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewWithGrouping (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_294 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -189,7 +189,7 @@ CLASS z2ui5_cl_smpc_app_294 IMPLEMENTATION.
 
   METHOD model_init.
 
-    DATA(lv_desc) = `First Error message description. ` && |\n| &&
+    DATA(desc) = `First Error message description. ` && |\n| &&
                       `Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod` &&
                       `tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,` &&
                       `quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo` &&
@@ -203,73 +203,73 @@ CLASS z2ui5_cl_smpc_app_294 IMPLEMENTATION.
         title       = `Account 801 requires an assignment`
         subtitle    = `Role is invalid`
         group       = `Purchase Order 450001`
-        description = lv_desc )
+        description = desc )
       ( type        = `Warning`
         title       = `Account 821 requires a check`
         subtitle    = `Undefined task`
         group       = `Purchase Order 450001`
-        description = lv_desc )
+        description = desc )
       ( type        = `Warning`
         title       = `Enter a text with maximum 6 characters length`
         group       = `Purchase Order 450002`
-        description = lv_desc )
+        description = desc )
       ( type        = `Warning`
         title       = `Enter a text with maximum 8 characters length`
         group       = `Purchase Order 450002`
-        description = lv_desc )
+        description = desc )
       ( type        = `Error`
         title       = `Account 802 requires an assignment`
         subtitle    = `Role is invalid`
         group       = `Purchase Order 450002`
-        description = lv_desc )
+        description = desc )
       ( type        = `Information`
         title       = `Account 804 requires an assignment`
         subtitle    = `Information type subtitle`
         group       = `Purchase Order 450002`
-        description = lv_desc )
+        description = desc )
       ( type        = `Error`
         title       = `Technical message without object relation`
         group       = `General`
-        description = lv_desc )
+        description = desc )
       ( type        = `Warning`
         title       = `Global System will be down on Sunday`
         group       = `General`
-        description = lv_desc )
+        description = desc )
       ( type        = `Error`
         title       = `Global System will be down on Sunday`
         group       = `General`
-        description = lv_desc )
+        description = desc )
       ( type        = `Error`
         title       = `An Error`
         subtitle    = `Ungrouped message`
-        description = lv_desc )
+        description = desc )
       ( type        = `Warning`
         title       = `A Warning`
         subtitle    = `Ungrouped message`
-        description = lv_desc ) ).
+        description = desc ) ).
 
     " buttonIconFormatter / buttonTypeFormatter / highestSeverityMessages walk
     " the whole message list and pick the highest severity (Error > Warning >
     " Success > Information) plus how many messages carry it. That is a
     " computation over the data, so it happens here and the Button binds the
     " finished values (thin-frontend rule, apps 009/010/022/092)
-    DATA(lv_top) = `Information`.
-    LOOP AT t_messages INTO DATA(ls_message).
-      CASE ls_message-type.
+    DATA(top) = `Information`.
+    LOOP AT t_messages INTO DATA(s_message).
+      CASE s_message-type.
         WHEN `Error`.
-          lv_top = `Error`.
+          top = `Error`.
         WHEN `Warning`.
-          IF lv_top <> `Error`.
-            lv_top = `Warning`.
+          IF top <> `Error`.
+            top = `Warning`.
           ENDIF.
         WHEN `Success`.
-          IF lv_top <> `Error` AND lv_top <> `Warning`.
-            lv_top = `Success`.
+          IF top <> `Error` AND top <> `Warning`.
+            top = `Success`.
           ENDIF.
       ENDCASE.
     ENDLOOP.
 
-    CASE lv_top.
+    CASE top.
       WHEN `Error`.
         button_icon = `sap-icon://message-error`.
         button_type = `Negative`.
@@ -284,7 +284,7 @@ CLASS z2ui5_cl_smpc_app_294 IMPLEMENTATION.
         button_type = `Neutral`.
     ENDCASE.
 
-    button_text = |{ REDUCE i( INIT x = 0 FOR ls_row IN t_messages NEXT x = COND #( WHEN ls_row-type = lv_top THEN x + 1 ELSE x ) ) }|.
+    button_text = |{ REDUCE i( INIT x = 0 FOR s_row IN t_messages NEXT x = COND #( WHEN s_row-type = top THEN x + 1 ELSE x ) ) }|.
 
   ENDMETHOD.
 

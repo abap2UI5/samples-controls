@@ -1,16 +1,17 @@
 " @keywords list sap.m listnavtype standardlistitem
 " @summary If only a subset of the list items are navigable you should indicate those by setting their 'type' to 'Navigation'. This displays an navigation arrow. Do not show arrows if all items are navigable.
-" @origin sap.m.sample.ListNavType - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNavType (status: generated)
+" @origin sap.m.sample.ListNavType - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNavType (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_429 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

@@ -1,6 +1,6 @@
 " @keywords messageview message sap.m showing connect messageitem
 " @summary A sample showing how you can connect the MessageView with MessageManager.
-" @origin sap.m.sample.MessageViewMessageManager - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewMessageManager (status: reviewed)
+" @origin sap.m.sample.MessageViewMessageManager - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewMessageManager (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_038 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,10 +8,10 @@ CLASS z2ui5_cl_smpc_app_038 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_message,
-        type            TYPE string,
-        message         TYPE string,
-        additional_text TYPE string,
-        description     TYPE string,
+        type           TYPE string,
+        message        TYPE string,
+        additionaltext TYPE string,
+        description    TYPE string,
       END OF ty_s_message.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
 
@@ -59,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_038 IMPLEMENTATION.
                 )->tag( `MessageItem`
                     )->a( n = `type`        v = `{TYPE}`
                     )->a( n = `title`       v = `{MESSAGE}`
-                    )->a( n = `subtitle`    v = `{ADDITIONAL_TEXT}`
+                    )->a( n = `subtitle`    v = `{ADDITIONALTEXT}`
                     )->a( n = `description` v = `{DESCRIPTION}` ).
 
     client->view_display( view->stringify( ) ).
@@ -71,22 +71,22 @@ CLASS z2ui5_cl_smpc_app_038 IMPLEMENTATION.
 
     " messages the original registers on the sap.ui.core.message.MessageManager
     t_messages = VALUE #(
-      ( type            = `Error`
-        message         = `Error message`
-        additional_text = `Example of additionalText`
-        description     = `Example of description` )
-      ( type            = `Information`
-        message         = `Information message`
-        additional_text = `Example of additionalText`
-        description     = `Example of description` )
-      ( type            = `Success`
-        message         = `Success message`
-        additional_text = `Example of additionalText`
-        description     = `Example of description` )
-      ( type            = `Warning`
-        message         = `Warning message`
-        additional_text = `Example of additionalText`
-        description     = `Example of description` ) ).
+      ( type           = `Error`
+        message        = `Error message`
+        additionaltext = `Example of additionalText`
+        description    = `Example of description` )
+      ( type           = `Information`
+        message        = `Information message`
+        additionaltext = `Example of additionalText`
+        description    = `Example of description` )
+      ( type           = `Success`
+        message        = `Success message`
+        additionaltext = `Example of additionalText`
+        description    = `Example of description` )
+      ( type           = `Warning`
+        message        = `Warning message`
+        additionaltext = `Example of additionalText`
+        description    = `Example of description` ) ).
 
   ENDMETHOD.
 

@@ -1,18 +1,19 @@
 " @keywords multiinput multi input sap.m multiinputfilteringsuggestions vbox item column label columnlistitem multiinputext formattedtext
 " @summary The default filtering is 'starts with per term', which filters by the beginning of every word in every column.
-" @origin sap.m.sample.MultiInputFilteringSuggestions - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputFilteringSuggestions (status: generated)
+" @origin sap.m.sample.MultiInputFilteringSuggestions - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputFilteringSuggestions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_612 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             price        TYPE string,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        price        TYPE string,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -21,8 +22,8 @@ CLASS z2ui5_cl_smpc_app_612 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -50,11 +51,11 @@ CLASS z2ui5_cl_smpc_app_612 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(box) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`       v = `sap.m`
+        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
-        )->a( n = `height`     v = `100%`
+        )->a( n = `height`      v = `100%`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin` ).
@@ -93,15 +94,15 @@ CLASS z2ui5_cl_smpc_app_612 IMPLEMENTATION.
         )->a( n = `class`    v = `sapUiSmallMarginTop`
 
         )->ele( `MultiInput`
-            )->a( n = `id`                     v = `multiInput2`
-            )->a( n = `class`                  v = `sapUiSmallMarginBottom`
-            )->a( n = `width`                  v = `100%`
-            )->a( n = `placeholder`            v = `Enter Product ...`
-            )->a( n = `showSuggestion`         v = `true`
-            )->a( n = `showValueHelp`          v = `false`
-            )->a( n = `valueState`             v = `Information`
-            )->a( n = `valueStateText`         v = `Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3.`
-            )->a( n = `suggestionRows`         v = client->_bind( t_products )
+            )->a( n = `id`             v = `multiInput2`
+            )->a( n = `class`          v = `sapUiSmallMarginBottom`
+            )->a( n = `width`          v = `100%`
+            )->a( n = `placeholder`    v = `Enter Product ...`
+            )->a( n = `showSuggestion` v = `true`
+            )->a( n = `showValueHelp`  v = `false`
+            )->a( n = `valueState`     v = `Information`
+            )->a( n = `valueStateText` v = `Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3.`
+            )->a( n = `suggestionRows` v = client->_bind( t_products )
 
             )->ele( `suggestionColumns`
                 )->ele( `Column`
@@ -150,7 +151,7 @@ CLASS z2ui5_cl_smpc_app_612 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(
@@ -177,14 +178,14 @@ CLASS z2ui5_cl_smpc_app_612 IMPLEMENTATION.
         )->a( n = `class`    v = `sapUiSmallMarginTop`
 
         )->ele( `MultiInput`
-            )->a( n = `id`                     v = `multiInput3`
-            )->a( n = `width`                  v = `100%`
-            )->a( n = `placeholder`            v = `Enter Product ...`
-            )->a( n = `showSuggestion`         v = `true`
-            )->a( n = `showValueHelp`          v = `false`
-            )->a( n = `valueState`             v = `Information`
-            )->a( n = `valueStateText`         v = `Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3.`
-            )->a( n = `suggestionRows`         v = client->_bind( t_products )
+            )->a( n = `id`             v = `multiInput3`
+            )->a( n = `width`          v = `100%`
+            )->a( n = `placeholder`    v = `Enter Product ...`
+            )->a( n = `showSuggestion` v = `true`
+            )->a( n = `showValueHelp`  v = `false`
+            )->a( n = `valueState`     v = `Information`
+            )->a( n = `valueStateText` v = `Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3.`
+            )->a( n = `suggestionRows` v = client->_bind( t_products )
 
             )->ele( `suggestionColumns`
                 )->ele( `Column`
@@ -233,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_612 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(

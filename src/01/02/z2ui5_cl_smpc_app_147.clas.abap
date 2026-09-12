@@ -1,6 +1,6 @@
 " @keywords busyindicator busy indicator sap.ui.core global panel text button
 " @summary A busy indicator can be used to block the entire screen until an operation has finished.
-" @origin sap.ui.core.sample.BusyIndicator - https://sdk.openui5.org/entity/sap.ui.core.BusyIndicator/sample/sap.ui.core.sample.BusyIndicator (status: reviewed)
+" @origin sap.ui.core.sample.BusyIndicator - https://sdk.openui5.org/entity/sap.ui.core.BusyIndicator/sample/sap.ui.core.sample.BusyIndicator (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_147 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

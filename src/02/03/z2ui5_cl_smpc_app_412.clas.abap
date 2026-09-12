@@ -1,6 +1,6 @@
 " @keywords headerfacetpattern header facet pattern sap.uxap objectpagewithlinksandobjectstatus objectpagelayout objectpagedynamicheadertitle title hbox vbox avatar
 " @summary ObjectPage sample with header content arranged using containers, called facets, Links, RatingIndicator and ObjectStatus.
-" @origin sap.uxap.sample.ObjectPageWithLinksAndObjectStatus - https://sdk.openui5.org/entity/sap.uxap.HeaderFacetPattern/sample/sap.uxap.sample.ObjectPageWithLinksAndObjectStatus (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageWithLinksAndObjectStatus - https://sdk.openui5.org/entity/sap.uxap.HeaderFacetPattern/sample/sap.uxap.sample.ObjectPageWithLinksAndObjectStatus (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_412 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

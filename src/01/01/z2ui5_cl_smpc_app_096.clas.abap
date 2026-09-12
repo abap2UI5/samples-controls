@@ -1,6 +1,6 @@
 " @keywords splitcontainer split container sap.m master-detail navigation label button vbox text radiobuttongroup radiobutton
 " @summary SplitContainer maintains two NavContainers if running on tablet or desktop and one NavContainer - on phone. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitContainer.
-" @origin sap.m.sample.SplitContainer - https://sdk.openui5.org/entity/sap.m.SplitContainer/sample/sap.m.sample.SplitContainer (status: reviewed)
+" @origin sap.m.sample.SplitContainer - https://sdk.openui5.org/entity/sap.m.SplitContainer/sample/sap.m.sample.SplitContainer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_096 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -88,21 +88,21 @@ CLASS z2ui5_cl_smpc_app_096 IMPLEMENTATION.
 
                             )->ele( `buttons`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-1`
-                                    )->a( n = `text`               v = `show/hide`
-                                    )->a( n = `selected`           v = `true`
+                                    )->a( n = `id`                  v = `RB1-1`
+                                    )->a( n = `text`                v = `show/hide`
+                                    )->a( n = `selected`            v = `true`
                                     )->a( n = `custom:splitAppMode` v = `ShowHideMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-2`
-                                    )->a( n = `text`               v = `stretch/compress`
+                                    )->a( n = `id`                  v = `RB1-2`
+                                    )->a( n = `text`                v = `stretch/compress`
                                     )->a( n = `custom:splitAppMode` v = `StretchCompressMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-3`
-                                    )->a( n = `text`               v = `hide`
+                                    )->a( n = `id`                  v = `RB1-3`
+                                    )->a( n = `text`                v = `hide`
                                     )->a( n = `custom:splitAppMode` v = `HideMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-4`
-                                    )->a( n = `text`               v = `popover`
+                                    )->a( n = `id`                  v = `RB1-4`
+                                    )->a( n = `text`                v = `popover`
                                     )->a( n = `custom:splitAppMode` v = `PopoverMode`
 
                             )->end(

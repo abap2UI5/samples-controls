@@ -1,6 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleformtoolbar vbox toolbar title toolbarspacer button label input
 " @summary A SimpleForm that uses Toolbars as Form header and FormContainer headers.
-" @origin sap.ui.layout.sample.SimpleFormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleFormToolbar (status: reviewed)
+" @origin sap.ui.layout.sample.SimpleFormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleFormToolbar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_175 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -47,14 +47,14 @@ CLASS z2ui5_cl_smpc_app_175 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
 
-            )->ele( n = `SimpleForm` ns = `f`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `id`                      v = `SimpleFormToolbar`
                 )->a( n = `editable`                v = `true`
                 )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -73,7 +73,7 @@ CLASS z2ui5_cl_smpc_app_175 IMPLEMENTATION.
                 )->a( n = `singleContainerFullSize` v = `false`
                 )->a( n = `ariaLabelledBy`          v = `Title1`
 
-                )->ele( n = `toolbar` ns = `f`
+                )->ele( n = `toolbar` ns = `form`
                     )->ele( `Toolbar`
                         )->a( n = `id` v = `TB1`
                         )->tag( `Title`
@@ -88,7 +88,7 @@ CLASS z2ui5_cl_smpc_app_175 IMPLEMENTATION.
                     )->end(
                 )->end(
 
-                )->ele( n = `content` ns = `f`
+                )->ele( n = `content` ns = `form`
                     )->ele( `Toolbar`
                         )->a( n = `ariaLabelledBy` v = `Title2`
                         )->tag( `Title`

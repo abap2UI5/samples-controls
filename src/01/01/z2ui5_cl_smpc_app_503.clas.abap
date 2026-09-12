@@ -1,18 +1,19 @@
 " @keywords input sap.m inputkeyvaluetabularsuggestions verticallayout label column columnlistitem text
 " @summary This sample illustrates how the Input works with key and value values, when the data is provided with table-like suggestions.
-" @origin sap.m.sample.InputKeyValueTabularSuggestions - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputKeyValueTabularSuggestions (status: generated)
+" @origin sap.m.sample.InputKeyValueTabularSuggestions - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputKeyValueTabularSuggestions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_503 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             price        TYPE p LENGTH 8 DECIMALS 2,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        price        TYPE p LENGTH 8 DECIMALS 2,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products   TYPE ty_t_product.
@@ -64,16 +65,16 @@ CLASS z2ui5_cl_smpc_app_503 IMPLEMENTATION.
                 )->a( n = `labelFor` v = `productInput`
 
             )->ele( `Input`
-                )->a( n = `id`                          v = `productInput`
-                )->a( n = `textFormatMode`              v = `ValueKey`
-                )->a( n = `placeholder`                 v = `Enter Product ...`
-                )->a( n = `showSuggestion`              v = `true`
+                )->a( n = `id`                           v = `productInput`
+                )->a( n = `textFormatMode`               v = `ValueKey`
+                )->a( n = `placeholder`                  v = `Enter Product ...`
+                )->a( n = `showSuggestion`               v = `true`
                 )->a( n = `showTableSuggestionValueHelp` v = `false`
-                )->a( n = `suggestionRows`              v = client->_bind( t_products )
+                )->a( n = `suggestionRows`               v = client->_bind( t_products )
                 " onSuggestionItemSelected reads the Input's selectedKey, which the JS
                 " suggestionRowValidator fills from the row's second cell - the same
                 " cell travels straight from the selected row instead
-                )->a( n = `suggestionItemSelected`      v = client->_event( val = `ITEM_SELECTED` arg = `${$parameters>/selectedRow}.getCells()[1].getText()` )
+                )->a( n = `suggestionItemSelected`       v = client->_event( val = `ITEM_SELECTED` arg = `${$parameters>/selectedRow}.getCells()[1].getText()` )
 
                 )->ele( `suggestionColumns`
                     )->ele( `Column`

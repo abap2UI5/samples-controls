@@ -1,18 +1,19 @@
 " @keywords wizard sap.m wizardbranching navcontainer wizardstep objectheader objectattribute list standardlistitem text hbox segmentedbutton
 " @summary The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one.
-" @origin sap.m.sample.WizardBranching - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardBranching (status: generated)
+" @origin sap.m.sample.WizardBranching - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardBranching (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_535 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             description   TYPE string,
-             productpicurl TYPE string,
-             price         TYPE p LENGTH 8 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        description   TYPE string,
+        productpicurl TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA productcollection    TYPE ty_t_product.
@@ -57,9 +58,9 @@ CLASS z2ui5_cl_smpc_app_535 DEFINITION PUBLIC.
 
     METHODS view_display.
     METHODS on_event.
-    METHODS nav_back_to_step IMPORTING step_id TYPE string.
     METHODS branch_payment.
     METHODS branch_delivery.
+    METHODS nav_back_to_step IMPORTING step_id TYPE string.
     METHODS total_calc.
     METHODS model_init.
 
@@ -89,11 +90,11 @@ CLASS z2ui5_cl_smpc_app_535 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `NavContainer`
             )->a( n = `id` v = `wizardNavContainer`
@@ -208,9 +209,9 @@ CLASS z2ui5_cl_smpc_app_535 IMPLEMENTATION.
                                         )->a( n = `text`     v = `Name on card`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
-                                        )->a( n = `value`            v = client->_bind( name )
-                                        )->a( n = `liveChange`       v = client->_event( `CHECK_CREDIT_CARD` )
-                                        )->a( n = `valueLiveUpdate`  v = `true`
+                                        )->a( n = `value`           v = client->_bind( name )
+                                        )->a( n = `liveChange`      v = client->_event( `CHECK_CREDIT_CARD` )
+                                        )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Card number`
                                     )->tag( `Input`
@@ -244,7 +245,7 @@ CLASS z2ui5_cl_smpc_app_535 IMPLEMENTATION.
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `Grid` ns = `layout`
+                                    )->ele( n = `Grid` ns = `l`
                                         )->a( n = `defaultSpan` v = `L6 M6 S10`
                                         )->a( n = `hSpacing`    v = `2`
 
@@ -545,7 +546,7 @@ CLASS z2ui5_cl_smpc_app_535 IMPLEMENTATION.
                             )->a( n = `layout`   v = `ResponsiveGridLayout`
 
                             )->ele( n = `content` ns = `form`
-                                )->ele( n = `Grid` ns = `layout`
+                                )->ele( n = `Grid` ns = `l`
                                     )->a( n = `defaultSpan` v = `L6 M6 S10`
                                     )->a( n = `hSpacing`    v = `2`
 

@@ -1,6 +1,6 @@
 " @keywords semanticpage semantic sap.f.semantic title text horizontallayout verticallayout objectattribute objectstatus messagemanager table column
 " @summary This sample demonstrates the use of a DraftIndicator in the footer area.
-" @origin sap.f.sample.SemanticPage - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPage (status: reviewed)
+" @origin sap.f.sample.SemanticPage - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPage (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_166 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -29,11 +29,12 @@ CLASS z2ui5_cl_smpc_app_166 DEFINITION PUBLIC.
     DATA showfooter  TYPE abap_bool VALUE abap_false.
     DATA edit_visible TYPE abap_bool VALUE abap_true.
 
-    TYPES: BEGIN OF ty_s_message,
-             type    TYPE string,
-             message TYPE string,
-             target  TYPE string,
-           END OF ty_s_message.
+    TYPES:
+      BEGIN OF ty_s_message,
+        type    TYPE string,
+        message TYPE string,
+        target  TYPE string,
+      END OF ty_s_message.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
 
   PROTECTED SECTION.
@@ -69,12 +70,12 @@ CLASS z2ui5_cl_smpc_app_166 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`          v = `100%`
-        )->a( n = `xmlns:mvc`       v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`           v = `sap.m`
-        )->a( n = `xmlns:layout`    v = `sap.ui.layout`
-        )->a( n = `xmlns:semantic`  v = `sap.f.semantic`
-        )->a( n = `xmlns:z2ui5`     v = `z2ui5.cc`
+        )->a( n = `height`         v = `100%`
+        )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`          v = `sap.m`
+        )->a( n = `xmlns:l`        v = `sap.ui.layout`
+        )->a( n = `xmlns:semantic` v = `sap.f.semantic`
+        )->a( n = `xmlns:z2ui5`    v = `z2ui5.cc`
 
         )->ele( n = `SemanticPage` ns = `semantic`
             )->a( n = `id`                          v = `mySemanticPage`
@@ -103,9 +104,9 @@ CLASS z2ui5_cl_smpc_app_166 IMPLEMENTATION.
             )->end(
 
             )->ele( n = `headerContent` ns = `semantic`
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->a( n = `allowWrapping` v = `true`
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiMediumMarginEnd`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Functional Area`
@@ -118,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_166 IMPLEMENTATION.
                             )->a( n = `text`  v = client->_bind( email )
 
                     )->end(
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Availability`
                         )->tag( `ObjectStatus`

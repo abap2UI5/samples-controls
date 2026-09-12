@@ -1,6 +1,6 @@
 " @keywords messageview message sap.m messageviewinsideresponsivepopover button responsivepopover bar title messageitem link
 " @summary A sample with Message View inside a ResponsivePopover.
-" @origin sap.m.sample.MessageViewInsideResponsivePopover - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewInsideResponsivePopover (status: generated)
+" @origin sap.m.sample.MessageViewInsideResponsivePopover - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewInsideResponsivePopover (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_564 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -25,8 +25,8 @@ CLASS z2ui5_cl_smpc_app_564 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popover_display IMPORTING by_id TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.

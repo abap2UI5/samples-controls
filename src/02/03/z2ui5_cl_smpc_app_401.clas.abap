@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageonjson objectpagedynamicheadertitle breadcrumbs link hbox title objectmarker flexbox
 " @summary Object Page sample showing a layout with subsection titles on top. This is the default layout. The sample also shows the 'Edit header' button in the Header Content area.
-" @origin sap.uxap.sample.ObjectPageOnJSON - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageOnJSON (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageOnJSON - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageOnJSON (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_401 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

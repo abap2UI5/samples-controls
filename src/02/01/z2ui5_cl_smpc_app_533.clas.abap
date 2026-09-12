@@ -1,36 +1,36 @@
 " @keywords wizard sap.m wizardsinglestep button dialog dynamicpage dynamicpagetitle title wizardstep messagestrip text hbox
 " @summary Demonstrates the usage of the renderMode property. The Wizard is displayed inside a Dialog to allow blocking of the interface without using page context. The dynamic page is used to provide a consistent and standards-compliant look.
-" @origin sap.m.sample.WizardSingleStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardSingleStep (status: generated)
+" @origin sap.m.sample.WizardSingleStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardSingleStep (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_533 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA product_type         TYPE string.
-    DATA product_name         TYPE string.
-    DATA product_name_state   TYPE string.
-    DATA product_weight       TYPE string.
-    DATA product_weight_state TYPE string.
-    DATA product_manufacturer TYPE string.
-    DATA product_description  TYPE string.
-    DATA manufacturing_date   TYPE string.
-    DATA availability_type    TYPE string.
-    DATA size                 TYPE string.
-    DATA measurement          TYPE string.
-    DATA product_price        TYPE string.
-    DATA discount_group       TYPE string.
-    DATA product_vat          TYPE abap_bool.
-    DATA step2_validated      TYPE abap_bool.
-    DATA next_enabled         TYPE abap_bool VALUE abap_true.
-    DATA step_index           TYPE i.
+    DATA producttype         TYPE string.
+    DATA productname         TYPE string.
+    DATA productnamestate    TYPE string.
+    DATA productweight       TYPE string.
+    DATA productweightstate  TYPE string.
+    DATA productmanufacturer TYPE string.
+    DATA productdescription  TYPE string.
+    DATA manufacturingdate   TYPE string.
+    DATA availabilitytype    TYPE string.
+    DATA size                TYPE string.
+    DATA measurement         TYPE string.
+    DATA productprice        TYPE string.
+    DATA discountgroup       TYPE string.
+    DATA productvat          TYPE abap_bool.
+    DATA step2_validated     TYPE abap_bool.
+    DATA next_enabled        TYPE abap_bool VALUE abap_true.
+    DATA step_index          TYPE i.
 
   PROTECTED SECTION.
     DATA client       TYPE REF TO z2ui5_if_client.
     DATA current_step TYPE string.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_wizard_display.
+    METHODS on_event.
     METHODS step_goto IMPORTING index TYPE i.
     METHODS info_validate.
     METHODS model_init.
@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
         )->a( n = `xmlns:f`    v = `sap.f`
         )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:u`    v = `sap.ui.unified`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
 
         )->ele( `Dialog`
             )->a( n = `id`                v = `wizardDialog`
@@ -153,7 +153,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
                                 )->ele( `SegmentedButton`
                                     )->a( n = `width`           v = `320px`
-                                    )->a( n = `selectedKey`     v = client->_bind( product_type )
+                                    )->a( n = `selectedKey`     v = client->_bind( producttype )
                                     )->a( n = `selectionChange` v = client->_event( `SET_PRODUCT_TYPE` )
 
                                     )->ele( `items`
@@ -187,8 +187,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->a( n = `showIcon` v = `true`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. ` &&
-                                                    `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
-                                                    `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
+                                                     `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
+                                                     `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
 
                             )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `editable` v = `true`
@@ -199,27 +199,27 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                     )->a( n = `required` v = `true`
                                 )->tag( `Input`
                                     )->a( n = `valueStateText` v = `Enter 6 symbols or more`
-                                    )->a( n = `valueState`     v = client->_bind( product_name_state )
+                                    )->a( n = `valueState`     v = client->_bind( productnamestate )
                                     )->a( n = `id`             v = `ProductName`
                                     )->a( n = `liveChange`     v = client->_event( `ADDITIONAL_INFO` )
                                     )->a( n = `placeholder`    v = `Enter name with length greater than 6`
-                                    )->a( n = `value`          v = client->_bind( product_name )
+                                    )->a( n = `value`          v = client->_bind( productname )
                                 )->tag( `Label`
                                     )->a( n = `text`     v = `Weight`
                                     )->a( n = `required` v = `true`
                                 )->tag( `Input`
                                     )->a( n = `valueStateText` v = `Enter digits`
-                                    )->a( n = `valueState`     v = client->_bind( product_weight_state )
+                                    )->a( n = `valueState`     v = client->_bind( productweightstate )
                                     )->a( n = `id`             v = `ProductWeight`
                                     )->a( n = `liveChange`     v = client->_event( `ADDITIONAL_INFO` )
                                     )->a( n = `type`           v = `Number`
                                     )->a( n = `placeholder`    v = `Enter digits`
-                                    )->a( n = `value`          v = client->_bind( product_weight )
+                                    )->a( n = `value`          v = client->_bind( productweight )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Manufacturer`
 
                                 )->ele( `Select`
-                                    )->a( n = `selectedKey` v = client->_bind( product_manufacturer )
+                                    )->a( n = `selectedKey` v = client->_bind( productmanufacturer )
 
                                     )->tag( n = `Item` ns = `core`
                                         )->a( n = `key`  v = `Apple`
@@ -244,7 +244,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Description`
                                 )->tag( `TextArea`
-                                    )->a( n = `value` v = client->_bind( product_description )
+                                    )->a( n = `value` v = client->_bind( productdescription )
                                     )->a( n = `rows`  v = `8`
 
                             )->end(
@@ -262,8 +262,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->a( n = `showIcon` v = `true`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                    `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                    `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
+                                                     `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
+                                                     `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
 
                             )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `editable` v = `true`
@@ -281,12 +281,12 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->tag( `DatePicker`
                                     )->a( n = `id`            v = `DP3`
                                     )->a( n = `displayFormat` v = `short`
-                                    )->a( n = `value`         v = client->_bind( manufacturing_date )
+                                    )->a( n = `value`         v = client->_bind( manufacturingdate )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Availability`
 
                                 )->ele( `SegmentedButton`
-                                    )->a( n = `selectedKey` v = client->_bind( availability_type )
+                                    )->a( n = `selectedKey` v = client->_bind( availabilitytype )
 
                                     )->ele( `items`
                                         )->tag( `SegmentedButtonItem`
@@ -335,7 +335,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                             )->tag( `MessageStrip`
                                 )->a( n = `class`    v = `sapUiSmallMarginBottom`
                                 )->a( n = `text`     v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
-                                                        `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
+                                                         `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
                                 )->a( n = `showIcon` v = `true`
 
                             )->ele( n = `SimpleForm` ns = `form`
@@ -345,12 +345,12 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Price`
                                 )->tag( `Input`
-                                    )->a( n = `value` v = client->_bind( product_price )
+                                    )->a( n = `value` v = client->_bind( productprice )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Discount group`
 
                                 )->ele( `ComboBox`
-                                    )->a( n = `selectedKey` v = client->_bind( discount_group )
+                                    )->a( n = `selectedKey` v = client->_bind( discountgroup )
 
                                     )->tag( n = `Item` ns = `core`
                                         )->a( n = `key`  v = `Kids`
@@ -369,7 +369,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->tag( `Label`
                                     )->a( n = `text` v = ` VAT is included`
                                 )->tag( `CheckBox`
-                                    )->a( n = `selected` v = client->_bind( product_vat )
+                                    )->a( n = `selected` v = client->_bind( productvat )
 
                             )->end(
                         )->end(
@@ -389,7 +389,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                         )->a( n = `text` v = `Type`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductTypeChosen`
-                                        )->a( n = `text` v = client->_bind( product_type )
+                                        )->a( n = `text` v = client->_bind( producttype )
                                     )->tag( `Link`
                                         )->a( n = `press` v = client->_event( `EDIT_STEP_1` )
                                         )->a( n = `text`  v = `Edit`
@@ -406,22 +406,22 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                         )->a( n = `text` v = `Name`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductNameChosen`
-                                        )->a( n = `text` v = client->_bind( product_name )
+                                        )->a( n = `text` v = client->_bind( productname )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Weight`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductWeightChosen`
-                                        )->a( n = `text` v = client->_bind( product_weight )
+                                        )->a( n = `text` v = client->_bind( productweight )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Manufacturer`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductManufacturerChosen`
-                                        )->a( n = `text` v = client->_bind( product_manufacturer )
+                                        )->a( n = `text` v = client->_bind( productmanufacturer )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Description`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductDescriptionChosen`
-                                        )->a( n = `text` v = client->_bind( product_description )
+                                        )->a( n = `text` v = client->_bind( productdescription )
                                     )->tag( `Link`
                                         )->a( n = `press` v = client->_event( `EDIT_STEP_2` )
                                         )->a( n = `text`  v = `Edit`
@@ -442,12 +442,12 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                         )->a( n = `text` v = `Manufacturing Date`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ManufacturingDate`
-                                        )->a( n = `text` v = client->_bind( manufacturing_date )
+                                        )->a( n = `text` v = client->_bind( manufacturingdate )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Availability`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `AvailabilityChosen`
-                                        )->a( n = `text` v = client->_bind( availability_type )
+                                        )->a( n = `text` v = client->_bind( availabilitytype )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Size`
 
@@ -477,17 +477,17 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                         )->a( n = `text` v = `Price`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductPriceChosen`
-                                        )->a( n = `text` v = client->_bind( product_price )
+                                        )->a( n = `text` v = client->_bind( productprice )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Discount Group`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `DiscountGroupChosen`
-                                        )->a( n = `text` v = client->_bind( discount_group )
+                                        )->a( n = `text` v = client->_bind( discountgroup )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `VAT Included`
                                     )->tag( `Text`
                                         )->a( n = `id`   v = `ProductVATChosen`
-                                        )->a( n = `text` v = client->_bind( product_vat )
+                                        )->a( n = `text` v = client->_bind( productvat )
                                     )->tag( `Link`
                                         )->a( n = `press` v = client->_event( `EDIT_STEP_4` )
                                         )->a( n = `text`  v = `Edit`
@@ -636,11 +636,11 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
     " additionalInfoValidation: a name of at least six characters and a numeric
     " weight; both drive their value state, the step's validated flag and the
     " Next button
-    DATA(name_ok)   = xsdbool( strlen( product_name ) >= 6 ).
-    DATA(weight_ok) = xsdbool( product_weight IS NOT INITIAL AND product_weight CO `0123456789.` ).
+    DATA(name_ok)   = xsdbool( strlen( productname ) >= 6 ).
+    DATA(weight_ok) = xsdbool( productweight IS NOT INITIAL AND productweight CO `0123456789.` ).
 
-    product_name_state   = COND #( WHEN name_ok   = abap_true THEN `None` ELSE `Error` ).
-    product_weight_state = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
+    productnamestate   = COND #( WHEN name_ok   = abap_true THEN `None` ELSE `Error` ).
+    productweightstate = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
 
     step2_validated = xsdbool( name_ok = abap_true AND weight_ok = abap_true ).
     next_enabled    = step2_validated.
@@ -656,20 +656,20 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
   METHOD model_init.
 
     " the controller's oData seed
-    product_name_state   = `Error`.
-    product_weight_state = `Error`.
-    product_type         = `Mobile`.
-    availability_type    = `In store`.
-    product_vat          = abap_false.
+    productnamestate   = `Error`.
+    productweightstate = `Error`.
+    producttype         = `Mobile`.
+    availabilitytype    = `In store`.
+    productvat          = abap_false.
     measurement          = ``.
-    product_manufacturer = `N/A`.
-    product_description  = `N/A`.
+    productmanufacturer = `N/A`.
+    productdescription  = `N/A`.
     size                 = `N/A`.
-    product_price        = `N/A`.
-    manufacturing_date   = `N/A`.
-    discount_group       = ``.
-    product_name         = ``.
-    product_weight       = ``.
+    productprice        = `N/A`.
+    manufacturingdate   = `N/A`.
+    discountgroup       = ``.
+    productname         = ``.
+    productweight       = ``.
     step2_validated      = abap_false.
     next_enabled         = abap_true.
     step_index           = 0.

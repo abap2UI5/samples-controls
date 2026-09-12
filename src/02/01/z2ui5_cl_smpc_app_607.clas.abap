@@ -1,22 +1,23 @@
 " @keywords overflowtoolbar overflow toolbar sap.m overflowtoolbarfooter messagestrip slider toolbarspacer searchfield overflowtoolbarlayoutdata button overflowtoolbarbutton
 " @summary Overflow Toolbar Button is useful for showing lists of action buttons that can display an icon in the toolbar, and icon+text when in the overflow.
-" @origin sap.m.sample.OverflowToolbarFooter - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.OverflowToolbarFooter (status: generated)
+" @origin sap.m.sample.OverflowToolbarFooter - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.OverflowToolbarFooter (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             width        TYPE string,
-             depth        TYPE string,
-             height       TYPE string,
-             dimunit      TYPE string,
-             price        TYPE string,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        width        TYPE string,
+        depth        TYPE string,
+        height       TYPE string,
+        dimunit      TYPE string,
+        price        TYPE string,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products   TYPE ty_t_product.
@@ -43,8 +44,8 @@ CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
     METHODS view_display.
     METHODS on_event.
     METHODS filters_apply.
-    METHODS model_init.
     METHODS ordering_issue.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -82,10 +83,10 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
         )->a( n = `text` v = `Label text` ).
 
     DATA(page) = root->ele( `Page`
-        )->a( n = `showHeader`       v = `false`
-        )->a( n = `enableScrolling`  v = `true`
-        )->a( n = `class`            v = `sapUiContentPadding`
-        )->a( n = `showNavButton`    v = `false` ).
+        )->a( n = `showHeader`      v = `false`
+        )->a( n = `enableScrolling` v = `true`
+        )->a( n = `class`           v = `sapUiContentPadding`
+        )->a( n = `showNavButton`   v = `false` ).
 
     DATA(content) = page->ele( `content` ).
 
@@ -98,6 +99,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
         " so the two are expressions over the two-way bound slider value
         )->tag( `Slider`
             )->a( n = `value` v = client->_bind( slider_value )
+
     )->end( ).
 
     content->tag( `Label` ).
@@ -125,6 +127,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                         )->a( n = `maxWidth`   v = `300px`
                         )->a( n = `shrinkable` v = `true`
                         )->a( n = `priority`   v = `NeverOverflow`
+
                 )->end(
             )->end(
 
@@ -153,9 +156,9 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->a( n = `icon`                 v = `sap-icon://share`
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->a( n = `defaultAction`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
+                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
                 )->a( n = `beforeMenuOpen`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
+                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
                 )->ele( `menu`
                     )->ele( `Menu`
                         )->a( n = `itemSelected` v = client->_event( val = `MENU_ACTION` arg = `${$parameters>/item}.getText()` )
@@ -165,6 +168,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                         )->tag( `MenuItem`
                             )->a( n = `text` v = `Export to Excel`
                             )->a( n = `icon` v = `sap-icon://excel-attachment`
+
                     )->end(
                 )->end(
             )->end(
@@ -176,12 +180,14 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
             )->a( n = `width` v = `12em`
             )->tag( `Text`
                 )->a( n = `text` v = `Product`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
             )->a( n = `demandPopin`    v = `true`
             )->tag( `Text`
                 )->a( n = `text` v = `Supplier`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
@@ -189,11 +195,13 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Dimensions`
+
         )->end(
         )->ele( `Column`
             )->a( n = `hAlign` v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Price`
+
         )->end(
     )->end( ).
 
@@ -209,8 +217,9 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                     )->a( n = `text` v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIMUNIT}`
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                          | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -227,6 +236,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
                         )->a( n = `priority` v = `NeverOverflow`
+
                 )->end(
             )->end(
             )->ele( `Button`
@@ -235,6 +245,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
                         )->a( n = `priority` v = `NeverOverflow`
+
                 )->end(
             )->end(
 
@@ -265,6 +276,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->a( n = `icon`    v = `sap-icon://touch`
                 )->a( n = `pressed` v = client->_bind( toggle_state )
                 )->a( n = `press`   v = client->_event( `TOGGLE` )
+
         )->end(
     )->end( ).
 

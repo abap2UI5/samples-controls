@@ -1,15 +1,16 @@
 " @keywords select sap.m select2columns title hbox label slider switch text listitem
 " @summary Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems.
-" @origin sap.m.sample.Select2Columns - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select2Columns (status: generated)
+" @origin sap.m.sample.Select2Columns - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select2Columns (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_608 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             firstcolumntext  TYPE string,
-             secondcolumntext TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        firstcolumntext  TYPE string,
+        secondcolumntext TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items1 TYPE ty_t_item.
@@ -87,6 +88,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->a( n = `id`     v = `firstSlider`
                 )->a( n = `value`  v = client->_bind( first_ratio )
                 )->a( n = `change` v = client->_event( `RATIO` )
+
         )->end(
 
         )->ele( `HBox`
@@ -99,6 +101,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->a( n = `id`     v = `secondSlider`
                 )->a( n = `value`  v = client->_bind( second_ratio )
                 )->a( n = `change` v = client->_event( `RATIO` )
+
         )->end(
 
         )->ele( `HBox`
@@ -111,6 +114,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Switch`
                 )->a( n = `type`  v = `AcceptReject`
                 )->a( n = `state` v = client->_bind( wrap_items )
+
         )->end(
 
         )->tag( `Title`
@@ -124,6 +128,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `id`   v = `text1`
                 )->a( n = `text` v = client->_bind( ratio_text )
+
         )->end(
 
         )->ele( `HBox`
@@ -133,18 +138,20 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `id`   v = `text2`
                 )->a( n = `text` v = client->_bind( percentage_text )
+
         )->end(
 
         )->ele( `Select`
-            )->a( n = `id`                   v = `select`
-            )->a( n = `showSecondaryValues`  v = `true`
-            )->a( n = `columnRatio`          v = client->_bind( column_ratio )
-            )->a( n = `wrapItemsText`        v = client->_bind( wrap_items )
-            )->a( n = `items`                v = client->_bind( t_items1 )
+            )->a( n = `id`                  v = `select`
+            )->a( n = `showSecondaryValues` v = `true`
+            )->a( n = `columnRatio`         v = client->_bind( column_ratio )
+            )->a( n = `wrapItemsText`       v = client->_bind( wrap_items )
+            )->a( n = `items`               v = client->_bind( t_items1 )
             )->ele( `items`
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `text`           v = `{FIRSTCOLUMNTEXT}`
                     )->a( n = `additionalText` v = `{SECONDCOLUMNTEXT}`
+
             )->end(
         )->end(
     )->end( ).
@@ -175,6 +182,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `VerticalLine`
                     )->a( n = `text` v = `VerticalLine`
+
             )->end(
         )->end(
 
@@ -187,6 +195,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Switch`
                 )->a( n = `id`    v = `switchEditable`
                 )->a( n = `state` v = client->_bind( editable )
+
         )->end(
 
         )->tag( `Title`
@@ -204,6 +213,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `text`           v = `{FIRSTCOLUMNTEXT}`
                     )->a( n = `additionalText` v = `{SECONDCOLUMNTEXT}`
+
             )->end(
         )->end(
     )->end( ).

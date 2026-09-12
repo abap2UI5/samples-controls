@@ -1,6 +1,6 @@
 " @keywords checkbox check box sap.m states vbox simpleform label griddata
 " @summary Checkboxes allow users to select a subset of options. If you want to offer an off/on setting you should use the Switch control instead.
-" @origin sap.m.sample.CheckBox - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBox (status: reviewed)
+" @origin sap.m.sample.CheckBox - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBox (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_155 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,10 +32,10 @@ CLASS z2ui5_cl_smpc_app_155 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `VBox`
             )->tag( `CheckBox`
@@ -91,13 +91,13 @@ CLASS z2ui5_cl_smpc_app_155 IMPLEMENTATION.
 
         )->end(
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `editable`   v = `true`
             )->a( n = `layout`     v = `ResponsiveGridLayout`
             )->a( n = `labelSpanL` v = `4`
             )->a( n = `labelSpanM` v = `4`
 
-            )->ele( n = `content` ns = `f`
+            )->ele( n = `content` ns = `form`
                 )->tag( `Label`
                     )->a( n = `text` v = `Clearing with Customer`
                 )->tag( `CheckBox`

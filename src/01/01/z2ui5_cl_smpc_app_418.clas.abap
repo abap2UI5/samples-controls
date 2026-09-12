@@ -1,6 +1,6 @@
 " @keywords title sap.m titlewrapping simpleform label switch slider panel messagestrip
 " @summary This sample shows the different behaviors of a title.
-" @origin sap.m.sample.TitleWrapping - https://sdk.openui5.org/entity/sap.m.Title/sample/sap.m.sample.TitleWrapping (status: generated)
+" @origin sap.m.sample.TitleWrapping - https://sdk.openui5.org/entity/sap.m.Title/sample/sap.m.sample.TitleWrapping (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_418 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -38,10 +38,10 @@ CLASS z2ui5_cl_smpc_app_418 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `displayBlock` v = `true`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `title`           v = `Title Properties`

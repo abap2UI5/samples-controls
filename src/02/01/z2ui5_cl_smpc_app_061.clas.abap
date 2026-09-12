@@ -1,6 +1,6 @@
 " @keywords menubutton menu button sap.m buttons regular split mode overflowtoolbar toolbarspacer label menuitem
 " @summary This control is used to open a menu in both desktop and mobile.
-" @origin sap.m.sample.MenuButton - https://sdk.openui5.org/entity/sap.m.MenuButton/sample/sap.m.sample.MenuButton (status: checked)
+" @origin sap.m.sample.MenuButton - https://sdk.openui5.org/entity/sap.m.MenuButton/sample/sap.m.sample.MenuButton (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_061 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,10 +32,10 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `OverflowToolbar`
             )->tag( `ToolbarSpacer`
@@ -71,8 +71,8 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->end(
 
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `Calculator`
-                )->a( n = `buttonMode`          v = `Split`
+                )->a( n = `text`                 v = `Calculator`
+                )->a( n = `buttonMode`           v = `Split`
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->ele( `menu`
                     )->ele( `Menu`
@@ -117,8 +117,8 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `With a complex menu`
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `Calculator`
-                )->a( n = `buttonMode`          v = `Split`
+                )->a( n = `text`                 v = `Calculator`
+                )->a( n = `buttonMode`           v = `Split`
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->ele( `menu`
                     )->ele( `Menu`
@@ -225,10 +225,10 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `Split mode button with default action only`
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `File Menu`
-                )->a( n = `buttonMode`          v = `Split`
-                )->a( n = `defaultAction`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
-                )->a( n = `beforeMenuOpen`      v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
+                )->a( n = `text`                 v = `File Menu`
+                )->a( n = `buttonMode`           v = `Split`
+                )->a( n = `defaultAction`        v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
+                )->a( n = `beforeMenuOpen`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->ele( `menu`
                     )->ele( `Menu`
@@ -250,11 +250,11 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `Split mode with type Accept and constant default action`
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `Accept`
-                )->a( n = `buttonMode`          v = `Split`
-                )->a( n = `type`                v = `Accept`
-                )->a( n = `defaultAction`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Accepted` ) ) )
-                )->a( n = `beforeMenuOpen`      v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
+                )->a( n = `text`                 v = `Accept`
+                )->a( n = `buttonMode`           v = `Split`
+                )->a( n = `type`                 v = `Accept`
+                )->a( n = `defaultAction`        v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Accepted` ) ) )
+                )->a( n = `beforeMenuOpen`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->ele( `menu`
                     )->ele( `Menu`
@@ -276,11 +276,11 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `Menu button with menuPosition set to Right Bottom which in RTL will stay on the Right`
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `File Menu`
-                )->a( n = `defaultAction`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
-                )->a( n = `beforeMenuOpen`      v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
+                )->a( n = `text`                 v = `File Menu`
+                )->a( n = `defaultAction`        v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
+                )->a( n = `beforeMenuOpen`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
                 )->a( n = `useDefaultActionOnly` v = `true`
-                )->a( n = `menuPosition`        v = `RightBottom`
+                )->a( n = `menuPosition`         v = `RightBottom`
                 )->ele( `menu`
                     )->ele( `Menu`
                         )->a( n = `itemSelected` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Action triggered on item: {0}` ) ( `${$parameters>/item}.getText()` ) ) )
@@ -301,9 +301,9 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `Menu button with menuPosition set to Begin Bottom. This way the menu in LTR will be positioned on the left and in RTL on the Right.`
             )->ele( `MenuButton`
-                )->a( n = `text`                v = `Calculator`
+                )->a( n = `text`                 v = `Calculator`
                 )->a( n = `useDefaultActionOnly` v = `true`
-                )->a( n = `menuPosition`        v = `BeginBottom`
+                )->a( n = `menuPosition`         v = `BeginBottom`
                 )->ele( `menu`
                     )->ele( `Menu`
                         )->a( n = `itemSelected` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Action triggered on item: {0}` ) ( `${$parameters>/item}.getText()` ) ) )

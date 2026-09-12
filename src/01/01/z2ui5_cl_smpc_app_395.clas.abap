@@ -1,6 +1,6 @@
 " @keywords overflowtoolbar overflow toolbar sap.m titletoolbar title toolbarspacer button
 " @summary The sap.m.Title control can be used to place a title inside an OverflowToolbar/Toolbar.
-" @origin sap.m.sample.TitleToolBar - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.TitleToolBar (status: reviewed)
+" @origin sap.m.sample.TitleToolBar - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.TitleToolBar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_395 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,9 +32,9 @@ CLASS z2ui5_cl_smpc_app_395 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`     v = `sap.m`
 
         )->ele( `OverflowToolbar`
             )->a( n = `design` v = `Transparent`

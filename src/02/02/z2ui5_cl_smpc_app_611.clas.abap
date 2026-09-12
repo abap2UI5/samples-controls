@@ -1,18 +1,19 @@
 " @keywords calendar sap.ui.unified calendarariahaspopup html verticallayout text datetyperange popover vbox title
 " @summary Calendar demonstrating configurable aria-haspopup attribute on individual day cells via DateTypeRange and a global Calendar-level fallback.
-" @origin sap.ui.unified.sample.CalendarAriaHasPopup - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarAriaHasPopup (status: generated)
+" @origin sap.ui.unified.sample.CalendarAriaHasPopup - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarAriaHasPopup (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_611 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_special,
-             start_date   TYPE string,
-             end_date     TYPE string,
-             type         TYPE string,
-             ariahaspopup TYPE string,
-             label        TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_date   TYPE string,
+        end_date     TYPE string,
+        type         TYPE string,
+        ariahaspopup TYPE string,
+        label        TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA t_special TYPE ty_t_special.
@@ -99,6 +100,7 @@ CLASS z2ui5_cl_smpc_app_611 IMPLEMENTATION.
                         )->a( n = `endDate`      v = `{ path: 'END_DATE', formatter: 'Formatter.DateAbapDateToDateObject' }`
                         )->a( n = `type`         v = `{TYPE}`
                         )->a( n = `ariaHasPopup` v = `{ARIAHASPOPUP}`
+
                 )->end(
             )->end(
         )->end( ).

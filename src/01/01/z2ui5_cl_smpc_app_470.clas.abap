@@ -1,15 +1,16 @@
 " @keywords combobox combo box sap.m comboboxfilteringcontains vbox label listitem
 " @summary You can override the default filtering "Starts with per term" with your own filter function using the setFilterFunction method. The "Contains" approach searches everywhere in the entries.
-" @origin sap.m.sample.ComboBoxFilteringContains - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringContains (status: generated)
+" @origin sap.m.sample.ComboBoxFilteringContains - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringContains (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_470 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.
@@ -61,10 +62,10 @@ CLASS z2ui5_cl_smpc_app_470 IMPLEMENTATION.
                             )->a( n = `text`     v = `Enter a search term, e.g. "Ge", and see filtered list.`
                             )->a( n = `labelFor` v = `combobox1`
                         )->ele( `ComboBox`
-                            )->a( n = `id`                  v = `combobox1`
-                            )->a( n = `showSecondaryValues` v = `true`
+                            )->a( n = `id`                    v = `combobox1`
+                            )->a( n = `showSecondaryValues`   v = `true`
                             )->a( n = `filterSecondaryValues` v = `true`
-                            )->a( n = `items`               v = |\{ path: '{ client->_bind_path( t_countries ) }', sorter: \{ path: 'TEXT' \} \}|
+                            )->a( n = `items`                 v = |\{ path: '{ client->_bind_path( t_countries ) }', sorter: \{ path: 'TEXT' \} \}|
 
                             )->tag( n = `ListItem` ns = `core`
                                 )->a( n = `key`            v = `{KEY}`

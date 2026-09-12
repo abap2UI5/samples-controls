@@ -1,27 +1,28 @@
 " @keywords productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem
 " @summary This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.
-" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: reviewed)
+" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_165 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             src       TYPE string,
-             title     TYPE string,
-             subtitle  TYPE string,
-             targetsrc TYPE string,
-             target    TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        src       TYPE string,
+        title     TYPE string,
+        subtitle  TYPE string,
+        targetsrc TYPE string,
+        target    TYPE string,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_event.
-    METHODS model_init.
-
     METHODS view_display.
+    METHODS on_event.
+
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -55,12 +56,12 @@ CLASS z2ui5_cl_smpc_app_165 IMPLEMENTATION.
     " controller so the press only toasts was refuted on 2026-08-05 and had
     " been left standing in this comment until 2026-08-23.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`    v = `100%`
 
-        )->ele( n = `VerticalLayout` ns = `layout`
+        )->ele( n = `VerticalLayout` ns = `l`
             )->a( n = `class` v = `sapUiContentPadding`
 
             )->tag( `Button`

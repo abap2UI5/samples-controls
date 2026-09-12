@@ -45,9 +45,9 @@ CLASS z2ui5_cl_smpc_sapui5_012 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_rendering.
     METHODS on_event.
     METHODS on_init.
+    METHODS on_rendering.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -157,16 +157,16 @@ CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`     v = `true`
-        )->a( n = `height`           v = `100%`
-        )->a( n = `xmlns`            v = `sap.m`
-        )->a( n = `xmlns:mvc`        v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`       v = `sap.ui.core`
-        )->a( n = `xmlns:f`          v = `sap.f`
-        )->a( n = `xmlns:fb`         v = `sap.ui.comp.filterbar`
-        )->a( n = `xmlns:viz`        v = `sap.viz.ui5.controls`
-        )->a( n = `xmlns:viz.data`   v = `sap.viz.ui5.data`
-        )->a( n = `xmlns:viz.feeds`  v = `sap.viz.ui5.controls.common.feeds`
+        )->a( n = `displayBlock`    v = `true`
+        )->a( n = `height`          v = `100%`
+        )->a( n = `xmlns`           v = `sap.m`
+        )->a( n = `xmlns:mvc`       v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`      v = `sap.ui.core`
+        )->a( n = `xmlns:f`         v = `sap.f`
+        )->a( n = `xmlns:fb`        v = `sap.ui.comp.filterbar`
+        )->a( n = `xmlns:viz`       v = `sap.viz.ui5.controls`
+        )->a( n = `xmlns:viz.data`  v = `sap.viz.ui5.data`
+        )->a( n = `xmlns:viz.feeds` v = `sap.viz.ui5.controls.common.feeds`
 
         )->ele( `Shell`
             )->ele( n = `DynamicPage` ns = `f`

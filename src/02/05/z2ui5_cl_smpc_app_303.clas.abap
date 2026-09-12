@@ -1,6 +1,6 @@
 " @keywords toolpage tool sap.tnt toolpagehorizontalnavigation toolheader image title overflowtoolbarlayoutdata text toolbarspacer searchfield button
 " @summary A tool page layout with horizontal navigation
-" @origin sap.tnt.sample.ToolPageHorizontalNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageHorizontalNavigation (status: reviewed)
+" @origin sap.tnt.sample.ToolPageHorizontalNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageHorizontalNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_303 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -8,16 +8,18 @@ CLASS z2ui5_cl_smpc_app_303 DEFINITION PUBLIC.
 
     DATA selectedkey TYPE string.
 
-    TYPES: BEGIN OF ty_s_sub_item,
-             title TYPE string,
-             key   TYPE string,
-           END OF ty_s_sub_item.
-    TYPES: BEGIN OF ty_s_nav_item,
-             title TYPE string,
-             icon  TYPE string,
-             key   TYPE string,
-             items TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_sub_item,
+        title TYPE string,
+        key   TYPE string,
+      END OF ty_s_sub_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        title TYPE string,
+        icon  TYPE string,
+        key   TYPE string,
+        items TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
+      END OF ty_s_nav_item.
     DATA navigation TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.

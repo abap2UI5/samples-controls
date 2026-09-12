@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardmarginsresponsive panel text
 " @summary Clear the space around your control, where the margin depends on the device your are using.
-" @origin sap.m.sample.StandardMarginsResponsive - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsResponsive (status: generated)
+" @origin sap.m.sample.StandardMarginsResponsive - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsResponsive (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_472 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

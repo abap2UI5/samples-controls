@@ -1,17 +1,18 @@
 " @keywords list sap.m listactions overflowtoolbar title toolbarspacer text slider standardlistitem listitemaction
 " @summary This example demonstrates how to add custom actions to list items. Dedicated 'Delete' and 'Edit' types can be used to add predefined actions to the list items. The 'Custom' type can be used to add custom actions to the list items.
-" @origin sap.m.sample.ListActions - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListActions (status: generated)
+" @origin sap.m.sample.ListActions - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListActions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_498 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-             quantity      TYPE i,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+        quantity      TYPE i,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products   TYPE ty_t_product.

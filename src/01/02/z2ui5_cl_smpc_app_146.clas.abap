@@ -1,6 +1,6 @@
 " @keywords hyphenation sap.ui.core.hyphenation api html simpleform label slider panel
 " @summary This sample demonstrates usage of the Hyphenation API
-" @origin sap.ui.core.sample.HyphenationAPI - https://sdk.openui5.org/entity/sap.ui.core.hyphenation.Hyphenation/sample/sap.ui.core.sample.HyphenationAPI (status: reviewed)
+" @origin sap.ui.core.sample.HyphenationAPI - https://sdk.openui5.org/entity/sap.ui.core.hyphenation.Hyphenation/sample/sap.ui.core.sample.HyphenationAPI (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_146 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -44,11 +44,11 @@ CLASS z2ui5_cl_smpc_app_146 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
         )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:c`      v = `sap.ui.core`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `displayBlock` v = `true`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `title`           v = `Hyphenation API usage with different languages`
@@ -69,7 +69,7 @@ CLASS z2ui5_cl_smpc_app_146 IMPLEMENTATION.
             )->a( n = `id`         v = `containerLayout`
             )->a( n = `headerText` v = `Default language (English-US)`
             )->a( n = `width`      v = |\{= ${ client->_bind( slider_value ) } + '%' \}|
-            )->tag( n = `HTML` ns = `c`
+            )->tag( n = `HTML` ns = `core`
                 )->a( n = `id`      v = `hyphenatedText`
                 )->a( n = `content` v = ``
 
@@ -78,7 +78,7 @@ CLASS z2ui5_cl_smpc_app_146 IMPLEMENTATION.
             )->a( n = `id`         v = `containerLayoutDE`
             )->a( n = `headerText` v = `German language`
             )->a( n = `width`      v = |\{= ${ client->_bind( slider_value ) } + '%' \}|
-            )->tag( n = `HTML` ns = `c`
+            )->tag( n = `HTML` ns = `core`
                 )->a( n = `id`      v = `hyphenatedTextDE`
                 )->a( n = `content` v = ``
 
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_146 IMPLEMENTATION.
             )->a( n = `id`         v = `containerLayoutRU`
             )->a( n = `headerText` v = `Russian language`
             )->a( n = `width`      v = |\{= ${ client->_bind( slider_value ) } + '%' \}|
-            )->tag( n = `HTML` ns = `c`
+            )->tag( n = `HTML` ns = `core`
                 )->a( n = `id`      v = `hyphenatedTextRU`
                 )->a( n = `content` v = `` ).
 

@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageresponsiveavatar objectpagedynamicheadertitle breadcrumbs link hbox title objectmarker flexbox
 " @summary ObjectPage sample demonstrating the breakpointChange event to adjust Avatar sizes responsively based on screen size (phone: M, tablet: L, desktop/desktop_XL: XL).
-" @origin sap.uxap.sample.ObjectPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageResponsiveAvatar (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageResponsiveAvatar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_262 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -54,11 +54,11 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
     " both Avatars' bound displaySize. test-resources image URLs point at the
     " sdk.openui5.org host (offline rule).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`     v = `sap.uxap`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
                         )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
                         )->a( n = `displaySize` v = client->_bind( avatar_size )
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
 
                         )->tag( n = `Link` ns = `m`
@@ -175,7 +175,7 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
 
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
 
                         )->tag( n = `Label` ns = `m`
@@ -188,8 +188,8 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
 
                 )->tag( n = `MessageStrip` ns = `m`
                     )->a( n = `text`     v = `The Avatar size changes automatically based on screen size: `
-                                          && `Phone (M), Tablet (L), Desktop/DesktopExtraLarge (XL). `
-                                          && `This is handled using the breakpointChange event.`
+                                             && `Phone (M), Tablet (L), Desktop/DesktopExtraLarge (XL). `
+                                             && `This is handled using the breakpointChange event.`
                     )->a( n = `type`     v = `Information`
                     )->a( n = `showIcon` v = `true`
                     )->a( n = `class`    v = `sapUiTinyMarginTopBottom`
@@ -204,7 +204,7 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
                     )->ele( `subSections`
                         )->ele( `ObjectPageSubSection`
                             )->ele( `blocks`
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
                                     )->tag( n = `Title` ns = `m`
                                         )->a( n = `text`  v = `Responsive Avatar Example`
                                         )->a( n = `level` v = `H3`
@@ -239,7 +239,7 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
                     )->ele( `subSections`
                         )->ele( `ObjectPageSubSection`
                             )->ele( `blocks`
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
                                     )->tag( n = `Title` ns = `m`
                                         )->a( n = `text`  v = `How it Works`
                                         )->a( n = `level` v = `H3`
@@ -272,7 +272,7 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
                     )->ele( `subSections`
                         )->ele( `ObjectPageSubSection`
                             )->ele( `blocks`
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
                                     )->tag( n = `Title` ns = `m`
                                         )->a( n = `text`  v = `Benefits`
                                         )->a( n = `level` v = `H3`
@@ -321,15 +321,15 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
         " onBreakpointChange: map the media range to the Avatar size (Phone M,
         " Tablet L, Desktop/DesktopExtraLarge XL), update both bound Avatars
         " and toast 'Media Range: <range> (<width>px) Avatar Size: <size>'
-        DATA(lv_range) = client->get_event_arg( ).
-        DATA(lv_width) = client->get_event_arg( 2 ).
-        avatar_size = SWITCH #( lv_range
+        DATA(range) = client->get_event_arg( ).
+        DATA(width) = client->get_event_arg( 2 ).
+        avatar_size = SWITCH #( range
                                 WHEN `Phone`  THEN `M`
                                 WHEN `Tablet` THEN `L`
                                 WHEN `Desktop` THEN `XL`
                                 WHEN `DesktopExtraLarge` THEN `XL`
                                 ELSE `L` ).
-        client->message_toast_display( |Media Range: { lv_range } ({ lv_width }px)\nAvatar Size: { avatar_size }| ).
+        client->message_toast_display( |Media Range: { range } ({ width }px)\nAvatar Size: { avatar_size }| ).
     ENDCASE.
 
   ENDMETHOD.

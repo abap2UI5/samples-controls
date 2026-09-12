@@ -1,26 +1,27 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarprocess icontabfilter icontabseparator table overflowtoolbar label column
 " @summary In this example, the Icon Tab Bar is used to apply filters on the same content along a business process.
-" @origin sap.m.sample.IconTabBarProcess - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarProcess (status: generated)
+" @origin sap.m.sample.IconTabBarProcess - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarProcess (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_618 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState, computed in the backend (thin frontend)
-             weight_state  TYPE string,
-             price         TYPE string,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState, computed in the backend (thin frontend)
+        weight_state  TYPE string,
+        price         TYPE string,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -76,9 +77,9 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc` ).
 
     DATA(bar) = panel->ele( `IconTabBar`
-        )->a( n = `id`                      v = `idIconTabBar`
-        )->a( n = `class`                   v = `sapUiResponsiveContentPadding`
-        )->a( n = `select`                  v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
+        )->a( n = `id`     v = `idIconTabBar`
+        )->a( n = `class`  v = `sapUiResponsiveContentPadding`
+        )->a( n = `select` v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
 
     bar->ele( `items`
         )->tag( `IconTabFilter`
@@ -106,6 +107,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
             )->a( n = `count`     v = client->_bind( count_overweight )
             )->a( n = `text`      v = `Claim Overweights`
             )->a( n = `key`       v = `Overweight`
+
     )->end( ).
 
     DATA(table) = bar->ele( `content`
@@ -122,6 +124,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
         )->ele( `OverflowToolbar`
             )->tag( `Label`
                 )->a( n = `text` v = `Wide range of available products`
+
         )->end(
     )->end( ).
 
@@ -130,12 +133,14 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
             )->a( n = `width` v = `12em`
             )->tag( `Text`
                 )->a( n = `text` v = `Product`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
             )->a( n = `demandPopin`    v = `true`
             )->tag( `Text`
                 )->a( n = `text` v = `Supplier`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Desktop`
@@ -143,6 +148,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Dimensions`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Desktop`
@@ -150,11 +156,13 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `Center`
             )->tag( `Text`
                 )->a( n = `text` v = `Weight`
+
         )->end(
         )->ele( `Column`
             )->a( n = `hAlign` v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Price`
+
         )->end(
     )->end( ).
 
@@ -174,8 +182,9 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
                     )->a( n = `state`  v = `{WEIGHT_STATE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                          | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -196,7 +205,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
 
   METHOD filter_apply.
 
-    DATA lt_keep TYPE ty_t_product.
+    DATA t_keep TYPE ty_t_product.
 
     " onFilterSelect: the picked tab's weight range; a thin frontend filters
     " the data it sends rather than the binding (app 298 idiom)
@@ -213,7 +222,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
     " a LOOP over the same table shifts the rows under the loop's own cursor -
     " on a system it silently SKIPS the row after each deletion, on the
     " transpiled backend it raises TABLE_INVALID_INDEX (app 298, 2026-08-17)
-    lt_keep = VALUE #( ).
+    t_keep = VALUE #( ).
     LOOP AT t_products INTO DATA(row).
       DATA(kg) = COND decfloat34( WHEN row-weightunit = `G`
                                   THEN CONV decfloat34( row-weightmeasure ) / 1000
@@ -224,10 +233,10 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
                                      WHEN `Overweight` THEN xsdbool( kg > 5 )
                                      ELSE abap_true ).
       IF keep = abap_true.
-        APPEND row TO lt_keep.
+        APPEND row TO t_keep.
       ENDIF.
     ENDLOOP.
-    t_products = lt_keep.
+    t_products = t_keep.
 
   ENDMETHOD.
 

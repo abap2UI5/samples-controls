@@ -1,6 +1,6 @@
 " @keywords datetimepicker date time picker sap.m datetimepickerhidden title vbox label button link
 " @summary This example shows Date Time Picker which is opened by another control.
-" @origin sap.m.sample.DateTimePickerHidden - https://sdk.openui5.org/entity/sap.m.DateTimePicker/sample/sap.m.sample.DateTimePickerHidden (status: checked)
+" @origin sap.m.sample.DateTimePickerHidden - https://sdk.openui5.org/entity/sap.m.DateTimePicker/sample/sap.m.sample.DateTimePickerHidden (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_257 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,39 +1,41 @@
 " @keywords singleplanningcalendar single planning calendar sap.m vbox overflowtoolbar label select listitem toolbarseparator togglebutton
 " @summary This sample demonstrates most of the features available for the SinglePlanningCalendar control.
-" @origin sap.m.sample.SinglePlanningCalendar - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendar (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendar - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendar (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_549 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             aria      TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        aria      TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_type,
-             text TYPE string,
-             type TYPE string,
-           END OF ty_s_type.
+    TYPES:
+      BEGIN OF ty_s_type,
+        text TYPE string,
+        type TYPE string,
+      END OF ty_s_type.
     TYPES ty_t_type TYPE STANDARD TABLE OF ty_s_type WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
     DATA t_types        TYPE ty_t_type.
-    DATA start_date     TYPE string.
+    DATA startdate      TYPE string.
 
     " the original keeps these in a settings> model; abap2UI5 keeps one default
     " model, so they are fields here
-    DATA sticky_mode TYPE string.
+    DATA stickymode  TYPE string.
     DATA enable_dnd  TYPE abap_bool.
     DATA enable_new  TYPE abap_bool.
     DATA enable_size TYPE abap_bool.
-    DATA all_day     TYPE abap_bool.
+    DATA allday      TYPE abap_bool.
 
     " the details popover reads the selected appointment; the modify dialog edits
     " it (or creates a new one when the path is empty)
@@ -50,10 +52,10 @@ CLASS z2ui5_cl_smpc_app_549 DEFINITION PUBLIC.
     DATA sel_index TYPE i.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_details_display.
     METHODS popup_modify_display.
     METHODS popup_legend_display.
+    METHODS on_event.
     METHODS all_day_hours.
     METHODS type_text
       IMPORTING type          TYPE string
@@ -97,11 +99,11 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
     " the drag, resize and create wires carry the interval's LOCAL date parts
     " (a UTC toISOString( ) would shift the day)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -116,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
                 )->ele( `Select`
                     )->a( n = `id`          v = `stickyModeSelect`
-                    )->a( n = `selectedKey` v = client->_bind( sticky_mode )
+                    )->a( n = `selectedKey` v = client->_bind( stickymode )
 
                     )->tag( n = `ListItem` ns = `core`
                         )->a( n = `text` v = `None`
@@ -154,75 +156,75 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                 )->a( n = `title`                         v = `My Calendar`
                 " handleViewChange toasts a constant text - composed on the client
                 )->a( n = `viewChange`                    v = client->follow_up_action(
-                          val   = client->cs_event-control_global
-                          t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
+                                             val   = client->cs_event-control_global
+                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
                 )->a( n = `appointmentSelect`             v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
+                                      val   = `APPT_SELECT`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
+                                        ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
                 )->a( n = `headerDateSelect`              v = client->_event(
-                          val   = `HEADER_DATE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/date}.getFullYear()` )
-                            ( `${$parameters>/date}.getMonth() + 1` )
-                            ( `${$parameters>/date}.getDate()` ) ) )
+                                       val   = `HEADER_DATE`
+                                       t_arg = VALUE #(
+                                         ( `${$parameters>/date}.getFullYear()` )
+                                         ( `${$parameters>/date}.getMonth() + 1` )
+                                         ( `${$parameters>/date}.getDate()` ) ) )
                 " handleStartDateChange names the new start date in a toast
                 )->a( n = `startDateChange`               v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
                 )->a( n = `appointmentDrop`               v = client->_event(
-                          val   = `APPT_DROP`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` )
-                            ( `${$parameters>/copy} ? 'X' : ''` ) ) )
+                                        val   = `APPT_DROP`
+                                        t_arg = VALUE #(
+                                          ( `${$parameters>/startDate}.getFullYear()` )
+                                          ( `${$parameters>/startDate}.getMonth() + 1` )
+                                          ( `${$parameters>/startDate}.getDate()` )
+                                          ( `${$parameters>/startDate}.getHours()` )
+                                          ( `${$parameters>/startDate}.getMinutes()` )
+                                          ( `${$parameters>/endDate}.getFullYear()` )
+                                          ( `${$parameters>/endDate}.getMonth() + 1` )
+                                          ( `${$parameters>/endDate}.getDate()` )
+                                          ( `${$parameters>/endDate}.getHours()` )
+                                          ( `${$parameters>/endDate}.getMinutes()` )
+                                          ( `${$parameters>/appointment}.getBindingContext().getPath()` )
+                                          ( `${$parameters>/copy} ? 'X' : ''` ) ) )
                 )->a( n = `appointmentResize`             v = client->_event(
-                          val   = `APPT_RESIZE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
+                                      val   = `APPT_RESIZE`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` )
+                                        ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
                 )->a( n = `appointmentCreate`             v = client->_event(
-                          val   = `APPT_CREATE_DND`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` ) ) )
+                                      val   = `APPT_CREATE_DND`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` ) ) )
                 " handleMoreLinkPress switches to the Day view on the clicked date
                 )->a( n = `moreLinkPress`                 v = client->_event(
-                          val   = `MORE_LINK`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/date}.getFullYear()` )
-                            ( `${$parameters>/date}.getMonth() + 1` )
-                            ( `${$parameters>/date}.getDate()` ) ) )
-                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                                          val   = `MORE_LINK`
+                                          t_arg = VALUE #(
+                                            ( `${$parameters>/date}.getFullYear()` )
+                                            ( `${$parameters>/date}.getMonth() + 1` )
+                                            ( `${$parameters>/date}.getDate()` ) ) )
+                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `enableAppointmentsDragAndDrop` v = client->_bind( enable_dnd )
                 )->a( n = `enableAppointmentsResize`      v = client->_bind( enable_size )
                 )->a( n = `enableAppointmentsCreate`      v = client->_bind( enable_new )
-                )->a( n = `stickyMode`                    v = client->_bind( sticky_mode )
+                )->a( n = `stickyMode`                    v = client->_bind( stickymode )
                 )->a( n = `appointments`                  v = client->_bind( t_appointments )
 
                 )->ele( `actions`
@@ -257,7 +259,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`        v = `{TITLE}`
                         )->a( n = `text`         v = `{TEXT}`
                         )->a( n = `type`         v = `{TYPE}`
@@ -277,7 +279,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `ResponsivePopover`
@@ -300,7 +302,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `SimpleForm` ns = `f`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `id`                      v = `appointmentEditForm`
                 )->a( n = `editable`                v = `false`
                 )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -325,7 +327,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                 )->tag( `CheckBox`
                     )->a( n = `id`       v = `allDayText`
                     )->a( n = `text`     v = `All-day`
-                    )->a( n = `selected` v = client->_bind( all_day )
+                    )->a( n = `selected` v = client->_bind( allday )
                     )->a( n = `enabled`  v = `false`
                 )->tag( `Label`
                     )->a( n = `text`     v = `Type`
@@ -348,7 +350,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Dialog`
@@ -373,7 +375,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                 )->a( n = `class` v = `sapUiContentPadding`
                 )->a( n = `width` v = `100%`
 
-                )->ele( n = `SimpleForm` ns = `f`
+                )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `id`                      v = `appointmentCreateForm`
                     )->a( n = `editable`                v = `true`
                     )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -409,13 +411,13 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                     )->tag( `DateTimePicker`
                         )->a( n = `id`          v = `DTPStartDate`
                         )->a( n = `required`    v = `true`
-                        )->a( n = `visible`     v = |\{= !${ client->_bind( all_day ) } \}|
+                        )->a( n = `visible`     v = |\{= !${ client->_bind( allday ) } \}|
                         )->a( n = `valueFormat` v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `value`       v = client->_bind( sel_start )
                     )->tag( `DatePicker`
                         )->a( n = `id`          v = `DPStartDate`
                         )->a( n = `required`    v = `true`
-                        )->a( n = `visible`     v = |\{= ${ client->_bind( all_day ) } \}|
+                        )->a( n = `visible`     v = |\{= ${ client->_bind( allday ) } \}|
                         )->a( n = `valueFormat` v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `value`       v = client->_bind( sel_start )
                     )->tag( `Label`
@@ -424,13 +426,13 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                     )->tag( `DateTimePicker`
                         )->a( n = `id`          v = `DTPEndDate`
                         )->a( n = `required`    v = `true`
-                        )->a( n = `visible`     v = |\{= !${ client->_bind( all_day ) } \}|
+                        )->a( n = `visible`     v = |\{= !${ client->_bind( allday ) } \}|
                         )->a( n = `valueFormat` v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `value`       v = client->_bind( sel_end )
                     )->tag( `DatePicker`
                         )->a( n = `id`          v = `DPEndDate`
                         )->a( n = `required`    v = `true`
-                        )->a( n = `visible`     v = |\{= ${ client->_bind( all_day ) } \}|
+                        )->a( n = `visible`     v = |\{= ${ client->_bind( allday ) } \}|
                         )->a( n = `valueFormat` v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `value`       v = client->_bind( sel_end )
                     " handleCheckBoxSelect rewrites the hours, it does not only swap
@@ -438,7 +440,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                     )->tag( `CheckBox`
                         )->a( n = `id`       v = `allDay`
                         )->a( n = `text`     v = `All-day`
-                        )->a( n = `selected` v = client->_bind( all_day )
+                        )->a( n = `selected` v = client->_bind( allday )
                         )->a( n = `select`   v = client->_event( `ALL_DAY` )
                     )->tag( `Label`
                         )->a( n = `text`     v = `Type`
@@ -514,7 +516,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
             " an appointment that starts and ends at midnight is an all-day one
             " (CP, not substring( ): a cleared picker sends an empty value and
             " an offset read would dump on it)
-            all_day     = xsdbool( sel_start CP `*T00:00:00` AND sel_end CP `*T00:00:00` ).
+            allday     = xsdbool( sel_start CP `*T00:00:00` AND sel_end CP `*T00:00:00` ).
             popup_details_display( ).
           ENDIF.
         ENDIF.
@@ -548,7 +550,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                 |-{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
                 |-{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
         ELSE.
-          day = substring( val = start_date len = 10 ).
+          day = substring( val = startdate len = 10 ).
         ENDIF.
         sel_index    = -1.
         sel_title    = ``.
@@ -556,7 +558,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
         sel_type     = `Type01`.
         sel_start    = |{ day }T09:00:00|.
         sel_end      = |{ day }T10:00:00|.
-        all_day      = abap_false.
+        allday      = abap_false.
         dialog_title = `Create appointment`.
         popup_modify_display( ).
 
@@ -585,7 +587,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
         " unticking puts them back on the default hours 9 and 10
         " (_getDefaultAppointmentStartHour / _getDefaultAppointmentEndHour),
         " then copies both into the pair that has just become visible. The
-        " CheckBox writes its selected state into all_day BEFORE it fires
+        " CheckBox writes its selected state into allday BEFORE it fires
         " select (sap.m.CheckBox.ontap), so the flag already carries the new value
         all_day_hours( ).
 
@@ -601,7 +603,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
       WHEN `MORE_LINK`.
         " handleMoreLinkPress switches to the Day view on the clicked date
-        start_date = |{ client->get_event_arg( ) }| &&
+        startdate = |{ client->get_event_arg( ) }| &&
                      |-{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
                      |-{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }T00:00:00|.
         " the switch to the Day view is lost: SinglePlanningCalendar.selectedView
@@ -660,7 +662,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
     " _setHoursToZero for an all-day appointment, the sample's own default
     " hours 9 and 10 for a timed one - the rewrite handleCheckBoxSelect does
     " on top of swapping which picker pair is visible
-    IF all_day = abap_true.
+    IF allday = abap_true.
       sel_start = at_hour( iso = sel_start hour = 0 ).
       sel_end   = at_hour( iso = sel_end   hour = 0 ).
     ELSE.
@@ -710,14 +712,14 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date  = `2018-07-09T00:00:00`.
-    sticky_mode = `None`.
+    startdate  = `2018-07-09T00:00:00`.
+    stickymode = `None`.
     " the original seeds all three true (Page.controller.js:323) - these are the
     " behaviours the sample exists to show, and the three ToggleButtons start pressed
     enable_dnd  = abap_true.
     enable_new  = abap_true.
     enable_size = abap_true.
-    all_day     = abap_false.
+    allday     = abap_false.
     sel_index   = -1.
 
     t_appointments = VALUE #(

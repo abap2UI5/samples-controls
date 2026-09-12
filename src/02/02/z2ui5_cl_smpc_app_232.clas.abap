@@ -1,15 +1,16 @@
 " @keywords commandexecution command execution sap.ui.core commands app popover toolbar button toolbarspacer input panel
 " @summary This example demonstrates how to define shortcuts using commands in your application
-" @origin sap.ui.core.sample.Commands - https://sdk.openui5.org/entity/sap.ui.core.CommandExecution/sample/sap.ui.core.sample.Commands (status: reviewed)
+" @origin sap.ui.core.sample.Commands - https://sdk.openui5.org/entity/sap.ui.core.CommandExecution/sample/sap.ui.core.sample.Commands (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_232 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     DATA t_countries TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
     DATA value    TYPE string.
     DATA selected TYPE string.

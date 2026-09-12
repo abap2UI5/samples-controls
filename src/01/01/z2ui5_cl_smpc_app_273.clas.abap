@@ -1,6 +1,6 @@
 " @keywords dialog sap.m dialogmessage verticallayout button text
 " @summary Creating a dialog for showing UI messages. The possible messages types are: 'None', 'Success', 'Warning' and 'Error'.
-" @origin sap.m.sample.DialogMessage - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogMessage (status: checked)
+" @origin sap.m.sample.DialogMessage - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogMessage (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_273 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -10,13 +10,13 @@ CLASS z2ui5_cl_smpc_app_273 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS popup_message_display
       IMPORTING
         title TYPE string
         state TYPE string
         text  TYPE string.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -133,7 +133,7 @@ CLASS z2ui5_cl_smpc_app_273 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `Dialog`
-            )->a( n = `type`  v = `Message`
+            )->a( n = `type` v = `Message`
             )->a( n = `title` t = title ).
 
     " the default dialog is the only one the original builds without a state

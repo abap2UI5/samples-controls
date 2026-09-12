@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridresponsiveness html togglebutton slider panel overflowtoolbar title text hbox segmentedbutton
 " @summary Example of setting customLayout for different layout (screen) sizes.
-" @origin sap.ui.layout.sample.GridResponsiveness - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveness (status: reviewed)
+" @origin sap.ui.layout.sample.GridResponsiveness - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveness (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_271 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -93,15 +93,15 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
                 )->a( n = `text`  v = client->_bind( info_text )
             )->tag( `Text`
                 )->a( n = `text` v = `Responsive behaviour is fully configurable by the developer. It is possible to `
-                                  && `pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and `
-                                  && `configure how it will look in different breakpoints (S, M, L, XL). The breakpoints `
-                                  && `can be calculated either by the screen size or by the grid container (with `
-                                  && `containerQuery property).`
+                                     && `pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and `
+                                     && `configure how it will look in different breakpoints (S, M, L, XL). The breakpoints `
+                                     && `can be calculated either by the screen size or by the grid container (with `
+                                     && `containerQuery property).`
 
             )->ele( `HBox`
-                )->a( n = `alignItems`  v = `Center`
-                )->a( n = `renderType`  v = `Bare`
-                )->a( n = `class`       v = `sapUiSmallMarginBottom sapUiSmallMarginTop`
+                )->a( n = `alignItems` v = `Center`
+                )->a( n = `renderType` v = `Bare`
+                )->a( n = `class`      v = `sapUiSmallMarginBottom sapUiSmallMarginTop`
 
                 )->tag( `Text`
                     )->a( n = `text`  v = `GridResponsiveLayout containerQuery:`
@@ -277,10 +277,10 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
     IF client->get_event( ) = `LAYOUT_CHANGE`.
       " onLayoutChange: the info Text names the active GridSettings
       " aggregation; 'layout' covers both M and L
-      DATA(lv_layout) = client->get_event_arg( ).
-      info_text = COND string( WHEN lv_layout = `layout`
+      DATA(layout) = client->get_event_arg( ).
+      info_text = COND string( WHEN layout = `layout`
                                THEN `Layout size is: layoutM or layoutL`
-                               ELSE |Layout size is: { lv_layout }| ).
+                               ELSE |Layout size is: { layout }| ).
     ENDIF.
 
   ENDMETHOD.

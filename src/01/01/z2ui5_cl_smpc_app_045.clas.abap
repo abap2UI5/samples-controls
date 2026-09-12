@@ -1,6 +1,6 @@
 " @keywords rangeslider range slider sap.m user specify verticallayout text responsivescale
 " @summary With the RangeSlider a user can specify range from a numerical interval.
-" @origin sap.m.sample.RangeSlider - https://sdk.openui5.org/entity/sap.m.RangeSlider/sample/sap.m.sample.RangeSlider (status: reviewed)
+" @origin sap.m.sample.RangeSlider - https://sdk.openui5.org/entity/sap.m.RangeSlider/sample/sap.m.sample.RangeSlider (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_045 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

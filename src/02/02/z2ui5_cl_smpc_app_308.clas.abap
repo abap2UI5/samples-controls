@@ -1,24 +1,26 @@
 " @keywords calendar sap.ui.unified calendarspecialdayslegend html verticallayout datetyperange calendarlegend calendarlegenditem togglebutton
 " @summary Calendar with special days and legend
-" @origin sap.ui.unified.sample.CalendarSpecialDaysLegend - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSpecialDaysLegend (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarSpecialDaysLegend - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSpecialDaysLegend (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_308 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_legend,
-             type TYPE string,
-             text TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        type TYPE string,
+        text TYPE string,
+      END OF ty_s_legend.
     TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_special,
-             start_date     TYPE string,
-             end_date       TYPE string,
-             type           TYPE string,
-             secondary_type TYPE string,
-             tooltip        TYPE string,
-             color          TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_date     TYPE string,
+        end_date       TYPE string,
+        type           TYPE string,
+        secondary_type TYPE string,
+        tooltip        TYPE string,
+        color          TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA pressed    TYPE abap_bool.

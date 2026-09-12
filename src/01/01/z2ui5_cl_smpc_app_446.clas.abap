@@ -1,18 +1,19 @@
 " @keywords link sap.m linksubtle table toolbar title column text columnlistitem objectidentifier
 " @summary Subtle links should be used to indicate less important links in tables with a large number of links. In this example all columns contain links, only the first column is non-subtle.
-" @origin sap.m.sample.LinkSubtle - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.LinkSubtle (status: generated)
+" @origin sap.m.sample.LinkSubtle - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.LinkSubtle (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_446 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             suppliername  TYPE string,
-             category      TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        suppliername  TYPE string,
+        category      TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

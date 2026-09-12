@@ -1,19 +1,20 @@
 " @keywords breadcrumbs sap.m breadcrumbswithoutcurrentpage verticallayout link hbox label select item
 " @summary The breadcrumb shows the position of the object page in the application hiearchy, without the current page. Use this breadcrumb for the object page only.
-" @origin sap.m.sample.BreadcrumbsWithoutCurrentPage - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.BreadcrumbsWithoutCurrentPage (status: generated)
+" @origin sap.m.sample.BreadcrumbsWithoutCurrentPage - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.BreadcrumbsWithoutCurrentPage (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_441 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_style,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_style.
+    TYPES:
+      BEGIN OF ty_s_style,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_style.
     TYPES ty_t_style TYPE STANDARD TABLE OF ty_s_style WITH EMPTY KEY.
 
-    DATA t_items         TYPE ty_t_style.
-    DATA separator_style TYPE string VALUE `Slash`.
+    DATA t_items        TYPE ty_t_style.
+    DATA separatorstyle TYPE string VALUE `Slash`.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -57,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_441 IMPLEMENTATION.
             " no currentLocationText and no current-page Link - the Breadcrumbs
             " renders links only, which is what this sample shows
             )->ele( `Breadcrumbs`
-                )->a( n = `separatorStyle` v = client->_bind( separator_style )
+                )->a( n = `separatorStyle` v = client->_bind( separatorstyle )
 
                 " onPress shows MessageToast.show( link text + ' has been clicked' ) -
                 " composed on the client from the pressed Link's own text
@@ -99,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_441 IMPLEMENTATION.
                 )->ele( `Select`
                     )->a( n = `class`       v = `sapUiSmallMarginBegin`
                     )->a( n = `id`          v = `separatorSelect`
-                    )->a( n = `selectedKey` v = client->_bind( separator_style )
+                    )->a( n = `selectedKey` v = client->_bind( separatorstyle )
                     )->a( n = `items`       v = client->_bind( t_items )
 
                     )->tag( n = `Item` ns = `core`

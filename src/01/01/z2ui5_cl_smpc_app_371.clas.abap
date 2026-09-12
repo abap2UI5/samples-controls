@@ -1,6 +1,6 @@
 " @keywords textarea text area sap.m textareavaluestates verticallayout
 " @summary This sample illustrates the different value states of the sap.m.TextArea control.
-" @origin sap.m.sample.TextAreaValueStates - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaValueStates (status: reviewed)
+" @origin sap.m.sample.TextAreaValueStates - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaValueStates (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_371 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

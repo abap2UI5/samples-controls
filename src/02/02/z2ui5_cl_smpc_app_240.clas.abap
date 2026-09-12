@@ -1,21 +1,23 @@
 " @keywords calendarlegend calendar legend sap.ui.unified calendarlegendnavigation html verticallayout datetyperange calendarlegenditem
 " @summary An example of adding navigatable legend to the calendar.
-" @origin sap.ui.unified.sample.CalendarLegendNavigation - https://sdk.openui5.org/entity/sap.ui.unified.CalendarLegend/sample/sap.ui.unified.sample.CalendarLegendNavigation (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarLegendNavigation - https://sdk.openui5.org/entity/sap.ui.unified.CalendarLegend/sample/sap.ui.unified.sample.CalendarLegendNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_240 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_legend,
-             type TYPE string,
-             text TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        type TYPE string,
+        text TYPE string,
+      END OF ty_s_legend.
     TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_special,
-             start_date TYPE string,
-             type       TYPE string,
-             tooltip    TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_date TYPE string,
+        type       TYPE string,
+        tooltip    TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA t_legend  TYPE ty_t_legend.
@@ -107,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
     " original onInit adds 10 legend items and, per type, two special dates
     " (day i and day i+12 of the current month) - reproduced server-side so the
     " special dates track the current month exactly like the original UI5Date logic
-    DATA lv_day TYPE i.
+    DATA day TYPE i.
     " The special dates are ABAP DATS strings read through
     " Formatter.DateAbapDateToDateObject, which builds the Date from the parsed
     " parts - LOCAL midnight, which is what sap.ui.unified reads back
@@ -115,23 +117,23 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
     " Formatter.DateCreateObject until 2026-08-21, and `new Date('yyyy-mm-dd')`
     " is UTC midnight, so west of Greenwich every marked day landed one day
     " early. Same defect and same fix as apps 220 and 017.
-    DATA(lv_prefix) = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
+    DATA(prefix) = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
 
     DO 10 TIMES.
-      DATA(lv_i)    = sy-index.
-      DATA(lv_type) = |Type{ lv_i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
-      DATA(lv_text) = |Placeholder { lv_i }|.
+      DATA(i)           = sy-index.
+      DATA(legend_type) = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      DATA(legend_text) = |Placeholder { i }|.
 
-      t_legend = VALUE #( BASE t_legend ( type = lv_type text = lv_text ) ).
+      t_legend = VALUE #( BASE t_legend ( type = legend_type text = legend_text ) ).
 
-      lv_day = lv_i.
-      DATA(lv_date1) = |{ lv_prefix }{ lv_day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
-      lv_day = lv_i + 12.
-      DATA(lv_date2) = |{ lv_prefix }{ lv_day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      day = i.
+      DATA(date1) = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      day = i + 12.
+      DATA(date2) = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
 
       t_special = VALUE #( BASE t_special
-        ( start_date = lv_date1 type = lv_type tooltip = lv_text )
-        ( start_date = lv_date2 type = lv_type tooltip = lv_text ) ).
+        ( start_date = date1 type = legend_type tooltip = legend_text )
+        ( start_date = date2 type = legend_type tooltip = legend_text ) ).
     ENDDO.
 
   ENDMETHOD.

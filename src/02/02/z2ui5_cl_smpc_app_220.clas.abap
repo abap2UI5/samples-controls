@@ -1,15 +1,16 @@
 " @keywords calendar sap.ui.unified calendarminmax html verticallayout daterange horizontallayout label text flexbox switch
 " @summary Calendar with minimum date 2000-01-01 and maximum date 2050-12-31, some disabled days (in January 2016) and ability to show or hide week numbers.
-" @origin sap.ui.unified.sample.CalendarMinMax - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarMinMax (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarMinMax - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarMinMax (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_220 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_disabled,
-             start TYPE string,
-             end   TYPE string,
-           END OF ty_s_disabled.
+    TYPES:
+      BEGIN OF ty_s_disabled,
+        start TYPE string,
+        end   TYPE string,
+      END OF ty_s_disabled.
     TYPES ty_t_disabled TYPE STANDARD TABLE OF ty_s_disabled WITH EMPTY KEY.
 
     DATA min_date          TYPE string.

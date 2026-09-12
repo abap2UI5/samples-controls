@@ -1,28 +1,29 @@
 " @keywords table sap.m tablemergecells column text columnlistitem objectidentifier objectnumber
 " @summary With column duplicate merging, you can improve the display of repeated data. See the effect of mergeDuplicates on the Supplier column, space permitting. Note: This feature is ignored if a column is shown in the pop-in.
-" @origin sap.m.sample.TableMergeCells - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableMergeCells (status: generated)
+" @origin sap.m.sample.TableMergeCells - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableMergeCells (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_573 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState and Formatter.formatType, computed in the
-             " backend (thin frontend)
-             weight_state  TYPE string,
-             row_type      TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState and Formatter.formatType, computed in the
+        " backend (thin frontend)
+        weight_state  TYPE string,
+        row_type      TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

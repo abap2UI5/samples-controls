@@ -1,6 +1,6 @@
 " @keywords toolpage tool sap.tnt toolpagenavigation toolheader button overflowtoolbarlayoutdata image title text toolbarspacer searchfield
 " @summary A tool page layout with horizontal navigation (on desktop and tablet) and vertical navigation (on phone)
-" @origin sap.tnt.sample.ToolPageNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageNavigation (status: reviewed)
+" @origin sap.tnt.sample.ToolPageNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_302 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -10,19 +10,21 @@ CLASS z2ui5_cl_smpc_app_302 DEFINITION PUBLIC.
     DATA side_expanded  TYPE abap_bool.
     DATA toggle_tooltip TYPE string.
 
-    TYPES: BEGIN OF ty_s_sub_item,
-             title   TYPE string,
-             key     TYPE string,
-             enabled TYPE abap_bool,
-           END OF ty_s_sub_item.
-    TYPES: BEGIN OF ty_s_nav_item,
-             title    TYPE string,
-             icon     TYPE string,
-             key      TYPE string,
-             enabled  TYPE abap_bool,
-             expanded TYPE abap_bool,
-             items    TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_sub_item,
+        title   TYPE string,
+        key     TYPE string,
+        enabled TYPE abap_bool,
+      END OF ty_s_sub_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        title    TYPE string,
+        icon     TYPE string,
+        key      TYPE string,
+        enabled  TYPE abap_bool,
+        expanded TYPE abap_bool,
+        items    TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
+      END OF ty_s_nav_item.
     DATA navigation TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.

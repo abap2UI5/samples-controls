@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageformlayout objectpagedynamicheadertitle breadcrumbs link title flexbox avatar text
 " @summary Object Page automatically adjusts form layout to match block column layout
-" @origin sap.uxap.sample.ObjectPageFormLayout - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormLayout (status: generated)
+" @origin sap.uxap.sample.ObjectPageFormLayout - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormLayout (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_591 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -35,13 +35,13 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
     " form block each plus four blockcolor:BlockBlue fillers, every one of them a
     " BlockBase around a static view - inlined 1:1 below (see sidecar)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -61,6 +61,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                 )->a( n = `text`  v = `Page 2 long link`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Page 2 long link clicked` ) ) )
+
                         )->end(
                     )->end(
 
@@ -68,6 +69,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `Denise Smith`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
 
                     )->ele( `snappedHeading`
@@ -80,22 +82,26 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->tag( n = `Title` ns = `m`
                                 )->a( n = `text`     v = `Denise Smith`
                                 )->a( n = `wrapping` v = `true`
+
                         )->end(
                     )->end(
 
                     )->ele( `expandedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `actions`
@@ -113,6 +119,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->a( n = `type`    v = `Transparent`
                             )->a( n = `text`    v = `Share`
                             )->a( n = `tooltip` v = `action`
+
                     )->end(
                 )->end(
             )->end(
@@ -127,23 +134,24 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                         )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
                         )->a( n = `displaySize` v = `L`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `+33 6 4512 5158`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `DeniseSmith@sap.com`
 
-                        )->ele( n = `HorizontalLayout` ns = `layout`
+                        )->ele( n = `HorizontalLayout` ns = `l`
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/linkedin.png`
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src`   v = `https://sdk.openui5.org/test-resources/sap/uxap/images/Twitter.png`
                                 )->a( n = `class` v = `sapUiSmallMarginBegin`
+
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Hello! I am Denise and I use UxAP`
@@ -154,13 +162,15 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->tag( n = `ProgressIndicator` ns = `m`
                                 )->a( n = `percentValue` v = `30`
                                 )->a( n = `displayValue` v = `30%`
+
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `San Jose, USA`
+
                     )->end(
                 )->end(
             )->end(
@@ -176,80 +186,88 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:PersonalFormBlock (columnLayout="3") inlined
-                                )->ele( n = `Form` ns = `forms`
+                                )->ele( n = `Form` ns = `form`
                                     )->a( n = `width` v = `100%`
 
-                                    )->ele( n = `layout` ns = `forms`
-                                        )->tag( n = `ColumnLayout` ns = `forms`
+                                    )->ele( n = `layout` ns = `form`
+                                        )->tag( n = `ColumnLayout` ns = `form`
+
                                     )->end(
 
-                                    )->ele( n = `formContainers` ns = `forms`
+                                    )->ele( n = `formContainers` ns = `form`
 
-                                        )->ele( n = `FormContainer` ns = `forms`
+                                        )->ele( n = `FormContainer` ns = `form`
                                             )->a( n = `id`    v = `addressInfo`
                                             )->a( n = `title` v = `Addresses`
-                                            )->ele( n = `formElements` ns = `forms`
+                                            )->ele( n = `formElements` ns = `form`
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Home Address`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `2096 Mission Street`
+
                                                     )->end(
                                                 )->end(
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Home Mailing Address`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `PO Box 32114`
+
                                                     )->end(
                                                 )->end(
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Office Address`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `4311 Green Street`
+
                                                     )->end(
                                                 )->end(
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Office Mailing Address`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `PO Box 95493`
+
                                                     )->end(
                                                 )->end(
                                             )->end(
                                         )->end(
 
-                                        )->ele( n = `FormContainer` ns = `forms`
+                                        )->ele( n = `FormContainer` ns = `form`
                                             )->a( n = `id`    v = `socialInfo`
                                             )->a( n = `title` v = `Social Accounts`
-                                            )->ele( n = `formElements` ns = `forms`
+                                            )->ele( n = `formElements` ns = `form`
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `LinkedIn`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `/DeniseSmith`
+
                                                     )->end(
                                                 )->end(
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Twitter`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `@DeniseSmith`
+
                                                     )->end(
                                                 )->end(
 
-                                                )->ele( n = `FormElement` ns = `forms`
+                                                )->ele( n = `FormElement` ns = `form`
                                                     )->a( n = `label` v = `Facebook`
-                                                    )->ele( n = `fields` ns = `forms`
+                                                    )->ele( n = `fields` ns = `form`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `/DenisSmith`
+
                                                     )->end(
                                                 )->end(
                                             )->end(
@@ -288,7 +306,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " employment:BlockJobInfo (columnLayout="3") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -306,6 +324,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job title`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = `Developer`
+
                                 )->end(
 
                                 " blockcolor:BlockBlue - a bare coloured html:div

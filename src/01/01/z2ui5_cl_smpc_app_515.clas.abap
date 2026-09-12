@@ -1,16 +1,17 @@
 " @keywords input sap.m inputassisted verticallayout label item selectdialog standardlistitem
 " @summary Assisted input is available via suggestions - shown as you type - and a value help dialog.
-" @origin sap.m.sample.InputAssisted - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssisted (status: generated)
+" @origin sap.m.sample.InputAssisted - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssisted (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_515 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -66,13 +67,13 @@ CLASS z2ui5_cl_smpc_app_515 IMPLEMENTATION.
             " the input's value and opens it - the same fragment, shown with
             " popup_display and pre-filtered on the same round-trip
             )->ele( `Input`
-                )->a( n = `id`              v = `productInput`
-                )->a( n = `placeholder`     v = `Enter product`
-                )->a( n = `showSuggestion`  v = `true`
-                )->a( n = `showValueHelp`   v = `true`
-                )->a( n = `value`           v = client->_bind( value )
+                )->a( n = `id`               v = `productInput`
+                )->a( n = `placeholder`      v = `Enter product`
+                )->a( n = `showSuggestion`   v = `true`
+                )->a( n = `showValueHelp`    v = `true`
+                )->a( n = `value`            v = client->_bind( value )
                 )->a( n = `valueHelpRequest` v = client->_event( `VALUE_HELP` )
-                )->a( n = `suggestionItems` v = client->_bind( t_products )
+                )->a( n = `suggestionItems`  v = client->_bind( t_products )
 
                 )->ele( `suggestionItems`
                     )->tag( n = `Item` ns = `core`

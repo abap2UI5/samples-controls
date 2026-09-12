@@ -1,6 +1,6 @@
 " @keywords messagebox message box sap.m messageboxinfo verticallayout button
 " @summary MessageBox with the option to display detailed information.
-" @origin sap.m.sample.MessageBoxInfo - https://sdk.openui5.org/entity/sap.m.MessageBox/sample/sap.m.sample.MessageBoxInfo (status: generated)
+" @origin sap.m.sample.MessageBoxInfo - https://sdk.openui5.org/entity/sap.m.MessageBox/sample/sap.m.sample.MessageBoxInfo (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_447 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

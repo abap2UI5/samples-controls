@@ -1,6 +1,6 @@
 " @keywords calendar sap.ui.unified calendardatedeselection html verticallayout horizontallayout label text
 " @summary An example of recommended implementation of deselection logic when the calendar is in single selection mode.
-" @origin sap.ui.unified.sample.CalendarDateDeselection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarDateDeselection (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarDateDeselection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarDateDeselection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_305 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -45,11 +45,11 @@ CLASS z2ui5_cl_smpc_app_305 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `class`     v = `viewPadding`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `class`      v = `viewPadding`
 
         )->a( n = `xmlns:core` v = `sap.ui.core`
 

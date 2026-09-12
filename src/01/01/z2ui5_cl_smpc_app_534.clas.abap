@@ -1,6 +1,6 @@
 " @keywords wizard sap.m wizardcurrentstep navcontainer bar segmentedbutton segmentedbuttonitem label select item wizardstep messagestrip
 " @summary Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard.
-" @origin sap.m.sample.WizardCurrentStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardCurrentStep (status: generated)
+" @origin sap.m.sample.WizardCurrentStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardCurrentStep (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_534 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -11,15 +11,15 @@ CLASS z2ui5_cl_smpc_app_534 DEFINITION PUBLIC.
     DATA linearwizardselectedstep TYPE string.
     DATA branchingselectedstep    TYPE string.
 
-    DATA product_name         TYPE string.
-    DATA product_name_state   TYPE string.
-    DATA product_weight       TYPE string.
-    DATA product_weight_state TYPE string.
-    DATA product_manufacturer TYPE string.
-    DATA product_description  TYPE string.
-    DATA product_price        TYPE string.
-    DATA product_vat          TYPE abap_bool.
-    DATA step2_validated      TYPE abap_bool.
+    DATA productname         TYPE string.
+    DATA productnamestate    TYPE string.
+    DATA productweight       TYPE string.
+    DATA productweightstate  TYPE string.
+    DATA productmanufacturer TYPE string.
+    DATA productdescription  TYPE string.
+    DATA productprice        TYPE string.
+    DATA productvat          TYPE abap_bool.
+    DATA step2_validated     TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client     TYPE REF TO z2ui5_if_client.
@@ -166,7 +166,7 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                         " mvc:XMLView
                         )->ele( `Wizard`
                             )->a( n = `id`               v = `CreateProductWizard`
-                            )->a( n = `backgroundDesign`  v = client->_bind( selectedbackgrounddesign )
+                            )->a( n = `backgroundDesign` v = client->_bind( selectedbackgrounddesign )
                             )->a( n = `finishButtonText` v = `Finish`
                             )->a( n = `currentStep`      v = `PricingStep`
                             )->a( n = `visible`          v = |\{= ${ client->_bind( selectedshowcase ) } === 'linear' \}|
@@ -225,8 +225,8 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                     )->a( n = `showIcon` v = `true`
                                 )->tag( `Text`
                                     )->a( n = `text` v = `Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. ` &&
-                                                        `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
-                                                        `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
+                                                         `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
+                                                         `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
 
                                 )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
@@ -237,27 +237,27 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `valueStateText` v = `Enter 6 symbols or more`
-                                        )->a( n = `valueState`     v = client->_bind( product_name_state )
+                                        )->a( n = `valueState`     v = client->_bind( productnamestate )
                                         )->a( n = `id`             v = `ProductName`
                                         )->a( n = `change`         v = client->_event( `VALIDATE_INFO` )
                                         )->a( n = `placeholder`    v = `Enter name with length greater than 6`
-                                        )->a( n = `value`          v = client->_bind( product_name )
+                                        )->a( n = `value`          v = client->_bind( productname )
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Weight`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `valueStateText` v = `Enter digits`
-                                        )->a( n = `valueState`     v = client->_bind( product_weight_state )
+                                        )->a( n = `valueState`     v = client->_bind( productweightstate )
                                         )->a( n = `id`             v = `ProductWeight`
                                         )->a( n = `change`         v = client->_event( `VALIDATE_INFO` )
                                         )->a( n = `type`           v = `Number`
                                         )->a( n = `placeholder`    v = `Enter digits`
-                                        )->a( n = `value`          v = client->_bind( product_weight )
+                                        )->a( n = `value`          v = client->_bind( productweight )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Manufacturer`
 
                                     )->ele( `Select`
-                                        )->a( n = `selectedKey` v = client->_bind( product_manufacturer )
+                                        )->a( n = `selectedKey` v = client->_bind( productmanufacturer )
 
                                         )->tag( n = `Item` ns = `core`
                                             )->a( n = `key`  v = `Apple`
@@ -282,7 +282,7 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Description`
                                     )->tag( `TextArea`
-                                        )->a( n = `value` v = client->_bind( product_description )
+                                        )->a( n = `value` v = client->_bind( productdescription )
                                         )->a( n = `rows`  v = `8`
 
                                 )->end(
@@ -300,8 +300,8 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                     )->a( n = `showIcon` v = `true`
                                 )->tag( `Text`
                                     )->a( n = `text` v = `Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                        `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                        `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
+                                                         `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
+                                                         `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
 
                                 )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
@@ -367,7 +367,7 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                 )->tag( `MessageStrip`
                                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                                     )->a( n = `text`     v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
-                                                            `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
+                                                             `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
                                     )->a( n = `showIcon` v = `true`
 
                                 )->ele( n = `SimpleForm` ns = `form`
@@ -377,7 +377,7 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Price`
                                     )->tag( `Input`
-                                        )->a( n = `value` v = client->_bind( product_price )
+                                        )->a( n = `value` v = client->_bind( productprice )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Discount group`
 
@@ -400,18 +400,18 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = ` VAT is included`
                                     )->tag( `CheckBox`
-                                        )->a( n = `selected` v = client->_bind( product_vat )
+                                        )->a( n = `selected` v = client->_bind( productvat )
 
                                 )->end(
                             )->end(
                         )->end(
 
                         )->ele( `Wizard`
-                            )->a( n = `id`              v = `BranchingWizard`
+                            )->a( n = `id`               v = `BranchingWizard`
                             )->a( n = `backgroundDesign` v = client->_bind( selectedbackgrounddesign )
-                            )->a( n = `enableBranching` v = `true`
-                            )->a( n = `visible`         v = |\{= ${ client->_bind( selectedshowcase ) } === 'branching' \}|
-                            )->a( n = `class`           v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
+                            )->a( n = `enableBranching`  v = `true`
+                            )->a( n = `visible`          v = |\{= ${ client->_bind( selectedshowcase ) } === 'branching' \}|
+                            )->a( n = `class`            v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
 
                             )->ele( `WizardStep`
                                 )->a( n = `validated`       v = `false`
@@ -590,11 +590,11 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
   METHOD info_validate.
 
     " validateProdInfoStep: a name of at least six characters and a numeric weight
-    DATA(name_ok)   = xsdbool( strlen( product_name ) >= 6 ).
-    DATA(weight_ok) = xsdbool( product_weight IS NOT INITIAL AND product_weight CO `0123456789.` ).
+    DATA(name_ok)   = xsdbool( strlen( productname ) >= 6 ).
+    DATA(weight_ok) = xsdbool( productweight IS NOT INITIAL AND productweight CO `0123456789.` ).
 
-    product_name_state   = COND #( WHEN name_ok   = abap_true THEN `None` ELSE `Error` ).
-    product_weight_state = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
+    productnamestate   = COND #( WHEN name_ok   = abap_true THEN `None` ELSE `Error` ).
+    productweightstate = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
     step2_validated      = xsdbool( name_ok = abap_true AND weight_ok = abap_true ).
 
   ENDMETHOD.
@@ -608,8 +608,8 @@ CLASS z2ui5_cl_smpc_app_534 IMPLEMENTATION.
     linearwizardselectedstep = `PricingStep`.
     branchingselectedstep    = `A`.
     path_index               = 0.
-    product_name_state       = `None`.
-    product_weight_state     = `None`.
+    productnamestate       = `None`.
+    productweightstate     = `None`.
     " the Linear view declares no validated attribute, so every step starts
     " VALIDATED - which is what lets currentStep="PricingStep" hold on startup;
     " validateProdInfoStep is the only thing that ever clears it

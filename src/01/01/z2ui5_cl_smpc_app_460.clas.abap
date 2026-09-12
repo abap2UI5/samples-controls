@@ -1,14 +1,15 @@
 " @keywords input sap.m inputsuggestionscustomfilter verticallayout label item
 " @summary The default filtering for the suggestionItems aggregation uses a 'begins with' style operator. You can override this with your own custom filter function using the Input control's setFilterFunction method.
-" @origin sap.m.sample.InputSuggestionsCustomFilter - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputSuggestionsCustomFilter (status: generated)
+" @origin sap.m.sample.InputSuggestionsCustomFilter - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputSuggestionsCustomFilter (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_460 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

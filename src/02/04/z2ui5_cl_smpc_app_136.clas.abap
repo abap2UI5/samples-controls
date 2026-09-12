@@ -1,6 +1,6 @@
 " @keywords sidepanel side panel sap.f single item button vbox label switch text sidepanelitem
 " @summary Demonstrates the usage of Side Panel with single action item.
-" @origin sap.f.sample.SidePanelSingle - https://sdk.openui5.org/entity/sap.f.SidePanel/sample/sap.f.sample.SidePanelSingle (status: reviewed)
+" @origin sap.f.sample.SidePanelSingle - https://sdk.openui5.org/entity/sap.f.SidePanel/sample/sap.f.sample.SidePanelSingle (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_136 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -12,9 +12,9 @@ CLASS z2ui5_cl_smpc_app_136 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_event.
-
     METHODS view_display.
+
+    METHODS on_event.
 
   PRIVATE SECTION.
 ENDCLASS.

@@ -1,6 +1,6 @@
 " @keywords objectpageheader object header sap.uxap kpiobjectpageheader objectpagelayout objectpageheaderactionbutton verticallayout label objectnumber objectattribute objectpagesection
 " @summary This is an example of an ObjectPageHeader containing mainly KPIs.
-" @origin sap.uxap.sample.KPIObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.KPIObjectPageHeader (status: reviewed)
+" @origin sap.uxap.sample.KPIObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.KPIObjectPageHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_217 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -37,13 +37,13 @@ CLASS z2ui5_cl_smpc_app_217 IMPLEMENTATION.
     " JS - a BlockBase is only a lazy-loading wrapper around a view, so each
     " block's content (a sap.ui.layout.form.SimpleForm) is inlined directly here.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -70,7 +70,7 @@ CLASS z2ui5_cl_smpc_app_217 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `PC, Unrestricted-Use Stock`
                     )->tag( n = `ObjectNumber` ns = `m`
@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_217 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Article Category`
                     )->tag( n = `ObjectAttribute` ns = `m`
@@ -88,7 +88,7 @@ CLASS z2ui5_cl_smpc_app_217 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Article Type`
                     )->tag( n = `ObjectAttribute` ns = `m`

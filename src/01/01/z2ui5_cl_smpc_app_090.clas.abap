@@ -1,6 +1,6 @@
 " @keywords searchfield search field sap.m inside dialog verticallayout button toolbar text
 " @summary Use a Search Field inside a Dialog.
-" @origin sap.m.sample.DialogSearch - https://sdk.openui5.org/entity/sap.m.SearchField/sample/sap.m.sample.DialogSearch (status: reviewed)
+" @origin sap.m.sample.DialogSearch - https://sdk.openui5.org/entity/sap.m.SearchField/sample/sap.m.sample.DialogSearch (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_090 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -78,7 +78,7 @@ CLASS z2ui5_cl_smpc_app_090 IMPLEMENTATION.
                   )->tag( `Text`
                       )->a( n = `width` v = `300px`
                       )->a( n = `text`  v = `Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ` &&
-                                           `aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est`
+                                            `aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est`
 
               )->end(
               )->ele( `beginButton`

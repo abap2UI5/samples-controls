@@ -1,6 +1,6 @@
 " @keywords menu sap.ui.unified menumenueventing horizontallayout button menuitem menutextfielditem
 " @summary Menu with Menu Eventing
-" @origin sap.ui.unified.sample.MenuMenuEventing - https://sdk.openui5.org/entity/sap.ui.unified.Menu/sample/sap.ui.unified.sample.MenuMenuEventing (status: reviewed)
+" @origin sap.ui.unified.sample.MenuMenuEventing - https://sdk.openui5.org/entity/sap.ui.unified.Menu/sample/sap.ui.unified.sample.MenuMenuEventing (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_228 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -9,8 +9,8 @@ CLASS z2ui5_cl_smpc_app_228 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS view_display.
     METHODS on_event.
+    METHODS view_display.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
 
                 )->ele( `dependents`
                     )->ele( n = `Menu` ns = `u`
-                        )->a( n = `id` v = `theMenu`
+                        )->a( n = `id`         v = `theMenu`
                         " menu-level eventing: one handler for every item, composed on the frontend
                         " (1:1 with MessageToast.show("'" + item.getText() + "' pressed"))
                         " handleMenuItemPress branches on the runtime item: a parent that

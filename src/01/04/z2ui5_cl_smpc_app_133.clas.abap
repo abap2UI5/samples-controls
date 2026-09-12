@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f selection modes html hbox segmentedbutton segmentedbuttonitem gridbasiclayout gridlistitem
 " @summary This is a sample for GridList with different modes of selection.
-" @origin sap.f.sample.GridListModes - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListModes (status: reviewed)
+" @origin sap.f.sample.GridListModes - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListModes (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_133 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_133 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:grid` v = `sap.ui.layout.cssgrid`
         )->a( n = `xmlns:f`    v = `sap.f`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
 
         " the sample's own main.css, injected as a style leaf (apps 122/124):
         " the view carries the imageDisplayBlock class and the rule behind it
@@ -70,9 +70,9 @@ CLASS z2ui5_cl_smpc_app_133 IMPLEMENTATION.
             )->a( n = `justifyContent` v = `End`
 
             )->ele( `SegmentedButton`
-                )->a( n = `selectedKey`      v = client->_bind( mode )
-                )->a( n = `class`            v = `sapUiSmallMarginTop sapUiSmallMarginEnd`
-                )->a( n = `selectionChange`  v = client->_event( `MODE_CHANGE` )
+                )->a( n = `selectedKey`     v = client->_bind( mode )
+                )->a( n = `class`           v = `sapUiSmallMarginTop sapUiSmallMarginEnd`
+                )->a( n = `selectionChange` v = client->_event( `MODE_CHANGE` )
 
                 )->ele( `items`
                     )->tag( `SegmentedButtonItem`

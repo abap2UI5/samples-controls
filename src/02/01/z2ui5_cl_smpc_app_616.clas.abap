@@ -1,15 +1,16 @@
 " @keywords combobox combo box sap.m comboboxvaluestate verticallayout listitem formattedtext link
 " @summary The combo box can show different value states.
-" @origin sap.m.sample.ComboBoxValueState - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValueState (status: generated)
+" @origin sap.m.sample.ComboBoxValueState - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValueState (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_616 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.
@@ -70,6 +71,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -85,6 +87,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -101,6 +104,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
             )->ele( `formattedValueStateText`
                 )->ele( `FormattedText`
@@ -110,7 +114,8 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                             )->a( n = `text`  v = `link`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+
                     )->end(
                 )->end(
             )->end(
@@ -129,6 +134,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -144,6 +150,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
             )->ele( `formattedValueStateText`
                 )->ele( `FormattedText`
@@ -153,12 +160,13 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                             )->a( n = `text`  v = `multiple`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
                         )->tag( `Link`
                             )->a( n = `text`  v = `links`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+
                     )->end(
                 )->end(
             )->end(
@@ -176,6 +184,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 

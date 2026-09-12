@@ -1,31 +1,34 @@
 " @keywords uploadset upload set sap.m.upload file list overflowtoolbar toolbarspacer button uploadsettoolbarplaceholder uploadsetitem objectmarker
 " @summary This sample shows an Upload Set control with a list of files to be uploaded and actions you can perform on them.
-" @origin sap.m.sample.UploadSet - https://sdk.openui5.org/entity/sap.m.upload.UploadSet/sample/sap.m.sample.UploadSet (status: reviewed)
+" @origin sap.m.sample.UploadSet - https://sdk.openui5.org/entity/sap.m.upload.UploadSet/sample/sap.m.sample.UploadSet (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_121 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_marker,
-             type       TYPE string,
-             visibility TYPE string,
-           END OF ty_s_marker.
-    TYPES: BEGIN OF ty_s_status,
-             title  TYPE string,
-             text   TYPE string,
-             state  TYPE string,
-             icon   TYPE string,
-             active TYPE abap_bool,
-           END OF ty_s_status.
-    TYPES: BEGIN OF ty_s_item,
-             filename     TYPE string,
-             mediatype    TYPE string,
-             url          TYPE string,
-             thumbnailurl TYPE string,
-             uploadstate  TYPE string,
-             markers      TYPE STANDARD TABLE OF ty_s_marker WITH EMPTY KEY,
-             statuses     TYPE STANDARD TABLE OF ty_s_status WITH EMPTY KEY,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_marker,
+        type       TYPE string,
+        visibility TYPE string,
+      END OF ty_s_marker.
+    TYPES:
+      BEGIN OF ty_s_status,
+        title  TYPE string,
+        text   TYPE string,
+        state  TYPE string,
+        icon   TYPE string,
+        active TYPE abap_bool,
+      END OF ty_s_status.
+    TYPES:
+      BEGIN OF ty_s_item,
+        filename     TYPE string,
+        mediatype    TYPE string,
+        url          TYPE string,
+        thumbnailurl TYPE string,
+        uploadstate  TYPE string,
+        markers      TYPE STANDARD TABLE OF ty_s_marker WITH EMPTY KEY,
+        statuses     TYPE STANDARD TABLE OF ty_s_status WITH EMPTY KEY,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
     " onSelectionChange enables the version button for exactly one selection
     DATA version_enabled TYPE abap_bool.
@@ -71,16 +74,16 @@ CLASS z2ui5_cl_smpc_app_121 IMPLEMENTATION.
             )->a( n = `showHeader` v = `false`
 
             )->ele( n = `UploadSet` ns = `upload`
-                )->a( n = `id`            v = `UploadSet`
-                )->a( n = `instantUpload` v = `true`
-                )->a( n = `showIcons`     v = `true`
-                )->a( n = `uploadEnabled` v = `true`
+                )->a( n = `id`                 v = `UploadSet`
+                )->a( n = `instantUpload`      v = `true`
+                )->a( n = `showIcons`          v = `true`
+                )->a( n = `uploadEnabled`      v = `true`
                 )->a( n = `terminationEnabled` v = `true`
-                )->a( n = `fileTypes`     v = `txt,doc,png`
-                )->a( n = `maxFileNameLength` v = `30`
-                )->a( n = `maxFileSize`   v = `200`
-                )->a( n = `mediaTypes`    v = `text/plain,application/msword,image/png`
-                )->a( n = `uploadUrl`     v = `../../../../upload`
+                )->a( n = `fileTypes`          v = `txt,doc,png`
+                )->a( n = `maxFileNameLength`  v = `30`
+                )->a( n = `maxFileSize`        v = `200`
+                )->a( n = `mediaTypes`         v = `text/plain,application/msword,image/png`
+                )->a( n = `uploadUrl`          v = `../../../../upload`
                 " omit_initial_paths so a marker that sets no visibility keeps
                 " the control's own default. The original's markers are
                 " {"type":"Draft"} and carry no visibility at all, so its
@@ -93,13 +96,13 @@ CLASS z2ui5_cl_smpc_app_121 IMPLEMENTATION.
                 " carries an icon, so ObjectStatus.state got "" and
                 " sap.ui.core.ValueState rejected THAT - the app died again,
                 " one enum further along, after VISIBILITY was fixed.
-                )->a( n = `items`         v = client->_bind( val = t_items
-                                                             omit_initial_paths = VALUE #( ( `VISIBILITY` )
-                                                                                          ( `STATE` )
-                                                                                          ( `ICON` ) ) )
-                )->a( n = `mode`          v = `MultiSelect`
-                )->a( n = `selectionChanged`  v = client->_event( val = `SELECTION` arg = `$event.oSource.getSelectedItems().length` )
-                )->a( n = `afterItemRemoved`  v = client->_event( val = `REMOVED` arg = `${$parameters>/item}.getFileName()` )
+                )->a( n = `items`              v = client->_bind( val = t_items
+                                                                  omit_initial_paths = VALUE #( ( `VISIBILITY` )
+                                                                                                ( `STATE` )
+                                                                                                ( `ICON` ) ) )
+                )->a( n = `mode`               v = `MultiSelect`
+                )->a( n = `selectionChanged`   v = client->_event( val = `SELECTION` arg = `$event.oSource.getSelectedItems().length` )
+                )->a( n = `afterItemRemoved`   v = client->_event( val = `REMOVED` arg = `${$parameters>/item}.getFileName()` )
 
                 )->ele( n = `toolbar` ns = `upload`
                     )->ele( `OverflowToolbar`

@@ -1,6 +1,6 @@
 " @keywords segmentedbutton segmented button sap.m segmentedbuttonli list inputlistitem segmentedbuttonitem
 " @summary Segmented Button used in Input List Item component
-" @origin sap.m.sample.SegmentedButtonLI - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonLI (status: reviewed)
+" @origin sap.m.sample.SegmentedButtonLI - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonLI (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_391 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

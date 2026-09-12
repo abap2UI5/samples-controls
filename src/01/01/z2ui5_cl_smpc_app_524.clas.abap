@@ -1,16 +1,17 @@
 " @keywords list sap.m listdeletion standardlistitem
 " @summary Setting 'Delete' mode on a List means you can trigger the deletion of single items with a single press. The application has to decide if an additional confirmation is required.
-" @origin sap.m.sample.ListDeletion - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListDeletion (status: generated)
+" @origin sap.m.sample.ListDeletion - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListDeletion (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_524 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             productpicurl TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        productpicurl TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
