@@ -7,6 +7,42 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-12 — the shared provider is reverted: a sample is one snippet
+
+The provider of the entry below was built, measured and reverted the same
+day, on a maintainer decision. It did exactly what it promised — the demo
+kit's `ProductCollection`, inlined 125 times, collapsed into one class,
+15,256 duplicated lines gone, 9,484 of them actually removed from 58 ports —
+and that was the wrong trade.
+
+**What it cost.** A sample in this repository is read and used as ONE
+snippet: a reader copies a single `*.clas.abap` into a system, activates it,
+and it runs. Each of the 58 consumers lost that. `z2ui5_cl_smpc_mock` was
+invisible from the port that needed it — nothing in app 014's source says
+"you also need this other class" — so the most common way the corpus is
+actually used broke silently, for a property (line count) nobody consumes it
+for. Duplication across ports is not debt here; it is the shape.
+
+**The revert.** The 58 ports carry their literal again (the conversion was a
+single hunk in each, so each file is byte-identical to what it was before);
+`src/z2ui5_cl_smpc_mock.clas.abap` and its `.clas.xml` are gone, along with
+the provider branch of `data-fidelity` (the 1:1 comparison against
+`ui5/mock/products.json` and the projected-rows accounting), the consumer
+map in `e2e-changed`, both fixture tests, the §3 root-classes section, the
+`port-a-sample` and `scaffold-a-port` paragraphs and the generation prompt's
+exception. `7bit_ascii` excludes apps 558/572/575/578 again for the three
+non-ASCII descriptions that came back with their rows — changed in abap2UI5's
+`app-rules.json` first, as `check:shared` requires, and `check:app-rules`
+caught the copy here that had not followed. Everything else from the entry
+below — the layout rules, the unroll pass, the style sweep, the namespace
+prefixes, the interaction modules — stands; only the provider went.
+
+**So it is not proposed a third time**, the rule is written down (AGENTS §3,
+"Every class stands alone") and gated: `pattern-lint`'s `standalone-class`
+fails any class naming another `z2ui5_cl_smpc_*`. One exemption, by shape not
+by list: the generated overview app `z2ui5_cl_smpc_app_000`, whose content
+*is* the names of the ports it launches. The corpus measures 0 findings.
+
 ## 2026-09-12 — the ecosystem review, implemented: what 622 ports asked of the framework, the linter and themselves
 
 One session, three repositories, one question — with the portable backlog at

@@ -27,11 +27,7 @@ Data values were verified instead:
   `Graphics Card`, sums to 119) and intentionally does not match the products'
   `Category` values — also kept verbatim.
   Used by most product-list samples (List*, Table*, ObjectHeader*, Popover,
-  IconTabBar*, SelectDialog, Link*, …). Its ABAP mirror is the shared
-  provider `src/z2ui5_cl_smpc_mock.clas.abap` (`products( )` — every column,
-  all 123 rows, `ProductPicUrl` host-absolutized), which
-  `scripts/data-fidelity.mjs` compares 1:1 against this file on every run;
-  a port binding the collection projects it from there (AGENTS §3).
+  IconTabBar*, SelectDialog, Link*, …).
 - `countriesExtendedCollection.json` — `CountriesCollection` (70 countries),
   fetched the same way; verified 1:1 (all 70 text/key pairs) against
   `src/01/z2ui5_cl_smpc_app_011.clas.abap`. Used by the ComboBox samples.

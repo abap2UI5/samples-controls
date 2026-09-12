@@ -174,7 +174,7 @@ Everything lives on the working branch, in separate top-level trees:
 
 | Path    | Content |
 |---------|---------|
-| `src/`  | The generated abap2UI5 ports (`*.clas.abap`) plus the two root-level classes that are not ports, the overview app and the shared mock provider (§3) — the abapGit project. |
+| `src/`  | The generated abap2UI5 ports (`*.clas.abap`) — the abapGit project (§3). |
 | `ui5/`  | The original UI5 demo kit templates (JS/XML/manifest), one folder per ported sample (§4). |
 
 Keep them separate: only `src/` is the abapGit / abaplint scope; `ui5/` is
@@ -302,51 +302,32 @@ batch process — it is just not one package.
 Because `FOLDER_LOGIC=PREFIX`, class names never encode the folder — moving a
 class between folders needs no rename.
 
-### Two classes at the root of `src/` — and neither is a port
+### Every class stands alone — one sample, one snippet
 
-`z2ui5_cl_smpc_app_000` is the generated overview app (§7), and
-`z2ui5_cl_smpc_mock` is the **shared mock-data provider** (since 2026-09-12):
-`z2ui5_cl_smpc_mock=>products( )` returns the demo kit's shared
-`ProductCollection` — all 123 rows of `ui5/mock/products.json`, every column,
-typed once (`ty_s_product`: the camelCase keys mirrored lowercase, the numeric
-columns packed with the decimals the data carries, `quantity` an integer,
-`ProductPicUrl` already host-absolutized) — so the one table that 125 ports
-had inlined as a `VALUE #( )` literal (15,256 lines, 8.8 % of the corpus)
-exists once. A port that binds it keeps its own narrow row type and projects
-the rows onto it, row by row, then computes any port-invented column
-(`weight_state`) in a LOOP as before:
+**A class in this repository names no OTHER class of this repository.** A
+sample is read and used as ONE snippet: a reader copies the single
+`*.clas.abap` into a system, activates it, and it runs. That property is the
+point of the corpus — not the line count — so nothing may be factored out of
+a sample into a shared class, however often it repeats. Repetition across 125
+ports is the intended shape.
 
-```abap
-t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) ).
-```
+Framework classes are the runtime and are not "another class":
+`z2ui5_cl_ui5_view_builder`, `z2ui5_cl_util` and the rest of abap2UI5 are
+installed before any sample is. The rule is about `z2ui5_cl_smpc_*` — the
+classes this repository owns.
 
-Row by row on purpose: a table-level `CORRESPONDING #( )` downports to a
-`MOVE-CORRESPONDING` between tables, which 7.02 has not got (abaplint's own
-v702 syntax check rejects it - measured 2026-09-12). Only a port whose literal
-was the FULL row set with the mock's value in every field it carries is
-converted; a sample that ships its own modified `products.json` next to the
-shared one (app 010), a subset, a reordered or an edited row set, a demo-only
-column, and a numeric column the port types as `string` (projected from the
-packed field, `30` would render as `30.0`) all stay inline. The
-`port-a-sample` guide has the recipe.
+`pattern-lint`'s `standalone-class` gates it. One class is exempt, and only
+one: the generated overview app `z2ui5_cl_smpc_app_000` (§7), whose whole
+content is the list of the ports it launches — it is a launcher, not a sample
+anybody copies.
 
-Neither root class is a port, and every gate decides that **by shape, not by
-name**: a file directly under `src/` rather than in a `src/<cc>/<ll>/`
-package (`validate-meta`'s port detector, `pattern-lint`'s `portsOnly` rules),
-and no `INTERFACES z2ui5_if_app` (the header generators `keywords` /
-`summary` / `origin`, `catalogue.json`, `SAMPLES.md`, `catalogue-derived.json`
-all skip a class without it). So the provider has no `meta/` sidecar, no
-`@keywords` / `@summary` / `@origin` lines and no view, and carries an ABAP
-Doc header saying what it is and where the data comes from - allowed there
-exactly as on the overview app. What does see it: all three `abaplint` builds
-(`7bit_ascii` excludes it, for the three `×` descriptions the converted ports
-used to carry), `pattern-lint`'s layout and statement rules (three
-`VALUE #( BASE result )` chunks of at most 30,000 characters, rows wrapped at
-the same five field boundaries), `data-fidelity` (the provider compared 1:1
-against `ui5/mock/products.json`, numbers included; a consuming port judged as
-if it had inlined the projected rows), the e2e build (a class under `src/`)
-and `scripts/e2e-changed.mjs`, which boots the provider's consumers when it
-changes rather than answering `all`.
+> **Measured, once.** A shared mock-data provider (`z2ui5_cl_smpc_mock`,
+> `products( )` returning the demo kit's `ProductCollection`) was built on
+> 2026-09-12 and reverted the same day. It did what it promised — 15,256
+> duplicated lines, 8.8 % of the corpus, collapsed into one class — and it
+> cost each of its 58 consumers the only property that makes a sample worth
+> shipping: none of the 58 could be copied out and run any more. Deduplication
+> is not a goal here. Do not propose it again.
 
 ### SAPUI5 — `src/03` collects, it does not port
 
@@ -567,12 +548,6 @@ source of truth:
   (control-level) and declare `POST_171` **by policy** even if no gate forces
   it. A green property gate does **not** prove a port is ≤ 1.71-clean — though
   it now does check the **control** itself, not only its members.
-- **The shared `ProductCollection` is not inlined.** A port that binds the
-  demo kit's shared products mock projects `z2ui5_cl_smpc_mock=>products( )`
-  onto its own row type (§3, the `port-a-sample` guide); every other mock —
-  a sample-local JSON, `/ProductCollection/0`, a subset, a modified or a
-  demo-only row set — is still moved into ABAP as a `VALUE #( )` literal in
-  the shape `scripts/json-to-abap.mjs` emits.
 - **Before declaring any sample feature inexpressible, check `CAPABILITIES.md`**
   — the map of what abap2UI5 can express, each entry backed by a port that
   proves it. Never improvise around a feature it marks ✅/🔶 (app 042 replaced a
@@ -778,8 +753,7 @@ one checks out and installs node for itself, and only `view_gates` runs
 
 The deterministic gates run on every PR, one workflow each. The heavy
 `e2e_smoke` runs twice: `e2e-pr.yaml` boots the ports a pull request TOUCHES
-(derived from the diff by `scripts/e2e-changed.mjs`, unit-tested - a change to
-the shared mock provider maps to the ports that call it; a change
+(derived from the diff by `scripts/e2e-changed.mjs`, unit-tested; a change
 reaching every port — the pin, the harness, the build — says so and leaves the
 corpus to the nightly rather than pretending a subset covered it), and
 `e2e-nightly.yaml` runs the whole corpus in four shards (scheduled + on
@@ -1124,9 +1098,7 @@ DSAG Leitfaden, then the samples style. Essentials:
   (all three pattern-lint). Rows with differing field lists (an optional
   field, a nested child table) have no column to align and are left alone.
   `scripts/json-to-abap.mjs` emits the padded form; `pattern-lint`'s
-  `ragged-value-table` catches a hand-written one that drifted. The shared
-  `ProductCollection` is not a literal in a port at all any more - it is
-  projected from `z2ui5_cl_smpc_mock=>products( )` (§3).
+  `ragged-value-table` catches a hand-written one that drifted.
 - **A call that fits on one line goes on one line** (budget 120 characters).
   Stacking parameters is for calls that do not fit, not for calls that happen
   to have two: `client->popover_display( xml = popup->stringify( ) by_id = by_id ).`

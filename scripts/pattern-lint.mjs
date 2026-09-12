@@ -215,6 +215,26 @@ const RULES = [
     find: grepLines(/\bTYPE\s+TABLE\s+OF\b/),
   },
   {
+    id: 'standalone-class',
+    level: 'error',
+    doc: 'a class in this repository names no OTHER class of this repository - every sample is one self-contained snippet a reader copies into a system in one piece and it runs (AGENTS §3). Framework classes (z2ui5_cl_ui5_view_builder, z2ui5_cl_util, ...) are the runtime and are fine; a z2ui5_cl_smpc_* other than the file\'s own class is not. A shared mock-data provider was built and reverted on 2026-09-12 for exactly this reason: it deduplicated 15k lines and cost every one of its 58 consumers the property that makes a sample useful',
+    find(content, rel) {
+      const self = path.basename(rel, '.clas.abap').toLowerCase();
+      // the generated overview app is the launcher: naming every port IS its
+      // content (§7), and it is not a sample anybody copies
+      if (self === 'z2ui5_cl_smpc_app_000') return [];
+      const out = [];
+      const seen = new Set();
+      for (const m of content.matchAll(/\bz2ui5_cl_smpc_\w+/gi)) {
+        const name = m[0].toLowerCase();
+        if (name === self || seen.has(name)) continue;
+        seen.add(name);
+        out.push({ line: lineOf(content, m.index), text: `names ${m[0]} - another class of this repository` });
+      }
+      return out;
+    },
+  },
+  {
     id: 'clear-statement',
     level: 'error',
     portsOnly: true,
@@ -567,7 +587,7 @@ for (const f of walkFiles(SRC, '.clas.abap')) {
   const content = fs.readFileSync(f, 'utf8');
   for (const rule of RULES) {
     if (rule.portsOnly && !isPort) continue;
-    const hits = rule.find(content);
+    const hits = rule.find(content, rel);
     if (!hits.length) continue;
     const key = `${rule.id}|${rel}`;
     if (rule.level === 'error' && BASELINE.has(key)) {

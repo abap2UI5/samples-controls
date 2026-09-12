@@ -20,13 +20,6 @@
  *                                     claim about the live behaviour)
  *   meta/interactions/<class>.mjs     the assertions that run against it
  *
- * A fourth input reaches a SUBSET that is not a guess: the shared mock
- * provider src/z2ui5_cl_smpc_mock.clas.abap (AGENTS §3), whose products( )
- * 58 ports project into their model. A change to it boots exactly the ports
- * whose source calls it - read off src/ when the provider is in the list -
- * because `all` would hand those ports to the nightly, and a provider change
- * is precisely the kind that shows only when a consumer renders its rows.
- *
  * A change to the FRAMEWORK PIN, the harness or the build reaches every port
  * at once, and there is no useful subset then: the answer is `all`, and the
  * caller decides whether to run the whole corpus or leave it to the nightly.
@@ -49,23 +42,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { walkFiles } from './lib/src-tree.mjs';
 
-const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CLASS = /^(z2ui5_cl_smpc_app_\d+)$/;
-
-/** The shared mock provider and the call every consumer writes. */
-const PROVIDER = 'z2ui5_cl_smpc_mock';
-const PROVIDER_CALL = `${PROVIDER}=>products(`;
-
-/** The ports whose source calls the provider, read off the tree under `src`. */
-export function providerConsumers(src = path.join(ROOT, 'src')) {
-  if (!fs.existsSync(src)) return [];
-  return walkFiles(src, '.clas.abap')
-    .filter((f) => fs.readFileSync(f, 'utf8').includes(PROVIDER_CALL))
-    .map((f) => path.basename(f, '.clas.abap'))
-    .filter((c) => CLASS.test(c));
-}
 
 /** Paths whose change reaches EVERY port's live behaviour. */
 const CORPUS_WIDE = [
@@ -83,11 +61,9 @@ const CORPUS_WIDE = [
 
 /**
  * @param {string[]} files repo-relative changed paths
- * @param {{ consumers?: () => string[] }} [deps] the provider's consumers -
- *        injectable so the tests need no src tree; defaults to the real one
  * @returns {{ all: boolean, classes: string[], reason: string }}
  */
-export function portsToRun(files, { consumers = providerConsumers } = {}) {
+export function portsToRun(files) {
   const list = (files || []).map((f) => String(f).trim().split(path.sep).join('/')).filter(Boolean);
 
   const wide = list.find((f) => CORPUS_WIDE.some((re) => re.test(f)));
@@ -96,14 +72,9 @@ export function portsToRun(files, { consumers = providerConsumers } = {}) {
   }
 
   const classes = new Set();
-  let viaProvider = 0;
   for (const f of list) {
     let m = /^src\/(?:\d+\/\d+\/)?([a-z0-9_]+)\.clas\.(abap|xml)$/.exec(f);
     if (m && CLASS.test(m[1])) { classes.add(m[1]); continue; }
-    if (m && m[1] === PROVIDER) {
-      for (const c of consumers()) { classes.add(c); viaProvider++; }
-      continue;
-    }
     m = /^meta\/([a-z0-9_]+)\.json$/.exec(f);
     if (m && CLASS.test(m[1])) { classes.add(m[1]); continue; }
     m = /^meta\/interactions\/([a-z0-9_]+)\.mjs$/.exec(f);
@@ -115,7 +86,7 @@ export function portsToRun(files, { consumers = providerConsumers } = {}) {
     all: false,
     classes: sorted,
     reason: sorted.length
-      ? `${sorted.length} port(s) touched${viaProvider ? ` (${viaProvider} of them consumers of ${PROVIDER})` : ''}`
+      ? `${sorted.length} port(s) touched`
       : 'no port, sidecar or interaction module changed',
   };
 }

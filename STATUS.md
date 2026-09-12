@@ -94,19 +94,6 @@ same cut AGENTS §10 already makes between the rule and the war story._
   CAPABILITIES.md. Not before — the wire would carry a positional argument
   the pinned frontend does not read.
 
-- [ ] **64 ports still inline the ProductCollection, 27 of them because they
-  type a numeric column as `string` (2026-09-12).** `z2ui5_cl_smpc_mock`
-  types `price`/`weightmeasure`/`width`… packed, so a port that shows `956`
-  where the packed projection would say `956.00` keeps its own literal (012
-  033 092 094 103 104 170 210 214 215 218 225 238 245 252 298 377 420 454
-  488 505 565 570 571 573 574 576 607 612 613 617 618 619 621). Two ways to
-  close it, both a decision: a string-typed twin of the provider row (the
-  port's own type does the conversion, as today), or retyping those ports
-  to packed — the second changes what they render. The other 37 stay inline
-  for real reasons (demo-only columns, subsets, edited rows, a single
-  record) and are listed in the 2026-09-12 journal entry. App 595 is the
-  same string-typed class and was left by the unroll pass.
-
 - [ ] **`check:shared` in abap2UI5 reports two drifts this repository owns
   (2026-09-12).** `scripts/check-prose-names.mjs` (#189 made it walk `src/`
   through `lib/src-tree.mjs`) and the "Metadata" section of AGENTS.md (#190

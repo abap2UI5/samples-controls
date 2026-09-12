@@ -80,9 +80,6 @@ that is the actual porting work):
   property (a backtick literal converts to packed), or `TYPE string` when it is
   a display-only value bound into a text template (keeps the exact decimals,
   e.g. dimensions `40.8`). Do **not** leave a decimal column as `TYPE i`.
-  The demo kit's shared `ProductCollection` is the one array NOT to feed
-  through it: a port projects `z2ui5_cl_smpc_mock=>products( )` onto its own
-  row type instead (AGENTS §3, the `port-a-sample` guide's `model_init`).
 
 - **`npm run form-family -- <ui5/sap.ui.layout/Sample> <class> <sample id> <out.clas.abap>`**
   (`scripts/form-family-to-abap.mjs`) — rebuilds one sample of the
