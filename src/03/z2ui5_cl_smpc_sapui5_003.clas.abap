@@ -33,13 +33,13 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`  v = `true`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:webc`    v = `sap.ui.webc.main`
-        )->a( n = `xmlns:layout`  v = `sap.ui.layout`
-        )->a( n = `xmlns:mchart`  v = `sap.suite.ui.microchart`
+        )->a( n = `displayBlock` v = `true`
+        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:webc`   v = `sap.ui.webc.main`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:mchart` v = `sap.suite.ui.microchart`
 
         )->ele( `Shell`
             )->ele( `Page`
@@ -53,7 +53,7 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
                         )->a( n = `text`     v = `Bar Chart`
                         )->a( n = `selected` v = client->_bind( tab_bar_active )
 
-                        )->ele( n = `Grid` ns = `layout`
+                        )->ele( n = `Grid` ns = `l`
                             )->a( n = `defaultSpan` v = `XL6 L6 M6 S12`
 
                             )->tag( `Link`
@@ -66,7 +66,7 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -87,19 +87,19 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
 
                                         )->ele( n = `bars` ns = `mchart`
                                             )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel1 )
-                                                )->a( n = `label`          v = `Product 1`
-                                                )->a( n = `value`          v = `10`
+                                                )->a( n = `selected` v = client->_bind( sel1 )
+                                                )->a( n = `label`    v = `Product 1`
+                                                )->a( n = `value`    v = `10`
 
                                             )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel2 )
-                                                )->a( n = `label`          v = `Product 2`
-                                                )->a( n = `value`          v = `20`
+                                                )->a( n = `selected` v = client->_bind( sel2 )
+                                                )->a( n = `label`    v = `Product 2`
+                                                )->a( n = `value`    v = `20`
 
                                             )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel3 )
-                                                )->a( n = `label`          v = `Product 3`
-                                                )->a( n = `value`          v = `70`
+                                                )->a( n = `selected` v = client->_bind( sel3 )
+                                                )->a( n = `label`    v = `Product 3`
+                                                )->a( n = `value`    v = `70`
 
                                         )->end(
                                     )->end(
@@ -137,9 +137,9 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
                                 )->end(
                             )->end(
 
-                            )->ele( n = `VerticalLayout` ns = `layout`
-                                )->ele( n = `layoutData` ns = `layout`
-                                    )->tag( n = `GridData` ns = `layout`
+                            )->ele( n = `VerticalLayout` ns = `l`
+                                )->ele( n = `layoutData` ns = `l`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -162,16 +162,16 @@ CLASS z2ui5_cl_smpc_sapui5_003 IMPLEMENTATION.
 
                                             )->ele( n = `bars` ns = `mchart`
                                                 )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                    )->a( n = `label`          v = `Product 1`
-                                                    )->a( n = `value`          v = `25`
+                                                    )->a( n = `label` v = `Product 1`
+                                                    )->a( n = `value` v = `25`
 
                                                 )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                    )->a( n = `label`          v = `Product 2`
-                                                    )->a( n = `value`          v = `-50`
+                                                    )->a( n = `label` v = `Product 2`
+                                                    )->a( n = `value` v = `-50`
 
                                                 )->tag( n = `InteractiveBarChartBar` ns = `mchart`
-                                                    )->a( n = `label`          v = `Product 3`
-                                                    )->a( n = `value`          v = `-100`
+                                                    )->a( n = `label` v = `Product 3`
+                                                    )->a( n = `value` v = `-100`
 
                                             )->end(
                                         )->end(

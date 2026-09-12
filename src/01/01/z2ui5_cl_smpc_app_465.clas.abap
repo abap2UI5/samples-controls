@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbaroverflowselectlist icontabfilter text
 " @summary In this example when there is not enough space for all tab items to fit on the screen, the rest are displayed in an overflow select list for easier selection.
-" @origin sap.m.sample.IconTabBarOverflowSelectList - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarOverflowSelectList (status: generated)
+" @origin sap.m.sample.IconTabBarOverflowSelectList - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarOverflowSelectList (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_465 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

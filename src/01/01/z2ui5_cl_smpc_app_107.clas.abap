@@ -1,6 +1,6 @@
 " @keywords semanticpage semantic sap.m.semantic master-detail actions splitcontainer masterpage pageaccessiblelandmarkinfo sortselect item filteraction groupaction
 " @summary Semantic Page Master/Detail
-" @origin sap.m.sample.SemanticPage - https://sdk.openui5.org/entity/sap.m.semantic.SemanticPage/sample/sap.m.sample.SemanticPage (status: reviewed)
+" @origin sap.m.sample.SemanticPage - https://sdk.openui5.org/entity/sap.m.semantic.SemanticPage/sample/sap.m.sample.SemanticPage (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_107 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

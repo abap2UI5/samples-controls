@@ -1,6 +1,6 @@
 " @keywords flexbox flex box sap.m boxes nested. remember html hbox flexitemdata vbox
 " @summary Flex Boxes can be nested. Remember also that HBox and VBox are 'convenience' controls based on the Flex Box control.
-" @origin sap.m.sample.FlexBoxNested - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxNested (status: checked)
+" @origin sap.m.sample.FlexBoxNested - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxNested (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_026 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

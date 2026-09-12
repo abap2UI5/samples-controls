@@ -1,6 +1,6 @@
 " @keywords pdfviewer sap.m pdf viewer opening popup dialog. carousel image
 " @summary A PDF viewer opening as a popup dialog.
-" @origin sap.m.sample.PDFViewerPopup - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerPopup (status: checked)
+" @origin sap.m.sample.PDFViewerPopup - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerPopup (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_044 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

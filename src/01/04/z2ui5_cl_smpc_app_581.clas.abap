@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistboxcontainerreal toolbar title gridboxlayout vbox flexitemdata label text
 " @summary This is a sample for GridList item templates representing a typical tools page dashboard style.
-" @origin sap.f.sample.GridListBoxContainerReal - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBoxContainerReal (status: generated)
+" @origin sap.f.sample.GridListBoxContainerReal - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBoxContainerReal (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_581 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -40,7 +40,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
         )->a( n = `xmlns:grid` v = `sap.ui.layout.cssgrid`
         )->a( n = `xmlns:f`    v = `sap.f`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:t`    v = `sap.tnt` ).
+        )->a( n = `xmlns:tnt`  v = `sap.tnt` ).
 
     " the Reveal Grid toggle keeps its label but not its press - the sample's own
     " RevealGrid helper is a JavaScript overlay with no backend side (see sidecar)
@@ -393,7 +393,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->tag( `Title`
                         )->a( n = `text`     v = `Title`
                         )->a( n = `wrapping` v = `true`
-                    )->tag( n = `InfoLabel` ns = `t`
+                    )->tag( n = `InfoLabel` ns = `tnt`
                         )->a( n = `text`        v = `T-Shirt Size M`
                         )->a( n = `colorScheme` v = `4`
 

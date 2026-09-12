@@ -1,6 +1,6 @@
 " @keywords select sap.m selectvaluestate hbox label item
 " @summary Visualizes the validation state of the control, for example, Error, Warning and Success.
-" @origin sap.m.sample.SelectValueState - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectValueState (status: reviewed)
+" @origin sap.m.sample.SelectValueState - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectValueState (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_373 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords sap.m standard responsive css classes objectheader objectattribute objectstatus icontabbar icontabfilter simpleform title
 " @summary This page implements the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes.
-" @origin sap.m.sample.PageStandardClasses - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageStandardClasses (status: reviewed)
+" @origin sap.m.sample.PageStandardClasses - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageStandardClasses (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_089 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -51,15 +51,15 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `Page`
-            )->a( n = `id`      v = `idPage`
-            )->a( n = `title`   v = ` Product XY`
-            )->a( n = `class`   v = `sapUiResponsivePadding--header`
+            )->a( n = `id`    v = `idPage`
+            )->a( n = `title` v = ` Product XY`
+            )->a( n = `class` v = `sapUiResponsivePadding--header`
             " element binding kept 1:1 - a one-record structure /S_PRODUCT instead of {/ProductCollection/0}
             )->a( n = `binding` v = client->_bind( s_product )
 
@@ -96,9 +96,9 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                         )->ele( `IconTabFilter`
                             )->a( n = `key`  v = `info`
                             )->a( n = `text` v = `Info`
-                            )->ele( n = `SimpleForm` ns = `f`
+                            )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `layout` v = `ResponsiveGridLayout`
-                                )->ele( n = `title` ns = `f`
+                                )->ele( n = `title` ns = `form`
                                     )->tag( n = `Title` ns = `core`
                                         )->a( n = `text` v = `A Form`
 
@@ -127,10 +127,10 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                     )->end(
                 )->end(
 
-                )->ele( n = `SimpleForm` ns = `f`
+                )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `layout` v = `ResponsiveGridLayout`
                     )->a( n = `class`  v = `sapUiForceWidthAuto sapUiResponsiveMargin`
-                    )->ele( n = `title` ns = `f`
+                    )->ele( n = `title` ns = `form`
                         )->tag( n = `Title` ns = `core`
                             )->a( n = `text` v = `A Form`
 

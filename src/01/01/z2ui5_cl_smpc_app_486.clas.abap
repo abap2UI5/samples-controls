@@ -1,6 +1,6 @@
 " @keywords objectheader object header sap.m objectheadertitleactive objectattribute responsivepopover text
 " @summary The Object Header's title can be active to trigger further actions like showing additional information in a Popover.
-" @origin sap.m.sample.ObjectHeaderTitleActive - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleActive (status: generated)
+" @origin sap.m.sample.ObjectHeaderTitleActive - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleActive (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_486 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

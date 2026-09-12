@@ -1,6 +1,6 @@
 " @keywords generictile generic tile sap.m generictileasfeedtile html tilecontent feedcontent slidetile newscontent
 " @summary Shows Feed Tile and News Tile samples that can contain feed content, news content, and a footer.
-" @origin sap.m.sample.GenericTileAsFeedTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsFeedTile (status: reviewed)
+" @origin sap.m.sample.GenericTileAsFeedTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsFeedTile (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_388 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords messagebox message box sap.m shows set initial focus verticallayout text button
 " @summary Shows how to set initial focus to MessageBox button.
-" @origin sap.m.sample.MessageBoxInitialFocus - https://sdk.openui5.org/entity/sap.m.MessageBox/sample/sap.m.sample.MessageBoxInitialFocus (status: reviewed)
+" @origin sap.m.sample.MessageBoxInitialFocus - https://sdk.openui5.org/entity/sap.m.MessageBox/sample/sap.m.sample.MessageBoxInitialFocus (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_036 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords tabcontainer tab container sap.m tabcontainermhc navcontainer overflowtoolbar toolbarspacer overflowtoolbarbutton column text columnlistitem
 " @summary Allows detail view / edit in sap.m.TabContainer after selecting items from table.
-" @origin sap.m.sample.TabContainerMHC - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerMHC (status: generated)
+" @origin sap.m.sample.TabContainerMHC - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerMHC (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_558 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -104,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `NavContainer`
             )->a( n = `id` v = `navCon` ).
@@ -114,9 +114,9 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         )->a( n = `title` v = `Product List` ).
 
     table_page->ele( `Table`
-        )->a( n = `id`              v = `idProductsTable`
-        )->a( n = `mode`            v = `MultiSelect`
-        )->a( n = `items`           v = client->_bind( t_products )
+        )->a( n = `id`    v = `idProductsTable`
+        )->a( n = `mode`  v = `MultiSelect`
+        )->a( n = `items` v = client->_bind( t_products )
         " onInit attaches selectionChange to keep the footer button in sync
         )->a( n = `selectionChange` v = client->_event( `SELECTION_CHANGE` )
 
@@ -192,11 +192,11 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " closes the tab itself once the user has confirmed. check_prevent_default
         " IS that call: the control does not close the tab, the event still
         " reaches the backend, and tab_close( ) decides
-        )->a( n = `itemClose`         v = client->_event( val    = `TAB_CLOSE`
+        )->a( n = `itemClose` v = client->_event( val    = `TAB_CLOSE`
                                                           arg    = `${$parameters>/item}.getKey()`
                                                           s_ctrl = VALUE #( check_prevent_default = abap_true ) )
-        )->a( n = `itemSelect`        v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/item}.getKey()` )
-        )->a( n = `items`             v = client->_bind( t_tabs )
+        )->a( n = `itemSelect` v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/item}.getKey()` )
+        )->a( n = `items`      v = client->_bind( t_tabs )
 
         )->ele( `items`
             )->ele( `TabContainerItem`
@@ -224,7 +224,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
     " the Edit fragment - the tab edits its OWN copy of the row, which is what
     " makes Cancel a pure discard
-    tab_content->ele( n = `SimpleForm` ns = `f`
+    tab_content->ele( n = `SimpleForm` ns = `form`
         )->a( n = `visible`  v = |\{= $\{MODIFIED\} \}|
         )->a( n = `editable` v = `true`
         )->a( n = `layout`   v = `ResponsiveGridLayout`
@@ -256,7 +256,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
     " handleNewItemAdd loads the same Edit fragment into the add page, over a fresh
     " JSONModel; here the add page's form binds the four add_* fields
-    add_page->ele( n = `SimpleForm` ns = `f`
+    add_page->ele( n = `SimpleForm` ns = `form`
         )->a( n = `id`       v = `myForm`
         )->a( n = `editable` v = `true`
         )->a( n = `layout`   v = `ResponsiveGridLayout`

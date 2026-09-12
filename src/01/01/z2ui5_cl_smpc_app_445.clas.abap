@@ -1,6 +1,6 @@
 " @keywords text sap.m texthyphenation simpleform label switch slider panel title blocklayout blocklayoutrow blocklayoutcell
 " @summary The Text control has a property allowing hyphenation.
-" @origin sap.m.sample.TextHyphenation - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextHyphenation (status: generated)
+" @origin sap.m.sample.TextHyphenation - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextHyphenation (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_445 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -41,11 +41,11 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `xmlns:l`      v = `sap.ui.layout`
         )->a( n = `displayBlock` v = `true`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `adjustLabelSpan` v = `false`

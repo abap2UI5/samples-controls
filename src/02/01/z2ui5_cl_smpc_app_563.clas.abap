@@ -1,6 +1,6 @@
 " @keywords messageview message sap.m messageviewinsidepopover button popover bar title messageitem link
 " @summary A sample with Message View inside a Popover.
-" @origin sap.m.sample.MessageViewInsidePopover - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewInsidePopover (status: generated)
+" @origin sap.m.sample.MessageViewInsidePopover - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewInsidePopover (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_563 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

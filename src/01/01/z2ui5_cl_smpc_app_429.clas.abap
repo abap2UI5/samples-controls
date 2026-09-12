@@ -1,6 +1,6 @@
 " @keywords list sap.m listnavtype standardlistitem
 " @summary If only a subset of the list items are navigable you should indicate those by setting their 'type' to 'Navigation'. This displays an navigation arrow. Do not show arrows if all items are navigable.
-" @origin sap.m.sample.ListNavType - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNavType (status: generated)
+" @origin sap.m.sample.ListNavType - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListNavType (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_429 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

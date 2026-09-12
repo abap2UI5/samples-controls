@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table tablefreeze overflowtoolbar title toolbarspacer input button fixed column label text
 " @summary Example which shows table freeze with fixed columns
-" @origin sap.ui.table.sample.TableFreeze - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.TableFreeze (status: reviewed)
+" @origin sap.ui.table.sample.TableFreeze - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.TableFreeze (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_363 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -90,13 +90,13 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
     " bind the same fields, so the Apply press only clamps them in ABAP - the
     " validation the original does in buttonPress before calling the setters.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`          v = `sap.ui.table`
-        )->a( n = `xmlns:rowmodes` v = `sap.ui.table.rowmodes`
-        )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`        v = `sap.ui.unified`
-        )->a( n = `xmlns:c`        v = `sap.ui.core`
-        )->a( n = `xmlns:m`        v = `sap.m`
-        )->a( n = `height`         v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:trm`  v = `sap.ui.table.rowmodes`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -150,7 +150,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `rowMode`
-                        )->tag( n = `Fixed` ns = `rowmodes`
+                        )->tag( n = `Fixed` ns = `trm`
                             )->a( n = `fixedTopRowCount`    v = client->_bind( fixed_top_row_count )
                             )->a( n = `fixedBottomRowCount` v = client->_bind( fixed_bottom_row_count )
 
@@ -231,7 +231,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
                                     )->a( n = `value` v = `{SUPPLIERNAME}`
                                     )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_suppliers ) }', templateShareable: false \}|
 
-                                    )->tag( n = `Item` ns = `c`
+                                    )->tag( n = `Item` ns = `core`
                                         )->a( n = `text` v = `{NAME}`
 
                                 )->end(
@@ -292,7 +292,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
                                     )->a( n = `selectedKey` v = `{CATEGORY}`
                                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( t_categories ) }', templateShareable: false \}|
 
-                                    )->tag( n = `Item` ns = `c`
+                                    )->tag( n = `Item` ns = `core`
                                         )->a( n = `text` v = `{NAME}`
                                         )->a( n = `key`  v = `{NAME}`
 
@@ -307,7 +307,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
                                 )->a( n = `text` v = `Status`
 
                             )->ele( `template`
-                                )->tag( n = `Icon` ns = `c`
+                                )->tag( n = `Icon` ns = `core`
                                     )->a( n = `src` v = `{AVAILABLEICON}`
 
                             )->end(

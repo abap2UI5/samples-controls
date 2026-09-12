@@ -1,6 +1,6 @@
 " @keywords dynamicsidecontent dynamic side content sap.ui.layout dynamicsidecontentequalsplit html vbox title image text toolbar
 " @summary The side content and the main content take 50%/50% of the container on all screen sizes except on phone screens where there is a button implemented to toggle between each other.
-" @origin sap.ui.layout.sample.DynamicSideContentEqualSplit - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContentEqualSplit (status: reviewed)
+" @origin sap.ui.layout.sample.DynamicSideContentEqualSplit - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContentEqualSplit (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_267 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords generictile generic tile sap.m shows kpi contain html tilecontent numericcontent imagecontent newscontent
 " @summary Shows KPI Tile samples that can contain header, subheader, key value, trend, scale, unit, and a footer.
-" @origin sap.m.sample.GenericTileAsKPITile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsKPITile (status: checked)
+" @origin sap.m.sample.GenericTileAsKPITile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsKPITile (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_028 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

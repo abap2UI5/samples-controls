@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table odata2 overflowtoolbar title busyindicator column label text currency
 " @summary Shows an example how an OData metadata driven table creation can look like.
-" @origin sap.ui.table.sample.OData2 - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData2 (status: reviewed)
+" @origin sap.ui.table.sample.OData2 - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData2 (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_358 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -74,12 +74,12 @@ CLASS z2ui5_cl_smpc_app_358 IMPLEMENTATION.
     " and a u:Currency template for the one property whose sap:unit carries the
     " currency-code semantic (Price / CurrencyCode).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`

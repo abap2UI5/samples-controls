@@ -1,6 +1,6 @@
 " @keywords toolpage tool sap.tnt toolpagehorizontalnavigation toolheader image title overflowtoolbarlayoutdata text toolbarspacer searchfield button
 " @summary A tool page layout with horizontal navigation
-" @origin sap.tnt.sample.ToolPageHorizontalNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageHorizontalNavigation (status: reviewed)
+" @origin sap.tnt.sample.ToolPageHorizontalNavigation - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPageHorizontalNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_303 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

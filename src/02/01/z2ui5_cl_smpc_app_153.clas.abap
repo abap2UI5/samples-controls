@@ -1,6 +1,6 @@
 " @keywords maskinput mask input sap.m rules app simpleform label maskinputrule
 " @summary The sap.m.MaskInput control allows users to easily enter data in a certain format and in a fixed-width input (for example: date, time, credit card number, and others).
-" @origin sap.m.sample.MaskInput - https://sdk.openui5.org/entity/sap.m.MaskInput/sample/sap.m.sample.MaskInput (status: reviewed)
+" @origin sap.m.sample.MaskInput - https://sdk.openui5.org/entity/sap.m.MaskInput/sample/sap.m.sample.MaskInput (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_153 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

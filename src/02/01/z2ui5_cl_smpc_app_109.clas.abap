@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m day selection vbox overflowtoolbar toolbarseparator label togglebutton
 " @summary SinglePlanningCalendar with multiple date selection functionality.
-" @origin sap.m.sample.SinglePlanningCalendarDateSelection - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDateSelection (status: reviewed)
+" @origin sap.m.sample.SinglePlanningCalendarDateSelection - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDateSelection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -73,11 +73,11 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
     " startDate + CalendarAppointment startDate/endDate are object-typed: the model
     " keeps ISO strings and Formatter.DateCreateObject converts them at the binding
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -104,11 +104,11 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
             )->end(
 
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`                  v = `SPC1`
-                )->a( n = `class`               v = `sapUiSmallMarginTop`
-                )->a( n = `title`               v = `My Calendar`
-                )->a( n = `dateSelectionMode`   v = client->_bind( date_selection_mode )
-                )->a( n = `viewChange`          v = client->_event( `VIEW_CHANGE` )
+                )->a( n = `id`                v = `SPC1`
+                )->a( n = `class`             v = `sapUiSmallMarginTop`
+                )->a( n = `title`             v = `My Calendar`
+                )->a( n = `dateSelectionMode` v = client->_bind( date_selection_mode )
+                )->a( n = `viewChange`        v = client->_event( `VIEW_CHANGE` )
                 " the WHOLE selectedDates parameter travels in one arg: the
                 " frontend marshals each DateRange into its public properties
                 " (Lib.normalizeEventArgs), which is the loop the client
@@ -135,7 +135,7 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
                 )->end(
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`

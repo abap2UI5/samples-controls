@@ -1,6 +1,6 @@
 " @keywords select sap.m dropdown selects item binding toolbar toolbarspacer hbox vbox label switch
 " @summary Illustrates the usage of a Select in header, footer and content of a page. Note the different display options.
-" @origin sap.m.sample.Select - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select (status: reviewed)
+" @origin sap.m.sample.Select - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_048 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

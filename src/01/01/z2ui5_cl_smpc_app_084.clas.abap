@@ -1,6 +1,6 @@
 " @keywords urlhelper sap.m tel sms email url triggers list displaylistitem
 " @summary The URL Helper can be used to easily trigger a phone's native apps like Email, Telephone and SMS. It can be used with any UI control but typically an active Display List Item is chosen.
-" @origin sap.m.sample.UrlHelper - https://sdk.openui5.org/entity/sap.m.URLHelper/sample/sap.m.sample.UrlHelper (status: generated)
+" @origin sap.m.sample.UrlHelper - https://sdk.openui5.org/entity/sap.m.URLHelper/sample/sap.m.sample.UrlHelper (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_084 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

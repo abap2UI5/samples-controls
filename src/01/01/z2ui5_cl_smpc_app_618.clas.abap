@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarprocess icontabfilter icontabseparator table overflowtoolbar label column
 " @summary In this example, the Icon Tab Bar is used to apply filters on the same content along a business process.
-" @origin sap.m.sample.IconTabBarProcess - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarProcess (status: generated)
+" @origin sap.m.sample.IconTabBarProcess - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarProcess (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_618 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

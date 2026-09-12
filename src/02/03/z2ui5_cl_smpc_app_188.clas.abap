@@ -1,6 +1,6 @@
 " @keywords objectpageheadercontent object header content sap.uxap objectpageheadercontentpriorities objectpagelayout objectpagedynamicheadertitle title flexbox avatar text
 " @summary The sample shows how to set priorities of the ObjectPageHeader content items by using the ObjectPageHeaderContentLayoutData element
-" @origin sap.uxap.sample.ObjectPageHeaderContentPriorities - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.ObjectPageHeaderContentPriorities (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageHeaderContentPriorities - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.ObjectPageHeaderContentPriorities (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_188 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -38,12 +38,12 @@ CLASS z2ui5_cl_smpc_app_188 IMPLEMENTATION.
     " goal pairs, inlined here as form:SimpleForm in each blocks aggregation -
     " no custom JS control needed, thin frontend preserved (see sidecar).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.uxap`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout`  v = `sap.ui.layout`
-        )->a( n = `xmlns:m`       v = `sap.m`
-        )->a( n = `xmlns:form`    v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
@@ -124,7 +124,7 @@ CLASS z2ui5_cl_smpc_app_188 IMPLEMENTATION.
                         )->a( n = `displaySize`     v = `L`
                         )->a( n = `class`           v = `sapUiTinyMarginEnd`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
 
                         )->tag( n = `ObjectStatus` ns = `m`
@@ -142,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_188 IMPLEMENTATION.
 
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
 
                         )->tag( n = `ObjectStatus` ns = `m`
@@ -157,10 +157,10 @@ CLASS z2ui5_cl_smpc_app_188 IMPLEMENTATION.
 
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
 
-                        )->ele( n = `layoutData` ns = `layout`
+                        )->ele( n = `layoutData` ns = `l`
                             )->tag( `ObjectPageHeaderLayoutData`
                                 )->a( n = `visibleS` v = `false`
                                 )->a( n = `visibleM` v = `false`

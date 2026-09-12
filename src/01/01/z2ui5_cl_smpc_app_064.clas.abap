@@ -1,6 +1,6 @@
 " @keywords numericcontent numeric content sap.m icon
 " @summary Shows NumericContent including an icon.
-" @origin sap.m.sample.NumericContentIcon - https://sdk.openui5.org/entity/sap.m.NumericContent/sample/sap.m.sample.NumericContentIcon (status: reviewed)
+" @origin sap.m.sample.NumericContentIcon - https://sdk.openui5.org/entity/sap.m.NumericContent/sample/sap.m.sample.NumericContentIcon (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_064 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

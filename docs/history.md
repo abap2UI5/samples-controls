@@ -7,6 +7,64 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-12 — the tooling half of the style sweep: five rules, a third linter config, and the overview says its catalogue is data
+
+Run alongside the corpus sweeps (TYPES layout, view-chain unrolling, the
+Hungarian names), this is what the tooling side did, with the numbers as
+measured on that day's tree:
+
+- **`chain-format` was red on main** — the linter's 0.6 bump brought
+  `popover-anchor-unknown-id`, and the overview app's `get_catalog( )` quotes
+  a sidecar deviation that says `popover_display( xml = ..., by_id = ... )`;
+  the literal split landed exactly so that the text scan read a call out of
+  it. Run over the overview alone with the property gate ON, the linter
+  reported 24 findings — 19 `hardcoded-binding-path`, 3 of 4 `icon-too-new`,
+  one dead event, the popover — and 23 of them were quotes. So the emitter
+  wraps the method in the linter's own `" abap2ui5lint-disable … " abap2ui5lint-enable`
+  block and refuses a sidecar text that quotes the closing directive; no
+  config carries an exclusion for the class. The one real finding was the
+  INFO button's `sap-icon://information` (@1.80); it is
+  `sap-icon://message-information` (1.71) now.
+- **The overview has a version gate** — `abap2ui5lint-overview.jsonc`
+  (`npm run check:overview`, in `view-gates.yaml` and `gates:full`): one
+  file, property gate on, `distribution: openui5`, the floor as an error. It
+  was the one class nothing judged for what it builds.
+- **`chain-house-layout` is an error** in the chains config, and the three
+  pattern-lint layout rules are errors too (their 382 findings were cleared
+  the day before).
+- **Five pattern-lint rules.** `statement-too-long` (budget 75,000 — the
+  kernel limit is unmeasured; ~226k failed, app 012's `model_init` at
+  72,398 is `checked` and passes, so the budget sits just above the largest
+  live-verified statement, NOT at the 22k the brief assumed;
+  `scripts/probes/statement-length-probe.mjs` is the activation-test
+  worksheet), `unrolled-chain-repetition` (warn, > 40 identical chain lines
+  in one method: 192 findings in 100 ports, the worst app 530 at 207 ×
+  `)->a( n = … v = … )`), `types-layout` (error, the two-line form: 266
+  findings in 175 classes at the time of writing, the sweep's job),
+  `hungarian-prefix` (error; 0 on the swept tree — the 5 remaining `ev_`
+  are `ev_container`, a framework parameter, and `is_selected`-style booleans
+  are deliberately not a prefix) and `line-headroom` (warn, > 240: 496 lines
+  in 55 ports, 328 of them in apps 218/358/362/354).
+- **`view-gates.mjs` passes `distribution: 'openui5'`** — the ports are
+  OpenUI5 rebuilds (§3), so a SAPUI5-only control in one is an error, not a
+  hint. Zero findings when set.
+- **`@origin` spells its status out** (`generated - machine-written, not yet
+  reviewed` …), 622 lines regenerated.
+- **26 abapGit DESCRIPTs** that were clipped at 60 characters mid-word now
+  end at a whole word with `...` (`scripts/lib/clip.mjs` `clipAtWord`,
+  applied once by `scripts/descript-clip-sweep.mjs`; `generate-summary`'s
+  word-boundary fallback uses the same helper; the 27th, app 365, is a
+  complete sample name that happens to be 60). The five `@summary` lines the
+  brief called clipped were not: the one 254-character line (app 278) is the
+  demo kit's own text without a full stop.
+- **STATUS.md has a hold-out row** — 24 reserved, 12 spent (098, 100, 101,
+  103, 153, 154, 210, 212, 229, 237, 242, 243), two probe sections here — the
+  generator KPI now that the portable backlog is closed.
+- **`scripts/probes/note-cluster.mjs`** sorts the 1,915 NOTEs by idiom
+  (323 closed LIVE_TESTs, 155 diff declarations, 134 asset-host, 133
+  client-composed toasts, 107 mock-data, 99 client filter/sort, …), 23 left
+  unclassified.
+
 ## 2026-09-11 — two §8 sentences become rules, and the overview generator stops linting its catalogue
 
 An optimization review over the corpus and the tooling (the same exercise

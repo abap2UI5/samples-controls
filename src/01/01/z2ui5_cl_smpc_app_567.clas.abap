@@ -1,6 +1,6 @@
 " @keywords table sap.m tablecolumnwidth messagestrip toolbar title toolbarspacer checkbox column input columnlistitem text
 " @summary While defining the column width you can use percent values but you should be careful with them. Click to see some traps and tipps.
-" @origin sap.m.sample.TableColumnWidth - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableColumnWidth (status: generated)
+" @origin sap.m.sample.TableColumnWidth - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableColumnWidth (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_567 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

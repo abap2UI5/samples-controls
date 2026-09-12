@@ -1,6 +1,6 @@
 " @keywords tabcontainer tab container sap.m tabcontainericons tabcontaineritem form title responsivegridlayout formcontainer formelement text
 " @summary This example shows how you can add additional text and an Icon to the tabs in TabContainer.
-" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: generated)
+" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_451 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -58,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
             " itemCloseHandler calls oEvent.preventDefault() unconditionally and lets a
             " MessageBox.confirm decide - the eBP wire cancels the built-in close and
             " transports the tab name plus its row index (app 093 precedent)
-            )->a( n = `itemClose`         v = client->_event( val    = `CLOSE`
+            )->a( n = `itemClose` v = client->_event( val    = `CLOSE`
                                                               t_arg  = VALUE #( ( `${$parameters>/item}.getName()` ) ( `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` ) )
                                                               s_ctrl = VALUE #( check_prevent_default = abap_true ) )
 
@@ -85,54 +85,54 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
                     )->a( n = `modified`       v = `{MODIFIED}`
 
                     )->ele( `content`
-                        )->ele( n = `Form` ns = `f`
+                        )->ele( n = `Form` ns = `form`
                             )->a( n = `editable` v = `false`
 
-                            )->ele( n = `title` ns = `f`
+                            )->ele( n = `title` ns = `form`
                                 )->tag( n = `Title` ns = `core`
                                     )->a( n = `text` v = `Employee`
 
                             )->end(
-                            )->ele( n = `layout` ns = `f`
-                                )->tag( n = `ResponsiveGridLayout` ns = `f`
+                            )->ele( n = `layout` ns = `form`
+                                )->tag( n = `ResponsiveGridLayout` ns = `form`
 
                             )->end(
-                            )->ele( n = `FormContainer` ns = `f`
+                            )->ele( n = `FormContainer` ns = `form`
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `First Name`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{EMPFIRSTNAME}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Last Name`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{EMPLASTNAME}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Position`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{POSITION}`
 
                                     )->end(
                                 )->end(
 
-                                )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `FormElement` ns = `form`
                                     )->a( n = `label` v = `Salary`
 
-                                    )->ele( n = `fields` ns = `f`
+                                    )->ele( n = `fields` ns = `form`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{SALARY} EUR` ).
 

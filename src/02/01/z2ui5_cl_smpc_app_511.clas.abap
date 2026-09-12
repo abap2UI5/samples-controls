@@ -1,6 +1,6 @@
 " @keywords select sap.m selectchangeevents listitem
 " @summary Demonstrates the use of 'change' and 'liveChange' events.
-" @origin sap.m.sample.SelectChangeEvents - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectChangeEvents (status: generated)
+" @origin sap.m.sample.SelectChangeEvents - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectChangeEvents (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_511 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

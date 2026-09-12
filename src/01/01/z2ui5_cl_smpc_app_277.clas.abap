@@ -1,6 +1,6 @@
 " @keywords table sap.m tablecontextualwidthdynamic messagestrip responsivesplitter panecontainer splitpane column text columnlistitem label
 " @summary This example shows the container-based pop-in behavior. The container has dynamic width.
-" @origin sap.m.sample.TableContextualWidthDynamic - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableContextualWidthDynamic (status: checked)
+" @origin sap.m.sample.TableContextualWidthDynamic - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableContextualWidthDynamic (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_277 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

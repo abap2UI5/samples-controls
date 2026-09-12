@@ -1,6 +1,6 @@
 " @keywords objectheader object header sap.m objectheadertitlesel objectattribute responsivepopover list standardlistitem
 " @summary This is a Object Header with a title selection. This can be used to switch between variants of the business object being shown.
-" @origin sap.m.sample.ObjectHeaderTitleSel - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleSel (status: generated)
+" @origin sap.m.sample.ObjectHeaderTitleSel - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderTitleSel (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_502 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

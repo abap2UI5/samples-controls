@@ -1,6 +1,6 @@
 " @keywords semanticpage semantic sap.f.semantic semanticpagefreestyle title breadcrumbs link image text horizontallayout verticallayout objectattribute
 " @summary This sample demonstrates a SemanticPage with all semantic-specific actions both in the title and in the footer areas.
-" @origin sap.f.sample.SemanticPageFreeStyle - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPageFreeStyle (status: generated)
+" @origin sap.f.sample.SemanticPageFreeStyle - https://sdk.openui5.org/entity/sap.f.semantic.SemanticPage/sample/sap.f.sample.SemanticPageFreeStyle (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_529 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -75,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
         )->a( n = `height`         v = `100%`
         )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
         )->a( n = `xmlns`          v = `sap.m`
-        )->a( n = `xmlns:layout`   v = `sap.ui.layout`
+        )->a( n = `xmlns:l`        v = `sap.ui.layout`
         )->a( n = `xmlns:semantic` v = `sap.f.semantic`
         )->a( n = `xmlns:z2ui5`    v = `z2ui5.cc`
 
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
             )->a( n = `titleAreaShrinkRatio`        v = `1:1.6:1.6`
             " showFooter is static true in the view and the ToggleFooter button
             " flips it in the controller - bound here so the toggle can reach it
-            )->a( n = `showFooter`                  v = client->_bind( showfooter )
+            )->a( n = `showFooter` v = client->_bind( showfooter )
 
             )->ele( n = `titleHeading` ns = `semantic`
                 )->tag( `Title`
@@ -131,10 +131,10 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
             )->end(
 
             )->ele( n = `headerContent` ns = `semantic`
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->a( n = `allowWrapping` v = `true`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiMediumMarginEnd`
 
                         )->tag( `ObjectAttribute`
@@ -148,7 +148,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
                             )->a( n = `text`  v = client->_bind( email )
 
                     )->end(
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
 
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Availability`
@@ -321,7 +321,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
 
             )->ele( n = `messagesIndicator` ns = `semantic`
                 )->ele( n = `MessagesIndicator` ns = `semantic`
-                    )->a( n = `id`    v = `messagesIndicatorBtn`
+                    )->a( n = `id` v = `messagesIndicatorBtn`
                     " onMessagesButtonPress builds a MessagePopover over the message>
                     " model and opens it at the button - declared in dependents and
                     " opened roundtrip-free (app 066 idiom)

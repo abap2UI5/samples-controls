@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridtemplaterows html slider panel overflowtoolbar title simpleform label combobox item
 " @summary Example of setting gridTemplateRows and gridTemplateColumns properties.
-" @origin sap.ui.layout.sample.GridTemplateRows - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridTemplateRows (status: reviewed)
+" @origin sap.ui.layout.sample.GridTemplateRows - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridTemplateRows (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_349 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

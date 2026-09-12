@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarweeknumbering vbox hbox label select listitem item
 " @summary This sample demonstrates how the SinglePlanningCalendar control can be used width different week numbering (only Week and Month views are affected)
-" @origin sap.m.sample.SinglePlanningCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWeekNumbering (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWeekNumbering (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_550 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -55,11 +55,11 @@ CLASS z2ui5_cl_smpc_app_550 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -144,7 +144,7 @@ CLASS z2ui5_cl_smpc_app_550 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`

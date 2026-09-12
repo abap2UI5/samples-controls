@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputdatabinding verticallayout label token
 " @summary MultiInput data binding allows data to be bound to tokens in MultiInput.
-" @origin sap.m.sample.MultiInputDatabinding - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputDatabinding (status: generated)
+" @origin sap.m.sample.MultiInputDatabinding - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputDatabinding (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_457 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords calendarlegend calendar legend sap.ui.unified calendarlegendnavigation html verticallayout datetyperange calendarlegenditem
 " @summary An example of adding navigatable legend to the calendar.
-" @origin sap.ui.unified.sample.CalendarLegendNavigation - https://sdk.openui5.org/entity/sap.ui.unified.CalendarLegend/sample/sap.ui.unified.sample.CalendarLegendNavigation (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarLegendNavigation - https://sdk.openui5.org/entity/sap.ui.unified.CalendarLegend/sample/sap.ui.unified.sample.CalendarLegendNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_240 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

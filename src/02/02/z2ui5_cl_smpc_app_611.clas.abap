@@ -1,6 +1,6 @@
 " @keywords calendar sap.ui.unified calendarariahaspopup html verticallayout text datetyperange popover vbox title
 " @summary Calendar demonstrating configurable aria-haspopup attribute on individual day cells via DateTypeRange and a global Calendar-level fallback.
-" @origin sap.ui.unified.sample.CalendarAriaHasPopup - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarAriaHasPopup (status: generated)
+" @origin sap.ui.unified.sample.CalendarAriaHasPopup - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarAriaHasPopup (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_611 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

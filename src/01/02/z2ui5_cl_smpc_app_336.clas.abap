@@ -1,6 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform_column_threegroups346 bar button vbox title label text link
 " @summary Form with three groups in a fullscreen app (with 3 columns in M, 4 columns in L, and 6 columns in XL size).
-" @origin sap.ui.layout.sample.SimpleForm_Column_threeGroups346 - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm_Column_threeGroups346 (status: reviewed)
+" @origin sap.ui.layout.sample.SimpleForm_Column_threeGroups346 - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm_Column_threeGroups346 (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_336 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -78,7 +78,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Page`
@@ -89,8 +89,8 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                 )->ele( `Bar`
                     )->ele( `contentRight`
                         )->tag( `Button`
-                            )->a( n = `id`      v = `edit`
-                            )->a( n = `text`    v = `Edit`
+                            )->a( n = `id`   v = `edit`
+                            )->a( n = `text` v = `Edit`
                             " the original enables Edit once the mock request completes;
                             " the ABAP model is seeded synchronously, so it starts enabled
                             )->a( n = `enabled` v = `true`
@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = |\{= !${ client->_bind( edit_mode ) }\}|
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`        v = `SimpleFormDisplayColumn_threeGroups346`
                         )->a( n = `editable`  v = `false`
                         )->a( n = `layout`    v = `ColumnLayout`
@@ -127,7 +127,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                         )->a( n = `columnsL`  v = `4`
                         )->a( n = `columnsXL` v = `6`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Address`
                             )->tag( `Label`
@@ -195,7 +195,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = client->_bind( edit_mode )
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`        v = `SimpleFormChangeColumn_threeGroups346`
                         )->a( n = `editable`  v = `true`
                         )->a( n = `layout`    v = `ColumnLayout`
@@ -204,7 +204,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                         )->a( n = `columnsL`  v = `4`
                         )->a( n = `columnsXL` v = `6`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Address`
                             )->tag( `Label`
@@ -221,7 +221,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                                 )->a( n = `value` v = client->_bind( housenumber )
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `ColumnElementData` ns = `f`
+                                    )->tag( n = `ColumnElementData` ns = `form`
                                         )->a( n = `cellsSmall` v = `2`
                                         )->a( n = `cellsLarge` v = `1`
 
@@ -234,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_336 IMPLEMENTATION.
                                 )->a( n = `value` v = client->_bind( zipcode )
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `ColumnElementData` ns = `f`
+                                    )->tag( n = `ColumnElementData` ns = `form`
                                         )->a( n = `cellsSmall` v = `3`
                                         )->a( n = `cellsLarge` v = `2`
 

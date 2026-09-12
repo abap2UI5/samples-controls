@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt groups vbox button navigationlist navigationlistitem navigationlistgroup
 " @summary SideNavigation in container with fixed width.
-" @origin sap.tnt.sample.SideNavigation - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigation (status: reviewed)
+" @origin sap.tnt.sample.SideNavigation - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_128 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

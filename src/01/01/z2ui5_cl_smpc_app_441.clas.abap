@@ -1,6 +1,6 @@
 " @keywords breadcrumbs sap.m breadcrumbswithoutcurrentpage verticallayout link hbox label select item
 " @summary The breadcrumb shows the position of the object page in the application hiearchy, without the current page. Use this breadcrumb for the object page only.
-" @origin sap.m.sample.BreadcrumbsWithoutCurrentPage - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.BreadcrumbsWithoutCurrentPage (status: generated)
+" @origin sap.m.sample.BreadcrumbsWithoutCurrentPage - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.BreadcrumbsWithoutCurrentPage (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_441 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords generictile generic tile sap.m generictileaslaunchtile simpleform label input button html tilecontent imagecontent
 " @summary Shows Launch Tile samples that can contain header, subheader, image content, unit, and a footer.
-" @origin sap.m.sample.GenericTileAsLaunchTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsLaunchTile (status: generated)
+" @origin sap.m.sample.GenericTileAsLaunchTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsLaunchTile (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_517 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

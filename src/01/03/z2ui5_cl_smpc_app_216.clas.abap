@@ -1,6 +1,6 @@
 " @keywords objectpageheadercontent object header content sap.uxap headercontent verticallayout objectstatus text objectnumber progressindicator label
 " @summary This is an example of an ObjectPageHeaderContent.
-" @origin sap.uxap.sample.HeaderContent - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.HeaderContent (status: reviewed)
+" @origin sap.uxap.sample.HeaderContent - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.HeaderContent (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_216 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -32,15 +32,15 @@ CLASS z2ui5_cl_smpc_app_216 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.uxap`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `height`    v = `100%`
 
         )->ele( `ObjectPageHeaderContent`
             )->ele( `content`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `ObjectStatus` ns = `m`
                         )->a( n = `title` v = `User ID`
                         )->a( n = `text`  v = `12345678`
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_216 IMPLEMENTATION.
                     )->a( n = `showValue`    v = `true`
                     )->a( n = `state`        v = `None`
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `PC, Unrestricted-Use Stock`
                     )->tag( n = `ObjectNumber` ns = `m`
@@ -87,8 +87,8 @@ CLASS z2ui5_cl_smpc_app_216 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleS` v = `false`
 
@@ -103,8 +103,8 @@ CLASS z2ui5_cl_smpc_app_216 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleM` v = `false`
 
@@ -119,8 +119,8 @@ CLASS z2ui5_cl_smpc_app_216 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
-                    )->ele( n = `layoutData` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
                         )->tag( `ObjectPageHeaderLayoutData`
                             )->a( n = `visibleL`           v = `false`
                             )->a( n = `showSeparatorAfter` v = `true`

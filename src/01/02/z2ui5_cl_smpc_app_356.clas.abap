@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table multiselectionplugin overflowtoolbar title toolbarspacer label select item input toolbarseparator togglebutton
 " @summary Example showing the behavior of MultiSelectionPlugin
-" @origin sap.ui.table.sample.MultiSelectionPlugin - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiSelectionPlugin (status: reviewed)
+" @origin sap.ui.table.sample.MultiSelectionPlugin - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiSelectionPlugin (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_356 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -72,13 +72,13 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
     " same fields, so the three config controls drive it directly; only the
     " limit's parse and the two selection messages need the backend.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`         v = `sap.ui.table`
-        )->a( n = `xmlns:plugins` v = `sap.ui.table.plugins`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`       v = `sap.ui.unified`
-        )->a( n = `xmlns:c`       v = `sap.ui.core`
-        )->a( n = `xmlns:m`       v = `sap.m`
-        )->a( n = `height`        v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:tp`   v = `sap.ui.table.plugins`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
                     )->a( n = `ariaLabelledBy`      v = `title`
 
                     )->ele( `dependents`
-                        )->tag( n = `MultiSelectionPlugin` ns = `plugins`
+                        )->tag( n = `MultiSelectionPlugin` ns = `tp`
                             )->a( n = `limit`              v = client->_bind( limit )
                             )->a( n = `enableNotification` v = `true`
                             )->a( n = `showHeaderSelector` v = client->_bind( showheaderselector )
@@ -124,7 +124,7 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
                                 )->a( n = `items`       v = client->_bind( t_selectionmodes )
                                 )->a( n = `selectedKey` v = client->_bind( selectionmode )
 
-                                )->tag( n = `Item` ns = `c`
+                                )->tag( n = `Item` ns = `core`
                                     )->a( n = `key`  v = `{KEY}`
                                     )->a( n = `text` v = `{TEXT}`
 

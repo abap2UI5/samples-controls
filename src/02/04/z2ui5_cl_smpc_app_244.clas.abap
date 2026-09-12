@@ -1,6 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpageresponsiveavatar dynamicpagetitle breadcrumbs link hbox title objectmarker text flexbox
 " @summary Dynamic Page demonstrating the breakpointChange event to adjust Avatar sizes responsively based on breakpoints.
-" @origin sap.f.sample.DynamicPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageResponsiveAvatar (status: reviewed)
+" @origin sap.f.sample.DynamicPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageResponsiveAvatar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_244 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -49,11 +49,11 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
     " original attaches it in onInit) and drives both Avatars' bound displaySize.
     " test-resources image URLs point at the sdk.openui5.org host (offline rule).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:f`   v = `sap.f`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`    v = `100%`
 
         )->ele( n = `DynamicPage` ns = `f`
             )->a( n = `id`         v = `dynamicPageId`
@@ -104,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
                                 )->a( n = `id`          v = `snappedAvatar`
                                 )->a( n = `displaySize` v = client->_bind( avatar_size )
                                 )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
-                                )->a( n = `class` v = `sapUiTinyMarginEnd`
+                                )->a( n = `class`       v = `sapUiTinyMarginEnd`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Senior UI Developer`
 
@@ -144,9 +144,9 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
                             )->a( n = `displaySize` v = client->_bind( avatar_size )
                             )->a( n = `class`       v = `sapUiSmallMarginEnd`
                             )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
-                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Avatar pressed` ) ) )
+                            )->a( n = `press`       v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Avatar pressed` ) ) )
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                             )->tag( `Link`
                                 )->a( n = `text` v = `+33 6 4512 5158`
@@ -155,7 +155,7 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
 
                         )->end(
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                             )->tag( `Label`
                                 )->a( n = `text` v = `San Jose, USA`
@@ -183,7 +183,7 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
                         )->a( n = `titleStyle` v = `H2`
                         )->a( n = `class`      v = `sapUiMediumMarginBottom`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBottom`
                         )->tag( `Title`
                             )->a( n = `text`  v = `Responsive Avatar Example`
@@ -213,7 +213,7 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
                         )->a( n = `titleStyle` v = `H2`
                         )->a( n = `class`      v = `sapUiMediumMarginTopBottom`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBottom`
                         )->tag( `Title`
                             )->a( n = `text`  v = `How it Works`
@@ -241,7 +241,7 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
                         )->a( n = `titleStyle` v = `H2`
                         )->a( n = `class`      v = `sapUiMediumMarginTopBottom`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->tag( `Title`
                             )->a( n = `text`  v = `Benefits`
                             )->a( n = `level` v = `H3`

@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m comboboxfilteringstartswith vbox label listitem
 " @summary You can override the default filtering "Starts with per term" with your own filter function using the setFilterFunction method. The "Starts with" approach searches only in the beginning of the entries in both columns.
-" @origin sap.m.sample.ComboBoxFilteringStartsWith - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringStartsWith (status: generated)
+" @origin sap.m.sample.ComboBoxFilteringStartsWith - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringStartsWith (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_471 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

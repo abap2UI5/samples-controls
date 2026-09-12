@@ -1,6 +1,6 @@
 " @keywords flexbox flex box sap.m flexboxrendertype vbox panel button flexitemdata input
 " @summary Flex items can be rendered differently. By default, they are wrapped in a div element. Optionally, the bare controls can be rendered directly. This can affect the resulting layout.
-" @origin sap.m.sample.FlexBoxRenderType - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxRenderType (status: reviewed)
+" @origin sap.m.sample.FlexBoxRenderType - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxRenderType (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_190 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

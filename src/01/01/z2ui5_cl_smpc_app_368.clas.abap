@@ -1,6 +1,6 @@
 " @keywords input sap.m inputpassword verticallayout label
 " @summary To make sure the password is not shown as clear text you set the 'type' of an input control to 'Password'.
-" @origin sap.m.sample.InputPassword - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputPassword (status: reviewed)
+" @origin sap.m.sample.InputPassword - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputPassword (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_368 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

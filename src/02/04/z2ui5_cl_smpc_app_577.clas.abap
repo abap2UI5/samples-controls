@@ -1,6 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutcolumnresize objectpagelayout objectpagedynamicheadertitle title objectpagesection objectpagesubsection button
 " @summary FlexibleColumnLayout where the app programmatically scrolls to some item within the newly navigated column, once the column is fully resized
-" @origin sap.f.sample.FlexibleColumnLayoutColumnResize - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutColumnResize (status: generated)
+" @origin sap.f.sample.FlexibleColumnLayoutColumnResize - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutColumnResize (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_577 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -68,13 +68,13 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(fcl) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:uxap`   v = `sap.uxap`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:uxap` v = `sap.uxap`
 
         )->ele( n = `FlexibleColumnLayout` ns = `f`
             )->a( n = `id`                           v = `fcl`
@@ -83,12 +83,12 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
             )->a( n = `backgroundDesign`             v = `Translucent`
             " List.controller attaches columnResize on the FCL: once the begin
             " column is back to full width the indexed section is re-selected
-            )->a( n = `columnResize`                 v = client->_event( val = `COLUMN_RESIZE` arg = `${$parameters>/beginColumn}` )
+            )->a( n = `columnResize` v = client->_event( val = `COLUMN_RESIZE` arg = `${$parameters>/beginColumn}` )
             " the original wires stateChange to onStateChanged: only a layout
             " change by a NAVIGATION ARROW replace-navTo's the URL - the flag
             " and the new layout travel with the event, the backend guards on it
-            )->a( n = `stateChange`      v = client->_event( val = `STATE_CHANGED` t_arg = VALUE #( ( `${$parameters>/isNavigationArrow}` ) ( `${$parameters>/layout}` ) ) )
-            )->a( n = `layout`                       v = client->_bind( layout ) ).
+            )->a( n = `stateChange` v = client->_event( val = `STATE_CHANGED` t_arg = VALUE #( ( `${$parameters>/isNavigationArrow}` ) ( `${$parameters>/layout}` ) ) )
+            )->a( n = `layout`      v = client->_bind( layout ) ).
 
     " List.view.xml - the ObjectPage whose sections come from the model.
     " The original attaches the ObjectPage's navigate event to
@@ -169,10 +169,10 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
                 )->ele( n = `DynamicPageHeader` ns = `f`
                     )->a( n = `pinnable` v = `false`
 
-                    )->ele( n = `HorizontalLayout` ns = `layout`
+                    )->ele( n = `HorizontalLayout` ns = `l`
                         )->a( n = `allowWrapping` v = `true`
 
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
                             )->a( n = `class` v = `sapUiMediumMarginEnd`
 
                             )->tag( `ObjectAttribute`
@@ -186,7 +186,7 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
                                 )->a( n = `text`  v = `34`
 
                         )->end(
-                        )->ele( n = `VerticalLayout` ns = `layout`
+                        )->ele( n = `VerticalLayout` ns = `l`
 
                             )->tag( `ObjectAttribute`
                                 )->a( n = `title` v = `Availability`

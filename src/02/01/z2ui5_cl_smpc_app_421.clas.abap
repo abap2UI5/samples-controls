@@ -1,6 +1,6 @@
 " @keywords quickviewcard quick card sap.m quickviewcardscrollbar button grid label griddata switch panel quickviewpage
 " @summary QuickViewCard embedded in container with scroll bar
-" @origin sap.m.sample.QuickViewCardScrollBar - https://sdk.openui5.org/entity/sap.m.QuickViewCard/sample/sap.m.sample.QuickViewCardScrollBar (status: generated)
+" @origin sap.m.sample.QuickViewCardScrollBar - https://sdk.openui5.org/entity/sap.m.QuickViewCard/sample/sap.m.sample.QuickViewCardScrollBar (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_421 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

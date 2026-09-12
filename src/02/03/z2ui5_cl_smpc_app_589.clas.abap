@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageblockviewtypes objectpageaccessiblelandmarkinfo objectpageheader objectpageheaderactionbutton breadcrumbs link verticallayout horizontallayout
 " @summary ObjectPage sample with blocks that use different view types
-" @origin sap.uxap.sample.ObjectPageBlockViewTypes - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageBlockViewTypes (status: generated)
+" @origin sap.uxap.sample.ObjectPageBlockViewTypes - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageBlockViewTypes (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_589 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -42,12 +42,12 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
     " sample. abap2UI5 emits one XML view, so each block's CONTENT is inlined and
     " the four view TYPES collapse to one (see sidecar)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
             )->a( n = `upperCaseAnchorBar`       v = `false`
             " the third action button's toggleFooter does setShowFooter( !getShowFooter( ) );
             " a bindable property beats a frontend action, so it is bound two-way
-            )->a( n = `showFooter`               v = client->_bind( show_footer )
+            )->a( n = `showFooter` v = client->_bind( show_footer )
 
             )->ele( `landmarkInfo`
                 )->tag( `ObjectPageAccessibleLandmarkInfo`
@@ -123,7 +123,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `+33 6 4512 5158`
                     )->tag( n = `Link` ns = `m`
@@ -131,7 +131,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->tag( n = `Image` ns = `m`
                         )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/linkedin.png`
                     )->tag( n = `Image` ns = `m`
@@ -139,7 +139,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
 
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Hello! I am Tim and I use UxAP`
 
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                     )->end(
                 )->end(
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `San Jose, USA`
 
@@ -176,7 +176,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                 " goals:GoalsBlockJS -> GoalsBlockView.js, the typed
                                 " view: the same three goals plus a Button, and the
                                 " sample's own 'accross' typo in the first label
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `width`    v = `100%`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->a( n = `editable` v = `false`
@@ -270,7 +270,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
 
                                 " goals:GoalsBlock -> GoalsBlock.view.xml, the same
                                 " three goals as a plain XML view
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 

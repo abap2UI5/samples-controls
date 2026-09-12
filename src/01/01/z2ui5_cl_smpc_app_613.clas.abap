@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputgrouping verticallayout item column label columnlistitem multiinputext
 " @summary Items in the MultiInput could be grouped by a property
-" @origin sap.m.sample.MultiInputGrouping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputGrouping (status: generated)
+" @origin sap.m.sample.MultiInputGrouping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputGrouping (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_613 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

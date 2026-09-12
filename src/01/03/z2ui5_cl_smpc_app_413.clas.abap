@@ -1,6 +1,6 @@
 " @keywords objectpageheader object header sap.uxap profileobjectpageheader objectpagelayout bar button text objectpageheaderactionbutton verticallayout objectstatus
 " @summary This is an example of ObjectPageHeader using the showPlaceholder property.
-" @origin sap.uxap.sample.ProfileObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ProfileObjectPageHeader (status: reviewed)
+" @origin sap.uxap.sample.ProfileObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ProfileObjectPageHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_413 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -38,13 +38,13 @@ CLASS z2ui5_cl_smpc_app_413 IMPLEMENTATION.
     " around a view, so each block's content (a sap.ui.layout.form.SimpleForm)
     " is inlined directly here.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_413 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `ObjectStatus` ns = `m`
                         )->a( n = `title` v = `Address`
                         )->a( n = `text`  v = `BLR.01, B2.023`
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_413 IMPLEMENTATION.
                 )->end(
 
                 " image srcs absolutized from ./test-resources/... to the sdk.openui5.org host (asset-URL rule)
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->tag( n = `Image` ns = `m`
                         )->a( n = `width`  v = `21px`
                         )->a( n = `height` v = `21px`
@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_413 IMPLEMENTATION.
                     )->a( n = `icon`  v = `sap-icon://employee-approvals`
                     )->a( n = `text`  v = `Available`
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Bangalore, India`
                     )->tag( n = `Label` ns = `m`

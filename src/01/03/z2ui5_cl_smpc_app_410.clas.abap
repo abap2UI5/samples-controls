@@ -1,6 +1,6 @@
 " @keywords blockbase block base sap.uxap blockbaseeventing html objectpagelayout objectpageheader objectpagesection objectpagesubsection vbox button
 " @summary Uses of a block that is firing a dummy event
-" @origin sap.uxap.sample.BlockBaseEventing - https://sdk.openui5.org/entity/sap.uxap.BlockBase/sample/sap.uxap.sample.BlockBaseEventing (status: reviewed)
+" @origin sap.uxap.sample.BlockBaseEventing - https://sdk.openui5.org/entity/sap.uxap.BlockBase/sample/sap.uxap.sample.BlockBaseEventing (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_410 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

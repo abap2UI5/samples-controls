@@ -1,6 +1,6 @@
 " @keywords input sap.m inputassistedtabularsuggestions verticallayout column label columnlistitem
 " @summary In this example assisted input is provided with table-like suggestions where several columns can display more details.
-" @origin sap.m.sample.InputAssistedTabularSuggestions - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssistedTabularSuggestions (status: generated)
+" @origin sap.m.sample.InputAssistedTabularSuggestions - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssistedTabularSuggestions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_621 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

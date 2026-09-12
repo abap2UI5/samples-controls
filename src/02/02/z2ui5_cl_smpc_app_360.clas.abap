@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table selectcopypaste multiselectionplugin fixed busyindicator overflowtoolbar title toolbarspacer select item button
 " @summary Shows cell selection, copy and paste interaction in the table.
-" @origin sap.ui.table.sample.SelectCopyPaste - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.SelectCopyPaste (status: reviewed)
+" @origin sap.ui.table.sample.SelectCopyPaste - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.SelectCopyPaste (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_360 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -64,15 +64,15 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
     " MultiSelectionPlugin bind the same field, so onSelectChange disappears;
     " the paste event carries the pasted data to the backend, which reports it.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:trm` v = `sap.ui.table.rowmodes`
-        )->a( n = `xmlns:tp`  v = `sap.ui.table.plugins`
-        )->a( n = `xmlns:mp`  v = `sap.m.plugins`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`         v = `sap.ui.table`
+        )->a( n = `xmlns:trm`     v = `sap.ui.table.rowmodes`
+        )->a( n = `xmlns:tp`      v = `sap.ui.table.plugins`
+        )->a( n = `xmlns:plugins` v = `sap.m.plugins`
+        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`       v = `sap.ui.unified`
+        )->a( n = `xmlns:core`    v = `sap.ui.core`
+        )->a( n = `xmlns:m`       v = `sap.m`
+        )->a( n = `height`        v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -121,14 +121,14 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                                 )->a( n = `items`       v = client->_bind( t_selectionmodes )
                                 )->a( n = `selectedKey` v = client->_bind( selectionmode )
 
-                                )->tag( n = `Item` ns = `c`
+                                )->tag( n = `Item` ns = `core`
                                     )->a( n = `key`  v = `{MODE}`
                                     )->a( n = `text` v = `{MODE}`
 
                             )->end(
                             )->ele( n = `Button` ns = `m`
                                 )->ele( n = `dependents` ns = `m`
-                                    )->tag( n = `PasteProvider` ns = `mp`
+                                    )->tag( n = `PasteProvider` ns = `plugins`
                                         )->a( n = `pasteFor` v = `table`
 
                                 )->end(

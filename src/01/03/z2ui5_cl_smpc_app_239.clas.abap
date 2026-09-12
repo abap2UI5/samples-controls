@@ -1,6 +1,6 @@
 " @keywords objectpageheaderactionbutton object header action button sap.uxap objectpageheaderactionbuttons html objectpagelayout objectpagedynamicheadertitle breadcrumbs link
 " @summary This example demonstrates ObjectPage with ObjectPageHeaderActionButtons and a GenericTag in the header.
-" @origin sap.uxap.sample.ObjectPageHeaderActionButtons - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderActionButton/sample/sap.uxap.sample.ObjectPageHeaderActionButtons (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageHeaderActionButtons - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderActionButton/sample/sap.uxap.sample.ObjectPageHeaderActionButtons (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_239 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -42,13 +42,13 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
     " Label/Text carry the m: prefix in this single-default-namespace (sap.uxap)
     " view (namespace-representation difference).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.uxap`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:m`     v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
     " the block view wraps its SimpleForm in <html:div style="font-size:
     " 0.875rem">. A control cannot be wrapped by core:HTML, but the FONT SIZE
@@ -59,9 +59,9 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
             )->a( n = `content` v = `<style>.smpcBlockFont\{font-size:0.875rem\}</style>`
 
         )->ele( `ObjectPageLayout`
-            )->a( n = `id`                     v = `ObjectPageLayout`
+            )->a( n = `id`                       v = `ObjectPageLayout`
             )->a( n = `showTitleInHeaderContent` v = `true`
-            )->a( n = `upperCaseAnchorBar`     v = `false`
+            )->a( n = `upperCaseAnchorBar`       v = `false`
 
             )->ele( `headerTitle`
                 )->ele( `ObjectPageDynamicHeaderTitle`
@@ -158,10 +158,10 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `HorizontalLayout` ns = `layout`
+                )->ele( n = `HorizontalLayout` ns = `l`
                     )->a( n = `allowWrapping` v = `true`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiMediumMarginEnd`
                         )->tag( n = `ObjectAttribute` ns = `m`
                             )->a( n = `title` v = `Location`
@@ -175,7 +175,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
 
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->tag( n = `ObjectAttribute` ns = `m`
                             )->a( n = `title` v = `Availability`
                         )->tag( n = `ObjectStatus` ns = `m`
@@ -198,7 +198,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = `Subsection 1.1`
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -216,7 +216,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = `Subsection 1.2`
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -249,7 +249,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -275,7 +275,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = `Subsection 4.1`
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -301,7 +301,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -327,7 +327,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -353,7 +353,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -377,7 +377,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -401,7 +401,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -425,7 +425,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -449,7 +449,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -473,7 +473,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -497,7 +497,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -521,7 +521,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`
@@ -545,7 +545,7 @@ CLASS z2ui5_cl_smpc_app_239 IMPLEMENTATION.
                             )->a( n = `title`          v = ` `
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`            v = `smpcBlockFont`
                                     )->a( n = `maxContainerCols` v = `2`
                                     )->a( n = `layout`           v = `ResponsiveGridLayout`

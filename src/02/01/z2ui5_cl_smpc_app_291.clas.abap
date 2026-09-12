@@ -1,6 +1,6 @@
 " @keywords notificationlistgroup notification list group sap.m notificationlistgroupbindings vbox notificationlist flexitemdata button notificationlistitem
 " @summary A control suitable for grouping notifications. The sample uses JSON data bindings.
-" @origin sap.m.sample.NotificationListGroupBindings - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroupBindings (status: reviewed)
+" @origin sap.m.sample.NotificationListGroupBindings - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroupBindings (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_291 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

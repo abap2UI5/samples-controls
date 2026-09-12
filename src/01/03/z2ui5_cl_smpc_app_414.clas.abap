@@ -1,6 +1,6 @@
 " @keywords objectpageheader object header sap.uxap alternativeprofileobjectpageheader objectpagelayout objectpageheaderactionbutton verticallayout link label horizontallayout image
 " @summary This is a different example of ObjectPageHeader hiding the headerTitle area entirely until user scrolls down.
-" @origin sap.uxap.sample.AlternativeProfileObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.AlternativeProfileObjectPageHeader (status: reviewed)
+" @origin sap.uxap.sample.AlternativeProfileObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.AlternativeProfileObjectPageHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_414 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -47,32 +47,32 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
     " SharedBlocks JS - a BlockBase is only a lazy-loading wrapper around a view,
     " so each block's content (a sap.ui.layout.form.SimpleForm) is inlined here.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
             )->a( n = `showTitleInHeaderContent` v = `true`
             " handlePress toggles the header content imperatively; bound two-way instead
-            )->a( n = `showHeaderContent`        v = client->_bind( show_header_content )
+            )->a( n = `showHeaderContent` v = client->_bind( show_header_content )
 
             )->ele( `headerTitle`
                 )->ele( `ObjectPageHeader`
-                    )->a( n = `id`                            v = `headerForTest`
-                    )->a( n = `objectTitle`                   v = `Denise Smith`
-                    )->a( n = `showTitleSelector`             v = `true`
-                    )->a( n = `showMarkers`                   v = `true`
-                    )->a( n = `markFavorite`                  v = `true`
-                    )->a( n = `markFlagged`                   v = `true`
-                    )->a( n = `markChanges`                   v = `true`
+                    )->a( n = `id`                v = `headerForTest`
+                    )->a( n = `objectTitle`       v = `Denise Smith`
+                    )->a( n = `showTitleSelector` v = `true`
+                    )->a( n = `showMarkers`       v = `true`
+                    )->a( n = `markFavorite`      v = `true`
+                    )->a( n = `markFlagged`       v = `true`
+                    )->a( n = `markChanges`       v = `true`
                     " handleMarkChangesPress: unsaved-changes popover, anchored at the pressed control
-                    )->a( n = `markChangesPress`              v = client->_event( val = `MARK_CHANGES_PRESS` arg = `$event.oSource.sId` )
-                    )->a( n = `objectSubtitle`                v = `Senior Developer`
+                    )->a( n = `markChangesPress` v = client->_event( val = `MARK_CHANGES_PRESS` arg = `$event.oSource.sId` )
+                    )->a( n = `objectSubtitle`   v = `Senior Developer`
                     " asset URI absolutized to the OpenUI5 host per the offline asset-URL rule
                     )->a( n = `objectImageURI`                v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_273624.png`
                     )->a( n = `objectImageShape`              v = `Circle`
@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
             )->end(
 
             )->ele( `headerContent`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `denise-smith`
                     )->tag( n = `Label` ns = `m`
@@ -104,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `DeniseSmith@sap.com`
 
-                    )->ele( n = `HorizontalLayout` ns = `layout`
+                    )->ele( n = `HorizontalLayout` ns = `l`
                         )->tag( n = `Image` ns = `m`
                             )->a( n = `height` v = `24px`
                             )->a( n = `width`  v = `24px`
@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
                     )->a( n = `width` v = `200px`
                     )->a( n = `text`  v = `Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win.`
 
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `Profile completion`
                     )->tag( n = `ProgressIndicator` ns = `m`

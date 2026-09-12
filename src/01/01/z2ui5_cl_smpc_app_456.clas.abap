@@ -1,6 +1,6 @@
 " @keywords input sap.m inputassistedtwovalues verticallayout label listitem
 " @summary This example shows how to easily implement an assisted input with two-value suggestions.
-" @origin sap.m.sample.InputAssistedTwoValues - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssistedTwoValues (status: generated)
+" @origin sap.m.sample.InputAssistedTwoValues - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputAssistedTwoValues (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_456 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

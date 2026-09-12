@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridresponsivecolumnlayout togglebutton slider panel toolbar title text responsivecolumnlayout card responsivecolumnitemlayoutdata
 " @summary Example of using ResponsiveColumnLayout.
-" @origin sap.ui.layout.sample.GridResponsiveColumnLayout - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveColumnLayout (status: reviewed)
+" @origin sap.ui.layout.sample.GridResponsiveColumnLayout - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveColumnLayout (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_348 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -49,11 +49,11 @@ CLASS z2ui5_cl_smpc_app_348 IMPLEMENTATION.
     " the layout's layoutChange carries its layout parameter to the backend so
     " the "Current breakpoint" Text shows it, like the original's model write.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:grid`  v = `sap.ui.layout.cssgrid`
-        )->a( n = `xmlns:f`     v = `sap.f`
-        )->a( n = `xmlns:cards` v = `sap.f.cards`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:grid` v = `sap.ui.layout.cssgrid`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:card` v = `sap.f.cards`
 
         )->tag( `ToggleButton`
             )->a( n = `id`    v = `revealGrid`

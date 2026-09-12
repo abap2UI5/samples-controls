@@ -1,6 +1,6 @@
 " @keywords flexbox flex box sap.m flexboxnav html vbox panel flexitemdata
 " @summary Here is an example of how you can use navigation items as unordered list items in a Flex Box.
-" @origin sap.m.sample.FlexBoxNav - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxNav (status: generated)
+" @origin sap.m.sample.FlexBoxNav - https://sdk.openui5.org/entity/sap.m.FlexBox/sample/sap.m.sample.FlexBoxNav (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_474 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

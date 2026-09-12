@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridautorows html panel togglebutton overflowtoolbar title text simpleform label vbox
 " @summary Example of setting gridAutoRows and gridAutoColumns properties.
-" @origin sap.ui.layout.sample.GridAutoRows - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridAutoRows (status: reviewed)
+" @origin sap.ui.layout.sample.GridAutoRows - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridAutoRows (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_346 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

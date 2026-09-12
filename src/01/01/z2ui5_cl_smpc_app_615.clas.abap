@@ -1,6 +1,6 @@
 " @keywords objectheader object header sap.m objectheaderresponsiveiv objectattribute objectstatus objectmarker icontabbar icontabfilter text responsivepopover
 " @summary This is a responsive Object Header with a Title, number, 6 Statuses/Attributes rendered in 3 columns in a Master/Detail mode (fullScreenOptimized = false).
-" @origin sap.m.sample.ObjectHeaderResponsiveIV - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveIV (status: generated)
+" @origin sap.m.sample.ObjectHeaderResponsiveIV - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveIV (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_615 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

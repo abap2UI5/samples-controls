@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m single-row day planner vbox title togglebutton planningcalendarrow calendarappointment
 " @summary PlanningCalendar with only one row without row header. On click on an interval a new appointment is created.
-" @origin sap.m.sample.PlanningCalendarSingle - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarSingle (status: generated)
+" @origin sap.m.sample.PlanningCalendarSingle - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarSingle (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_108 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -71,17 +71,17 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
     " real JS Date; the model keeps ISO strings and Formatter.DateCreateObject from
     " the curated module converts them at the point of use (needs UI5 >= 1.74)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `PlanningCalendar`
-                )->a( n = `id`                        v = `PC1`
+                )->a( n = `id` v = `PC1`
                 " toggleDayNamesLine flips PC1.showDayNamesLine - a bindable property
                 " (@since 1.50), so the ToggleButton and the calendar share the field
                 )->a( n = `showDayNamesLine`          v = client->_bind( show_day_names )
@@ -95,7 +95,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                 " the interval selection hit no appointment, the count of them. Every
                 " value is client-readable, so it travels and ABAP composes both
                 " branches (the message is modal anyway, so the round-trip is free)
-                )->a( n = `appointmentSelect`         v = client->_event(
+                )->a( n = `appointmentSelect` v = client->_event(
                           val   = `APPT_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                 " Type09) over the selected interval into the model - reproduced by
                 " appending that row, with the interval's start/end carried as their
                 " LOCAL parts (a UTC toISOString( ) would shift the day)
-                )->a( n = `intervalSelect`            v = client->_event(
+                )->a( n = `intervalSelect` v = client->_event(
                           val   = `INTERVAL_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/startDate}.getFullYear()` )
@@ -119,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                             ( `${$parameters>/endDate}.getDate()` )
                             ( `${$parameters>/endDate}.getHours()` )
                             ( `${$parameters>/endDate}.getMinutes()` ) ) )
-                )->a( n = `showEmptyIntervalHeaders`  v = `false`
+                )->a( n = `showEmptyIntervalHeaders` v = `false`
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`
@@ -137,7 +137,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                         )->a( n = `intervalHeaders` v = `{path: 'T_HEADERS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate`    v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`      v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`         v = `{PIC}`
@@ -149,7 +149,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `title`     v = `{TITLE}`

@@ -36,13 +36,13 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`  v = `true`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:webc`    v = `sap.ui.webc.main`
-        )->a( n = `xmlns:layout`  v = `sap.ui.layout`
-        )->a( n = `xmlns:mchart`  v = `sap.suite.ui.microchart`
+        )->a( n = `displayBlock` v = `true`
+        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:webc`   v = `sap.ui.webc.main`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:mchart` v = `sap.suite.ui.microchart`
 
         )->ele( `Shell`
             )->ele( `Page`
@@ -55,7 +55,7 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
                         )->a( n = `text`     v = `Line Chart`
                         )->a( n = `selected` v = client->_bind( tab_line_active )
 
-                        )->ele( n = `Grid` ns = `layout`
+                        )->ele( n = `Grid` ns = `l`
                             )->a( n = `defaultSpan` v = `XL6 L6 M6 S12`
 
                             )->tag( `Link`
@@ -68,7 +68,7 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiSmallMargin`
 
                                 )->ele( `layoutData`
-                                    )->tag( n = `GridData` ns = `layout`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(
@@ -94,9 +94,9 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
                                                 )->a( n = `secondaryLabel` v = `Q2`
 
                                             )->tag( n = `InteractiveLineChartPoint` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel8 )
-                                                )->a( n = `label`          v = `June`
-                                                )->a( n = `value`          v = `12`
+                                                )->a( n = `selected` v = client->_bind( sel8 )
+                                                )->a( n = `label`    v = `June`
+                                                )->a( n = `value`    v = `12`
 
                                             )->tag( n = `InteractiveLineChartPoint` ns = `mchart`
                                                 )->a( n = `selected`       v = client->_bind( sel9 )
@@ -105,14 +105,14 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
                                                 )->a( n = `secondaryLabel` v = `Q3`
 
                                             )->tag( n = `InteractiveLineChartPoint` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel10 )
-                                                )->a( n = `label`          v = `Aug`
-                                                )->a( n = `value`          v = `52`
+                                                )->a( n = `selected` v = client->_bind( sel10 )
+                                                )->a( n = `label`    v = `Aug`
+                                                )->a( n = `value`    v = `52`
 
                                             )->tag( n = `InteractiveLineChartPoint` ns = `mchart`
-                                                )->a( n = `selected`       v = client->_bind( sel11 )
-                                                )->a( n = `label`          v = `Sep`
-                                                )->a( n = `value`          v = `69.9`
+                                                )->a( n = `selected` v = client->_bind( sel11 )
+                                                )->a( n = `label`    v = `Sep`
+                                                )->a( n = `value`    v = `69.9`
 
                                             )->tag( n = `InteractiveLineChartPoint` ns = `mchart`
                                                 )->a( n = `selected`       v = client->_bind( sel12 )
@@ -176,9 +176,9 @@ CLASS z2ui5_cl_smpc_sapui5_002 IMPLEMENTATION.
                                 )->end(
                             )->end(
 
-                            )->ele( n = `VerticalLayout` ns = `layout`
-                                )->ele( n = `layoutData` ns = `layout`
-                                    )->tag( n = `GridData` ns = `layout`
+                            )->ele( n = `VerticalLayout` ns = `l`
+                                )->ele( n = `layoutData` ns = `l`
+                                    )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL12 L12 M12 S12`
 
                                 )->end(

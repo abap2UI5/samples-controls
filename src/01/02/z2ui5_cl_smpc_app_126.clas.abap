@@ -1,6 +1,6 @@
 " @keywords fileuploader file uploader sap.ui.unified basic html verticallayout button
 " @summary Basic File Uploader Example
-" @origin sap.ui.unified.sample.FileUploaderBasic - https://sdk.openui5.org/entity/sap.ui.unified.FileUploader/sample/sap.ui.unified.sample.FileUploaderBasic (status: reviewed)
+" @origin sap.ui.unified.sample.FileUploaderBasic - https://sdk.openui5.org/entity/sap.ui.unified.FileUploader/sample/sap.ui.unified.sample.FileUploaderBasic (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_126 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

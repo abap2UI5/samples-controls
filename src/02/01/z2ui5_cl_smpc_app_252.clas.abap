@@ -1,6 +1,6 @@
 " @keywords carousel sap.m carouselwithmorepages simpleform label input switch title carousellayout scrollcontainer card header
 " @summary The customLayout aggregation determines how many pages are displayed in Carousel's visible area.
-" @origin sap.m.sample.CarouselWithMorePages - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithMorePages (status: reviewed)
+" @origin sap.m.sample.CarouselWithMorePages - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithMorePages (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_252 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -53,14 +53,14 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`     v = `sap.f`
-        )->a( n = `xmlns:cards` v = `sap.f.cards`
-        )->a( n = `xmlns:l`     v = `sap.ui.layout`
-        )->a( n = `xmlns:lf`    v = `sap.ui.layout.form`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:card` v = `sap.f.cards`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `height`     v = `100%`
         " the Input's value has to carry a TYPE, or the two-way write-back
         " stores the typed text as a STRING and CarouselLayout.visiblePagesCount
         " (an int property) throws on every keystroke - validateProperty casts
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
             )->a( n = `title` v = `Carousel With customLayout aggregation Sample`
             )->a( n = `class` v = `sapUiResponsiveContentPadding`
 
-            )->ele( n = `SimpleForm` ns = `lf`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `labelSpanL` v = `6`
                 )->a( n = `labelSpanM` v = `6`
                 )->a( n = `editable`   v = `true`
@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
                     )->tag( `CarouselLayout`
                         )->a( n = `visiblePagesCount` v = client->_bind( pagescount )
                         " OnScrollModeChange folded into the binding (declared)
-                        )->a( n = `scrollMode`        v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
+                        )->a( n = `scrollMode` v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
 
                 )->end(
 
@@ -120,7 +120,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
 
                     )->ele( n = `Card` ns = `f`
                         )->ele( n = `header` ns = `f`
-                            )->tag( n = `Header` ns = `cards`
+                            )->tag( n = `Header` ns = `card`
                                 )->a( n = `title`            v = `{NAME}`
                                 )->a( n = `subtitle`         v = `{STATUS}`
                                 )->a( n = `iconSrc`          v = `{PRODUCTPICURL}`

@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationpressevent vbox hbox button checkbox navigationlist navigationlistitem dialog
 " @summary SideNavigation with press event parameters and preventDefault.
-" @origin sap.tnt.sample.SideNavigationPressEvent - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationPressEvent (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationPressEvent - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationPressEvent (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_241 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

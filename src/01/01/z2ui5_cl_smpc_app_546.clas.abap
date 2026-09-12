@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendardnd vbox title label select item planningcalendarrow calendarappointment
 " @summary PlanningCalendar with draggable appointments. The sample represents three possible roles. If you are logged as an Admin, you can move appointments both within the same row and between different rows without any restrictions.
-" @origin sap.m.sample.PlanningCalendarDnD - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarDnD (status: generated)
+" @origin sap.m.sample.PlanningCalendarDnD - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarDnD (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_546 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -87,11 +87,11 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
     " (a UTC toISOString( ) would shift the day) plus the binding paths that name
     " the row and the appointment
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -155,7 +155,7 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
                                     ( `${$parameters>/calendarRow}.getBindingContext().getPath()` )
                                     ( `${$parameters>/copy} ? 'X' : ''` )
                                     ( `${$parameters>/calendarRow}.getTitle()` ) ) )
-                        )->a( n = `appointmentResize`             v = client->_event(
+                        )->a( n = `appointmentResize` v = client->_event(
                                   val   = `APPT_RESIZE`
                                   t_arg = VALUE #(
                                     ( `${$parameters>/startDate}.getFullYear()` )
@@ -169,7 +169,7 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
                                     ( `${$parameters>/endDate}.getHours()` )
                                     ( `${$parameters>/endDate}.getMinutes()` )
                                     ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointmentCreate`             v = client->_event(
+                        )->a( n = `appointmentCreate` v = client->_event(
                                   val   = `APPT_CREATE`
                                   t_arg = VALUE #(
                                     ( `${$parameters>/startDate}.getFullYear()` )
@@ -183,10 +183,10 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
                                     ( `${$parameters>/endDate}.getHours()` )
                                     ( `${$parameters>/endDate}.getMinutes()` )
                                     ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointments`                  v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
+                        )->a( n = `appointments` v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

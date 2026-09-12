@@ -1,6 +1,6 @@
 " @keywords wizard sap.m wizardsinglestep button dialog dynamicpage dynamicpagetitle title wizardstep messagestrip text hbox
 " @summary Demonstrates the usage of the renderMode property. The Wizard is displayed inside a Dialog to allow blocking of the interface without using page context. The dynamic page is used to provide a consistent and standards-compliant look.
-" @origin sap.m.sample.WizardSingleStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardSingleStep (status: generated)
+" @origin sap.m.sample.WizardSingleStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardSingleStep (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_533 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
         )->a( n = `xmlns:f`    v = `sap.f`
         )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:u`    v = `sap.ui.unified`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
 
         )->ele( `Dialog`
             )->a( n = `id`                v = `wizardDialog`
@@ -121,10 +121,10 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
                 )->ele( n = `content` ns = `f`
                     )->ele( `Wizard`
-                        )->a( n = `id`               v = `CreateProductWizard`
-                        )->a( n = `class`            v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
-                        )->a( n = `showNextButton`   v = `false`
-                        )->a( n = `renderMode`       v = `Page`
+                        )->a( n = `id`             v = `CreateProductWizard`
+                        )->a( n = `class`          v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
+                        )->a( n = `showNextButton` v = `false`
+                        )->a( n = `renderMode`     v = `Page`
                         " handleNavigationChange reads the step off the event and
                         " recomputes the index; the step TITLE travels here
                         )->a( n = `navigationChange` v = client->_event( val = `NAVIGATION_CHANGE` arg = `${$parameters>/step}.getTitle()` )
@@ -333,8 +333,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                             )->a( n = `title`     v = `Pricing`
 
                             )->tag( `MessageStrip`
-                                )->a( n = `class`    v = `sapUiSmallMarginBottom`
-                                )->a( n = `text`     v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
+                                )->a( n = `class` v = `sapUiSmallMarginBottom`
+                                )->a( n = `text`  v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
                                                         `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
                                 )->a( n = `showIcon` v = `true`
 

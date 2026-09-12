@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table filtering overflowtoolbar title toolbarspacer togglebutton button toolbarseparator searchfield column label
 " @summary Example showing the different facets of filtering within a table
-" @origin sap.ui.table.sample.Filtering - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Filtering (status: reviewed)
+" @origin sap.ui.table.sample.Filtering - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Filtering (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_354 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

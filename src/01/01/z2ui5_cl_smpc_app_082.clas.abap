@@ -1,6 +1,6 @@
 " @keywords slidetile slide tile sap.m sliding generic tiles verticallayout generictile tilecontent newscontent
 " @summary Shows Generic Tile with the 2x1 frame type displayed as sliding tiles.
-" @origin sap.m.sample.SlideTile - https://sdk.openui5.org/entity/sap.m.SlideTile/sample/sap.m.sample.SlideTile (status: reviewed)
+" @origin sap.m.sample.SlideTile - https://sdk.openui5.org/entity/sap.m.SlideTile/sample/sap.m.sample.SlideTile (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_082 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

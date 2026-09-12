@@ -134,12 +134,28 @@ of every CI build.
   grows with it. `generate-overview.mjs` caps each statement at `CHUNK_CHARS`
   3000 / `CHUNK_ROWS` 6 and appends with `VALUE #( BASE result … )`, and
   hoists any single text longer than `HOIST_CHARS` into preceding
-  `lv_textN = lv_textN && \`…\`` assignments (each ≤ `ASSIGN_CHARS`), so one
+  `textN = textN && \`…\`` assignments (each ≤ `ASSIGN_CHARS`; they were
+  `lv_textN` until 2026-09-12, when pattern-lint's `hungarian-prefix` rule
+  arrived and the emitter was renamed rather than exempted), so one
   oversized row cannot blow the budget on its own. Data points for the
   (undocumented) threshold: a ~226 kB statement failed, the biggest inlined
-  port mock table (app 012, ~74 kB) passes — port-sized mock tables are below
+  port mock table (app 012, ~72 kB) passes — port-sized mock tables are below
   the limit, but split by size rather than trusting a margin when a block
-  grows to many hundreds of long rows.
+  grows to many hundreds of long rows. pattern-lint's `statement-too-long`
+  now gates every class at `STATEMENT_BUDGET` (just above app 012), and
+  `scripts/probes/statement-length-probe.mjs` lists what an activation test
+  on a real system should cover to move that number.
+- **The catalogue is data, and the class says so to the linter.** Every
+  text-scan rule the linter grows (`popover-anchor-unknown-id`,
+  `hardcoded-binding-path`, `icon-too-new`, `event-without-handler`, …)
+  reads `get_catalog( )`'s quoted sidecar prose as if it were the overview's
+  own code — 24 findings on 2026-09-12, 23 of them quotes. The emitter wraps
+  the method in the linter's `" abap2ui5lint-disable … " abap2ui5lint-enable`
+  block, refuses (throws) a sidecar text that quotes the closing directive,
+  and that is what lets `abap2ui5lint-overview.jsonc` run the property gate
+  over the overview's real view code with no exclusion at all. Do not answer
+  the next such finding with a `rules` entry in a config — it is the block
+  that is missing, or a text that broke out of it.
 - **Coverage is measured over the IN-SCOPE backlog only.** The README's
   `Ported` column counts ports whose sample is in scope; a documented
   out-of-scope port (`ui5/scope-exceptions.json`) is listed separately, not as

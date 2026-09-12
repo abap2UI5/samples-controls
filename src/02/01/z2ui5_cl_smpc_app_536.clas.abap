@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m vbox title select item planningcalendarrow customdata calendarappointment label
 " @summary PlanningCalendar with single row selection that illustrates the built-in views.
-" @origin sap.m.sample.PlanningCalendar - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendar (status: generated)
+" @origin sap.m.sample.PlanningCalendar - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendar (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_536 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -78,11 +78,11 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
     " real JS Date; the model keeps ISO strings and Formatter.DateCreateObject from
     " the curated module converts them at the point of use (needs UI5 >= 1.74)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
                 " new selected state and the number of selected appointments - or, when
                 " the interval selection hit no appointment, the count of them. Every
                 " value is client-readable, so it travels and ABAP composes both branches
-                )->a( n = `appointmentSelect`         v = client->_event(
+                )->a( n = `appointmentSelect` v = client->_event(
                           val   = `APPT_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
@@ -104,19 +104,19 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
                             ( `$event.oSource.getSelectedAppointments().length` )
                             ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleRowHeaderPress names the pressed row's id in a MessageBox
-                )->a( n = `rowHeaderPress`            v = client->_event( val = `ROW_HEADER_PRESS` arg = `${$parameters>/row}.getId()` )
-                )->a( n = `showEmptyIntervalHeaders`  v = `false`
-                )->a( n = `showWeekNumbers`           v = `true`
+                )->a( n = `rowHeaderPress`           v = client->_event( val = `ROW_HEADER_PRESS` arg = `${$parameters>/row}.getId()` )
+                )->a( n = `showEmptyIntervalHeaders` v = `false`
+                )->a( n = `showWeekNumbers`          v = `true`
                 " onCalendarTypeSelect / onCalendarSecondaryTypeSelect call the two
                 " setters; both properties are bindable, so the two Selects share
                 " their key with the calendar and the handlers are dropped
-                )->a( n = `primaryCalendarType`       v = client->_bind( primary_type )
+                )->a( n = `primaryCalendarType` v = client->_bind( primary_type )
                 " the secondary Select's None entry means "no secondary type" -
                 " the original passes undefined, which the expression reproduces
-                )->a( n = `secondaryCalendarType`     v = |\{= ${ client->_bind( secondary_type ) } === 'None' ? undefined : ${ client->_bind( secondary_type ) } \}|
+                )->a( n = `secondaryCalendarType` v = |\{= ${ client->_bind( secondary_type ) } === 'None' ? undefined : ${ client->_bind( secondary_type ) } \}|
                 " handleSelectionFinish hands the MultiComboBox's selected keys to
                 " setBuiltInViews - a bindable string[] property, bound here
-                )->a( n = `builtInViews`              v = client->_bind( t_built_in )
+                )->a( n = `builtInViews` v = client->_bind( t_built_in )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`
@@ -186,7 +186,7 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate`    v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`      v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`         v = `{PIC}`
@@ -198,7 +198,7 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

@@ -1,6 +1,6 @@
 " @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionhiddentitle objectpagelayout objectpageheader objectpagesection simpleform label text
 " @summary Example of a subsection with showTitle property set to false.
-" @origin sap.uxap.sample.ObjectPageSubSectionHiddenTitle - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionHiddenTitle (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageSubSectionHiddenTitle - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionHiddenTitle (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_245 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -57,15 +57,15 @@ CLASS z2ui5_cl_smpc_app_245 IMPLEMENTATION.
     " SimpleForm subsections precede it. The ObjectNumber weight state is computed
     " in ABAP (thin frontend) instead of the original frontend .weightState.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
-        )->a( n = `xmlns:uxap`  v = `sap.uxap`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:uxap` v = `sap.uxap`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `ObjectPageLayout` ns = `uxap`
-            )->a( n = `id`               v = `ObjectPageLayout`
+            )->a( n = `id`                 v = `ObjectPageLayout`
             )->a( n = `upperCaseAnchorBar` v = `false`
 
             )->ele( n = `headerTitle` ns = `uxap`
@@ -86,7 +86,7 @@ CLASS z2ui5_cl_smpc_app_245 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( n = `blocks` ns = `uxap`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_245 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( n = `blocks` ns = `uxap`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`

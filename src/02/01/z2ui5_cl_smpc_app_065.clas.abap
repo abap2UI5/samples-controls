@@ -1,6 +1,6 @@
 " @keywords messagepopover message popover sap.m handling vbox simpleform title label input select item
 " @summary The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover.
-" @origin sap.m.sample.MessagePopoverMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverMessageHandling (status: checked)
+" @origin sap.m.sample.MessagePopoverMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverMessageHandling (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_065 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
         )->a( n = `xmlns`       v = `sap.m`
         )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:f`     v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`  v = `sap.ui.layout.form`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
 
         )->ele( `Page`
@@ -97,15 +97,15 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->a( n = `items` v = client->_bind( t_forms )
 
-                    )->ele( n = `SimpleForm` ns = `f`
-                        )->a( n = `editable` v = `true`
-                        )->a( n = `layout`   v = `ColumnLayout`
-                        )->a( n = `title`    v = `Personal`
-                        )->a( n = `columnsM` v = `2`
-                        )->a( n = `columnsL` v = `2`
+                    )->ele( n = `SimpleForm` ns = `form`
+                        )->a( n = `editable`  v = `true`
+                        )->a( n = `layout`    v = `ColumnLayout`
+                        )->a( n = `title`     v = `Personal`
+                        )->a( n = `columnsM`  v = `2`
+                        )->a( n = `columnsL`  v = `2`
                         )->a( n = `columnsXL` v = `2`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Information`
                             )->tag( `Label`
@@ -167,15 +167,15 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                     )->a( n = `class` v = `sapUiSmallMargin`
                     )->a( n = `items` v = client->_bind( t_employment )
 
-                    )->ele( n = `SimpleForm` ns = `f`
-                        )->a( n = `editable` v = `true`
-                        )->a( n = `layout`   v = `ColumnLayout`
-                        )->a( n = `title`    v = `Personal`
-                        )->a( n = `columnsM` v = `2`
-                        )->a( n = `columnsL` v = `2`
+                    )->ele( n = `SimpleForm` ns = `form`
+                        )->a( n = `editable`  v = `true`
+                        )->a( n = `layout`    v = `ColumnLayout`
+                        )->a( n = `title`     v = `Personal`
+                        )->a( n = `columnsM`  v = `2`
+                        )->a( n = `columnsL`  v = `2`
                         )->a( n = `columnsXL` v = `2`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Information`
                             )->tag( `Label`
@@ -226,14 +226,14 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                         )->a( n = `ariaHasPopup` v = `Dialog`
                         " original: this.oMP.toggle(oEvent.getSource()) - a pure client-side toggle, so
                         " wired roundtrip-free (no on_event) anchored to the button by its own id
-                        )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
+                        )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                t_arg = VALUE #( ( `messagePopover` ) ( `toggleBy` ) ( `messagePopoverBtn` ) ) )
 
                         )->ele( `dependents`
                             )->ele( `MessagePopover`
-                                )->a( n = `id`              v = `messagePopover`
-                                )->a( n = `items`           v = `{message>/}`
-                                )->a( n = `groupItems`      v = `true`
+                                )->a( n = `id`         v = `messagePopover`
+                                )->a( n = `items`      v = `{message>/}`
+                                )->a( n = `groupItems` v = `true`
                                 " activeTitlePress is a MessagePopover event (not MessageItem); it ships the
                                 " pressed message's target control id so the handler can scroll+focus it
                                 )->a( n = `activeTitlePress` v = client->_event( val = `ACTIVE_TITLE` arg = `${$parameters>/item}.getBindingContext('message').getObject().getControlIds()[0]` )
@@ -247,7 +247,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                                     " the backend (see model above) and carried on the Message code field,
                                     " NOT a frontend expression - the original derives it in its controller's
                                     " getGroupName; only Email sits in the Contact group, the rest in Information
-                                    )->a( n = `groupName`   v = `{message>code}`
+                                    )->a( n = `groupName` v = `{message>code}`
 
                             )->end(
                         )->end(

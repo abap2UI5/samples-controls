@@ -1,6 +1,6 @@
 " @keywords datepicker date picker sap.m datepickervaluestate flexbox vbox label
 " @summary This example shows different DatePicker value states.
-" @origin sap.m.sample.DatePickerValueState - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerValueState (status: reviewed)
+" @origin sap.m.sample.DatePickerValueState - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerValueState (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_253 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

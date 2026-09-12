@@ -1,6 +1,6 @@
 " @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionwithactions objectpagelayout objectpageheader objectpagesection html button
 " @summary Example of a subsection displaying action buttons.
-" @origin sap.uxap.sample.ObjectPageSubSectionWithActions - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionWithActions (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageSubSectionWithActions - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionWithActions (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_178 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

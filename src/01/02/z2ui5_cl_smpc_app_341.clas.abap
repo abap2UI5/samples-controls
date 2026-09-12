@@ -1,6 +1,6 @@
 " @keywords card sap.ui.integration.widgets cardsloading simpleform label input button gridcontainer gridcontaineritemlayoutdata
 " @summary Different types of cards types and their loading placeholder
-" @origin sap.ui.integration.sample.CardsLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardsLoading (status: reviewed)
+" @origin sap.ui.integration.sample.CardsLoading - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardsLoading (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_341 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

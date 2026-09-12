@@ -1,6 +1,6 @@
 " @keywords colorpicker color picker sap.ui.unified colorpickerlarge vbox button responsivepopover
 " @summary Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device.
-" @origin sap.ui.unified.sample.ColorPickerLarge - https://sdk.openui5.org/entity/sap.ui.unified.ColorPicker/sample/sap.ui.unified.sample.ColorPickerLarge (status: reviewed)
+" @origin sap.ui.unified.sample.ColorPickerLarge - https://sdk.openui5.org/entity/sap.ui.unified.ColorPicker/sample/sap.ui.unified.sample.ColorPickerLarge (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_310 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords initialpagepattern initial pattern sap.m selectdialog standardlistitem objectpagelayout objectpagedynamicheadertitle input listitem flexbox vbox
 " @summary The initial page floorplan allows the user to navigate to a single object to view or edit it.
-" @origin sap.m.sample.InitialPagePattern - https://sdk.openui5.org/entity/sap.m.InitialPagePattern/sample/sap.m.sample.InitialPagePattern (status: reviewed)
+" @origin sap.m.sample.InitialPagePattern - https://sdk.openui5.org/entity/sap.m.InitialPagePattern/sample/sap.m.sample.InitialPagePattern (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_233 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -79,20 +79,20 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:uxap`  v = `sap.uxap`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:m`     v = `sap.m`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:uxap` v = `sap.uxap`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
         " Dialog.fragment.xml - loaded in the controller via oView.addDependent
         )->ele( n = `dependents` ns = `mvc`
             )->ele( `SelectDialog`
-                )->a( n = `id`      v = `selectDialog`
-                )->a( n = `title`   v = `Purchases`
-                )->a( n = `items`   v = client->_bind( t_purchases )
+                )->a( n = `id`    v = `selectDialog`
+                )->a( n = `title` v = `Purchases`
+                )->a( n = `items` v = client->_bind( t_purchases )
                 " handleValueHelpSearch/_getCombinedFilter build an OR over PurchaseID
                 " and SupplierName. The compound binding_call payload is one JSON
                 " string, so the value cannot be substituted client-side - the search
@@ -108,10 +108,10 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
         )->end(
 
         )->ele( n = `ObjectPageLayout` ns = `uxap`
-            )->a( n = `id`                     v = `ObjectPageLayout`
-            )->a( n = `showHeaderContent`      v = client->_bind( has_selection )
+            )->a( n = `id`                       v = `ObjectPageLayout`
+            )->a( n = `showHeaderContent`        v = client->_bind( has_selection )
             )->a( n = `toggleHeaderOnTitleClick` v = client->_bind( has_selection )
-            )->a( n = `upperCaseAnchorBar`     v = `false`
+            )->a( n = `upperCaseAnchorBar`       v = `false`
 
             )->ele( n = `headerTitle` ns = `uxap`
                 )->ele( n = `ObjectPageDynamicHeaderTitle` ns = `uxap`
@@ -119,16 +119,16 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                     )->ele( n = `heading` ns = `uxap`
                         " Input.fragment.xml
                         )->ele( `Input`
-                            )->a( n = `class`           v = `sapUiTinyMarginBottom`
-                            )->a( n = `id`              v = `purchaseInput`
-                            )->a( n = `value`           v = client->_bind( input_value )
-                            )->a( n = `textFormatMode`  v = `KeyValue`
-                            )->a( n = `submit`          v = client->_event( `SUBMIT` )
-                            )->a( n = `placeholder`     v = `Enter product`
-                            )->a( n = `showSuggestion`  v = `true`
-                            )->a( n = `autocomplete`    v = `false`
-                            )->a( n = `showValueHelp`   v = `true`
-                            )->a( n = `change`          v = client->_event( `CHANGE` )
+                            )->a( n = `class`          v = `sapUiTinyMarginBottom`
+                            )->a( n = `id`             v = `purchaseInput`
+                            )->a( n = `value`          v = client->_bind( input_value )
+                            )->a( n = `textFormatMode` v = `KeyValue`
+                            )->a( n = `submit`         v = client->_event( `SUBMIT` )
+                            )->a( n = `placeholder`    v = `Enter product`
+                            )->a( n = `showSuggestion` v = `true`
+                            )->a( n = `autocomplete`   v = `false`
+                            )->a( n = `showValueHelp`  v = `true`
+                            )->a( n = `change`         v = client->_event( `CHANGE` )
                             " _filterAndOpenValueHelpDialog does TWO things: it applies the
                             " combined filter to the dialog's binding and THEN opens it with
                             " the current input value. SelectDialog.open( ) only seeds the
@@ -150,7 +150,7 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                                       t_arg = VALUE #( ( `selectDialog` )
                                                        ( `open` )
                                                        ( `$event.oSource.getValue()` ) ) )
-                            )->a( n = `suggestionItems` v = client->_bind( t_purchases )
+                            )->a( n = `suggestionItems`        v = client->_bind( t_purchases )
                             )->a( n = `suggestionItemSelected` v = client->_event( val = `SUGGEST` arg = `${$parameters>/selectedItem}.getKey()` )
 
                             )->ele( `suggestionItems`
@@ -352,12 +352,12 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                             )->a( n = `title` v = `Connect`
 
                             )->ele( n = `blocks` ns = `uxap`
-                                )->ele( n = `SimpleForm` ns = `forms`
-                                    )->a( n = `layout`   v = `ColumnLayout`
-                                    )->a( n = `width`    v = `100%`
-                                    )->a( n = `class`    v = `sapUxAPObjectPageSubSectionAlignContent`
-                                    )->a( n = `columnsM` v = `2`
-                                    )->a( n = `columnsL` v = `3`
+                                )->ele( n = `SimpleForm` ns = `form`
+                                    )->a( n = `layout`    v = `ColumnLayout`
+                                    )->a( n = `width`     v = `100%`
+                                    )->a( n = `class`     v = `sapUxAPObjectPageSubSectionAlignContent`
+                                    )->a( n = `columnsM`  v = `2`
+                                    )->a( n = `columnsL`  v = `3`
                                     )->a( n = `columnsXL` v = `4`
 
                                     )->tag( n = `Title` ns = `core`
@@ -405,7 +405,7 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                             )->a( n = `title` v = `Payment information`
 
                             )->ele( n = `blocks` ns = `uxap`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout`    v = `ColumnLayout`
                                     )->a( n = `width`     v = `100%`
                                     )->a( n = `class`     v = `sapUxAPObjectPageSubSectionAlignContent`

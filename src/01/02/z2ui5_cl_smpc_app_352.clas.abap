@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table aggregations hbox icon title overflowtoolbar toolbarspacer searchfield facetfilter facetfilterlist facetfilteritem
 " @summary Example which shows the different aggregations of the table
-" @origin sap.ui.table.sample.Aggregations - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Aggregations (status: reviewed)
+" @origin sap.ui.table.sample.Aggregations - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Aggregations (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_352 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -83,12 +83,12 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
     " listClose event only has to tell the backend to read them (the app-022
     " idiom).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -105,7 +105,7 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
                     )->ele( `extension`
                         )->ele( n = `HBox` ns = `m`
                             )->ele( n = `items` ns = `m`
-                                )->tag( n = `Icon` ns = `c`
+                                )->tag( n = `Icon` ns = `core`
                                     )->a( n = `src`  v = `sap-icon://cart`
                                     )->a( n = `alt`  v = `Cart`
                                     )->a( n = `size` v = `1.25rem`

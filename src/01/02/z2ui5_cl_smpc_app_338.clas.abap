@@ -1,6 +1,6 @@
 " @keywords fixflex fix flex sap.ui.layout fixflexfixedsize html scrollcontainer text
 " @summary Shows a FixFlex control where fixContentSize is set to a specific value(200px) and sap.m.scrollContainer is enabling vertical scrolling.
-" @origin sap.ui.layout.sample.FixFlexFixedSize - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexFixedSize (status: reviewed)
+" @origin sap.ui.layout.sample.FixFlexFixedSize - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexFixedSize (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_338 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

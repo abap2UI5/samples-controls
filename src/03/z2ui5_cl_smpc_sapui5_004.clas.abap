@@ -53,13 +53,13 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`  v = `true`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:webc`    v = `sap.ui.webc.main`
-        )->a( n = `xmlns:layout`  v = `sap.ui.layout`
-        )->a( n = `xmlns:mchart`  v = `sap.suite.ui.microchart`
+        )->a( n = `displayBlock` v = `true`
+        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:webc`   v = `sap.ui.webc.main`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:mchart` v = `sap.suite.ui.microchart`
 
         )->ele( `Shell`
             )->ele( `Page`
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
                         )->a( n = `text`     v = `Radial Chart`
                         )->a( n = `selected` v = client->_bind( tab_radial_active )
 
-                        )->ele( n = `Grid` ns = `layout`
+                        )->ele( n = `Grid` ns = `l`
                             )->a( n = `defaultSpan` v = `XL12 L12 M12 S12`
 
                             )->tag( `Link`
@@ -80,8 +80,8 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
                                 )->a( n = `target` v = `_blank`
                                 )->a( n = `href`   v = `https://ui5.sap.com/#/entity/sap.suite.ui.microchart.RadialMicroChart/sample/sap.suite.ui.microchart.sample.RadialMicroChart`
 
-                            )->ele( n = `VerticalLayout` ns = `layout`
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                            )->ele( n = `VerticalLayout` ns = `l`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->tag( n = `RadialMicroChart` ns = `mchart`
                                         )->a( n = `size`       v = `M`
                                         )->a( n = `percentage` v = `45`
@@ -93,7 +93,7 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
 
                                 )->end(
 
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->tag( n = `RadialMicroChart` ns = `mchart`
                                         )->a( n = `size`       v = `M`
                                         )->a( n = `percentage` v = `99.9`
@@ -107,7 +107,7 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
 
                                 )->end(
 
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->tag( n = `RadialMicroChart` ns = `mchart`
                                         )->a( n = `size`       v = `M`
                                         )->a( n = `percentage` v = `0`
@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_sapui5_004 IMPLEMENTATION.
 
                                 )->end(
 
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->tag( n = `RadialMicroChart` ns = `mchart`
                                         )->a( n = `size`       v = `M`
                                         )->a( n = `percentage` v = `0.1`

@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarrelativeviews vbox title planningcalendarview planningcalendarrow customdata calendarappointment
 " @summary PlanningCalendar with relative views. The relative periods are not directly related to dates, but periods with pre-defined duration.
-" @origin sap.m.sample.PlanningCalendarRelativeViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRelativeViews (status: generated)
+" @origin sap.m.sample.PlanningCalendarRelativeViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRelativeViews (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_545 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -72,11 +72,11 @@ CLASS z2ui5_cl_smpc_app_545 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -134,7 +134,7 @@ CLASS z2ui5_cl_smpc_app_545 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`
@@ -145,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_545 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

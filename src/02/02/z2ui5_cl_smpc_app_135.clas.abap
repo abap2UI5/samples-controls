@@ -1,6 +1,6 @@
 " @keywords currency sap.ui.model.type data type simpleform label input text
 " @summary Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string.
-" @origin sap.ui.core.sample.TypeCurrency - https://sdk.openui5.org/entity/sap.ui.model.type.Currency/sample/sap.ui.core.sample.TypeCurrency (status: reviewed)
+" @origin sap.ui.core.sample.TypeCurrency - https://sdk.openui5.org/entity/sap.ui.model.type.Currency/sample/sap.ui.core.sample.TypeCurrency (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_135 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

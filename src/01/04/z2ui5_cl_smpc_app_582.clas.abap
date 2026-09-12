@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistkeyboardarrowsnavigation app slider gridresponsivelayout gridsettings gridbasiclayout gridlistitem griditemlayoutdata
 " @summary This sample demonstrates the keyboard navigation between multiple grids
-" @origin sap.f.sample.GridListKeyboardArrowsNavigation - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListKeyboardArrowsNavigation (status: generated)
+" @origin sap.f.sample.GridListKeyboardArrowsNavigation - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListKeyboardArrowsNavigation (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_582 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -50,11 +50,11 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(page) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`        v = `100%`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:f`       v = `sap.f`
-        )->a( n = `xmlns:cssgrid` v = `sap.ui.layout.cssgrid`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:grid` v = `sap.ui.layout.cssgrid`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
 
         )->ele( `App`
             )->ele( `Page`
@@ -70,22 +70,22 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->tag( `Slider`
             )->a( n = `value` v = client->_bind( slider_value ) ).
 
-    DATA(container) = page->ele( n = `CSSGrid` ns = `cssgrid`
+    DATA(container) = page->ele( n = `CSSGrid` ns = `grid`
         )->a( n = `id`    v = `container`
         )->a( n = `width` v = |\{= ${ client->_bind( slider_value ) } + '%' \}|
 
-        )->ele( n = `customLayout` ns = `cssgrid`
-            )->ele( n = `GridResponsiveLayout` ns = `cssgrid`
+        )->ele( n = `customLayout` ns = `grid`
+            )->ele( n = `GridResponsiveLayout` ns = `grid`
                 )->a( n = `containerQuery` v = `true`
 
-                )->ele( n = `layout` ns = `cssgrid`
-                    )->tag( n = `GridSettings` ns = `cssgrid`
+                )->ele( n = `layout` ns = `grid`
+                    )->tag( n = `GridSettings` ns = `grid`
                         )->a( n = `gridGap`             v = `1rem`
                         )->a( n = `gridTemplateColumns` v = `repeat(2, 1fr)`
 
                 )->end(
-                )->ele( n = `layoutS` ns = `cssgrid`
-                    )->tag( n = `GridSettings` ns = `cssgrid`
+                )->ele( n = `layoutS` ns = `grid`
+                    )->tag( n = `GridSettings` ns = `grid`
                         )->a( n = `gridGap`             v = `1rem`
                         )->a( n = `gridTemplateColumns` v = `1fr`
 
@@ -94,19 +94,19 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`             v = `gridList1`
-        )->a( n = `headerText`     v = `GridList 1`
-        )->a( n = `items`          v = client->_bind( t_items1 )
+        )->a( n = `id`         v = `gridList1`
+        )->a( n = `headerText` v = `GridList 1`
+        )->a( n = `items`      v = client->_bind( t_items1 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
-        )->a( n = `borderReached`  v = client->follow_up_action(
+        )->a( n = `borderReached` v = client->follow_up_action(
                   val   = client->cs_event-control_global
                   t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                    ( `show` )
                                    ( `Reached border of GridList 1` ) ) )
 
         )->ele( n = `customLayout` ns = `f`
-            )->tag( n = `GridBasicLayout` ns = `cssgrid`
+            )->tag( n = `GridBasicLayout` ns = `grid`
                 )->a( n = `gridAutoRows`        v = `5rem`
                 )->a( n = `gridTemplateColumns` v = `repeat(auto-fill, minmax(5rem, 1fr))`
                 )->a( n = `gridGap`             v = `0.5rem`
@@ -115,7 +115,7 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->ele( n = `GridListItem` ns = `f`
 
             )->ele( n = `layoutData` ns = `f`
-                )->tag( n = `GridItemLayoutData` ns = `cssgrid`
+                )->tag( n = `GridItemLayoutData` ns = `grid`
                     )->a( n = `gridRow`    v = `span 2`
                     )->a( n = `gridColumn` v = `span 2`
 
@@ -135,19 +135,19 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`             v = `gridList2`
-        )->a( n = `headerText`     v = `GridList 2`
-        )->a( n = `items`          v = client->_bind( t_items2 )
+        )->a( n = `id`         v = `gridList2`
+        )->a( n = `headerText` v = `GridList 2`
+        )->a( n = `items`      v = client->_bind( t_items2 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
-        )->a( n = `borderReached`  v = client->follow_up_action(
+        )->a( n = `borderReached` v = client->follow_up_action(
                   val   = client->cs_event-control_global
                   t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                    ( `show` )
                                    ( `Reached border of GridList 2` ) ) )
 
         )->ele( n = `customLayout` ns = `f`
-            )->tag( n = `GridBasicLayout` ns = `cssgrid`
+            )->tag( n = `GridBasicLayout` ns = `grid`
                 )->a( n = `gridAutoRows`        v = `5rem`
                 )->a( n = `gridTemplateColumns` v = `repeat(auto-fill, minmax(5rem, 1fr))`
                 )->a( n = `gridGap`             v = `0.5rem`
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->ele( n = `GridListItem` ns = `f`
 
             )->ele( n = `layoutData` ns = `f`
-                )->tag( n = `GridItemLayoutData` ns = `cssgrid`
+                )->tag( n = `GridItemLayoutData` ns = `grid`
                     )->a( n = `gridRow`    v = `span 1`
                     )->a( n = `gridColumn` v = `span 3`
 
@@ -176,19 +176,19 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`             v = `gridList3`
-        )->a( n = `headerText`     v = `GridList 3`
-        )->a( n = `items`          v = client->_bind( t_items3 )
+        )->a( n = `id`         v = `gridList3`
+        )->a( n = `headerText` v = `GridList 3`
+        )->a( n = `items`      v = client->_bind( t_items3 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
-        )->a( n = `borderReached`  v = client->follow_up_action(
+        )->a( n = `borderReached` v = client->follow_up_action(
                   val   = client->cs_event-control_global
                   t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                    ( `show` )
                                    ( `Reached border of GridList 3` ) ) )
 
         )->ele( n = `customLayout` ns = `f`
-            )->tag( n = `GridBasicLayout` ns = `cssgrid`
+            )->tag( n = `GridBasicLayout` ns = `grid`
                 )->a( n = `gridAutoRows`        v = `5rem`
                 )->a( n = `gridTemplateColumns` v = `repeat(auto-fill, minmax(5rem, 1fr))`
                 )->a( n = `gridGap`             v = `0.5rem`
@@ -197,7 +197,7 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->ele( n = `GridListItem` ns = `f`
 
             )->ele( n = `layoutData` ns = `f`
-                )->tag( n = `GridItemLayoutData` ns = `cssgrid`
+                )->tag( n = `GridItemLayoutData` ns = `grid`
                     )->a( n = `gridRow`    v = `span 2`
                     )->a( n = `gridColumn` v = `span 3`
 
@@ -217,19 +217,19 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`             v = `gridList4`
-        )->a( n = `headerText`     v = `GridList 4`
-        )->a( n = `items`          v = client->_bind( t_items4 )
+        )->a( n = `id`         v = `gridList4`
+        )->a( n = `headerText` v = `GridList 4`
+        )->a( n = `items`      v = client->_bind( t_items4 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
-        )->a( n = `borderReached`  v = client->follow_up_action(
+        )->a( n = `borderReached` v = client->follow_up_action(
                   val   = client->cs_event-control_global
                   t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                    ( `show` )
                                    ( `Reached border of GridList 4` ) ) )
 
         )->ele( n = `customLayout` ns = `f`
-            )->tag( n = `GridBasicLayout` ns = `cssgrid`
+            )->tag( n = `GridBasicLayout` ns = `grid`
                 )->a( n = `gridAutoRows`        v = `5rem`
                 )->a( n = `gridTemplateColumns` v = `repeat(auto-fill, minmax(5rem, 1fr))`
                 )->a( n = `gridGap`             v = `0.5rem`
@@ -238,7 +238,7 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->ele( n = `GridListItem` ns = `f`
 
             )->ele( n = `layoutData` ns = `f`
-                )->tag( n = `GridItemLayoutData` ns = `cssgrid`
+                )->tag( n = `GridItemLayoutData` ns = `grid`
                     )->a( n = `gridRow`    v = `span 3`
                     )->a( n = `gridColumn` v = `span 2`
 

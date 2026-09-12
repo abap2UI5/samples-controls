@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbardragdrop simpleform label stepinput icontabfilter text
 " @summary This example shows how the tab filters can be reordered and nested with drag and drop. Works only on desktop devices.
-" @origin sap.m.sample.IconTabBarDragDrop - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarDragDrop (status: generated)
+" @origin sap.m.sample.IconTabBarDragDrop - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarDragDrop (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_506 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -47,11 +47,11 @@ CLASS z2ui5_cl_smpc_app_506 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `adjustLabelSpan` v = `false`

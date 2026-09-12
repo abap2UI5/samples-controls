@@ -1,6 +1,6 @@
 " @keywords form sap.ui.layout.form toolbars vbox toolbar title toolbarspacer button responsivegridlayout formcontainer formelement input
 " @summary A form that uses Toolbars as Form header and FormContainer headers.
-" @origin sap.ui.layout.sample.FormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.FormToolbar (status: reviewed)
+" @origin sap.ui.layout.sample.FormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.FormToolbar (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_142 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -47,19 +47,19 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
 
-            )->ele( n = `Form` ns = `f`
-                )->a( n = `id`            v = `FormToolbar`
-                )->a( n = `editable`      v = `true`
+            )->ele( n = `Form` ns = `form`
+                )->a( n = `id`             v = `FormToolbar`
+                )->a( n = `editable`       v = `true`
                 )->a( n = `ariaLabelledBy` v = `Title1`
 
-                )->ele( n = `toolbar` ns = `f`
+                )->ele( n = `toolbar` ns = `form`
                     )->ele( `Toolbar`
                         )->a( n = `id` v = `TB1`
                         )->tag( `Title`
@@ -74,8 +74,8 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                     )->end(
                 )->end(
 
-                )->ele( n = `layout` ns = `f`
-                    )->tag( n = `ResponsiveGridLayout` ns = `f`
+                )->ele( n = `layout` ns = `form`
+                    )->tag( n = `ResponsiveGridLayout` ns = `form`
                         )->a( n = `labelSpanXL`             v = `4`
                         )->a( n = `labelSpanL`              v = `3`
                         )->a( n = `labelSpanM`              v = `4`
@@ -85,18 +85,18 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                         )->a( n = `emptySpanL`              v = `4`
                         )->a( n = `emptySpanM`              v = `0`
                         )->a( n = `emptySpanS`              v = `0`
-                        )->a( n = `columnsXL`              v = `2`
-                        )->a( n = `columnsL`               v = `1`
-                        )->a( n = `columnsM`               v = `1`
+                        )->a( n = `columnsXL`               v = `2`
+                        )->a( n = `columnsL`                v = `1`
+                        )->a( n = `columnsM`                v = `1`
                         )->a( n = `singleContainerFullSize` v = `false`
 
                 )->end(
 
-                )->ele( n = `formContainers` ns = `f`
+                )->ele( n = `formContainers` ns = `form`
 
-                    )->ele( n = `FormContainer` ns = `f`
+                    )->ele( n = `FormContainer` ns = `form`
                         )->a( n = `ariaLabelledBy` v = `Title2`
-                        )->ele( n = `toolbar` ns = `f`
+                        )->ele( n = `toolbar` ns = `form`
                             )->ele( `Toolbar`
                                 )->tag( `Title`
                                     )->a( n = `id`   v = `Title2`
@@ -108,19 +108,19 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                             )->end(
                         )->end(
 
-                        )->ele( n = `formElements` ns = `f`
-                            )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `formElements` ns = `form`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `Name`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->tag( `Input`
                                         )->a( n = `value` v = client->_bind( suppliername )
                                         )->a( n = `id`    v = `name`
 
                                 )->end(
                             )->end(
-                            )->ele( n = `FormElement` ns = `f`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `Street`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->tag( `Input`
                                         )->a( n = `value` v = client->_bind( street )
                                     )->ele( `Input`
@@ -133,9 +133,9 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                                     )->end(
                                 )->end(
                             )->end(
-                            )->ele( n = `FormElement` ns = `f`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `ZIP Code/City`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->ele( `Input`
                                         )->a( n = `value` v = client->_bind( zipcode )
                                         )->ele( `layoutData`
@@ -149,9 +149,9 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
 
                                 )->end(
                             )->end(
-                            )->ele( n = `FormElement` ns = `f`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `Country`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->ele( `Select`
                                         )->a( n = `width`       v = `100%`
                                         )->a( n = `id`          v = `country`
@@ -172,9 +172,9 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                         )->end(
                     )->end(
 
-                    )->ele( n = `FormContainer` ns = `f`
+                    )->ele( n = `FormContainer` ns = `form`
                         )->a( n = `ariaLabelledBy` v = `Title3`
-                        )->ele( n = `toolbar` ns = `f`
+                        )->ele( n = `toolbar` ns = `form`
                             )->ele( `Toolbar`
                                 )->tag( `Title`
                                     )->a( n = `id`   v = `Title3`
@@ -186,10 +186,10 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
                             )->end(
                         )->end(
 
-                        )->ele( n = `formElements` ns = `f`
-                            )->ele( n = `FormElement` ns = `f`
+                        )->ele( n = `formElements` ns = `form`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `Web`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->tag( `Input`
                                         )->a( n = `value` v = client->_bind( url )
                                         )->a( n = `type`  v = `Url`
@@ -197,9 +197,9 @@ CLASS z2ui5_cl_smpc_app_142 IMPLEMENTATION.
 
                                 )->end(
                             )->end(
-                            )->ele( n = `FormElement` ns = `f`
+                            )->ele( n = `FormElement` ns = `form`
                                 )->a( n = `label` v = `Twitter`
-                                )->ele( n = `fields` ns = `f`
+                                )->ele( n = `fields` ns = `form`
                                     )->tag( `Input`
                                         )->a( n = `value` v = client->_bind( twitter )
                                         )->a( n = `id`    v = `twitter` ).

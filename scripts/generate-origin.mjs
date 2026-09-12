@@ -16,12 +16,13 @@
  *
  * So a third generated line, under the two:
  *
- *   " @origin sap.m.sample.ActionListItem - https://sdk.openui5.org/entity/sap.m.ActionListItem/sample/sap.m.sample.ActionListItem (status: checked)
+ *   " @origin sap.m.sample.ActionListItem - https://sdk.openui5.org/entity/sap.m.ActionListItem/sample/sap.m.sample.ActionListItem (status: checked - verified in a running system)
  *
  * the demo kit sample, the URL of its page in the demo kit - the same page
- * api.md links - and the sidecar's status: `checked` (a human watched it run),
- * `reviewed` (read against the original, not run), `generated` (machine-
- * written, not yet reviewed). A plain `"` comment, like the two above it:
+ * api.md links - and the sidecar's status, spelled out so the class explains
+ * its own rung: `checked - verified in a running system`, `reviewed - read
+ * against the original, not run`, `generated - machine-written, not yet
+ * reviewed`. A plain `"` comment, like the two above it:
  * not ABAP Doc, so the pattern-lint rule against `"!` in a port is untouched
  * and SLIN/ATC see nothing. Nothing here is invented - every word comes out
  * of the sidecar, and `--check` holds the line to it, so a port whose status
@@ -53,7 +54,15 @@ const pageOf = (entity, sample) => `${DEMOKIT}/entity/${entity}/sample/${sample}
  * its whole header. */
 const GENERATED = 'z2ui5_cl_smpc_app_000';
 
-const STATUSES = new Set(['checked', 'reviewed', 'generated']);
+/* The status word, and what it means, IN the class: a reader in ADT has no
+ * TRAINING.md to look the ladder up in, and `(status: generated)` alone told
+ * 208 ports' readers nothing they could act on. Since 2026-09-12 the line
+ * spells the rung out - the same three sentences the sidecar schema uses. */
+const STATUSES = new Map([
+  ['generated', 'generated - machine-written, not yet reviewed'],
+  ['reviewed', 'reviewed - read against the original, not run'],
+  ['checked', 'checked - verified in a running system'],
+]);
 
 const problems = [];
 let write = 0;
@@ -74,7 +83,14 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
     problems.push(`${cls}: the sidecar names no sample, no entity or no known status - nothing to write an @origin line from`);
     continue;
   }
-  const line = `" @origin ${meta.sample} - ${pageOf(meta.entity, meta.sample)} (status: ${meta.status})`;
+  /* The explained status is the line; the bare word is the fallback for the
+   * one sample id long enough to push the explained form over abaplint's 255
+   * (sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding, app
+   * 365, lands at 260). Its meaning is on every sibling line, and a status
+   * word is better than no line. */
+  const head = `" @origin ${meta.sample} - ${pageOf(meta.entity, meta.sample)}`;
+  let line = `${head} (status: ${STATUSES.get(meta.status)})`;
+  if (line.length > 255) line = `${head} (status: ${meta.status})`;
   if (line.length > 255) {
     problems.push(`${cls}: the @origin line would be ${line.length} characters, over abaplint's 255`);
     continue;

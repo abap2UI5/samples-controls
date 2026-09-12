@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table rowmodes named model overflowtoolbar title column label text link segmentedbutton
 " @summary Example for the different row modes
-" @origin sap.ui.table.sample.RowModes - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowModes (status: checked)
+" @origin sap.ui.table.sample.RowModes - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.RowModes (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_164 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -58,12 +58,12 @@ CLASS z2ui5_cl_smpc_app_164 IMPLEMENTATION.
     " selectedKey bind it directly (the 'ui>' prefix is dropped - last path
     " segment identical, which structural-diff matches).
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader` v = `false`

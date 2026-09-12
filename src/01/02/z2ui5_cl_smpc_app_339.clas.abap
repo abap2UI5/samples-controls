@@ -1,6 +1,6 @@
 " @keywords splitter sap.ui.layout splitter3 app text splitterlayoutdata
 " @summary Simple splitter example with two content areas that cannot be resized
-" @origin sap.ui.layout.sample.Splitter3 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter3 (status: reviewed)
+" @origin sap.ui.layout.sample.Splitter3 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter3 (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_339 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

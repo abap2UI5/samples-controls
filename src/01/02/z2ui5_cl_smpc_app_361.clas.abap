@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table selection label select item overflowtoolbar title toolbarspacer button switch column
 " @summary Selection example showing selection modes and selection behaviors of table.
-" @origin sap.ui.table.sample.Selection - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Selection (status: reviewed)
+" @origin sap.ui.table.sample.Selection - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Selection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_361 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -87,12 +87,12 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
     " table reports its selection through rowSelectionChange so the three
     " toolbar buttons can report it from the model.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader`      v = `false`
@@ -111,7 +111,7 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                     )->a( n = `selectedKey` v = client->_bind( select_mode_key )
                     )->a( n = `change`      v = client->_event( `MODE_CHANGE` )
 
-                    )->tag( n = `Item` ns = `c`
+                    )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{KEY}`
                         )->a( n = `text` v = `{TEXT}`
 
@@ -126,17 +126,17 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                     )->a( n = `items`       v = client->_bind( t_behavioritems )
                     )->a( n = `selectedKey` v = client->_bind( selection_behavior )
 
-                    )->tag( n = `Item` ns = `c`
+                    )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{KEY}`
                         )->a( n = `text` v = `{TEXT}`
 
                 )->end(
                 )->ele( `Table`
-                    )->a( n = `id`                 v = `table1`
-                    )->a( n = `rows`               v = client->_bind( t_products )
-                    )->a( n = `selectionMode`      v = client->_bind( selection_mode )
-                    )->a( n = `selectionBehavior`  v = client->_bind( selection_behavior )
-                    )->a( n = `enableSelectAll`    v = client->_bind( enable_select_all )
+                    )->a( n = `id`                v = `table1`
+                    )->a( n = `rows`              v = client->_bind( t_products )
+                    )->a( n = `selectionMode`     v = client->_bind( selection_mode )
+                    )->a( n = `selectionBehavior` v = client->_bind( selection_behavior )
+                    )->a( n = `enableSelectAll`   v = client->_bind( enable_select_all )
                     " The three buttons all read the table's CURRENT selection,
                     " so the wire has to carry that - not the event's delta.
                     " rowIndices is documented as "array of row indices which
@@ -151,7 +151,7 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                               val   = `SELECTION_CHANGE`
                               t_arg = VALUE #( ( `${$source>}.getSelectedIndices()` )
                                                ( `${$source>}.getSelectedIndex()` ) ) )
-                    )->a( n = `ariaLabelledBy`     v = `title`
+                    )->a( n = `ariaLabelledBy` v = `title`
 
                     )->ele( `extension`
                         )->ele( n = `OverflowToolbar` ns = `m`
@@ -262,7 +262,7 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                                     )->a( n = `value` v = `{SUPPLIERNAME}`
                                     )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_suppliers ) }', templateShareable: false \}|
 
-                                    )->tag( n = `Item` ns = `c`
+                                    )->tag( n = `Item` ns = `core`
                                         )->a( n = `text` v = `{NAME}`
 
                                 )->end(
@@ -323,7 +323,7 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                                     )->a( n = `selectedKey` v = `{CATEGORY}`
                                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( t_categories ) }', templateShareable: false \}|
 
-                                    )->tag( n = `Item` ns = `c`
+                                    )->tag( n = `Item` ns = `core`
                                         )->a( n = `text` v = `{NAME}`
                                         )->a( n = `key`  v = `{NAME}`
 
@@ -338,7 +338,7 @@ CLASS z2ui5_cl_smpc_app_361 IMPLEMENTATION.
                                 )->a( n = `text` v = `Status`
 
                             )->ele( `template`
-                                )->tag( n = `Icon` ns = `c`
+                                )->tag( n = `Icon` ns = `core`
                                     )->a( n = `src` v = `{AVAILABLEICON}`
 
                             )->end(

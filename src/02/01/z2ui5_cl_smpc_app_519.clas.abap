@@ -1,6 +1,6 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxsuggestionsandvaluestate verticallayout label item formattedtext link
 " @summary MultiComboBox with suggestions and Value State Message containing a link.
-" @origin sap.m.sample.MultiComboBoxSuggestionsAndValueState - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxSuggestionsAndValueState (status: generated)
+" @origin sap.m.sample.MultiComboBoxSuggestionsAndValueState - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxSuggestionsAndValueState (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_519 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

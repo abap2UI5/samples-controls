@@ -1,6 +1,6 @@
 " @keywords form sap.ui.layout.form form_column_twogroups234 bar button vbox title columnlayout formcontainer formelement text link
 " @summary Form with two groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size).
-" @origin sap.ui.layout.sample.Form_Column_twoGroups234 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form_Column_twoGroups234 (status: reviewed)
+" @origin sap.ui.layout.sample.Form_Column_twoGroups234 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form_Column_twoGroups234 (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_324 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -78,7 +78,7 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Page`
@@ -89,8 +89,8 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                 )->ele( `Bar`
                     )->ele( `contentRight`
                         )->tag( `Button`
-                            )->a( n = `id`      v = `edit`
-                            )->a( n = `text`    v = `Edit`
+                            )->a( n = `id`   v = `edit`
+                            )->a( n = `text` v = `Edit`
                             " the original enables Edit once the mock request completes;
                             " the ABAP model is seeded synchronously, so it starts enabled
                             )->a( n = `enabled` v = `true`
@@ -118,69 +118,69 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = |\{= !${ client->_bind( edit_mode ) }\}|
 
-                    )->ele( n = `Form` ns = `f`
+                    )->ele( n = `Form` ns = `form`
                         )->a( n = `id`       v = `FormDisplayColumn_twoGroups234`
                         )->a( n = `editable` v = `false`
 
-                        )->ele( n = `title` ns = `f`
+                        )->ele( n = `title` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Supplier`
 
                         )->end(
-                        )->ele( n = `layout` ns = `f`
-                            )->tag( n = `ColumnLayout` ns = `f`
+                        )->ele( n = `layout` ns = `form`
+                            )->tag( n = `ColumnLayout` ns = `form`
                                 )->a( n = `columnsM`  v = `2`
                                 )->a( n = `columnsL`  v = `3`
                                 )->a( n = `columnsXL` v = `4`
 
                         )->end(
-                        )->ele( n = `formContainers` ns = `f`
-                            )->ele( n = `FormContainer` ns = `f`
+                        )->ele( n = `formContainers` ns = `form`
+                            )->ele( n = `FormContainer` ns = `form`
                                 )->a( n = `title` v = `Address`
 
-                                )->ele( n = `formElements` ns = `f`
-                                    )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `formElements` ns = `form`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Name`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( suppliername )
                                                 )->a( n = `id`   v = `nameText`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Street`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = |{ client->_bind( street ) } { client->_bind( housenumber ) }|
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `ZIP Code/City`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = |{ client->_bind( zipcode ) } { client->_bind( city ) }|
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Country`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( country )
                                                 )->a( n = `id`   v = `countryText`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Web`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Link`
                                                 )->a( n = `text` v = `Url`
                                                 )->a( n = `href` v = client->_bind( url )
@@ -189,68 +189,68 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                                     )->end(
                                 )->end(
                             )->end(
-                            )->ele( n = `FormContainer` ns = `f`
+                            )->ele( n = `FormContainer` ns = `form`
                                 )->a( n = `title` v = `Contact`
 
-                                )->ele( n = `formElements` ns = `f`
-                                    )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `formElements` ns = `form`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Twitter`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( twitter )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Email`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( email )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Tel.`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( tel )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `SMS`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( sms )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Mobile`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( mobile )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Pager`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( pager )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Fax`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = client->_bind( fax )
 
@@ -267,41 +267,41 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = client->_bind( edit_mode )
 
-                    )->ele( n = `Form` ns = `f`
+                    )->ele( n = `Form` ns = `form`
                         )->a( n = `id`       v = `FormChangeColumn_twoGroups234`
                         )->a( n = `editable` v = `true`
 
-                        )->ele( n = `title` ns = `f`
+                        )->ele( n = `title` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Supplier`
 
                         )->end(
-                        )->ele( n = `layout` ns = `f`
-                            )->tag( n = `ColumnLayout` ns = `f`
+                        )->ele( n = `layout` ns = `form`
+                            )->tag( n = `ColumnLayout` ns = `form`
                                 )->a( n = `columnsM`  v = `2`
                                 )->a( n = `columnsL`  v = `3`
                                 )->a( n = `columnsXL` v = `4`
 
                         )->end(
-                        )->ele( n = `formContainers` ns = `f`
-                            )->ele( n = `FormContainer` ns = `f`
+                        )->ele( n = `formContainers` ns = `form`
+                            )->ele( n = `FormContainer` ns = `form`
                                 )->a( n = `title` v = `Address`
 
-                                )->ele( n = `formElements` ns = `f`
-                                    )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `formElements` ns = `form`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Name`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( suppliername )
                                                 )->a( n = `id`    v = `name`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Street`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( street )
 
@@ -309,7 +309,7 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                                                 )->a( n = `value` v = client->_bind( housenumber )
 
                                                 )->ele( `layoutData`
-                                                    )->tag( n = `ColumnElementData` ns = `f`
+                                                    )->tag( n = `ColumnElementData` ns = `form`
                                                         )->a( n = `cellsSmall` v = `2`
                                                         )->a( n = `cellsLarge` v = `1`
 
@@ -317,15 +317,15 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                                             )->end(
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `ZIP Code/City`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->ele( `Input`
                                                 )->a( n = `value` v = client->_bind( zipcode )
 
                                                 )->ele( `layoutData`
-                                                    )->tag( n = `ColumnElementData` ns = `f`
+                                                    )->tag( n = `ColumnElementData` ns = `form`
                                                         )->a( n = `cellsSmall` v = `3`
                                                         )->a( n = `cellsLarge` v = `2`
 
@@ -336,10 +336,10 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Country`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->ele( `Select`
                                                 )->a( n = `id`          v = `country`
                                                 )->a( n = `selectedKey` v = client->_bind( country )
@@ -359,10 +359,10 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                                             )->end(
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Web`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( url )
                                                 )->a( n = `type`  v = `Url`
@@ -371,73 +371,73 @@ CLASS z2ui5_cl_smpc_app_324 IMPLEMENTATION.
                                     )->end(
                                 )->end(
                             )->end(
-                            )->ele( n = `FormContainer` ns = `f`
+                            )->ele( n = `FormContainer` ns = `form`
                                 )->a( n = `title` v = `Contact`
 
-                                )->ele( n = `formElements` ns = `f`
-                                    )->ele( n = `FormElement` ns = `f`
+                                )->ele( n = `formElements` ns = `form`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Twitter`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( twitter )
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Email`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( email )
                                                 )->a( n = `type`  v = `Email`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Tel.`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( tel )
                                                 )->a( n = `type`  v = `Tel`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `SMS`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( sms )
                                                 )->a( n = `type`  v = `Tel`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Mobile`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( mobile )
                                                 )->a( n = `type`  v = `Tel`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Pager`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( pager )
                                                 )->a( n = `type`  v = `Tel`
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `FormElement` ns = `f`
+                                    )->ele( n = `FormElement` ns = `form`
                                         )->a( n = `label` v = `Fax`
 
-                                        )->ele( n = `fields` ns = `f`
+                                        )->ele( n = `fields` ns = `form`
                                             )->tag( `Input`
                                                 )->a( n = `value` v = client->_bind( fax )
                                                 )->a( n = `type`  v = `Tel` ).

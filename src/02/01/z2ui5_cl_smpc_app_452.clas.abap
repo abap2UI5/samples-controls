@@ -1,6 +1,6 @@
 " @keywords messagestrip message strip sap.m custommessagestripdesign verticallayout panel horizontallayout label select item
 " @summary Demonstrates MessageStrips with different colorSet and colorScheme properties.
-" @origin sap.m.sample.CustomMessageStripDesign - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.CustomMessageStripDesign (status: generated)
+" @origin sap.m.sample.CustomMessageStripDesign - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.CustomMessageStripDesign (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_452 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

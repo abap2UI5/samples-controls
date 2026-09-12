@@ -1,6 +1,6 @@
 " @keywords productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem
 " @summary This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.
-" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: reviewed)
+" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_165 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -56,18 +56,18 @@ CLASS z2ui5_cl_smpc_app_165 IMPLEMENTATION.
     " controller so the press only toasts was refuted on 2026-08-05 and had
     " been left standing in this comment until 2026-08-23.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`    v = `100%`
 
-        )->ele( n = `VerticalLayout` ns = `layout`
+        )->ele( n = `VerticalLayout` ns = `l`
             )->a( n = `class` v = `sapUiContentPadding`
 
             )->tag( `Button`
-                )->a( n = `id`    v = `pSwitchBtn`
-                )->a( n = `icon`  v = `sap-icon://menu`
-                )->a( n = `text`  v = `Open Product Switch`
+                )->a( n = `id`   v = `pSwitchBtn`
+                )->a( n = `icon` v = `sap-icon://menu`
+                )->a( n = `text` v = `Open Product Switch`
                 " fnOpen loads ProductSwitchPopover.fragment.xml and opens it at this
                 " button - rebuilt as a core:FragmentDefinition shown through
                 " popover_display( by_id = ... ), the documented fragment-popover path

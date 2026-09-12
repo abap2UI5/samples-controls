@@ -1,6 +1,6 @@
 " @keywords text sap.m textrenderwhitespace simpleform label switch slider panel
 " @summary The Text control has a property allowing browsers to render whitespace and tabs.
-" @origin sap.m.sample.TextRenderWhitespace - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextRenderWhitespace (status: generated)
+" @origin sap.m.sample.TextRenderWhitespace - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextRenderWhitespace (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_443 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -51,10 +51,10 @@ CLASS z2ui5_cl_smpc_app_443 IMPLEMENTATION.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
         )->a( n = `displayBlock` v = `true`
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `layout`          v = `ResponsiveGridLayout`
             )->a( n = `editable`        v = `true`
             )->a( n = `title`           v = `Text Properties`

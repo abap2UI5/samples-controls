@@ -1,6 +1,6 @@
 " @keywords draftindicator draft indicator sap.m semanticpagedraftindicator fullscreenpage addaction flagaction favoriteaction messagesindicator messagepopover messageitem
 " @summary Integration of Draft Indicator inside Semantic Page
-" @origin sap.m.sample.SemanticPageDraftIndicator - https://sdk.openui5.org/entity/sap.m.DraftIndicator/sample/sap.m.sample.SemanticPageDraftIndicator (status: generated)
+" @origin sap.m.sample.SemanticPageDraftIndicator - https://sdk.openui5.org/entity/sap.m.DraftIndicator/sample/sap.m.sample.SemanticPageDraftIndicator (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_448 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

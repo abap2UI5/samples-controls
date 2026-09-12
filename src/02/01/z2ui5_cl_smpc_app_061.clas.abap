@@ -1,6 +1,6 @@
 " @keywords menubutton menu button sap.m buttons regular split mode overflowtoolbar toolbarspacer label menuitem
 " @summary This control is used to open a menu in both desktop and mobile.
-" @origin sap.m.sample.MenuButton - https://sdk.openui5.org/entity/sap.m.MenuButton/sample/sap.m.sample.MenuButton (status: checked)
+" @origin sap.m.sample.MenuButton - https://sdk.openui5.org/entity/sap.m.MenuButton/sample/sap.m.sample.MenuButton (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_061 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

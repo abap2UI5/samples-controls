@@ -1,6 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpageanalyticaltable dynamicpagetitle title label overflowtoolbar generictag objectnumber toolbarspacer button
 " @summary Dynamic Page containing an Analytical Table in the content area aligned with the SAP Fiori List Report floorplan.
-" @origin sap.f.sample.DynamicPageAnalyticalTable - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageAnalyticalTable (status: generated)
+" @origin sap.f.sample.DynamicPageAnalyticalTable - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageAnalyticalTable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_559 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -70,21 +70,21 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(page) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:c`    v = `sap.ui.core`
-        )->a( n = `xmlns:u`    v = `sap.ui.unified`
-        )->a( n = `xmlns:t`    v = `sap.ui.table`
-        )->a( n = `xmlns:f`    v = `sap.f`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
+        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`       v = `sap.m`
+        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:u`     v = `sap.ui.unified`
+        )->a( n = `xmlns:table` v = `sap.ui.table`
+        )->a( n = `xmlns:f`     v = `sap.f`
+        )->a( n = `xmlns:l`     v = `sap.ui.layout`
 
         )->ele( n = `DynamicPage` ns = `f`
-            )->a( n = `id`                         v = `dynamicPageId`
+            )->a( n = `id`                          v = `dynamicPageId`
             )->a( n = `preserveHeaderStateOnScroll` v = `true`
-            )->a( n = `headerExpanded`             v = client->_bind( headerexpanded )
-            )->a( n = `showFooter`                 v = `true`
-            )->a( n = `fitContent`                 v = `true` ).
+            )->a( n = `headerExpanded`              v = client->_bind( headerexpanded )
+            )->a( n = `showFooter`                  v = `true`
+            )->a( n = `fitContent`                  v = `true` ).
 
     " DynamicPage Title
     DATA(title) = page->ele( n = `title` ns = `f`
@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                     )->a( n = `status` v = `Error`
                     )->a( n = `design` v = `StatusIconHidden`
                     " onGenericTagPress anchors the card popover on the pressed tag
-                    )->a( n = `press`  v = client->_event( val = `GENERIC_TAG` arg = `$event.oSource.sId` )
+                    )->a( n = `press` v = client->_event( val = `GENERIC_TAG` arg = `$event.oSource.sId` )
 
                     )->tag( `ObjectNumber`
                         )->a( n = `number`     v = `2`
@@ -160,10 +160,10 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                         )->a( n = `class`            v = `sapUiNoContentPadding`
 
                         )->ele( `content`
-                            )->ele( n = `HorizontalLayout` ns = `layout`
+                            )->ele( n = `HorizontalLayout` ns = `l`
                                 )->a( n = `allowWrapping` v = `true`
 
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
                                     )->a( n = `class` v = `sapUiMediumMarginEnd`
 
                                     )->tag( `ObjectAttribute`
@@ -177,7 +177,7 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                                         )->a( n = `text`  v = `34`
 
                                 )->end(
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
 
                                     )->tag( `ObjectAttribute`
                                         )->a( n = `title` v = `Availability`
@@ -195,12 +195,12 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
     )->end( ).
 
     DATA(columns) = page->ele( n = `content` ns = `f`
-        )->ele( n = `Table` ns = `t`
+        )->ele( n = `Table` ns = `table`
             )->a( n = `rows`          v = client->_bind( productcollection )
             )->a( n = `selectionMode` v = `MultiToggle`
             )->a( n = `rowMode`       v = `Auto`
 
-            )->ele( n = `extension` ns = `t`
+            )->ele( n = `extension` ns = `table`
                 )->ele( `OverflowToolbar`
                     )->a( n = `style` v = `Clear`
 
@@ -209,83 +209,83 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
 
                 )->end(
             )->end(
-            )->ele( n = `columns` ns = `t` ).
+            )->ele( n = `columns` ns = `table` ).
 
-    columns->ele( n = `Column` ns = `t`
+    columns->ele( n = `Column` ns = `table`
         )->a( n = `width` v = `11rem`
         )->tag( `Label`
             )->a( n = `text` v = `Product Name`
-        )->ele( n = `template` ns = `t`
+        )->ele( n = `template` ns = `table`
             )->tag( `Text`
                 )->a( n = `text`     v = `{NAME}`
                 )->a( n = `wrapping` v = `false`
 
         )->end(
     )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `11rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Product Id`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `Input`
                     )->a( n = `value` v = `{PRODUCTID}`
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width`  v = `6rem`
             )->a( n = `hAlign` v = `End`
             )->tag( `Label`
                 )->a( n = `text` v = `Quantity`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `Label`
                     )->a( n = `text` v = `{QUANTITY}`
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `9rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Status`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `ObjectStatus`
-                    )->a( n = `text`  v = `{STATUS}`
+                    )->a( n = `text` v = `{STATUS}`
                     " formatAvailableToObjectState is computed in ABAP (thin frontend)
                     )->a( n = `state` v = `{AVAILABLESTATE}`
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `9rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Price`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( n = `Currency` ns = `u`
                     )->a( n = `value`    v = `{PRICE}`
                     )->a( n = `currency` v = `{CURRENCYCODE}`
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `12rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Supplier`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->ele( `ComboBox`
                     )->a( n = `value` v = `{SUPPLIERNAME}`
                     )->a( n = `items` v = |\{ path: '{ client->_bind_path( suppliers ) }', templateShareable: false \}|
 
-                    )->tag( n = `Item` ns = `c`
+                    )->tag( n = `Item` ns = `core`
                         )->a( n = `text` v = `{NAME}`
 
                 )->end(
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `9rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Image`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `Link`
                     )->a( n = `text`   v = `Show Image`
                     )->a( n = `href`   v = `{PRODUCTPICURL}`
@@ -293,11 +293,11 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `9rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Details`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 " handleDetailsPress toasts the row's ProductId - the row field
                 " resolves on the client, so no round-trip
                 )->tag( `Button`
@@ -311,50 +311,50 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `7rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Heavy Weight`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `CheckBox`
                     )->a( n = `selected` v = |\{ path: 'HEAVY', type: 'sap.ui.model.type.String' \}|
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width` v = `12rem`
             )->tag( `Label`
                 )->a( n = `text` v = `Category`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->ele( `Select`
                     )->a( n = `selectedKey` v = `{CATEGORY}`
                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false \}|
 
-                    )->tag( n = `Item` ns = `c`
+                    )->tag( n = `Item` ns = `core`
                         )->a( n = `text` v = `{NAME}`
                         )->a( n = `key`  v = `{NAME}`
 
                 )->end(
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width`  v = `6rem`
             )->a( n = `hAlign` v = `Center`
             )->tag( `Label`
                 )->a( n = `text` v = `Status`
-            )->ele( n = `template` ns = `t`
-                )->tag( n = `Icon` ns = `c`
+            )->ele( n = `template` ns = `table`
+                )->tag( n = `Icon` ns = `core`
                     " formatAvailableToIcon is computed in ABAP (thin frontend)
                     )->a( n = `src` v = `{AVAILABLEICON}`
 
             )->end(
         )->end(
-        )->ele( n = `Column` ns = `t`
+        )->ele( n = `Column` ns = `table`
             )->a( n = `width`  v = `11rem`
             )->a( n = `hAlign` v = `Center`
             )->tag( `Label`
                 )->a( n = `text` v = `Delivery Date`
-            )->ele( n = `template` ns = `t`
+            )->ele( n = `template` ns = `table`
                 )->tag( `DatePicker`
                     )->a( n = `value` v = |\{ path: 'DELIVERYDATE', type: 'sap.ui.model.type.Date', formatOptions: \{ source: \{ pattern: 'yyyy-MM-dd' \} \} \}|
 

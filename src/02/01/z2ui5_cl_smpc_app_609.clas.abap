@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarcreateapp vbox button singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview calendarappointment
 " @summary This sample demonstrates how the SinglePlanningCalendar control can be used in combination with sap.m.Dialog to create new appointments and sap.m.ResponsivePopover to edit already existing appointments.
-" @origin sap.m.sample.SinglePlanningCalendarCreateApp - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarCreateApp (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarCreateApp - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarCreateApp (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_609 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -97,32 +97,32 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
     " the drag, resize and create wires carry the interval's LOCAL date parts
     " (a UTC toISOString( ) would shift the day)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`                            v = `SPC1`
-                )->a( n = `title`                         v = `My Calendar`
-                )->a( n = `appointmentSelect`             v = client->_event(
+                )->a( n = `id`                v = `SPC1`
+                )->a( n = `title`             v = `My Calendar`
+                )->a( n = `appointmentSelect` v = client->_event(
                           val   = `APPT_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
-                )->a( n = `headerDateSelect`              v = client->_event(
+                )->a( n = `headerDateSelect` v = client->_event(
                           val   = `HEADER_DATE`
                           t_arg = VALUE #(
                             ( `${$parameters>/date}.getFullYear()` )
                             ( `${$parameters>/date}.getMonth() + 1` )
                             ( `${$parameters>/date}.getDate()` ) ) )
                 " handleStartDateChange names the new start date in a toast
-                )->a( n = `startDateChange`               v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
-                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `appointments`                  v = client->_bind( t_appointments )
+                )->a( n = `startDateChange` v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
+                )->a( n = `startDate`       v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `appointments`    v = client->_bind( t_appointments )
 
                 )->ele( `actions`
                     )->tag( `Button`
@@ -147,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`        v = `{TITLE}`
                         )->a( n = `text`         v = `{TEXT}`
                         )->a( n = `type`         v = `{TYPE}`
@@ -167,7 +167,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `ResponsivePopover`
@@ -190,7 +190,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `SimpleForm` ns = `f`
+            )->ele( n = `SimpleForm` ns = `form`
                 )->a( n = `id`                      v = `appointmentEditForm`
                 )->a( n = `editable`                v = `false`
                 )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -238,7 +238,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Dialog`
@@ -266,7 +266,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
                 )->a( n = `class` v = `sapUiContentPadding`
                 )->a( n = `width` v = `100%`
 
-                )->ele( n = `SimpleForm` ns = `f`
+                )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `id`                      v = `appointmentCreateForm`
                     )->a( n = `editable`                v = `true`
                     )->a( n = `layout`                  v = `ResponsiveGridLayout`

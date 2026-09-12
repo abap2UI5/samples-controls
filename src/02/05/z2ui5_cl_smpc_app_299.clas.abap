@@ -1,6 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationactions vbox button navigationlist navigationlistitem dialog label input
 " @summary SideNavigation with a quick create action button.
-" @origin sap.tnt.sample.SideNavigationActions - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationActions (status: reviewed)
+" @origin sap.tnt.sample.SideNavigationActions - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationActions (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_299 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

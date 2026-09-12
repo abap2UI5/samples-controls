@@ -1,6 +1,6 @@
 " @keywords date sap.ui.model.type typedateasdate simpleform label datepicker text
 " @summary This sample explains the formatting options of the Date type with the date being available as date object.
-" @origin sap.ui.core.sample.TypeDateAsDate - https://sdk.openui5.org/entity/sap.ui.model.type.Date/sample/sap.ui.core.sample.TypeDateAsDate (status: reviewed)
+" @origin sap.ui.core.sample.TypeDateAsDate - https://sdk.openui5.org/entity/sap.ui.model.type.Date/sample/sap.ui.core.sample.TypeDateAsDate (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_282 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

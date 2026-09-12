@@ -1,6 +1,6 @@
 " @keywords sap.ui.core fieldgroup simpleform title label input griddata select item combobox messagestrip toolbar
 " @summary A control's field group id can be used to define a virtual group of fields that should be validated together.
-" @origin sap.ui.core.sample.FieldGroup - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.FieldGroup (status: checked)
+" @origin sap.ui.core.sample.FieldGroup - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.FieldGroup (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_272 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `height`     v = `100%`
 
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
             )->ele( `content`
 
-                )->ele( n = `SimpleForm` ns = `f`
+                )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `id`               v = `FieldGroupView`
                     )->a( n = `maxContainerCols` v = `2`
                     )->a( n = `editable`         v = `true`
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
                     " (measured 2026-08-01 - the expression grammar allows [n])
                     )->a( n = `validateFieldGroup` v = client->_event( val = `VALIDATE_FIELD_GROUP` arg = `${$parameters>/fieldGroupIds}[0]` )
 
-                    )->ele( n = `content` ns = `f`
+                    )->ele( n = `content` ns = `form`
 
                         )->tag( n = `Title` ns = `core`
                             )->a( n = `text` v = `Billing Information`

@@ -1,6 +1,6 @@
 " @keywords calendar sap.ui.unified calendarspecialdayslegend html verticallayout datetyperange calendarlegend calendarlegenditem togglebutton
 " @summary Calendar with special days and legend
-" @origin sap.ui.unified.sample.CalendarSpecialDaysLegend - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSpecialDaysLegend (status: reviewed)
+" @origin sap.ui.unified.sample.CalendarSpecialDaysLegend - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSpecialDaysLegend (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_308 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

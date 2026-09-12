@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputfilteringsuggestions vbox item column label columnlistitem multiinputext formattedtext
 " @summary The default filtering is 'starts with per term', which filters by the beginning of every word in every column.
-" @origin sap.m.sample.MultiInputFilteringSuggestions - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputFilteringSuggestions (status: generated)
+" @origin sap.m.sample.MultiInputFilteringSuggestions - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputFilteringSuggestions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_612 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

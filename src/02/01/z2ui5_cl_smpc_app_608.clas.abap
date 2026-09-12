@@ -1,6 +1,6 @@
 " @keywords select sap.m select2columns title hbox label slider switch text listitem
 " @summary Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems.
-" @origin sap.m.sample.Select2Columns - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select2Columns (status: generated)
+" @origin sap.m.sample.Select2Columns - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.Select2Columns (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_608 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

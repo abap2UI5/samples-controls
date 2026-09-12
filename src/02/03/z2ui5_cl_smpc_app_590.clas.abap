@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageformfocusableinput objectpagedynamicheadertitle breadcrumbs link title flexbox avatar text
 " @summary Object Page that focuses its first editable input in the currently selected section.
-" @origin sap.uxap.sample.ObjectPageFormFocusableInput - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormFocusableInput (status: generated)
+" @origin sap.uxap.sample.ObjectPageFormFocusableInput - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormFocusableInput (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_590 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -35,13 +35,13 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
     " each hold one blockcolor:BlockBlue, a BlockBase around a view whose whole
     " body is a coloured html:div - inlined as the text it shows (see sidecar)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:f`      v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -123,14 +123,14 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->a( n = `src`         v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_275314.png`
                         )->a( n = `displaySize` v = `L`
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `+33 6 4512 5158`
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text` v = `DeniseSmith@sap.com`
 
-                        )->ele( n = `HorizontalLayout` ns = `layout`
+                        )->ele( n = `HorizontalLayout` ns = `l`
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/linkedin.png`
                             )->tag( n = `Image` ns = `m`
@@ -140,7 +140,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Hello! I am Denise and I use UxAP`
@@ -155,7 +155,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->end(
                     )->end(
 
-                    )->ele( n = `VerticalLayout` ns = `layout`
+                    )->ele( n = `VerticalLayout` ns = `l`
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `San Jose, USA`
@@ -269,14 +269,14 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
                         )->ele( `ObjectPageSubSection`
                             )->a( n = `titleUppercase` v = `false`
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `f`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable`  v = `true`
                                     )->a( n = `layout`    v = `ColumnLayout`
                                     )->a( n = `columnsM`  v = `2`
                                     )->a( n = `columnsL`  v = `3`
                                     )->a( n = `columnsXL` v = `4`
 
-                                    )->ele( n = `content` ns = `f`
+                                    )->ele( n = `content` ns = `form`
                                         )->tag( n = `Label` ns = `m`
                                             )->a( n = `text` v = `Name`
                                         " the Focus button's target: the first editable
@@ -289,7 +289,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
 
                                         )->ele( n = `Input` ns = `m`
                                             )->ele( n = `layoutData` ns = `m`
-                                                )->tag( n = `ColumnElementData` ns = `f`
+                                                )->tag( n = `ColumnElementData` ns = `form`
                                                     )->a( n = `cellsSmall` v = `2`
                                                     )->a( n = `cellsLarge` v = `1`
 
@@ -301,7 +301,7 @@ CLASS z2ui5_cl_smpc_app_590 IMPLEMENTATION.
 
                                         )->ele( n = `Input` ns = `m`
                                             )->ele( n = `layoutData` ns = `m`
-                                                )->tag( n = `ColumnElementData` ns = `f`
+                                                )->tag( n = `ColumnElementData` ns = `form`
                                                     )->a( n = `cellsSmall` v = `3`
                                                     )->a( n = `cellsLarge` v = `2`
 

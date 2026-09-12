@@ -1,6 +1,6 @@
 " @keywords card sap.ui.integration manifest shellbar menu menuitem avatar icontabbar icontabfilter gridcontainer gridcontainersettings cardbadgecustomdata
 " @summary Different types of cards types arranged in a sap.f.GridContainer.
-" @origin sap.ui.integration.sample.CardsLayout - https://sdk.openui5.org/entity/sap.ui.integration.Card/sample/sap.ui.integration.sample.CardsLayout (status: reviewed)
+" @origin sap.ui.integration.sample.CardsLayout - https://sdk.openui5.org/entity/sap.ui.integration.Card/sample/sap.ui.integration.sample.CardsLayout (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_118 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -736,12 +736,12 @@ up to 24 hours later:
 
 | Workflow | Job | What it gates |
 |----------|-----|---------------|
-| `pattern-lint.yaml` | `pattern_lint` | the distilled corpus-policy rules |
+| `pattern-lint.yaml` | `pattern_lint` | the distilled corpus-policy rules — method order, the three layout rules (`error` since 2026-09-12, their 382 findings cleared the day before), `types-layout` (the two-line `TYPES:` / `BEGIN OF` form), `hungarian-prefix` (§8's "prefix only `t_` and `s_`"), `statement-too-long` (a per-statement budget just above the largest live-verified statement, since the kernel limit is unmeasured — `scripts/probes/statement-length-probe.mjs` is the worksheet), plus two advisories: `unrolled-chain-repetition` (the same chain line more than 40 times in one method) and `line-headroom` (a line within 15 characters of abaplint's 255) |
 | `check-pins.yaml` | `check_pins` | the whole pin policy: `A2UI5_PIN` well-formed, no stray/duplicate `"branch"` on the abap2UI5 dependency in any abaplint config, `ui5/properties.json` and `ui5/descriptions.json` not older than `ui5/universe.json`, the `@openui5`/`@sapui5` runtime pinned exactly and to the version `@abap2ui5/linter` judges against, and **prose that cites the pin naming the pin's actual value** |
 | `chain-format.yaml` | `chain_format` | the view-chain layout (`npm run fmt:chains` fixes it) |
 | `structural-diff.yaml` | `structural_diff` | port vs. archived original, binding values included |
 | `data-fidelity.yaml` | `data_fidelity` | seeded values vs. the archived sample mocks |
-| `view-gates.yaml` | `view_gates` | properties + structure + headless render — the three former view gates, now run from [abap2UI5-linter](https://github.com/abap2UI5/linter) with only the corpus policy kept here in `scripts/view-gates.mjs`; also `npm run check:collection` for `src/03`, and it publishes the two README badges |
+| `view-gates.yaml` | `view_gates` | properties + structure + headless render — the three former view gates, now run from [abap2UI5-linter](https://github.com/abap2UI5/linter) with only the corpus policy kept here in `scripts/view-gates.mjs`; also `npm run check:collection` for `src/03` and `npm run check:overview` for the generated overview app (`abap2ui5lint-overview.jsonc`), and it publishes the two README badges |
 | `meta-valid.yaml` | `meta_valid` | sidecar schema + referential integrity, the archive the sidecars point at (`check-archive`, §4), and that every generated artefact (overview app, `README.md`, `api.md`, `STATUS.md`, `SAMPLES.md`, `catalogue.json`, `catalogue-derived.json`) is in sync |
 | `tooling-tests.yaml` | `tooling_tests` | the gate/generator tooling's own fixture tests |
 | `check-prose-names.yaml` | `prose_names` | every `z2ui5_cl_*` class named in prose exists, here or in the repository that owns it |
@@ -752,6 +752,48 @@ up to 24 hours later:
 What each gate checks, what a failure means and every legitimate escape hatch
 is in **`.claude/skills/run-the-gates/SKILL.md`** — read it the moment a gate
 fails, and before declaring any skip or deviation to satisfy one.
+
+**Three linter configs, one per thing that nothing else judges** (decided
+2026-09-12, when the 0.6 bump turned `chain-format` red on the overview app):
+
+- `abap2ui5lint-chains.jsonc` — the layout, over the whole tree, property gate
+  OFF. `chain-house-layout` is an `error` there now (it was `warning` only
+  while the run failed on a rule that was not it). Its `distribution: sapui5`
+  is INERT with the property gate off — `sapui5-only-control` is emitted from
+  the snapshot walk that flag switches off — and stays `sapui5` because the
+  tree it covers includes `src/03`; the value is a description of the tree,
+  not a decision that reaches any rule.
+- `abap2ui5lint-collection.jsonc` — `src/03`, property gate on, the 1.71
+  rules as hints, `distribution: sapui5` because that is what the folder IS.
+- `abap2ui5lint-overview.jsonc` — `src/z2ui5_cl_smpc_app_000` alone, property
+  gate on, the 1.71 floor as an error, `distribution: openui5` because the
+  overview ships with the ports and has to load where they load. It exists
+  because the overview was the one class no gate judged for what it BUILDS:
+  no sidecar (so `view_gates` cannot see it), not in `src/03`, and the chains
+  config is blind to a version by design — its INFO button carried
+  `sap-icon://information` (@1.80) into a 1.71 app and nothing said so; the
+  emitter writes `sap-icon://message-information` (1.71) now. Run in
+  `view-gates.yaml` and `gates:full`, next to `check:collection`.
+
+Two facts behind those decisions: **the ports are OpenUI5 rebuilds** (§3), so
+`scripts/view-gates.mjs` passes `distribution: 'openui5'` to the linter and a
+SAPUI5-only control in a port is an error rather than the hint it is when
+nobody has said which distribution the target ships — measured at zero
+findings on the day it was set. And **the overview's catalogue is DATA**:
+`get_catalog( )` quotes every sidecar deviation verbatim, and a linter rule
+that reads the SOURCE for a call shape (`popover_display( by_id = )`, a
+`{/path}` written as text, a `sap-icon://` name) reads that prose as the
+class's own code — 24 findings, 23 of them quotes. The emitter wraps the
+method in the linter's `" abap2ui5lint-disable … " abap2ui5lint-enable`
+block (`scripts/lib/overview-emit.mjs`), which is why no config needs an
+exclusion for it and why the overview's real view code stays judged. #189
+held the same method out of the chain FORMATTER for the same reason.
+
+The **`ADVISORY_BUDGET` map in `scripts/view-gates.mjs` stays** although
+the linter's own configs carry `baseline` and `badge` now: the budget is a
+per-TYPE ratchet that decides which advisory debt this corpus has accepted
+and why (each raise is a dated sentence), which a per-finding baseline file
+cannot say.
 
 **When a distilled lesson is greppable, encode it as a rule in the same
 change** — that is what makes a lesson unrepeatable rather than advisory.

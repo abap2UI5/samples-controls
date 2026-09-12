@@ -1,6 +1,6 @@
 " @keywords select sap.m selectwithwrappeditemtext item
 " @summary Illustrates how the text in items wrap.
-" @origin sap.m.sample.SelectWithWrappedItemText - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithWrappedItemText (status: reviewed)
+" @origin sap.m.sample.SelectWithWrappedItemText - https://sdk.openui5.org/entity/sap.m.Select/sample/sap.m.sample.SelectWithWrappedItemText (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_374 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core margin classes text panel
 " @summary Use standard margin classes 'sapUiTinyMargin', 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) margin to your control.
-" @origin sap.m.sample.StandardMarginsAll - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsAll (status: reviewed)
+" @origin sap.m.sample.StandardMarginsAll - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsAll (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_088 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

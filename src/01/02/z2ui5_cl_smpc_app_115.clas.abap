@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table grid overflowtoolbar title column label text input objectstatus currency combobox
 " @summary Basic example showing most controls which are intended to be used inside a table.
-" @origin sap.ui.table.sample.Basic - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Basic (status: reviewed)
+" @origin sap.ui.table.sample.Basic - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Basic (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_115 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -81,24 +81,24 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
     " but takes an ISO source pattern instead of the original timestamp - the
     " model carries a date STRING, not a JS epoch number (CAPABILITIES date row)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
-            )->a( n = `showHeader`       v = `false`
-            )->a( n = `enableScrolling`  v = `false`
-            )->a( n = `class`            v = `sapUiContentPadding`
+            )->a( n = `showHeader`      v = `false`
+            )->a( n = `enableScrolling` v = `false`
+            )->a( n = `class`           v = `sapUiContentPadding`
 
             )->ele( n = `content` ns = `m`
                 )->ele( `Table`
-                    )->a( n = `rows`           v = client->_bind( productcollection )
-                    )->a( n = `selectionMode`  v = `MultiToggle`
+                    )->a( n = `rows`          v = client->_bind( productcollection )
+                    )->a( n = `selectionMode` v = `MultiToggle`
                     " onPaste toasts the pasted data - composed on the client
-                    )->a( n = `paste`          v = client->follow_up_action(
+                    )->a( n = `paste` v = client->follow_up_action(
                               val   = client->cs_event-control_global
                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                ( `show` )
@@ -139,7 +139,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                             )->end(
                         )->end(
                         )->ele( `Column`
-                            )->a( n = `width` v = `6rem`
+                            )->a( n = `width`  v = `6rem`
                             )->a( n = `hAlign` v = `End`
                             )->tag( n = `Label` ns = `m`
                                 )->a( n = `text` v = `Quantity`
@@ -181,7 +181,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                                     )->a( n = `items` v = |\{ path: '{ client->_bind_path( suppliers ) }', templateShareable: false \}|
 
                                     )->ele( n = `items` ns = `m`
-                                        )->tag( n = `Item` ns = `c`
+                                        )->tag( n = `Item` ns = `core`
                                             )->a( n = `text` v = `{NAME}`
 
                                     )->end(
@@ -238,7 +238,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                                     )->a( n = `items`       v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false \}|
 
                                     )->ele( n = `items` ns = `m`
-                                        )->tag( n = `Item` ns = `c`
+                                        )->tag( n = `Item` ns = `core`
                                             )->a( n = `text` v = `{NAME}`
                                             )->a( n = `key`  v = `{NAME}`
 
@@ -258,15 +258,15 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                                     " The removedTokens guard is required: an ADD fires the
                                     " same event with removedTokens = [], and an unguarded
                                     " [0].getKey() throws before the round-trip even starts
-                                    )->a( n = `tokenUpdate`      v = client->_event(
+                                    )->a( n = `tokenUpdate` v = client->_event(
                                               val   = `TOKEN_UPDATE`
                                               t_arg = VALUE #( ( `${$parameters>/type}` )
                                                                ( `${$parameters>/removedTokens}[0] ? ${$parameters>/removedTokens}[0].getKey() : ''` )
                                                                ( `$event.oSource.getBindingContext().getPath()` ) ) )
-                                    )->a( n = `value`            v = `{ADDITIONALCATEGORY}`
-                                    )->a( n = `tokens`           v = |\{ path: 'ADDITIONALCATEGORIESSELECTION', templateShareable: false \}|
-                                    )->a( n = `suggestionItems`  v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false, sorter: \{ path: 'NAME' \} \}|
-                                    )->a( n = `showValueHelp`    v = `false`
+                                    )->a( n = `value`           v = `{ADDITIONALCATEGORY}`
+                                    )->a( n = `tokens`          v = |\{ path: 'ADDITIONALCATEGORIESSELECTION', templateShareable: false \}|
+                                    )->a( n = `suggestionItems` v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false, sorter: \{ path: 'NAME' \} \}|
+                                    )->a( n = `showValueHelp`   v = `false`
 
                                     )->ele( n = `tokens` ns = `m`
                                         )->tag( n = `Token` ns = `m`
@@ -275,7 +275,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
 
                                     )->end(
                                     )->ele( n = `suggestionItems` ns = `m`
-                                        )->tag( n = `Item` ns = `c`
+                                        )->tag( n = `Item` ns = `core`
                                             " the ORIGINAL writes key="{ProductId}" on a template bound
                                             " over /Categories, whose rows only have a Name - its own quirk,
                                             " ported verbatim (sidecar NOTE)
@@ -293,7 +293,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                             )->tag( n = `Label` ns = `m`
                                 )->a( n = `text` v = `Status`
                             )->ele( `template`
-                                )->tag( n = `Icon` ns = `c`
+                                )->tag( n = `Icon` ns = `core`
                                     )->a( n = `src` v = `{AVAILABLEICON}`
 
                             )->end(

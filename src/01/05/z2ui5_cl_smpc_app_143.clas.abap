@@ -1,6 +1,6 @@
 " @keywords infolabel info label sap.tnt dynamicpage dynamicpagetitle title button dynamicpageheader flexbox panel horizontallayout
 " @summary InfoLabel used as subheader in DynamicPage
-" @origin sap.tnt.sample.InfoLabelInDynamicPage - https://sdk.openui5.org/entity/sap.tnt.InfoLabel/sample/sap.tnt.sample.InfoLabelInDynamicPage (status: reviewed)
+" @origin sap.tnt.sample.InfoLabelInDynamicPage - https://sdk.openui5.org/entity/sap.tnt.InfoLabel/sample/sap.tnt.sample.InfoLabelInDynamicPage (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_143 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -44,14 +44,14 @@ CLASS z2ui5_cl_smpc_app_143 IMPLEMENTATION.
     " 1:1.6:1.6 and 1.6:1:1.6). on_event flips the flags - the press wires are
     " dispatched, not decorative
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:tnt`    v = `sap.tnt`
-        )->a( n = `xmlns:c`      v = `sap.ui.core`
-        )->a( n = `xmlns:sf`     v = `sap.ui.layout.form`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:tnt`  v = `sap.tnt`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `DynamicPage` ns = `f`
             )->a( n = `id`         v = `dynamicPageId`
@@ -107,9 +107,9 @@ CLASS z2ui5_cl_smpc_app_143 IMPLEMENTATION.
                         )->ele( `Panel`
                             )->a( n = `backgroundDesign` v = `Transparent`
                             )->a( n = `class`            v = `sapUiNoContentPadding`
-                            )->ele( n = `HorizontalLayout` ns = `layout`
+                            )->ele( n = `HorizontalLayout` ns = `l`
                                 )->a( n = `allowWrapping` v = `true`
-                                )->ele( n = `VerticalLayout` ns = `layout`
+                                )->ele( n = `VerticalLayout` ns = `l`
                                     )->a( n = `class` v = `sapUiMediumMarginEnd`
                                     )->tag( `ObjectAttribute`
                                         )->a( n = `title` v = `Location`
@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_143 IMPLEMENTATION.
             )->end(
 
             )->ele( n = `content` ns = `f`
-                )->ele( n = `VerticalLayout` ns = `layout`
+                )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( `Text`
                         )->a( n = `text` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula, nulla eget sagittis vulputate, sem dolor iaculis nisi, sit amet semper lectus nibh et leo. Nam ` &&
                                          `luctus ac justo aliquet dignissim. Suspendisse ex magna, volutpat vitae neque ac, iaculis blandit mauris. Vestibulum at vestibulum nisl. Suspendisse eget finibus quam, ` &&

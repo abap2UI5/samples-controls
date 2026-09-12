@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarwithlegend dynamicsidecontent vbox label select item togglebutton planningcalendarrow
 " @summary PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections. For each sap.m.PlanningCalendarRow in the sap.m.
-" @origin sap.m.sample.PlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWithLegend (status: generated)
+" @origin sap.m.sample.PlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWithLegend (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_541 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -96,21 +96,21 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
     " calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:l`       v = `sap.ui.layout`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( n = `DynamicSideContent` ns = `l`
-            )->a( n = `id`                   v = `DynamicSideContent`
-            )->a( n = `class`                v = `sapUiDSCExplored sapUiContentPadding`
+            )->a( n = `id`                    v = `DynamicSideContent`
+            )->a( n = `class`                 v = `sapUiDSCExplored sapUiContentPadding`
             )->a( n = `sideContentVisibility` v = `AlwaysShow`
             " the original keeps the legend flag in a second named model; abap2UI5
             " keeps one default model, so the flag is a field here
-            )->a( n = `showSideContent`      v = client->_bind( legend_shown )
-            )->a( n = `containerQuery`       v = `true`
+            )->a( n = `showSideContent` v = client->_bind( legend_shown )
+            )->a( n = `containerQuery`  v = `true`
 
             )->ele( `VBox`
 
@@ -162,16 +162,16 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                     " onChange calls setFirstDayOfWeek( Number( key ) ); the property is
                     " an INT and the Select's key is a string, so the expression multiplies
                     " by 1 - the Number( ) the original calls
-                    )->a( n = `firstDayOfWeek`            v = |\{= ${ client->_bind( first_day ) } * 1 \}|
+                    )->a( n = `firstDayOfWeek` v = |\{= ${ client->_bind( first_day ) } * 1 \}|
                     " handleViewChange only recomputes the legend's standardItems;
                     " viewKey is bindable, so the key is the shared field and the
                     " legend reads it through an expression
-                    )->a( n = `viewKey`                   v = client->_bind( view_key )
-                    )->a( n = `legend`                    v = `PlanningCalendarLegend`
+                    )->a( n = `viewKey` v = client->_bind( view_key )
+                    )->a( n = `legend`  v = `PlanningCalendarLegend`
                     " ROOT-level aggregation - a bare 'T_' path is RELATIVE and resolves
                     " against nothing outside a row context, and an unbound table is not
                     " serialized at all (app 553 has the same two fixes)
-                    )->a( n = `specialDates`              v = |\{ path: '{ client->_bind_path( t_special_dates ) }', templateShareable: false \}|
+                    )->a( n = `specialDates` v = |\{ path: '{ client->_bind_path( t_special_dates ) }', templateShareable: false \}|
 
                     )->ele( `toolbarContent`
                         )->tag( `ToggleButton`
@@ -190,7 +190,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                             )->a( n = `intervalHeaders` v = `{path: 'T_HEADERS', templateShareable: false}`
 
                             )->ele( `specialDates`
-                                )->tag( n = `DateTypeRange` ns = `unified`
+                                )->tag( n = `DateTypeRange` ns = `u`
                                     )->a( n = `startDate`     v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `endDate`       v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `type`          v = `{TYPE}`
@@ -198,7 +198,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
 
                             )->end(
                             )->ele( `appointments`
-                                )->tag( n = `CalendarAppointment` ns = `unified`
+                                )->tag( n = `CalendarAppointment` ns = `u`
                                     )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `icon`      v = `{PIC}`
@@ -209,7 +209,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
 
                             )->end(
                             )->ele( `intervalHeaders`
-                                )->tag( n = `CalendarAppointment` ns = `unified`
+                                )->tag( n = `CalendarAppointment` ns = `u`
                                     )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                     )->a( n = `icon`      v = `{PIC}`
@@ -221,7 +221,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                     )->end(
 
                     )->ele( `specialDates`
-                        )->tag( n = `DateTypeRange` ns = `unified`
+                        )->tag( n = `DateTypeRange` ns = `u`
                             )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                             )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                             )->a( n = `type`      v = `{TYPE}`
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                 )->a( n = `width` v = `200px`
 
                 )->ele( `PlanningCalendarLegend`
-                    )->a( n = `id`               v = `PlanningCalendarLegend`
+                    )->a( n = `id` v = `PlanningCalendarLegend`
                     " ROOT-level aggregations - a bare 'T_' path is RELATIVE and resolves
                     " against nothing outside a row context, and an unbound table is not
                     " serialized at all (app 553 has the same two fixes)
@@ -244,10 +244,10 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                     " changeStandardItemsPerView swaps Selected for WorkingDay off the
                     " OneMonth view; the property is bindable, so the expression over
                     " the shared view key carries the same switch
-                    )->a( n = `standardItems`    v = |\{= ${ client->_bind( view_key ) } === 'One Month' ? ['Today','Selected','NonWorkingDay'] : ['Today','WorkingDay','NonWorkingDay'] \}|
+                    )->a( n = `standardItems` v = |\{= ${ client->_bind( view_key ) } === 'One Month' ? ['Today','Selected','NonWorkingDay'] : ['Today','WorkingDay','NonWorkingDay'] \}|
 
                     )->ele( `items`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `tooltip` v = `{TEXT}`
@@ -255,7 +255,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `appointmentItems`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `tooltip` v = `{TEXT}` ).

@@ -1,6 +1,6 @@
 " @keywords notificationlistgroup notification list group sap.m grouped notifications vbox notificationlist flexitemdata button notificationlistitem
 " @summary A control suitable for grouping notifications.
-" @origin sap.m.sample.NotificationListGroup - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroup (status: reviewed)
+" @origin sap.m.sample.NotificationListGroup - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.NotificationListGroup (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_077 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

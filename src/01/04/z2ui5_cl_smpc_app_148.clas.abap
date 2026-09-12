@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f drag drop panel toolbar title draginfo griddropinfo gridboxlayout
 " @summary This sample represents GridList with enabled Drag and Drop functionality.
-" @origin sap.f.sample.GridListDragAndDrop - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListDragAndDrop (status: reviewed)
+" @origin sap.f.sample.GridListDragAndDrop - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListDragAndDrop (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_148 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

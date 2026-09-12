@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardmarginsenforcewidthauto icontabbar icontabfilter simpleform title label text list
 " @summary Some controls (for example the IconTabBar) do not have a 'width' property but still have a default width of 100%. We provide css class 'sapUiForceWidthAuto' to overwrite the control's width in such a case.
-" @origin sap.m.sample.StandardMarginsEnforceWidthAuto - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsEnforceWidthAuto (status: generated)
+" @origin sap.m.sample.StandardMarginsEnforceWidthAuto - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardMarginsEnforceWidthAuto (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_484 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -33,7 +33,7 @@ CLASS z2ui5_cl_smpc_app_484 IMPLEMENTATION.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -49,10 +49,10 @@ CLASS z2ui5_cl_smpc_app_484 IMPLEMENTATION.
                     )->a( n = `key`  v = `info`
                     )->a( n = `text` v = `Info`
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `layout` v = `ResponsiveGridLayout`
 
-                        )->ele( n = `title` ns = `f`
+                        )->ele( n = `title` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `A Form`
 
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_484 IMPLEMENTATION.
         )->end(
 
         )->tag( `Text`
-            )->a( n = `text`  v = `The IconTabBar above does not have a width property and renders a default width of '100%'. ` &&
+            )->a( n = `text` v = `The IconTabBar above does not have a width property and renders a default width of '100%'. ` &&
                                   `Therefore we use margin class 'sapUiForceWidthAuto' to set its width to 'auto'. To clear a ` &&
                                   `16px (1rem) space all around, we use class 'sapUiSmallMargin'.`
             )->a( n = `class` v = `sapUiExploredNoMarginInfo` ).

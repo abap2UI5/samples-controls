@@ -1,6 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpagewithwizard navcontainer dynamicpagetitle title wizard wizardstep objectheader objectattribute list
 " @summary Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area.
-" @origin sap.f.sample.DynamicPageWithWizard - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageWithWizard (status: generated)
+" @origin sap.f.sample.DynamicPageWithWizard - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageWithWizard (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_560 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -94,12 +94,12 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.m`
-        )->a( n = `xmlns:f`      v = `sap.f`
-        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
 
         )->ele( `NavContainer`
             )->a( n = `id` v = `navContainer`
@@ -228,9 +228,9 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `text`     v = `Name on card`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
-                                        )->a( n = `value`            v = client->_bind( name )
-                                        )->a( n = `liveChange`       v = client->_event( `CHECK_CREDIT_CARD` )
-                                        )->a( n = `valueLiveUpdate`  v = `true`
+                                        )->a( n = `value`           v = client->_bind( name )
+                                        )->a( n = `liveChange`      v = client->_event( `CHECK_CREDIT_CARD` )
+                                        )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Card number`
                                     )->tag( `Input`
@@ -264,7 +264,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
                                         )->end(
                                     )->end(
-                                    )->ele( n = `Grid` ns = `layout`
+                                    )->ele( n = `Grid` ns = `l`
                                         )->a( n = `defaultSpan` v = `L6 M6 S10`
                                         )->a( n = `hSpacing`    v = `2`
 
@@ -566,7 +566,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                             )->a( n = `layout`   v = `ResponsiveGridLayout`
 
                             )->ele( n = `content` ns = `form`
-                                )->ele( n = `Grid` ns = `layout`
+                                )->ele( n = `Grid` ns = `l`
                                     )->a( n = `defaultSpan` v = `L6 M6 S10`
                                     )->a( n = `hSpacing`    v = `2`
 

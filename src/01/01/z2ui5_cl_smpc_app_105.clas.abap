@@ -1,6 +1,6 @@
 " @keywords semanticpage semantic sap.m.semantic actions fullscreenpage addaction editaction deleteaction flagaction favoriteaction sendemailaction sendmessageaction
 " @summary Semantic Page Full Screen
-" @origin sap.m.sample.SemanticPageFullScreen - https://sdk.openui5.org/entity/sap.m.semantic.SemanticPage/sample/sap.m.sample.SemanticPageFullScreen (status: reviewed)
+" @origin sap.m.sample.SemanticPageFullScreen - https://sdk.openui5.org/entity/sap.m.semantic.SemanticPage/sample/sap.m.sample.SemanticPageFullScreen (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_105 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

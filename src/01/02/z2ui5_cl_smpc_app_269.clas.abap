@@ -1,6 +1,6 @@
 " @keywords dynamicsidecontent dynamic side content sap.ui.layout dynamicsidecontentproduct html vbox title image text toolbar
 " @summary Product page with comments example.
-" @origin sap.ui.layout.sample.DynamicSideContentProduct - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContentProduct (status: reviewed)
+" @origin sap.ui.layout.sample.DynamicSideContentProduct - https://sdk.openui5.org/entity/sap.ui.layout.DynamicSideContent/sample/sap.ui.layout.sample.DynamicSideContentProduct (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_269 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

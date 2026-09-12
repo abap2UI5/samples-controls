@@ -1,6 +1,6 @@
 " @keywords grid sap.ui.layout gridxl verticallayout title text image griddata
 " @summary The major layout features of the Grid control are shown in this example. Features like indentation, making content visible/invisible based on the screen size, moving content forward and backwards are demonstrated.
-" @origin sap.ui.layout.sample.GridXL - https://sdk.openui5.org/entity/sap.ui.layout.Grid/sample/sap.ui.layout.sample.GridXL (status: reviewed)
+" @origin sap.ui.layout.sample.GridXL - https://sdk.openui5.org/entity/sap.ui.layout.Grid/sample/sap.ui.layout.sample.GridXL (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_226 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

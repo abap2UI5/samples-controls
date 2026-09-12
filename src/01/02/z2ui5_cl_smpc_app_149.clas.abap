@@ -1,6 +1,6 @@
 " @keywords card sap.ui.integration.widgets explorer link vbox image
 " @summary Card Explorer is the application where you can learn more about integration cards.
-" @origin sap.ui.integration.sample.CardExplorer - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardExplorer (status: reviewed)
+" @origin sap.ui.integration.sample.CardExplorer - https://sdk.openui5.org/entity/sap.ui.integration.widgets.Card/sample/sap.ui.integration.sample.CardExplorer (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_149 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

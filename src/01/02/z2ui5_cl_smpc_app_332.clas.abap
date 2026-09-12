@@ -1,6 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform480_trial bar button vbox title label text ratingindicator
 " @summary Form with three groups in a three-column layout. On extra large screens a three-column layout (4:8:0) is used; on large and medium screens a two-column layout (4:8:0); on small screens a one-column layout (12:12:0).
-" @origin sap.ui.layout.sample.SimpleForm480_Trial - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm480_Trial (status: reviewed)
+" @origin sap.ui.layout.sample.SimpleForm480_Trial - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm480_Trial (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_332 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -76,7 +76,7 @@ CLASS z2ui5_cl_smpc_app_332 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Page`
@@ -113,7 +113,7 @@ CLASS z2ui5_cl_smpc_app_332 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = |\{= !${ client->_bind( edit_mode ) }\}|
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`                      v = `SimpleFormDisplay480_Trial`
                         )->a( n = `editable`                v = `false`
                         )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -132,7 +132,7 @@ CLASS z2ui5_cl_smpc_app_332 IMPLEMENTATION.
                         )->a( n = `columnsM`                v = `2`
                         )->a( n = `singleContainerFullSize` v = `false`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Office`
                             )->tag( `Label`
@@ -195,7 +195,7 @@ CLASS z2ui5_cl_smpc_app_332 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMargin`
                     )->a( n = `visible` v = client->_bind( edit_mode )
 
-                    )->ele( n = `SimpleForm` ns = `f`
+                    )->ele( n = `SimpleForm` ns = `form`
                         )->a( n = `id`                      v = `SimpleFormChange480_Trial`
                         )->a( n = `editable`                v = `true`
                         )->a( n = `layout`                  v = `ResponsiveGridLayout`
@@ -214,7 +214,7 @@ CLASS z2ui5_cl_smpc_app_332 IMPLEMENTATION.
                         )->a( n = `columnsM`                v = `2`
                         )->a( n = `singleContainerFullSize` v = `false`
 
-                        )->ele( n = `content` ns = `f`
+                        )->ele( n = `content` ns = `form`
                             )->tag( n = `Title` ns = `core`
                                 )->a( n = `text` v = `Office`
                             )->tag( `Label`

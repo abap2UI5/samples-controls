@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarwithlegend dynamicsidecontent vbox togglebutton singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview
 " @summary SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control. The calendar also shows the daily working hours.
-" @origin sap.m.sample.SinglePlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithLegend (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithLegend (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_553 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -75,12 +75,12 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:l`       v = `sap.ui.layout`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( n = `DynamicSideContent` ns = `l`
             )->a( n = `id`                    v = `DynamicSideContent`
@@ -88,17 +88,17 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
             )->a( n = `sideContentVisibility` v = `AlwaysShow`
             " the original keeps the legend flag in a second named model; abap2UI5
             " keeps one default model, so the flag is a field here
-            )->a( n = `showSideContent`       v = client->_bind( legend_shown )
-            )->a( n = `containerQuery`        v = `true`
+            )->a( n = `showSideContent` v = client->_bind( legend_shown )
+            )->a( n = `containerQuery`  v = `true`
 
             )->ele( `VBox`
 
                 )->ele( `SinglePlanningCalendar`
-                    )->a( n = `id`           v = `SPC1`
-                    )->a( n = `class`        v = `sapUiSmallMarginTop`
-                    )->a( n = `title`        v = `My Calendar`
-                    )->a( n = `startHour`    v = `8`
-                    )->a( n = `endHour`      v = `20`
+                    )->a( n = `id`        v = `SPC1`
+                    )->a( n = `class`     v = `sapUiSmallMarginTop`
+                    )->a( n = `title`     v = `My Calendar`
+                    )->a( n = `startHour` v = `8`
+                    )->a( n = `endHour`   v = `20`
                     " toggleFullDay flips setFullDay; the property is bindable, so
                     " the ToggleButton and the calendar share the flag
                     )->a( n = `fullDay`      v = client->_bind( full_day )
@@ -131,9 +131,9 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->end(
 
                     )->ele( `specialDates`
-                        )->tag( n = `DateTypeRange` ns = `unified`
-                            )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
-                            )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
+                        )->tag( n = `DateTypeRange` ns = `u`
+                            )->a( n = `startDate`     v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
+                            )->a( n = `endDate`       v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                             )->a( n = `type`          v = `{TYPE}`
                             )->a( n = `secondaryType` v = `{SECONDARYTYPE}`
                             )->a( n = `color`         v = `{COLOR}`
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->end(
 
                     )->ele( `appointments`
-                        )->tag( n = `CalendarAppointment` ns = `unified`
+                        )->tag( n = `CalendarAppointment` ns = `u`
                             )->a( n = `title`     v = `{TITLE}`
                             )->a( n = `text`      v = `{TEXT}`
                             )->a( n = `type`      v = `{TYPE}`
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                 )->a( n = `width` v = `200px`
 
                 )->ele( `PlanningCalendarLegend`
-                    )->a( n = `id`               v = `SinglePlanningCalendarLegend`
+                    )->a( n = `id` v = `SinglePlanningCalendarLegend`
                     " ROOT-level aggregations - see app 555: a bare 'T_' path is
                     " RELATIVE and resolves against nothing outside a row context
                     )->a( n = `items`            v = |\{ path: '{ client->_bind_path( t_legend_items ) }', templateShareable: true \}|
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
                     )->a( n = `class`            v = `sapUiSmallMarginTop`
 
                     )->ele( `items`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `color`   v = `{COLOR}`
@@ -173,7 +173,7 @@ CLASS z2ui5_cl_smpc_app_553 IMPLEMENTATION.
 
                     )->end(
                     )->ele( `appointmentItems`
-                        )->tag( n = `CalendarLegendItem` ns = `unified`
+                        )->tag( n = `CalendarLegendItem` ns = `u`
                             )->a( n = `text`    v = `{TEXT}`
                             )->a( n = `type`    v = `{TYPE}`
                             )->a( n = `tooltip` v = `{TEXT}` ).

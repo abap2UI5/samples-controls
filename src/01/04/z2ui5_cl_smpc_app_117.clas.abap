@@ -1,6 +1,6 @@
 " @keywords card sap.f fiori header vbox hbox combobox item datepicker button list customlistitem
 " @summary This sample illustrates how to specify the predefined header and the content of the Card control.
-" @origin sap.f.sample.Card - https://sdk.openui5.org/entity/sap.f.Card/sample/sap.f.sample.Card (status: reviewed)
+" @origin sap.f.sample.Card - https://sdk.openui5.org/entity/sap.f.Card/sample/sap.f.sample.Card (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_117 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

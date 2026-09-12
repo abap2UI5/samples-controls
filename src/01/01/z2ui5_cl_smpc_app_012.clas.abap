@@ -1,6 +1,6 @@
 " @keywords comparisonpattern comparison pattern sap.m compare items side app table toolbar title toolbarspacer
 " @summary The pattern allows users to select multiple items from an sap.m.Table and display information about them in a structured way - all items are displayed next to each other for easy comparison, based on their specifics.
-" @origin sap.m.sample.ComparisonPattern - https://sdk.openui5.org/entity/sap.m.ComparisonPattern/sample/sap.m.sample.ComparisonPattern (status: checked)
+" @origin sap.m.sample.ComparisonPattern - https://sdk.openui5.org/entity/sap.m.ComparisonPattern/sample/sap.m.sample.ComparisonPattern (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_012 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -107,12 +107,12 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
 
     " the sample's App/Main/Comparison views merged into one view: the App hosts both pages, the router's navTo becomes a NavContainer `to` frontend action
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`      v = `100%`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`     v = `sap.f`
-        )->a( n = `xmlns:cards` v = `sap.f.cards`
-        )->a( n = `xmlns:l`     v = `sap.ui.layout`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:card` v = `sap.f.cards`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
 
         )->ele( `App`
             )->a( n = `id` v = `rootControl`
@@ -188,7 +188,7 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
                                         )->a( n = `title` v = `{NAME}`
                                         )->a( n = `text`  v = `{PRODUCTID}`
                                     )->tag( `Input`
-                                        )->a( n = `value`       v = `{QUANTITY}`
+                                        )->a( n = `value` v = `{QUANTITY}`
                                         " the ORIGINAL writes type="{Text}" (Main.view.xml): it meant the
                                         " literal enum value and wrote a binding, so the property falls back
                                         " to its default. Ported verbatim rather than repaired
@@ -244,7 +244,7 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
 
                                     )->ele( n = `header` ns = `f`
                                         " iconSrc formatter .formatter.url flattened to absolute image URLs in the model
-                                        )->tag( n = `Header` ns = `cards`
+                                        )->tag( n = `Header` ns = `card`
                                             )->a( n = `title`            v = `{NAME}`
                                             )->a( n = `subtitle`         v = `{STATUS}`
                                             )->a( n = `iconSrc`          v = `{PRODUCTPICURL}`
@@ -278,7 +278,7 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
                                 )->a( n = `class` v = `sapUiTinyMarginTop`
 
                                 )->ele( n = `header` ns = `f`
-                                    )->tag( n = `Header` ns = `cards`
+                                    )->tag( n = `Header` ns = `card`
                                         )->a( n = `title`            v = `{NAME}`
                                         )->a( n = `subtitle`         v = `{STATUS}`
                                         )->a( n = `iconSrc`          v = `{PRODUCTPICURL}`

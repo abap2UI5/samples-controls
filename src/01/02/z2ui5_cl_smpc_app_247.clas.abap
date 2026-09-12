@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table columnresizing overflowtoolbar title column label text link segmentedbutton segmentedbuttonitem
 " @summary Example for column resizing
-" @origin sap.ui.table.sample.ColumnResizing - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.ColumnResizing (status: reviewed)
+" @origin sap.ui.table.sample.ColumnResizing - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.ColumnResizing (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_247 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -60,12 +60,12 @@ CLASS z2ui5_cl_smpc_app_247 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.ui.table`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:m`   v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`      v = `sap.ui.table`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `height`     v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader` v = `false`
@@ -82,7 +82,7 @@ CLASS z2ui5_cl_smpc_app_247 IMPLEMENTATION.
                     " branch), every other column reports its LABEL and the new
                     " width. The veto is per COLUMN, so it rides on the wire as
                     " an expression - the flag form would freeze the whole table
-                    )->a( n = `columnResize`  v = client->_event(
+                    )->a( n = `columnResize` v = client->_event(
                               val    = `COLUMN_RESIZE`
                               t_arg  = VALUE #( ( `${$parameters>/column}.getId()` )
                                                 ( `${$parameters>/column}.getLabel().getText()` )

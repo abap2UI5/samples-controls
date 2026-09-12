@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarwithcustomviews vbox singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview calendarappointment
 " @summary SinglePlanningCalendar showing the provided predefined views and custom views.
-" @origin sap.m.sample.SinglePlanningCalendarWithCustomViews - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithCustomViews (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarWithCustomViews - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithCustomViews (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_552 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -53,11 +53,11 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
 
@@ -85,7 +85,7 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`

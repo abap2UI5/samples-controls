@@ -1,6 +1,6 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxdefaultfiltering verticallayout label item
 " @summary The default filtering is 'starts with per term', which filters by the beginning of every word in every column.
-" @origin sap.m.sample.MultiComboBoxDefaultFiltering - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxDefaultFiltering (status: generated)
+" @origin sap.m.sample.MultiComboBoxDefaultFiltering - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxDefaultFiltering (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_459 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

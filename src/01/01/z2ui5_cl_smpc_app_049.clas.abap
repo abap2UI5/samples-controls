@@ -1,6 +1,6 @@
 " @keywords stepinput step input sap.m allows user change st list customlistitem hbox vbox
 " @summary The StepInput allows the user to change stepwise a value by a predefined step and also to set additional description, such as units of measurement and currencies after the input field.
-" @origin sap.m.sample.StepInput - https://sdk.openui5.org/entity/sap.m.StepInput/sample/sap.m.sample.StepInput (status: reviewed)
+" @origin sap.m.sample.StepInput - https://sdk.openui5.org/entity/sap.m.StepInput/sample/sap.m.sample.StepInput (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_049 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

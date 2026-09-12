@@ -1,6 +1,6 @@
 " @keywords dialog sap.m dialogwithmessagepopover button simpleform title label input columnelementdata select item toolbar
 " @summary Dialog with custom footer and support for message popover.
-" @origin sap.m.sample.DialogWithMessagePopover - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogWithMessagePopover (status: generated)
+" @origin sap.m.sample.DialogWithMessagePopover - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogWithMessagePopover (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_562 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -116,7 +116,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
 
     DATA(dialog) = popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:f`     v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form`  v = `sap.ui.layout.form`
         )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core`  v = `sap.ui.core`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
@@ -132,7 +132,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
         )->a( n = `class` v = `sapUiSmallMargin`
         )->a( n = `items` v = client->_bind( t_forms )
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `id`        v = `SimpleFormChangeColumn_twoGroups234`
             )->a( n = `editable`  v = `true`
             )->a( n = `layout`    v = `ColumnLayout`
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
             )->a( n = `columnsL`  v = `2`
             )->a( n = `columnsXL` v = `2`
 
-            )->ele( n = `content` ns = `f`
+            )->ele( n = `content` ns = `form`
                 )->tag( n = `Title` ns = `core`
                     )->a( n = `text` v = `Information`
                 )->tag( `Label`
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                 )->ele( `Input`
                     )->a( n = `value` v = `{STREET_NUMBER}`
                     )->ele( `layoutData`
-                        )->tag( n = `ColumnElementData` ns = `f`
+                        )->tag( n = `ColumnElementData` ns = `form`
                             )->a( n = `cellsSmall` v = `2`
                             )->a( n = `cellsLarge` v = `2`
 
@@ -168,7 +168,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                 )->ele( `Input`
                     )->a( n = `value` v = `{ path: 'ZIPCODE', type: 'sap.ui.model.type.Integer' }`
                     )->ele( `layoutData`
-                        )->tag( n = `ColumnElementData` ns = `f`
+                        )->tag( n = `ColumnElementData` ns = `form`
                             )->a( n = `cellsSmall` v = `3`
                             )->a( n = `cellsLarge` v = `2`
 
@@ -205,7 +205,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                 )->ele( `Input`
                     )->a( n = `value` v = `{PHONE_TIME}`
                     )->ele( `layoutData`
-                        )->tag( n = `ColumnElementData` ns = `f`
+                        )->tag( n = `ColumnElementData` ns = `form`
                             )->a( n = `cellsSmall` v = `2`
                             )->a( n = `cellsLarge` v = `2`
 
@@ -225,7 +225,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
         )->a( n = `class` v = `sapUiSmallMargin`
         )->a( n = `items` v = client->_bind( t_employment )
 
-        )->ele( n = `SimpleForm` ns = `f`
+        )->ele( n = `SimpleForm` ns = `form`
             )->a( n = `editable`  v = `true`
             )->a( n = `layout`    v = `ColumnLayout`
             )->a( n = `title`     v = `Personal`
@@ -233,7 +233,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
             )->a( n = `columnsL`  v = `2`
             )->a( n = `columnsXL` v = `2`
 
-            )->ele( n = `content` ns = `f`
+            )->ele( n = `content` ns = `form`
                 )->tag( n = `Title` ns = `core`
                     )->a( n = `text` v = `Information`
                 )->tag( `Label`
@@ -286,7 +286,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     " handleMessagePopoverPress: this.oMP.toggle(oEvent.getSource()) - a pure
                     " client-side toggle, so wired roundtrip-free onto the button's own id
-                    )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
+                    )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                            t_arg = VALUE #( ( `messagePopover` ) ( `toggleBy` ) ( `messagePopoverBtn` ) ) )
 
                     )->ele( `dependents`
@@ -307,7 +307,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                                 " getGroupName reads the form titles around the target control -
                                 " a domain classification, so it is computed in the backend and
                                 " rides on the Message code field (see model below)
-                                )->a( n = `groupName`   v = `{message>code}`
+                                )->a( n = `groupName` v = `{message>code}`
 
                         )->end(
                     )->end(

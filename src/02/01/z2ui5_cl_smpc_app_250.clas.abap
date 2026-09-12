@@ -1,6 +1,6 @@
 " @keywords colorpalette color palette sap.m colorpalettepopover table column text columnlistitem label button
 " @summary The ColorPalette in a popover (by use of thin wrapper control sap.m.ColorPalettePopover).
-" @origin sap.m.sample.ColorPalettePopover - https://sdk.openui5.org/entity/sap.m.ColorPalette/sample/sap.m.sample.ColorPalettePopover (status: reviewed)
+" @origin sap.m.sample.ColorPalettePopover - https://sdk.openui5.org/entity/sap.m.ColorPalette/sample/sap.m.sample.ColorPalettePopover (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_250 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

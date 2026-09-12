@@ -1,6 +1,6 @@
 " @keywords gridcontainer grid container sap.f gridcontainersnavigation scrollcontainer togglebutton hbox panel flexitemdata generictile gridcontaineritemlayoutdata
 " @summary This sample demonstrates the keyboard navigation between multiple grids
-" @origin sap.f.sample.GridContainersNavigation - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainersNavigation (status: generated)
+" @origin sap.f.sample.GridContainersNavigation - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainersNavigation (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_528 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

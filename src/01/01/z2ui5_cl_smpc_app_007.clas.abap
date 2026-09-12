@@ -1,6 +1,6 @@
 " @keywords checkbox check box sap.m reflects verticallayout text html
 " @summary In this sample, the CheckBox reflects the selection states of its dependent input fields - selected, not selected, and partially selected.
-" @origin sap.m.sample.CheckBoxTriState - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBoxTriState (status: checked)
+" @origin sap.m.sample.CheckBoxTriState - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBoxTriState (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_007 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -43,10 +43,10 @@ CLASS z2ui5_cl_smpc_app_007 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:c`   v = `sap.ui.core`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( n = `VerticalLayout` ns = `l`
             )->tag( `Text`
@@ -56,7 +56,7 @@ CLASS z2ui5_cl_smpc_app_007 IMPLEMENTATION.
                 )->a( n = `selected`          v = |\{= ${ client->_bind( child1 ) } \|\| ${ client->_bind( child2 ) } \|\| ${ client->_bind( child3 ) } \}|
                 )->a( n = `partiallySelected` v = |\{= !(${ client->_bind( child1 ) } && ${ client->_bind( child2 ) } && ${ client->_bind( child3 ) })\}|
                 )->a( n = `select`            v = client->_event( val = `PARENT_CLICKED` arg = `${$parameters>/selected}` )
-            )->tag( n = `HTML` ns = `c`
+            )->tag( n = `HTML` ns = `core`
                 )->a( n = `content` v = `<hr>`
             )->tag( `CheckBox`
                 )->a( n = `text`     v = `English`

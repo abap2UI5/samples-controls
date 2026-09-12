@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeexpandto text toolbarspacer select item button standardtreeitem
 " @summary This example shows the initial expand state and how to collapse all nodes.
-" @origin sap.m.sample.TreeExpandTo - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandTo (status: generated)
+" @origin sap.m.sample.TreeExpandTo - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeExpandTo (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_602 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

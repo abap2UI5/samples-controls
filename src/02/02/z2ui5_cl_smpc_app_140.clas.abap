@@ -1,6 +1,6 @@
 " @keywords blocklayout block layout sap.ui.layout backgrounds html vbox hbox label select item blocklayoutrow
 " @summary Block Layout in which all cells use the same background color set and different color shade.
-" @origin sap.ui.layout.sample.BlockLayoutCustomBackground - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutCustomBackground (status: checked)
+" @origin sap.ui.layout.sample.BlockLayoutCustomBackground - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutCustomBackground (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_140 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -40,7 +40,7 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
         )->a( n = `xmlns`      v = `sap.m`
 
 
@@ -138,7 +138,7 @@ CLASS z2ui5_cl_smpc_app_140 IMPLEMENTATION.
                         )->a( n = `title`                v = `Simple Form (Shade C)`
                         )->a( n = `backgroundColorSet`   v = client->_bind( colorset )
                         )->a( n = `backgroundColorShade` v = `ShadeC`
-                        )->ele( n = `SimpleForm` ns = `f`
+                        )->ele( n = `SimpleForm` ns = `form`
                             )->a( n = `editable`         v = `true`
                             )->a( n = `backgroundDesign` v = `Transparent`
                             )->a( n = `layout`           v = `ResponsiveGridLayout`

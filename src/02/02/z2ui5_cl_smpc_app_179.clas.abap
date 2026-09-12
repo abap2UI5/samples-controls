@@ -1,6 +1,6 @@
 " @keywords float sap.ui.model.type typefloat simpleform label input text
 " @summary Formats and parses both integer and decimal digits.
-" @origin sap.ui.core.sample.TypeFloat - https://sdk.openui5.org/entity/sap.ui.model.type.Float/sample/sap.ui.core.sample.TypeFloat (status: reviewed)
+" @origin sap.ui.core.sample.TypeFloat - https://sdk.openui5.org/entity/sap.ui.model.type.Float/sample/sap.ui.core.sample.TypeFloat (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_179 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

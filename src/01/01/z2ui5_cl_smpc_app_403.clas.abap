@@ -1,6 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardnegativemarginstwosided toolbar icon text panel
 " @summary Use standard negative margin classes 'sapUiTinyNegativeMarginBeginEnd', 'sapUiSmallNegativeMarginBeginEnd', 'sapUiMediumNegativeMarginBeginEnd' or 'sapUiLargeNegativeMarginBeginEnd' to remove 0.5rem, 1rem, 2rem, or 3rem margin to the left...
-" @origin sap.m.sample.StandardNegativeMarginsTwoSided - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardNegativeMarginsTwoSided (status: reviewed)
+" @origin sap.m.sample.StandardNegativeMarginsTwoSided - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardNegativeMarginsTwoSided (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_403 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

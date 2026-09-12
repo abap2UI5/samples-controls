@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageheader objectpagesection objectpagesubsection simpleform label text
 " @summary This example shows subsections in expanded and collapsed mode.
-" @origin sap.uxap.sample.ObjectPageSubSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageSubSection (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageSubSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageSubSection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_116 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -42,11 +42,11 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
     " load. Written out per block rather than through a helper method: the view has
     " to stay statically reconstructable for the structural diff.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.uxap`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`     v = `sap.m`
-        )->a( n = `xmlns:forms` v = `sap.ui.layout.form`
-        )->a( n = `height`      v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                 v = `ObjectPageLayout`
@@ -69,7 +69,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -92,7 +92,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                         )->a( n = `text` v = `AppHaus`
 
                                 )->end(
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -122,7 +122,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -137,7 +137,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                         )->a( n = `text` v = `SAP France`
 
                                 )->end(
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -154,7 +154,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                 )->end(
                             )->end(
                             )->ele( `moreBlocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -169,7 +169,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                         )->a( n = `text` v = `SAP France`
 
                                 )->end(
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -192,7 +192,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                             )->a( n = `titleUppercase` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -215,7 +215,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                         )->a( n = `text` v = `AppHaus`
 
                                 )->end(
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -240,7 +240,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                 )->end(
                             )->end(
                             )->ele( `moreBlocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
@@ -263,7 +263,7 @@ CLASS z2ui5_cl_smpc_app_116 IMPLEMENTATION.
                                         )->a( n = `text` v = `AppHaus`
 
                                 )->end(
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `title`    v = `Location`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`

@@ -1,6 +1,6 @@
 " @keywords selectlist select list sap.m items sorter item
 " @summary A SelectList allows the user to select one item from a list of choices.
-" @origin sap.m.sample.SelectList - https://sdk.openui5.org/entity/sap.m.SelectList/sample/sap.m.sample.SelectList (status: reviewed)
+" @origin sap.m.sample.SelectList - https://sdk.openui5.org/entity/sap.m.SelectList/sample/sap.m.sample.SelectList (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_075 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

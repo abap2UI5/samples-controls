@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarmulti vbox title planningcalendarrow calendarappointment
 " @summary PlanningCalendar with multiple row selection. No interval headers are displayed. On click on an interval a new appointment is created.
-" @origin sap.m.sample.PlanningCalendarMulti - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarMulti (status: generated)
+" @origin sap.m.sample.PlanningCalendarMulti - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarMulti (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_538 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -66,11 +66,11 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
     " calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -85,7 +85,7 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
                 " handleAppointmentSelect: MessageBox with the appointment title, its
                 " new selected state and the number of selected appointments - or, when
                 " the interval selection hit no appointment, the count of them
-                )->a( n = `appointmentSelect`         v = client->_event(
+                )->a( n = `appointmentSelect` v = client->_event(
                           val   = `APPT_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
@@ -95,7 +95,7 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
                 " handleIntervalSelect pushes a 'new appointment' (Type09) into the row
                 " it hit, or into every selected row. The interval's start and end travel
                 " as their LOCAL parts - a UTC toISOString( ) would shift the day
-                )->a( n = `intervalSelect`            v = client->_event(
+                )->a( n = `intervalSelect` v = client->_event(
                           val   = `INTERVAL_SELECT`
                           t_arg = VALUE #(
                             ( `${$parameters>/startDate}.getFullYear()` )
@@ -126,7 +126,7 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
                         )->a( n = `appointments` v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
 
                         )->ele( `appointments`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate`    v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`      v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`         v = `{PIC}`

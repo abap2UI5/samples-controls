@@ -1,6 +1,6 @@
 " @keywords objectpagesection object section sap.uxap objectpagelayout objectpageheader objectattribute objectpagesubsection html
 " @summary This example explains the rules for the rendering of sections
-" @origin sap.uxap.sample.ObjectPageSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSection/sample/sap.uxap.sample.ObjectPageSection (status: reviewed)
+" @origin sap.uxap.sample.ObjectPageSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSection/sample/sap.uxap.sample.ObjectPageSection (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_184 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

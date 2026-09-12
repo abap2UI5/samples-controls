@@ -1,6 +1,6 @@
 " @keywords carousel sap.m carouselwithdisplayoptions label slider panel carousellayout image radiobuttongroup radiobutton switch input
 " @summary The Carousel has options for the arrows placement, page indicator placement and page indicator visibility.
-" @origin sap.m.sample.CarouselWithDisplayOptions - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithDisplayOptions (status: generated)
+" @origin sap.m.sample.CarouselWithDisplayOptions - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselWithDisplayOptions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_604 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -95,15 +95,15 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
     " port binds the option controls and the Carousel to the same fields and
     " keeps the whole playground in the browser (see sidecar)
     DATA(page) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `Page`
             )->a( n = `class` v = `sapUiContentPadding` ).
 
-    page->ele( n = `SimpleForm` ns = `f`
+    page->ele( n = `SimpleForm` ns = `form`
         )->a( n = `labelSpanL` v = `6`
         )->a( n = `labelSpanM` v = `6`
         )->a( n = `editable`   v = `true`
@@ -130,7 +130,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
         )->a( n = `renderType`     v = `Bare`
 
         )->ele( `Panel`
-            )->a( n = `id`               v = `carouselContainer`
+            )->a( n = `id` v = `carouselContainer`
             " onResizeCarouselContainer sets width to <value>% and height to
             " floor( 650 * value / 100 )px - both are expressions over the slider
             )->a( n = `width`            v = |\{= ${ client->_bind( slider_value ) } + '%' \}|
@@ -138,16 +138,16 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->a( n = `backgroundDesign` v = `Transparent`
 
             )->ele( `Carousel`
-                )->a( n = `id`                           v = `carouselSample`
-                )->a( n = `ariaLabelledBy`               v = `carouselTitle`
-                )->a( n = `loop`                         v = `true`
+                )->a( n = `id`                            v = `carouselSample`
+                )->a( n = `ariaLabelledBy`                v = `carouselTitle`
+                )->a( n = `loop`                          v = `true`
                 )->a( n = `arrowsPlacement`               v = |\{= ${ client->_bind( arrows_placement ) } \|\| null \}|
                 )->a( n = `pageIndicatorPlacement`        v = |\{= ${ client->_bind( indicator_placement ) } \|\| null \}|
                 )->a( n = `backgroundDesign`              v = |\{= ${ client->_bind( background_design ) } \|\| null \}|
                 )->a( n = `showPageIndicator`             v = client->_bind( show_page_indicator )
                 )->a( n = `pageIndicatorBackgroundDesign` v = |\{= ${ client->_bind( ind_background_design ) } \|\| null \}|
                 )->a( n = `pageIndicatorBorderDesign`     v = |\{= ${ client->_bind( ind_border_design ) } \|\| null \}|
-                )->a( n = `pages`                        v = client->_bind( t_pages )
+                )->a( n = `pages`                         v = client->_bind( t_pages )
 
                 )->ele( `customLayout`
                     )->tag( `CarouselLayout`
@@ -160,17 +160,17 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
 
                 )->ele( `pages`
                     )->tag( `Image`
-                        )->a( n = `src`           v = `{SRC}`
-                        )->a( n = `alt`           v = `{ALT}`
-                        )->a( n = `densityAware`  v = `false`
-                        )->a( n = `decorative`    v = `false`
+                        )->a( n = `src`          v = `{SRC}`
+                        )->a( n = `alt`          v = `{ALT}`
+                        )->a( n = `densityAware` v = `false`
+                        )->a( n = `decorative`   v = `false`
 
                 )->end(
             )->end(
         )->end(
     )->end( ).
 
-    page->ele( n = `SimpleForm` ns = `f`
+    page->ele( n = `SimpleForm` ns = `form`
         )->a( n = `labelSpanL` v = `6`
         )->a( n = `labelSpanM` v = `6`
         )->a( n = `editable`   v = `true`

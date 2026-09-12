@@ -1,6 +1,6 @@
 " @keywords feedinput feed input sap.m allows user list feedlistitem
 " @summary This sample shows you how to build a complete feed user interface by combining a FeedInput with a list of FeedListItems.
-" @origin sap.m.sample.Feed - https://sdk.openui5.org/entity/sap.m.FeedInput/sample/sap.m.sample.Feed (status: checked)
+" @origin sap.m.sample.Feed - https://sdk.openui5.org/entity/sap.m.FeedInput/sample/sap.m.sample.Feed (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_024 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

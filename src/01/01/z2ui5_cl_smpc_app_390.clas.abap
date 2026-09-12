@@ -1,6 +1,6 @@
 " @keywords numericcontent numeric content sap.m numericcontentwithoutmargin label
 " @summary This is an example of the NumericContent that contains no margins, so the control is aligned to the left and to the top without any margins.
-" @origin sap.m.sample.NumericContentWithoutMargin - https://sdk.openui5.org/entity/sap.m.NumericContent/sample/sap.m.sample.NumericContentWithoutMargin (status: reviewed)
+" @origin sap.m.sample.NumericContentWithoutMargin - https://sdk.openui5.org/entity/sap.m.NumericContent/sample/sap.m.sample.NumericContentWithoutMargin (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_390 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

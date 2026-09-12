@@ -1,6 +1,6 @@
 " @keywords pulltorefresh pull refresh sap.m refreshresponsive bar searchfield list standardlistitem
 " @summary An 'Responsive Refresh' can be achieved by the combination of a Search Field's refresh button and a Pull To Refresh, both of which appear depending on whether the device is touch-enabled. A growing stream of backend data is simulated here.
-" @origin sap.m.sample.RefreshResponsive - https://sdk.openui5.org/entity/sap.m.PullToRefresh/sample/sap.m.sample.RefreshResponsive (status: generated)
+" @origin sap.m.sample.RefreshResponsive - https://sdk.openui5.org/entity/sap.m.PullToRefresh/sample/sap.m.sample.RefreshResponsive (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_438 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

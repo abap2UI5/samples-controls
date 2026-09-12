@@ -1,6 +1,6 @@
 " @keywords segmentedbutton segmented button sap.m allows user overflowtoolbar toolbarspacer segmentedbuttonitem vbox label text
 " @summary The Segmented Button allows the user to pick one out of many options for displaying the content of the current page. It is a UI pattern from iOS, now also available for other platforms.
-" @origin sap.m.sample.SegmentedButton - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButton (status: checked)
+" @origin sap.m.sample.SegmentedButton - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButton (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_047 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

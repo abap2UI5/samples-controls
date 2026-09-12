@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarbackgrounddesign panel label radiobuttongroup radiobutton icontabfilter icontabseparator
 " @summary In this example the backgroundDesign and headerBackgroundDesign properties are demonstrated.
-" @origin sap.m.sample.IconTabBarBackgroundDesign - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBackgroundDesign (status: generated)
+" @origin sap.m.sample.IconTabBarBackgroundDesign - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBackgroundDesign (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_617 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -80,14 +80,14 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(panel) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `Panel`
             )->a( n = `class` v = `sapMShellGlobalOuterBackground` ).
 
-    panel->ele( n = `SimpleForm` ns = `f`
+    panel->ele( n = `SimpleForm` ns = `form`
         )->a( n = `labelSpanL` v = `6`
         )->a( n = `labelSpanM` v = `6`
         )->a( n = `editable`   v = `true`
@@ -128,13 +128,13 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
     )->end( ).
 
     DATA(bar) = panel->ele( `IconTabBar`
-        )->a( n = `id`                      v = `idIconTabBar`
-        )->a( n = `class`                   v = `sapUiResponsiveContentPadding`
+        )->a( n = `id`    v = `idIconTabBar`
+        )->a( n = `class` v = `sapUiResponsiveContentPadding`
         " the null fallback keeps an unset enum out of the property before the
         " first round trip (apps 548/555/604 idiom)
-        )->a( n = `backgroundDesign`        v = |\{= ${ client->_bind( background_design ) } \|\| null \}|
-        )->a( n = `headerBackgroundDesign`  v = |\{= ${ client->_bind( header_background ) } \|\| null \}|
-        )->a( n = `select`                  v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
+        )->a( n = `backgroundDesign`       v = |\{= ${ client->_bind( background_design ) } \|\| null \}|
+        )->a( n = `headerBackgroundDesign` v = |\{= ${ client->_bind( header_background ) } \|\| null \}|
+        )->a( n = `select`                 v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
 
     bar->ele( `items`
         )->tag( `IconTabFilter`
@@ -172,7 +172,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `headerText`     v = `Products`
             " the rows binding carries a sorter on Name; a thin frontend sorts
             " the data it sends (app 298 idiom)
-            )->a( n = `items`          v = client->_bind( t_products ) ).
+            )->a( n = `items` v = client->_bind( t_products ) ).
 
     table->ele( `infoToolbar`
         )->ele( `OverflowToolbar`
@@ -237,7 +237,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
-                    )->a( n = `unit`   v = `{CURRENCYCODE}`
+                    )->a( n = `unit` v = `{CURRENCYCODE}`
 
             )->end(
         )->end(

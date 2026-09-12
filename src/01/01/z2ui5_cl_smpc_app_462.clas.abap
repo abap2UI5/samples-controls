@@ -1,6 +1,6 @@
 " @keywords input sap.m inputvalueupdate simpleform label switch text
 " @summary Since 1.24 the value property of sap.m.Input is not updated on every keystroke, but first when the user presses Enter or leaves the input. The change was necessary to fully support the standard UI5 data binding with formatters and types.
-" @origin sap.m.sample.InputValueUpdate - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputValueUpdate (status: generated)
+" @origin sap.m.sample.InputValueUpdate - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputValueUpdate (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_462 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

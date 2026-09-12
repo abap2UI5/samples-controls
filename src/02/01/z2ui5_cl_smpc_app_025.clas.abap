@@ -1,6 +1,6 @@
 " @keywords feedlistitem feed list item sap.m provides set verticallayout feedlistitemaction
 " @summary The Feed List Item provides a standard UI for 'feeds' where multiple users publish information on regular basis on a certain topic.
-" @origin sap.m.sample.FeedListItem - https://sdk.openui5.org/entity/sap.m.FeedListItem/sample/sap.m.sample.FeedListItem (status: checked)
+" @origin sap.m.sample.FeedListItem - https://sdk.openui5.org/entity/sap.m.FeedListItem/sample/sap.m.sample.FeedListItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_025 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

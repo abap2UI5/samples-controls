@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendardnd vbox hbox label switch singleplanningcalendardayview singleplanningcalendarworkweekview
 " @summary SinglePlanningCalendar with enabled drag and drop functionality, allowing to create appointments with dragging and dropping, to change the start and end date of appointments by selecting and dragging their top or bottom end, and to copy and...
-" @origin sap.m.sample.SinglePlanningCalendarDND - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDND (status: generated)
+" @origin sap.m.sample.SinglePlanningCalendarDND - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarDND (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_610 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -72,11 +72,11 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
     " The drag, resize and create wires carry the interval's LOCAL date parts
     " (a UTC toISOString( ) would shift the day) - app 549 idiom
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -127,7 +127,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                 )->a( n = `appointments`                  v = client->_bind( t_appointments )
                 )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
 
-                )->a( n = `appointmentDrop`               v = client->_event(
+                )->a( n = `appointmentDrop` v = client->_event(
                           val   = `APPT_DROP`
                           t_arg = VALUE #(
                             ( `${$parameters>/startDate}.getFullYear()` )
@@ -143,7 +143,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                             ( `${$parameters>/appointment}.getBindingContext().getPath()` )
                             ( `${$parameters>/copy} ? 'X' : ''` ) ) )
 
-                )->a( n = `appointmentResize`             v = client->_event(
+                )->a( n = `appointmentResize` v = client->_event(
                           val   = `APPT_RESIZE`
                           t_arg = VALUE #(
                             ( `${$parameters>/startDate}.getFullYear()` )
@@ -158,7 +158,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                             ( `${$parameters>/endDate}.getMinutes()` )
                             ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
 
-                )->a( n = `appointmentCreate`             v = client->_event(
+                )->a( n = `appointmentCreate` v = client->_event(
                           val   = `APPT_CREATE_DND`
                           t_arg = VALUE #(
                             ( `${$parameters>/startDate}.getFullYear()` )
@@ -186,7 +186,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                 )->end(
 
                 )->ele( `appointments`
-                    )->tag( n = `CalendarAppointment` ns = `unified`
+                    )->tag( n = `CalendarAppointment` ns = `u`
                         )->a( n = `title`     v = `{TITLE}`
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`

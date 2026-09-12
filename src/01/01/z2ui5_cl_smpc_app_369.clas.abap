@@ -1,6 +1,6 @@
 " @keywords input sap.m inputwrapping verticallayout label item
 " @summary Suggestions wrap automatically when longer then the dropdown width
-" @origin sap.m.sample.InputWrapping - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputWrapping (status: reviewed)
+" @origin sap.m.sample.InputWrapping - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputWrapping (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_369 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

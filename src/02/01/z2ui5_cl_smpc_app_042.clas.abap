@@ -1,6 +1,6 @@
 " @keywords objectstatus object status sap.m text semantic states verticallayout blocklayout blocklayoutrow blocklayoutcell label
 " @summary The object status is a small building block representing a status with a semantic color.
-" @origin sap.m.sample.ObjectStatus - https://sdk.openui5.org/entity/sap.m.ObjectStatus/sample/sap.m.sample.ObjectStatus (status: checked)
+" @origin sap.m.sample.ObjectStatus - https://sdk.openui5.org/entity/sap.m.ObjectStatus/sample/sap.m.sample.ObjectStatus (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_042 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

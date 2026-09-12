@@ -1,6 +1,6 @@
 " @keywords datepicker date picker sap.m datepickermassedit vbox table toolbar title toolbarspacer button column
 " @summary Using calendar in a dialog for changing dates in mass editing scenario.
-" @origin sap.m.sample.DatePickerMassEdit - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerMassEdit (status: generated)
+" @origin sap.m.sample.DatePickerMassEdit - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerMassEdit (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_556 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -131,16 +131,16 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
 
     " the dialog and its Calendar are built in the controller (new Dialog({ ... }))
     popup->ele( n = `FragmentDefinition` ns = `core`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:u`    v = `sap.ui.unified`
 
         )->ele( `Dialog`
             )->a( n = `title` v = `Select New Date`
 
             )->ele( `beginButton`
                 )->tag( `Button`
-                    )->a( n = `text`    v = `OK`
+                    )->a( n = `text` v = `OK`
                     " handleCalendarSelect enables OK once a date is picked
                     )->a( n = `enabled` v = |\{= ${ client->_bind( selected_date ) } !== '' \}|
                     )->a( n = `press`   v = client->_event( `DATE_OK` )
@@ -153,7 +153,7 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
 
             )->end(
 
-            )->ele( n = `Calendar` ns = `unified`
+            )->ele( n = `Calendar` ns = `u`
                 )->a( n = `width`  v = `100%`
                 )->a( n = `select` v = client->_event(
                           val   = `CALENDAR_SELECT`

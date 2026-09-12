@@ -1,6 +1,6 @@
 " @keywords objectattribute object attribute sap.m objectheaderactiveattributes objectheader objectstatus dialog ratingindicator textarea button
 " @summary Active Object Attributes can trigger actions, such as navigating to related content inside or outside of the current application, or displaying additional information in a popover.
-" @origin sap.m.sample.ObjectHeaderActiveAttributes - https://sdk.openui5.org/entity/sap.m.ObjectAttribute/sample/sap.m.sample.ObjectHeaderActiveAttributes (status: generated)
+" @origin sap.m.sample.ObjectHeaderActiveAttributes - https://sdk.openui5.org/entity/sap.m.ObjectAttribute/sample/sap.m.sample.ObjectHeaderActiveAttributes (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_518 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

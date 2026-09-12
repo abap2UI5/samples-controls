@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarrecurringitem vbox title toolbarspacer button planningcalendarrow customdata recurringcalendarappointment
 " @summary PlanningCalendar with recurring calendar items.
-" @origin sap.m.sample.PlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRecurringItem (status: generated)
+" @origin sap.m.sample.PlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRecurringItem (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -129,11 +129,11 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:unified` v = `sap.ui.unified`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `core:require`  v = `{Formatter: 'z2ui5/model/formatter'}`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
 
         )->ele( `VBox`
             )->a( n = `class` v = `sapUiSmallMargin`
@@ -174,7 +174,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         " onAppointmentCreate opens the create dialog on the row the
                         " drag started in; onAppointmentDrop moves, copies or just
                         " reschedules by the dragged delta
-                        )->a( n = `appointmentCreate`             v = client->_event(
+                        )->a( n = `appointmentCreate` v = client->_event(
                                   val   = `APPT_CREATE`
                                   t_arg = VALUE #(
                                     ( `${$parameters>/startDate}.getFullYear()` )
@@ -188,7 +188,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                                     ( `${$parameters>/endDate}.getHours()` )
                                     ( `${$parameters>/endDate}.getMinutes()` )
                                     ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointmentDrop`               v = client->_event(
+                        )->a( n = `appointmentDrop` v = client->_event(
                                   val   = `APPT_DROP`
                                   t_arg = VALUE #(
                                     ( `${$parameters>/startDate}.getFullYear()` )
@@ -215,7 +215,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `appointments`
-                            )->ele( n = `RecurringCalendarAppointment` ns = `unified`
+                            )->ele( n = `RecurringCalendarAppointment` ns = `u`
                                 )->a( n = `startDate`         v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`           v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `recurrenceType`    v = |\{= $\{RECURRENCETYPE\} \|\| null \}|
@@ -224,8 +224,8 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                                 )->a( n = `title`             v = `{TITLE}`
                                 )->a( n = `type`              v = `{TYPE}`
 
-                                )->ele( n = `recurrenceRule` ns = `unified`
-                                    )->tag( n = `RecurrenceRule` ns = `unified`
+                                )->ele( n = `recurrenceRule` ns = `u`
+                                    )->tag( n = `RecurrenceRule` ns = `u`
                                         )->a( n = `days`        v = `{T_RECURRENCE_DAY}`
                                         )->a( n = `type`        v = |\{= $\{RULETYPE\} \|\| null \}|
                                         )->a( n = `dayOfMonth`  v = `{RULEDAYOFMONTH}`
@@ -238,7 +238,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `nonWorkingPeriods`
-                            )->ele( n = `RecurringNonWorkingPeriod` ns = `unified`
+                            )->ele( n = `RecurringNonWorkingPeriod` ns = `u`
                                 )->a( n = `recurrenceType`    v = |\{= $\{RECURRENCETYPE\} \|\| null \}|
                                 )->a( n = `recurrenceEndDate` v = `{ path: 'RECURRENCEENDDATE', formatter: 'Formatter.DateCreateObject' }`
                                 " setRecurrencePattern raises "recurrencePattern must be >= 1" here too,
@@ -247,7 +247,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                                 )->a( n = `recurrencePattern` v = `{= ${RECURRENCEPATTERN} || 1 }`
                                 )->a( n = `date`              v = `{ path: 'DATE_AT', formatter: 'Formatter.DateCreateObject' }`
 
-                                )->tag( n = `TimeRange` ns = `unified`
+                                )->tag( n = `TimeRange` ns = `u`
                                     )->a( n = `start`       v = `{START_AT}`
                                     )->a( n = `end`         v = `{END_AT}`
                                     )->a( n = `valueFormat` v = `{VALUEFORMAT}`
@@ -256,7 +256,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `intervalHeaders`
-                            )->tag( n = `CalendarAppointment` ns = `unified`
+                            )->tag( n = `CalendarAppointment` ns = `u`
                                 )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`

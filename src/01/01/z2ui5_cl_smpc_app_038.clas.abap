@@ -1,6 +1,6 @@
 " @keywords messageview message sap.m showing connect messageitem
 " @summary A sample showing how you can connect the MessageView with MessageManager.
-" @origin sap.m.sample.MessageViewMessageManager - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewMessageManager (status: reviewed)
+" @origin sap.m.sample.MessageViewMessageManager - https://sdk.openui5.org/entity/sap.m.MessageView/sample/sap.m.sample.MessageViewMessageManager (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_038 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

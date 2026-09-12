@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarstartandendoverflow icontabfilter text
 " @summary This sample illustrates the start and end overflow mode of the Icon Tab Bar.
-" @origin sap.m.sample.IconTabBarStartAndEndOverflow - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarStartAndEndOverflow (status: generated)
+" @origin sap.m.sample.IconTabBarStartAndEndOverflow - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarStartAndEndOverflow (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_466 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarbadges panel simpleform label radiobuttongroup radiobutton icontabfilter
 " @summary This sample illustrates the possibility to add badges to the icon tab filters.
-" @origin sap.m.sample.IconTabBarBadges - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBadges (status: reviewed)
+" @origin sap.m.sample.IconTabBarBadges - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBadges (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_287 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -55,19 +55,19 @@ CLASS z2ui5_cl_smpc_app_287 IMPLEMENTATION.
     " selected radio button's text; tabDensityMode is a bindable property, so
     " every bar binds the one server-side field instead (see on_event)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->ele( `Panel`
 
-            )->ele( n = `SimpleForm` ns = `f`
-                )->a( n = `editable`     v = `true`
-                )->a( n = `labelSpanXL`  v = `2`
-                )->a( n = `labelSpanL`   v = `2`
-                )->a( n = `labelSpanM`   v = `3`
-                )->a( n = `labelSpanS`   v = `5`
-                )->a( n = `layout`       v = `ResponsiveGridLayout`
+            )->ele( n = `SimpleForm` ns = `form`
+                )->a( n = `editable`    v = `true`
+                )->a( n = `labelSpanXL` v = `2`
+                )->a( n = `labelSpanL`  v = `2`
+                )->a( n = `labelSpanM`  v = `3`
+                )->a( n = `labelSpanS`  v = `5`
+                )->a( n = `layout`      v = `ResponsiveGridLayout`
 
                 )->tag( `Label`
                     )->a( n = `text` v = `Tab Density Mode`

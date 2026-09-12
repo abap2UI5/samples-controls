@@ -1,6 +1,6 @@
 " @keywords image sap.m visualizes state html verticallayout grid vbox flexitemdata text hbox
 " @summary Visualizes the state of the control when the mode property is set to ImageMode.Background.
-" @origin sap.m.sample.ImageModeBackground - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.ImageModeBackground (status: checked)
+" @origin sap.m.sample.ImageModeBackground - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.ImageModeBackground (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_031 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

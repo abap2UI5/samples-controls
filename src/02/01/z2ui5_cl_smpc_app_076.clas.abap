@@ -1,6 +1,6 @@
 " @keywords notificationlistitem notification list item sap.m variants buttons avatars vbox notificationlist flexitemdata button
 " @summary A list item suitable for showing notifications to the user.
-" @origin sap.m.sample.NotificationListItem - https://sdk.openui5.org/entity/sap.m.NotificationListItem/sample/sap.m.sample.NotificationListItem (status: reviewed)
+" @origin sap.m.sample.NotificationListItem - https://sdk.openui5.org/entity/sap.m.NotificationListItem/sample/sap.m.sample.NotificationListItem (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_076 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

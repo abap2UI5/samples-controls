@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid producthomelayout toolpage toolheader image text toolbarspacer button avatar scrollcontainer togglebutton
 " @summary Example of using several grids nested in one main grid with ResponsiveColumnLayout, in order to achieve responsive home page design.
-" @origin sap.ui.layout.sample.ProductHomeLayout - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.ProductHomeLayout (status: reviewed)
+" @origin sap.ui.layout.sample.ProductHomeLayout - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.ProductHomeLayout (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_350 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -78,14 +78,14 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
     " own parameters to the backend, where the column arithmetic the original
     " does in the controller now lives.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`         v = `sap.m`
-        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:cssgrid` v = `sap.ui.layout.cssgrid`
-        )->a( n = `xmlns:tnt`     v = `sap.tnt`
-        )->a( n = `xmlns:core`    v = `sap.ui.core`
-        )->a( n = `xmlns:f`       v = `sap.f`
-        )->a( n = `xmlns:cards`   v = `sap.f.cards`
-        )->a( n = `xmlns:widgets` v = `sap.ui.integration.widgets`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:grid` v = `sap.ui.layout.cssgrid`
+        )->a( n = `xmlns:tnt`  v = `sap.tnt`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:f`    v = `sap.f`
+        )->a( n = `xmlns:card` v = `sap.f.cards`
+        )->a( n = `xmlns:w`    v = `sap.ui.integration.widgets`
 
         )->ele( n = `ToolPage` ns = `tnt`
             )->ele( n = `header` ns = `tnt`
@@ -136,11 +136,11 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                         )->a( n = `text`  v = |Current breakpoint: { client->_bind( currentbreakpoint ) }|
                         )->a( n = `width` v = `100%`
 
-                    )->ele( n = `CSSGrid` ns = `cssgrid`
+                    )->ele( n = `CSSGrid` ns = `grid`
                         )->a( n = `id` v = `mainGrid`
 
-                        )->ele( n = `customLayout` ns = `cssgrid`
-                            )->tag( n = `ResponsiveColumnLayout` ns = `cssgrid`
+                        )->ele( n = `customLayout` ns = `grid`
+                            )->tag( n = `ResponsiveColumnLayout` ns = `grid`
                                 )->a( n = `layoutChange` v = client->_event( val = `LAYOUT_CHANGE` arg = `${$parameters>/layout}` )
 
                         )->end(
@@ -148,7 +148,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->ele( `layoutData`
-                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `cssgrid`
+                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `grid`
                                     )->a( n = `columns` v = client->_bind( group1_columns )
 
                             )->end(
@@ -178,7 +178,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
 
                                     )->end(
                                     )->ele( n = `header` ns = `f`
-                                        )->tag( n = `Header` ns = `cards`
+                                        )->tag( n = `Header` ns = `card`
                                             )->a( n = `title` v = `Applications`
 
                                     )->end(
@@ -210,12 +210,12 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                                         )->end(
                                     )->end(
                                 )->end(
-                                )->ele( n = `Card` ns = `widgets`
+                                )->ele( n = `Card` ns = `w`
                                     )->a( n = `id`       v = `usersCard`
                                     )->a( n = `manifest` v = client->_bind( manifest_users )
                                     )->a( n = `height`   v = `100%`
 
-                                    )->ele( n = `layoutData` ns = `widgets`
+                                    )->ele( n = `layoutData` ns = `w`
                                         " onColumnsChange writes iCardColumns onto this card's layoutData
                                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
                                             )->a( n = `columns` v = client->_bind( card_columns )
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
 
                                     )->end(
                                     )->ele( n = `header` ns = `f`
-                                        )->tag( n = `Header` ns = `cards`
+                                        )->tag( n = `Header` ns = `card`
                                             )->a( n = `title` v = `User Provisioning Flows`
 
                                     )->end(
@@ -273,7 +273,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->ele( `layoutData`
-                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `cssgrid`
+                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `grid`
                                     )->a( n = `columns` v = client->_bind( group2_columns )
 
                             )->end(
@@ -417,7 +417,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->ele( `layoutData`
-                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `cssgrid`
+                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `grid`
                                     )->a( n = `columns` v = client->_bind( group3_columns )
 
                             )->end(
@@ -435,12 +435,12 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                                         )->a( n = `columnSize` v = `4rem`
 
                                 )->end(
-                                )->ele( n = `Card` ns = `widgets`
+                                )->ele( n = `Card` ns = `w`
                                     )->a( n = `id`       v = `logonRequestsCard`
                                     )->a( n = `manifest` v = client->_bind( manifest_logonrequests )
                                     )->a( n = `height`   v = `100%`
 
-                                    )->ele( n = `layoutData` ns = `widgets`
+                                    )->ele( n = `layoutData` ns = `w`
                                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
                                             )->a( n = `columns` v = `4`
                                             )->a( n = `minRows` v = `3`
@@ -451,7 +451,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                                     )->a( n = `height` v = `100%`
 
                                     )->ele( n = `header` ns = `f`
-                                        )->tag( n = `Header` ns = `cards`
+                                        )->tag( n = `Header` ns = `card`
                                             )->a( n = `title` v = `Audit Logs`
 
                                     )->end(
@@ -479,7 +479,7 @@ CLASS z2ui5_cl_smpc_app_350 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->ele( `layoutData`
-                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `cssgrid`
+                                )->tag( n = `ResponsiveColumnItemLayoutData` ns = `grid`
                                     )->a( n = `columns` v = client->_bind( group4_columns )
 
                             )->end(

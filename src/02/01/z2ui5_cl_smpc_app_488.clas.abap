@@ -1,6 +1,6 @@
 " @keywords table sap.m tablenavigated column text columnlistitem objectidentifier
 " @summary This example demonstrates the navigated property of the item.
-" @origin sap.m.sample.TableNavigated - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableNavigated (status: generated)
+" @origin sap.m.sample.TableNavigated - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableNavigated (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_488 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

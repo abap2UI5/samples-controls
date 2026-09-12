@@ -1,6 +1,6 @@
 " @keywords customlistitem custom list item sap.m content hbox icon vbox link label dialog
 " @summary With the Custom List Item you can add any kind of content to lists.
-" @origin sap.m.sample.CustomListItem - https://sdk.openui5.org/entity/sap.m.CustomListItem/sample/sap.m.sample.CustomListItem (status: checked)
+" @origin sap.m.sample.CustomListItem - https://sdk.openui5.org/entity/sap.m.CustomListItem/sample/sap.m.sample.CustomListItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_014 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

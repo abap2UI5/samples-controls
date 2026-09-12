@@ -1,6 +1,6 @@
 " @keywords headercontainer header container sap.m headercontaineroh objectheader objectattribute objectstatus objectmarker numericcontent
 " @summary The Header Container combined with sap.m.ObjectHeader.
-" @origin sap.m.sample.HeaderContainerOH - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerOH (status: generated)
+" @origin sap.m.sample.HeaderContainerOH - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerOH (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_477 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

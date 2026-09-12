@@ -1,6 +1,6 @@
 " @keywords currency sap.ui.unified amounts table column text columnlistitem objectidentifier objectnumber
 " @summary Display Currencies in Table
-" @origin sap.ui.unified.sample.CurrencyInTable - https://sdk.openui5.org/entity/sap.ui.unified.Currency/sample/sap.ui.unified.sample.CurrencyInTable (status: checked)
+" @origin sap.ui.unified.sample.CurrencyInTable - https://sdk.openui5.org/entity/sap.ui.unified.Currency/sample/sap.ui.unified.sample.CurrencyInTable (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_171 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

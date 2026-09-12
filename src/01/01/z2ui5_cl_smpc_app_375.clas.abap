@@ -1,6 +1,6 @@
 " @keywords stepinput step input sap.m stepinputvaluestate flexbox vbox label
 " @summary This example shows different StepInput value states.
-" @origin sap.m.sample.StepInputValueState - https://sdk.openui5.org/entity/sap.m.StepInput/sample/sap.m.sample.StepInputValueState (status: reviewed)
+" @origin sap.m.sample.StepInputValueState - https://sdk.openui5.org/entity/sap.m.StepInput/sample/sap.m.sample.StepInputValueState (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_375 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

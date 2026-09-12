@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table multi-level column headers overflowtoolbar title label text input
 " @summary Example for multi-header of table
-" @origin sap.ui.table.sample.MultiHeader - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiHeader (status: reviewed)
+" @origin sap.ui.table.sample.MultiHeader - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiHeader (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_137 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

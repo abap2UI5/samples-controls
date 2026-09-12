@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputwrapping verticallayout label item
 " @summary Suggestions wrap automatically when longer then the dropdown width
-" @origin sap.m.sample.MultiInputWrapping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputWrapping (status: reviewed)
+" @origin sap.m.sample.MultiInputWrapping - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputWrapping (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_387 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
