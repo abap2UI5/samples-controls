@@ -47,7 +47,7 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
             )->ele( `SlideTile`
                 )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop`
                 )->ele( `GenericTile`
-                    )->a( n = `backgroundImage` v = |{ img }NewsImage2.png|
+                    )->a( n = `backgroundImage` t = |{ img }NewsImage2.png|
                     )->a( n = `frameType`       v = `TwoByOne`
                     )->a( n = `press`           v = client->_event( `PRESS_ONE` )
                     )->ele( `TileContent`
@@ -59,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                     )->end(
                 )->end(
                 )->ele( `GenericTile`
-                    )->a( n = `backgroundImage` v = |{ img }NewsImage1.png|
+                    )->a( n = `backgroundImage` t = |{ img }NewsImage1.png|
                     )->a( n = `frameType`       v = `TwoByOne`
                     )->a( n = `press`           v = client->_event( `PRESS_TWO` )
                     )->ele( `TileContent`
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                 )->a( n = `transitionTime` v = `250`
                 )->a( n = `displayTime`    v = `2500`
                 )->ele( `GenericTile`
-                    )->a( n = `backgroundImage` v = |{ img }NewsImage1.png|
+                    )->a( n = `backgroundImage` t = |{ img }NewsImage1.png|
                     )->a( n = `frameType`       v = `TwoByOne`
                     )->a( n = `press`           v = client->_event( `PRESS_ONE` )
                     )->ele( `TileContent`
@@ -89,7 +89,7 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                     )->end(
                 )->end(
                 )->ele( `GenericTile`
-                    )->a( n = `backgroundImage` v = |{ img }NewsImage2.png|
+                    )->a( n = `backgroundImage` t = |{ img }NewsImage2.png|
                     )->a( n = `frameType`       v = `TwoByOne`
                     )->a( n = `state`           v = `Failed`
                     )->ele( `TileContent`

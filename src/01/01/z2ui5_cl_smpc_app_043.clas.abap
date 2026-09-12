@@ -58,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_043 IMPLEMENTATION.
 
             )->ele( `content`
                 )->tag( `Text`
-                    )->a( n = `text` v = lorem
+                    )->a( n = `text` t = lorem
 
             )->end(
         )->end(
@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_app_043 IMPLEMENTATION.
             )->end(
             )->ele( `content`
                 )->tag( `Text`
-                    )->a( n = `text` v = lorem
+                    )->a( n = `text` t = lorem
 
             )->end(
         )->end(
@@ -111,7 +111,7 @@ CLASS z2ui5_cl_smpc_app_043 IMPLEMENTATION.
             )->end(
             )->ele( `content`
                 )->tag( `Text`
-                    )->a( n = `text` v = lorem ).
+                    )->a( n = `text` t = lorem ).
 
     client->view_display( view->stringify( ) ).
 

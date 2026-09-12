@@ -62,7 +62,7 @@ CLASS z2ui5_cl_smpc_app_031 IMPLEMENTATION.
                             )->a( n = `alignItems` v = `Center`
 
                             )->ele( `Image`
-                                )->a( n = `src`    v = pic1
+                                )->a( n = `src`    t = pic1
                                 )->a( n = `mode`   v = `Background`
                                 )->a( n = `height` v = size
                                 )->a( n = `width`  v = size
@@ -82,7 +82,7 @@ CLASS z2ui5_cl_smpc_app_031 IMPLEMENTATION.
                             )->a( n = `alignItems` v = `Center`
 
                             )->ele( `Image`
-                                )->a( n = `src`                v = pic1
+                                )->a( n = `src`                t = pic1
                                 )->a( n = `mode`               v = `Background`
                                 )->a( n = `height`             v = size
                                 )->a( n = `backgroundSize`     v = `5em 5em`
@@ -104,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_031 IMPLEMENTATION.
                             )->a( n = `alignItems` v = `Center`
 
                             )->ele( `Image`
-                                )->a( n = `src`              v = pic1
+                                )->a( n = `src`              t = pic1
                                 )->a( n = `mode`             v = `Background`
                                 )->a( n = `height`           v = size
                                 )->a( n = `backgroundSize`   v = `2em 2em`
@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_031 IMPLEMENTATION.
                                 )->a( n = `class` v = `imageContainer`
 
                                 )->tag( `Image`
-                                    )->a( n = `src`                v = pic3
+                                    )->a( n = `src`                t = pic3
                                     )->a( n = `mode`               v = `Background`
                                     )->a( n = `height`             v = size
                                     )->a( n = `backgroundSize`     v = `contain`

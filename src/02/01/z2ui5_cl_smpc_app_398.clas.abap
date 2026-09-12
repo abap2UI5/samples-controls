@@ -53,16 +53,16 @@ CLASS z2ui5_cl_smpc_app_398 IMPLEMENTATION.
             )->a( n = `loop`           v = `true`
 
             )->tag( `Image`
-                )->a( n = `src` v = base && `HT-7777-large.jpg`
+                )->a( n = `src` t = base && `HT-7777-large.jpg`
                 )->a( n = `alt` v = `Example picture of speakers`
             )->tag( `Image`
-                )->a( n = `src` v = base && `HT-6120-large.jpg`
+                )->a( n = `src` t = base && `HT-6120-large.jpg`
                 )->a( n = `alt` v = `Example picture of USB flash drive`
             )->tag( `Image`
-                )->a( n = `src` v = base && `HT-6100-large.jpg`
+                )->a( n = `src` t = base && `HT-6100-large.jpg`
                 )->a( n = `alt` v = `Example picture of spotlight`
             )->tag( `Image`
-                )->a( n = `src` v = base && `screw.jpg`
+                )->a( n = `src` t = base && `screw.jpg`
                 )->a( n = `alt` v = `Example picture of screw` ).
 
     client->view_display( view->stringify( ) ).

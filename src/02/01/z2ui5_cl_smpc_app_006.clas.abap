@@ -67,17 +67,17 @@ CLASS z2ui5_cl_smpc_app_006 IMPLEMENTATION.
 
             )->ele( n = `VerticalLayout` ns = `l`
                 )->tag( `Image`
-                    )->a( n = `src` v = base_url && `HT-7777-large.jpg`
+                    )->a( n = `src` t = base_url && `HT-7777-large.jpg`
                     )->a( n = `alt` v = `Example picture of speakers`
 
             )->end(
             )->tag( `Image`
-                )->a( n = `src` v = base_url && `HT-6120-large.jpg`
+                )->a( n = `src` t = base_url && `HT-6120-large.jpg`
                 )->a( n = `alt` v = `Example picture of USB flash drive`
 
             )->tag( `Text`
                 )->a( n = `class` v = `sapUiSmallMargin`
-                )->a( n = `text`  v = lorem
+                )->a( n = `text`  t = lorem
 
             )->ele( `ScrollContainer`
                 )->a( n = `height`     v = `100%`
@@ -99,7 +99,7 @@ CLASS z2ui5_cl_smpc_app_006 IMPLEMENTATION.
                 )->end(
             )->end(
             )->tag( `Image`
-                )->a( n = `src` v = base_url && `HT-6100-large.jpg`
+                )->a( n = `src` t = base_url && `HT-6100-large.jpg`
                 )->a( n = `alt` v = `Example picture of spotlight` ).
 
     client->view_display( view->stringify( ) ).

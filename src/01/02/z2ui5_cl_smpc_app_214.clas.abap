@@ -117,7 +117,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->a( n = `title` v = `Left aligned heading`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                         )->ele( `RadioButtonGroup`
                             )->a( n = `columns`       v = `2`
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
@@ -159,7 +159,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->a( n = `title` v = `50% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
@@ -181,7 +181,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->a( n = `title` v = `Cell inside scrollable row`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
@@ -195,24 +195,24 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->a( n = `width` v = `90`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -243,14 +243,14 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->end(
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -260,28 +260,28 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->a( n = `title` v = `25% width cell`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -289,7 +289,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                 )->ele( n = `BlockLayoutRow` ns = `l`
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -297,7 +297,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                 )->ele( n = `BlockLayoutRow` ns = `l`
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -305,7 +305,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                 )->ele( n = `BlockLayoutRow` ns = `l`
                     )->ele( n = `BlockLayoutCell` ns = `l`
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(
@@ -320,7 +320,7 @@ CLASS z2ui5_cl_smpc_app_214 IMPLEMENTATION.
                             )->a( n = `text` v = `You can use the cells with 100% width, if you set the vertical property of the row to true`
 
                         )->tag( `Text`
-                            )->a( n = `text` v = lorem
+                            )->a( n = `text` t = lorem
 
                     )->end(
                 )->end(

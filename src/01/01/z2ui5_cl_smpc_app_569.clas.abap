@@ -113,7 +113,7 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
         ELSE |\{ path: '{ client->_bind_path( t_products ) }', filters: \{path: 'RANK', operator: 'EQ', value1: '0'\} \}| ).
 
     DATA(table) = node->ele( `Table`
-        )->a( n = `id`               v = COND #( WHEN selected = abap_true THEN `selectedTable` ELSE `availableTable` )
+        )->a( n = `id`               t = COND #( WHEN selected = abap_true THEN `selectedTable` ELSE `availableTable` )
         )->a( n = `mode`             v = `SingleSelectMaster`
         )->a( n = `growing`          v = `true`
         )->a( n = `growingThreshold` v = `10`
@@ -126,7 +126,7 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
     DATA(toolbar) = table->ele( `headerToolbar`
         )->ele( `OverflowToolbar`
             )->tag( `Title`
-                )->a( n = `text` v = COND #( WHEN selected = abap_true THEN `Selected Products` ELSE `Available Products` ) ).
+                )->a( n = `text` t = COND #( WHEN selected = abap_true THEN `Selected Products` ELSE `Available Products` ) ).
 
     IF selected = abap_true.
       toolbar->tag( `ToolbarSpacer`

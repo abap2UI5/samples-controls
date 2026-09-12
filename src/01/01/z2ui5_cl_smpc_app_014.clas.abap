@@ -101,7 +101,7 @@ CLASS z2ui5_cl_smpc_app_014 IMPLEMENTATION.
 
         )->ele( `Dialog`
             )->tag( `Image`
-                )->a( n = `src` v = pic_url
+                )->a( n = `src` t = pic_url
 
             )->ele( `beginButton`
                 )->tag( `Button`

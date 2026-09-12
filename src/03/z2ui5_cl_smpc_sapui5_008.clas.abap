@@ -69,12 +69,12 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
             )->ele( `QuickViewPage`
                 )->a( n = `header`      v = `Employee`
-                )->a( n = `title`       v = node-title
-                )->a( n = `description` v = node-position
+                )->a( n = `title`       t = node-title
+                )->a( n = `description` t = node-position
 
                 )->ele( `avatar`
                     )->tag( `Avatar`
-                        )->a( n = `src`          v = node-src
+                        )->a( n = `src`          t = node-src
                         )->a( n = `displayShape` v = `Square`
 
                 )->end(
@@ -84,16 +84,16 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label` v = `Location`
-                        )->a( n = `value` v = node-location
+                        )->a( n = `value` t = node-location
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label` v = `Mobile`
-                        )->a( n = `value` v = node-phone
+                        )->a( n = `value` t = node-phone
                         )->a( n = `type`  v = `phone`
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label`        v = `Email`
-                        )->a( n = `value`        v = node-email
+                        )->a( n = `value`        t = node-email
                         )->a( n = `type`         v = `email`
-                        )->a( n = `emailSubject` v = |Contact{ node-id }|
+                        )->a( n = `emailSubject` t = |Contact{ node-id }|
 
                 )->end( ).
 
@@ -103,7 +103,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
           )->tag( `QuickViewGroupElement`
               )->a( n = `label` v = `Size`
-              )->a( n = `value` v = CONV string( node-team ) ).
+              )->a( n = `value` t = CONV string( node-team ) ).
     ENDIF.
 
     client->popover_display( xml = view->stringify( ) by_id = id ).
