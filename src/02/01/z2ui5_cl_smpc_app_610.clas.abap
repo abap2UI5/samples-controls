@@ -6,18 +6,19 @@ CLASS z2ui5_cl_smpc_app_610 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title    TYPE string,
-             text     TYPE string,
-             type     TYPE string,
-             icon     TYPE string,
-             start_at TYPE string,
-             end_at   TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title    TYPE string,
+        text     TYPE string,
+        type     TYPE string,
+        icon     TYPE string,
+        start_at TYPE string,
+        end_at   TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
+    DATA startdate      TYPE string.
 
     " the original keeps these three in a settings> model; abap2UI5 keeps one
     " default model, so they are fields the Switches and the calendar share
@@ -124,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                 )->a( n = `enableAppointmentsResize`      v = client->_bind( enable_resize )
                 )->a( n = `enableAppointmentsCreate`      v = client->_bind( enable_create )
                 )->a( n = `appointments`                  v = client->_bind( t_appointments )
-                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
 
                 )->a( n = `appointmentDrop`               v = client->_event(
                           val   = `APPT_DROP`
@@ -310,7 +311,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
   METHOD model_init.
 
     " onInit's startDate and its 36 appointments, all on the 2018-07 week
-    start_date = `2018-07-09T00:00:00`.
+    startdate = `2018-07-09T00:00:00`.
 
     t_appointments = VALUE #(
       ( title    = `Meet John Miller`

@@ -1,0 +1,43 @@
+{
+  // The version gate for the generated overview app, src/z2ui5_cl_smpc_app_000.
+  //
+  // The overview is the one abap2UI5 class in this repository that no gate
+  // judged for what it BUILDS (2026-09-12): it has no meta sidecar, so
+  // view-gates never sees it (the port machinery is sidecar-driven, AGENTS
+  // section 3); it is not in src/03, so check:collection never sees it; and
+  // abap2ui5lint-chains.jsonc runs over it with the property gate OFF, which
+  // is right for a layout check and blind to an icon. So its INFO button
+  // carried sap-icon://information - a glyph that reached the icon font in
+  // 1.80 - into an app that claims to run on 1.71, and nothing said so.
+  //
+  //   npm run check:overview
+  //
+  // One file, property gate on, the 1.71 floor as a hard error: the overview
+  // is installed on every system that installs the ports, so it is held to
+  // the floor src/01 is held to. Render is off for the same reason it is off
+  // in the chains config - nothing in the offline gate set opens a browser -
+  // and because the overview is booted for real by nothing else either; the
+  // e2e harness is sidecar-driven too. Turning it on is a decision for the
+  // view-gates workflow, which does install Chromium.
+  //
+  // Why this can run with the property gate on at all, when the class is
+  // 12,000 lines of sidecar prose: get_catalog( ) is wrapped in the linter's
+  // `abap2ui5lint-disable ... -enable` block by the emitter
+  // (scripts/lib/overview-emit.mjs), so a rule that reads the source for a
+  // call shape - popover_display( by_id = ), a {/path} written as text, a
+  // sap-icon:// name - no longer reads a quoted deviation as this class's own
+  // code. Measured before the block existed: 24 findings, 23 in the catalogue
+  // and every one of them a quote. The block is what keeps this config free
+  // of exclusions; an exclusion here would be a second place that knows the
+  // catalogue is data.
+  "$schema": "./node_modules/@abap2ui5/linter/data/abap2ui5lint.schema.json",
+
+  "paths": ["src/z2ui5_cl_smpc_app_000.clas.abap"],
+  "ui5": "1.71",
+  // the overview ships with the OpenUI5 ports and has to load where they load;
+  // a SAPUI5-only control in it would be an error, not a hint
+  "distribution": "openui5",
+  "render": false,
+
+  "failOn": "warning"
+}

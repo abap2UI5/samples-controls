@@ -6,11 +6,12 @@ CLASS z2ui5_cl_smpc_app_105 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_message,
-             message     TYPE string,
-             description TYPE string,
-             type        TYPE string,
-           END OF ty_s_message.
+    TYPES:
+      BEGIN OF ty_s_message,
+        message     TYPE string,
+        description TYPE string,
+        type        TYPE string,
+      END OF ty_s_message.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
 
   PROTECTED SECTION.

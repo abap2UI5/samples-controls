@@ -6,23 +6,24 @@ CLASS z2ui5_cl_smpc_app_573 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState and Formatter.formatType, computed in the
-             " backend (thin frontend)
-             weight_state  TYPE string,
-             row_type      TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState and Formatter.formatType, computed in the
+        " backend (thin frontend)
+        weight_state  TYPE string,
+        row_type      TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

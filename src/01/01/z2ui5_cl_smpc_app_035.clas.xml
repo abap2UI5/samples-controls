@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>Z2UI5_CL_SMPC_APP_035</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>sap.m.List - If the list is empty it indicates this state by</DESCRIPT>
+    <DESCRIPT>sap.m.List - If the list is empty it indicates this state...</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>

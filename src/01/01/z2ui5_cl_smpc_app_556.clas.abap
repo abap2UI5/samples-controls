@@ -6,12 +6,13 @@ CLASS z2ui5_cl_smpc_app_556 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             suppliername TYPE string,
-             dateofsale   TYPE string,
-             selected     TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        suppliername TYPE string,
+        dateofsale   TYPE string,
+        selected     TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products    TYPE ty_t_product.
@@ -22,8 +23,8 @@ CLASS z2ui5_cl_smpc_app_556 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_date_display.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.

@@ -6,31 +6,34 @@ CLASS z2ui5_cl_smpc_app_532 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_element,
-             label        TYPE string,
-             value        TYPE string,
-             url          TYPE string,
-             elementtype  TYPE string,
-             pagelinkid   TYPE string,
-             emailsubject TYPE string,
-             target       TYPE string,
-           END OF ty_s_element.
+    TYPES:
+      BEGIN OF ty_s_element,
+        label        TYPE string,
+        value        TYPE string,
+        url          TYPE string,
+        elementtype  TYPE string,
+        pagelinkid   TYPE string,
+        emailsubject TYPE string,
+        target       TYPE string,
+      END OF ty_s_element.
     TYPES ty_t_element TYPE STANDARD TABLE OF ty_s_element WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_group,
-             heading  TYPE string,
-             elements TYPE ty_t_element,
-           END OF ty_s_group.
+    TYPES:
+      BEGIN OF ty_s_group,
+        heading  TYPE string,
+        elements TYPE ty_t_element,
+      END OF ty_s_group.
     TYPES ty_t_group TYPE STANDARD TABLE OF ty_s_group WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_page,
-             pageid       TYPE string,
-             header       TYPE string,
-             title        TYPE string,
-             titleurl     TYPE string,
-             icon         TYPE string,
-             displayshape TYPE string,
-             description  TYPE string,
-             groups       TYPE ty_t_group,
-           END OF ty_s_page.
+    TYPES:
+      BEGIN OF ty_s_page,
+        pageid       TYPE string,
+        header       TYPE string,
+        title        TYPE string,
+        titleurl     TYPE string,
+        icon         TYPE string,
+        displayshape TYPE string,
+        description  TYPE string,
+        groups       TYPE ty_t_group,
+      END OF ty_s_page.
     TYPES ty_t_page TYPE STANDARD TABLE OF ty_s_page WITH EMPTY KEY.
 
     DATA t_pages TYPE ty_t_page.

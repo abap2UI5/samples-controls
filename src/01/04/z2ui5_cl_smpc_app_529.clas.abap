@@ -6,19 +6,21 @@ CLASS z2ui5_cl_smpc_app_529 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_prod,
-             name         TYPE string,
-             productid    TYPE string,
-             category     TYPE string,
-             suppliername TYPE string,
-           END OF ty_prod.
+    TYPES:
+      BEGIN OF ty_prod,
+        name         TYPE string,
+        productid    TYPE string,
+        category     TYPE string,
+        suppliername TYPE string,
+      END OF ty_prod.
     DATA productcollection TYPE STANDARD TABLE OF ty_prod WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_message,
-             type    TYPE string,
-             message TYPE string,
-             target  TYPE string,
-           END OF ty_s_message.
+    TYPES:
+      BEGIN OF ty_s_message,
+        type    TYPE string,
+        message TYPE string,
+        target  TYPE string,
+      END OF ty_s_message.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
 
     " The original keeps the header data in nested paths on one JSON model

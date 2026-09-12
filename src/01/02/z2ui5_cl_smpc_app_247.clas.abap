@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_247 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             category      TYPE string,
-             productpicurl TYPE string,
-             quantity      TYPE i,
-             deliverydate  TYPE p LENGTH 8 DECIMALS 0,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        category      TYPE string,
+        productpicurl TYPE string,
+        quantity      TYPE i,
+        deliverydate  TYPE p LENGTH 8 DECIMALS 0,
+      END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     " Column widths - the sample's ui>/widths/{name,category,image,quantity,date}

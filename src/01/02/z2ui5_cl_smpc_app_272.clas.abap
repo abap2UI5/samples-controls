@@ -40,9 +40,9 @@ CLASS z2ui5_cl_smpc_app_272 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS hide_messages.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -380,26 +380,26 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onValidateFieldGroup: mMessageMapping resolves the group to its own
         " strip + type, the strip shows "Group '<g>' Validation:<type>" and
         " the toast names the validated group
-        DATA(lv_group) = client->get_event_arg( ).
-        CASE lv_group.
+        DATA(group) = client->get_event_arg( ).
+        CASE group.
           WHEN `Billing Information`.
             billing_type    = `Error`.
-            billing_text    = |Group '{ lv_group }' Validation:Error|.
+            billing_text    = |Group '{ group }' Validation:Error|.
             billing_visible = abap_true.
           WHEN `Credit Card`.
             credit_type    = `Information`.
-            credit_text    = |Group '{ lv_group }' Validation:Information|.
+            credit_text    = |Group '{ group }' Validation:Information|.
             credit_visible = abap_true.
           WHEN `Online`.
             online_type    = `Warning`.
-            online_text    = |Group '{ lv_group }' Validation:Warning|.
+            online_text    = |Group '{ group }' Validation:Warning|.
             online_visible = abap_true.
           WHEN `Discount Code`.
             discount_type    = `Success`.
-            discount_text    = |Group '{ lv_group }' Validation:Success|.
+            discount_text    = |Group '{ group }' Validation:Success|.
             discount_visible = abap_true.
         ENDCASE.
-        client->message_toast_display( text = |Validation of field group '{ lv_group }' triggered.| duration = `500` ).
+        client->message_toast_display( text = |Validation of field group '{ group }' triggered.| duration = `500` ).
 
       WHEN `CLOSE_BILLING`.
         billing_visible = abap_false.
@@ -467,11 +467,11 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
     credit_type   = `Information`.
     online_type   = `Information`.
 
-    DATA(lv_default) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
-    billing_text  = lv_default.
-    discount_text = lv_default.
-    credit_text   = lv_default.
-    online_text   = lv_default.
+    DATA(default_text) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
+    billing_text  = default_text.
+    discount_text = default_text.
+    credit_text   = default_text.
+    online_text   = default_text.
 
   ENDMETHOD.
 

@@ -63,10 +63,10 @@ CLASS z2ui5_cl_smpc_app_557 DEFINITION PUBLIC.
 
     METHODS view_display.
     METHODS on_event.
-    METHODS apply_filter.
-    METHODS filter_issue.
     METHODS list_search IMPORTING title TYPE string
                                   term  TYPE string.
+    METHODS apply_filter.
+    METHODS filter_issue.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -318,9 +318,9 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
       WHEN `RESET`.
         " handleFacetFilterReset: clear every group's selection, drop the search
         " filters (Contains '') and re-filter the table with an empty filter
-        LOOP AT t_filters_all REFERENCE INTO DATA(lr_group).
-          LOOP AT lr_group->values REFERENCE INTO DATA(lr_value).
-            lr_value->selected = abap_false.
+        LOOP AT t_filters_all REFERENCE INTO DATA(group).
+          LOOP AT group->values REFERENCE INTO DATA(value).
+            value->selected = abap_false.
           ENDLOOP.
         ENDLOOP.
         t_filters = t_filters_all.
@@ -360,14 +360,14 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
 
     " Contains on a client model is case-insensitive; the original lower-cases the
     " term before building Filter( 'text', Contains, term )
-    LOOP AT t_filters REFERENCE INTO DATA(lr_group) WHERE type = title.
+    LOOP AT t_filters REFERENCE INTO DATA(group) WHERE type = title.
       DATA(kept) = VALUE ty_t_value( ).
-      LOOP AT lr_group->values INTO DATA(candidate).
+      LOOP AT group->values INTO DATA(candidate).
         IF to_upper( candidate-text ) CS to_upper( term ).
           APPEND candidate TO kept.
         ENDIF.
       ENDLOOP.
-      lr_group->values = kept.
+      group->values = kept.
     ENDLOOP.
 
   ENDMETHOD.
@@ -380,12 +380,12 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
     " model itself untouched (the original calls oTable.getBinding('items').filter)
     filter_live = `[`.
 
-    LOOP AT t_filters REFERENCE INTO DATA(lr_group).
+    LOOP AT t_filters REFERENCE INTO DATA(group).
       DATA(rows) = ``.
       " the original filters on the LIST TITLE (oList.getTitle()), which is the
       " stats group's type - Category / SupplierName
-      DATA(column) = to_upper( lr_group->type ).
-      LOOP AT lr_group->values INTO DATA(value) WHERE selected = abap_true.
+      DATA(column) = to_upper( group->type ).
+      LOOP AT group->values INTO DATA(value) WHERE selected = abap_true.
         IF rows IS NOT INITIAL.
           rows = rows && `,`.
         ENDIF.
@@ -709,12 +709,12 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
     " thresholds), not presentation - abap2UI5 is a thin frontend, so the
     " ObjectNumber state is computed here in the backend (the original does it in
     " its frontend Formatter.js, which a faithful port moves server-side).
-    LOOP AT t_products REFERENCE INTO DATA(lr_product).
-      DATA(weight_kg) = lr_product->weightmeasure.
-      IF lr_product->weightunit = `G`.
+    LOOP AT t_products REFERENCE INTO DATA(product).
+      DATA(weight_kg) = product->weightmeasure.
+      IF product->weightunit = `G`.
         weight_kg = weight_kg / 1000.
       ENDIF.
-      lr_product->weight_state = COND #( WHEN weight_kg < 0 THEN `None`
+      product->weight_state = COND #( WHEN weight_kg < 0 THEN `None`
                                          WHEN weight_kg < 1 THEN `Success`
                                          WHEN weight_kg < 5 THEN `Warning`
                                          ELSE `Error` ).

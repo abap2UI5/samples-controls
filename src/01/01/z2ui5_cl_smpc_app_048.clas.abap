@@ -8,16 +8,16 @@ CLASS z2ui5_cl_smpc_app_048 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        product_id TYPE string,
-        name       TYPE string,
+        productid TYPE string,
+        name      TYPE string,
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA selected_product  TYPE string.
-    DATA selected_product2 TYPE string.
-    DATA selected_product3 TYPE string.
-    DATA enabled  TYPE abap_bool.
-    DATA editable TYPE abap_bool.
+    DATA selectedproduct  TYPE string.
+    DATA selectedproduct2 TYPE string.
+    DATA selectedproduct3 TYPE string.
+    DATA enabled          TYPE abap_bool.
+    DATA editable         TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -63,11 +63,11 @@ CLASS z2ui5_cl_smpc_app_048 IMPLEMENTATION.
                     )->tag( `ToolbarSpacer`
                     )->ele( `Select`
                         )->a( n = `forceSelection` v = `false`
-                        )->a( n = `selectedKey`    v = client->_bind( selected_product )
+                        )->a( n = `selectedKey`    v = client->_bind( selectedproduct )
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}`
 
                     )->end(
@@ -82,11 +82,11 @@ CLASS z2ui5_cl_smpc_app_048 IMPLEMENTATION.
                         )->a( n = `enabled`        v = client->_bind( enabled )
                         )->a( n = `editable`       v = client->_bind( editable )
                         )->a( n = `forceSelection` v = `false`
-                        )->a( n = `selectedKey`    v = client->_bind( selected_product2 )
+                        )->a( n = `selectedKey`    v = client->_bind( selectedproduct2 )
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}`
 
                     )->end(
@@ -123,14 +123,14 @@ CLASS z2ui5_cl_smpc_app_048 IMPLEMENTATION.
                     )->tag( `ToolbarSpacer`
                     )->ele( `Select`
                         )->a( n = `forceSelection`  v = `false`
-                        )->a( n = `selectedKey`     v = client->_bind( selected_product3 )
+                        )->a( n = `selectedKey`     v = client->_bind( selectedproduct3 )
                         )->a( n = `type`            v = `IconOnly`
                         )->a( n = `icon`            v = `sap-icon://filter`
                         )->a( n = `autoAdjustWidth` v = `true`
                         )->a( n = `items`           v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}` ).
 
     client->view_display( view->stringify( ) ).
@@ -141,9 +141,9 @@ CLASS z2ui5_cl_smpc_app_048 IMPLEMENTATION.
   METHOD model_init.
 
     " Data of the inline JSON model defined in the original sample controller
-    selected_product  = `HT-1001`.
-    selected_product2 = `HT-1001`.
-    selected_product3 = `HT-1001`.
+    selectedproduct  = `HT-1001`.
+    selectedproduct2 = `HT-1001`.
+    selectedproduct3 = `HT-1001`.
     enabled  = abap_true.
     editable = abap_true.
 
@@ -151,11 +151,11 @@ CLASS z2ui5_cl_smpc_app_048 IMPLEMENTATION.
     " byte-identical collections /ProductCollection, /ProductCollection2 and
     " /ProductCollection3); each Select keeps its own selectedKey
     t_products = VALUE #(
-      ( product_id = `HT-1000` name = `Notebook Basic 15` )
-      ( product_id = `HT-1001` name = `Notebook Basic 17` )
-      ( product_id = `HT-1002` name = `Notebook Basic 18` )
-      ( product_id = `HT-1003` name = `Notebook Basic 19` )
-      ( product_id = `HT-1007` name = `ITelO Vault` ) ).
+      ( productid = `HT-1000` name = `Notebook Basic 15` )
+      ( productid = `HT-1001` name = `Notebook Basic 17` )
+      ( productid = `HT-1002` name = `Notebook Basic 18` )
+      ( productid = `HT-1003` name = `Notebook Basic 19` )
+      ( productid = `HT-1007` name = `ITelO Vault` ) ).
 
   ENDMETHOD.
 

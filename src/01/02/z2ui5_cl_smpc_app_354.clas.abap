@@ -26,9 +26,9 @@ CLASS z2ui5_cl_smpc_app_354 DEFINITION PUBLIC.
     DATA t_products TYPE ty_t_product.
 
     " the original's `ui>` model, folded onto the one default model
-    DATA global_filter           TYPE string.
-    DATA availability_filter_on  TYPE abap_bool.
-    DATA cell_filter_on          TYPE abap_bool.
+    DATA globalfilter         TYPE string.
+    DATA availabilityfilteron TYPE abap_bool.
+    DATA cellfilteron         TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -90,7 +90,7 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
                     )->a( n = `id`               v = `table`
                     )->a( n = `selectionMode`    v = `MultiToggle`
                     )->a( n = `rows`             v = client->_bind( t_products )
-                    )->a( n = `enableCellFilter` v = client->_bind( cell_filter_on )
+                    )->a( n = `enableCellFilter` v = client->_bind( cellfilteron )
                     )->a( n = `filter`           v = client->_event(
                                         val    = `COLUMN_FILTER`
                                         t_arg  = VALUE #( ( `${$parameters>/column}.getFilterProperty()` )
@@ -118,13 +118,13 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
                             )->tag( n = `ToggleButton` ns = `m`
                                 )->a( n = `icon`    v = `sap-icon://complete`
                                 )->a( n = `tooltip` v = `Show available products only`
-                                )->a( n = `pressed` v = client->_bind( availability_filter_on )
+                                )->a( n = `pressed` v = client->_bind( availabilityfilteron )
                                 )->a( n = `press`   v = client->_event( `TOGGLE_AVAILABILITY` )
 
                             )->tag( n = `ToggleButton` ns = `m`
                                 )->a( n = `icon`    v = `sap-icon://grid`
                                 )->a( n = `tooltip` v = `Enable / Disable Cell Filter Functionality`
-                                )->a( n = `pressed` v = client->_bind( cell_filter_on )
+                                )->a( n = `pressed` v = client->_bind( cellfilteron )
 
                             )->tag( n = `Button` ns = `m`
                                 )->a( n = `icon`    v = `sap-icon://decline`
@@ -135,7 +135,7 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
 
                             )->tag( n = `SearchField` ns = `m`
                                 )->a( n = `placeholder` v = `Filter`
-                                )->a( n = `value`       v = client->_bind( global_filter )
+                                )->a( n = `value`       v = client->_bind( globalfilter )
                                 )->a( n = `search`      v = client->_event( `SEARCH` )
                                 )->a( n = `width`       v = `15rem`
 
@@ -285,8 +285,8 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
         " are Control-type filters living on the rows binding, untouched by
         " anything the backend does to the model - and on_event never rebuilds
         " the view, so they simply stayed on.
-        global_filter          = ``.
-        availability_filter_on = abap_false.
+        globalfilter          = ``.
+        availabilityfilteron = abap_false.
         price_filter           = ``.
         filter_apply( ).
         " Table.filter( col, null ) delegates to Column.filter( '' ), which does
@@ -295,9 +295,9 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
         " price column needs no call: its filter event is vetoed, so
         " Column.filter returns before setFiltered and it never carries an
         " indicator in the first place.
-        LOOP AT VALUE string_table( ( `name` ) ( `category` ) ( `availability` ) ( `quantity` ) ) INTO DATA(lv_col).
+        LOOP AT VALUE string_table( ( `name` ) ( `category` ) ( `availability` ) ( `quantity` ) ) INTO DATA(col).
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( lv_col ) ( `filter` ) ( `` ) ) ).
+                                    t_arg = VALUE #( ( col ) ( `filter` ) ( `` ) ) ).
         ENDLOOP.
 
     ENDCASE.
@@ -312,22 +312,22 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
     " ANDed, each one on its own an OR over its columns
     t_products = catalog( ).
 
-    IF global_filter IS NOT INITIAL.
-      DATA(lv_query) = to_upper( global_filter ).
+    IF globalfilter IS NOT INITIAL.
+      DATA(query) = to_upper( globalfilter ).
       " Collected rather than deleted in place: DELETE ... INDEX sy-tabix inside
       " a LOOP over the same table shifts the rows under the loop's own cursor -
       " on a system it silently SKIPS the row after each deletion, on the
       " transpiled backend it raises TABLE_INVALID_INDEX (2026-08-17).
-      DATA(lt_keep) = VALUE ty_t_product( ).
-      LOOP AT t_products INTO DATA(ls_row).
-        IF to_upper( ls_row-name ) CS lv_query OR to_upper( ls_row-category ) CS lv_query.
-          APPEND ls_row TO lt_keep.
+      DATA(t_keep) = VALUE ty_t_product( ).
+      LOOP AT t_products INTO DATA(s_row).
+        IF to_upper( s_row-name ) CS query OR to_upper( s_row-category ) CS query.
+          APPEND s_row TO t_keep.
         ENDIF.
       ENDLOOP.
-      t_products = lt_keep.
+      t_products = t_keep.
     ENDIF.
 
-    IF availability_filter_on = abap_true.
+    IF availabilityfilteron = abap_true.
       DELETE t_products WHERE available = abap_false.
     ENDIF.
 
@@ -343,12 +343,12 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
     " a trailing one on the fraction change nothing. No length term is needed
     " here (unlike the i-targeted guards elsewhere): decfloat34 carries 34
     " digits and the comparison against PRICE is done in decfloat34 too
-    DATA(lv_text) = condense( price_filter ).
-    SPLIT lv_text AT `.` INTO DATA(lv_whole) DATA(lv_frac).
-    IF lv_text IS NOT INITIAL AND lv_text <> `.`
-       AND lv_whole CO `0123456789` AND lv_frac CO `0123456789`.
-      DATA(lv_price) = CONV decfloat34( |0{ lv_whole }.{ lv_frac }0| ).
-      DELETE t_products WHERE price < lv_price - 20 OR price > lv_price + 20.
+    DATA(text) = condense( price_filter ).
+    SPLIT text AT `.` INTO DATA(whole) DATA(frac).
+    IF text IS NOT INITIAL AND text <> `.`
+       AND whole CO `0123456789` AND frac CO `0123456789`.
+      DATA(filter_price) = CONV decfloat34( |0{ whole }.{ frac }0| ).
+      DELETE t_products WHERE price < filter_price - 20 OR price > filter_price + 20.
     ENDIF.
 
   ENDMETHOD.

@@ -8,12 +8,12 @@ CLASS z2ui5_cl_smpc_app_073 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        weight_measure TYPE string,
-        weight_unit    TYPE string,
-        width          TYPE string,
-        depth          TYPE string,
-        height         TYPE string,
-        dim_unit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
       END OF ty_s_product.
     DATA s_product TYPE ty_s_product.
 
@@ -67,7 +67,7 @@ CLASS z2ui5_cl_smpc_app_073 IMPLEMENTATION.
                 )->tag( `ObjectAttribute`
                     )->a( n = `binding` v = client->_bind( s_product )
                     )->a( n = `title`   v = `Weight`
-                    )->a( n = `text`    v = `{WEIGHT_MEASURE} {WEIGHT_UNIT}`
+                    )->a( n = `text`    v = `{WEIGHTMEASURE} {WEIGHTUNIT}`
 
                 )->tag( `Label`
                     )->a( n = `text`   v = `Not active Object Attribute only with set text`
@@ -75,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_073 IMPLEMENTATION.
                     )->a( n = `class`  v = `sapUiSmallMarginTop`
                 )->tag( `ObjectAttribute`
                     )->a( n = `binding` v = client->_bind( s_product )
-                    )->a( n = `text`    v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIM_UNIT}`
+                    )->a( n = `text`    v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIMUNIT}`
 
                 )->tag( `Label`
                     )->a( n = `text`   v = `Active Object Attribute with title and text which opens popup on press`
@@ -208,9 +208,9 @@ CLASS z2ui5_cl_smpc_app_073 IMPLEMENTATION.
   METHOD model_init.
 
     " the bound record /ProductCollection/0 (Notebook Basic 15) of ui5/mock/products.json, verbatim
-    s_product = VALUE #( weight_measure = `4.2` weight_unit = `KG`
+    s_product = VALUE #( weightmeasure = `4.2` weightunit = `KG`
                          width          = `30`  depth       = `18`
-                         height         = `3`   dim_unit    = `cm` ).
+                         height         = `3`   dimunit    = `cm` ).
 
   ENDMETHOD.
 

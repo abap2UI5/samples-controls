@@ -6,20 +6,21 @@ CLASS z2ui5_cl_smpc_app_550 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
-    DATA sticky_mode    TYPE string.
+    DATA startdate      TYPE string.
+    DATA stickymode     TYPE string.
     DATA week_number    TYPE string.
 
   PROTECTED SECTION.
@@ -75,7 +76,7 @@ CLASS z2ui5_cl_smpc_app_550 IMPLEMENTATION.
                     " abap2UI5 keeps one default model, so it is a field here
                     )->ele( `Select`
                         )->a( n = `id`          v = `stickyModeSelect`
-                        )->a( n = `selectedKey` v = client->_bind( sticky_mode )
+                        )->a( n = `selectedKey` v = client->_bind( stickymode )
 
                         )->tag( n = `ListItem` ns = `core`
                             )->a( n = `text` v = `None`
@@ -121,8 +122,8 @@ CLASS z2ui5_cl_smpc_app_550 IMPLEMENTATION.
                 )->a( n = `id`                    v = `SPC1`
                 )->a( n = `class`                 v = `sapUiSmallMarginTop`
                 )->a( n = `title`                 v = `My Calendar`
-                )->a( n = `startDate`             v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `stickyMode`            v = client->_bind( sticky_mode )
+                )->a( n = `startDate`             v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `stickyMode`            v = client->_bind( stickymode )
                 )->a( n = `calendarWeekNumbering` v = client->_bind( week_number )
                 )->a( n = `appointments`          v = client->_bind( t_appointments )
 
@@ -158,8 +159,8 @@ CLASS z2ui5_cl_smpc_app_550 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date  = `2018-07-09T00:00:00`.
-    sticky_mode = `None`.
+    startdate  = `2018-07-09T00:00:00`.
+    stickymode = `None`.
     week_number = `Default`.
 
     t_appointments = VALUE #(

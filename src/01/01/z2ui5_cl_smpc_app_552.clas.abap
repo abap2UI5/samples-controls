@@ -6,19 +6,20 @@ CLASS z2ui5_cl_smpc_app_552 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
-    DATA start_date     TYPE string.
+    DATA startdate      TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -63,7 +64,7 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
             )->ele( `SinglePlanningCalendar`
                 )->a( n = `id`           v = `SPC1`
                 )->a( n = `title`        v = `My Calendar`
-                )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `appointments` v = client->_bind( t_appointments )
 
                 " onInit adds five views: three built-in ones and two JS subclasses
@@ -99,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_552 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date = `2018-07-09T00:00:00`.
+    startdate = `2018-07-09T00:00:00`.
 
     t_appointments = VALUE #(
       ( title = `Meet John Miller` type = `Type05` start_at = `2018-07-08T05:00:00` end_at = `2018-07-08T06:00:00` )

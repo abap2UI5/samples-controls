@@ -6,7 +6,7 @@ CLASS z2ui5_cl_smpc_app_013 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA show_cookie_details TYPE abap_bool.
+    DATA showcookiedetails TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -62,11 +62,11 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
 
       WHEN `OPEN_COOKIE_SETTINGS_DIALOG`.
         " the original forces cookie details to be hidden on opening of the dialog
-        show_cookie_details = abap_false.
+        showcookiedetails = abap_false.
         dialog_display( ).
 
       WHEN `SHOW_COOKIE_DETAILS`.
-        show_cookie_details = abap_true.
+        showcookiedetails = abap_true.
         " the original moves the focus to the Save Preferences action through
         " its _focusButton helper: focus now if the button is rendered, else
         " once it is. SET_FOCUS is that helper - it waits for the render,
@@ -89,12 +89,12 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
         client->popup_destroy( ).
 
       WHEN `CANCEL_PRESS`.
-        IF show_cookie_details = abap_false.
+        IF showcookiedetails = abap_false.
           " the cancel action ignores all changes and closes the dialog
           client->popup_destroy( ).
         ELSE.
           " the cancel action navigates back to the preview
-          show_cookie_details = abap_false.
+          showcookiedetails = abap_false.
           client->follow_up_action( val   = client->cs_event-set_focus
                                     t_arg = VALUE #( ( `actionSetPreferences` ) ) ).
         ENDIF.
@@ -125,13 +125,13 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
 
                     )->tag( `Text`
                         )->a( n = `text`    v = `We use cookies and SAP Web Analytics to improve your experience on our site. By continuing to use this site, you consent to use our cookies.`
-                        )->a( n = `visible` v = |\{= !${ client->_bind( show_cookie_details ) } \}|
+                        )->a( n = `visible` v = |\{= !${ client->_bind( showcookiedetails ) } \}|
                     )->tag( `Text`
                         )->a( n = `text`    v = `We use cookies to improve your experience on our site. By continuing to use this site, you consent to use our cookies.`
-                        )->a( n = `visible` v = |\{= !${ client->_bind( show_cookie_details ) } \}|
+                        )->a( n = `visible` v = |\{= !${ client->_bind( showcookiedetails ) } \}|
 
                     )->ele( n = `GridList` ns = `f`
-                        )->a( n = `visible` v = client->_bind( show_cookie_details )
+                        )->a( n = `visible` v = client->_bind( showcookiedetails )
 
                         )->ele( n = `customLayout` ns = `f`
                             )->tag( n = `GridBasicLayout` ns = `grid`
@@ -204,7 +204,7 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
                     )->a( n = `text`    v = `Accept All`
                     )->a( n = `type`    v = `Emphasized`
                     )->a( n = `press`   v = client->_event( `ACCEPT_ALL_COOKIES` )
-                    )->a( n = `visible` v = |\{=! ${ client->_bind( show_cookie_details ) } \}|
+                    )->a( n = `visible` v = |\{=! ${ client->_bind( showcookiedetails ) } \}|
 
                     )->ele( `layoutData`
                         )->tag( `OverflowToolbarLayoutData`
@@ -217,12 +217,12 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
                     )->a( n = `id`      v = `actionSetPreferences`
                     )->a( n = `type`    v = `Ghost`
                     )->a( n = `press`   v = client->_event( `SHOW_COOKIE_DETAILS` )
-                    )->a( n = `visible` v = |\{= !${ client->_bind( show_cookie_details ) } \}|
+                    )->a( n = `visible` v = |\{= !${ client->_bind( showcookiedetails ) } \}|
 
                 )->ele( `Button`
                     )->a( n = `text`    v = `Reject All`
                     )->a( n = `press`   v = client->_event( `REJECT_ALL_COOKIES` )
-                    )->a( n = `visible` v = |\{=! ${ client->_bind( show_cookie_details ) } \}|
+                    )->a( n = `visible` v = |\{=! ${ client->_bind( showcookiedetails ) } \}|
 
                     )->ele( `layoutData`
                         )->tag( `OverflowToolbarLayoutData`
@@ -235,11 +235,11 @@ CLASS z2ui5_cl_smpc_app_013 IMPLEMENTATION.
                     )->a( n = `id`      v = `actionSavePreferences`
                     )->a( n = `type`    v = `Emphasized`
                     )->a( n = `press`   v = client->_event( `SAVE_COOKIES` )
-                    )->a( n = `visible` v = client->_bind( show_cookie_details )
+                    )->a( n = `visible` v = client->_bind( showcookiedetails )
                 )->tag( `Button`
                     )->a( n = `text`    v = `Cancel`
                     )->a( n = `press`   v = client->_event( `CANCEL_PRESS` )
-                    )->a( n = `visible` v = client->_bind( show_cookie_details ) ).
+                    )->a( n = `visible` v = client->_bind( showcookiedetails ) ).
 
     client->popup_display( popup->stringify( ) ).
 

@@ -10,13 +10,13 @@ CLASS z2ui5_cl_smpc_app_273 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS popup_message_display
       IMPORTING
         title TYPE string
         state TYPE string
         text  TYPE string.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

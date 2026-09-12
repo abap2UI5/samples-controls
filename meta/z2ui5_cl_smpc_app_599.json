@@ -18,7 +18,7 @@
     },
     {
       "type": "IMPROVISED",
-      "what": "this sample is ABOUT sap.uxap.BlockBase.columnLayout: the ten sections walk every arrangement of 'auto' and 1..4 across 2, 3, 4, 5 and 6 blocks, and the last five sections put one fixed width on all of them. columnLayout is a property of the BlockBase WRAPPER, read by ObjectPageSubSection when it lays its blocks out - and the wrapper is exactly what the inlining removes, so the property has nowhere to go: an m:Button in a blocks aggregation is laid out as 'auto'. What survives is the structure the sample walks - the ten sections, the 86 subsections, their titles ('a-1', '2 -a', '1-a-a-a-1' ... which spell out the very layouts) and the right number of buttons in each - so the page reads as the same matrix, with every row laid out automatically instead of as its title says. Each inlined button carries a comment naming the columnLayout it had."
+      "what": "this sample is ABOUT sap.uxap.BlockBase.columnLayout: the ten sections walk every arrangement of 'auto' and 1..4 across 2, 3, 4, 5 and 6 blocks, and the last five sections put one fixed width on all of them. columnLayout is a property of the BlockBase WRAPPER, read by ObjectPageSubSection when it lays its blocks out - and the wrapper is exactly what the inlining removes, so the property has nowhere to go: an m:Button in a blocks aggregation is laid out as 'auto'. What survives is the structure the sample walks - the ten sections, the 86 subsections, their titles ('a-1', '2 -a', '1-a-a-a-1' ... which spell out the very layouts) and the right number of buttons in each - so the page reads as the same matrix, with every row laid out automatically instead of as its title says. The port's section table carries each subsection's title and block count, and the title spells the columnLayout each block had ('a-1' = auto, 1; '2-a-a' = 2, auto, auto; the 'All N' sections put N on every block), so the matrix stays readable in the source."
     },
     {
       "type": "NOTE",
@@ -31,6 +31,10 @@
     {
       "type": "NOTE",
       "what": "not yet verified in a running system: that the two toggles switch the subsection layout to TitleOnLeft and the page into two-column mode. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_599.mjs)."
+    },
+    {
+      "type": "NOTE",
+      "what": "The view is built in a loop (the app 520 idiom): the ten ObjectPageSection / 86 ObjectPageSubSection / 359 m:Button tree is one local table of sections with their subsection titles and block counts, walked with LOOP AT and DO on a sub-handle of the sections aggregation; the ids infoButton1..infoButton359 are string templates over a running counter. structural-diff therefore reads the port as dynamic - control counts built in a loop cannot match statically - and the render gate reconstructs one pass of each loop. The rendered view is identical to the unrolled form it replaced (both expanded and diffed, 2026-09-12): a rewrite of the source, not of the behaviour, so the status is untouched."
     }
   ]
 }

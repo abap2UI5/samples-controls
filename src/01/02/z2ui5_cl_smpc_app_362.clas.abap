@@ -111,8 +111,8 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
                     )->a( n = `rows`           v = client->_bind( t_products )
                     )->a( n = `ariaLabelledBy` v = `title`
                     )->a( n = `sort`           v = client->_event(
-                              val    = `SORT`
-                              t_arg  = VALUE #( ( `${$parameters>/column}.getSortProperty()` )
+                              val   = `SORT`
+                              t_arg = VALUE #( ( `${$parameters>/column}.getSortProperty()` )
                                                 ( `${$parameters>/sortOrder}` ) )
                               s_ctrl = VALUE #( check_prevent_default = abap_true ) )
 
@@ -248,39 +248,39 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
         " its cells hold dd/MM/yyyy STRINGS, which no text compare can order,
         " so the underlying timestamp is sorted instead (the ABAP equivalent of
         " the original's custom Sorter.fnCompare)
-        DATA(lv_property)  = client->get_event_arg( ).
-        DATA(lv_order)     = client->get_event_arg( 2 ).
-        DATA(lv_ascending) = xsdbool( lv_order <> `Descending` ).
+        DATA(property)   = client->get_event_arg( ).
+        DATA(sort_order) = client->get_event_arg( 2 ).
+        DATA(ascending)  = xsdbool( sort_order <> `Descending` ).
         sort_clear( ).
 
-        CASE lv_property.
+        CASE property.
           WHEN `NAME`.
-            sort_name = lv_order.
-            IF lv_ascending = abap_true.
+            sort_name = sort_order.
+            IF ascending = abap_true.
               SORT t_products BY name ASCENDING.
             ELSE.
               SORT t_products BY name DESCENDING.
             ENDIF.
 
           WHEN `CATEGORY`.
-            sort_category = lv_order.
-            IF lv_ascending = abap_true.
+            sort_category = sort_order.
+            IF ascending = abap_true.
               SORT t_products BY category ASCENDING.
             ELSE.
               SORT t_products BY category DESCENDING.
             ENDIF.
 
           WHEN `QUANTITY`.
-            sort_quantity = lv_order.
-            IF lv_ascending = abap_true.
+            sort_quantity = sort_order.
+            IF ascending = abap_true.
               SORT t_products BY quantity ASCENDING.
             ELSE.
               SORT t_products BY quantity DESCENDING.
             ENDIF.
 
           WHEN `DELIVERYDATESTR`.
-            sort_deliverydate = lv_order.
-            IF lv_ascending = abap_true.
+            sort_deliverydate = sort_order.
+            IF ascending = abap_true.
               SORT t_products BY deliverydate ASCENDING.
             ELSE.
               SORT t_products BY deliverydate DESCENDING.
@@ -296,7 +296,7 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
         " Ascending. Exactly the header-lies-about-the-rows defect the
         " SORT_CATEGORIES branch below was fixed for on 2026-08-21, still live
         " on the menu path.
-        APPEND VALUE #( field = lv_property descending = xsdbool( lv_ascending = abap_false ) ) TO t_sortkeys.
+        APPEND VALUE #( field = property descending = xsdbool( ascending = abap_false ) ) TO t_sortkeys.
 
       WHEN `SORT_CATEGORIES_AND_NAME`.
         " sortCategoriesAndName: Category ascending, then Name ascending
@@ -314,12 +314,12 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
         " table while leaving the other columns' indicators standing: the
         " header claimed Name-ascending while the rows were Category-ascending.
         " The button's own tooltip says "in addition to current sorting".
-        DATA(ls_cat) = VALUE ty_s_sortkey( field = `CATEGORY` descending = category_descending ).
+        DATA(s_cat) = VALUE ty_s_sortkey( field = `CATEGORY` descending = category_descending ).
         READ TABLE t_sortkeys TRANSPORTING NO FIELDS WITH KEY field = `CATEGORY`.
         IF sy-subrc = 0.
-          t_sortkeys[ sy-tabix ] = ls_cat.
+          t_sortkeys[ sy-tabix ] = s_cat.
         ELSE.
-          APPEND ls_cat TO t_sortkeys.
+          APPEND s_cat TO t_sortkeys.
         ENDIF.
         sort_category       = COND #( WHEN category_descending = abap_true THEN `Descending` ELSE `Ascending` ).
         category_descending = xsdbool( category_descending = abap_false ).
@@ -354,28 +354,28 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
     " SORT, so the list is applied from the LAST key to the first with STABLE -
     " each pass preserves the order the previous one established, which leaves
     " the rows ordered by the list exactly as a multi-key sorter would.
-    DATA(lv_index) = lines( t_sortkeys ).
-    WHILE lv_index >= 1.
-      DATA(ls_key) = t_sortkeys[ lv_index ].
+    DATA(index) = lines( t_sortkeys ).
+    WHILE index >= 1.
+      DATA(s_key) = t_sortkeys[ index ].
       " the component is named STATICALLY per key rather than through
-      " SORT BY (ls_key-field): the transpiled backend drops the dynamic BY
+      " SORT BY (s_key-field): the transpiled backend drops the dynamic BY
       " clause altogether (abap.statements.sort(t, {}) - **e2e-caught
       " 2026-08-22** on app 571), so the table came back in its original order
-      CASE ls_key-field.
+      CASE s_key-field.
         WHEN `CATEGORY`.
-          IF ls_key-descending = abap_true.
+          IF s_key-descending = abap_true.
             SORT t_products STABLE BY category AS TEXT DESCENDING.
           ELSE.
             SORT t_products STABLE BY category AS TEXT ASCENDING.
           ENDIF.
         WHEN OTHERS.
-          IF ls_key-descending = abap_true.
+          IF s_key-descending = abap_true.
             SORT t_products STABLE BY name AS TEXT DESCENDING.
           ELSE.
             SORT t_products STABLE BY name AS TEXT ASCENDING.
           ENDIF.
       ENDCASE.
-      lv_index = lv_index - 1.
+      index = index - 1.
     ENDWHILE.
 
   ENDMETHOD.

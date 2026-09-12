@@ -291,6 +291,14 @@ const results = await checkFiles([...byFile.keys()], {
   minUi5: MIN_UI5,
   render: RENDER,
   properties: true,
+  /* The ports are OpenUI5 rebuilds (AGENTS §3: 1:1 porting is for OpenUI5
+   * only; a SAPUI5-only control has no original to rebuild against and is
+   * collected in src/03 instead). Saying so makes `sapui5-only-control` an
+   * ERROR on a port rather than the hint it is when nobody has said which
+   * distribution the target ships - the same fact the scope gate enforces
+   * from the sample side. Measured at zero findings before it was set
+   * (2026-09-12); the collection is judged under "sapui5" by its own config. */
+  distribution: 'openui5',
 });
 
 /** A deviation excuses a finding when it NAMES what the finding is about -
@@ -488,7 +496,7 @@ if (!ONLY) {
 
 console.log(
   `\nview-gates: ${results.length} ports, ${failing} failing, ${skipped} skipped, `
-  + `${advisories} advisory (target SAPUI5 ${MIN_UI5}${RENDER ? ', render gate on' : ', render gate off'}).`
+  + `${advisories} advisory (target OpenUI5 ${MIN_UI5}${RENDER ? ', render gate on' : ', render gate off'}).`
 );
 
 /* The two README badges — the same pair abap2UI5/samples and

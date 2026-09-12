@@ -1,6 +1,6 @@
 // The port's focus follow-ups are SET_FOCUS, not a control_by_id `focus`: the
 // button they aim at is INVISIBLE when the action runs (its `visible` is bound
-// to show_cookie_details, which the same roundtrip flips), so a bare
+// to showcookiedetails, which the same roundtrip flips), so a bare
 // control.focus() finds no DOM node and returns silently - the original moves
 // the focus through its _focusButton helper, which is "focus now if rendered,
 // else once it is", exactly what SET_FOCUS does.
@@ -19,7 +19,7 @@ export default async (page, expect) => {
   await expect(page.locator('.sapMDialog'), 'the cookie settings dialog').toBeVisible();
   await expect(page.locator('.sapMDialog'), 'the dialog preview text').toContainText('SAP Web Analytics');
 
-  // SHOW_COOKIE_DETAILS: the detail list appears and the focus follows it
+  // SHOWCOOKIEDETAILS: the detail list appears and the focus follows it
   await page.locator('.sapMDialog button', { hasText: 'Set Preferences' }).first().click();
   await waitForUi5(page, () => {
     const save = ui5All().find((c) => c.getId().endsWith('actionSavePreferences'));

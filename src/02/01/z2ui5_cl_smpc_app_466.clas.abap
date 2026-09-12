@@ -6,11 +6,12 @@ CLASS z2ui5_cl_smpc_app_466 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_tab,
-             key     TYPE i,
-             text    TYPE string,
-             content TYPE string,
-           END OF ty_s_tab.
+    TYPES:
+      BEGIN OF ty_s_tab,
+        key     TYPE i,
+        text    TYPE string,
+        content TYPE string,
+      END OF ty_s_tab.
     TYPES ty_t_tab TYPE STANDARD TABLE OF ty_s_tab WITH EMPTY KEY.
 
     DATA t_tabs TYPE ty_t_tab.

@@ -6,11 +6,12 @@ CLASS z2ui5_cl_smpc_app_605 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_content,
-             value  TYPE string,
-             color  TYPE string,
-             growth TYPE string,
-           END OF ty_s_content.
+    TYPES:
+      BEGIN OF ty_s_content,
+        value  TYPE string,
+        color  TYPE string,
+        growth TYPE string,
+      END OF ty_s_content.
     TYPES ty_t_content TYPE STANDARD TABLE OF ty_s_content WITH EMPTY KEY.
 
     " the ObjectHeader's binding="{/ProductCollection/}" folded onto root fields

@@ -6,20 +6,20 @@ CLASS z2ui5_cl_smpc_app_101 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA product_type TYPE string.
-    DATA product_name TYPE string.
-    DATA product_name_state TYPE string.
-    DATA product_weight TYPE string.
-    DATA product_weight_state TYPE string.
-    DATA product_manufacturer TYPE string.
-    DATA product_description TYPE string.
-    DATA manufacturing_date TYPE string.
-    DATA availability_type TYPE string.
+    DATA producttype TYPE string.
+    DATA productname TYPE string.
+    DATA productnamestate TYPE string.
+    DATA productweight TYPE string.
+    DATA productweightstate TYPE string.
+    DATA productmanufacturer TYPE string.
+    DATA productdescription TYPE string.
+    DATA manufacturingdate TYPE string.
+    DATA availabilitytype TYPE string.
     DATA size TYPE string.
     DATA measurement TYPE string.
-    DATA product_price TYPE string.
-    DATA discount_group TYPE string.
-    DATA product_vat TYPE abap_bool.
+    DATA productprice TYPE string.
+    DATA discountgroup TYPE string.
+    DATA productvat TYPE abap_bool.
     DATA step2_validated TYPE abap_bool.
 
   PROTECTED SECTION.
@@ -101,7 +101,7 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
 
                                     )->ele( `SegmentedButton`
                                         )->a( n = `width`           v = `320px`
-                                        )->a( n = `selectedKey`     v = client->_bind( product_type )
+                                        )->a( n = `selectedKey`     v = client->_bind( producttype )
                                         )->a( n = `selectionChange` v = client->_event( `SET_PRODUCT_TYPE` )
 
                                         )->ele( `items`
@@ -151,27 +151,27 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `valueStateText` v = `Enter 6 symbols or more`
-                                        )->a( n = `valueState`     v = client->_bind( product_name_state )
+                                        )->a( n = `valueState`     v = client->_bind( productnamestate )
                                         )->a( n = `id`             v = `ProductName`
                                         )->a( n = `liveChange`     v = client->_event( `ADDITIONAL_INFO` )
                                         )->a( n = `placeholder`    v = `Enter name with length greater than 6`
-                                        )->a( n = `value`          v = client->_bind( product_name )
+                                        )->a( n = `value`          v = client->_bind( productname )
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Weight`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `valueStateText` v = `Enter digits`
-                                        )->a( n = `valueState`     v = client->_bind( product_weight_state )
+                                        )->a( n = `valueState`     v = client->_bind( productweightstate )
                                         )->a( n = `id`             v = `ProductWeight`
                                         )->a( n = `liveChange`     v = client->_event( `ADDITIONAL_INFO` )
                                         )->a( n = `type`           v = `Number`
                                         )->a( n = `placeholder`    v = `Enter digits`
-                                        )->a( n = `value`          v = client->_bind( product_weight )
+                                        )->a( n = `value`          v = client->_bind( productweight )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Manufacturer`
 
                                     )->ele( `Select`
-                                        )->a( n = `selectedKey` v = client->_bind( product_manufacturer )
+                                        )->a( n = `selectedKey` v = client->_bind( productmanufacturer )
 
                                         )->tag( n = `Item` ns = `core`
                                             )->a( n = `key`  v = `Apple`
@@ -196,7 +196,7 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Description`
                                     )->tag( `TextArea`
-                                        )->a( n = `value` v = client->_bind( product_description )
+                                        )->a( n = `value` v = client->_bind( productdescription )
                                         )->a( n = `rows`  v = `8`
 
                                 )->end(
@@ -234,12 +234,12 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->tag( `DatePicker`
                                         )->a( n = `id`            v = `DP3`
                                         )->a( n = `displayFormat` v = `short`
-                                        )->a( n = `value`         v = client->_bind( manufacturing_date )
+                                        )->a( n = `value`         v = client->_bind( manufacturingdate )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Availability`
 
                                     )->ele( `SegmentedButton`
-                                        )->a( n = `selectedKey` v = client->_bind( availability_type )
+                                        )->a( n = `selectedKey` v = client->_bind( availabilitytype )
 
                                         )->ele( `items`
                                             )->tag( `SegmentedButtonItem`
@@ -300,12 +300,12 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Price`
                                     )->tag( `Input`
-                                        )->a( n = `value` v = client->_bind( product_price )
+                                        )->a( n = `value` v = client->_bind( productprice )
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Discount group`
 
                                     )->ele( `ComboBox`
-                                        )->a( n = `selectedKey` v = client->_bind( discount_group )
+                                        )->a( n = `selectedKey` v = client->_bind( discountgroup )
 
                                         )->tag( n = `Item` ns = `core`
                                             )->a( n = `key`  v = `Kids`
@@ -324,7 +324,7 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->tag( `Label`
                                         )->a( n = `text` v = ` VAT is included`
                                     )->tag( `CheckBox`
-                                        )->a( n = `selected` v = client->_bind( product_vat )
+                                        )->a( n = `selected` v = client->_bind( productvat )
 
                                 )->end(
                             )->end(
@@ -355,7 +355,7 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `text` v = `Type`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductTypeChosen`
-                                    )->a( n = `text` v = client->_bind( product_type )
+                                    )->a( n = `text` v = client->_bind( producttype )
                                 )->tag( `Link`
                                     )->a( n = `press` v = client->_event( `EDIT_STEP_1` )
                                     )->a( n = `text`  v = `Edit`
@@ -372,22 +372,22 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `text` v = `Name`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductNameChosen`
-                                    )->a( n = `text` v = client->_bind( product_name )
+                                    )->a( n = `text` v = client->_bind( productname )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Weight`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductWeightChosen`
-                                    )->a( n = `text` v = client->_bind( product_weight )
+                                    )->a( n = `text` v = client->_bind( productweight )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Manufacturer`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductManufacturerChosen`
-                                    )->a( n = `text` v = client->_bind( product_manufacturer )
+                                    )->a( n = `text` v = client->_bind( productmanufacturer )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Description`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductDescriptionChosen`
-                                    )->a( n = `text` v = client->_bind( product_description )
+                                    )->a( n = `text` v = client->_bind( productdescription )
                                 )->tag( `Link`
                                     )->a( n = `press` v = client->_event( `EDIT_STEP_2` )
                                     )->a( n = `text`  v = `Edit`
@@ -409,12 +409,12 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `text` v = `Manufacturing Date`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ManufacturingDate`
-                                    )->a( n = `text` v = client->_bind( manufacturing_date )
+                                    )->a( n = `text` v = client->_bind( manufacturingdate )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Availability`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `AvailabilityChosen`
-                                    )->a( n = `text` v = client->_bind( availability_type )
+                                    )->a( n = `text` v = client->_bind( availabilitytype )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Size`
 
@@ -444,17 +444,17 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `text` v = `Price`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductPriceChosen`
-                                    )->a( n = `text` v = client->_bind( product_price )
+                                    )->a( n = `text` v = client->_bind( productprice )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Discount Group`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `DiscountGroupChosen`
-                                    )->a( n = `text` v = client->_bind( discount_group )
+                                    )->a( n = `text` v = client->_bind( discountgroup )
                                 )->tag( `Label`
                                     )->a( n = `text` v = `VAT Included`
                                 )->tag( `Text`
                                     )->a( n = `id`   v = `ProductVATChosen`
-                                    )->a( n = `text` v = client->_bind( product_vat )
+                                    )->a( n = `text` v = client->_bind( productvat )
                                 )->tag( `Link`
                                     )->a( n = `press` v = client->_event( `EDIT_STEP_4` )
                                     )->a( n = `text`  v = `Edit`
@@ -490,18 +490,18 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
 
       WHEN `ADDITIONAL_INFO`.
         " reproduces additionalInfoValidation: name >= 6 chars, weight numeric
-        DATA(name_ok) = xsdbool( strlen( product_name ) >= 6 ).
+        DATA(name_ok) = xsdbool( strlen( productname ) >= 6 ).
         " the original tests parseInt( ) IS NaN, which is far laxer than "all
         " digits": leading blanks and a sign are skipped and parsing stops at
         " the first non-digit, so '12.5', '-5' and '12abc' are all VALID there
-        DATA(weight) = condense( product_weight ).
+        DATA(weight) = condense( productweight ).
         IF weight IS NOT INITIAL AND ( weight(1) = `-` OR weight(1) = `+` ).
           weight = weight+1.
         ENDIF.
         DATA(weight_ok) = COND abap_bool( WHEN weight IS INITIAL THEN abap_false
                                           ELSE xsdbool( weight(1) CO `0123456789` ) ).
-        product_name_state   = COND #( WHEN name_ok = abap_true THEN `None` ELSE `Error` ).
-        product_weight_state = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
+        productnamestate   = COND #( WHEN name_ok = abap_true THEN `None` ELSE `Error` ).
+        productweightstate = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
         step2_validated      = xsdbool( name_ok = abap_true AND weight_ok = abap_true ).
         IF step2_validated = abap_false.
           " both failing branches of the original also call
@@ -567,18 +567,18 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
 
   METHOD model_init.
 
-    product_name_state   = `Error`.
-    product_weight_state = `Error`.
-    product_type         = `Mobile`.
-    availability_type    = `In Store`.
-    product_vat          = abap_false.
+    productnamestate   = `Error`.
+    productweightstate = `Error`.
+    producttype         = `Mobile`.
+    availabilitytype    = `In Store`.
+    productvat          = abap_false.
     measurement          = ``.
-    product_manufacturer = `n/a`.
-    product_description  = `n/a`.
+    productmanufacturer = `n/a`.
+    productdescription  = `n/a`.
     size                 = `n/a`.
-    product_price        = `n/a`.
-    manufacturing_date   = `n/a`.
-    discount_group       = `n/a`.
+    productprice        = `n/a`.
+    manufacturingdate   = `n/a`.
+    discountgroup       = `n/a`.
 
   ENDMETHOD.
 

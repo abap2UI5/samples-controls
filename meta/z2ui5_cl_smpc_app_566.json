@@ -30,7 +30,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the Order model (products / count / hasCounts) becomes the SELECTED flag on the product nodes plus the derived ORDER_COUNT and HAS_COUNTS fields: the info toolbar's visible and its '<n> Products Selected' Label bind them, and so does the footer button's enabled - the original's isAnyProductSelected formatter. handleOrderPress toasts the selected product names, which the backend composes because it is the one holding the selection."
+      "what": "the Order model (products / count / hasCounts) becomes the SELECTED flag on the product nodes plus the derived ORDER_COUNT and HASCOUNTS fields: the info toolbar's visible and its '<n> Products Selected' Label bind them, and so does the footer button's enabled - the original's isAnyProductSelected formatter. handleOrderPress toasts the selected product names, which the backend composes because it is the one holding the selection."
     },
     {
       "type": "NOTE",

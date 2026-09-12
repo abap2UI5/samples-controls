@@ -8,27 +8,29 @@ CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
 
     " the three levels of the hierarchy in one flat table: 1 Suppliers,
     " 2 Categories, 3 Products
-    TYPES: BEGIN OF ty_s_node,
-             level         TYPE i,
-             supplier      TYPE string,
-             category      TYPE string,
-             name          TYPE string,
-             productid     TYPE string,
-             dimensions    TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             weight_state  TYPE string,
-             price         TYPE string,
-             currencycode  TYPE string,
-             row_type      TYPE string,
-             selected      TYPE abap_bool,
-           END OF ty_s_node.
+    TYPES:
+      BEGIN OF ty_s_node,
+        level         TYPE i,
+        supplier      TYPE string,
+        category      TYPE string,
+        name          TYPE string,
+        productid     TYPE string,
+        dimensions    TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        weight_state  TYPE string,
+        price         TYPE string,
+        currencycode  TYPE string,
+        row_type      TYPE string,
+        selected      TYPE abap_bool,
+      END OF ty_s_node.
     TYPES ty_t_node TYPE STANDARD TABLE OF ty_s_node WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_crumb,
-             text  TYPE string,
-             level TYPE i,
-           END OF ty_s_crumb.
+    TYPES:
+      BEGIN OF ty_s_crumb,
+        text  TYPE string,
+        level TYPE i,
+      END OF ty_s_crumb.
     TYPES ty_t_crumb TYPE STANDARD TABLE OF ty_s_crumb WITH EMPTY KEY.
 
     DATA t_rows   TYPE ty_t_node.
@@ -38,7 +40,7 @@ CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
     DATA cur_level TYPE i VALUE 1.
     " the Order model: count + hasCounts
     DATA order_count TYPE i.
-    DATA has_counts  TYPE abap_bool.
+    DATA hascounts   TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client       TYPE REF TO z2ui5_if_client.
@@ -47,9 +49,9 @@ CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
     DATA cur_category TYPE string.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS rows_refresh.
     METHODS order_refresh.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -92,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
             )->tag( `ToolbarSpacer`
             )->tag( `Button`
                 )->a( n = `text`    v = `Order`
-                )->a( n = `enabled` v = client->_bind( has_counts )
+                )->a( n = `enabled` v = client->_bind( hascounts )
                 )->a( n = `press`   v = client->_event( `ORDER` )
 
         )->end(
@@ -127,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
             )->end(
             )->ele( `infoToolbar`
                 )->ele( `OverflowToolbar`
-                    )->a( n = `visible` v = client->_bind( has_counts )
+                    )->a( n = `visible` v = client->_bind( hascounts )
 
                     )->tag( `Label`
                         )->a( n = `text` v = |\{{ client->_bind_path( order_count ) }\} Products Selected|
@@ -244,7 +246,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
     order_count = REDUCE i( INIT n = 0
                             FOR node IN t_nodes
                             NEXT n = COND #( WHEN node-selected = abap_true THEN n + 1 ELSE n ) ).
-    has_counts = xsdbool( order_count > 0 ).
+    hascounts = xsdbool( order_count > 0 ).
 
   ENDMETHOD.
 

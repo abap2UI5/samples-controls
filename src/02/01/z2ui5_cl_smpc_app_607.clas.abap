@@ -6,17 +6,18 @@ CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             width        TYPE string,
-             depth        TYPE string,
-             height       TYPE string,
-             dimunit      TYPE string,
-             price        TYPE string,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        width        TYPE string,
+        depth        TYPE string,
+        height       TYPE string,
+        dimunit      TYPE string,
+        price        TYPE string,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products   TYPE ty_t_product.
@@ -43,8 +44,8 @@ CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
     METHODS view_display.
     METHODS on_event.
     METHODS filters_apply.
-    METHODS model_init.
     METHODS ordering_issue.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

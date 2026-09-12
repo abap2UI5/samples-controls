@@ -6,26 +6,29 @@ CLASS z2ui5_cl_smpc_app_121 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_marker,
-             type       TYPE string,
-             visibility TYPE string,
-           END OF ty_s_marker.
-    TYPES: BEGIN OF ty_s_status,
-             title  TYPE string,
-             text   TYPE string,
-             state  TYPE string,
-             icon   TYPE string,
-             active TYPE abap_bool,
-           END OF ty_s_status.
-    TYPES: BEGIN OF ty_s_item,
-             filename     TYPE string,
-             mediatype    TYPE string,
-             url          TYPE string,
-             thumbnailurl TYPE string,
-             uploadstate  TYPE string,
-             markers      TYPE STANDARD TABLE OF ty_s_marker WITH EMPTY KEY,
-             statuses     TYPE STANDARD TABLE OF ty_s_status WITH EMPTY KEY,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_marker,
+        type       TYPE string,
+        visibility TYPE string,
+      END OF ty_s_marker.
+    TYPES:
+      BEGIN OF ty_s_status,
+        title  TYPE string,
+        text   TYPE string,
+        state  TYPE string,
+        icon   TYPE string,
+        active TYPE abap_bool,
+      END OF ty_s_status.
+    TYPES:
+      BEGIN OF ty_s_item,
+        filename     TYPE string,
+        mediatype    TYPE string,
+        url          TYPE string,
+        thumbnailurl TYPE string,
+        uploadstate  TYPE string,
+        markers      TYPE STANDARD TABLE OF ty_s_marker WITH EMPTY KEY,
+        statuses     TYPE STANDARD TABLE OF ty_s_status WITH EMPTY KEY,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
     " onSelectionChange enables the version button for exactly one selection
     DATA version_enabled TYPE abap_bool.

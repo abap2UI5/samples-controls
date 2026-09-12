@@ -236,24 +236,24 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
     " whitespaces stay visible. abap2UI5 is a thin frontend, so that
     " presentation transform is applied here in ABAP (identical output) and the
     " view binds the finished text.
-    CONSTANTS lc_nbsp TYPE string VALUE ` `.
+    CONSTANTS nbsp TYPE string VALUE ` `.
 
-    DATA(lv_repl) = ` ` && lc_nbsp.
-    DATA lv_inverted TYPE i.
-    DATA lv_text TYPE string.
-    DATA lv_add  TYPE string.
+    DATA(repl) = ` ` && nbsp.
+    DATA inverted   TYPE i.
+    DATA text       TYPE string.
+    DATA additional TYPE string.
 
     DO 10 TIMES.
-      DATA(lv_i) = sy-index.
-      lv_inverted = 11 - lv_i.
+      DATA(i) = sy-index.
+      inverted = 11 - i.
 
-      lv_text = |Text with { repeat( val = ` ` occ = lv_i - 1 ) }{ lv_i } whitespaces|.
-      lv_add  = |Additional text with { repeat( val = ` ` occ = lv_inverted - 1 ) }{ lv_inverted } whitespaces|.
+      text       = |Text with { repeat( val = ` ` occ = i - 1 ) }{ i } whitespaces|.
+      additional = |Additional text with { repeat( val = ` ` occ = inverted - 1 ) }{ inverted } whitespaces|.
 
-      REPLACE ALL OCCURRENCES OF `  ` IN lv_text WITH lv_repl.
-      REPLACE ALL OCCURRENCES OF `  ` IN lv_add  WITH lv_repl.
+      REPLACE ALL OCCURRENCES OF `  ` IN text WITH repl.
+      REPLACE ALL OCCURRENCES OF `  ` IN additional WITH repl.
 
-      APPEND VALUE #( key = lv_i text = lv_text additionaltext = lv_add ) TO t_items.
+      APPEND VALUE #( key = i text = text additionaltext = additional ) TO t_items.
     ENDDO.
 
   ENDMETHOD.

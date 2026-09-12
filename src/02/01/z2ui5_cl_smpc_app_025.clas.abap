@@ -15,12 +15,12 @@ CLASS z2ui5_cl_smpc_app_025 DEFINITION PUBLIC.
     TYPES ty_t_action TYPE STANDARD TABLE OF ty_s_action WITH EMPTY KEY.
     TYPES:
       BEGIN OF ty_s_entry,
-        author         TYPE string,
-        author_pic_url TYPE string,
-        type           TYPE string,
-        date           TYPE string,
-        actions        TYPE ty_t_action,
-        text           TYPE string,
+        author       TYPE string,
+        authorpicurl TYPE string,
+        type         TYPE string,
+        date         TYPE string,
+        actions      TYPE ty_t_action,
+        text         TYPE string,
       END OF ty_s_entry.
     DATA t_entry_collection TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
 
@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_025 IMPLEMENTATION.
 
                     )->ele( `FeedListItem`
                         )->a( n = `sender`                   v = `{AUTHOR}`
-                        )->a( n = `icon`                     v = `{AUTHOR_PIC_URL}`
+                        )->a( n = `icon`                     v = `{AUTHORPICURL}`
                         )->a( n = `senderPress`              v = client->_event( val = `PRESSED` arg = `${AUTHOR}` )
                         )->a( n = `iconPress`                v = client->_event( val = `PRESSED` arg = `${AUTHOR}` )
                         )->a( n = `info`                     v = `{TYPE}`
@@ -122,10 +122,10 @@ CLASS z2ui5_cl_smpc_app_025 IMPLEMENTATION.
 
     " the sample's feed.json; AuthorPicUrl rewritten to the OpenUI5 host, entries without Actions keep an empty table
     t_entry_collection = VALUE #(
-      ( author         = `Alexandrina Victoria`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
-        type           = `Request`
-        date           = `March 03 2013`
+      ( author       = `Alexandrina Victoria`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
+        type         = `Request`
+        date         = `March 03 2013`
         actions        = VALUE #( ( text = `Delete` icon = `sap-icon://delete` key = `delete` )
                                   ( text = `Share` icon = `sap-icon://share-2` key = `share` )
                                   ( text = `Edit` icon = `sap-icon://edit` key = `edit` ) )
@@ -137,24 +137,24 @@ CLASS z2ui5_cl_smpc_app_025 IMPLEMENTATION.
                          `<strong>At vero eos et accusam</strong> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ` &&
                          `<a href='//www.sap.com'>tempor invidunt</a> ut labore et dolore magna aliquyam erat, sed diam voluptua. <em>At vero eos et accusam</em> et justo duo dolores et ea rebum. ` &&
                          `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.` )
-      ( author         = `George Washington`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
-        type           = `Reply`
-        date           = `March 04 2013`
-        text           = `Lorem ipsum dolor sit <a href='http://www.sap.com'>amet</a>, consetetur sadipscing elitr, <em>sed diam</em> nonumy <strong>eirmod tempor</strong> invidunt ut labore` )
-      ( author         = `Alexandrina Victoria`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
-        type           = `Request`
-        date           = `March 05 2013`
+      ( author       = `George Washington`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
+        type         = `Reply`
+        date         = `March 04 2013`
+        text         = `Lorem ipsum dolor sit <a href='http://www.sap.com'>amet</a>, consetetur sadipscing elitr, <em>sed diam</em> nonumy <strong>eirmod tempor</strong> invidunt ut labore` )
+      ( author       = `Alexandrina Victoria`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/dronning_victoria.jpg`
+        type         = `Request`
+        date         = `March 05 2013`
         actions        = VALUE #( ( text = `Delete` icon = `sap-icon://delete` key = `delete` )
                                   ( text = `Share` icon = `sap-icon://share-2` key = `share` )
                                   ( text = `Edit` icon = `sap-icon://edit` key = `edit` ) )
         text           = `Lorem ipsum dolor sit amet, <u>consetetur sadipscing elitr</u>, sed diam nonumy eirmod tempor <strong>invidunt ut labore et dolore magna</strong> aliquyam erat` )
-      ( author         = `George Washington`
-        author_pic_url = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
-        type           = `Rejection`
-        date           = `March 07 2013`
-        text           = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, www.sap.com sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.` ) ).
+      ( author       = `George Washington`
+        authorpicurl = `https://sdk.openui5.org/test-resources/sap/m/images/george_washington.jpg`
+        type         = `Rejection`
+        date         = `March 07 2013`
+        text         = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, www.sap.com sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.` ) ).
 
   ENDMETHOD.
 

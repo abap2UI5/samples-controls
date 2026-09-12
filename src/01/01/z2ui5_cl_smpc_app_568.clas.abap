@@ -6,12 +6,13 @@ CLASS z2ui5_cl_smpc_app_568 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_person,
-             firstname TYPE string,
-             lastname  TYPE string,
-             birthdate TYPE string,
-             gender    TYPE string,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        firstname TYPE string,
+        lastname  TYPE string,
+        birthdate TYPE string,
+        gender    TYPE string,
+      END OF ty_s_person.
     TYPES ty_t_person TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA t_people         TYPE ty_t_person.

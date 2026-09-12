@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_264 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_teammember,
-             firstname  TYPE string,
-             lastname   TYPE string,
-             age        TYPE i,
-             department TYPE string,
-             location   TYPE string,
-           END OF ty_s_teammember.
+    TYPES:
+      BEGIN OF ty_s_teammember,
+        firstname  TYPE string,
+        lastname   TYPE string,
+        age        TYPE i,
+        department TYPE string,
+        location   TYPE string,
+      END OF ty_s_teammember.
 
     DATA t_teammembers      TYPE STANDARD TABLE OF ty_s_teammember WITH EMPTY KEY.
     DATA departmentprefix   TYPE string.
@@ -58,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_264 IMPLEMENTATION.
     " time, so the toggle event redraws the view with the other boundFilters
     " list instead of calling ListBinding.filter (app 241 precedent). Only the
     " fragment is composed here - every client->_bind( ) call stays inline.
-    DATA(lv_boundfilters) = COND string(
+    DATA(boundfilters) = COND string(
       WHEN showorganizational = abap_true
       THEN |\{ path: 'LOCATION', operator: 'StartsWith', value1: '{ client->_bind( locationprefix ) }' \}, | &&
            |\{ path: 'DEPARTMENT', operator: 'StartsWith', value1: '{ client->_bind( departmentprefix ) }' \}|
@@ -78,7 +79,7 @@ CLASS z2ui5_cl_smpc_app_264 IMPLEMENTATION.
         )->ele( n = `Table` ns = `table`
             )->a( n = `id`   v = `myTable`
             )->a( n = `rows` v = |\{ path: '{ client->_bind_path( t_teammembers ) }', | &&
-                                 |boundFilters: [{ lv_boundfilters }] \}|
+                                 |boundFilters: [{ boundfilters }] \}|
 
             )->ele( n = `extension` ns = `table`
                 )->tag( `Title`

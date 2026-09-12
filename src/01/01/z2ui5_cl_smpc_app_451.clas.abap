@@ -6,15 +6,16 @@ CLASS z2ui5_cl_smpc_app_451 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_emp,
-             name           TYPE string,
-             emp_first_name TYPE string,
-             emp_last_name  TYPE string,
-             position       TYPE string,
-             icon           TYPE string,
-             modified       TYPE abap_bool,
-             salary         TYPE p LENGTH 8 DECIMALS 2,
-           END OF ty_s_emp.
+    TYPES:
+      BEGIN OF ty_s_emp,
+        name           TYPE string,
+        empfirstname TYPE string,
+        emplastname  TYPE string,
+        position       TYPE string,
+        icon           TYPE string,
+        modified       TYPE abap_bool,
+        salary         TYPE p LENGTH 8 DECIMALS 2,
+      END OF ty_s_emp.
     TYPES ty_t_emp TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
 
     DATA t_employees TYPE ty_t_emp.
@@ -103,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
 
                                     )->ele( n = `fields` ns = `f`
                                         )->tag( `Text`
-                                            )->a( n = `text` v = `{EMP_FIRST_NAME}`
+                                            )->a( n = `text` v = `{EMPFIRSTNAME}`
 
                                     )->end(
                                 )->end(
@@ -113,7 +114,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
 
                                     )->ele( n = `fields` ns = `f`
                                         )->tag( `Text`
-                                            )->a( n = `text` v = `{EMP_LAST_NAME}`
+                                            )->a( n = `text` v = `{EMPLASTNAME}`
 
                                     )->end(
                                 )->end(
@@ -178,13 +179,13 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
     " the four employees the controller seeds, verbatim (the first icon is the
     " sample's own image, re-hosted on the demo kit host)
     t_employees = VALUE #(
-      ( name = `Jean Doe`       emp_first_name = `Jean`     emp_last_name = `Doe`     position = `Senior Developer`
+      ( name = `Jean Doe`       empfirstname = `Jean`     emplastname = `Doe`     position = `Senior Developer`
         icon = `https://sdk.openui5.org/test-resources/sap/m/images/Woman_04.png` salary = '1455.22' )
-      ( name = `John Smith`     emp_first_name = `John`     emp_last_name = `Smith`   position = `Developer`
+      ( name = `John Smith`     empfirstname = `John`     emplastname = `Smith`   position = `Developer`
         icon = `sap-icon://notes` salary = '1390.77' modified = abap_true )
-      ( name = `Particia Clark` emp_first_name = `Particia` emp_last_name = `Clark`   position = `Developer`
+      ( name = `Particia Clark` empfirstname = `Particia` emplastname = `Clark`   position = `Developer`
         icon = `sap-icon://group` salary = '1189.00' )
-      ( name = `Tim McAfeed`    emp_first_name = `Tim`      emp_last_name = `McAfeed` position = `Junior Developer`
+      ( name = `Tim McAfeed`    empfirstname = `Tim`      emplastname = `McAfeed` position = `Junior Developer`
         icon = `sap-icon://group` salary = '1235.37' ) ).
 
   ENDMETHOD.

@@ -6,10 +6,11 @@ CLASS z2ui5_cl_smpc_app_604 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_image,
-             src TYPE string,
-             alt TYPE string,
-           END OF ty_s_image.
+    TYPES:
+      BEGIN OF ty_s_image,
+        src TYPE string,
+        alt TYPE string,
+      END OF ty_s_image.
     TYPES ty_t_image TYPE STANDARD TABLE OF ty_s_image WITH EMPTY KEY.
 
     " the pages the Carousel shows - rebuilt when the count changes

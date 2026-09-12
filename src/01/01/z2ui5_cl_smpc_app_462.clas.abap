@@ -6,8 +6,8 @@ CLASS z2ui5_cl_smpc_app_462 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA value_live_update TYPE abap_bool.
-    DATA input_value       TYPE string.
+    DATA valueliveupdate TYPE abap_bool.
+    DATA inputvalue      TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -46,7 +46,7 @@ CLASS z2ui5_cl_smpc_app_462 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `ValueLiveUpdate`
             )->tag( `Switch`
-                )->a( n = `state` v = client->_bind( value_live_update )
+                )->a( n = `state` v = client->_bind( valueliveupdate )
             )->tag( `Label`
                 )->a( n = `text` v = `Type here`
             " onLiveChange writes the value into the Text below - the only leg of the
@@ -55,8 +55,8 @@ CLASS z2ui5_cl_smpc_app_462 IMPLEMENTATION.
             " It needs no round-trip either: setText on the Text by id, with the
             " keystroke value as the argument, is the same write done on the client
             )->tag( `Input`
-                )->a( n = `value`            v = client->_bind( input_value )
-                )->a( n = `valueLiveUpdate`  v = client->_bind( value_live_update )
+                )->a( n = `value`            v = client->_bind( inputvalue )
+                )->a( n = `valueLiveUpdate`  v = client->_bind( valueliveupdate )
                 )->a( n = `liveChange`       v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                            t_arg = VALUE #( ( `getValue` ) ( `setText` ) ( `${$parameters>/value}` ) ) )
             )->tag( `Label`
@@ -68,7 +68,7 @@ CLASS z2ui5_cl_smpc_app_462 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `oModel.getProperty()`
             )->tag( `Text`
-                )->a( n = `text` v = client->_bind( input_value ) ).
+                )->a( n = `text` v = client->_bind( inputvalue ) ).
 
     client->view_display( view->stringify( ) ).
 

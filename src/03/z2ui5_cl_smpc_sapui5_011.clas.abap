@@ -25,9 +25,9 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
     IF client->get_event( ) = `ON_SCAN_SUCCESS`.
       client->message_box_display( `Scan finished!` ).
-      DATA(lt_arg) = client->get( )-t_event_arg.
-      mv_scan_input = lt_arg[ 1 ].
-      mv_scan_type  = lt_arg[ 2 ].
+      DATA(t_arg) = client->get( )-t_event_arg.
+      mv_scan_input = t_arg[ 1 ].
+      mv_scan_type  = t_arg[ 2 ].
       "implement further processing here...
       "...
       RETURN.

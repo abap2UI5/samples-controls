@@ -12,10 +12,10 @@ CLASS z2ui5_cl_smpc_app_171 DEFINITION PUBLIC.
         currency TYPE string,
       END OF ty_s_transaction_amount,
       BEGIN OF ty_s_data,
-        expense            TYPE string,
-        transaction_amount TYPE ty_s_transaction_amount,
-        exchange_rate      TYPE p LENGTH 13 DECIMALS 5,
-        amount             TYPE p LENGTH 14 DECIMALS 2,
+        expense           TYPE string,
+        transactionamount TYPE ty_s_transaction_amount,
+        exchange_rate     TYPE p LENGTH 13 DECIMALS 5,
+        amount            TYPE p LENGTH 14 DECIMALS 2,
       END OF ty_s_data.
     DATA t_modeldata TYPE STANDARD TABLE OF ty_s_data WITH EMPTY KEY.
 
@@ -98,8 +98,8 @@ CLASS z2ui5_cl_smpc_app_171 IMPLEMENTATION.
                         )->tag( `ObjectIdentifier`
                             )->a( n = `text` v = `{EXPENSE}`
                         )->tag( n = `Currency` ns = `u`
-                            )->a( n = `value`        v = `{TRANSACTION_AMOUNT/SIZE}`
-                            )->a( n = `currency`     v = `{TRANSACTION_AMOUNT/CURRENCY}`
+                            )->a( n = `value`        v = `{TRANSACTIONAMOUNT/SIZE}`
+                            )->a( n = `currency`     v = `{TRANSACTIONAMOUNT/CURRENCY}`
                             )->a( n = `maxPrecision` v = `2`
                             )->a( n = `useSymbol`    v = `false`
                         )->tag( `ObjectNumber`
@@ -118,27 +118,27 @@ CLASS z2ui5_cl_smpc_app_171 IMPLEMENTATION.
     " inline mock data of the sample's controller (aData -> /modelData)
     t_modeldata = VALUE #(
         ( expense            = `Flight`
-          transaction_amount = VALUE #( size = `560.67` currency = `EUR` )
+          transactionamount = VALUE #( size = `560.67` currency = `EUR` )
           exchange_rate      = `1.00000`
           amount             = `560.67` )
         ( expense            = `Meals`
-          transaction_amount = VALUE #( size = `180.50` currency = `USD` )
+          transactionamount = VALUE #( size = `180.50` currency = `USD` )
           exchange_rate      = `0.85654`
           amount             = `154.72` )
         ( expense            = `Hotel`
-          transaction_amount = VALUE #( size = `675.00` currency = `USD` )
+          transactionamount = VALUE #( size = `675.00` currency = `USD` )
           exchange_rate      = `0.85654`
           amount             = `578.57` )
         ( expense            = `Taxi`
-          transaction_amount = VALUE #( size = `15` currency = `USD` )
+          transactionamount = VALUE #( size = `15` currency = `USD` )
           exchange_rate      = `0.85654`
           amount             = `12.86` )
         ( expense            = `Daily allowance`
-          transaction_amount = VALUE #( size = `80.00` currency = `BGN` )
+          transactionamount = VALUE #( size = `80.00` currency = `BGN` )
           exchange_rate      = `0.51129`
           amount             = `40.90` )
         ( expense            = `Daily allowance Japan`
-          transaction_amount = VALUE #( size = `7000` currency = `JPY` )
+          transactionamount = VALUE #( size = `7000` currency = `JPY` )
           exchange_rate      = `0.0067`
           amount             = `46.69` ) ).
 

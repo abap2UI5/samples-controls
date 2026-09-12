@@ -6,21 +6,22 @@ CLASS z2ui5_cl_smpc_app_617 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             " Formatter.weightState, computed in the backend (thin frontend)
-             weight_state  TYPE string,
-             price         TYPE string,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        " Formatter.weightState, computed in the backend (thin frontend)
+        weight_state  TYPE string,
+        price         TYPE string,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -261,7 +262,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
 
   METHOD filter_apply.
 
-    DATA lt_keep TYPE ty_t_product.
+    DATA t_keep TYPE ty_t_product.
 
     " onFilterSelect: a WeightUnit EQ KG filter AND-ed with the measure range of
     " the picked tab; a thin frontend filters the data it sends (app 298 idiom)
@@ -276,7 +277,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
     " a LOOP over the same table shifts the rows under the loop's own cursor -
     " on a system it silently SKIPS the row after each deletion, on the
     " transpiled backend it raises TABLE_INVALID_INDEX (app 298, 2026-08-17)
-    lt_keep = VALUE #( ).
+    t_keep = VALUE #( ).
     LOOP AT t_products INTO DATA(row) WHERE weightunit = `KG`.
       DATA(measure) = CONV decfloat34( row-weightmeasure ).
       DATA(keep) = SWITCH abap_bool( key
@@ -285,10 +286,10 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                                      WHEN `Overweight` THEN xsdbool( measure > 5 )
                                      ELSE abap_true ).
       IF keep = abap_true.
-        APPEND row TO lt_keep.
+        APPEND row TO t_keep.
       ENDIF.
     ENDLOOP.
-    t_products = lt_keep.
+    t_products = t_keep.
 
   ENDMETHOD.
 

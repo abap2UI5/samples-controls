@@ -6,10 +6,11 @@ CLASS z2ui5_cl_smpc_app_577 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_section,
-             tablename   TYPE string,
-             sectionname TYPE string,
-           END OF ty_s_section.
+    TYPES:
+      BEGIN OF ty_s_section,
+        tablename   TYPE string,
+        sectionname TYPE string,
+      END OF ty_s_section.
     TYPES ty_t_section TYPE STANDARD TABLE OF ty_s_section WITH EMPTY KEY.
 
     DATA t_sections TYPE ty_t_section.
@@ -26,10 +27,10 @@ CLASS z2ui5_cl_smpc_app_577 DEFINITION PUBLIC.
     DATA section_ix TYPE i VALUE -1.
 
     METHODS view_display.
-    METHODS on_event.
-    METHODS hash_apply IMPORTING iv_hash TYPE string.
-    METHODS hash_push IMPORTING check_replace TYPE abap_bool OPTIONAL.
     METHODS section_select.
+    METHODS on_event.
+    METHODS hash_apply IMPORTING hash TYPE string.
+    METHODS hash_push IMPORTING check_replace TYPE abap_bool OPTIONAL.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -59,9 +60,9 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " MidColumnFullScreen`): the live hash rides in s_config-hash on every
     " request; applying it is idempotent, so a rebuild whose hash matches the
     " state simply re-derives it
-    DATA(lv_hash) = client->get( )-s_config-hash.
-    IF lv_hash IS NOT INITIAL AND lv_hash <> `#`.
-      hash_apply( lv_hash ).
+    DATA(hash) = client->get( )-s_config-hash.
+    IF hash IS NOT INITIAL AND hash <> `#`.
+      hash_apply( hash ).
     ENDIF.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
@@ -262,9 +263,9 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
       WHEN `NAVIGATE`.
         " _updateUrlOnNavigate: the anchor-bar selection writes the section
         " index into the URL
-        DATA(lv_ix) = client->get_event_arg( ).
-        IF lv_ix CO `0123456789` AND lv_ix IS NOT INITIAL AND strlen( lv_ix ) <= 4.
-          section_ix = lv_ix.
+        DATA(ix) = client->get_event_arg( ).
+        IF ix CO `0123456789` AND ix IS NOT INITIAL AND strlen( ix ) <= 4.
+          section_ix = ix.
           route      = `list`.
           hash_push( ).
         ENDIF.
@@ -307,18 +308,18 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " the router's routeMatched, read side. The original's patterns:
     " '' (list start), '{section}' (the ':section:' list route, a section
     " INDEX), 'detail/{layout}'
-    DATA(lv_hash) = iv_hash.
-    IF lv_hash CS `#`.
-      lv_hash = substring_after( val = lv_hash sub = `#` ).
+    DATA(path) = hash.
+    IF path CS `#`.
+      path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT lv_hash LEFT DELETING LEADING `/`.
-    SPLIT lv_hash AT `/` INTO TABLE DATA(lt_seg).
-    DELETE lt_seg WHERE table_line IS INITIAL.
+    SHIFT path LEFT DELETING LEADING `/`.
+    SPLIT path AT `/` INTO TABLE DATA(t_seg).
+    DELETE t_seg WHERE table_line IS INITIAL.
 
-    DATA(lv_1) = VALUE string( lt_seg[ 1 ] OPTIONAL ).
-    DATA(lv_2) = VALUE string( lt_seg[ 2 ] OPTIONAL ).
+    DATA(seg1) = VALUE string( t_seg[ 1 ] OPTIONAL ).
+    DATA(seg2) = VALUE string( t_seg[ 2 ] OPTIONAL ).
 
-    CASE lv_1.
+    CASE seg1.
       WHEN ``.
         route      = `list`.
         layout     = `OneColumn`.
@@ -326,14 +327,14 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
 
       WHEN `detail`.
         route  = `detail`.
-        layout = COND #( WHEN lv_2 IS NOT INITIAL THEN lv_2 ELSE `MidColumnFullScreen` ).
+        layout = COND #( WHEN seg2 IS NOT INITIAL THEN seg2 ELSE `MidColumnFullScreen` ).
 
       WHEN OTHERS.
         " the single-segment ':section:' list route, e.g. '#/3'
         route  = `list`.
         layout = `OneColumn`.
-        IF lv_1 CO `0123456789` AND strlen( lv_1 ) <= 4.
-          section_ix = lv_1.
+        IF seg1 CO `0123456789` AND strlen( seg1 ) <= 4.
+          section_ix = seg1.
         ELSE.
           section_ix = -1.
         ENDIF.
@@ -344,7 +345,7 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
 
   METHOD hash_push.
 
-    DATA lv_hash TYPE string.
+    DATA hash TYPE string.
     " the router's navTo, write side: compose the current route the way the
     " manifest patterns spell it and push it as the app-owned hash. The bare
     " list route pushes '/' - the leading slash is normalised away, so the
@@ -352,21 +353,21 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " navTo('list') without a section
     CASE route.
       WHEN `detail`.
-        lv_hash = |/detail/{ layout }|.
+        hash = |/detail/{ layout }|.
       WHEN OTHERS.
         IF section_ix >= 0.
-          lv_hash = |/{ section_ix }|.
+          hash = |/{ section_ix }|.
         ELSE.
-          lv_hash = `/`.
+          hash = `/`.
         ENDIF.
     ENDCASE.
 
     " a NAVIGATION ARROW rewrites the URL in place (the original's
     " replace-navTo) - everything else is a real, pushed history entry
     IF check_replace = abap_true.
-      client->hash_replace( lv_hash ).
+      client->hash_replace( hash ).
     ELSE.
-      client->hash_set( lv_hash ).
+      client->hash_set( hash ).
     ENDIF.
 
   ENDMETHOD.

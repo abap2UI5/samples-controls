@@ -6,22 +6,23 @@ CLASS z2ui5_cl_smpc_app_165 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             src       TYPE string,
-             title     TYPE string,
-             subtitle  TYPE string,
-             targetsrc TYPE string,
-             target    TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        src       TYPE string,
+        title     TYPE string,
+        subtitle  TYPE string,
+        targetsrc TYPE string,
+        target    TYPE string,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_event.
-    METHODS model_init.
-
     METHODS view_display.
+    METHODS on_event.
+
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

@@ -6,14 +6,16 @@ CLASS z2ui5_cl_smpc_app_106 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_filter,
-             type TYPE string,
-           END OF ty_s_filter.
-    TYPES: BEGIN OF ty_s_message,
-             message     TYPE string,
-             description TYPE string,
-             type        TYPE string,
-           END OF ty_s_message.
+    TYPES:
+      BEGIN OF ty_s_filter,
+        type TYPE string,
+      END OF ty_s_filter.
+    TYPES:
+      BEGIN OF ty_s_message,
+        message     TYPE string,
+        description TYPE string,
+        type        TYPE string,
+      END OF ty_s_message.
     DATA t_filters  TYPE STANDARD TABLE OF ty_s_filter WITH EMPTY KEY.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
     DATA sort_key   TYPE string.
@@ -232,8 +234,8 @@ CLASS z2ui5_cl_smpc_app_106 IMPLEMENTATION.
 
       WHEN `MULTI`.
         " onMultiSelectPress: getPressed() ? 'MultiSelect Pressed' : 'MultiSelect Unpressed'
-        DATA(lv_pressed) = CONV abap_bool( client->get_event_arg( ) ).
-        client->message_toast_display( COND #( WHEN lv_pressed = abap_true
+        DATA(pressed) = CONV abap_bool( client->get_event_arg( ) ).
+        client->message_toast_display( COND #( WHEN pressed = abap_true
                                                THEN `MultiSelect Pressed`
                                                ELSE `MultiSelect Unpressed` ) ).
 

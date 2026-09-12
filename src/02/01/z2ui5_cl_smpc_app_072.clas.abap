@@ -8,8 +8,8 @@ CLASS z2ui5_cl_smpc_app_072 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        price         TYPE p LENGTH 8 DECIMALS 2,
-        currency_code TYPE string,
+        price        TYPE p LENGTH 8 DECIMALS 2,
+        currencycode TYPE string,
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
@@ -43,7 +43,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the shared Currency number binding (parts Price + CurrencyCode, showMeasure off), reused on every ObjectNumber
-    DATA(num) = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCY_CODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|.
+    DATA(num) = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
@@ -64,30 +64,30 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `binding` v = |\{{ client->_bind_path( t_products ) }/0\}|
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `binding` v = |\{{ client->_bind_path( t_products ) }/1\}|
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Error`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `binding` v = |\{{ client->_bind_path( t_products ) }/2\}|
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Warning`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `binding` v = |\{{ client->_bind_path( t_products ) }/3\}|
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Success`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `binding` v = |\{{ client->_bind_path( t_products ) }/4\}|
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Information`
 
             )->end(
@@ -108,34 +108,34 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `inverted` v = `true`
                     )->a( n = `binding`  v = |\{{ client->_bind_path( t_products ) }/0\}|
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                     )->a( n = `inverted` v = `true`
                     )->a( n = `binding`  v = |\{{ client->_bind_path( t_products ) }/1\}|
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Error`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                     )->a( n = `inverted` v = `true`
                     )->a( n = `binding`  v = |\{{ client->_bind_path( t_products ) }/2\}|
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Warning`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                     )->a( n = `inverted` v = `true`
                     )->a( n = `binding`  v = |\{{ client->_bind_path( t_products ) }/3\}|
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Success`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                     )->a( n = `inverted` v = `true`
                     )->a( n = `binding`  v = |\{{ client->_bind_path( t_products ) }/4\}|
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Information`
 
             )->end(
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
                     )->a( n = `active`  v = `true`
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Error`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
@@ -174,7 +174,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Warning`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
@@ -183,7 +183,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Success`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`   v = `sapUiSmallMarginBottom`
@@ -192,7 +192,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`  v = num
-                    )->a( n = `unit`    v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`    v = `{CURRENCYCODE}`
                     )->a( n = `state`   v = `Information`
 
             )->end(
@@ -215,7 +215,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                     )->a( n = `active`   v = `true`
@@ -224,7 +224,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Error`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
@@ -234,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Warning`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
@@ -244,7 +244,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Success`
                 )->tag( `ObjectNumber`
                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
@@ -254,7 +254,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                     )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                     )->a( n = `number`   v = num
-                    )->a( n = `unit`     v = `{CURRENCY_CODE}`
+                    )->a( n = `unit`     v = `{CURRENCYCODE}`
                     )->a( n = `state`    v = `Information`
 
             )->end(
@@ -272,7 +272,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                 )->a( n = `class`      v = `sapMObjectNumberLarge`
                 )->a( n = `binding`    v = |\{{ client->_bind_path( t_products ) }/5\}|
                 )->a( n = `number`     v = num
-                )->a( n = `unit`       v = `{CURRENCY_CODE}`
+                )->a( n = `unit`       v = `{CURRENCYCODE}`
                 )->a( n = `emphasized` v = `false`
                 )->a( n = `state`      v = `None`
 
@@ -287,7 +287,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                 )->a( n = `press`      v = client->follow_up_action( val   = client->cs_event-control_global
                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                 )->a( n = `number`     v = num
-                )->a( n = `unit`       v = `{CURRENCY_CODE}`
+                )->a( n = `unit`       v = `{CURRENCYCODE}`
                 )->a( n = `emphasized` v = `false`
                 )->a( n = `state`      v = `None`
 
@@ -306,7 +306,7 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
                         )->a( n = `press`      v = client->follow_up_action( val   = client->cs_event-control_global
                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `PRESS fired!` ) ) )
                         )->a( n = `number`     v = `12345678901234567890`
-                        )->a( n = `unit`       v = `{CURRENCY_CODE}`
+                        )->a( n = `unit`       v = `{CURRENCYCODE}`
                         )->a( n = `emphasized` v = `false`
                         )->a( n = `state`      v = `None`
 
@@ -323,12 +323,12 @@ CLASS z2ui5_cl_smpc_app_072 IMPLEMENTATION.
 
     " records /ProductCollection/0..5 of ui5/mock/products.json, verbatim (Price + CurrencyCode)
     t_products = VALUE #(
-      ( price = '956.00'  currency_code = `EUR` )
-      ( price = '1249.00' currency_code = `EUR` )
-      ( price = '1570.00' currency_code = `EUR` )
-      ( price = '1650.00' currency_code = `EUR` )
-      ( price = '299.00'  currency_code = `EUR` )
-      ( price = '1999.00' currency_code = `EUR` ) ).
+      ( price = '956.00'  currencycode = `EUR` )
+      ( price = '1249.00' currencycode = `EUR` )
+      ( price = '1570.00' currencycode = `EUR` )
+      ( price = '1650.00' currencycode = `EUR` )
+      ( price = '299.00'  currencycode = `EUR` )
+      ( price = '1999.00' currencycode = `EUR` ) ).
 
   ENDMETHOD.
 

@@ -290,13 +290,13 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
         " onBreakpointChange: map the media range to the Avatar size (Phone M,
         " Tablet L, Desktop/DesktopExtraLarge XL), update both bound Avatars
         " and toast 'Media Range: <range> (<width>px)'
-        DATA(lv_range) = client->get_event_arg( ).
-        DATA(lv_width) = client->get_event_arg( 2 ).
-        avatar_size = SWITCH #( lv_range
+        DATA(range) = client->get_event_arg( ).
+        DATA(width) = client->get_event_arg( 2 ).
+        avatar_size = SWITCH #( range
                                 WHEN `Phone`  THEN `M`
                                 WHEN `Tablet` THEN `L`
                                 ELSE `XL` ).
-        client->message_toast_display( |Media Range: { lv_range } ({ lv_width }px)| ).
+        client->message_toast_display( |Media Range: { range } ({ width }px)| ).
     ENDCASE.
 
   ENDMETHOD.

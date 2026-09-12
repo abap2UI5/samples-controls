@@ -8,25 +8,27 @@ CLASS z2ui5_cl_smpc_app_585 DEFINITION PUBLIC.
 
     " the navigation model: one row per NavigationListItem, its children in a
     " nested table, exactly as model.json nests them
-    TYPES: BEGIN OF ty_s_child,
-             title   TYPE string,
-             key     TYPE string,
-             enabled TYPE abap_bool,
-           END OF ty_s_child.
+    TYPES:
+      BEGIN OF ty_s_child,
+        title   TYPE string,
+        key     TYPE string,
+        enabled TYPE abap_bool,
+      END OF ty_s_child.
     TYPES ty_t_child TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_nav,
-             title    TYPE string,
-             icon     TYPE string,
-             key      TYPE string,
-             enabled  TYPE abap_bool,
-             expanded TYPE abap_bool,
-             t_items  TYPE ty_t_child,
-           END OF ty_s_nav.
+    TYPES:
+      BEGIN OF ty_s_nav,
+        title    TYPE string,
+        icon     TYPE string,
+        key      TYPE string,
+        enabled  TYPE abap_bool,
+        expanded TYPE abap_bool,
+        t_items  TYPE ty_t_child,
+      END OF ty_s_nav.
     TYPES ty_t_nav TYPE STANDARD TABLE OF ty_s_nav WITH EMPTY KEY.
 
     DATA t_navigation       TYPE ty_t_nav.
     DATA t_fixed_navigation TYPE ty_t_nav.
-    DATA selected_key       TYPE string VALUE `page2`.
+    DATA selectedkey        TYPE string VALUE `page2`.
     DATA side_expanded      TYPE abap_bool VALUE abap_true.
     DATA page2_text         TYPE string.
 
@@ -34,9 +36,9 @@ CLASS z2ui5_cl_smpc_app_585 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS nav_list IMPORTING node  TYPE REF TO z2ui5_cl_ui5_view_builder
                                items TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -115,7 +117,7 @@ CLASS z2ui5_cl_smpc_app_585 IMPLEMENTATION.
     DATA(side) = tool_page->ele( n = `sideContent` ns = `tnt`
         )->ele( n = `SideNavigation` ns = `tnt`
             )->a( n = `expanded`    v = `true`
-            )->a( n = `selectedKey` v = client->_bind( selected_key )
+            )->a( n = `selectedKey` v = client->_bind( selectedkey )
             )->a( n = `itemSelect`  v = client->_event( val = `ITEM_SELECT` arg = `${$parameters>/item}.getKey()` ) ).
 
     nav_list( node = side items = client->_bind( t_navigation ) ).
@@ -176,15 +178,15 @@ CLASS z2ui5_cl_smpc_app_585 IMPLEMENTATION.
 
     " The NavContainer's position is live control state: view_display( )
     " destroys the MAIN slot and XMLView.create builds a fresh tree, so
-    " pageContainer comes back on its initialPage="page2" - while selected_key
+    " pageContainer comes back on its initialPage="page2" - while selectedkey
     " is bound class state that survives, and the SideNavigation then
     " highlights root2 over a page2 the user never navigated back to.
     " Re-issuing the SAME key the ITEM_SELECT branch last sent is the app-000
     " idiom. Guarded twice: an untouched key (nothing selected yet) and the key
     " the initialPage already shows both need no action at all
-    IF selected_key IS NOT INITIAL AND selected_key <> `page2`.
+    IF selectedkey IS NOT INITIAL AND selectedkey <> `page2`.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( selected_key ) ) ).
+                                t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( selectedkey ) ) ).
     ENDIF.
 
   ENDMETHOD.
@@ -227,7 +229,7 @@ CLASS z2ui5_cl_smpc_app_585 IMPLEMENTATION.
         " onItemSelect: pageContainer.to( the item's key )
         DATA(key) = client->get_event_arg( ).
         IF key IS NOT INITIAL.
-          selected_key = key.
+          selectedkey = key.
           client->follow_up_action( val   = client->cs_event-control_by_id
                                     t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( key ) ) ).
         ENDIF.

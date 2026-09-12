@@ -6,25 +6,27 @@ CLASS z2ui5_cl_smpc_app_505 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             productid     TYPE string,
-             suppliername  TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-             weightmeasure TYPE p LENGTH 8 DECIMALS 2,
-             weightunit    TYPE string,
-             weightstate   TYPE string,
-             price         TYPE p LENGTH 8 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        productid     TYPE string,
+        suppliername  TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        weightmeasure TYPE p LENGTH 8 DECIMALS 2,
+        weightunit    TYPE string,
+        weightstate   TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_filter,
-             text TYPE string,
-           END OF ty_s_filter.
+    TYPES:
+      BEGIN OF ty_s_filter,
+        text TYPE string,
+      END OF ty_s_filter.
     TYPES ty_t_filter TYPE STANDARD TABLE OF ty_s_filter WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -500,12 +502,12 @@ CLASS z2ui5_cl_smpc_app_505 IMPLEMENTATION.
     " sap.m.sample.Table COMPONENT, so it inherits that sample's Formatter.js:
     " thresholds 1 and 5 KG with G converted, NOT the 1000/2000 raw thresholds the
     " TableSelectDialog family uses (app 009 computes the identical rule).
-    LOOP AT t_all REFERENCE INTO DATA(lr_product).
-      DATA(weight_kg) = lr_product->weightmeasure.
-      IF lr_product->weightunit = `G`.
+    LOOP AT t_all REFERENCE INTO DATA(product).
+      DATA(weight_kg) = product->weightmeasure.
+      IF product->weightunit = `G`.
         weight_kg = weight_kg / 1000.
       ENDIF.
-      lr_product->weightstate = COND #( WHEN weight_kg < 0 THEN `None`
+      product->weightstate = COND #( WHEN weight_kg < 0 THEN `None`
                                         WHEN weight_kg < 1 THEN `Success`
                                         WHEN weight_kg < 5 THEN `Warning`
                                         ELSE `Error` ).

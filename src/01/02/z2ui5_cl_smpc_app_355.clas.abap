@@ -19,8 +19,8 @@ CLASS z2ui5_cl_smpc_app_355 DEFINITION PUBLIC.
     " the original's `ui>` model, folded onto the one default model; each flag
     " is shared by its ToggleButton and the Table property it drives, so both
     " toggles work without a round-trip
-    DATA show_freeze_menu_entry TYPE abap_bool.
-    DATA enable_cell_filter     TYPE abap_bool.
+    DATA showfreezemenuentry TYPE abap_bool.
+    DATA enablecellfilter    TYPE abap_bool.
     " onToggleContextMenu's pressed state - the view carries the contextMenu
     " subtree only while it is on, which is setContextMenu / destroyContextMenu
     DATA custom_context_menu    TYPE abap_bool.
@@ -78,8 +78,8 @@ CLASS z2ui5_cl_smpc_app_355 IMPLEMENTATION.
                     )->a( n = `id`                 v = `table`
                     )->a( n = `selectionMode`      v = `MultiToggle`
                     )->a( n = `rows`               v = client->_bind( t_products )
-                    )->a( n = `enableColumnFreeze` v = client->_bind( show_freeze_menu_entry )
-                    )->a( n = `enableCellFilter`   v = client->_bind( enable_cell_filter )
+                    )->a( n = `enableColumnFreeze` v = client->_bind( showfreezemenuentry )
+                    )->a( n = `enableCellFilter`   v = client->_bind( enablecellfilter )
                     )->a( n = `ariaLabelledBy`     v = `title` ).
 
     " onToggleContextMenu: setContextMenu( new sap.m.Menu with two bound
@@ -109,12 +109,12 @@ CLASS z2ui5_cl_smpc_app_355 IMPLEMENTATION.
             )->tag( n = `ToggleButton` ns = `m`
                 )->a( n = `icon`    v = `sap-icon://resize-horizontal`
                 )->a( n = `tooltip` v = `Enable / Disable Freezing Menu Entries`
-                )->a( n = `pressed` v = client->_bind( show_freeze_menu_entry )
+                )->a( n = `pressed` v = client->_bind( showfreezemenuentry )
 
             )->tag( n = `ToggleButton` ns = `m`
                 )->a( n = `icon`    v = `sap-icon://filter`
                 )->a( n = `tooltip` v = `Enable / Disable Cell Filter`
-                )->a( n = `pressed` v = client->_bind( enable_cell_filter )
+                )->a( n = `pressed` v = client->_bind( enablecellfilter )
 
             " NOT `b = <field>`: that parameter writes the LITERAL
             " 'true'/'false' at render time, so a field the event

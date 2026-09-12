@@ -6,11 +6,12 @@ CLASS z2ui5_cl_smpc_app_482 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name      TYPE string,
-             productid TYPE string,
-             navigated TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name      TYPE string,
+        productid TYPE string,
+        navigated TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

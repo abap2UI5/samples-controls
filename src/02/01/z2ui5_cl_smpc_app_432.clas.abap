@@ -6,10 +6,11 @@ CLASS z2ui5_cl_smpc_app_432 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_token,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_token.
+    TYPES:
+      BEGIN OF ty_s_token,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_token.
     TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
 
     DATA t_tokens TYPE ty_t_token.

@@ -6,9 +6,10 @@ CLASS z2ui5_cl_smpc_app_582 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             title TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        title TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items1 TYPE ty_t_item.

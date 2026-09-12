@@ -6,33 +6,36 @@ CLASS z2ui5_cl_smpc_app_547 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-             aria      TYPE string,
-             selected  TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+        aria      TYPE string,
+        selected  TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_appointments TYPE ty_t_appointment,
-             t_headers      TYPE ty_t_header,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_appointments TYPE ty_t_appointment,
+        t_headers      TYPE ty_t_header,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA start_date TYPE string.
@@ -57,9 +60,9 @@ CLASS z2ui5_cl_smpc_app_547 DEFINITION PUBLIC.
     DATA d_mode    TYPE string.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_details_display.
     METHODS popup_create_display.
+    METHODS on_event.
     METHODS appointment_edit
       IMPORTING target_row TYPE i.
     METHODS iso_of

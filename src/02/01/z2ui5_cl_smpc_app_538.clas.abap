@@ -6,25 +6,27 @@ CLASS z2ui5_cl_smpc_app_538 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-             aria      TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+        aria      TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_appointments TYPE ty_t_appointment,
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_appointments TYPE ty_t_appointment,
 
-             selected       TYPE abap_bool,
-           END OF ty_s_person.
+        selected       TYPE abap_bool,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
     DATA start_date TYPE string.

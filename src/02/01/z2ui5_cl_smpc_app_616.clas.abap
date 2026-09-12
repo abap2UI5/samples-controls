@@ -6,10 +6,11 @@ CLASS z2ui5_cl_smpc_app_616 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.

@@ -9,60 +9,65 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
     " RecurrenceRule.days is an int[]: a table of STRINGS serializes to ['1','2']
     " and UI5 rejects it, so the day tables are integer tables
     TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             title             TYPE string,
-             text              TYPE string,
-             type              TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-             ruletype          TYPE string,
-             ruledayofmonth    TYPE i,
-             ruleweekofmonth   TYPE string,
-             ruledayofweek     TYPE i,
-             rulemonth         TYPE i,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        title             TYPE string,
+        text              TYPE string,
+        type              TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+        ruletype          TYPE string,
+        ruledayofmonth    TYPE i,
+        ruleweekofmonth   TYPE string,
+        ruledayofweek     TYPE i,
+        rulemonth         TYPE i,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_non_working,
-             date_at           TYPE string,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             valueformat       TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-           END OF ty_s_non_working.
+    TYPES:
+      BEGIN OF ty_s_non_working,
+        date_at           TYPE string,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        valueformat       TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+      END OF ty_s_non_working.
     TYPES ty_t_non_working TYPE STANDARD TABLE OF ty_s_non_working WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_appointments TYPE ty_t_appointment,
-             t_non_working  TYPE ty_t_non_working,
-             t_headers      TYPE ty_t_header,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_appointments TYPE ty_t_appointment,
+        t_non_working  TYPE ty_t_non_working,
+        t_headers      TYPE ty_t_header,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_item,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_item.
     DATA t_person_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
-    DATA start_date TYPE string.
-    DATA view_key   TYPE string.
+    DATA startdate TYPE string.
+    DATA viewkey   TYPE string.
 
     " the create dialog's own model, folded to fields (see sidecar)
     DATA c_person      TYPE string.
@@ -85,15 +90,15 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_create_display.
-    METHODS create_reset.
+    METHODS on_event.
     METHODS iso_of
       IMPORTING first         TYPE i
       RETURNING VALUE(result) TYPE string.
     METHODS index_of
       IMPORTING path          TYPE string
       RETURNING VALUE(result) TYPE i.
+    METHODS create_reset.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -135,13 +140,13 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
             )->ele( `PlanningCalendar`
                 )->a( n = `id`                        v = `PC1`
-                )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `rows`                      v = client->_bind( t_people )
                 )->a( n = `appointmentsVisualization` v = `Filled`
                 )->a( n = `rowHeaderPress`            v = client->_event( val = `ROW_HEADER_PRESS` arg = `${$parameters>/row}.getId()` )
                 )->a( n = `showEmptyIntervalHeaders`  v = `false`
                 )->a( n = `builtInViews`              v = `Hour,Day,Week,Month,One Month`
-                )->a( n = `viewKey`                   v = client->_bind( view_key )
+                )->a( n = `viewKey`                   v = client->_bind( viewkey )
                 )->a( n = `showWeekNumbers`           v = `true`
 
                 )->ele( `toolbarContent`
@@ -819,8 +824,8 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date = `2019-09-01T00:00:00`.
-    view_key   = `Hour`.
+    startdate = `2019-09-01T00:00:00`.
+    viewkey   = `Hour`.
 
     t_people = VALUE #(
       ( pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/John_Miller.png` name = `John Miller` role = `team member`

@@ -45,9 +45,9 @@ CLASS z2ui5_cl_smpc_sapui5_012 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    METHODS on_rendering.
     METHODS on_event.
     METHODS on_init.
+    METHODS on_rendering.
 
   PRIVATE SECTION.
 ENDCLASS.

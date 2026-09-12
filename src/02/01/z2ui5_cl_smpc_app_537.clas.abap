@@ -7,44 +7,48 @@ CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
     INTERFACES z2ui5_if_app.
 
     TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-             aria      TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+        aria      TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             " nonWorkingDays / nonWorkingHours are int[] properties: a table of
-             " STRINGS serializes to ['5','6'] and UI5 rejects it ("is of type
-             " object, expected int[]"), so both are integer tables
-             t_free_days    TYPE ty_t_int,
-             t_free_hours   TYPE ty_t_int,
-             t_appointments TYPE ty_t_appointment,
-             t_headers      TYPE ty_t_header,
-             selected       TYPE abap_bool,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        " nonWorkingDays / nonWorkingHours are int[] properties: a table of
+        " STRINGS serializes to ['5','6'] and UI5 rejects it ("is of type
+        " object, expected int[]"), so both are integer tables
+        t_free_days    TYPE ty_t_int,
+        t_free_hours   TYPE ty_t_int,
+        t_appointments TYPE ty_t_appointment,
+        t_headers      TYPE ty_t_header,
+        selected       TYPE abap_bool,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_special,
-             start_at TYPE string,
-             type     TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_at TYPE string,
+        type     TYPE string,
+      END OF ty_s_special.
     DATA t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA start_date  TYPE string.

@@ -6,19 +6,21 @@ CLASS z2ui5_cl_smpc_app_265 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_customer,
-             key              TYPE i,
-             name             TYPE string,
-             region           TYPE string,
-             accountmanagerid TYPE i,
-           END OF ty_s_customer.
+    TYPES:
+      BEGIN OF ty_s_customer,
+        key              TYPE i,
+        name             TYPE string,
+        region           TYPE string,
+        accountmanagerid TYPE i,
+      END OF ty_s_customer.
 
-    TYPES: BEGIN OF ty_s_accountmanager,
-             id        TYPE i,
-             firstname TYPE string,
-             lastname  TYPE string,
-             region    TYPE string,
-           END OF ty_s_accountmanager.
+    TYPES:
+      BEGIN OF ty_s_accountmanager,
+        id        TYPE i,
+        firstname TYPE string,
+        lastname  TYPE string,
+        region    TYPE string,
+      END OF ty_s_accountmanager.
 
     DATA t_customers       TYPE STANDARD TABLE OF ty_s_customer WITH EMPTY KEY.
     DATA t_accountmanagers TYPE STANDARD TABLE OF ty_s_accountmanager WITH EMPTY KEY.

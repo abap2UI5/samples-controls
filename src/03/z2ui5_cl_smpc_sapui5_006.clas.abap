@@ -15,24 +15,26 @@ CLASS z2ui5_cl_smpc_sapui5_006 DEFINITION PUBLIC.
     TYPES ty_t_children TYPE STANDARD TABLE OF int4 WITH NON-UNIQUE KEY table_line.
     TYPES ty_t_texts TYPE STANDARD TABLE OF string WITH NON-UNIQUE KEY table_line.
 
-    TYPES: BEGIN OF ty_s_nodes2,
-             id                TYPE string,
-             lane              TYPE string,
-             title             TYPE string,
-             titleabbreviation TYPE string,
-             children          TYPE ty_t_children,
-             state             TYPE string,
-             statetext         TYPE string,
-             focused           TYPE abap_bool,
-             highlighted       TYPE abap_bool,
-             texts             TYPE ty_t_texts,
-           END OF ty_s_nodes2.
-    TYPES: BEGIN OF ty_s_lanes5,
-             id       TYPE string,
-             icon     TYPE string,
-             label    TYPE string,
-             position TYPE i,
-           END OF ty_s_lanes5.
+    TYPES:
+      BEGIN OF ty_s_nodes2,
+        id                TYPE string,
+        lane              TYPE string,
+        title             TYPE string,
+        titleabbreviation TYPE string,
+        children          TYPE ty_t_children,
+        state             TYPE string,
+        statetext         TYPE string,
+        focused           TYPE abap_bool,
+        highlighted       TYPE abap_bool,
+        texts             TYPE ty_t_texts,
+      END OF ty_s_nodes2.
+    TYPES:
+      BEGIN OF ty_s_lanes5,
+        id       TYPE string,
+        icon     TYPE string,
+        label    TYPE string,
+        position TYPE i,
+      END OF ty_s_lanes5.
     TYPES ty_t_nodes2 TYPE STANDARD TABLE OF ty_s_nodes2 WITH EMPTY KEY.
     TYPES ty_t_lanes5 TYPE STANDARD TABLE OF ty_s_lanes5 WITH EMPTY KEY.
 
@@ -42,9 +44,9 @@ CLASS z2ui5_cl_smpc_sapui5_006 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
+    METHODS on_event.
     METHODS set_data.
     METHODS view_display.
-    METHODS on_event.
 
   PRIVATE SECTION.
 ENDCLASS.

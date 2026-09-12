@@ -36,11 +36,12 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
     DATA t_nodes TYPE STANDARD TABLE OF ty_s_node_level1 WITH EMPTY KEY.
 
     " the hierarchy the drop rewrites: one row per node, parent by text
-    TYPES: BEGIN OF ty_s_flat,
-             text   TYPE string,
-             ref    TYPE string,
-             parent TYPE string,
-           END OF ty_s_flat.
+    TYPES:
+      BEGIN OF ty_s_flat,
+        text   TYPE string,
+        ref    TYPE string,
+        parent TYPE string,
+      END OF ty_s_flat.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -49,11 +50,11 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
     METHODS view_display.
     METHODS on_event.
     METHODS node_drop.
-    METHODS model_init.
-    METHODS nodes_rebuild.
     METHODS is_descendant IMPORTING node          TYPE string
                                     ancestor      TYPE string
                           RETURNING VALUE(result) TYPE abap_bool.
+    METHODS nodes_rebuild.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

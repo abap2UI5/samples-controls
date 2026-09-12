@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_583 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             src       TYPE string,
-             title     TYPE string,
-             subtitle  TYPE string,
-             targetsrc TYPE string,
-             target    TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        src       TYPE string,
+        title     TYPE string,
+        subtitle  TYPE string,
+        targetsrc TYPE string,
+        target    TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     DATA t_items TYPE ty_t_item.
@@ -21,8 +22,8 @@ CLASS z2ui5_cl_smpc_app_583 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popover_display IMPORTING by_id TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.

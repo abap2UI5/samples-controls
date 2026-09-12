@@ -52,6 +52,13 @@ jobs:
     # SAPUI5 alone. Settings and the reasoning: abap2ui5lint-collection.jsonc
     - run: npm run check:collection
 
+    # The generated overview app (src/z2ui5_cl_smpc_app_000) has no sidecar
+    # either and is not in src/03, so until 2026-09-12 nothing judged what it
+    # BUILDS against the 1.71 floor - its INFO button carried a 1.80 icon.
+    # This is its version gate: one file, property gate on, the floor as an
+    # error. Settings and the reasoning: abap2ui5lint-overview.jsonc
+    - run: npm run check:overview
+
     # view-gates rewrote .github/badges/ with what the corpus now is. The
     # default branch is protected and github-actions[bot] can never be added
     # to a bypass list, so they are committed onto the PULL REQUEST branch -

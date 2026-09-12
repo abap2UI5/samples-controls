@@ -6,28 +6,29 @@ CLASS z2ui5_cl_smpc_app_218 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             category      TYPE string,
-             maincategory  TYPE string,
-             taxtarifcode  TYPE string,
-             suppliername  TYPE string,
-             weightmeasure TYPE string,
-             weightunit    TYPE string,
-             description   TYPE string,
-             name          TYPE string,
-             dateofsale    TYPE string,
-             productpicurl TYPE string,
-             status        TYPE string,
-             quantity      TYPE i,
-             uom           TYPE string,
-             currencycode  TYPE string,
-             price         TYPE string,
-             width         TYPE string,
-             depth         TYPE string,
-             height        TYPE string,
-             dimunit       TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        category      TYPE string,
+        maincategory  TYPE string,
+        taxtarifcode  TYPE string,
+        suppliername  TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        description   TYPE string,
+        name          TYPE string,
+        dateofsale    TYPE string,
+        productpicurl TYPE string,
+        status        TYPE string,
+        quantity      TYPE i,
+        uom           TYPE string,
+        currencycode  TYPE string,
+        price         TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+      END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
   PROTECTED SECTION.

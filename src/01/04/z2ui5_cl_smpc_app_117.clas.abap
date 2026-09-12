@@ -6,17 +6,19 @@ CLASS z2ui5_cl_smpc_app_117 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_city,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_city.
-    TYPES: BEGIN OF ty_s_product,
-             title        TYPE string,
-             subtitle     TYPE string,
-             revenue      TYPE string,
-             status       TYPE string,
-             statusschema TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_city,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_city.
+    TYPES:
+      BEGIN OF ty_s_product,
+        title        TYPE string,
+        subtitle     TYPE string,
+        revenue      TYPE string,
+        status       TYPE string,
+        statusschema TYPE string,
+      END OF ty_s_product.
     DATA t_cities   TYPE STANDARD TABLE OF ty_s_city WITH EMPTY KEY.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 

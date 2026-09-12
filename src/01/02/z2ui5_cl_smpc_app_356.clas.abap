@@ -30,10 +30,10 @@ CLASS z2ui5_cl_smpc_app_356 DEFINITION PUBLIC.
     " Input carries the limit as text because sap.m.Input.value is a string
     " property while the plugin's limit is an integer - the original bridges
     " that with a typed binding, the port parses it in onLimitChange's place
-    DATA limit                TYPE i.
-    DATA limit_text           TYPE string.
-    DATA show_header_selector TYPE abap_bool.
-    DATA selection_mode       TYPE string.
+    DATA limit              TYPE i.
+    DATA limit_text         TYPE string.
+    DATA showheaderselector TYPE abap_bool.
+    DATA selectionmode      TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -97,8 +97,8 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
                         )->tag( n = `MultiSelectionPlugin` ns = `plugins`
                             )->a( n = `limit`              v = client->_bind( limit )
                             )->a( n = `enableNotification` v = `true`
-                            )->a( n = `showHeaderSelector` v = client->_bind( show_header_selector )
-                            )->a( n = `selectionMode`      v = client->_bind( selection_mode )
+                            )->a( n = `showHeaderSelector` v = client->_bind( showheaderselector )
+                            )->a( n = `selectionMode`      v = client->_bind( selectionmode )
                             )->a( n = `selectionChange`    v = client->_event( val   = `SELECTION_CHANGE`
                                                                                t_arg = VALUE #( ( `${$parameters>/limitReached}` )
                                                                                                 ( `${$source>}.getSelectedIndices().length` ) ) )
@@ -122,7 +122,7 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
                                 )->a( n = `id`          v = `select1`
                                 )->a( n = `width`       v = `20%`
                                 )->a( n = `items`       v = client->_bind( t_selectionmodes )
-                                )->a( n = `selectedKey` v = client->_bind( selection_mode )
+                                )->a( n = `selectedKey` v = client->_bind( selectionmode )
 
                                 )->tag( n = `Item` ns = `c`
                                     )->a( n = `key`  v = `{KEY}`
@@ -145,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
                             )->tag( n = `ToggleButton` ns = `m`
                                 )->a( n = `icon`    v = `sap-icon://complete`
                                 )->a( n = `tooltip` v = `Show header selector`
-                                )->a( n = `pressed` v = client->_bind( show_header_selector )
+                                )->a( n = `pressed` v = client->_bind( showheaderselector )
 
                         )->end(
                     )->end(
@@ -275,14 +275,14 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
       WHEN `SELECTION_CHANGE`.
         " onSelectionChange: how many rows are selected, and whether the last
         " range had to be cut down to the limit
-        DATA(lv_limit_reached) = client->get_event_arg( ).
-        DATA(lv_count)         = CONV i( client->get_event_arg( 2 ) ).
-        IF lv_count = 0.
+        DATA(limit_reached) = client->get_event_arg( ).
+        DATA(count)         = CONV i( client->get_event_arg( 2 ) ).
+        IF count = 0.
           client->message_toast_display( `Selection cleared.` ).
-        ELSEIF lv_limit_reached = abap_true.
-          client->message_toast_display( |{ lv_count } row(s) selected. The recently selected range was limited to { limit } rows!| ).
+        ELSEIF limit_reached = abap_true.
+          client->message_toast_display( |{ count } row(s) selected. The recently selected range was limited to { limit } rows!| ).
         ELSE.
-          client->message_toast_display( |{ lv_count } row(s) selected.| ).
+          client->message_toast_display( |{ count } row(s) selected.| ).
         ENDIF.
 
     ENDCASE.
@@ -296,8 +296,8 @@ CLASS z2ui5_cl_smpc_app_356 IMPLEMENTATION.
     " the `config>` model defaults the controller sets
     limit                = 20.
     limit_text           = `20`.
-    show_header_selector = abap_true.
-    selection_mode       = `MultiToggle`.
+    showheaderselector = abap_true.
+    selectionmode       = `MultiToggle`.
 
     " the SelectionMode item set the controller builds from the sap.ui.table
     " enum, in Object.keys order, with Multi skipped as there. The enum has

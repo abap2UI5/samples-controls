@@ -20,7 +20,7 @@ CLASS z2ui5_cl_smpc_app_252 DEFINITION PUBLIC.
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA pages_count    TYPE i.
+    DATA pagescount     TYPE i.
     DATA scroll_visible TYPE abap_bool.
 
   PROTECTED SECTION.
@@ -84,7 +84,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
                 " field - the toggles drive the carousel client-side (007/128)
                 )->tag( `Input`
                     )->a( n = `type`            v = `Number`
-                    )->a( n = `value`           v = |\{ path: '{ client->_bind_path( pages_count ) }', type: 'IntegerType' \}|
+                    )->a( n = `value`           v = |\{ path: '{ client->_bind_path( pagescount ) }', type: 'IntegerType' \}|
                     )->a( n = `valueLiveUpdate` v = `true`
                     )->a( n = `width`           v = `320px`
                 )->tag( `Label`
@@ -107,7 +107,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
 
                 )->ele( `customLayout`
                     )->tag( `CarouselLayout`
-                        )->a( n = `visiblePagesCount` v = client->_bind( pages_count )
+                        )->a( n = `visiblePagesCount` v = client->_bind( pagescount )
                         " OnScrollModeChange folded into the binding (declared)
                         )->a( n = `scrollMode`        v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
 
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
     " desktop leg. The mirror collapses that pair to the single string 'combi',
     " which is why it has to be named here - checking 'tablet' alone would give
     " such a machine 2 pages where the sample gives 4
-    pages_count    = COND #(
+    pagescount    = COND #(
         WHEN client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-desktop
           OR client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-combi  THEN 4
         WHEN client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-tablet  THEN 2

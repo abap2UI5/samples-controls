@@ -8,16 +8,16 @@ CLASS z2ui5_cl_smpc_app_041 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        name           TYPE string,
-        description    TYPE string,
-        weight_measure TYPE string,
-        weight_unit    TYPE string,
-        width          TYPE string,
-        depth          TYPE string,
-        height         TYPE string,
-        dim_unit       TYPE string,
-        price          TYPE p LENGTH 14 DECIMALS 2,
-        currency_code  TYPE string,
+        name          TYPE string,
+        description   TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
+        price         TYPE p LENGTH 14 DECIMALS 2,
+        currencycode  TYPE string,
       END OF ty_s_product.
     DATA s_product TYPE ty_s_product.
 
@@ -58,8 +58,8 @@ CLASS z2ui5_cl_smpc_app_041 IMPLEMENTATION.
             " element binding kept 1:1 - the context is the one-record structure instead of {/ProductCollection/0}
             )->a( n = `binding`    v = client->_bind( s_product )
             )->a( n = `title`      v = `{NAME}`
-            )->a( n = `number`     v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCY_CODE'\}], type:'sap.ui.model.type.Currency', formatOptions:\{showMeasure:false\} \}|
-            )->a( n = `numberUnit` v = `{CURRENCY_CODE}`
+            )->a( n = `number`     v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}], type:'sap.ui.model.type.Currency', formatOptions:\{showMeasure:false\} \}|
+            )->a( n = `numberUnit` v = `{CURRENCYCODE}`
             )->a( n = `class`      v = `sapUiResponsivePadding--header`
 
             )->ele( `statuses`
@@ -73,9 +73,9 @@ CLASS z2ui5_cl_smpc_app_041 IMPLEMENTATION.
             )->end(
 
             )->tag( `ObjectAttribute`
-                )->a( n = `text` v = `{WEIGHT_MEASURE} {WEIGHT_UNIT}`
+                )->a( n = `text` v = `{WEIGHTMEASURE} {WEIGHTUNIT}`
             )->tag( `ObjectAttribute`
-                )->a( n = `text` v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIM_UNIT}`
+                )->a( n = `text` v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIMUNIT}`
             )->tag( `ObjectAttribute`
                 )->a( n = `text` v = `{DESCRIPTION}`
             )->tag( `ObjectAttribute`
@@ -92,16 +92,16 @@ CLASS z2ui5_cl_smpc_app_041 IMPLEMENTATION.
   METHOD model_init.
 
     " the bound record /ProductCollection/0 of the shared mock data sap/ui/demo/mock/products.json
-    s_product = VALUE #( name           = `Notebook Basic 15`
-                         description    = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
-                         weight_measure = `4.2`
-                         weight_unit    = `KG`
-                         width          = `30`
-                         depth          = `18`
-                         height         = `3`
-                         dim_unit       = `cm`
-                         price          = `956.00`
-                         currency_code  = `EUR` ).
+    s_product = VALUE #( name          = `Notebook Basic 15`
+                         description   = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
+                         weightmeasure = `4.2`
+                         weightunit    = `KG`
+                         width         = `30`
+                         depth         = `18`
+                         height        = `3`
+                         dimunit       = `cm`
+                         price         = `956.00`
+                         currencycode  = `EUR` ).
 
   ENDMETHOD.
 

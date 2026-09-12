@@ -6,48 +6,53 @@ CLASS z2ui5_cl_smpc_app_541 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_special,
-             start_at      TYPE string,
-             end_at        TYPE string,
-             type          TYPE string,
-             secondarytype TYPE string,
-             color         TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_at      TYPE string,
+        end_at        TYPE string,
+        type          TYPE string,
+        secondarytype TYPE string,
+        color         TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             title     TYPE string,
-             info      TYPE string,
-             type      TYPE string,
-             pic       TYPE string,
-             tentative TYPE abap_bool,
-             aria      TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        title     TYPE string,
+        info      TYPE string,
+        type      TYPE string,
+        pic       TYPE string,
+        tentative TYPE abap_bool,
+        aria      TYPE string,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_header,
-             start_at TYPE string,
-             end_at   TYPE string,
-             title    TYPE string,
-             type     TYPE string,
-             pic      TYPE string,
-           END OF ty_s_header.
+    TYPES:
+      BEGIN OF ty_s_header,
+        start_at TYPE string,
+        end_at   TYPE string,
+        title    TYPE string,
+        type     TYPE string,
+        pic      TYPE string,
+      END OF ty_s_header.
     TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_person,
-             pic            TYPE string,
-             name           TYPE string,
-             role           TYPE string,
-             t_specials     TYPE ty_t_special,
-             t_appointments TYPE ty_t_appointment,
-             t_headers      TYPE ty_t_header,
-           END OF ty_s_person.
+    TYPES:
+      BEGIN OF ty_s_person,
+        pic            TYPE string,
+        name           TYPE string,
+        role           TYPE string,
+        t_specials     TYPE ty_t_special,
+        t_appointments TYPE ty_t_appointment,
+        t_headers      TYPE ty_t_header,
+      END OF ty_s_person.
     DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_legend,
-             text  TYPE string,
-             type  TYPE string,
-             color TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        text  TYPE string,
+        type  TYPE string,
+        color TYPE string,
+      END OF ty_s_legend.
     TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
 
     DATA t_special_dates     TYPE ty_t_special.

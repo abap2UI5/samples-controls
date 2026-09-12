@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_535 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name          TYPE string,
-             description   TYPE string,
-             productpicurl TYPE string,
-             price         TYPE p LENGTH 8 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name          TYPE string,
+        description   TYPE string,
+        productpicurl TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA productcollection    TYPE ty_t_product.
@@ -57,9 +58,9 @@ CLASS z2ui5_cl_smpc_app_535 DEFINITION PUBLIC.
 
     METHODS view_display.
     METHODS on_event.
-    METHODS nav_back_to_step IMPORTING step_id TYPE string.
     METHODS branch_payment.
     METHODS branch_delivery.
+    METHODS nav_back_to_step IMPORTING step_id TYPE string.
     METHODS total_calc.
     METHODS model_init.
 

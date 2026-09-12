@@ -25,7 +25,7 @@
     },
     {
       "type": "NOTE",
-      "what": "Width, Depth and Height are typed as ABAP string rather than packed. The mock mixes integers (30) and one-decimal values (40.8) in these columns and they are only bound into the text template \"{WIDTH} x {DEPTH} x {HEIGHT} {DIM_UNIT}\", so a fixed DECIMALS would render 30 as 30.0."
+      "what": "Width, Depth and Height are typed as ABAP string rather than packed. The mock mixes integers (30) and one-decimal values (40.8) in these columns and they are only bound into the text template \"{WIDTH} x {DEPTH} x {HEIGHT} {DIMUNIT}\", so a fixed DECIMALS would render 30 as 30.0."
     },
     {
       "type": "NOTE",

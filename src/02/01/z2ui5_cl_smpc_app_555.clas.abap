@@ -9,35 +9,37 @@ CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
     " RecurrenceRule.days is an int[]: a table of STRINGS serializes to ['1','2']
     " and UI5 rejects it, so the day tables are integer tables
     TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_appointment,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             title             TYPE string,
-             text              TYPE string,
-             type              TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-             ruletype          TYPE string,
-             ruledayofmonth    TYPE i,
-             ruleweekofmonth   TYPE string,
-             ruledayofweek     TYPE i,
-             rulemonth         TYPE i,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        title             TYPE string,
+        text              TYPE string,
+        type              TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+        ruletype          TYPE string,
+        ruledayofmonth    TYPE i,
+        ruleweekofmonth   TYPE string,
+        ruledayofweek     TYPE i,
+        rulemonth         TYPE i,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_non_working,
-             date_at           TYPE string,
-             start_at          TYPE string,
-             end_at            TYPE string,
-             valueformat       TYPE string,
-             title             TYPE string,
-             recurrencetype    TYPE string,
-             recurrencepattern TYPE i,
-             recurrenceenddate TYPE string,
-             t_recurrence_day  TYPE ty_t_int,
-           END OF ty_s_non_working.
+    TYPES:
+      BEGIN OF ty_s_non_working,
+        date_at           TYPE string,
+        start_at          TYPE string,
+        end_at            TYPE string,
+        valueformat       TYPE string,
+        title             TYPE string,
+        recurrencetype    TYPE string,
+        recurrencepattern TYPE i,
+        recurrenceenddate TYPE string,
+        t_recurrence_day  TYPE ty_t_int,
+      END OF ty_s_non_working.
     TYPES ty_t_non_working TYPE STANDARD TABLE OF ty_s_non_working WITH EMPTY KEY.
 
     DATA t_appointments TYPE ty_t_appointment.
@@ -64,8 +66,8 @@ CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS popup_create_display.
+    METHODS on_event.
     METHODS create_reset.
     METHODS model_init.
 

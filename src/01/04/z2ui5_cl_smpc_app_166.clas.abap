@@ -29,11 +29,12 @@ CLASS z2ui5_cl_smpc_app_166 DEFINITION PUBLIC.
     DATA showfooter  TYPE abap_bool VALUE abap_false.
     DATA edit_visible TYPE abap_bool VALUE abap_true.
 
-    TYPES: BEGIN OF ty_s_message,
-             type    TYPE string,
-             message TYPE string,
-             target  TYPE string,
-           END OF ty_s_message.
+    TYPES:
+      BEGIN OF ty_s_message,
+        type    TYPE string,
+        message TYPE string,
+        target  TYPE string,
+      END OF ty_s_message.
     DATA t_messages TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
 
   PROTECTED SECTION.

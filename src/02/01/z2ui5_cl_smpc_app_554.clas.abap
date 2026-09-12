@@ -6,28 +6,31 @@ CLASS z2ui5_cl_smpc_app_554 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title     TYPE string,
-             text      TYPE string,
-             type      TYPE string,
-             icon      TYPE string,
-             start_at  TYPE string,
-             end_at    TYPE string,
-             tentative TYPE abap_bool,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
+        start_at  TYPE string,
+        end_at    TYPE string,
+        tentative TYPE abap_bool,
+      END OF ty_s_appointment.
     TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_special,
-             start_at TYPE string,
-             end_at   TYPE string,
-             type     TYPE string,
-             color    TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_at TYPE string,
+        end_at   TYPE string,
+        type     TYPE string,
+        color    TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_legend,
-             text  TYPE string,
-             type  TYPE string,
-             color TYPE string,
-           END OF ty_s_legend.
+    TYPES:
+      BEGIN OF ty_s_legend,
+        text  TYPE string,
+        type  TYPE string,
+        color TYPE string,
+      END OF ty_s_legend.
     TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
 
     DATA t_appointments      TYPE ty_t_appointment.
@@ -35,7 +38,7 @@ CLASS z2ui5_cl_smpc_app_554 DEFINITION PUBLIC.
     DATA t_legend_items      TYPE ty_t_legend.
     DATA t_legend_appt_items TYPE ty_t_legend.
 
-    DATA start_date   TYPE string.
+    DATA startdate    TYPE string.
     DATA legend_shown TYPE abap_bool.
     DATA full_day     TYPE abap_bool.
     DATA scale_factor TYPE i.
@@ -105,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
                     " zoomIn / zoomOut step setScaleFactor; the property is bindable
                     " and the two presses do the same increment in ABAP
                     )->a( n = `scaleFactor`  v = client->_bind( scale_factor )
-                    )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                    )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                     )->a( n = `appointments` v = client->_bind( t_appointments )
                     )->a( n = `specialDates` v = client->_bind( t_special_dates )
                     )->a( n = `legend`       v = `SinglePlanningCalendarLegend`
@@ -209,7 +212,7 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
 
   METHOD model_init.
 
-    start_date   = `2018-07-24T00:00:00`.
+    startdate   = `2018-07-24T00:00:00`.
     legend_shown = abap_false.
     full_day     = abap_false.
     " the SinglePlanningCalendar scaleFactor default

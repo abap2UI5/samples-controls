@@ -6,18 +6,20 @@ CLASS z2ui5_cl_smpc_app_307 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_date,
-             date TYPE string,
-           END OF ty_s_date.
+    TYPES:
+      BEGIN OF ty_s_date,
+        date TYPE string,
+      END OF ty_s_date.
     DATA selecteddates TYPE STANDARD TABLE OF ty_s_date WITH EMPTY KEY.
 
   PROTECTED SECTION.
     " one entry per DateRange the frontend marshalled out of the LIVE
     " selectedDates aggregation - startDate arrives as an ISO LOCAL timestamp
     " (no Z), so its first ten characters are the day the user picked
-    TYPES: BEGIN OF ty_s_event_range,
-             startdate TYPE string,
-           END OF ty_s_event_range.
+    TYPES:
+      BEGIN OF ty_s_event_range,
+        startdate TYPE string,
+      END OF ty_s_event_range.
     TYPES ty_t_event_range TYPE STANDARD TABLE OF ty_s_event_range WITH EMPTY KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
@@ -110,11 +112,11 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " the ISO local timestamp the marshalled DateRange carries
         selecteddates = VALUE #( ).
         DATA(ranges) = event_ranges( client->get_event_arg( ) ).
-        LOOP AT ranges REFERENCE INTO DATA(lr_range).
-          IF strlen( lr_range->startdate ) < 10.
+        LOOP AT ranges REFERENCE INTO DATA(range).
+          IF strlen( range->startdate ) < 10.
             CONTINUE.
           ENDIF.
-          INSERT VALUE #( date = lr_range->startdate(10) ) INTO TABLE selecteddates.
+          INSERT VALUE #( date = range->startdate(10) ) INTO TABLE selecteddates.
         ENDLOOP.
 
       WHEN `REMOVE_SELECTION`.
@@ -133,13 +135,13 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
 
   METHOD event_ranges.
 
-    DATA(lv_json) = condense( val ).
-    IF lv_json IS INITIAL.
+    DATA(json) = condense( val ).
+    IF json IS INITIAL.
       RETURN.
     ENDIF.
 
-    IF lv_json(1) <> `[`.
-      lv_json = |[{ lv_json }]|.
+    IF json(1) <> `[`.
+      json = |[{ json }]|.
     ENDIF.
 
     TRY.
@@ -153,7 +155,7 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
         " There is no released JSON reader to use instead, the same reasoning
         " as apps 103 and 298; declared as a deviation in the sidecar
         " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( lv_json
+        z2ui5_cl_ajson=>parse( json
           )->to_abap_corresponding_only(
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above

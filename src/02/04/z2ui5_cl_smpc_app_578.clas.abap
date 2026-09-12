@@ -6,21 +6,23 @@ CLASS z2ui5_cl_smpc_app_578 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid     TYPE string,
-             name          TYPE string,
-             maincategory  TYPE string,
-             category      TYPE string,
-             suppliername  TYPE string,
-             productpicurl TYPE string,
-             description   TYPE string,
-             price         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid     TYPE string,
+        name          TYPE string,
+        maincategory  TYPE string,
+        category      TYPE string,
+        suppliername  TYPE string,
+        productpicurl TYPE string,
+        description   TYPE string,
+        price         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_supplier,
-             text TYPE string,
-           END OF ty_s_supplier.
+    TYPES:
+      BEGIN OF ty_s_supplier,
+        text TYPE string,
+      END OF ty_s_supplier.
     TYPES ty_t_supplier TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
 
     DATA t_products  TYPE ty_t_product.
@@ -62,10 +64,10 @@ CLASS z2ui5_cl_smpc_app_578 DEFINITION PUBLIC.
     DATA supplier_ix    TYPE i.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS detail_bind IMPORTING productid TYPE string.
-    METHODS category_apply IMPORTING iv_category TYPE string.
-    METHODS hash_apply IMPORTING iv_hash TYPE string.
+    METHODS on_event.
+    METHODS category_apply IMPORTING category TYPE string.
+    METHODS hash_apply IMPORTING hash TYPE string.
     METHODS hash_push IMPORTING check_replace TYPE abap_bool OPTIONAL.
     METHODS model_init.
 
@@ -98,9 +100,9 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     " 0/TwoColumnsMidExpanded`): the live hash rides in s_config-hash on
     " every request; applying it is idempotent, so a rebuild whose hash
     " matches the state simply re-derives it
-    DATA(lv_hash) = client->get( )-s_config-hash.
-    IF lv_hash IS NOT INITIAL AND lv_hash <> `#`.
-      hash_apply( lv_hash ).
+    DATA(hash) = client->get( )-s_config-hash.
+    IF hash IS NOT INITIAL AND hash <> `#`.
+      hash_apply( hash ).
     ENDIF.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
@@ -708,13 +710,13 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     " page to it and swap the begin column onto that page. Idempotent - the
     " same category leaves T_ROWS alone, so a search filtered further is not
     " reset by the next render's hash_apply
-    IF iv_category = route_category AND begin_page IS NOT INITIAL.
+    IF category = route_category AND begin_page IS NOT INITIAL.
       RETURN.
     ENDIF.
-    route_category = iv_category.
+    route_category = category.
     " the right-hand name of a WHERE resolves to the COLUMN, so the local
     " one must not share it (apps 520/524)
-    DATA(sel_category) = iv_category.
+    DATA(sel_category) = category.
     t_rows = VALUE #( ).
     LOOP AT t_products INTO DATA(row) WHERE category = sel_category.
       APPEND row TO t_rows.
@@ -738,19 +740,19 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     " the category is its NAME (spaces ride URL-encoded), product/supplier
     " are INDICES into the mock collections, defaulting to 0 like the
     " original's `arguments.product || this._product || "0"`
-    DATA(lv_hash) = iv_hash.
-    IF lv_hash CS `#`.
-      lv_hash = substring_after( val = lv_hash sub = `#` ).
+    DATA(path) = hash.
+    IF path CS `#`.
+      path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT lv_hash LEFT DELETING LEADING `/`.
-    SPLIT lv_hash AT `/` INTO TABLE DATA(lt_seg).
-    DELETE lt_seg WHERE table_line IS INITIAL.
+    SHIFT path LEFT DELETING LEADING `/`.
+    SPLIT path AT `/` INTO TABLE DATA(t_seg).
+    DELETE t_seg WHERE table_line IS INITIAL.
 
-    DATA(lv_cat) = replace( val = VALUE string( lt_seg[ 2 ] OPTIONAL ) sub = `%20` with = ` ` occ = 0 ).
-    DATA(lv_p)   = VALUE string( lt_seg[ 3 ] OPTIONAL ).
-    DATA(lv_s)   = VALUE string( lt_seg[ 4 ] OPTIONAL ).
+    DATA(cat)  = replace( val = VALUE string( t_seg[ 2 ] OPTIONAL ) sub = `%20` with = ` ` occ = 0 ).
+    DATA(seg3) = VALUE string( t_seg[ 3 ] OPTIONAL ).
+    DATA(seg4) = VALUE string( t_seg[ 4 ] OPTIONAL ).
 
-    CASE VALUE string( lt_seg[ 1 ] OPTIONAL ).
+    CASE VALUE string( t_seg[ 1 ] OPTIONAL ).
       WHEN ``.
         route  = `list`.
         layout = `OneColumn`.
@@ -764,25 +766,25 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
 
       WHEN `detail`.
         route = `detail`.
-        category_apply( lv_cat ).
-        layout = COND #( WHEN lv_p IS NOT INITIAL THEN lv_p ELSE `OneColumn` ).
+        category_apply( cat ).
+        layout = COND #( WHEN seg3 IS NOT INITIAL THEN seg3 ELSE `OneColumn` ).
 
       WHEN `detailDetail`.
         route = `detailDetail`.
-        category_apply( lv_cat ).
-        product_ix = COND #( WHEN lv_p CO `0123456789` AND lv_p IS NOT INITIAL AND strlen( lv_p ) <= 4 THEN lv_p ).
-        layout     = COND #( WHEN lv_s IS NOT INITIAL THEN lv_s ELSE `TwoColumnsMidExpanded` ).
+        category_apply( cat ).
+        product_ix = COND #( WHEN seg3 CO `0123456789` AND seg3 IS NOT INITIAL AND strlen( seg3 ) <= 4 THEN seg3 ).
+        layout     = COND #( WHEN seg4 IS NOT INITIAL THEN seg4 ELSE `TwoColumnsMidExpanded` ).
         IF product_ix < lines( t_products ).
           detail_bind( t_products[ product_ix + 1 ]-productid ).
         ENDIF.
 
       WHEN `detailDetailDetail`.
         route = `detailDetailDetail`.
-        category_apply( lv_cat ).
-        product_ix  = COND #( WHEN lv_p CO `0123456789` AND lv_p IS NOT INITIAL AND strlen( lv_p ) <= 4 THEN lv_p ).
-        supplier_ix = COND #( WHEN lv_s CO `0123456789` AND lv_s IS NOT INITIAL AND strlen( lv_s ) <= 4 THEN lv_s ).
-        layout      = COND #( WHEN VALUE string( lt_seg[ 5 ] OPTIONAL ) IS NOT INITIAL
-                              THEN lt_seg[ 5 ]
+        category_apply( cat ).
+        product_ix  = COND #( WHEN seg3 CO `0123456789` AND seg3 IS NOT INITIAL AND strlen( seg3 ) <= 4 THEN seg3 ).
+        supplier_ix = COND #( WHEN seg4 CO `0123456789` AND seg4 IS NOT INITIAL AND strlen( seg4 ) <= 4 THEN seg4 ).
+        layout      = COND #( WHEN VALUE string( t_seg[ 5 ] OPTIONAL ) IS NOT INITIAL
+                              THEN t_seg[ 5 ]
                               ELSE `ThreeColumnsMidExpanded` ).
         IF product_ix < lines( t_products ).
           detail_bind( t_products[ product_ix + 1 ]-productid ).
@@ -794,7 +796,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
       WHEN OTHERS.
         " the single-segment ':layout:' list route, e.g. '#/OneColumn'
         route  = `list`.
-        layout = lt_seg[ 1 ].
+        layout = t_seg[ 1 ].
         IF begin_page IS NOT INITIAL.
           begin_page = VALUE #( ).
           route_category = VALUE #( ).
@@ -808,28 +810,28 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
 
   METHOD hash_push.
 
-    DATA lv_hash TYPE string.
+    DATA hash TYPE string.
     " the router's navTo, write side: compose the current route the way the
     " manifest patterns spell it and push it as the app-owned hash. The
     " category name is URL-encoded the way the original's navTo encodes it
-    DATA(lv_cat) = replace( val = route_category sub = ` ` with = `%20` occ = 0 ).
+    DATA(cat) = replace( val = route_category sub = ` ` with = `%20` occ = 0 ).
     CASE route.
       WHEN `detail`.
-        lv_hash = |/detail/{ lv_cat }/{ layout }|.
+        hash = |/detail/{ cat }/{ layout }|.
       WHEN `detailDetail`.
-        lv_hash = |/detailDetail/{ lv_cat }/{ product_ix }/{ layout }|.
+        hash = |/detailDetail/{ cat }/{ product_ix }/{ layout }|.
       WHEN `detailDetailDetail`.
-        lv_hash = |/detailDetailDetail/{ lv_cat }/{ product_ix }/{ supplier_ix }/{ layout }|.
+        hash = |/detailDetailDetail/{ cat }/{ product_ix }/{ supplier_ix }/{ layout }|.
       WHEN OTHERS.
-        lv_hash = |/{ layout }|.
+        hash = |/{ layout }|.
     ENDCASE.
 
     " a NAVIGATION ARROW rewrites the URL in place (the original's
     " replace-navTo) - everything else is a real, pushed history entry
     IF check_replace = abap_true.
-      client->hash_replace( lv_hash ).
+      client->hash_replace( hash ).
     ELSE.
-      client->hash_set( lv_hash ).
+      client->hash_set( hash ).
     ENDIF.
 
   ENDMETHOD.

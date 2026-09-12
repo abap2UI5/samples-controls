@@ -14,10 +14,10 @@ CLASS z2ui5_cl_smpc_app_417 DEFINITION PUBLIC.
     DATA breakpoint TYPE string.
 
     METHODS view_display.
-    METHODS on_event.
     " is the DynamicSideContent at breakpoint S right now?
     METHODS at_breakpoint_s
       RETURNING VALUE(result) TYPE abap_bool.
+    METHODS on_event.
 
   PRIVATE SECTION.
 ENDCLASS.

@@ -6,10 +6,11 @@ CLASS z2ui5_cl_smpc_app_111 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             title    TYPE string,
-             subtitle TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        title    TYPE string,
+        subtitle TYPE string,
+      END OF ty_s_item.
     DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
     DATA slider_value TYPE i.
 

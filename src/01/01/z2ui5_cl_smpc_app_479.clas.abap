@@ -6,17 +6,18 @@ CLASS z2ui5_cl_smpc_app_479 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_country,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_country.
+    TYPES:
+      BEGIN OF ty_s_country,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_country.
     TYPES ty_t_country TYPE STANDARD TABLE OF ty_s_country WITH EMPTY KEY.
 
     DATA t_countries TYPE ty_t_country.
 
-    DATA combo_box_value TYPE string.
-    DATA combo_box_key   TYPE string.
-    DATA formatted       TYPE string.
+    DATA comboboxvalue TYPE string.
+    DATA comboboxkey   TYPE string.
+    DATA formatted     TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -68,8 +69,8 @@ CLASS z2ui5_cl_smpc_app_479 IMPLEMENTATION.
                         )->a( n = `id`                    v = `idComboBox`
                         )->a( n = `showSecondaryValues`   v = `true`
                         )->a( n = `filterSecondaryValues` v = `true`
-                        )->a( n = `value`                 v = client->_bind( combo_box_value )
-                        )->a( n = `selectedKey`           v = client->_bind( combo_box_key )
+                        )->a( n = `value`                 v = client->_bind( comboboxvalue )
+                        )->a( n = `selectedKey`           v = client->_bind( comboboxkey )
                         " fnFormatter joins value and key - a formatter is business logic,
                         " so the text is composed in ABAP; the change wire is what tells
                         " the backend to recompute it
@@ -99,10 +100,10 @@ CLASS z2ui5_cl_smpc_app_479 IMPLEMENTATION.
     IF client->get_event( ) = `CHANGE`.
 
       " fnFormatter: "text (key)" when both are there, otherwise whichever one is
-      formatted = COND string( WHEN combo_box_value IS NOT INITIAL AND combo_box_key IS NOT INITIAL
-                               THEN |{ combo_box_value } ({ combo_box_key })|
-                               WHEN combo_box_value IS NOT INITIAL THEN combo_box_value
-                               WHEN combo_box_key IS NOT INITIAL THEN combo_box_key
+      formatted = COND string( WHEN comboboxvalue IS NOT INITIAL AND comboboxkey IS NOT INITIAL
+                               THEN |{ comboboxvalue } ({ comboboxkey })|
+                               WHEN comboboxvalue IS NOT INITIAL THEN comboboxvalue
+                               WHEN comboboxkey IS NOT INITIAL THEN comboboxkey
                                ELSE `` ).
 
     ENDIF.

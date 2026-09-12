@@ -6,28 +6,30 @@ CLASS z2ui5_cl_smpc_app_233 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid    TYPE string,
-             name         TYPE string,
-             width        TYPE string,
-             depth        TYPE string,
-             height       TYPE string,
-             dimunit      TYPE string,
-             quantity     TYPE i,
-             price        TYPE p LENGTH 12 DECIMALS 2,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid    TYPE string,
+        name         TYPE string,
+        width        TYPE string,
+        depth        TYPE string,
+        height       TYPE string,
+        dimunit      TYPE string,
+        quantity     TYPE i,
+        price        TYPE p LENGTH 12 DECIMALS 2,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    TYPES: BEGIN OF ty_s_purchase,
-             purchaseid           TYPE string,
-             suppliername         TYPE string,
-             category             TYPE string,
-             subcategory          TYPE string,
-             paymenttype          TYPE string,
-             deliverystatus       TYPE string,
-             deliverystatus_state TYPE string,
-             productcollection    TYPE ty_t_product,
-           END OF ty_s_purchase.
+    TYPES:
+      BEGIN OF ty_s_purchase,
+        purchaseid           TYPE string,
+        suppliername         TYPE string,
+        category             TYPE string,
+        subcategory          TYPE string,
+        paymenttype          TYPE string,
+        deliverystatus       TYPE string,
+        deliverystatus_state TYPE string,
+        productcollection    TYPE ty_t_product,
+      END OF ty_s_purchase.
     DATA t_purchases TYPE STANDARD TABLE OF ty_s_purchase WITH EMPTY KEY.
 
     " the sample's dynamic /selectedPurchase object is flattened to the default-model

@@ -8,15 +8,15 @@ CLASS z2ui5_cl_smpc_app_089 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        name           TYPE string,
-        price          TYPE p LENGTH 8 DECIMALS 2,
-        currency_code  TYPE string,
-        weight_measure TYPE string,
-        weight_unit    TYPE string,
-        width          TYPE string,
-        depth          TYPE string,
-        height         TYPE string,
-        dim_unit       TYPE string,
+        name          TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
+        currencycode  TYPE string,
+        weightmeasure TYPE string,
+        weightunit    TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
+        dimunit       TYPE string,
       END OF ty_s_product.
     DATA s_product TYPE ty_s_product.
 
@@ -67,15 +67,15 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
                 )->ele( `ObjectHeader`
                     )->a( n = `title`            v = `{NAME}`
                     )->a( n = `backgroundDesign` v = `Solid`
-                    )->a( n = `number`           v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCY_CODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
-                    )->a( n = `numberUnit`       v = `{CURRENCY_CODE}`
+                    )->a( n = `number`           v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}], type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                    )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
                     )->ele( `attributes`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Weight`
-                            )->a( n = `text`  v = `{WEIGHT_MEASURE} {WEIGHT_UNIT}`
+                            )->a( n = `text`  v = `{WEIGHTMEASURE} {WEIGHTUNIT}`
                         )->tag( `ObjectAttribute`
                             )->a( n = `title` v = `Dimensions`
-                            )->a( n = `text`  v = `{WIDTH} x {DEPTH} X {HEIGHT} {DIM_UNIT}`
+                            )->a( n = `text`  v = `{WIDTH} x {DEPTH} X {HEIGHT} {DIMUNIT}`
 
                     )->end(
                     )->ele( `statuses`
@@ -167,12 +167,12 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
   METHOD model_init.
 
     " the bound record /ProductCollection/0 (Notebook Basic 15) of ui5/mock/products.json, verbatim
-    s_product = VALUE #( name           = `Notebook Basic 15`
-                         price          = '956.00'
-                         currency_code  = `EUR`
-                         weight_measure = `4.2` weight_unit = `KG`
+    s_product = VALUE #( name         = `Notebook Basic 15`
+                         price        = '956.00'
+                         currencycode = `EUR`
+                         weightmeasure = `4.2` weightunit = `KG`
                          width          = `30`  depth       = `18`
-                         height         = `3`   dim_unit    = `cm` ).
+                         height         = `3`   dimunit    = `cm` ).
 
   ENDMETHOD.
 

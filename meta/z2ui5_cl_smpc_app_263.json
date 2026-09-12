@@ -38,6 +38,10 @@
     {
       "type": "NOTE",
       "what": "The Avatar / Image src values point at the sdk.openui5.org host (imageID_275314.png, linkedin.png, Twitter.png, person.png) per the offline asset-URL rule; the original and HRData.json use the relative ./test-resources path."
+    },
+    {
+      "type": "NOTE",
+      "what": "The six ConnectionsBlock Panels are built in a loop (the app 520 idiom): one DO 6 TIMES over a sub-handle of the Connections blocks aggregation, each Panel binding its t_employees row with client->_bind( tab / tab_index ) on the row index sy-index gives. structural-diff therefore reads the port as dynamic - control counts built in a loop cannot match statically. The rendered view is identical to the unrolled form it replaced (both expanded and diffed, 2026-09-12): a rewrite of the source, not of the behaviour, so the reviewed status is untouched."
     }
   ]
 }

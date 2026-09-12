@@ -6,15 +6,16 @@ CLASS z2ui5_cl_smpc_app_526 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_row,
-             name        TYPE string,
-             description TYPE string,
-             icon        TYPE string,
-             state       TYPE string,
-             info        TYPE string,
-             infostate   TYPE string,
-             title       TYPE string,
-           END OF ty_s_row.
+    TYPES:
+      BEGIN OF ty_s_row,
+        name        TYPE string,
+        description TYPE string,
+        icon        TYPE string,
+        state       TYPE string,
+        info        TYPE string,
+        infostate   TYPE string,
+        title       TYPE string,
+      END OF ty_s_row.
     TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
 
     DATA t_contacts TYPE ty_t_row.

@@ -6,30 +6,32 @@ CLASS z2ui5_cl_smpc_app_203 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_token,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_token.
+    TYPES:
+      BEGIN OF ty_s_token,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_token.
     DATA t_tokens  TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
     DATA new_token TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    TYPES: BEGIN OF ty_s_event_token,
-             text TYPE string,
-             key  TYPE string,
-           END OF ty_s_event_token.
+    TYPES:
+      BEGIN OF ty_s_event_token,
+        text TYPE string,
+        key  TYPE string,
+      END OF ty_s_event_token.
     TYPES ty_t_event_token TYPE STANDARD TABLE OF ty_s_event_token WITH EMPTY KEY.
 
+    METHODS view_display.
+
+    METHODS on_event.
     METHODS event_tokens
       IMPORTING
         val           TYPE string
       RETURNING
         VALUE(result) TYPE ty_t_event_token.
-
-    METHODS view_display.
-    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -446,9 +448,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
         " remove it. Selecting several tokens and pressing Delete really does
         " deliver several: Tokenizer fires with getSelectedTokens( ) when there
         " is a selection, and with the focused token otherwise
-        LOOP AT event_tokens( client->get_event_arg( ) ) REFERENCE INTO DATA(lr_del).
-          client->message_toast_display( |Token deleted: { lr_del->text }| ).
-          DELETE t_tokens WHERE key = lr_del->key.
+        LOOP AT event_tokens( client->get_event_arg( ) ) REFERENCE INTO DATA(del).
+          client->message_toast_display( |Token deleted: { del->text }| ).
+          DELETE t_tokens WHERE key = del->key.
         ENDLOOP.
 
     ENDCASE.
@@ -458,13 +460,13 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
 
   METHOD event_tokens.
 
-    DATA(lv_json) = condense( val ).
-    IF lv_json IS INITIAL.
+    DATA(json) = condense( val ).
+    IF json IS INITIAL.
       RETURN.
     ENDIF.
 
-    IF lv_json(1) <> `[`.
-      lv_json = |[{ lv_json }]|.
+    IF json(1) <> `[`.
+      json = |[{ json }]|.
     ENDIF.
 
     TRY.
@@ -476,7 +478,7 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
         " outside the released API (src/02); there is no released JSON reader
         " to use instead, the same reasoning as apps 103/298
         " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( lv_json
+        z2ui5_cl_ajson=>parse( json
           )->to_abap_corresponding_only(
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above

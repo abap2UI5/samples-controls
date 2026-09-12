@@ -185,8 +185,8 @@ CLASS z2ui5_cl_smpc_app_192 IMPLEMENTATION.
 
     " availableState maps an already-classified Status to an InfoLabel colorScheme index - moved
     " from the original frontend Formatter.js to the ABAP backend (thin-frontend principle)
-    LOOP AT t_products REFERENCE INTO DATA(lr_product).
-      lr_product->color_scheme = SWITCH #( to_lower( lr_product->status )
+    LOOP AT t_products REFERENCE INTO DATA(product).
+      product->color_scheme = SWITCH #( to_lower( product->status )
                                            WHEN `available`         THEN 8
                                            WHEN `sold out`          THEN 3
                                            WHEN `delivery expected` THEN 5

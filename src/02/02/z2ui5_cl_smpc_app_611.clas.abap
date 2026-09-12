@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_611 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_special,
-             start_date   TYPE string,
-             end_date     TYPE string,
-             type         TYPE string,
-             ariahaspopup TYPE string,
-             label        TYPE string,
-           END OF ty_s_special.
+    TYPES:
+      BEGIN OF ty_s_special,
+        start_date   TYPE string,
+        end_date     TYPE string,
+        type         TYPE string,
+        ariahaspopup TYPE string,
+        label        TYPE string,
+      END OF ty_s_special.
     TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
 
     DATA t_special TYPE ty_t_special.

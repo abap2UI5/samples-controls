@@ -12,24 +12,26 @@ CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
     DATA date_selection_mode TYPE string.
     DATA multiselect_tooltip TYPE string.
 
-    TYPES: BEGIN OF ty_s_appointment,
-             title      TYPE string,
-             text       TYPE string,
-             type       TYPE string,
-             icon       TYPE string,
-             start_date TYPE string,
-             end_date   TYPE string,
-           END OF ty_s_appointment.
+    TYPES:
+      BEGIN OF ty_s_appointment,
+        title      TYPE string,
+        text       TYPE string,
+        type       TYPE string,
+        icon       TYPE string,
+        startdate TYPE string,
+        enddate   TYPE string,
+      END OF ty_s_appointment.
     DATA t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    DATA start_date TYPE string.
+    DATA startdate TYPE string.
 
   PROTECTED SECTION.
     " one entry per DateRange the frontend marshalled out of the event's
     " selectedDates parameter - startDate arrives as an ISO LOCAL timestamp
     " (no Z), so its first ten characters are the day the user picked
-    TYPES: BEGIN OF ty_s_event_range,
-             startdate TYPE string,
-           END OF ty_s_event_range.
+    TYPES:
+      BEGIN OF ty_s_event_range,
+        startdate TYPE string,
+      END OF ty_s_event_range.
     TYPES ty_t_event_range TYPE STANDARD TABLE OF ty_s_event_range WITH EMPTY KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
@@ -114,7 +116,7 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
                 )->a( n = `selectedDatesChange` v = client->_event( val = `SELECTED_DATE` arg = `${$parameters>/selectedDates}` )
                 )->a( n = `weekNumberPress`     v = client->_event( val = `WEEK` arg = `${$parameters>/weekNumber}` )
                 )->a( n = `startDateChange`     v = client->_event( val = `START_DATE` arg = `${$parameters>/date}` )
-                )->a( n = `startDate`           v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `startDate`           v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `appointments`        v = client->_bind( t_appointments )
 
                 )->ele( `views`
@@ -138,8 +140,8 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
                         )->a( n = `text`      v = `{TEXT}`
                         )->a( n = `type`      v = `{TYPE}`
                         )->a( n = `icon`      v = `{ICON}`
-                        )->a( n = `startDate` v = `{ path: 'START_DATE', formatter: 'Formatter.DateCreateObject' }`
-                        )->a( n = `endDate`   v = `{ path: 'END_DATE', formatter: 'Formatter.DateCreateObject' }` ).
+                        )->a( n = `startDate` v = `{ path: 'STARTDATE', formatter: 'Formatter.DateCreateObject' }`
+                        )->a( n = `endDate`   v = `{ path: 'ENDDATE', formatter: 'Formatter.DateCreateObject' }` ).
 
     client->view_display( view->stringify( ) ).
 
@@ -170,11 +172,11 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
         " the original writes in JavaScript is an ABAP loop here
         DATA(output) = ``.
         DATA(ranges) = event_ranges( client->get_event_arg( ) ).
-        LOOP AT ranges REFERENCE INTO DATA(lr_range).
-          IF strlen( lr_range->startdate ) < 10.
+        LOOP AT ranges REFERENCE INTO DATA(range).
+          IF strlen( range->startdate ) < 10.
             CONTINUE.
           ENDIF.
-          output = |{ output }{ sy-tabix }: { lr_range->startdate(10) }\n|.
+          output = |{ output }{ sy-tabix }: { range->startdate(10) }\n|.
         ENDLOOP.
         client->message_toast_display( |'selectedDatesChange' event fired.\n\nNew selected dates: \n{ output }| ).
 
@@ -193,13 +195,13 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
   METHOD event_ranges.
 
-    DATA(lv_json) = condense( val ).
-    IF lv_json IS INITIAL.
+    DATA(json) = condense( val ).
+    IF json IS INITIAL.
       RETURN.
     ENDIF.
 
-    IF lv_json(1) <> `[`.
-      lv_json = |[{ lv_json }]|.
+    IF json(1) <> `[`.
+      json = |[{ json }]|.
     ENDIF.
 
     TRY.
@@ -213,7 +215,7 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
         " There is no released JSON reader to use instead, the same reasoning
         " as apps 103 and 298; declared as a deviation in the sidecar
         " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( lv_json
+        z2ui5_cl_ajson=>parse( json
           )->to_abap_corresponding_only(
           )->to_abap( IMPORTING ev_container = result ).
         " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
@@ -231,19 +233,19 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
     date_selection_mode = `SingleSelect`.
     multiselect_tooltip = `Enable multi-day selection`.
 
-    start_date = `2018-07-09T00:00:00`.
+    startdate = `2018-07-09T00:00:00`.
     t_appointments = VALUE #(
-      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        start_date = `2018-07-09T00:00:00` end_date = `2018-07-09T00:00:00` )
-      ( title = `Meet John Miller`                                  text = ``               type = `Type05` icon = ``                        start_date = `2018-07-08T05:00:00` end_date = `2018-07-08T06:00:00` )
-      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        start_date = `2018-07-08T07:00:00` end_date = `2018-07-08T08:00:00` )
-      ( title = `New Product`                                       text = `room 105`       type = `Type01` icon = `sap-icon://meeting-room` start_date = `2018-07-08T08:00:00` end_date = `2018-07-08T09:00:00` )
-      ( title = `Discussion with clients for the new release dates` text = `Online meeting` type = `Type08` icon = ``                        start_date = `2018-07-09T09:00:00` end_date = `2018-07-09T10:00:00` )
-      ( title = `Meeting with the manager`                          text = ``               type = `Type03` icon = ``                        start_date = `2018-07-06T09:00:00` end_date = `2018-07-06T10:00:00` )
-      ( title = `Daily standup meeting`                             text = ``               type = `Type01` icon = ``                        start_date = `2018-07-07T10:00:00` end_date = `2018-07-07T10:30:00` )
-      ( title = `Private meeting`                                   text = ``               type = `Type03` icon = ``                        start_date = `2018-07-06T11:30:00` end_date = `2018-07-06T12:00:00` )
-      ( title = `Lunch`                                             text = ``               type = `Type05` icon = ``                        start_date = `2018-07-06T12:00:00` end_date = `2018-07-06T13:00:00` )
-      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        start_date = `2018-07-16T11:00:00` end_date = `2018-07-16T12:00:00` )
-      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        start_date = `2018-07-16T12:00:00` end_date = `2018-07-16T13:00:00` ) ).
+      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        startdate = `2018-07-09T00:00:00` enddate = `2018-07-09T00:00:00` )
+      ( title = `Meet John Miller`                                  text = ``               type = `Type05` icon = ``                        startdate = `2018-07-08T05:00:00` enddate = `2018-07-08T06:00:00` )
+      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        startdate = `2018-07-08T07:00:00` enddate = `2018-07-08T08:00:00` )
+      ( title = `New Product`                                       text = `room 105`       type = `Type01` icon = `sap-icon://meeting-room` startdate = `2018-07-08T08:00:00` enddate = `2018-07-08T09:00:00` )
+      ( title = `Discussion with clients for the new release dates` text = `Online meeting` type = `Type08` icon = ``                        startdate = `2018-07-09T09:00:00` enddate = `2018-07-09T10:00:00` )
+      ( title = `Meeting with the manager`                          text = ``               type = `Type03` icon = ``                        startdate = `2018-07-06T09:00:00` enddate = `2018-07-06T10:00:00` )
+      ( title = `Daily standup meeting`                             text = ``               type = `Type01` icon = ``                        startdate = `2018-07-07T10:00:00` enddate = `2018-07-07T10:30:00` )
+      ( title = `Private meeting`                                   text = ``               type = `Type03` icon = ``                        startdate = `2018-07-06T11:30:00` enddate = `2018-07-06T12:00:00` )
+      ( title = `Lunch`                                             text = ``               type = `Type05` icon = ``                        startdate = `2018-07-06T12:00:00` enddate = `2018-07-06T13:00:00` )
+      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        startdate = `2018-07-16T11:00:00` enddate = `2018-07-16T12:00:00` )
+      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        startdate = `2018-07-16T12:00:00` enddate = `2018-07-16T13:00:00` ) ).
 
   ENDMETHOD.
 

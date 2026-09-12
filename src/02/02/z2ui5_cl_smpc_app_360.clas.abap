@@ -26,7 +26,7 @@ CLASS z2ui5_cl_smpc_app_360 DEFINITION PUBLIC.
 
     " the original's `ui>` model: the three selection modes and the picked one
     DATA t_selectionmodes TYPE STANDARD TABLE OF ty_s_mode WITH EMPTY KEY.
-    DATA selection_mode   TYPE string.
+    DATA selectionmode    TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -93,7 +93,7 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                         )->tag( n = `MultiSelectionPlugin` ns = `tp`
                             )->a( n = `limit`              v = `100`
                             )->a( n = `enableNotification` v = `true`
-                            )->a( n = `selectionMode`      v = client->_bind( selection_mode )
+                            )->a( n = `selectionMode`      v = client->_bind( selectionmode )
 
                     )->end(
                     )->ele( `rowMode`
@@ -119,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
 
                             )->ele( n = `Select` ns = `m`
                                 )->a( n = `items`       v = client->_bind( t_selectionmodes )
-                                )->a( n = `selectedKey` v = client->_bind( selection_mode )
+                                )->a( n = `selectedKey` v = client->_bind( selectionmode )
 
                                 )->tag( n = `Item` ns = `c`
                                     )->a( n = `key`  v = `{MODE}`
@@ -253,11 +253,11 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
       " raw JSON (until 2026-08-24) showed the brackets and quotes the user
       " never sees upstream; stripping them reproduces the coercion, the same
       " way the sibling port 361 declares it for its index array.
-      DATA(lv_pasted) = client->get_event_arg( ).
-      REPLACE ALL OCCURRENCES OF `"` IN lv_pasted WITH ``.
-      REPLACE ALL OCCURRENCES OF `[` IN lv_pasted WITH ``.
-      REPLACE ALL OCCURRENCES OF `]` IN lv_pasted WITH ``.
-      client->message_toast_display( |Pasted Data (on Table Level):\n\n{ lv_pasted }| ).
+      DATA(pasted) = client->get_event_arg( ).
+      REPLACE ALL OCCURRENCES OF `"` IN pasted WITH ``.
+      REPLACE ALL OCCURRENCES OF `[` IN pasted WITH ``.
+      REPLACE ALL OCCURRENCES OF `]` IN pasted WITH ``.
+      client->message_toast_display( |Pasted Data (on Table Level):\n\n{ pasted }| ).
     ENDIF.
 
 
@@ -269,7 +269,7 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
     " the `ui>` model the controller sets: three selection modes, MultiToggle
     " preselected
     t_selectionmodes = VALUE #( ( mode = `MultiToggle` ) ( mode = `Single` ) ( mode = `None` ) ).
-    selection_mode   = `MultiToggle`.
+    selectionmode   = `MultiToggle`.
 
     " the OData ProductSet the sample serves from a MockServer, inlined with
     " the columns the six table columns bind - all 115 rows of ProductSet.json

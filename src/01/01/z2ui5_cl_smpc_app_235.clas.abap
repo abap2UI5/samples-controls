@@ -645,12 +645,12 @@ CLASS z2ui5_cl_smpc_app_235 IMPLEMENTATION.
     " thresholds), not presentation - abap2UI5 is a thin frontend, so the
     " ObjectNumber state is computed here in the backend (the original does it in
     " its frontend Formatter.js, which a faithful port moves server-side).
-    LOOP AT t_products REFERENCE INTO DATA(lr_product).
-      DATA(weight_kg) = lr_product->weightmeasure.
-      IF lr_product->weightunit = `G`.
+    LOOP AT t_products REFERENCE INTO DATA(product).
+      DATA(weight_kg) = product->weightmeasure.
+      IF product->weightunit = `G`.
         weight_kg = weight_kg / 1000.
       ENDIF.
-      lr_product->weight_state = COND #( WHEN weight_kg < 0 THEN `None`
+      product->weight_state = COND #( WHEN weight_kg < 0 THEN `None`
                                          WHEN weight_kg < 1 THEN `Success`
                                          WHEN weight_kg < 5 THEN `Warning`
                                          ELSE `Error` ).

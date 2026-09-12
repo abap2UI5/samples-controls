@@ -6,20 +6,22 @@ CLASS z2ui5_cl_smpc_app_512 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_item,
-             key       TYPE string,
-             text      TYPE string,
-             list_text TYPE string,
-             list_info TYPE string,
-           END OF ty_s_item.
+    TYPES:
+      BEGIN OF ty_s_item,
+        key       TYPE string,
+        text      TYPE string,
+        list_text TYPE string,
+        list_info TYPE string,
+      END OF ty_s_item.
     TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     " the tokens z2ui5.cc.MultiInputExt mirrors out of the tokenUpdate event -
     " the whole added / removed list, not just its first entry
-    TYPES: BEGIN OF ty_s_token,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_token.
+    TYPES:
+      BEGIN OF ty_s_token,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_token.
     TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
 
     DATA t_items   TYPE ty_t_item.

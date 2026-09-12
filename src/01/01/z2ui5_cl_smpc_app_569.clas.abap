@@ -6,15 +6,16 @@ CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name     TYPE string,
-             category TYPE string,
-             quantity TYPE i,
-             " Utils.ranking: 0 keeps the row in Available, anything above puts it
-             " in Selected and orders it there (descending)
-             rank     TYPE i,
-             selected TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name     TYPE string,
+        category TYPE string,
+        quantity TYPE i,
+        " Utils.ranking: 0 keeps the row in Available, anything above puts it
+        " in Selected and orders it there (descending)
+        rank     TYPE i,
+        selected TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     CONSTANTS c_rank_default TYPE i VALUE 1024.
@@ -25,7 +26,6 @@ CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS products_table IMPORTING node     TYPE REF TO z2ui5_cl_ui5_view_builder
                                      selected TYPE abap_bool.
     METHODS move_to_selected.
@@ -34,6 +34,7 @@ CLASS z2ui5_cl_smpc_app_569 DEFINITION PUBLIC.
     METHODS rank_after_drop IMPORTING dragged  TYPE string
                                       dropped  TYPE string
                                       position TYPE string.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.

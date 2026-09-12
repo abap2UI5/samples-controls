@@ -265,7 +265,7 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
     IF client->get_event( ) = `MODE_CHANGE`.
       " onBehaviourModeChange -> switchState: the picked mode decides the
       " row action count and which items are shown
-      DATA(lv_was_none) = xsdbool( row_action_count = 0 ).
+      DATA(was_none) = xsdbool( row_action_count = 0 ).
       mode_apply( ).
       " switchState always calls setRowActionTemplate BEFORE setRowActionCount,
       " and that ordering is load-bearing: the template setter ends in an
@@ -282,7 +282,7 @@ CLASS z2ui5_cl_smpc_app_359 IMPLEMENTATION.
       " Reachable without anything exotic: pick "No Actions", leave and come
       " back - check_on_navigated rebuilds the view with mode_key still 'None',
       " so every row is created actionless and no later switch brings them back.
-      IF lv_was_none = abap_true AND row_action_count > 0.
+      IF was_none = abap_true AND row_action_count > 0.
         view_display( ).
       ENDIF.
     ENDIF.

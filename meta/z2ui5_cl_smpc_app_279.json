@@ -28,7 +28,7 @@
     },
     {
       "type": "NOTE",
-      "what": "live-verified on 2026-08-02 (maintainer live check): the initial load leaves HAS_ERROR false and Set-wrong-src fires error, hides the Image and reveals the IllustratedMessage. The error->swap half is additionally e2e-verified (scripts/e2e-smoke.mjs interaction); the load leg cannot be checked headless (the seeded image sits on sdk.openui5.org)."
+      "what": "live-verified on 2026-08-02 (maintainer live check): the initial load leaves HASERROR false and Set-wrong-src fires error, hides the Image and reveals the IllustratedMessage. The error->swap half is additionally e2e-verified (scripts/e2e-smoke.mjs interaction); the load leg cannot be checked headless (the seeded image sits on sdk.openui5.org)."
     }
   ]
 }

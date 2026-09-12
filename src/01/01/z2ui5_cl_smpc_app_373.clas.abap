@@ -8,8 +8,8 @@ CLASS z2ui5_cl_smpc_app_373 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        product_id TYPE string,
-        name       TYPE string,
+        productid TYPE string,
+        name      TYPE string,
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
@@ -75,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}`
 
                     )->end(
@@ -98,7 +98,7 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}`
 
                     )->end(
@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}`
 
                     )->end(
@@ -144,7 +144,7 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
                         )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                         )->tag( n = `Item` ns = `core`
-                            )->a( n = `key`  v = `{PRODUCT_ID}`
+                            )->a( n = `key`  v = `{PRODUCTID}`
                             )->a( n = `text` v = `{NAME}` ).
 
     client->view_display( view->stringify( ) ).
@@ -163,22 +163,22 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
     selected_information = `HT-1007`.
 
     t_products = VALUE #(
-      ( product_id = `HT-998`  name = `Notebook Basic 11` )
-      ( product_id = `HT-999`  name = `Notebook Basic 13` )
-      ( product_id = `HT-1000` name = `Notebook Basic 15` )
-      ( product_id = `HT-1001` name = `Notebook Basic 17` )
-      ( product_id = `HT-1002` name = `Notebook Basic 18` )
-      ( product_id = `HT-1003` name = `Notebook Basic 19` )
-      ( product_id = `HT-1007` name = `ITelO Vault` )
-      ( product_id = `HT-1008` name = `Notebook Professional 11` )
-      ( product_id = `HT-1009` name = `Notebook Professional 13` )
-      ( product_id = `HT-1010` name = `Notebook Professional 15` )
-      ( product_id = `HT-1011` name = `Notebook Professional 17` )
-      ( product_id = `HT-1012` name = `Notebook Professional 19` )
-      ( product_id = `HT-1020` name = `ITelO Vault Net` )
-      ( product_id = `HT-1021` name = `ITelO Vault SAT` )
-      ( product_id = `HT-1022` name = `Comfort Easy` )
-      ( product_id = `HT-1023` name = `Comfort Senior` ) ).
+      ( productid = `HT-998`  name = `Notebook Basic 11` )
+      ( productid = `HT-999`  name = `Notebook Basic 13` )
+      ( productid = `HT-1000` name = `Notebook Basic 15` )
+      ( productid = `HT-1001` name = `Notebook Basic 17` )
+      ( productid = `HT-1002` name = `Notebook Basic 18` )
+      ( productid = `HT-1003` name = `Notebook Basic 19` )
+      ( productid = `HT-1007` name = `ITelO Vault` )
+      ( productid = `HT-1008` name = `Notebook Professional 11` )
+      ( productid = `HT-1009` name = `Notebook Professional 13` )
+      ( productid = `HT-1010` name = `Notebook Professional 15` )
+      ( productid = `HT-1011` name = `Notebook Professional 17` )
+      ( productid = `HT-1012` name = `Notebook Professional 19` )
+      ( productid = `HT-1020` name = `ITelO Vault Net` )
+      ( productid = `HT-1021` name = `ITelO Vault SAT` )
+      ( productid = `HT-1022` name = `Comfort Easy` )
+      ( productid = `HT-1023` name = `Comfort Senior` ) ).
 
   ENDMETHOD.
 

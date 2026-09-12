@@ -6,11 +6,12 @@ CLASS z2ui5_cl_smpc_app_237 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_modeldata,
-             product        TYPE string,
-             type           TYPE string,
-             additionalinfo TYPE string,
-           END OF ty_s_modeldata.
+    TYPES:
+      BEGIN OF ty_s_modeldata,
+        product        TYPE string,
+        type           TYPE string,
+        additionalinfo TYPE string,
+      END OF ty_s_modeldata.
     DATA t_modeldata TYPE STANDARD TABLE OF ty_s_modeldata WITH EMPTY KEY.
 
   PROTECTED SECTION.

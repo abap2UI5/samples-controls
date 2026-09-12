@@ -8,16 +8,18 @@ CLASS z2ui5_cl_smpc_app_303 DEFINITION PUBLIC.
 
     DATA selectedkey TYPE string.
 
-    TYPES: BEGIN OF ty_s_sub_item,
-             title TYPE string,
-             key   TYPE string,
-           END OF ty_s_sub_item.
-    TYPES: BEGIN OF ty_s_nav_item,
-             title TYPE string,
-             icon  TYPE string,
-             key   TYPE string,
-             items TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_sub_item,
+        title TYPE string,
+        key   TYPE string,
+      END OF ty_s_sub_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        title TYPE string,
+        icon  TYPE string,
+        key   TYPE string,
+        items TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
+      END OF ty_s_nav_item.
     DATA navigation TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.

@@ -6,27 +6,28 @@ CLASS z2ui5_cl_smpc_app_574 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid    TYPE string,
-             name         TYPE string,
-             suppliername TYPE string,
-             width        TYPE string,
-             depth        TYPE string,
-             height       TYPE string,
-             dimunit      TYPE string,
-             selected     TYPE abap_bool,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid    TYPE string,
+        name         TYPE string,
+        suppliername TYPE string,
+        width        TYPE string,
+        depth        TYPE string,
+        height       TYPE string,
+        dimunit      TYPE string,
+        selected     TYPE abap_bool,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     " the rows the search leaves visible; T_PRODUCTS stays the full set
     DATA t_rows TYPE ty_t_product.
 
     " the ui> view model of the sample
-    DATA total_count    TYPE i.
-    DATA selected_count TYPE i.
-    DATA show_total     TYPE abap_bool VALUE abap_true.
-    DATA extended_view  TYPE abap_bool.
-    DATA select_mode    TYPE string VALUE `Default`.
+    DATA totalcount    TYPE i.
+    DATA selectedcount TYPE i.
+    DATA show_total    TYPE abap_bool VALUE abap_true.
+    DATA extended_view TYPE abap_bool.
+    DATA select_mode   TYPE string VALUE `Default`.
 
   PROTECTED SECTION.
     DATA client      TYPE REF TO z2ui5_if_client.
@@ -34,8 +35,8 @@ CLASS z2ui5_cl_smpc_app_574 DEFINITION PUBLIC.
     DATA new_counter TYPE i.
 
     METHODS view_display.
-    METHODS on_event.
     METHODS counts_refresh.
+    METHODS on_event.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -90,8 +91,8 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
 
                     )->ele( n = `Title` ns = `table`
                         )->a( n = `id`               v = `idTableTitle`
-                        )->a( n = `totalCount`       v = client->_bind( total_count )
-                        )->a( n = `selectedCount`    v = client->_bind( selected_count )
+                        )->a( n = `totalCount`       v = client->_bind( totalcount )
+                        )->a( n = `selectedCount`    v = client->_bind( selectedcount )
                         )->a( n = `showExtendedView` v = client->_bind( extended_view )
 
                         )->tag( `Title`
@@ -199,8 +200,8 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
 
     " _updateTotalCount / _updateSelectedCount read the binding and the selection;
     " the backend holds both, so it counts them here
-    total_count = COND i( WHEN show_total = abap_true THEN lines( t_rows ) ELSE -1 ).
-    selected_count = REDUCE i( INIT n = 0
+    totalcount = COND i( WHEN show_total = abap_true THEN lines( t_rows ) ELSE -1 ).
+    selectedcount = REDUCE i( INIT n = 0
                                FOR row IN t_rows
                                NEXT n = COND #( WHEN row-selected = abap_true THEN n + 1 ELSE n ) ).
 
@@ -238,8 +239,8 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
         DATA(del_id) = client->get_event_arg( ).
         DELETE t_products WHERE productid = del_id.
         DELETE t_rows WHERE productid = del_id.
-        LOOP AT t_rows REFERENCE INTO DATA(lr_row).
-          lr_row->selected = abap_false.
+        LOOP AT t_rows REFERENCE INTO DATA(row).
+          row->selected = abap_false.
         ENDLOOP.
         counts_refresh( ).
         client->message_toast_display( `Product deleted and selection cleared.` ).

@@ -30,6 +30,10 @@
     {
       "type": "NOTE",
       "what": "the mock carries eleven more fields on that row (Url, Twitter, Tel, Sms, Mobile, Pager, Fax, Email, Rating, Prime, Disposable) that this sample's form never binds, so they are not modelled."
+    },
+    {
+      "type": "NOTE",
+      "what": "The view is built in a loop (the app 520 idiom): the twenty-one identical ObjectPageSection blocks are one DO 21 TIMES over a sub-handle of the sections aggregation, the title 'Section N' and the ids SectionN / SectionNstashed string templates over sy-index. structural-diff therefore reads the port as dynamic - control counts built in a loop cannot match statically. The rendered view is identical to the unrolled form it replaced (both expanded and diffed, 2026-09-12): a rewrite of the source, not of the behaviour."
     }
   ]
 }

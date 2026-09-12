@@ -10,19 +10,21 @@ CLASS z2ui5_cl_smpc_app_302 DEFINITION PUBLIC.
     DATA side_expanded  TYPE abap_bool.
     DATA toggle_tooltip TYPE string.
 
-    TYPES: BEGIN OF ty_s_sub_item,
-             title   TYPE string,
-             key     TYPE string,
-             enabled TYPE abap_bool,
-           END OF ty_s_sub_item.
-    TYPES: BEGIN OF ty_s_nav_item,
-             title    TYPE string,
-             icon     TYPE string,
-             key      TYPE string,
-             enabled  TYPE abap_bool,
-             expanded TYPE abap_bool,
-             items    TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_sub_item,
+        title   TYPE string,
+        key     TYPE string,
+        enabled TYPE abap_bool,
+      END OF ty_s_sub_item.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        title    TYPE string,
+        icon     TYPE string,
+        key      TYPE string,
+        enabled  TYPE abap_bool,
+        expanded TYPE abap_bool,
+        items    TYPE STANDARD TABLE OF ty_s_sub_item WITH EMPTY KEY,
+      END OF ty_s_nav_item.
     DATA navigation TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.

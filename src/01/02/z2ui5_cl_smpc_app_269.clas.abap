@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_269 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_entry,
-             author       TYPE string,
-             authorpicurl TYPE string,
-             type         TYPE string,
-             date         TYPE string,
-             text         TYPE string,
-           END OF ty_s_entry.
+    TYPES:
+      BEGIN OF ty_s_entry,
+        author       TYPE string,
+        authorpicurl TYPE string,
+        type         TYPE string,
+        date         TYPE string,
+        text         TYPE string,
+      END OF ty_s_entry.
 
     DATA t_entrycollection TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
     DATA toggle_enabled    TYPE abap_bool.

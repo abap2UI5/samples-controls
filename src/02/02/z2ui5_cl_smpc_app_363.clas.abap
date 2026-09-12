@@ -46,8 +46,8 @@ CLASS z2ui5_cl_smpc_app_363 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    CONSTANTS cv_total_columns TYPE i VALUE 12.
-    CONSTANTS cv_total_rows    TYPE i VALUE 10.
+    CONSTANTS total_columns TYPE i VALUE 12.
+    CONSTANTS total_rows    TYPE i VALUE 10.
 
     METHODS view_display.
     METHODS on_event.
@@ -352,21 +352,21 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
       fixed_top_row_count = count_read( text = top_row_count_text last = fixed_top_row_count ).
       fixed_bottom_row_count = count_read( text = bottom_row_count_text last = fixed_bottom_row_count ).
 
-      IF fixed_column_count > cv_total_columns.
-        fixed_column_count = cv_total_columns.
+      IF fixed_column_count > total_columns.
+        fixed_column_count = total_columns.
         " the original's oView.byId( 'inputColumn' ).setValue( ) - inside the
         " clamp branch, not after it
         column_count_text = |{ fixed_column_count }|.
         client->message_toast_display( `Fixed column count exceeds the total column count. Value in column count input got updated.` ).
       ENDIF.
 
-      IF fixed_top_row_count + fixed_bottom_row_count > cv_total_rows.
-        IF fixed_top_row_count < cv_total_rows AND fixed_bottom_row_count < cv_total_rows.
+      IF fixed_top_row_count + fixed_bottom_row_count > total_rows.
+        IF fixed_top_row_count < total_rows AND fixed_bottom_row_count < total_rows.
           fixed_bottom_row_count = 1.
-        ELSEIF fixed_top_row_count > cv_total_rows AND fixed_bottom_row_count < cv_total_rows.
-          fixed_top_row_count = cv_total_rows - fixed_bottom_row_count - 1.
-        ELSEIF fixed_top_row_count < cv_total_rows AND fixed_bottom_row_count > cv_total_rows.
-          fixed_bottom_row_count = cv_total_rows - fixed_top_row_count - 1.
+        ELSEIF fixed_top_row_count > total_rows AND fixed_bottom_row_count < total_rows.
+          fixed_top_row_count = total_rows - fixed_bottom_row_count - 1.
+        ELSEIF fixed_top_row_count < total_rows AND fixed_bottom_row_count > total_rows.
+          fixed_bottom_row_count = total_rows - fixed_top_row_count - 1.
         ELSE.
           fixed_top_row_count    = 1.
           fixed_bottom_row_count = 1.

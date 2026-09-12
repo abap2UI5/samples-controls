@@ -58,7 +58,7 @@ const HOIST_CHARS = 900;    // a single field value longer than this is hoisted
 const ASSIGN_CHARS = 1200;  // max source characters per hoisted-text statement
 
 // a text too long to sit inside its row: assigned to a local variable in one or
-// more `lv_textN = [lv_textN &&] `…` && `…`.` statements, each of bounded size
+// more `textN = [textN &&] `…` && `…`.` statements, each of bounded size
 const hoistStatements = (name, parts) => {
   const groups = [];
   for (const p of parts) {
@@ -80,14 +80,14 @@ const rows = apps.map((a) => {
     ` path = \`${a.file}\`${' '.repeat(wf - a.file.length)}`;
   const extras = [];
   // long texts do not fit into the row's own statement - hoist them into
-  // preceding lv_textN assignments and reference the variable in the row
+  // preceding textN assignments and reference the variable in the row
   const prelude = [];
   let hoisted = 0;
   const text = (v) => {
     const parts = abapParts(v);
     const inline = parts.join(' &&\n                 ');
     if (inline.length <= HOIST_CHARS) return inline;
-    const name = `lv_text${++hoisted}`;
+    const name = `text${++hoisted}`;
     prelude.push(...hoistStatements(name, parts));
     return name;
   };
@@ -115,7 +115,7 @@ const rows = apps.map((a) => {
 // current one would exceed CHUNK_CHARS or CHUNK_ROWS. The first statement
 // builds result, every following one appends via VALUE #( BASE result ).
 // A row whose texts were hoisted gets a statement of its own, right behind its
-// lv_textN assignments - the variables are reused by every later row, so no
+// textN assignments - the variables are reused by every later row, so no
 // second row may sit in the same statement.
 const chunks = [];
 let open = null;
@@ -133,13 +133,28 @@ for (const r of rows) {
     open.chars += r.row.length;
   }
 }
+// The catalogue is wrapped in a ` abap2ui5lint-disable ... abap2ui5lint-enable`
+// block (see the get_catalog template below). The linter parses directives
+// per LINE, on any comment and on any literal alike, and an -enable closes
+// every open block - so a sidecar text that quoted the closing directive
+// would re-open the linter on the rest of the catalogue, and the prose-as-code
+// findings the block exists for would come back one sidecar at a time. A
+// -disable inside the block is harmless (the final -enable closes both), so
+// only the closing word is refused, loudly, with the sidecar to fix.
+for (const a of apps) {
+  for (const k of ['score_tip', 'dep_text', 'checked', 'notes', 'post171']) {
+    if (/abap2ui5lint-enable\b/.test(a[k] || '')) {
+      throw new Error(`${a.cls}: the sidecar text in '${k}' quotes 'abap2ui5lint-enable', which would close the catalogue's linter block early - rephrase it`);
+    }
+  }
+}
 const catalogStatements = chunks
   .map((c, i) =>
     [...c.prelude, `    result = VALUE #(${i === 0 ? '' : ' BASE result'}\n${c.rows.join('\n')} ).`].join('\n'))
   .join('\n\n');
 // the hoist variables, declared once at the top of get_catalog (definitions_top)
 const maxHoist = Math.max(0, ...rows.map((r) => r.hoisted));
-const catalogDecl = Array.from({ length: maxHoist }, (_, i) => `    DATA lv_text${i + 1} TYPE string.`).join('\n');
+const catalogDecl = Array.from({ length: maxHoist }, (_, i) => `    DATA text${i + 1} TYPE string.`).join('\n');
 
 // --- client-side (roundtrip-free) filter & sort, both via cs_event-binding_call
 // wired through follow_up_action (see abap2UI5 z2ui5_if_client / FrontendAction.js):
@@ -499,11 +514,11 @@ CLASS ${CLASS} IMPLEMENTATION.
         " anchored to the button (arg 2). Only the row KEY travels through the
         " client (arg 1, \`\${CLASS}\`) - the URLs are rebuilt here from the
         " catalog, so they never sit in the bound model and never bloat the draft.
-        DATA(ls_link) = row_of( client->get_event_arg( ) ).
-        DATA(lv_api)  = ls_link-api_url.
-        DATA(lv_js)   = ls_link-js_url.
-        DATA(lv_ui5)  = ls_link-ui5_url.
-        DATA(lv_abap) = ls_link-abap_url.
+        DATA(link) = row_of( client->get_event_arg( ) ).
+        DATA(api)  = link-api_url.
+        DATA(js)   = link-js_url.
+        DATA(ui5)  = link-ui5_url.
+        DATA(abap) = link-abap_url.
 
         DATA(links) = z2ui5_cl_ui5_view_builder=>factory( ).
         DATA(box) = links->ele( n = \`FragmentDefinition\` ns = \`core\`
@@ -526,46 +541,46 @@ CLASS ${CLASS} IMPLEMENTATION.
         " round-trip. The URL is also the tooltip, so it stays readable/copyable.
         " The three OpenUI5 targets are empty for a ui5_only row (the control is
         " not in the OpenUI5 checkout), so each renders only when it resolves.
-        IF lv_api IS NOT INITIAL.
+        IF api IS NOT INITIAL.
           box->tag( \`Button\`
               )->a( n = \`text\`    v = \`Control API Reference\`
               )->a( n = \`icon\`    v = \`sap-icon://document-text\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` t = lv_api
+              )->a( n = \`tooltip\` t = api
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
-              )->a( n = \`press\`   v = link_press( lv_api ) ).
+              )->a( n = \`press\`   v = link_press( api ) ).
         ENDIF.
-        IF lv_ui5 IS NOT INITIAL.
+        IF ui5 IS NOT INITIAL.
           box->tag( \`Button\`
               )->a( n = \`text\`    v = \`Sample Link\`
               )->a( n = \`icon\`    v = \`sap-icon://sys-monitor\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` t = lv_ui5
+              )->a( n = \`tooltip\` t = ui5
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
-              )->a( n = \`press\`   v = link_press( lv_ui5 ) ).
+              )->a( n = \`press\`   v = link_press( ui5 ) ).
         ENDIF.
-        IF lv_js IS NOT INITIAL.
+        IF js IS NOT INITIAL.
           box->tag( \`Button\`
               )->a( n = \`text\`    v = \`Sample Source Code\`
               )->a( n = \`icon\`    v = \`sap-icon://source-code\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` t = lv_js
+              )->a( n = \`tooltip\` t = js
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
-              )->a( n = \`press\`   v = link_press( lv_js ) ).
+              )->a( n = \`press\`   v = link_press( js ) ).
         ENDIF.
         box->tag( \`Button\`
             )->a( n = \`text\`    v = \`abap2UI5 Source Code\`
             )->a( n = \`icon\`    v = \`sap-icon://syntax\`
             )->a( n = \`type\`    v = \`Transparent\`
             )->a( n = \`width\`   v = \`100%\`
-            )->a( n = \`tooltip\` t = lv_abap
-            )->a( n = \`press\`   v = link_press( lv_abap ) ).
+            )->a( n = \`tooltip\` t = abap
+            )->a( n = \`press\`   v = link_press( abap ) ).
 
         " say why the reference links are missing rather than leaving a gap
-        IF lv_api IS INITIAL.
+        IF api IS INITIAL.
           box->tag( \`MessageStrip\`
               )->a( n = \`text\`      v = \`This control is in no OpenUI5 checkout, so this sample has no Control API Reference, Sample Link or Sample Source Code.\`
               )->a( n = \`type\`      v = \`Information\`
@@ -582,10 +597,10 @@ CLASS ${CLASS} IMPLEMENTATION.
         " button, anchored to it (arg 2); the button only renders on a row that
         " carries at least one of the three. Like LINKS, only the row key
         " travels (arg 1) - the texts are read from the catalog here.
-        DATA(ls_info)    = row_of( client->get_event_arg( ) ).
-        DATA(lv_checked) = ls_info-checked.
-        DATA(lv_post171) = ls_info-post171.
-        DATA(lv_notes)   = ls_info-notes.
+        DATA(row)     = row_of( client->get_event_arg( ) ).
+        DATA(checked) = row-checked.
+        DATA(post171) = row-post171.
+        DATA(notes)   = row-notes.
 
         DATA(info) = z2ui5_cl_ui5_view_builder=>factory( ).
         DATA(ibox) = info->ele( n = \`FragmentDefinition\` ns = \`core\`
@@ -600,43 +615,43 @@ CLASS ${CLASS} IMPLEMENTATION.
                 )->ele( \`VBox\`
                     )->a( n = \`class\` v = \`sapUiContentPadding\` ).
 
-        IF lv_checked IS NOT INITIAL.
+        IF checked IS NOT INITIAL.
           ibox->tag( \`ObjectStatus\`
-              )->a( n = \`text\`  t = lv_checked
+              )->a( n = \`text\`  t = checked
               )->a( n = \`state\` v = \`Success\` ).
         ENDIF.
 
-        IF lv_post171 IS NOT INITIAL.
+        IF post171 IS NOT INITIAL.
           ibox->tag( \`ObjectStatus\`
-              )->a( n = \`text\`  t = |Needs a UI5 release newer than 1.71: { lv_post171 }|
+              )->a( n = \`text\`  t = |Needs a UI5 release newer than 1.71: { post171 }|
               )->a( n = \`state\` v = \`Warning\`
               )->a( n = \`class\` v = \`sapUiTinyMarginTop\` ).
         ENDIF.
 
-        IF lv_notes IS NOT INITIAL.
+        IF notes IS NOT INITIAL.
           " render the notes as an HTML bullet list (FormattedText): each
           " \` // \`-separated bullet becomes one <li> with its leading LABEL
           " (NOTE / IMPROVISED / POST-1.71 / ...) in bold. The note text is
           " HTML-escaped first (it can contain <, >, & - e.g. id="x", a<b, or a
           " literal <strong> mention); the builder's xml_escape escapes it a
           " second time and UI5 un-escapes once, so FormattedText shows it verbatim.
-          SPLIT lv_notes AT \` // \` INTO TABLE DATA(lt_line).
-          DATA(lv_html) = \`<ul>\`.
-          LOOP AT lt_line INTO DATA(lv_line).
-            DATA(lv_esc) = lv_line.
-            REPLACE ALL OCCURRENCES OF \`&\` IN lv_esc WITH \`&amp;\`.
-            REPLACE ALL OCCURRENCES OF \`<\` IN lv_esc WITH \`&lt;\`.
-            REPLACE ALL OCCURRENCES OF \`>\` IN lv_esc WITH \`&gt;\`.
-            DATA(lv_col) = find( val = lv_esc sub = \`:\` ).
-            IF lv_col > 0.
-              lv_html = |{ lv_html }<li><strong>{ substring( val = lv_esc len = lv_col + 1 ) }</strong>{ substring( val = lv_esc off = lv_col + 1 ) }</li>|.
+          SPLIT notes AT \` // \` INTO TABLE DATA(t_line).
+          DATA(html) = \`<ul>\`.
+          LOOP AT t_line INTO DATA(line).
+            DATA(esc) = line.
+            REPLACE ALL OCCURRENCES OF \`&\` IN esc WITH \`&amp;\`.
+            REPLACE ALL OCCURRENCES OF \`<\` IN esc WITH \`&lt;\`.
+            REPLACE ALL OCCURRENCES OF \`>\` IN esc WITH \`&gt;\`.
+            DATA(col) = find( val = esc sub = \`:\` ).
+            IF col > 0.
+              html = |{ html }<li><strong>{ substring( val = esc len = col + 1 ) }</strong>{ substring( val = esc off = col + 1 ) }</li>|.
             ELSE.
-              lv_html = |{ lv_html }<li>{ lv_esc }</li>|.
+              html = |{ html }<li>{ esc }</li>|.
             ENDIF.
           ENDLOOP.
-          lv_html = |{ lv_html }</ul>|.
+          html = |{ html }</ul>|.
           ibox->tag( \`FormattedText\`
-              )->a( n = \`htmlText\` t = lv_html ).
+              )->a( n = \`htmlText\` t = html ).
         ENDIF.
 
         client->popover_display( xml = info->stringify( ) by_id = client->get_event_arg( 2 ) ).
@@ -652,9 +667,9 @@ CLASS ${CLASS} IMPLEMENTATION.
         " a button of the shared header whose target overview app is on this
         " system - the class travels as the event argument and is resolved
         " here, so a repository that is NOT installed cannot break this one
-        DATA(lv_nav) = to_upper( client->get_event_arg( ) ).
+        DATA(nav) = to_upper( client->get_event_arg( ) ).
         TRY.
-            CREATE OBJECT li_app TYPE (lv_nav).
+            CREATE OBJECT li_app TYPE (nav).
             client->nav_app_call( li_app ).
 
           CATCH cx_root INTO DATA(lx_nav) ##CATCH_ALL.
@@ -662,7 +677,7 @@ CLASS ${CLASS} IMPLEMENTATION.
             " can give, and it is what the silent catch here used to produce.
             " Only the running system knows why the overview app of the other
             " repository did not start, so let it say so.
-            client->message_box_display( text = |{ lv_nav }: { lx_nav->get_text( ) }| type = \`error\` ).
+            client->message_box_display( text = |{ nav }: { lx_nav->get_text( ) }| type = \`error\` ).
         ENDTRY.
 
     ENDCASE.
@@ -842,7 +857,7 @@ ${columnsBlock}
                                         )->a( n = \`tooltip\` v = \`Start this abap2UI5 app in a new tab\`
                                         )->a( n = \`press\`   v = client->follow_up_action( val = client->cs_event-open_new_tab t_arg = VALUE #( ( \`\${START_URL}\` ) ) )
                                     )->tag( \`Button\`
-                                        )->a( n = \`icon\`    v = \`sap-icon://information\`
+                                        )->a( n = \`icon\`    v = \`sap-icon://message-information\`
                                         )->a( n = \`type\`    v = \`Transparent\`
                                         )->a( n = \`tooltip\` v = \`Generation notes: how this port was built - live-check status, post-1.71 members, deviations\`
                                         " a backtick literal, not a |…| template: ABAP ends a string
@@ -938,11 +953,22 @@ ${columnsBlock}
     " ABAP statement length, so the generator emits the catalog in size-bounded
     " chunks (a few rows each); every chunk after the first appends to the
     " previous ones via VALUE #( BASE result ). Texts too long to fit into their
-    " own row are assigned to lv_textN just ahead of it - such a row is always
+    " own row are assigned to textN just ahead of it - such a row is always
     " alone in its statement, because the next hoisting row reuses the variable.
+    "
+    " abap2ui5lint-disable -- this method is DATA, not code: every literal
+    " below quotes a sidecar deviation verbatim, and a linter rule that reads
+    " the SOURCE for a call shape - popover_display( by_id = \`\` ), a {/path}
+    " written as text, a sap-icon:// name - reads that prose as this class's
+    " own code. Measured 2026-09-12: 24 findings on this class, 23 of them in
+    " this method and every one of them a quote (the real one was the INFO
+    " button's icon in view_display). The block ends at the -enable below, so
+    " the overview's actual view code stays fully judged.
 ${catalogDecl}
 
 ${catalogStatements}
+
+    " abap2ui5lint-enable
 
   ENDMETHOD.
 

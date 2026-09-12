@@ -6,35 +6,38 @@ CLASS z2ui5_cl_smpc_app_115 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_token,
-             key  TYPE string,
-             name TYPE string,
-           END OF ty_s_token.
-    TYPES: BEGIN OF ty_s_named,
-             name TYPE string,
-           END OF ty_s_named.
-    TYPES: BEGIN OF ty_s_product,
-             productid                     TYPE string,
-             name                          TYPE string,
-             quantity                      TYPE i,
-             status                        TYPE string,
-             price                         TYPE p LENGTH 9 DECIMALS 2,
-             currencycode                  TYPE string,
-             suppliername                  TYPE string,
-             productpicurl                 TYPE string,
-             category                      TYPE string,
-             weightmeasure                 TYPE p LENGTH 9 DECIMALS 3,
-             " derived in initSampleDataModel, reproduced in model_init
-             available                     TYPE abap_bool,
-             availablestate                TYPE string,
-             availableicon                 TYPE string,
-             heavy                         TYPE string,
-             deliverydate                  TYPE string,
-             " the MultiInput column: the sample's rows carry neither key, so both
-             " start empty and the token table grows through the tokenUpdate wire
-             additionalcategory            TYPE string,
-             additionalcategoriesselection TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_token,
+        key  TYPE string,
+        name TYPE string,
+      END OF ty_s_token.
+    TYPES:
+      BEGIN OF ty_s_named,
+        name TYPE string,
+      END OF ty_s_named.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid                     TYPE string,
+        name                          TYPE string,
+        quantity                      TYPE i,
+        status                        TYPE string,
+        price                         TYPE p LENGTH 9 DECIMALS 2,
+        currencycode                  TYPE string,
+        suppliername                  TYPE string,
+        productpicurl                 TYPE string,
+        category                      TYPE string,
+        weightmeasure                 TYPE p LENGTH 9 DECIMALS 3,
+        " derived in initSampleDataModel, reproduced in model_init
+        available                     TYPE abap_bool,
+        availablestate                TYPE string,
+        availableicon                 TYPE string,
+        heavy                         TYPE string,
+        deliverydate                  TYPE string,
+        " the MultiInput column: the sample's rows carry neither key, so both
+        " start empty and the token table grows through the tokenUpdate wire
+        additionalcategory            TYPE string,
+        additionalcategoriesselection TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY,
+      END OF ty_s_product.
     DATA productcollection TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA suppliers         TYPE STANDARD TABLE OF ty_s_named WITH EMPTY KEY.
     DATA categories        TYPE STANDARD TABLE OF ty_s_named WITH EMPTY KEY.

@@ -11,27 +11,29 @@ CLASS z2ui5_cl_smpc_app_241 DEFINITION PUBLIC.
     DATA create_name     TYPE string.
     DATA create_icon     TYPE string.
 
-    TYPES: BEGIN OF ty_s_child,
-             text TYPE string,
-           END OF ty_s_child.
-    TYPES: BEGIN OF ty_s_nav_item,
-             text       TYPE string,
-             icon       TYPE string,
-             href       TYPE string,
-             target     TYPE string,
-             selectable TYPE abap_bool,
-             expanded   TYPE abap_bool,
-             items      TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
-           END OF ty_s_nav_item.
+    TYPES:
+      BEGIN OF ty_s_child,
+        text TYPE string,
+      END OF ty_s_child.
+    TYPES:
+      BEGIN OF ty_s_nav_item,
+        text       TYPE string,
+        icon       TYPE string,
+        href       TYPE string,
+        target     TYPE string,
+        selectable TYPE abap_bool,
+        expanded   TYPE abap_bool,
+        items      TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      END OF ty_s_nav_item.
     DATA t_nav_items TYPE STANDARD TABLE OF ty_s_nav_item WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
     METHODS popup_quickcreate_display.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -167,10 +169,10 @@ CLASS z2ui5_cl_smpc_app_241 IMPLEMENTATION.
 
   METHOD on_event.
 
-    DATA lv_ctrl  TYPE abap_bool.
-    DATA lv_shift TYPE abap_bool.
-    DATA lv_alt   TYPE abap_bool.
-    DATA lv_meta  TYPE abap_bool.
+    DATA ctrl_key  TYPE abap_bool.
+    DATA shift_key TYPE abap_bool.
+    DATA alt_key   TYPE abap_bool.
+    DATA meta_key  TYPE abap_bool.
 
     CASE client->get_event( ).
 
@@ -187,22 +189,20 @@ CLASS z2ui5_cl_smpc_app_241 IMPLEMENTATION.
         " original itemPress: reads the pressed item text + modifier keys and
         " toasts them; when the checkbox is set the wire's check_prevent_default
         " cancels the item's built-in default (selection / href) client-side
-        DATA(lv_item) = client->get_event_arg( ).
-        lv_ctrl  = client->get_event_arg( 2 ).
-        lv_shift = client->get_event_arg( 3 ).
-        lv_alt   = client->get_event_arg( 4 ).
-        lv_meta  = client->get_event_arg( 5 ).
+        DATA(item) = client->get_event_arg( ).
+        ctrl_key  = client->get_event_arg( 2 ).
+        shift_key = client->get_event_arg( 3 ).
+        alt_key   = client->get_event_arg( 4 ).
+        meta_key  = client->get_event_arg( 5 ).
 
-        DATA(lv_head) = COND string( WHEN prevent_default = abap_true
-                                     THEN `Default was prevented:`
-                                     ELSE `Item Pressed:` ).
+        DATA(head) = COND string( WHEN prevent_default = abap_true THEN `Default was prevented:` ELSE `Item Pressed:` ).
         client->message_toast_display(
-          |{ lv_head }\n| &&
-          |Item: { lv_item }\n| &&
-          |Ctrl Key: { COND string( WHEN lv_ctrl  = abap_true THEN `true` ELSE `false` ) }\n| &&
-          |Shift Key: { COND string( WHEN lv_shift = abap_true THEN `true` ELSE `false` ) }\n| &&
-          |Alt Key: { COND string( WHEN lv_alt   = abap_true THEN `true` ELSE `false` ) }\n| &&
-          |Meta Key: { COND string( WHEN lv_meta  = abap_true THEN `true` ELSE `false` ) }| ).
+          |{ head }\n| &&
+          |Item: { item }\n| &&
+          |Ctrl Key: { COND string( WHEN ctrl_key  = abap_true THEN `true` ELSE `false` ) }\n| &&
+          |Shift Key: { COND string( WHEN shift_key = abap_true THEN `true` ELSE `false` ) }\n| &&
+          |Alt Key: { COND string( WHEN alt_key   = abap_true THEN `true` ELSE `false` ) }\n| &&
+          |Meta Key: { COND string( WHEN meta_key  = abap_true THEN `true` ELSE `false` ) }| ).
 
       WHEN `QUICK_CREATE`.
         popup_quickcreate_display( ).

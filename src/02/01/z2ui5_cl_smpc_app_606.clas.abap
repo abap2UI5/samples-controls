@@ -6,44 +6,49 @@ CLASS z2ui5_cl_smpc_app_606 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_tile,
-             title    TYPE string,
-             subtitle TYPE string,
-             footer   TYPE string,
-             unit     TYPE string,
-             kpivalue TYPE string,
-             scale    TYPE string,
-             state    TYPE string,
-             color    TYPE string,
-             trend    TYPE string,
-           END OF ty_s_tile.
+    TYPES:
+      BEGIN OF ty_s_tile,
+        title    TYPE string,
+        subtitle TYPE string,
+        footer   TYPE string,
+        unit     TYPE string,
+        kpivalue TYPE string,
+        scale    TYPE string,
+        state    TYPE string,
+        color    TYPE string,
+        trend    TYPE string,
+      END OF ty_s_tile.
     TYPES ty_t_tile TYPE STANDARD TABLE OF ty_s_tile WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_link_content,
-             iconsrc  TYPE string,
-             linktext TYPE string,
-             linkhref TYPE string,
-           END OF ty_s_link_content.
-    TYPES: BEGIN OF ty_s_link_tile,
-             title    TYPE string,
-             contents TYPE STANDARD TABLE OF ty_s_link_content WITH EMPTY KEY,
-           END OF ty_s_link_tile.
+    TYPES:
+      BEGIN OF ty_s_link_content,
+        iconsrc  TYPE string,
+        linktext TYPE string,
+        linkhref TYPE string,
+      END OF ty_s_link_content.
+    TYPES:
+      BEGIN OF ty_s_link_tile,
+        title    TYPE string,
+        contents TYPE STANDARD TABLE OF ty_s_link_content WITH EMPTY KEY,
+      END OF ty_s_link_tile.
     TYPES ty_t_link_tile TYPE STANDARD TABLE OF ty_s_link_tile WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_slide,
-             backgroundimage TYPE string,
-             footer          TYPE string,
-             contenttext     TYPE string,
-             subtitle        TYPE string,
-             state           TYPE string,
-             tooltip         TYPE string,
-           END OF ty_s_slide.
+    TYPES:
+      BEGIN OF ty_s_slide,
+        backgroundimage TYPE string,
+        footer          TYPE string,
+        contenttext     TYPE string,
+        subtitle        TYPE string,
+        state           TYPE string,
+        tooltip         TYPE string,
+      END OF ty_s_slide.
     TYPES ty_t_slide TYPE STANDARD TABLE OF ty_s_slide WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_scope,
-             key  TYPE string,
-             text TYPE string,
-           END OF ty_s_scope.
+    TYPES:
+      BEGIN OF ty_s_scope,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_scope.
     TYPES ty_t_scope TYPE STANDARD TABLE OF ty_s_scope WITH EMPTY KEY.
 
     DATA t_tiles       TYPE ty_t_tile.
@@ -53,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_606 DEFINITION PUBLIC.
     DATA t_scopes      TYPE ty_t_scope.
 
     DATA scope         TYPE string.
-    DATA size_behavior TYPE string.
+    DATA sizebehavior  TYPE string.
     DATA enforce_small TYPE abap_bool.
 
   PROTECTED SECTION.
@@ -149,7 +154,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `press`        v = client->_event( val   = `TILE_PRESS`
                                                          t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
             )->a( n = `class`        v = `sapUiTinyMarginEnd`
-            )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
+            )->a( n = `sizeBehavior` v = client->_bind( sizebehavior )
 
             )->ele( `TileContent`
                 )->a( n = `unit`   v = `{UNIT}`
@@ -201,7 +206,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
         )->a( n = `press`        v = client->_event( val   = `SLIDE_PRESS`
                                                      t_arg = VALUE #( ( `SlideTile 1` ) ( `${$parameters>/action}` ) ) )
         )->a( n = `class`        v = `sapUiTinyMarginEnd`
-        )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
+        )->a( n = `sizeBehavior` v = client->_bind( sizebehavior )
 
         )->ele( `GenericTile`
             )->a( n = `id`              v = `tile6`
@@ -211,7 +216,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `frameType`       v = `TwoByOne`
             )->a( n = `press`           v = client->_event( val   = `TILE_PRESS`
                                                             t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
-            )->a( n = `sizeBehavior`    v = client->_bind( size_behavior )
+            )->a( n = `sizeBehavior`    v = client->_bind( sizebehavior )
 
             )->ele( `TileContent`
                 )->a( n = `footer` v = `{FOOTER}`
@@ -232,7 +237,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                                                        t_arg = VALUE #( ( `SlideTile 2` ) ( `${$parameters>/action}` ) ) )
         )->a( n = `transitionTime` v = `250`
         )->a( n = `displayTime`    v = `2500`
-        )->a( n = `sizeBehavior`   v = client->_bind( size_behavior )
+        )->a( n = `sizeBehavior`   v = client->_bind( sizebehavior )
 
         )->ele( `GenericTile`
             )->a( n = `id`              v = `tile7`
@@ -242,7 +247,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `frameType`       v = `TwoByOne`
             )->a( n = `press`           v = client->_event( val   = `TILE_PRESS`
                                                             t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
-            )->a( n = `sizeBehavior`    v = client->_bind( size_behavior )
+            )->a( n = `sizeBehavior`    v = client->_bind( sizebehavior )
 
             )->ele( `TileContent`
                 )->a( n = `footer` v = `{FOOTER}`
@@ -269,7 +274,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `mode`         v = `LineMode`
             )->a( n = `press`        v = client->_event( val   = `TILE_PRESS`
                                                          t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
-            )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
+            )->a( n = `sizeBehavior` v = client->_bind( sizebehavior )
             )->a( n = `class`        v = `sapUiTinyMarginEnd sapUiTinyMarginBottom`
 
             )->ele( `TileContent`
@@ -296,7 +301,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
 
       WHEN `ENFORCE_SMALL`.
         " changeEnforceSmall: /sizeBehavior = state ? 'Small' : 'Responsive'
-        size_behavior = COND #( WHEN enforce_small = abap_true THEN `Small` ELSE `Responsive` ).
+        sizebehavior = COND #( WHEN enforce_small = abap_true THEN `Small` ELSE `Responsive` ).
 
       WHEN `TILE_PRESS` OR `SLIDE_PRESS`.
         " press / pressSlideTile: the tile name is its header or its tooltip, and
@@ -324,7 +329,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
       ( key = `ActionMore`   text = `ActionMore` )
       ( key = `ActionRemove` text = `ActionRemove` ) ).
     scope         = `Display`.
-    size_behavior = `Responsive`.
+    sizebehavior = `Responsive`.
 
     t_tiles = VALUE #(
       ( title    = `Jessica Danielle Johnson `

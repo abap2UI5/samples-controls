@@ -6,20 +6,22 @@ CLASS z2ui5_cl_smpc_app_567 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             suppliername TYPE string,
-             description  TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        suppliername TYPE string,
+        description  TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    TYPES: BEGIN OF ty_s_column,
-             width          TYPE string,
-             header         TYPE string,
-             demandpopin    TYPE abap_bool,
-             minscreenwidth TYPE string,
-             styleclass     TYPE string,
-           END OF ty_s_column.
+    TYPES:
+      BEGIN OF ty_s_column,
+        width          TYPE string,
+        header         TYPE string,
+        demandpopin    TYPE abap_bool,
+        minscreenwidth TYPE string,
+        styleclass     TYPE string,
+      END OF ty_s_column.
     TYPES ty_t_column TYPE STANDARD TABLE OF ty_s_column WITH EMPTY KEY.
 
     DATA t_products     TYPE ty_t_product.

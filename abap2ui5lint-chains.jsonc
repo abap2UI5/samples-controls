@@ -47,7 +47,11 @@
     // agent is working on - not corpus, not committed, and it must not fail a
     // gate. scripts/lib/src-tree.mjs is the same list for the scripts that
     // walk the tree themselves.
-    "chain-house-layout": { "severity": "warning", "exclude": ["src/zz_dev/"] },
+    // "error" since 2026-09-12: the layout is a property of the source that
+    // `npm run fmt:chains` rewrites, so there is no reason a drift should
+    // ever be tolerated - it was "warning" only while the run failed on a
+    // rule that was not this one (the catalogue's prose, see below)
+    "chain-house-layout": { "severity": "error", "exclude": ["src/zz_dev/"] },
 
     // What remains after the property gate is off: the ABAP-side rules, which
     // read the class rather than the view tree and are therefore unaffected by
@@ -65,5 +69,17 @@
     "event-without-handler": false,
     "frontend-action-too-new": false,
     "escape-sequence-in-backtick": false
+
+    // NOT in this list, on purpose: popover-anchor-unknown-id. It fired here
+    // on the 0.6 bump (2026-09-12) - once, on the generated overview app,
+    // where a sidecar deviation quoted `popover_display( xml = ..., by_id =
+    // ... )` as prose and the literal split landed exactly so that the text
+    // scan read a call out of it. That is not a rule to switch off: the
+    // overview's catalogue is DATA, and the emitter now says so in the class
+    // itself with the linter's own `abap2ui5lint-disable ... -enable` block
+    // around get_catalog( ) (scripts/lib/overview-emit.mjs), which is what
+    // lets this run - and abap2ui5lint-overview.jsonc with the property gate
+    // ON - judge the overview's real view code and skip the quotes. The rule
+    // stays live over the whole tree at zero findings.
   }
 }

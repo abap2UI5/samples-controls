@@ -6,13 +6,14 @@ CLASS z2ui5_cl_smpc_app_612 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             name         TYPE string,
-             productid    TYPE string,
-             suppliername TYPE string,
-             price        TYPE string,
-             currencycode TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        name         TYPE string,
+        productid    TYPE string,
+        suppliername TYPE string,
+        price        TYPE string,
+        currencycode TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.
@@ -21,8 +22,8 @@ CLASS z2ui5_cl_smpc_app_612 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
     METHODS on_event.
+    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.

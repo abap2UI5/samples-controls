@@ -6,14 +6,15 @@ CLASS z2ui5_cl_smpc_app_511 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid TYPE string,
-             name      TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid TYPE string,
+        name      TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
-    DATA t_products       TYPE ty_t_product.
-    DATA selected_product TYPE string VALUE `HT-1001`.
+    DATA t_products      TYPE ty_t_product.
+    DATA selectedproduct TYPE string VALUE `HT-1001`.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -59,7 +60,7 @@ CLASS z2ui5_cl_smpc_app_511 IMPLEMENTATION.
                 " the client from the event parameters, so neither needs a round-trip
                 )->ele( `Select`
                     )->a( n = `forceSelection` v = `false`
-                    )->a( n = `selectedKey`    v = client->_bind( selected_product )
+                    )->a( n = `selectedKey`    v = client->_bind( selectedproduct )
                     )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
                     )->a( n = `change`         v = client->follow_up_action( val   = client->cs_event-control_global
                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` )
