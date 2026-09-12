@@ -1198,7 +1198,7 @@ const xml = `﻿<?xml version="1.0" encoding="utf-8"?>
    <VSEOCLASS>
     <CLSNAME>${CLASS.toUpperCase()}</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>abap2UI5 - api overview</DESCRIPT>
+    <DESCRIPT>abap2UI5 - samples-controls overview</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
