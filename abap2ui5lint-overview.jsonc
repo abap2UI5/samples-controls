@@ -30,6 +30,17 @@
   // and every one of them a quote. The block is what keeps this config free
   // of exclusions; an exclusion here would be a second place that knows the
   // catalogue is data.
+  //
+  // One rule WILL need switching off here at the next linter bump, and it is
+  // not about the catalogue: `client-handle-capture` (linter 0.7, promoted
+  // out of this repository's pattern-lint on 2026-09-12) reports the
+  // header_button( ) press wire, which is decided per branch and written
+  // once from a variable. The alternative - writing the wire in each branch
+  // - reads to the reconstructor as one control set three times
+  // (duplicate-property, an error), so the captured handle stays; see the
+  // comment in scripts/lib/overview-emit.mjs. The pinned 0.6.1 does not know
+  // the rule id and the config loader refuses unknown ids, so the line goes
+  // in with the bump: "client-handle-capture": false.
   "$schema": "./node_modules/@abap2ui5/linter/data/abap2ui5lint.schema.json",
 
   "paths": ["src/z2ui5_cl_smpc_app_000.clas.abap"],
