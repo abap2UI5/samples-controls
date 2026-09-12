@@ -667,7 +667,7 @@ CLASS z2ui5_cl_smpc_app_363 IMPLEMENTATION.
       ( name = `Maxi Tablet` productid = `HT-9999` quantity = 20 status = `Available` availablestate = `Success` availableicon = `sap-icon://accept` price = 749 currencycode = `EUR`
         suppliername = `Titanium` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9999.jpg` heavy = `false` category = `Tablets` deliverydate = 1784419200000 )
       ( name = `Flyer` productid = `PF-1000` quantity = 33 status = `Out of Stock` availablestate = `Error` availableicon = `sap-icon://decline` price = 0 currencycode = `EUR`
-        suppliername = `Titanium` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` heavy = `false` category = `Accessories` deliverydate = 1784073600000 ).
+        suppliername = `Titanium` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` heavy = `false` category = `Accessories` deliverydate = 1784073600000 ) ).
 
     " the Suppliers / Categories collections the controller derives from the
     " products for the two in-cell dropdowns - the distinct values, in first

@@ -418,8 +418,19 @@ CLASS ${CLASS} DEFINITION PUBLIC.
         stack    TYPE string VALUE \`https://github.com/abap2UI5/samples-stack\`,
       END OF cs_url.
 
-    METHODS view_display.
     METHODS on_event.
+    METHODS row_of
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE ty_s_app.
+    METHODS view_display.
+    METHODS derive
+      CHANGING
+        app TYPE ty_s_app.
+    METHODS get_catalog
+      RETURNING
+        VALUE(result) TYPE ty_t_app.
     " The header every abap2UI5 overview app shares - see the class
     " documentation. Keep it in sync with the copies in abap2UI5/samples and
     " abap2UI5/samples-stack.
@@ -458,17 +469,6 @@ CLASS ${CLASS} DEFINITION PUBLIC.
         val           TYPE string
       RETURNING
         VALUE(result) TYPE abap_bool.
-    METHODS row_of
-      IMPORTING
-        val           TYPE string
-      RETURNING
-        VALUE(result) TYPE ty_s_app.
-    METHODS derive
-      CHANGING
-        app TYPE ty_s_app.
-    METHODS get_catalog
-      RETURNING
-        VALUE(result) TYPE ty_t_app.
     METHODS link_press
       IMPORTING
         url           TYPE string

@@ -8,37 +8,37 @@ CLASS z2ui5_cl_smpc_app_496 DEFINITION PUBLIC.
 
     " one structure per nesting depth (ABAP has no recursive types) - the number is the depth the controller's loadData( iLevel ) builds, 1 = a root node
     TYPES:
-      BEGIN OF ty_s_node_level6,
+      BEGIN OF ty_s_leaf,
         text  TYPE string,
         dummy TYPE abap_bool,
-      END OF ty_s_node_level6,
-      BEGIN OF ty_s_node_level5,
+      END OF ty_s_leaf,
+      BEGIN OF ty_s_great_great_grandchild,
         text  TYPE string,
         dummy TYPE abap_bool,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level6 WITH EMPTY KEY,
-      END OF ty_s_node_level5,
-      BEGIN OF ty_s_node_level4,
+        nodes TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+      END OF ty_s_great_great_grandchild,
+      BEGIN OF ty_s_great_grandchild,
         text  TYPE string,
         dummy TYPE abap_bool,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level5 WITH EMPTY KEY,
-      END OF ty_s_node_level4,
-      BEGIN OF ty_s_node_level3,
+        nodes TYPE STANDARD TABLE OF ty_s_great_great_grandchild WITH EMPTY KEY,
+      END OF ty_s_great_grandchild,
+      BEGIN OF ty_s_grandchild,
         text  TYPE string,
         dummy TYPE abap_bool,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level4 WITH EMPTY KEY,
-      END OF ty_s_node_level3,
-      BEGIN OF ty_s_node_level2,
+        nodes TYPE STANDARD TABLE OF ty_s_great_grandchild WITH EMPTY KEY,
+      END OF ty_s_grandchild,
+      BEGIN OF ty_s_child,
         text  TYPE string,
         dummy TYPE abap_bool,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level3 WITH EMPTY KEY,
-      END OF ty_s_node_level2,
-      BEGIN OF ty_s_node_level1,
+        nodes TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+      END OF ty_s_child,
+      BEGIN OF ty_s_root,
         text  TYPE string,
         dummy TYPE abap_bool,
-        nodes TYPE STANDARD TABLE OF ty_s_node_level2 WITH EMPTY KEY,
-      END OF ty_s_node_level1.
+        nodes TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+      END OF ty_s_root.
 
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_node_level1 WITH EMPTY KEY.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -101,11 +101,11 @@ CLASS z2ui5_cl_smpc_app_496 IMPLEMENTATION.
 
     DATA indices  TYPE STANDARD TABLE OF i WITH EMPTY KEY.
     DATA segments TYPE string_table.
-    DATA node1    TYPE REF TO ty_s_node_level1.
-    DATA node2    TYPE REF TO ty_s_node_level2.
-    DATA node3    TYPE REF TO ty_s_node_level3.
-    DATA node4    TYPE REF TO ty_s_node_level4.
-    DATA node5    TYPE REF TO ty_s_node_level5.
+    DATA node1    TYPE REF TO ty_s_root.
+    DATA node2    TYPE REF TO ty_s_child.
+    DATA node3    TYPE REF TO ty_s_grandchild.
+    DATA node4    TYPE REF TO ty_s_great_grandchild.
+    DATA node5    TYPE REF TO ty_s_great_great_grandchild.
 
     IF client->get_event( ) = `TOGGLE`.
 

@@ -45,10 +45,10 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
     " enough for enableLazyLoading to be worth watching
     DATA(sections) = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`       v = `100%`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
+        )->a( n = `xmlns`     v = `sap.uxap`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                  v = `ObjectPageLayout`
@@ -108,28 +108,28 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
                       " employment:EmploymentBlockJob inlined with its Collapsed
                       " view (the block's initial mode); the empN> models fold
                       " onto the default-model root
-                      )->ele( n = `Grid` ns = `layout`
+                      )->ele( n = `Grid` ns = `l`
                           )->a( n = `defaultSpan` v = `L4 M6 S12`
                           )->a( n = `hSpacing`    v = `0`
                           )->a( n = `width`       v = `100%`
 
-                          )->ele( n = `content` ns = `layout`
-                              )->ele( n = `VerticalLayout` ns = `layout`
-                                  )->ele( n = `HorizontalLayout` ns = `layout`
-                                      )->ele( n = `Grid` ns = `layout`
+                          )->ele( n = `content` ns = `l`
+                              )->ele( n = `VerticalLayout` ns = `l`
+                                  )->ele( n = `HorizontalLayout` ns = `l`
+                                      )->ele( n = `Grid` ns = `l`
                                           )->a( n = `defaultSpan` v = `L4 M4 S4`
                                           )->a( n = `hSpacing`    v = `0`
                                           )->a( n = `width`       v = `100%`
 
-                                          )->ele( n = `content` ns = `layout`
-                                              )->ele( n = `VerticalLayout` ns = `layout`
+                                          )->ele( n = `content` ns = `l`
+                                              )->ele( n = `VerticalLayout` ns = `l`
                                                   )->tag( n = `Label` ns = `m`
                                                       )->a( n = `text` v = client->_bind( emp1_name )
                                                   )->tag( n = `Label` ns = `m`
                                                       )->a( n = `text` v = client->_bind( emp1_job )
 
-                                                  )->ele( n = `layoutData` ns = `layout`
-                                                      )->tag( n = `GridData` ns = `layout`
+                                                  )->ele( n = `layoutData` ns = `l`
+                                                      )->tag( n = `GridData` ns = `l`
                                                           )->a( n = `span` v = `L12 M12 S12`
 
                                                   )->end(
@@ -138,26 +138,26 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
                                       )->end(
                                   )->end(
 
-                                  )->ele( n = `layoutData` ns = `layout`
-                                      )->tag( n = `GridData` ns = `layout`
+                                  )->ele( n = `layoutData` ns = `l`
+                                      )->tag( n = `GridData` ns = `l`
                                           )->a( n = `linebreak` v = `true`
 
                                   )->end(
 
-                                  )->ele( n = `HorizontalLayout` ns = `layout`
-                                      )->ele( n = `Grid` ns = `layout`
+                                  )->ele( n = `HorizontalLayout` ns = `l`
+                                      )->ele( n = `Grid` ns = `l`
                                           )->a( n = `defaultSpan` v = `L4 M4 S4`
                                           )->a( n = `hSpacing`    v = `0`
                                           )->a( n = `width`       v = `100%`
 
-                                          )->ele( n = `VerticalLayout` ns = `layout`
+                                          )->ele( n = `VerticalLayout` ns = `l`
                                               )->tag( n = `Label` ns = `m`
                                                   )->a( n = `text` v = client->_bind( emp2_name )
                                               )->tag( n = `Label` ns = `m`
                                                   )->a( n = `text` v = client->_bind( emp2_job )
 
-                                              )->ele( n = `layoutData` ns = `layout`
-                                                  )->tag( n = `GridData` ns = `layout`
+                                              )->ele( n = `layoutData` ns = `l`
+                                                  )->tag( n = `GridData` ns = `l`
                                                       )->a( n = `span` v = `L12 M12 S12`
 
                                               )->end(

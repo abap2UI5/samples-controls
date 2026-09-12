@@ -506,7 +506,7 @@ CLASS z2ui5_cl_smpc_app_247 IMPLEMENTATION.
       ( name = `Maxi Tablet` category = `Tablets` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-9999.jpg` quantity = 20
         deliverydate = `1784592000000` )
       ( name = `Flyer` category = `Accessories` productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/PF-1000.jpg` quantity = 33
-        deliverydate = `1784246400000` ).
+        deliverydate = `1784246400000` ) ).
 
   ENDMETHOD.
 

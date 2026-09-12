@@ -117,7 +117,9 @@ const REPEAT_BUDGET = 40;
 
 /* line-headroom: abaplint holds a line to 255 characters (`line_length`), and
  * a padded VALUE #( ) row that sits within 15 of it breaks on the next field
- * that grows by a word. */
+ * that grows by a word. Code lines only: the generated `" @summary` /
+ * `" @origin` header comments are clipped to 255 by their own generators
+ * (`clipAtWord`, generate-summary / generate-origin) and nothing grows them. */
 const LINE_HEADROOM = 240;
 
 /* hungarian-prefix: the SAP-classic prefixes AGENTS §8 retired ("prefix only
@@ -503,7 +505,7 @@ const RULES = [
     find(content) {
       const out = [];
       content.split('\n').forEach((l, i) => {
-        if (l.length > LINE_HEADROOM) out.push({ line: i + 1, text: `${l.length} characters` });
+        if (l.length > LINE_HEADROOM && !/^\s*"/.test(l)) out.push({ line: i + 1, text: `${l.length} characters` });
       });
       return out;
     },

@@ -13,14 +13,15 @@ CLASS z2ui5_cl_smpc_app_595 DEFINITION PUBLIC.
         picture TYPE string,
       END OF ty_s_employee.
 
-    TYPES: BEGIN OF ty_s_product,
-             productid    TYPE string,
-             " the field the rows binding's sorter uses; no column shows it
-             name         TYPE string,
-             suppliername TYPE string,
-             category     TYPE string,
-             price        TYPE string,
-           END OF ty_s_product.
+    TYPES:
+      BEGIN OF ty_s_product,
+        productid    TYPE string,
+        " the field the rows binding's sorter uses; no column shows it
+        name         TYPE string,
+        suppliername TYPE string,
+        category     TYPE string,
+        price        TYPE string,
+      END OF ty_s_product.
     TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
 
     DATA t_products TYPE ty_t_product.

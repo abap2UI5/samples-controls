@@ -255,6 +255,32 @@ test('abap-scope: a path in neither list, and an empty list, run the downport', 
   assert.equal(reachesAbap(['']).run, true, 'an empty line is not a file list either');
 });
 
+/* ------------------------------------------------- json-to-abap.mjs */
+
+/*
+ * AGENTS §8 names this emitter as the one that writes the two-line TYPES
+ * layout (`TYPES:` alone, then `BEGIN OF`), the form pattern-lint's
+ * `types-layout` holds the corpus to. An emitter that drifts back to
+ * `TYPES: BEGIN OF` on one line would put every scaffolded port straight
+ * into the lint's error list, so the shape is pinned here character for
+ * character - the TYPE column aligned, the table type on the same statement.
+ */
+test('json-to-abap: rowsToAbapType emits the two-line TYPES layout with an aligned TYPE column', async () => {
+  const { rowsToAbapType, inferFields } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const fields = inferFields([{ ProductId: 'HT-1000', Name: 'Notebook', Price: 956 }]);
+  assert.equal(rowsToAbapType(fields, 'ty_s_product', 'ty_t_product'),
+    [
+      '    TYPES:',
+      '      BEGIN OF ty_s_product,',
+      '        productid TYPE string,',
+      '        name      TYPE string,',
+      '        price     TYPE i,',
+      '      END OF ty_s_product,',
+      '      ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.',
+    ].join('\n'));
+  assert.doesNotMatch(rowsToAbapType(fields), /TYPES: BEGIN OF/, 'the one-line form is the layout the corpus retired');
+});
+
 /* ------------------------------------------- form-family-to-abap.mjs */
 
 /*
@@ -1021,10 +1047,14 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
     r = lint(inMain('    DATA(is_selected) = abap_true.'));
     assert.equal(r.code, 0, `is_selected is a boolean\'s English name, not a prefix\n${r.out}`);
 
-    // line-headroom: a line within 15 of 255 warns and does not fail
-    r = lint(inMain(`    " ${'x'.repeat(241)}`));
+    // line-headroom: a CODE line within 15 of 255 warns and does not fail; a
+    // full-line comment does not - the generated `" @summary` / `" @origin`
+    // headers are clipped at 255 by their own generators (AGENTS §8)
+    r = lint(inMain(`    DATA(long) = \`${'x'.repeat(227)}\`.`));
     assert.equal(r.code, 0, 'headroom is a warning');
     assert.match(r.out, /WARN .*\[line-headroom\] 247 characters/);
+    r = lint(`" @summary ${'x'.repeat(244)}\n${base}`);
+    assert.doesNotMatch(r.out, /line-headroom/, 'a header comment line is outside the rule');
 
     // unrolled-chain-repetition: the same chain line 41 times in one method warns, 40 do not
     // (the fixture's xmlns attribute already normalises to the same key, so it counts as one)

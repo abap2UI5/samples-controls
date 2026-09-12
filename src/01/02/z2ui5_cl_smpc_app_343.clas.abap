@@ -22,9 +22,18 @@ CLASS z2ui5_cl_smpc_app_343 DEFINITION PUBLIC.
     DATA cell6 TYPE ty_s_cell.
 
   PROTECTED SECTION.
+    " one entry of the fragment's shade Select
+    TYPES:
+      BEGIN OF ty_s_shade,
+        key  TYPE string,
+        text TYPE string,
+      END OF ty_s_shade.
+    TYPES ty_t_shade TYPE STANDARD TABLE OF ty_s_shade WITH EMPTY KEY.
+
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
+    METHODS color_select IMPORTING cell TYPE REF TO z2ui5_cl_ui5_view_builder.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -50,14 +59,15 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    " the sample's six BlockLayoutRows. Each cell carries its OWN context
-    " (binding="{/cellN}") and the ColorSelect fragment is inlined into every
-    " one of them - abap2UI5 serves one view, so a core:Fragment reference has
-    " no file to resolve; the relative {COLORSET}/{COLORSHADE} bindings then
-    " resolve against the cell's context exactly like in the original.
+    " the sample's six BlockLayoutRows, one statement per cell. Each bound cell
+    " carries its OWN context (binding="{/cellN}") and hands itself to
+    " color_select( ), which inlines the ColorSelect fragment - abap2UI5 serves
+    " one view, so a core:Fragment reference has no file to resolve; the
+    " relative {COLORSET}/{COLORSHADE} bindings then resolve against the cell's
+    " context exactly like in the original.
     " resources/sample.css is injected through a core:HTML <style> (CSS braces
     " escaped \{ \} so the XMLView parser does not read them as bindings).
-    view->ele( n = `View` ns = `mvc`
+    DATA(layout) = view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -72,528 +82,169 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
                                     `.customCellImageBackground .sapUiBlockCellContent .sapMText\{color:#fff\}</style>`
 
         )->ele( n = `BlockLayout` ns = `l`
-            )->a( n = `id` v = `blockLayout`
+            )->a( n = `id` v = `blockLayout` ).
 
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-1`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell1 ) }\}|
-                    )->a( n = `title`                v = `Select Cells' Custom Color`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
+    " row 1: the colour picker alone
+    DATA(custom_color) = layout->ele( n = `BlockLayoutRow` ns = `l`
+        )->ele( n = `BlockLayoutCell` ns = `l`
+            )->a( n = `id`                   v = `cell-1`
+            )->a( n = `binding`              v = |\{{ client->_bind_path( cell1 ) }\}|
+            )->a( n = `title`                v = `Select Cells' Custom Color`
+            )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+            )->a( n = `backgroundColorShade` v = `{COLORSHADE}` ).
 
-                    )->ele( `VBox`
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Set`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSET}`
+    color_select( custom_color ).
 
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet1`
-                                )->a( n = `text` v = `ColorSet1`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet2`
-                                )->a( n = `text` v = `ColorSet2`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet3`
-                                )->a( n = `text` v = `ColorSet3`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet4`
-                                )->a( n = `text` v = `ColorSet4`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet5`
-                                )->a( n = `text` v = `ColorSet5`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet6`
-                                )->a( n = `text` v = `ColorSet6`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet7`
-                                )->a( n = `text` v = `ColorSet7`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet8`
-                                )->a( n = `text` v = `ColorSet8`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet9`
-                                )->a( n = `text` v = `ColorSet9`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet10`
-                                )->a( n = `text` v = `ColorSet10`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet11`
-                                )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
+    " row 2: the image cell (the one cell without a picker), then the icon cell
+    DATA(row2) = layout->ele( n = `BlockLayoutRow` ns = `l` ).
 
-                        )->end(
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Shade`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSHADE}`
+    row2->ele( n = `BlockLayoutCell` ns = `l`
+        )->a( n = `title`          v = `The Title`
+        )->a( n = `titleAlignment` v = `Center`
+        )->a( n = `class`          v = `customCellImageBackground`
 
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeA`
-                                )->a( n = `text` v = `ShadeA`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeB`
-                                )->a( n = `text` v = `ShadeB`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeC`
-                                )->a( n = `text` v = `ShadeC`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeD`
-                                )->a( n = `text` v = `ShadeD`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeE`
-                                )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeF`
-                                )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
+        )->tag( `Text`
+            )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin.` ).
 
-                        )->end(
-                    )->end(
-                )->end(
-            )->end(
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `title`          v = `The Title`
-                    )->a( n = `titleAlignment` v = `Center`
-                    )->a( n = `class`          v = `customCellImageBackground`
+    DATA(an_icon) = row2->ele( n = `BlockLayoutCell` ns = `l`
+        )->a( n = `id`                   v = `cell-2`
+        )->a( n = `binding`              v = |\{{ client->_bind_path( cell2 ) }\}|
+        )->a( n = `title`                v = `An Icon`
+        )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+        )->a( n = `backgroundColorShade` v = `{COLORSHADE}` ).
 
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin.`
+    color_select( an_icon ).
 
-                )->end(
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-2`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell2 ) }\}|
-                    )->a( n = `title`                v = `An Icon`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
+    an_icon->tag( n = `Icon` ns = `core`
+        )->a( n = `src` v = `sap-icon://add-activity` ).
 
-                    )->ele( `VBox`
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Set`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSET}`
+    " row 3: picker and form share one VBox
+    DATA(simple_form) = layout->ele( n = `BlockLayoutRow` ns = `l`
+        )->ele( n = `BlockLayoutCell` ns = `l`
+            )->a( n = `id`                   v = `cell-3`
+            )->a( n = `binding`              v = |\{{ client->_bind_path( cell3 ) }\}|
+            )->a( n = `title`                v = `Simple Form`
+            )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+            )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
 
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet1`
-                                )->a( n = `text` v = `ColorSet1`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet2`
-                                )->a( n = `text` v = `ColorSet2`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet3`
-                                )->a( n = `text` v = `ColorSet3`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet4`
-                                )->a( n = `text` v = `ColorSet4`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet5`
-                                )->a( n = `text` v = `ColorSet5`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet6`
-                                )->a( n = `text` v = `ColorSet6`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet7`
-                                )->a( n = `text` v = `ColorSet7`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet8`
-                                )->a( n = `text` v = `ColorSet8`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet9`
-                                )->a( n = `text` v = `ColorSet9`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet10`
-                                )->a( n = `text` v = `ColorSet10`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet11`
-                                )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
+            )->ele( `VBox` ).
 
-                        )->end(
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Shade`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSHADE}`
+    color_select( simple_form ).
 
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeA`
-                                )->a( n = `text` v = `ShadeA`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeB`
-                                )->a( n = `text` v = `ShadeB`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeC`
-                                )->a( n = `text` v = `ShadeC`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeD`
-                                )->a( n = `text` v = `ShadeD`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeE`
-                                )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeF`
-                                )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
+    simple_form->ele( n = `SimpleForm` ns = `f`
+        )->a( n = `editable`         v = `true`
+        )->a( n = `backgroundDesign` v = `Transparent`
+        )->a( n = `layout`           v = `ResponsiveGridLayout`
 
-                        )->end(
-                    )->end(
-                    )->tag( n = `Icon` ns = `core`
-                        )->a( n = `src` v = `sap-icon://add-activity`
+        )->tag( `Label`
+            )->a( n = `text` v = `sap.m.Input`
+        )->tag( `Input`
+            )->a( n = `type`        v = `Text`
+            )->a( n = `placeholder` v = `Enter Name ...`
+        )->tag( `Label`
+            )->a( n = `text` v = `sap.m.TextArea`
+        )->tag( `TextArea`
+            )->a( n = `placeholder` v = `Please add your comment...`
+            )->a( n = `rows`        v = `6`
+            )->a( n = `maxLength`   v = `255`
+            )->a( n = `width`       v = `100%`
+        )->tag( `Label`
+            )->a( n = `text` v = `sap.m.Text`
+        )->tag( `Text`
+            )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, faucibus suscipit metus. ` &&
+                                 `Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. Aliquam in sapien sit amet tortor laoreet feugiat id ` &&
+                                 `in ligula.` ).
 
-                )->end(
-            )->end(
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-3`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell3 ) }\}|
-                    )->a( n = `title`                v = `Simple Form`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
+    " rows 4-6: the three title alignments, each over the same text
+    DATA(right_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+        )->ele( n = `BlockLayoutCell` ns = `l`
+            )->a( n = `id`                   v = `cell-4`
+            )->a( n = `binding`              v = |\{{ client->_bind_path( cell4 ) }\}|
+            )->a( n = `title`                v = `Right Aligned Title`
+            )->a( n = `titleAlignment`       v = `Right`
+            )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+            )->a( n = `backgroundColorShade` v = `{COLORSHADE}` ).
 
-                    )->ele( `VBox`
-                        )->ele( `VBox`
-                            )->tag( `Label`
-                                )->a( n = `text` v = `Cell Color Set`
-                            )->ele( `Select`
-                                )->a( n = `selectedKey` v = `{COLORSET}`
+    color_select( right_aligned ).
 
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet1`
-                                    )->a( n = `text` v = `ColorSet1`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet2`
-                                    )->a( n = `text` v = `ColorSet2`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet3`
-                                    )->a( n = `text` v = `ColorSet3`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet4`
-                                    )->a( n = `text` v = `ColorSet4`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet5`
-                                    )->a( n = `text` v = `ColorSet5`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet6`
-                                    )->a( n = `text` v = `ColorSet6`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet7`
-                                    )->a( n = `text` v = `ColorSet7`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet8`
-                                    )->a( n = `text` v = `ColorSet8`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet9`
-                                    )->a( n = `text` v = `ColorSet9`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet10`
-                                    )->a( n = `text` v = `ColorSet10`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ColorSet11`
-                                    )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
+    right_aligned->tag( `Text`
+        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
+                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
+                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
-                            )->end(
-                            )->tag( `Label`
-                                )->a( n = `text` v = `Cell Color Shade`
-                            )->ele( `Select`
-                                )->a( n = `selectedKey` v = `{COLORSHADE}`
+    DATA(left_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+        )->ele( n = `BlockLayoutCell` ns = `l`
+            )->a( n = `id`                   v = `cell-5`
+            )->a( n = `binding`              v = |\{{ client->_bind_path( cell5 ) }\}|
+            )->a( n = `title`                v = `Left Aligned Title`
+            )->a( n = `titleAlignment`       v = `Left`
+            )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+            )->a( n = `backgroundColorShade` v = `{COLORSHADE}` ).
 
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeA`
-                                    )->a( n = `text` v = `ShadeA`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeB`
-                                    )->a( n = `text` v = `ShadeB`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeC`
-                                    )->a( n = `text` v = `ShadeC`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeD`
-                                    )->a( n = `text` v = `ShadeD`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeE`
-                                    )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                                )->tag( n = `Item` ns = `core`
-                                    )->a( n = `key`  v = `ShadeF`
-                                    )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
+    color_select( left_aligned ).
 
-                            )->end(
-                        )->end(
-                        )->ele( n = `SimpleForm` ns = `f`
-                            )->a( n = `editable`         v = `true`
-                            )->a( n = `backgroundDesign` v = `Transparent`
-                            )->a( n = `layout`           v = `ResponsiveGridLayout`
+    left_aligned->tag( `Text`
+        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
+                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
+                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
-                            )->tag( `Label`
-                                )->a( n = `text` v = `sap.m.Input`
-                            )->tag( `Input`
-                                )->a( n = `type`        v = `Text`
-                                )->a( n = `placeholder` v = `Enter Name ...`
-                            )->tag( `Label`
-                                )->a( n = `text` v = `sap.m.TextArea`
-                            )->tag( `TextArea`
-                                )->a( n = `placeholder` v = `Please add your comment...`
-                                )->a( n = `rows`        v = `6`
-                                )->a( n = `maxLength`   v = `255`
-                                )->a( n = `width`       v = `100%`
-                            )->tag( `Label`
-                                )->a( n = `text` v = `sap.m.Text`
-                            )->tag( `Text`
-                                )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, faucibus suscipit metus. ` &&
-                                                     `Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. Aliquam in sapien sit amet tortor laoreet feugiat id ` &&
-                                                     `in ligula.`
+    DATA(default_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+        )->ele( n = `BlockLayoutCell` ns = `l`
+            )->a( n = `id`                   v = `cell-6`
+            )->a( n = `binding`              v = |\{{ client->_bind_path( cell6 ) }\}|
+            )->a( n = `title`                v = `Default Aligned Title`
+            )->a( n = `backgroundColorSet`   v = `{COLORSET}`
+            )->a( n = `backgroundColorShade` v = `{COLORSHADE}` ).
 
-                        )->end(
-                    )->end(
-                )->end(
-            )->end(
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-4`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell4 ) }\}|
-                    )->a( n = `title`                v = `Right Aligned Title`
-                    )->a( n = `titleAlignment`       v = `Right`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
+    color_select( default_aligned ).
 
-                    )->ele( `VBox`
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Set`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSET}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet1`
-                                )->a( n = `text` v = `ColorSet1`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet2`
-                                )->a( n = `text` v = `ColorSet2`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet3`
-                                )->a( n = `text` v = `ColorSet3`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet4`
-                                )->a( n = `text` v = `ColorSet4`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet5`
-                                )->a( n = `text` v = `ColorSet5`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet6`
-                                )->a( n = `text` v = `ColorSet6`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet7`
-                                )->a( n = `text` v = `ColorSet7`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet8`
-                                )->a( n = `text` v = `ColorSet8`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet9`
-                                )->a( n = `text` v = `ColorSet9`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet10`
-                                )->a( n = `text` v = `ColorSet10`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet11`
-                                )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
-
-                        )->end(
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Shade`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSHADE}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeA`
-                                )->a( n = `text` v = `ShadeA`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeB`
-                                )->a( n = `text` v = `ShadeB`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeC`
-                                )->a( n = `text` v = `ShadeC`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeD`
-                                )->a( n = `text` v = `ShadeD`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeE`
-                                )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeF`
-                                )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
-
-                        )->end(
-                    )->end(
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
-                                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
-                                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
-
-                )->end(
-            )->end(
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-5`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell5 ) }\}|
-                    )->a( n = `title`                v = `Left Aligned Title`
-                    )->a( n = `titleAlignment`       v = `Left`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
-
-                    )->ele( `VBox`
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Set`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSET}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet1`
-                                )->a( n = `text` v = `ColorSet1`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet2`
-                                )->a( n = `text` v = `ColorSet2`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet3`
-                                )->a( n = `text` v = `ColorSet3`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet4`
-                                )->a( n = `text` v = `ColorSet4`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet5`
-                                )->a( n = `text` v = `ColorSet5`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet6`
-                                )->a( n = `text` v = `ColorSet6`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet7`
-                                )->a( n = `text` v = `ColorSet7`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet8`
-                                )->a( n = `text` v = `ColorSet8`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet9`
-                                )->a( n = `text` v = `ColorSet9`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet10`
-                                )->a( n = `text` v = `ColorSet10`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet11`
-                                )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
-
-                        )->end(
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Shade`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSHADE}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeA`
-                                )->a( n = `text` v = `ShadeA`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeB`
-                                )->a( n = `text` v = `ShadeB`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeC`
-                                )->a( n = `text` v = `ShadeC`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeD`
-                                )->a( n = `text` v = `ShadeD`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeE`
-                                )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeF`
-                                )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
-
-                        )->end(
-                    )->end(
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
-                                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
-                                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
-
-                )->end(
-            )->end(
-            )->ele( n = `BlockLayoutRow` ns = `l`
-                )->ele( n = `BlockLayoutCell` ns = `l`
-                    )->a( n = `id`                   v = `cell-6`
-                    )->a( n = `binding`              v = |\{{ client->_bind_path( cell6 ) }\}|
-                    )->a( n = `title`                v = `Default Aligned Title`
-                    )->a( n = `backgroundColorSet`   v = `{COLORSET}`
-                    )->a( n = `backgroundColorShade` v = `{COLORSHADE}`
-
-                    )->ele( `VBox`
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Set`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSET}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet1`
-                                )->a( n = `text` v = `ColorSet1`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet2`
-                                )->a( n = `text` v = `ColorSet2`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet3`
-                                )->a( n = `text` v = `ColorSet3`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet4`
-                                )->a( n = `text` v = `ColorSet4`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet5`
-                                )->a( n = `text` v = `ColorSet5`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet6`
-                                )->a( n = `text` v = `ColorSet6`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet7`
-                                )->a( n = `text` v = `ColorSet7`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet8`
-                                )->a( n = `text` v = `ColorSet8`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet9`
-                                )->a( n = `text` v = `ColorSet9`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet10`
-                                )->a( n = `text` v = `ColorSet10`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ColorSet11`
-                                )->a( n = `text` v = `ColorSet11 (transparent in SAP Horizon theme)`
-
-                        )->end(
-                        )->tag( `Label`
-                            )->a( n = `text` v = `Cell Color Shade`
-                        )->ele( `Select`
-                            )->a( n = `selectedKey` v = `{COLORSHADE}`
-
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeA`
-                                )->a( n = `text` v = `ShadeA`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeB`
-                                )->a( n = `text` v = `ShadeB`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeC`
-                                )->a( n = `text` v = `ShadeC`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeD`
-                                )->a( n = `text` v = `ShadeD`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeE`
-                                )->a( n = `text` v = `ShadeE (only available for SAP Quartz and Horizon themes)`
-                            )->tag( n = `Item` ns = `core`
-                                )->a( n = `key`  v = `ShadeF`
-                                )->a( n = `text` v = `ShadeF (only available for SAP Quartz and Horizon themes)`
-
-                        )->end(
-                    )->end(
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
-                                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
-                                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.`
-
-                )->end(
-            )->end( ).
+    default_aligned->tag( `Text`
+        )->a( n = `text` v = `Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam ` &&
+                             `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
+                             `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
     client->view_display( view->stringify( ) ).
+
+  ENDMETHOD.
+
+
+  METHOD color_select.
+
+    " the ColorSelect fragment, inlined into the cell it is given (the original
+    " references it from six cells): a VBox with the two Labels and the two
+    " Selects. The eleven ColorSets are numbered, the last one carrying a theme
+    " note in its text; the six shades A..F likewise, on the last two
+    DATA(vbox) = cell->ele( `VBox` ).
+
+    DATA(colorset) = vbox->tag( `Label`
+        )->a( n = `text` v = `Cell Color Set`
+        )->ele( `Select`
+            )->a( n = `selectedKey` v = `{COLORSET}` ).
+
+    DO 11 TIMES.
+      colorset->tag( n = `Item` ns = `core`
+          )->a( n = `key`  v = |ColorSet{ sy-index }|
+          )->a( n = `text` v = COND #( WHEN sy-index = 11 THEN `ColorSet11 (transparent in SAP Horizon theme)` ELSE |ColorSet{ sy-index }| ) ).
+    ENDDO.
+
+    DATA(colorshade) = vbox->tag( `Label`
+        )->a( n = `text` v = `Cell Color Shade`
+        )->ele( `Select`
+            )->a( n = `selectedKey` v = `{COLORSHADE}` ).
+
+    DATA(t_shades) = VALUE ty_t_shade(
+        ( key = `ShadeA` text = `ShadeA` )
+        ( key = `ShadeB` text = `ShadeB` )
+        ( key = `ShadeC` text = `ShadeC` )
+        ( key = `ShadeD` text = `ShadeD` )
+        ( key = `ShadeE` text = `ShadeE (only available for SAP Quartz and Horizon themes)` )
+        ( key = `ShadeF` text = `ShadeF (only available for SAP Quartz and Horizon themes)` ) ).
+
+    LOOP AT t_shades INTO DATA(shade).
+      colorshade->tag( n = `Item` ns = `core`
+          )->a( n = `key`  v = shade-key
+          )->a( n = `text` v = shade-text ).
+    ENDLOOP.
 
   ENDMETHOD.
 

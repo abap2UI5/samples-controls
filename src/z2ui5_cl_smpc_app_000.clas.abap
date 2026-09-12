@@ -191,8 +191,19 @@ CLASS z2ui5_cl_smpc_app_000 DEFINITION PUBLIC.
         stack    TYPE string VALUE `https://github.com/abap2UI5/samples-stack`,
       END OF cs_url.
 
-    METHODS view_display.
     METHODS on_event.
+    METHODS row_of
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE ty_s_app.
+    METHODS view_display.
+    METHODS derive
+      CHANGING
+        app TYPE ty_s_app.
+    METHODS get_catalog
+      RETURNING
+        VALUE(result) TYPE ty_t_app.
     " The header every abap2UI5 overview app shares - see the class
     " documentation. Keep it in sync with the copies in abap2UI5/samples and
     " abap2UI5/samples-stack.
@@ -231,17 +242,6 @@ CLASS z2ui5_cl_smpc_app_000 DEFINITION PUBLIC.
         val           TYPE string
       RETURNING
         VALUE(result) TYPE abap_bool.
-    METHODS row_of
-      IMPORTING
-        val           TYPE string
-      RETURNING
-        VALUE(result) TYPE ty_s_app.
-    METHODS derive
-      CHANGING
-        app TYPE ty_s_app.
-    METHODS get_catalog
-      RETURNING
-        VALUE(result) TYPE ty_t_app.
     METHODS link_press
       IMPORTING
         url           TYPE string
@@ -9062,8 +9062,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` half is covered from that date; the stylesheet half is still only covered by the render.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.BlockLayout`             name = `BlockLayoutCustomBackgroundPerCell`            class = `z2ui5_cl_smpc_app_343` path = `src/01/02/z2ui5_cl_smpc_app_343.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.34`
         notes = text1 ) ).
 

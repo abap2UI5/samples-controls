@@ -96,8 +96,14 @@ function valueExpr(name, raw) {
 // ---------- emitter ----------
 const IND = (lvl) => ' '.repeat(4 + 4 * lvl);
 
+// the fragments declare sap.ui.layout.form as `f`; the corpus writes it `form`
+// (AGENTS §8, one canonical prefix per namespace - `f` is sap.f). Only the
+// prefix is rewritten: structural-diff resolves it to the namespace URI.
+const CANONICAL_PREFIX = { f: 'form' };
+
 function controlLine(node, lvl) {
-  const [pfx, local] = node.name.includes(':') ? node.name.split(':') : [null, node.name];
+  const [raw, local] = node.name.includes(':') ? node.name.split(':') : [null, node.name];
+  const pfx = raw && (CANONICAL_PREFIX[raw] || raw);
   const verb = node.children.length ? 'ele' : 'tag';
   const args = pfx ? '( n = `' + local + '` ns = `' + pfx + '`' : '( `' + local + '`';
   return { text: IND(lvl) + ')->' + verb + args, verb, isAggregation: /^[a-z]/.test(local) };
@@ -175,7 +181,7 @@ function build(sampleDir, cls) {
   // the namespaces the inlined fragments need
   const rootAttrs = pageView.attrs.filter(([n]) => n !== 'controllerName' && !n.startsWith('xmlns'));
   const ns = [['xmlns:mvc', 'sap.ui.core.mvc'], ['xmlns', 'sap.m'],
-    ['xmlns:l', 'sap.ui.layout'], ['xmlns:f', 'sap.ui.layout.form'], ['xmlns:core', 'sap.ui.core']];
+    ['xmlns:l', 'sap.ui.layout'], ['xmlns:form', 'sap.ui.layout.form'], ['xmlns:core', 'sap.ui.core']];
   const view = { name: 'mvc:View', attrs: [...rootAttrs, ...ns], children: pageView.children.map(clone) };
 
   // wire the three header buttons and inject the visibility flag

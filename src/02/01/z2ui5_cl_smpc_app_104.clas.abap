@@ -13,23 +13,23 @@ CLASS z2ui5_cl_smpc_app_104 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_product,
-        name           TYPE string,
+        name          TYPE string,
         productid     TYPE string,
-        description    TYPE string,
-        category       TYPE string,
+        description   TYPE string,
+        category      TYPE string,
         maincategory  TYPE string,
         suppliername  TYPE string,
-        width          TYPE string,
-        depth          TYPE string,
-        height         TYPE string,
+        width         TYPE string,
+        depth         TYPE string,
+        height        TYPE string,
         dimunit       TYPE string,
         weightmeasure TYPE string,
         weightunit    TYPE string,
-        weight_state   TYPE string,
-        quantity       TYPE string,
-        price          TYPE p LENGTH 8 DECIMALS 2,
+        weight_state  TYPE string,
+        quantity      TYPE string,
+        price         TYPE p LENGTH 8 DECIMALS 2,
         currencycode  TYPE string,
-        selected       TYPE abap_bool,
+        selected      TYPE abap_bool,
       END OF ty_s_product.
     DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA multi_select TYPE abap_bool.

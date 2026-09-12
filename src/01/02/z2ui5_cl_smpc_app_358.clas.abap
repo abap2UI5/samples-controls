@@ -887,7 +887,7 @@ CLASS z2ui5_cl_smpc_app_358 IMPLEMENTATION.
       ( productid = `HT-9999` typecode = `PR` category = `Tablets` name = `Maxi Tablet` namelanguage = `E`
         description = `10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor` descriptionlanguage = `E`
         supplierid = `0100000016` suppliername = `Mexican Oil Trading Company` taxtarifcode = 1 measureunit = `EA` weightmeasure = `3.8` weightunit = `KG` currencycode = `MXN` price = `749.0` width = `0.48` depth = `0.31`
-        height = `0.05` dimunit = `M` createdat = `/Date(1414583899000)/` changedat = `/Date(1414583899000)/` ).
+        height = `0.05` dimunit = `M` createdat = `/Date(1414583899000)/` changedat = `/Date(1414583899000)/` ) ).
 
   ENDMETHOD.
 

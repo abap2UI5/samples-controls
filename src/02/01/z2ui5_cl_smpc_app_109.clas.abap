@@ -14,10 +14,10 @@ CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
 
     TYPES:
       BEGIN OF ty_s_appointment,
-        title      TYPE string,
-        text       TYPE string,
-        type       TYPE string,
-        icon       TYPE string,
+        title     TYPE string,
+        text      TYPE string,
+        type      TYPE string,
+        icon      TYPE string,
         startdate TYPE string,
         enddate   TYPE string,
       END OF ty_s_appointment.

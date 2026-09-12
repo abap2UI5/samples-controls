@@ -1064,7 +1064,9 @@ DSAG Leitfaden, then the samples style. Essentials:
   571's shape, and padding a wrapped block is what carried apps 012/218/358
   past the 75,000-character `statement-too-long` budget on 2026-09-12. The
   headroom rule is `line-headroom`: no code line over 240 characters, 15 short
-  of abaplint's hard 255 (478 lines sat in that band until 2026-09-12); a
+  of abaplint's hard 255 (478 lines sat in that band until 2026-09-12) — the
+  generated `" @summary` / `" @origin` header comments are outside it, their
+  generators clip them at 255 themselves and nothing grows them; a
   chain line repeated over 40 times in one method is `unrolled-chain-repetition`
   (all three pattern-lint). Rows with differing field lists (an optional
   field, a nested child table) have no column to align and are left alone.
