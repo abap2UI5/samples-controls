@@ -1,5 +1,6 @@
 " @keywords modelmapping model mapping sap.uxap boundmodelmapping simpleform title text
 " @summary Use of dynamic bound model mapping
+" @origin sap.uxap.sample.BoundModelMapping - https://sdk.openui5.org/entity/sap.uxap.ModelMapping/sample/sap.uxap.sample.BoundModelMapping (status: reviewed)
 CLASS z2ui5_cl_smpc_app_230 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

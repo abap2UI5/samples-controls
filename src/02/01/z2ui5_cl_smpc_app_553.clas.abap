@@ -1,5 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarwithlegend dynamicsidecontent vbox togglebutton singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview
 " @summary SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control. The calendar also shows the daily working hours.
+" @origin sap.m.sample.SinglePlanningCalendarWithLegend - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarWithLegend (status: generated)
 CLASS z2ui5_cl_smpc_app_553 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

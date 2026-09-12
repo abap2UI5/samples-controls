@@ -1,5 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputcustomfiltering verticallayout label item
 " @summary The default filtering for the suggestionItems aggregation uses is a 'starts with per term' style operator. You can overwrite this with your own custom filter function using the Input control's setFilterFunction method.
+" @origin sap.m.sample.MultiInputCustomFiltering - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputCustomFiltering (status: generated)
 CLASS z2ui5_cl_smpc_app_478 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

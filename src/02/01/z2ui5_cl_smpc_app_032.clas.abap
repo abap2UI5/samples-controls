@@ -1,5 +1,6 @@
 " @keywords input sap.m shows different value state vbox formattedtext link
 " @summary This example shows different input value states.
+" @origin sap.m.sample.InputValueState - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputValueState (status: reviewed)
 CLASS z2ui5_cl_smpc_app_032 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

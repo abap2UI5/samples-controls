@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarrecurringitem vbox title toolbarspacer button planningcalendarrow customdata recurringcalendarappointment
 " @summary PlanningCalendar with recurring calendar items.
+" @origin sap.m.sample.PlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRecurringItem (status: generated)
 CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

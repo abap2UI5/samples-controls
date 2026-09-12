@@ -1,5 +1,6 @@
 " @keywords breadcrumbs sap.m breadcrumbswithcurrentpagelink verticallayout title link
 " @summary Breadcrumbs sample with current page set as aggregation, resulting in a link
+" @origin sap.m.sample.BreadcrumbsWithCurrentPageLink - https://sdk.openui5.org/entity/sap.m.Breadcrumbs/sample/sap.m.sample.BreadcrumbsWithCurrentPageLink (status: reviewed)
 CLASS z2ui5_cl_smpc_app_286 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords carousel sap.m title image
 " @summary A sample of a Carousel that contains images.
+" @origin sap.m.sample.Carousel - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.Carousel (status: reviewed)
 CLASS z2ui5_cl_smpc_app_398 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

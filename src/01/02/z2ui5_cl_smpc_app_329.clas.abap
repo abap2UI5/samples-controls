@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform480 bar button vbox title label text input
 " @summary The same fullscreen address form built with SimpleForm: Edit / Save / Cancel in the page header switch it between display and change mode.
+" @origin sap.ui.layout.sample.SimpleForm480 - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm480 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_329 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

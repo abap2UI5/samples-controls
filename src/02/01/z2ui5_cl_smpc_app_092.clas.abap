@@ -1,5 +1,6 @@
 " @keywords table sap.m automatic pop-in column importance messagestrip slider overflowtoolbar title toolbarspacer label
 " @summary This example demonstrates the automatic pop-in behavior of the table and hiding columns instead of moving them into the pop-in depending on their importance.
+" @origin sap.m.sample.TableAutoPopin - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableAutoPopin (status: reviewed)
 CLASS z2ui5_cl_smpc_app_092 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutwithfullscreenpage dynamicpagetitle title table text columnlistitem objectidentifier
 " @summary Flexible Column Layout as an app with routing that displays different pages in the initial column. The first page is only displayed in OneColumn layout type
+" @origin sap.f.sample.FlexibleColumnLayoutWithFullscreenPage - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutWithFullscreenPage (status: generated)
 CLASS z2ui5_cl_smpc_app_578 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

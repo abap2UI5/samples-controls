@@ -1,5 +1,6 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxcustomfiltering verticallayout label item
 " @summary The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method.
+" @origin sap.m.sample.MultiComboBoxCustomFiltering - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxCustomFiltering (status: generated)
 CLASS z2ui5_cl_smpc_app_481 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

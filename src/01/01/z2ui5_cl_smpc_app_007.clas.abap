@@ -1,5 +1,6 @@
 " @keywords checkbox check box sap.m reflects verticallayout text html
 " @summary In this sample, the CheckBox reflects the selection states of its dependent input fields - selected, not selected, and partially selected.
+" @origin sap.m.sample.CheckBoxTriState - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBoxTriState (status: checked)
 CLASS z2ui5_cl_smpc_app_007 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

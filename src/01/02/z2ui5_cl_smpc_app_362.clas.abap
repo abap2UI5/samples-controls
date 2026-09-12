@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table sorting overflowtoolbar title toolbarspacer button column label text link
 " @summary Example showing the different kinds of sorting capabilities
+" @origin sap.ui.table.sample.Sorting - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Sorting (status: reviewed)
 CLASS z2ui5_cl_smpc_app_362 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

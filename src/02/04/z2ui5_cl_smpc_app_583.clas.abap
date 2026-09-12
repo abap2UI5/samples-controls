@@ -1,5 +1,6 @@
 " @keywords shellbar shell bar sap.f shellbarproductswitch avatar responsivepopover productswitch productswitchitem
 " @summary Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state.
+" @origin sap.f.sample.ShellBarProductSwitch - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarProductSwitch (status: generated)
 CLASS z2ui5_cl_smpc_app_583 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords feedinput feed input sap.m label button dialog text
 " @summary This sample shows a standalone feed input with different settings.
+" @origin sap.m.sample.FeedInput - https://sdk.openui5.org/entity/sap.m.FeedInput/sample/sap.m.sample.FeedInput (status: reviewed)
 CLASS z2ui5_cl_smpc_app_236 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

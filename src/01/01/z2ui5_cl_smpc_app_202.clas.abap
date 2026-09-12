@@ -1,5 +1,6 @@
 " @keywords standardlistitem standard list item sap.m standardlistitemdescription
 " @summary This list item offers a standardized user interface for list content with title and description.
+" @origin sap.m.sample.StandardListItemDescription - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemDescription (status: reviewed)
 CLASS z2ui5_cl_smpc_app_202 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

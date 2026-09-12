@@ -1,5 +1,6 @@
 " @keywords daterangeselection date range selection sap.m daterangeselectionhidden title vbox label button link
 " @summary This example shows Date Range Selection which is opened by another control.
+" @origin sap.m.sample.DateRangeSelectionHidden - https://sdk.openui5.org/entity/sap.m.DateRangeSelection/sample/sap.m.sample.DateRangeSelectionHidden (status: checked)
 CLASS z2ui5_cl_smpc_app_256 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

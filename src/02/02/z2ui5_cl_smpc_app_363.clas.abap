@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table tablefreeze overflowtoolbar title toolbarspacer input button fixed column label text
 " @summary Example which shows table freeze with fixed columns
+" @origin sap.ui.table.sample.TableFreeze - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.TableFreeze (status: reviewed)
 CLASS z2ui5_cl_smpc_app_363 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

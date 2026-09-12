@@ -1,5 +1,6 @@
 " @keywords initialpagepattern initial pattern sap.m selectdialog standardlistitem objectpagelayout objectpagedynamicheadertitle input listitem flexbox vbox
 " @summary The initial page floorplan allows the user to navigate to a single object to view or edit it.
+" @origin sap.m.sample.InitialPagePattern - https://sdk.openui5.org/entity/sap.m.InitialPagePattern/sample/sap.m.sample.InitialPagePattern (status: reviewed)
 CLASS z2ui5_cl_smpc_app_233 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords dialog sap.m dialogmessage verticallayout button text
 " @summary Creating a dialog for showing UI messages. The possible messages types are: 'None', 'Success', 'Warning' and 'Error'.
+" @origin sap.m.sample.DialogMessage - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogMessage (status: checked)
 CLASS z2ui5_cl_smpc_app_273 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

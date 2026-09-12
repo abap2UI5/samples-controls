@@ -1,5 +1,6 @@
 " @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionhiddentitle objectpagelayout objectpageheader objectpagesection simpleform label text
 " @summary Example of a subsection with showTitle property set to false.
+" @origin sap.uxap.sample.ObjectPageSubSectionHiddenTitle - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionHiddenTitle (status: reviewed)
 CLASS z2ui5_cl_smpc_app_245 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

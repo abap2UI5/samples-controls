@@ -1,5 +1,6 @@
 " @keywords blockbase block base sap.uxap objectpageblockbase objectpagelayout objectpageheader objectpageheaderactionbutton objectpagesection objectpagesubsection html text
 " @summary This example shows the different layout of the blocks based on their ColumnLayout.
+" @origin sap.uxap.sample.ObjectPageBlockBase - https://sdk.openui5.org/entity/sap.uxap.BlockBase/sample/sap.uxap.sample.ObjectPageBlockBase (status: reviewed)
 CLASS z2ui5_cl_smpc_app_408 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

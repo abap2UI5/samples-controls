@@ -1,5 +1,6 @@
 " @keywords sap.m standard responsive css classes objectheader objectattribute objectstatus icontabbar icontabfilter simpleform title
 " @summary This page implements the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes.
+" @origin sap.m.sample.PageStandardClasses - https://sdk.openui5.org/entity/sap.m.Page/sample/sap.m.sample.PageStandardClasses (status: reviewed)
 CLASS z2ui5_cl_smpc_app_089 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

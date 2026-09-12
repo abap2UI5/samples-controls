@@ -1,5 +1,6 @@
 " @keywords panel sap.m panelbackgrounddesign verticallayout horizontallayout label select item text messagestrip
 " @summary Panels support different background designs for better visual distinction inside containers. [since rel. 1.150]
+" @origin sap.m.sample.PanelBackgroundDesign - https://sdk.openui5.org/entity/sap.m.Panel/sample/sap.m.sample.PanelBackgroundDesign (status: reviewed)
 CLASS z2ui5_cl_smpc_app_292 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

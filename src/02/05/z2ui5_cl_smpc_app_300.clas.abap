@@ -1,5 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationwrapping vbox button navigationlist navigationlistitem navigationlistgroup dialog label
 " @summary SideNavigation with long texts that wrap.
+" @origin sap.tnt.sample.SideNavigationWrapping - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationWrapping (status: reviewed)
 CLASS z2ui5_cl_smpc_app_300 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

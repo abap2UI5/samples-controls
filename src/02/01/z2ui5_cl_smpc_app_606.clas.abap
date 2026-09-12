@@ -1,5 +1,6 @@
 " @keywords generictile generic tile sap.m generictilelinemode overflowtoolbar toolbarspacer label switch combobox item tilecontent
 " @summary Shows Generic Tile regular and in line mode, and you can switch between the display scope and actions scope for Generic Tiles on a web page.
+" @origin sap.m.sample.GenericTileLineMode - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileLineMode (status: generated)
 CLASS z2ui5_cl_smpc_app_606 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

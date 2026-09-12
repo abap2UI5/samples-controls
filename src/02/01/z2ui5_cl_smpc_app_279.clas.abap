@@ -1,5 +1,6 @@
 " @keywords image sap.m imageerrorwithillustration verticallayout grid vbox button flexitemdata illustratedmessage
 " @summary Handle errors using the sap.m.IllustratedMessage with the error event.
+" @origin sap.m.sample.ImageErrorWithIllustration - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.ImageErrorWithIllustration (status: checked)
 CLASS z2ui5_cl_smpc_app_279 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

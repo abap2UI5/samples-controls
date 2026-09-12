@@ -28,7 +28,17 @@ how to express a control in ABAP? Its sample is already here — or on its way.
 #### Try it in 60 seconds
 
 1. Install [abap2UI5](https://github.com/abap2UI5/abap2UI5).
-2. Pull this repository with [abapGit](https://abapgit.org).
+2. Pull this repository with [abapGit](https://abapgit.org). What arrives:
+   **637 classes in 14 packages** — `src/01` (416 ports, OpenUI5 ≤ 1.71,
+   what every system renders), `src/02` (221 ports that need a UI5 runtime
+   newer than 1.71: they install and activate on any release, and on an
+   older UI5 the newer control simply does not render), and `src/03` (the
+   SAPUI5-only collection, which needs a SAPUI5 bootstrap). ABAP-wise every
+   class is Cloud-ready and runs from NetWeaver 7.02 on, see
+   [Compatibility](#compatibility). There are no per-library branches yet
+   (unlike [samples-stack](https://github.com/abap2UI5/samples-stack), which
+   ships one branch per package) — pulling the whole repository is the one
+   way in, so expect the activation to take a few minutes.
 3. Start **`z2ui5_cl_smpc_app_000`** — every sample in one searchable
    table: each row links the original UI5 sample and its ABAP rebuild, and
    one click starts the app right in your system.

@@ -1,5 +1,6 @@
 " @keywords fixflex fix flex sap.ui.layout fixflexhorizontal html image text
 " @summary Shows a FixFlex control with a horizontal layout.
+" @origin sap.ui.layout.sample.FixFlexHorizontal - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexHorizontal (status: reviewed)
 CLASS z2ui5_cl_smpc_app_219 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

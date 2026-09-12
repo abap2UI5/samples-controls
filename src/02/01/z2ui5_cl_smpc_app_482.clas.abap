@@ -1,5 +1,6 @@
 " @keywords standardlistitem standard list item sap.m standardlistitemnavigated
 " @summary This example demonstrates the navigated property of the list item.
+" @origin sap.m.sample.StandardListItemNavigated - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemNavigated (status: generated)
 CLASS z2ui5_cl_smpc_app_482 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

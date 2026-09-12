@@ -1,5 +1,6 @@
 " @keywords splitter sap.ui.layout splitternested1 app splitterlayoutdata button
 " @summary Nested Splitter example with 7 content areas
+" @origin sap.ui.layout.sample.SplitterNested1 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.SplitterNested1 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_266 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

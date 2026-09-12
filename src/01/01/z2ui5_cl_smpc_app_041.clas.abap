@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m displays objectstatus objectattribute
 " @summary This is a Object Header which displays the basic information about objects similar to the Object List Item. Besides a title and number you can show multiple attributes (on the left) and statuses (on the right).
+" @origin sap.m.sample.ObjectHeader - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeader (status: checked)
 CLASS z2ui5_cl_smpc_app_041 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

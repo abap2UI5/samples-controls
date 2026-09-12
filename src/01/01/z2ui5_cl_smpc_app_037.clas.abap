@@ -1,5 +1,6 @@
 " @keywords messagetoast message toast sap.m displays verticallayout button
 " @summary The Message Toast displays the message text as an overlay to the current screen. It closes automatically after some time without requiring further user interaction.
+" @origin sap.m.sample.MessageToast - https://sdk.openui5.org/entity/sap.m.MessageToast/sample/sap.m.sample.MessageToast (status: reviewed)
 CLASS z2ui5_cl_smpc_app_037 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

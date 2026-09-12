@@ -1,5 +1,6 @@
 " @keywords lightbox light box sap.m image thumbnails opening messagestrip list customlistitem hbox lightboxitem
 " @summary Displays several image thumbnails. Clicking on each of them will open a LightBox.
+" @origin sap.m.sample.LightBox - https://sdk.openui5.org/entity/sap.m.LightBox/sample/sap.m.sample.LightBox (status: reviewed)
 CLASS z2ui5_cl_smpc_app_059 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

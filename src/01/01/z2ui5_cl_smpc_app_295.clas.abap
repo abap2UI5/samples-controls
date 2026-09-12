@@ -1,5 +1,6 @@
 " @keywords viewsettingsdialog settings dialog sap.m viewsettingsdialogcustom viewsettingscustomitem slider verticallayout button
 " @summary You can have custom filters in your View Settings Dialog, as shown in this example here.
+" @origin sap.m.sample.ViewSettingsDialogCustom - https://sdk.openui5.org/entity/sap.m.ViewSettingsDialog/sample/sap.m.sample.ViewSettingsDialogCustom (status: reviewed)
 CLASS z2ui5_cl_smpc_app_295 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

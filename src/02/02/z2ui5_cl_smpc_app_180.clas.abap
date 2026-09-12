@@ -1,5 +1,6 @@
 " @keywords filesize file size sap.ui.model.type typefilesize simpleform label input text
 " @summary This sample explains the formatting options of the FileSize type.
+" @origin sap.ui.core.sample.TypeFileSize - https://sdk.openui5.org/entity/sap.ui.model.type.FileSize/sample/sap.ui.core.sample.TypeFileSize (status: reviewed)
 CLASS z2ui5_cl_smpc_app_180 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

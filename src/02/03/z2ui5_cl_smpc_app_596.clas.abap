@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagetabnavigationmode objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary Object Page sample showing a layout where the navigation is Tab based (one Tab per section) rather than having all of the sections visible at the same time.
+" @origin sap.uxap.sample.ObjectPageTabNavigationMode - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageTabNavigationMode (status: generated)
 CLASS z2ui5_cl_smpc_app_596 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

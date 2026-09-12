@@ -1,5 +1,6 @@
 " @keywords button sap.m buttonwithbadge verticallayout toolbar title badgecustomdata flexbox text stepinput input select
 " @summary Button with a Badge attached
+" @origin sap.m.sample.ButtonWithBadge - https://sdk.openui5.org/entity/sap.m.Button/sample/sap.m.sample.ButtonWithBadge (status: reviewed)
 CLASS z2ui5_cl_smpc_app_249 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

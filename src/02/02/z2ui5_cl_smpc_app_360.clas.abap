@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table selectcopypaste multiselectionplugin fixed busyindicator overflowtoolbar title toolbarspacer select item button
 " @summary Shows cell selection, copy and paste interaction in the table.
+" @origin sap.ui.table.sample.SelectCopyPaste - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.SelectCopyPaste (status: reviewed)
 CLASS z2ui5_cl_smpc_app_360 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

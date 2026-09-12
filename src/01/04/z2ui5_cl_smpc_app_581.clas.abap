@@ -1,5 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistboxcontainerreal toolbar title gridboxlayout vbox flexitemdata label text
 " @summary This is a sample for GridList item templates representing a typical tools page dashboard style.
+" @origin sap.f.sample.GridListBoxContainerReal - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBoxContainerReal (status: generated)
 CLASS z2ui5_cl_smpc_app_581 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

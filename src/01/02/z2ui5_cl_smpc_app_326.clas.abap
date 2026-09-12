@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform354wide bar button vbox label text input griddata
 " @summary Form with one single group in a fullscreen app for long labels and fields, so some more space is available on medium screens (4:7:0).
+" @origin sap.ui.layout.sample.SimpleForm354wide - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm354wide (status: reviewed)
 CLASS z2ui5_cl_smpc_app_326 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

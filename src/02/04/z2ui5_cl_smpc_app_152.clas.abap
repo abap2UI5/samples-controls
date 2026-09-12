@@ -1,5 +1,6 @@
 " @keywords shellbar shell bar sap.f menu button avatar
 " @summary Shell Bar example with a menu button and a plain title.
+" @origin sap.f.sample.ShellBarWithMenuButton - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarWithMenuButton (status: reviewed)
 CLASS z2ui5_cl_smpc_app_152 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

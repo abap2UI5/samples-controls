@@ -1,5 +1,6 @@
 " @keywords infolabel info label sap.tnt dynamicpage dynamicpagetitle title button dynamicpageheader flexbox panel horizontallayout
 " @summary InfoLabel used as subheader in DynamicPage
+" @origin sap.tnt.sample.InfoLabelInDynamicPage - https://sdk.openui5.org/entity/sap.tnt.InfoLabel/sample/sap.tnt.sample.InfoLabelInDynamicPage (status: reviewed)
 CLASS z2ui5_cl_smpc_app_143 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

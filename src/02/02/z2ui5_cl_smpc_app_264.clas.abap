@@ -1,5 +1,6 @@
 " @keywords filter sap.ui.model boundfilters.filterbar table title toolbar label input toolbarspacer button column text
 " @summary This sample shows how bound filters work in a filter bar. As the user enters values, a toolbar with filter inputs instantly filters the customer table. It also demonstrates how to use the filter API to change the bound filters programmatically.
+" @origin sap.ui.core.sample.BoundFilters.FilterBar - https://sdk.openui5.org/entity/sap.ui.model.Filter/sample/sap.ui.core.sample.BoundFilters.FilterBar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_264 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

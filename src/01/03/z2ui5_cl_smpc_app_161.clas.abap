@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpage single objectpageheader objectpagesection objectpagesubsection html
 " @summary Use of implicit static view definition.
+" @origin sap.uxap.sample.SingleView - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.SingleView (status: reviewed)
 CLASS z2ui5_cl_smpc_app_161 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

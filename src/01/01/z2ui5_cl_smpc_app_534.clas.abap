@@ -1,5 +1,6 @@
 " @keywords wizard sap.m wizardcurrentstep navcontainer bar segmentedbutton segmentedbuttonitem label select item wizardstep messagestrip
 " @summary Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard.
+" @origin sap.m.sample.WizardCurrentStep - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardCurrentStep (status: generated)
 CLASS z2ui5_cl_smpc_app_534 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

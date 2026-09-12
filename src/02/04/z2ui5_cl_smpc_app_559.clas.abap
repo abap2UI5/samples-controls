@@ -1,5 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpageanalyticaltable dynamicpagetitle title label overflowtoolbar generictag objectnumber toolbarspacer button
 " @summary Dynamic Page containing an Analytical Table in the content area aligned with the SAP Fiori List Report floorplan.
+" @origin sap.f.sample.DynamicPageAnalyticalTable - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageAnalyticalTable (status: generated)
 CLASS z2ui5_cl_smpc_app_559 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

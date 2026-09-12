@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageresponsiveavatar objectpagedynamicheadertitle breadcrumbs link hbox title objectmarker flexbox
 " @summary ObjectPage sample demonstrating the breakpointChange event to adjust Avatar sizes responsively based on screen size (phone: M, tablet: L, desktop/desktop_XL: XL).
+" @origin sap.uxap.sample.ObjectPageResponsiveAvatar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageResponsiveAvatar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_262 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

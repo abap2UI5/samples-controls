@@ -1,5 +1,6 @@
 " @keywords treetable tree table sap.ui.table treetable.odataannotationstreebinding column label text
 " @summary Illustrates how to bind to data from an OData model using $metadata annotations.
+" @origin sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding - https://sdk.openui5.org/entity/sap.ui.table.TreeTable/sample/sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding (status: reviewed)
 CLASS z2ui5_cl_smpc_app_366 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords sap.ui.core fieldgroup simpleform title label input griddata select item combobox messagestrip toolbar
 " @summary A control's field group id can be used to define a virtual group of fields that should be validated together.
+" @origin sap.ui.core.sample.FieldGroup - https://sdk.openui5.org/entity/sap.ui.core.Control/sample/sap.ui.core.sample.FieldGroup (status: checked)
 CLASS z2ui5_cl_smpc_app_272 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

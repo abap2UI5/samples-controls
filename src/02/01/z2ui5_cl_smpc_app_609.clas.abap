@@ -1,5 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarcreateapp vbox button singleplanningcalendardayview singleplanningcalendarworkweekview singleplanningcalendarweekview calendarappointment
 " @summary This sample demonstrates how the SinglePlanningCalendar control can be used in combination with sap.m.Dialog to create new appointments and sap.m.ResponsivePopover to edit already existing appointments.
+" @origin sap.m.sample.SinglePlanningCalendarCreateApp - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarCreateApp (status: generated)
 CLASS z2ui5_cl_smpc_app_609 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

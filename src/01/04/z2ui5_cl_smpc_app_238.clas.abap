@@ -1,5 +1,6 @@
 " @keywords dynamicpage dynamic sap.f dynamicpagewithstickysubheader dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber
 " @summary Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area.
+" @origin sap.f.sample.DynamicPageWithStickySubheader - https://sdk.openui5.org/entity/sap.f.DynamicPage/sample/sap.f.sample.DynamicPageWithStickySubheader (status: reviewed)
 CLASS z2ui5_cl_smpc_app_238 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

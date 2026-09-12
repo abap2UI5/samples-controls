@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap anchorbar objectpagedynamicheadertitle title objectpagesection objectpagesubsection simpleform label text
 " @summary AnchorBar has a different behavior based on the device
+" @origin sap.uxap.sample.AnchorBar - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.AnchorBar (status: generated)
 CLASS z2ui5_cl_smpc_app_586 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

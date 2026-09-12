@@ -1,5 +1,6 @@
 " @keywords input sap.m inputgrouping verticallayout label item column columnlistitem
 " @summary Items in the Input could be grouped by a property
+" @origin sap.m.sample.InputGrouping - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputGrouping (status: generated)
 CLASS z2ui5_cl_smpc_app_507 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

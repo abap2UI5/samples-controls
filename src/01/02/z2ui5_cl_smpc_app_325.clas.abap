@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform354 bar button vbox label text input griddata
 " @summary Form with one single group in a fullscreen app with a label field ratio of 3:5:4 in all sizes besides size S (12:12:0).
+" @origin sap.ui.layout.sample.SimpleForm354 - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm354 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_325 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

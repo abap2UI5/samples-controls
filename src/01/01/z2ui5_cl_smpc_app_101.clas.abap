@@ -1,5 +1,6 @@
 " @keywords wizard sap.m multi-step product creation navcontainer wizardstep messagestrip text hbox segmentedbutton segmentedbuttonitem
 " @summary The Wizard is useful for breaking down complex tasks into smaller steps.
+" @origin sap.m.sample.Wizard - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.Wizard (status: reviewed)
 CLASS z2ui5_cl_smpc_app_101 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

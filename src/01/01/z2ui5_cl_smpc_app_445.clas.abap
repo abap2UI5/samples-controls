@@ -1,5 +1,6 @@
 " @keywords text sap.m texthyphenation simpleform label switch slider panel title blocklayout blocklayoutrow blocklayoutcell
 " @summary The Text control has a property allowing hyphenation.
+" @origin sap.m.sample.TextHyphenation - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextHyphenation (status: generated)
 CLASS z2ui5_cl_smpc_app_445 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

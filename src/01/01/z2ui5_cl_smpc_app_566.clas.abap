@@ -1,5 +1,6 @@
 " @keywords table sap.m tablebreadcrumb overflowtoolbar toolbarspacer button breadcrumbs link label column text columnlistitem
 " @summary With an InfoToolbar and some crumb logic you can navigate simple hierarchies with a breadcrumb table approach.
+" @origin sap.m.sample.TableBreadcrumb - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableBreadcrumb (status: generated)
 CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

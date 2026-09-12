@@ -1,5 +1,6 @@
 " @keywords table sap.m tablemultiselectmode overflowtoolbar title toolbarspacer searchfield label switch combobox item button
 " @summary This example demonstrates the different multi-selection modes if the table is configured with MultiToggle mode and the sap.m.table.Title control.
+" @origin sap.m.sample.TableMultiSelectMode - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableMultiSelectMode (status: generated)
 CLASS z2ui5_cl_smpc_app_574 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

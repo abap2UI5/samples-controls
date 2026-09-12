@@ -1,5 +1,6 @@
 " @keywords columnlistitem column list item sap.m opa test app product table toolbar title
 " @summary The following example simulates a click on a list item in a table.
+" @origin sap.m.sample.TableTest - https://sdk.openui5.org/entity/sap.m.ColumnListItem/sample/sap.m.sample.TableTest (status: checked)
 CLASS z2ui5_cl_smpc_app_010 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

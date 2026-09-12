@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleformtoolbar vbox toolbar title toolbarspacer button label input
 " @summary A SimpleForm that uses Toolbars as Form header and FormContainer headers.
+" @origin sap.ui.layout.sample.SimpleFormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleFormToolbar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_175 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

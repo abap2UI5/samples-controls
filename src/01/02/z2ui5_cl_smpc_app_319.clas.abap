@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form480_trial bar button vbox title responsivegridlayout formcontainer formelement text link
 " @summary Form with three groups in a three-column layout. On extra large screens a three-column layout (4:8:0) is used; on large and medium screens a two-column layout (4:8:0); on small screens a one-column layout (12:12:0).
+" @origin sap.ui.layout.sample.Form480_Trial - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form480_Trial (status: reviewed)
 CLASS z2ui5_cl_smpc_app_319 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

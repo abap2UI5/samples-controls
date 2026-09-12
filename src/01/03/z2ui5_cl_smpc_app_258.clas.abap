@@ -1,5 +1,6 @@
 " @keywords objectpagedynamicheadertitle object dynamic header title sap.uxap objectpageheaderbackgrounddesign objectpagelayout breadcrumbs link text horizontallayout
 " @summary This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar.
+" @origin sap.uxap.sample.ObjectPageHeaderBackgroundDesign - https://sdk.openui5.org/entity/sap.uxap.ObjectPageDynamicHeaderTitle/sample/sap.uxap.sample.ObjectPageHeaderBackgroundDesign (status: reviewed)
 CLASS z2ui5_cl_smpc_app_258 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

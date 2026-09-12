@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m objectheadercondensed objectattribute
 " @summary The Object Header is shown in condensed mode with title, number, number unit and one attribute.
+" @origin sap.m.sample.ObjectHeaderCondensed - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderCondensed (status: reviewed)
 CLASS z2ui5_cl_smpc_app_201 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

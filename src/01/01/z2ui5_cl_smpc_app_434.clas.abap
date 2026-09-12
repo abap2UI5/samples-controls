@@ -1,5 +1,6 @@
 " @keywords containerpadding container padding sap.ui.core messagestrip button dialog text
 " @summary Apply the CSS class 'sapUiContentPadding' on a UI5 container control to add a default padding of 1rem (16px) around the container content area.
+" @origin sap.m.sample.ContainerPadding - https://sdk.openui5.org/entity/sap.ui.core.ContainerPadding/sample/sap.m.sample.ContainerPadding (status: generated)
 CLASS z2ui5_cl_smpc_app_434 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

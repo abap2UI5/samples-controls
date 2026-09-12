@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m objectheaderresponsiveii objectattribute objectstatus objectmarker icontabbar icontabfilter verticallayout image
 " @summary This is a responsive Object Header with a Title, 2 Statuses/Attributes rendered below the title in a Master/Detail mode (fullScreenOptimized = false).
+" @origin sap.m.sample.ObjectHeaderResponsiveII - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveII (status: generated)
 CLASS z2ui5_cl_smpc_app_513 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

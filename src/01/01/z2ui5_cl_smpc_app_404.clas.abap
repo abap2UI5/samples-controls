@@ -1,5 +1,6 @@
 " @keywords timepicker time picker sap.m timepickervaluestate flexbox vbox label
 " @summary This example shows different TimePicker value states.
+" @origin sap.m.sample.TimePickerValueState - https://sdk.openui5.org/entity/sap.m.TimePicker/sample/sap.m.sample.TimePickerValueState (status: reviewed)
 CLASS z2ui5_cl_smpc_app_404 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

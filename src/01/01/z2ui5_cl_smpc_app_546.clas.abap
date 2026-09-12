@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendardnd vbox title label select item planningcalendarrow calendarappointment
 " @summary PlanningCalendar with draggable appointments. The sample represents three possible roles. If you are logged as an Admin, you can move appointments both within the same row and between different rows without any restrictions.
+" @origin sap.m.sample.PlanningCalendarDnD - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarDnD (status: generated)
 CLASS z2ui5_cl_smpc_app_546 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

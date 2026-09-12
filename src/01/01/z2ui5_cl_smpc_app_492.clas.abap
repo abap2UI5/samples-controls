@@ -1,5 +1,6 @@
 " @keywords list sap.m listgrouping overflowtoolbar title toolbarspacer togglebutton menu menuitem
 " @summary Grouping your items makes it easier for the user to browse and find the desired content. This example also shows the context menu for the items in the List control.
+" @origin sap.m.sample.ListGrouping - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListGrouping (status: generated)
 CLASS z2ui5_cl_smpc_app_492 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

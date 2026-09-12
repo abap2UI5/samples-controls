@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform480_12120dual bar button vbox title label text input
 " @summary Form with two groups, gets a two-column layout whenever possible.
+" @origin sap.ui.layout.sample.SimpleForm480_12120Dual - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm480_12120Dual (status: reviewed)
 CLASS z2ui5_cl_smpc_app_331 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

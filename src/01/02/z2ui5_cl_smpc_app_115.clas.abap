@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table grid overflowtoolbar title column label text input objectstatus currency combobox
 " @summary Basic example showing most controls which are intended to be used inside a table.
+" @origin sap.ui.table.sample.Basic - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Basic (status: reviewed)
 CLASS z2ui5_cl_smpc_app_115 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

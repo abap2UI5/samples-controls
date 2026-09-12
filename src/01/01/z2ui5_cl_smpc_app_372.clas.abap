@@ -1,5 +1,6 @@
 " @keywords text sap.m textmaxlines verticallayout messagestrip
 " @summary The Text control has a property to limit the number of lines for wrapping texts.
+" @origin sap.m.sample.TextMaxLines - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.TextMaxLines (status: reviewed)
 CLASS z2ui5_cl_smpc_app_372 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

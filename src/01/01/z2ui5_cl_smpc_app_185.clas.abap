@@ -1,5 +1,6 @@
 " @keywords whitespacepattern whitespace pattern sap.m messagestrip link form responsivegridlayout formcontainer formelement input listitem
 " @summary Renders whitespaces properly within controls
+" @origin sap.m.sample.WhitespacePattern - https://sdk.openui5.org/entity/sap.m.WhitespacePattern/sample/sap.m.sample.WhitespacePattern (status: reviewed)
 CLASS z2ui5_cl_smpc_app_185 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

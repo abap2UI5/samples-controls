@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m objectheadermarkers objectattribute objectmarker
 " @summary This sample shows the different states of an Object Header, which can be set using the markers.
+" @origin sap.m.sample.ObjectHeaderMarkers - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderMarkers (status: reviewed)
 CLASS z2ui5_cl_smpc_app_197 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

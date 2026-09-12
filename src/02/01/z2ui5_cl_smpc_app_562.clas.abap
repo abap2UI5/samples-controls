@@ -1,5 +1,6 @@
 " @keywords dialog sap.m dialogwithmessagepopover button simpleform title label input columnelementdata select item toolbar
 " @summary Dialog with custom footer and support for message popover.
+" @origin sap.m.sample.DialogWithMessagePopover - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogWithMessagePopover (status: generated)
 CLASS z2ui5_cl_smpc_app_562 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

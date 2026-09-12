@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageformlayout objectpagedynamicheadertitle breadcrumbs link title flexbox avatar text
 " @summary Object Page automatically adjusts form layout to match block column layout
+" @origin sap.uxap.sample.ObjectPageFormLayout - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageFormLayout (status: generated)
 CLASS z2ui5_cl_smpc_app_591 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

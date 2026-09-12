@@ -1,5 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarsnappingheader vbox hbox label select listitem item
 " @summary SinglePlanningCalendar showing the modes for snapping the header part of the calendar.
+" @origin sap.m.sample.SinglePlanningCalendarSnappingHeader - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarSnappingHeader (status: generated)
 CLASS z2ui5_cl_smpc_app_551 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

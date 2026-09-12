@@ -1,5 +1,6 @@
 " @keywords objectattribute object attribute sap.m active attributes customcontent verticallayout label link text dialog
 " @summary This is an example of Object Attribute used standalone.
+" @origin sap.m.sample.ObjectAttributes - https://sdk.openui5.org/entity/sap.m.ObjectAttribute/sample/sap.m.sample.ObjectAttributes (status: reviewed)
 CLASS z2ui5_cl_smpc_app_073 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

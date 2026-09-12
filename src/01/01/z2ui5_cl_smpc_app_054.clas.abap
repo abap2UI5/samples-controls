@@ -1,5 +1,6 @@
 " @keywords tree sap.m displays data hierarchical structure. standardtreeitem
 " @summary Tree displays data in hierarchical structure.
+" @origin sap.m.sample.Tree - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.Tree (status: checked)
 CLASS z2ui5_cl_smpc_app_054 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

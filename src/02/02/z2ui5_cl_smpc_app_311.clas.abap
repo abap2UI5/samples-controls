@@ -1,5 +1,6 @@
 " @keywords menu sap.ui.unified menuselectable vbox button menuitem menuitemgroup
 " @summary Some menu items can be added to groups to allow single or multiple item selection.
+" @origin sap.ui.unified.sample.MenuSelectable - https://sdk.openui5.org/entity/sap.ui.unified.Menu/sample/sap.ui.unified.sample.MenuSelectable (status: reviewed)
 CLASS z2ui5_cl_smpc_app_311 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

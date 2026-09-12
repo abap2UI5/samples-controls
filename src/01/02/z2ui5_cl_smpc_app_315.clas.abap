@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form471 splitcontainer bar button vbox title responsivegridlayout formcontainer formelement text
 " @summary Form with one single group in a split app with a label field ratio of 4:7:1 in all sizes besides size S (12:12:0).
+" @origin sap.ui.layout.sample.Form471 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form471 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_315 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form480 bar button vbox title responsivegridlayout formcontainer formelement text input
 " @summary A fullscreen address form with Edit / Save / Cancel in the page header, switching between a display and a change fragment; ResponsiveGridLayout arranges the columns.
+" @origin sap.ui.layout.sample.Form480 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form480 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_316 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

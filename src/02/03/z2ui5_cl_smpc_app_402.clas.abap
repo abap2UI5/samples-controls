@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagewithheadercontainer objectpagedynamicheadertitle title hbox vbox avatar label button
 " @summary ObjectPage sample with Header Container
+" @origin sap.uxap.sample.ObjectPageWithHeaderContainer - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageWithHeaderContainer (status: reviewed)
 CLASS z2ui5_cl_smpc_app_402 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

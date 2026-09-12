@@ -1,5 +1,6 @@
 " @keywords responsivesplitter responsive splitter sap.ui.layout panecontainer splitpane splitterlayoutdata panel text list standardlistitem vbox
 " @summary ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further agregate other PaneContainers and SplitPanes.
+" @origin sap.ui.layout.sample.ResponsiveSplitter - https://sdk.openui5.org/entity/sap.ui.layout.ResponsiveSplitter/sample/sap.ui.layout.sample.ResponsiveSplitter (status: reviewed)
 CLASS z2ui5_cl_smpc_app_186 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

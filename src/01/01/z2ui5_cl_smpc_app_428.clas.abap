@@ -1,5 +1,6 @@
 " @keywords headercontainer header container sap.m headercontainernodividers numericcontent invisibletext
 " @summary The Header Container without divider lines.
+" @origin sap.m.sample.HeaderContainerNoDividers - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerNoDividers (status: generated)
 CLASS z2ui5_cl_smpc_app_428 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

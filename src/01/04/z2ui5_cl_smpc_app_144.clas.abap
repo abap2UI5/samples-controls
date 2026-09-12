@@ -1,5 +1,6 @@
 " @keywords gridlist grid list sap.f gridboxlayout slider panel toolbar title gridlistitem vbox flexitemdata
 " @summary This layout allows to display same height grid items with configurable width.
+" @origin sap.f.sample.GridListBoxContainer - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListBoxContainer (status: reviewed)
 CLASS z2ui5_cl_smpc_app_144 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

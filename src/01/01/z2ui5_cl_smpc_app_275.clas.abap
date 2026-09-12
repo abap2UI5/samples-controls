@@ -1,5 +1,6 @@
 " @keywords generictile generic tile sap.m generictilestates html tilecontent imagecontent numericcontent feedcontent slidetile newscontent
 " @summary Shows the GenericTile while it is loading, if loading fails, and in disabled status.
+" @origin sap.m.sample.GenericTileStates - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileStates (status: checked)
 CLASS z2ui5_cl_smpc_app_275 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

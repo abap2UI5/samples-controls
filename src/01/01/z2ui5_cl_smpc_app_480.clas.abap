@@ -1,5 +1,6 @@
 " @keywords list sap.m listunread standardlistitem
 " @summary With the Unread Indicator you can highlight new items making it easier for the user to discover them.
+" @origin sap.m.sample.ListUnread - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListUnread (status: generated)
 CLASS z2ui5_cl_smpc_app_480 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
