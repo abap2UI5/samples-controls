@@ -98,6 +98,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
         " so the two are expressions over the two-way bound slider value
         )->tag( `Slider`
             )->a( n = `value` v = client->_bind( slider_value )
+
     )->end( ).
 
     content->tag( `Label` ).
@@ -125,6 +126,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                         )->a( n = `maxWidth`   v = `300px`
                         )->a( n = `shrinkable` v = `true`
                         )->a( n = `priority`   v = `NeverOverflow`
+
                 )->end(
             )->end(
 
@@ -153,9 +155,9 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->a( n = `icon`                 v = `sap-icon://share`
                 )->a( n = `useDefaultActionOnly` v = `true`
                 )->a( n = `defaultAction`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
+                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Default action triggered` ) ) )
                 )->a( n = `beforeMenuOpen`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
+                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `beforeMenuOpen is fired` ) ) )
                 )->ele( `menu`
                     )->ele( `Menu`
                         )->a( n = `itemSelected` v = client->_event( val = `MENU_ACTION` arg = `${$parameters>/item}.getText()` )
@@ -165,6 +167,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                         )->tag( `MenuItem`
                             )->a( n = `text` v = `Export to Excel`
                             )->a( n = `icon` v = `sap-icon://excel-attachment`
+
                     )->end(
                 )->end(
             )->end(
@@ -176,12 +179,14 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
             )->a( n = `width` v = `12em`
             )->tag( `Text`
                 )->a( n = `text` v = `Product`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
             )->a( n = `demandPopin`    v = `true`
             )->tag( `Text`
                 )->a( n = `text` v = `Supplier`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
@@ -189,11 +194,13 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Dimensions`
+
         )->end(
         )->ele( `Column`
             )->a( n = `hAlign` v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Price`
+
         )->end(
     )->end( ).
 
@@ -211,6 +218,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -227,6 +235,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
                         )->a( n = `priority` v = `NeverOverflow`
+
                 )->end(
             )->end(
             )->ele( `Button`
@@ -235,6 +244,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
                         )->a( n = `priority` v = `NeverOverflow`
+
                 )->end(
             )->end(
 
@@ -265,6 +275,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                 )->a( n = `icon`    v = `sap-icon://touch`
                 )->a( n = `pressed` v = client->_bind( toggle_state )
                 )->a( n = `press`   v = client->_event( `TOGGLE` )
+
         )->end(
     )->end( ).
 

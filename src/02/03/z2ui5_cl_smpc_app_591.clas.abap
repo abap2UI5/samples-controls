@@ -61,6 +61,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                 )->a( n = `text`  v = `Page 2 long link`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Page 2 long link clicked` ) ) )
+
                         )->end(
                     )->end(
 
@@ -68,6 +69,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `Denise Smith`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
 
                     )->ele( `snappedHeading`
@@ -80,22 +82,26 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->tag( n = `Title` ns = `m`
                                 )->a( n = `text`     v = `Denise Smith`
                                 )->a( n = `wrapping` v = `true`
+
                         )->end(
                     )->end(
 
                     )->ele( `expandedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `actions`
@@ -113,6 +119,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->a( n = `type`    v = `Transparent`
                             )->a( n = `text`    v = `Share`
                             )->a( n = `tooltip` v = `action`
+
                     )->end(
                 )->end(
             )->end(
@@ -140,6 +147,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src`   v = `https://sdk.openui5.org/test-resources/sap/uxap/images/Twitter.png`
                                 )->a( n = `class` v = `sapUiSmallMarginBegin`
+
                         )->end(
                     )->end(
 
@@ -154,6 +162,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                             )->tag( n = `ProgressIndicator` ns = `m`
                                 )->a( n = `percentValue` v = `30`
                                 )->a( n = `displayValue` v = `30%`
+
                         )->end(
                     )->end(
 
@@ -161,6 +170,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `San Jose, USA`
+
                     )->end(
                 )->end(
             )->end(
@@ -181,6 +191,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
 
                                     )->ele( n = `layout` ns = `forms`
                                         )->tag( n = `ColumnLayout` ns = `forms`
+
                                     )->end(
 
                                     )->ele( n = `formContainers` ns = `forms`
@@ -195,6 +206,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `2096 Mission Street`
+
                                                     )->end(
                                                 )->end(
 
@@ -203,6 +215,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `PO Box 32114`
+
                                                     )->end(
                                                 )->end(
 
@@ -211,6 +224,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `4311 Green Street`
+
                                                     )->end(
                                                 )->end(
 
@@ -219,6 +233,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `PO Box 95493`
+
                                                     )->end(
                                                 )->end(
                                             )->end(
@@ -234,6 +249,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `/DeniseSmith`
+
                                                     )->end(
                                                 )->end(
 
@@ -242,6 +258,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `@DeniseSmith`
+
                                                     )->end(
                                                 )->end(
 
@@ -250,6 +267,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                                     )->ele( n = `fields` ns = `forms`
                                                         )->tag( n = `Text` ns = `m`
                                                             )->a( n = `text` v = `/DenisSmith`
+
                                                     )->end(
                                                 )->end(
                                             )->end(
@@ -306,6 +324,7 @@ CLASS z2ui5_cl_smpc_app_591 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job title`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = `Developer`
+
                                 )->end(
 
                                 " blockcolor:BlockBlue - a bare coloured html:div

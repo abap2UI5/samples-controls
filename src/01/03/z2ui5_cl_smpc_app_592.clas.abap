@@ -62,11 +62,13 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                     )->ele( `heading`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `ObjectPage with LazyLoading without the use of Blocks`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `ObjectPage with LazyLoading without the use of Blocks`
+
                     )->end(
 
                     )->ele( `actions`
@@ -84,6 +86,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                             )->a( n = `type`    v = `Transparent`
                             )->a( n = `text`    v = `Share`
                             )->a( n = `tooltip` v = `action`
+
                     )->end(
                 )->end(
             )->end(
@@ -137,6 +140,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -193,6 +197,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -249,6 +254,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -305,6 +311,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -361,6 +368,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -417,6 +425,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -473,6 +482,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -529,6 +539,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -585,6 +596,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -641,6 +653,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -697,6 +710,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -753,6 +767,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -809,6 +824,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -865,6 +881,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -921,6 +938,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -977,6 +995,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -1033,6 +1052,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -1089,6 +1109,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -1145,6 +1166,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -1201,6 +1223,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(
@@ -1257,6 +1280,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
                                                     )->a( n = `text` v = `Country`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = client->_bind( country )
+
                                             )->end(
                                         )->end(
                                     )->end(

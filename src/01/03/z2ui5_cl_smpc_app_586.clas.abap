@@ -51,10 +51,12 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `AnchorBar sample`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `AnchorBar sample`
+
                     )->end(
                 )->end(
             )->end(
@@ -63,6 +65,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                 )->tag( n = `Title` ns = `m`
                     )->a( n = `text`       v = `This example explains how the Anchor Bar is built based on page content`
                     )->a( n = `titleStyle` v = `H6`
+
             )->end(
 
             )->ele( `sections`
@@ -84,6 +87,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -99,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -108,6 +113,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                     )->a( n = `titleUppercase` v = `false`
                     )->a( n = `id`             v = `section2`
                     )->a( n = `title`          v = `Section 2`
+
                 )->end(
                 )->ele( `ObjectPageSection`
                     )->a( n = `titleUppercase` v = `false`
@@ -127,6 +133,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -150,6 +157,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -173,6 +181,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -196,6 +205,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -219,6 +229,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -240,6 +251,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -261,6 +273,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -282,6 +295,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -303,6 +317,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -324,6 +339,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -345,6 +361,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -366,6 +383,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -387,6 +405,7 @@ CLASS z2ui5_cl_smpc_app_586 IMPLEMENTATION.
                                         )->a( n = `text` v = `Content`
                                     )->tag( n = `Text`  ns = `m`
                                         )->a( n = `text` v = `some content goes here...`
+
                                 )->end(
                             )->end(
                         )->end(

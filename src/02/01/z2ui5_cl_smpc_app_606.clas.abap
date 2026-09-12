@@ -118,6 +118,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{KEY}`
                         )->a( n = `text` v = `{TEXT}`
+
                 )->end(
             )->end(
         )->end(
@@ -146,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `state`        v = `{STATE}`
             )->a( n = `scope`        v = client->_bind( scope )
             )->a( n = `press`        v = client->_event( val   = `TILE_PRESS`
-                                                          t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
+                                                         t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
             )->a( n = `class`        v = `sapUiTinyMarginEnd`
             )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
 
@@ -159,6 +160,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                     )->a( n = `valueColor`  v = `{COLOR}`
                     )->a( n = `indicator`   v = `{TREND}`
                     )->a( n = `scale`       v = `{SCALE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -180,7 +182,8 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                     )->a( n = `linkText`  v = `{LINKTEXT}`
                     )->a( n = `linkHref`  v = `{LINKHREF}`
                     )->a( n = `linkPress` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                         t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Pressed on Link` ) ) )
+                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Pressed on Link` ) ) )
+
             )->end(
         )->end(
     )->end( ).
@@ -196,7 +199,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
         )->a( n = `scope`        v = |\{= ${ client->_bind( scope ) } === 'Actions' ? 'Actions' : 'Display' \}|
         )->a( n = `tooltip`      v = `SlideTile 1`
         )->a( n = `press`        v = client->_event( val   = `SLIDE_PRESS`
-                                                      t_arg = VALUE #( ( `SlideTile 1` ) ( `${$parameters>/action}` ) ) )
+                                                     t_arg = VALUE #( ( `SlideTile 1` ) ( `${$parameters>/action}` ) ) )
         )->a( n = `class`        v = `sapUiTinyMarginEnd`
         )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
 
@@ -207,7 +210,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `tooltip`         v = `{TOOLTIP}`
             )->a( n = `frameType`       v = `TwoByOne`
             )->a( n = `press`           v = client->_event( val   = `TILE_PRESS`
-                                                             t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
+                                                            t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
             )->a( n = `sizeBehavior`    v = client->_bind( size_behavior )
 
             )->ele( `TileContent`
@@ -215,6 +218,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                 )->tag( `NewsContent`
                     )->a( n = `contentText` v = `{CONTENTTEXT}`
                     )->a( n = `subheader`   v = `{SUBTITLE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -225,7 +229,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
         )->a( n = `scope`          v = |\{= ${ client->_bind( scope ) } === 'Actions' ? 'Actions' : 'Display' \}|
         )->a( n = `tooltip`        v = `SlideTile 2`
         )->a( n = `press`          v = client->_event( val   = `SLIDE_PRESS`
-                                                        t_arg = VALUE #( ( `SlideTile 2` ) ( `${$parameters>/action}` ) ) )
+                                                       t_arg = VALUE #( ( `SlideTile 2` ) ( `${$parameters>/action}` ) ) )
         )->a( n = `transitionTime` v = `250`
         )->a( n = `displayTime`    v = `2500`
         )->a( n = `sizeBehavior`   v = client->_bind( size_behavior )
@@ -237,7 +241,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `tooltip`         v = `{TOOLTIP}`
             )->a( n = `frameType`       v = `TwoByOne`
             )->a( n = `press`           v = client->_event( val   = `TILE_PRESS`
-                                                             t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
+                                                            t_arg = VALUE #( ( `${$source>/tooltip}` ) ( `${$parameters>/action}` ) ) )
             )->a( n = `sizeBehavior`    v = client->_bind( size_behavior )
 
             )->ele( `TileContent`
@@ -245,6 +249,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                 )->tag( `NewsContent`
                     )->a( n = `contentText` v = `{CONTENTTEXT}`
                     )->a( n = `subheader`   v = `{SUBTITLE}`
+
             )->end(
         )->end(
     )->end( ).
@@ -263,7 +268,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
             )->a( n = `scope`        v = client->_bind( scope )
             )->a( n = `mode`         v = `LineMode`
             )->a( n = `press`        v = client->_event( val   = `TILE_PRESS`
-                                                          t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
+                                                         t_arg = VALUE #( ( `${$source>/header}` ) ( `${$parameters>/action}` ) ) )
             )->a( n = `sizeBehavior` v = client->_bind( size_behavior )
             )->a( n = `class`        v = `sapUiTinyMarginEnd sapUiTinyMarginBottom`
 
@@ -275,6 +280,7 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                     )->a( n = `valueColor` v = `{COLOR}`
                     )->a( n = `indicator`  v = `{TREND}`
                     )->a( n = `scale`      v = `{SCALE}`
+
             )->end(
         )->end(
     )->end( ).

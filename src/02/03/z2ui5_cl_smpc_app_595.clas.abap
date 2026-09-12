@@ -655,6 +655,7 @@ CLASS z2ui5_cl_smpc_app_595 IMPLEMENTATION.
                                     )->ele( n = `rowMode` ns = `ui`
                                         )->tag( n = `Auto` ns = `uirm`
                                             )->a( n = `minRowCount` v = `2`
+
                                     )->end(
 
                                     )->ele( n = `columns` ns = `ui`
@@ -663,6 +664,7 @@ CLASS z2ui5_cl_smpc_app_595 IMPLEMENTATION.
                                             )->ele( n = `template` ns = `ui`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = `{PRODUCTID}`
+
                                             )->end(
                                         )->end(
                                         )->ele( n = `Column` ns = `ui`
@@ -670,6 +672,7 @@ CLASS z2ui5_cl_smpc_app_595 IMPLEMENTATION.
                                             )->ele( n = `template` ns = `ui`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = `{SUPPLIERNAME}`
+
                                             )->end(
                                         )->end(
                                         )->ele( n = `Column` ns = `ui`
@@ -677,6 +680,7 @@ CLASS z2ui5_cl_smpc_app_595 IMPLEMENTATION.
                                             )->ele( n = `template` ns = `ui`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = `{CATEGORY}`
+
                                             )->end(
                                         )->end(
                                         )->ele( n = `Column` ns = `ui`
@@ -684,6 +688,7 @@ CLASS z2ui5_cl_smpc_app_595 IMPLEMENTATION.
                                             )->ele( n = `template` ns = `ui`
                                                 )->tag( n = `Text` ns = `m`
                                                     )->a( n = `text` v = `{PRICE}`
+
                                             )->end(
                                         )->end(
                                     )->end(

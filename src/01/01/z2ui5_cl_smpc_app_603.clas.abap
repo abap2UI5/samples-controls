@@ -90,6 +90,7 @@ CLASS z2ui5_cl_smpc_app_603 IMPLEMENTATION.
 
         )->tag( `StandardTreeItem`
             )->a( n = `title` v = `{DESCRIPTION}`
+
     )->end( ).
 
     client->view_display( view->stringify( ) ).

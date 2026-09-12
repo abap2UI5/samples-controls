@@ -72,6 +72,7 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text`     v = `Denise Smith`
                             )->a( n = `wrapping` v = `true`
+
                     )->end(
 
                     )->ele( `snappedHeading`
@@ -85,22 +86,26 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                             )->tag( n = `Title` ns = `m`
                                 )->a( n = `text`     v = `Denise Smith`
                                 )->a( n = `wrapping` v = `true`
+
                         )->end(
                     )->end(
 
                     )->ele( `expandedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedContent`
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `Senior UI Developer`
+
                     )->end(
 
                     )->ele( `actions`
@@ -118,8 +123,8 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                             )->a( n = `type`    v = `Transparent`
                             )->a( n = `text`    v = `Share`
                             )->a( n = `tooltip` v = `action`
-                    )->end(
 
+                    )->end(
                 )->end(
             )->end(
 
@@ -145,6 +150,7 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                             )->tag( n = `Image` ns = `m`
                                 )->a( n = `src`   v = `https://sdk.openui5.org/test-resources/sap/uxap/images/Twitter.png`
                                 )->a( n = `class` v = `sapUiSmallMarginBegin`
+
                         )->end(
                     )->end(
 
@@ -159,6 +165,7 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                             )->tag( n = `ProgressIndicator` ns = `m`
                                 )->a( n = `percentValue` v = `30`
                                 )->a( n = `displayValue` v = `30%`
+
                         )->end(
                     )->end(
 
@@ -166,6 +173,7 @@ CLASS z2ui5_cl_smpc_app_587 IMPLEMENTATION.
                         )->a( n = `class` v = `sapUiSmallMarginBeginEnd`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `San Jose, USA`
+
                     )->end(
                 )->end(
             )->end(

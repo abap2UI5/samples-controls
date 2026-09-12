@@ -113,6 +113,7 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
                     )->a( n = `drop`              v = client->_event( val   = `DROP_NODE`
                                                                       t_arg = VALUE #( ( `${$parameters>/draggedControl}.getTitle()` )
                                                                                        ( `${$parameters>/droppedControl}.getTitle()` ) ) )
+
             )->end(
 
             )->tag( `StandardTreeItem`

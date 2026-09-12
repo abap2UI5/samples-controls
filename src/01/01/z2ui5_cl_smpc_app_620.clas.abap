@@ -84,6 +84,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `text` v = `Compact`
             )->tag( `RadioButton`
                 )->a( n = `text` v = `Inherit`
+
         )->end(
     )->end( ).
 
@@ -102,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `text` v = `{TEXT}`
                 )->tag( `Text`
                     )->a( n = `text` v = `{CONTENT}`
+
             )->end(
         )->end(
     )->end( ).
@@ -119,24 +121,28 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `text` v = `Info`
                 )->tag( `Text`
                     )->a( n = `text` v = `Info content goes here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `attachments`
                 )->a( n = `text` v = `Attachments`
                 )->tag( `Text`
                     )->a( n = `text` v = `Attachments go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `notes`
                 )->a( n = `text` v = `Notes`
                 )->tag( `Text`
                     )->a( n = `text` v = `Notes go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `people`
                 )->a( n = `text` v = `People`
                 )->tag( `Text`
                     )->a( n = `text` v = `People content goes here ...`
+
             )->end(
         )->end(
     )->end( ).
@@ -156,6 +162,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `3`
                 )->tag( `Text`
                     )->a( n = `text` v = `Info content goes here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `attachments`
@@ -163,6 +170,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `4321`
                 )->tag( `Text`
                     )->a( n = `text` v = `Attachments go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `notes`
@@ -170,6 +178,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `333`
                 )->tag( `Text`
                     )->a( n = `text` v = `Notes go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `people`
@@ -177,6 +186,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `34`
                 )->tag( `Text`
                     )->a( n = `text` v = `People content goes here ...`
+
             )->end(
         )->end(
     )->end( ).
@@ -195,6 +205,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `3`
                 )->tag( `Text`
                     )->a( n = `text` v = `Info content goes here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `attachments`
@@ -202,6 +213,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `4321`
                 )->tag( `Text`
                     )->a( n = `text` v = `Attachments go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `notes`
@@ -209,6 +221,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `333`
                 )->tag( `Text`
                     )->a( n = `text` v = `Notes go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `people`
@@ -216,6 +229,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `34`
                 )->tag( `Text`
                     )->a( n = `text` v = `People content goes here ...`
+
             )->end(
         )->end(
     )->end( ).
@@ -233,6 +247,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `icon` v = `sap-icon://hint`
                 )->tag( `Text`
                     )->a( n = `text` v = `Info content goes here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `attachments`
@@ -240,6 +255,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `3`
                 )->tag( `Text`
                     )->a( n = `text` v = `Attachments go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `notes`
@@ -247,12 +263,14 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `12`
                 )->tag( `Text`
                     )->a( n = `text` v = `Notes go here ...`
+
             )->end(
             )->ele( `IconTabFilter`
                 )->a( n = `key` v = `people`
                 )->a( n = `icon` v = `sap-icon://group`
                 )->tag( `Text`
                     )->a( n = `text` v = `People content goes here ...`
+
             )->end(
         )->end(
     )->end( ).
@@ -271,6 +289,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `iconColor` v = `Critical`
                 )->tag( `Text`
                     )->a( n = `text` v = `Info content goes here ...`
+
             )->end(
             )->tag( `IconTabSeparator`
                 )->a( n = `icon` v = ``
@@ -281,6 +300,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `3`
                 )->tag( `Text`
                     )->a( n = `text` v = `Attachments go here ...`
+
             )->end(
             )->tag( `IconTabSeparator`
                 )->a( n = `icon` v = `sap-icon://vertical-grip`
@@ -291,6 +311,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `count` v = `12`
                 )->tag( `Text`
                     )->a( n = `text` v = `Notes go here ...`
+
             )->end(
             )->tag( `IconTabSeparator`
                 )->a( n = `icon` v = `sap-icon://process`
@@ -300,6 +321,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `iconColor` v = `Negative`
                 )->tag( `Text`
                     )->a( n = `text` v = `People content goes here ...`
+
             )->end(
         )->end(
     )->end( ).
@@ -321,6 +343,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `design` v = `Horizontal`
                 )->tag( `Text`
                     )->a( n = `text` v = `Filtered items goes here ...`
+
             )->end(
             )->tag( `IconTabSeparator`
                 )->a( n = `icon` v = `sap-icon://open-command-field`
@@ -340,6 +363,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `iconColor` v = `Negative`
                 )->a( n = `count` v = `19 of 123`
                 )->a( n = `design` v = `Horizontal`
+
         )->end(
     )->end( ).
 
@@ -358,6 +382,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `showAll` v = `true`
                 )->tag( `Text`
                     )->a( n = `text` v = `Filtered items goes here ...`
+
             )->end(
             )->tag( `IconTabSeparator`
             )->tag( `IconTabFilter`
@@ -378,6 +403,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `icon` v = `sap-icon://inventory`
                 )->a( n = `iconColor` v = `Negative`
                 )->a( n = `count` v = `19`
+
         )->end(
     )->end( ).
 
@@ -394,6 +420,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
                 )->a( n = `icon` v = `{ICON}`
                 )->tag( `Text`
                     )->a( n = `text` v = `{CONTENT}`
+
             )->end(
         )->end(
     )->end( ).

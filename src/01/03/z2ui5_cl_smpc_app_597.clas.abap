@@ -90,6 +90,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->a( n = `type`    v = `Emphasized`
                             )->a( n = `tooltip` v = `show state`
                             )->a( n = `press`   v = client->_event( `SHOW_STATE` )
+
                     )->end(
                 )->end(
             )->end(
@@ -108,6 +109,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                         )->tag( n = `Link` ns = `m`
                             )->a( n = `text`   v = `LinkedIn`
                             )->a( n = `target` v = `_blank`
+
                     )->end(
                 )->end(
 
@@ -123,6 +125,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                             )->a( n = `text` v = `Personal description (3)`
                         )->tag( n = `Label` ns = `m`
                             )->a( n = `text` v = `Personal description (4)`
+
                     )->end(
                 )->end(
 
@@ -136,6 +139,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `id`   v = `headerRole2`
                         )->a( n = `text` v = `Role Specific info 2`
+
                 )->end(
             )->end(
 
@@ -171,6 +175,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Location`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = client->_bind( emp_location )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -186,13 +191,14 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                     )->a( n = `type`    v = `Transparent`
                                     )->a( n = `tooltip` v = `action`
                                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
                                 )->tag( n = `Button` ns = `m`
                                     )->a( n = `icon`    v = `sap-icon://edit`
                                     )->a( n = `type`    v = `Transparent`
                                     )->a( n = `tooltip` v = `edit`
                                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                    t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `action pressed !` ) ) )
+
                             )->end(
 
                             )->ele( `blocks`
@@ -209,6 +215,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
 
                                 " sample:MultiViewBlock, its Collapsed view
@@ -224,6 +231,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
 
@@ -241,6 +249,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
                         )->end(
@@ -277,6 +286,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Location`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = client->_bind( emp_location )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -301,6 +311,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = client->_bind( emp_job )
+
                                 )->end(
 
                                 " mb:MixedBlock (improvised - see sidecar)
@@ -317,6 +328,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Job`
                                     )->tag( n = `Input` ns = `m`
                                         )->a( n = `value` v = client->_bind( emp_job )
+
                                 )->end(
                             )->end(
 
@@ -334,6 +346,7 @@ CLASS z2ui5_cl_smpc_app_597 IMPLEMENTATION.
                                         )->a( n = `text` v = `Subsidiary`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `SAP France`
+
                                 )->end(
                             )->end(
                         )->end(

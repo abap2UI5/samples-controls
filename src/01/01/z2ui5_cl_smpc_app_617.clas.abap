@@ -107,6 +107,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                 )->a( n = `text` v = `Transparent`
             )->tag( `RadioButton`
                 )->a( n = `text` v = `Translucent`
+
         )->end(
 
         )->tag( `Label`
@@ -121,6 +122,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                 )->a( n = `text` v = `Transparent`
             )->tag( `RadioButton`
                 )->a( n = `text` v = `Translucent`
+
         )->end(
     )->end( ).
 
@@ -158,6 +160,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `count`     v = client->_bind( count_overweight )
             )->a( n = `text`      v = `Overweight`
             )->a( n = `key`       v = `Overweight`
+
     )->end( ).
 
     DATA(table) = bar->ele( `content`
@@ -174,6 +177,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
         )->ele( `OverflowToolbar`
             )->tag( `Label`
                 )->a( n = `text` v = `Wide range of available products`
+
         )->end(
     )->end( ).
 
@@ -182,12 +186,14 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `width` v = `12em`
             )->tag( `Text`
                 )->a( n = `text` v = `Product`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Tablet`
             )->a( n = `demandPopin`    v = `true`
             )->tag( `Text`
                 )->a( n = `text` v = `Supplier`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Desktop`
@@ -195,6 +201,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Dimensions`
+
         )->end(
         )->ele( `Column`
             )->a( n = `minScreenWidth` v = `Desktop`
@@ -202,11 +209,13 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `hAlign`         v = `Center`
             )->tag( `Text`
                 )->a( n = `text` v = `Weight`
+
         )->end(
         )->ele( `Column`
             )->a( n = `hAlign` v = `End`
             )->tag( `Text`
                 )->a( n = `text` v = `Price`
+
         )->end(
     )->end( ).
 
@@ -228,6 +237,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
+
             )->end(
         )->end(
     )->end( ).

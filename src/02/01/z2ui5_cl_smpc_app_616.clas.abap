@@ -70,6 +70,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -85,6 +86,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -101,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
             )->ele( `formattedValueStateText`
                 )->ele( `FormattedText`
@@ -110,7 +113,8 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                             )->a( n = `text`  v = `link`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+
                     )->end(
                 )->end(
             )->end(
@@ -129,6 +133,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 
@@ -144,6 +149,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
             )->ele( `formattedValueStateText`
                 )->ele( `FormattedText`
@@ -153,12 +159,13 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                             )->a( n = `text`  v = `multiple`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
                         )->tag( `Link`
                             )->a( n = `text`  v = `links`
                             )->a( n = `href`  v = ``
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Link in value state pressed` ) ) )
+
                     )->end(
                 )->end(
             )->end(
@@ -176,6 +183,7 @@ CLASS z2ui5_cl_smpc_app_616 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `{KEY}`
                     )->a( n = `text` v = `{TEXT}`
+
             )->end(
         )->end( ).
 

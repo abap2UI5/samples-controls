@@ -99,6 +99,7 @@ CLASS z2ui5_cl_smpc_app_611 IMPLEMENTATION.
                         )->a( n = `endDate`      v = `{ path: 'END_DATE', formatter: 'Formatter.DateAbapDateToDateObject' }`
                         )->a( n = `type`         v = `{TYPE}`
                         )->a( n = `ariaHasPopup` v = `{ARIAHASPOPUP}`
+
                 )->end(
             )->end(
         )->end( ).

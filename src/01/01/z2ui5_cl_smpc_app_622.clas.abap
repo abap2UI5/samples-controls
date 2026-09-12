@@ -86,6 +86,7 @@ CLASS z2ui5_cl_smpc_app_622 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `text`  v = `Submit`
                 )->a( n = `press` v = client->_event( `SUBMIT` )
+
         )->end( ).
 
     client->view_display( view->stringify( ) ).

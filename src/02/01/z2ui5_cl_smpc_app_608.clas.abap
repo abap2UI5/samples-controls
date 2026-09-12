@@ -87,6 +87,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->a( n = `id`     v = `firstSlider`
                 )->a( n = `value`  v = client->_bind( first_ratio )
                 )->a( n = `change` v = client->_event( `RATIO` )
+
         )->end(
 
         )->ele( `HBox`
@@ -99,6 +100,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->a( n = `id`     v = `secondSlider`
                 )->a( n = `value`  v = client->_bind( second_ratio )
                 )->a( n = `change` v = client->_event( `RATIO` )
+
         )->end(
 
         )->ele( `HBox`
@@ -111,6 +113,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Switch`
                 )->a( n = `type`  v = `AcceptReject`
                 )->a( n = `state` v = client->_bind( wrap_items )
+
         )->end(
 
         )->tag( `Title`
@@ -124,6 +127,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `id`   v = `text1`
                 )->a( n = `text` v = client->_bind( ratio_text )
+
         )->end(
 
         )->ele( `HBox`
@@ -133,6 +137,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `id`   v = `text2`
                 )->a( n = `text` v = client->_bind( percentage_text )
+
         )->end(
 
         )->ele( `Select`
@@ -145,6 +150,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `text`           v = `{FIRSTCOLUMNTEXT}`
                     )->a( n = `additionalText` v = `{SECONDCOLUMNTEXT}`
+
             )->end(
         )->end(
     )->end( ).
@@ -175,6 +181,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `key`  v = `VerticalLine`
                     )->a( n = `text` v = `VerticalLine`
+
             )->end(
         )->end(
 
@@ -187,6 +194,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
             )->tag( `Switch`
                 )->a( n = `id`    v = `switchEditable`
                 )->a( n = `state` v = client->_bind( editable )
+
         )->end(
 
         )->tag( `Title`
@@ -204,6 +212,7 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `text`           v = `{FIRSTCOLUMNTEXT}`
                     )->a( n = `additionalText` v = `{SECONDCOLUMNTEXT}`
+
             )->end(
         )->end(
     )->end( ).

@@ -70,21 +70,25 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                 )->ele( `Column`
                     )->tag( `Label`
                         )->a( n = `text` v = `Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Product ID`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Supplier Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `hAlign` v = `End`
                     )->tag( `Label`
                         )->a( n = `text` v = `Price`
+
                 )->end(
             )->end(
 
@@ -99,6 +103,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                                  | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+
                 )->end(
             )->end(
         )->end( ).
@@ -120,24 +125,28 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->a( n = `width` v = `20rem`
                     )->tag( `Label`
                         )->a( n = `text` v = `Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Product ID`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Supplier Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
                     )->a( n = `hAlign` v = `End`
                     )->tag( `Label`
                         )->a( n = `text` v = `Price`
+
                 )->end(
             )->end(
 
@@ -152,6 +161,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                                  | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+
                 )->end(
             )->end(
         )->end( ).
@@ -172,11 +182,13 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->a( n = `width` v = `20rem`
                     )->tag( `Label`
                         )->a( n = `text` v = `Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
                     )->tag( `Label`
                         )->a( n = `text` v = `Product ID`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
@@ -185,6 +197,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->a( n = `demandPopin` v = `true`
                     )->tag( `Label`
                         )->a( n = `text` v = `Supplier Name`
+
                 )->end(
                 )->ele( `Column`
                     )->a( n = `width` v = `10rem`
@@ -193,6 +206,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->a( n = `demandPopin` v = `true`
                     )->tag( `Label`
                         )->a( n = `text` v = `Price`
+
                 )->end(
             )->end(
 
@@ -207,6 +221,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
                                                  | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+
                 )->end(
             )->end(
         )->end( ).

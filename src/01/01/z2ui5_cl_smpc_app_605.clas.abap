@@ -75,6 +75,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                 )->tag( `ObjectAttribute`
                     )->a( n = `title` v = `Manufacturer`
                     )->a( n = `text`  v = client->_bind( suppliername )
+
             )->end(
 
             )->ele( `statuses`
@@ -82,6 +83,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                     )->a( n = `title` v = `Approval`
                     )->a( n = `text`  v = `Pending`
                     )->a( n = `state` v = `Warning`
+
             )->end(
 
             )->ele( `markers`
@@ -89,6 +91,7 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                     )->a( n = `type` v = `Flagged`
                 )->tag( `ObjectMarker`
                     )->a( n = `type` v = `Favorite`
+
             )->end(
 
             )->ele( `headerContainer`
@@ -107,7 +110,8 @@ CLASS z2ui5_cl_smpc_app_605 IMPLEMENTATION.
                             )->a( n = `valueColor` v = `{COLOR}`
                             )->a( n = `indicator`  v = `{GROWTH}`
                             )->a( n = `press`      v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                  t_arg = VALUE #( ( `MESSAGE_BOX` ) ( `alert` ) ( `Link was clicked!` ) ) )
+                                                                                 t_arg = VALUE #( ( `MESSAGE_BOX` ) ( `alert` ) ( `Link was clicked!` ) ) )
+
                     )->end(
                 )->end(
             )->end(

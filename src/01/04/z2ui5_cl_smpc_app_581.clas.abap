@@ -58,6 +58,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->a( n = `height` v = `3rem`
                 )->tag( `Title`
                     )->a( n = `text` v = `Recommended designs for content, used in the GridList`
+
             )->end(
         )->end( ).
 
@@ -79,6 +80,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
         )->ele( n = `customLayout` ns = `f`
             )->tag( n = `GridBoxLayout` ns = `grid`
                 )->a( n = `boxWidth` v = `15rem`
+
         )->end( ).
 
     " first box - the Solid toolbar carries sapContrast on top of the design
@@ -92,6 +94,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->ele( `VBox`
@@ -106,6 +109,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `Text`
                     )->a( n = `text`     v = `A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.`
                     )->a( n = `wrapping` v = `true`
+
             )->end(
 
             )->ele( `OverflowToolbar`
@@ -123,6 +127,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://group-2`
                     )->a( n = `type`    v = `Transparent`
                     )->a( n = `tooltip` v = `Group`
+
             )->end(
         )->end(
     )->end( ).
@@ -137,6 +142,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->ele( `VBox`
@@ -151,6 +157,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `Text`
                     )->a( n = `text`     v = `A great description with useful information about this project.`
                     )->a( n = `wrapping` v = `true`
+
             )->end(
 
             )->ele( `OverflowToolbar`
@@ -167,6 +174,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://group-2`
                     )->a( n = `type`    v = `Transparent`
                     )->a( n = `tooltip` v = `Group`
+
             )->end(
         )->end(
     )->end( ).
@@ -181,6 +189,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->ele( `VBox`
@@ -195,6 +204,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `Text`
                     )->a( n = `text`     v = `A great description with useful information about this project.`
                     )->a( n = `wrapping` v = `true`
+
             )->end(
 
             )->ele( `OverflowToolbar`
@@ -211,6 +221,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://group-2`
                     )->a( n = `type`    v = `Transparent`
                     )->a( n = `tooltip` v = `Group`
+
             )->end(
         )->end(
     )->end( ).
@@ -227,6 +238,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
         )->ele( n = `customLayout` ns = `f`
             )->tag( n = `GridBoxLayout` ns = `grid`
                 )->a( n = `boxWidth` v = `22.5rem`
+
         )->end( ).
 
     list->ele( n = `GridListItem` ns = `f`
@@ -238,6 +250,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->tag( n = `Icon` ns = `core`
@@ -251,6 +264,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `text`     v = `A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.`
                 )->a( n = `wrapping` v = `true`
+
         )->end(
     )->end( ).
 
@@ -263,6 +277,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->tag( n = `Icon` ns = `core`
@@ -276,6 +291,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `text`     v = `A great description with useful information about this project.`
                 )->a( n = `wrapping` v = `true`
+
         )->end(
     )->end( ).
 
@@ -291,6 +307,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
         )->ele( n = `customLayout` ns = `f`
             )->tag( n = `GridBoxLayout` ns = `grid`
                 )->a( n = `boxWidth` v = `17.5rem`
+
         )->end( ).
 
     " first box - icon and ObjectStatus share the head line
@@ -303,6 +320,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->ele( `VBox`
@@ -318,6 +336,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->tag( `ObjectStatus`
                         )->a( n = `text`  v = `Positive Status`
                         )->a( n = `state` v = `Success`
+
                 )->end(
 
                 )->tag( `Title`
@@ -330,6 +349,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `Text`
                     )->a( n = `text`     v = `A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr`
                     )->a( n = `wrapping` v = `true`
+
             )->end(
 
             )->ele( `OverflowToolbar`
@@ -347,6 +367,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://message-information`
                     )->a( n = `type`    v = `Transparent`
                     )->a( n = `tooltip` v = `Information`
+
             )->end(
         )->end(
     )->end( ).
@@ -361,6 +382,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `FlexItemData`
                     )->a( n = `growFactor`   v = `1`
                     )->a( n = `shrinkFactor` v = `0`
+
             )->end(
 
             )->ele( `VBox`
@@ -374,6 +396,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->tag( n = `InfoLabel` ns = `t`
                         )->a( n = `text`        v = `T-Shirt Size M`
                         )->a( n = `colorScheme` v = `4`
+
                 )->end(
 
                 )->tag( `Label`
@@ -383,6 +406,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                 )->tag( `Text`
                     )->a( n = `text`     v = `A great description with useful information about this project.`
                     )->a( n = `wrapping` v = `true`
+
             )->end(
 
             )->ele( `OverflowToolbar`
@@ -400,6 +424,7 @@ CLASS z2ui5_cl_smpc_app_581 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://message-information`
                     )->a( n = `type`    v = `Transparent`
                     )->a( n = `tooltip` v = `Information`
+
             )->end(
         )->end(
     )->end( ).

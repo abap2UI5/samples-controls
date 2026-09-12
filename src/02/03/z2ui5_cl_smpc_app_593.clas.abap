@@ -61,11 +61,13 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
                     )->ele( `heading`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `ObjectPage with LazyLoading`
+
                     )->end(
 
                     )->ele( `snappedTitleOnMobile`
                         )->tag( n = `Title` ns = `m`
                             )->a( n = `text` v = `ObjectPage with LazyLoading`
+
                     )->end(
 
                     )->ele( `actions`
@@ -83,6 +85,7 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
                             )->a( n = `type`    v = `Transparent`
                             )->a( n = `text`    v = `Share`
                             )->a( n = `tooltip` v = `action`
+
                     )->end(
                 )->end(
             )->end(

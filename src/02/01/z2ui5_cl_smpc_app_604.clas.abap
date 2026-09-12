@@ -116,6 +116,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->a( n = `min`   v = `50`
             )->a( n = `step`  v = `25`
             )->a( n = `max`   v = `100`
+
     )->end( ).
 
     page->tag( `Title`
@@ -153,6 +154,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
                         )->a( n = `scrollMode`        v = |\{= ${ client->_bind( scroll_mode ) } \|\| null \}|
                         )->a( n = `responsive`        v = client->_bind( responsive )
                         )->a( n = `minPageWidth`      v = client->_bind( min_page_width )
+
                 )->end(
 
                 )->ele( `pages`
@@ -161,6 +163,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
                         )->a( n = `alt`           v = `{ALT}`
                         )->a( n = `densityAware`  v = `false`
                         )->a( n = `decorative`    v = `false`
+
                 )->end(
             )->end(
         )->end(
@@ -184,6 +187,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->tag( `RadioButton`
                 )->a( n = `text`    v = `PageIndicator`
                 )->a( n = `tooltip` v = `Places the arrows on the sides of the page indicator`
+
         )->end(
 
         )->tag( `Label`
@@ -204,6 +208,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->tag( `RadioButton`
                 )->a( n = `text`    v = `OverContentTop`
                 )->a( n = `tooltip` v = `Places the page indicator over the carousel's content, aligned top`
+
         )->end(
 
         )->tag( `Label`
@@ -221,6 +226,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->tag( `RadioButton`
                 )->a( n = `text`    v = `Transparent`
                 )->a( n = `tooltip` v = `Chooses a Transparent background for the carousel.`
+
         )->end(
 
         )->tag( `Label`
@@ -244,6 +250,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->tag( `RadioButton`
                 )->a( n = `text`    v = `Transparent`
                 )->a( n = `tooltip` v = `Chooses a Transparent background for the page indicator.`
+
         )->end(
 
         )->tag( `Label`
@@ -258,6 +265,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->tag( `RadioButton`
                 )->a( n = `text`    v = `None`
                 )->a( n = `tooltip` v = `Chooses no border for the page indicator.`
+
         )->end(
 
         )->tag( `Label`
@@ -296,6 +304,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
             )->a( n = `type`  v = `Number`
             )->a( n = `value` v = client->_bind( min_page_width )
             )->a( n = `width` v = `320px`
+
     )->end( ).
 
     client->view_display( view->stringify( ) ).

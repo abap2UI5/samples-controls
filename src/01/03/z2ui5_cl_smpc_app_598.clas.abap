@@ -48,6 +48,7 @@ CLASS z2ui5_cl_smpc_app_598 IMPLEMENTATION.
                 )->tag( `ObjectPageHeader`
                     )->a( n = `objectTitle`    v = `Automatic layout of blocks`
                     )->a( n = `objectSubtitle` v = `This example shows how blocks can be laid out automatically by the Object Page when their size is not specified`
+
             )->end(
 
             )->ele( `sections`

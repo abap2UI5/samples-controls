@@ -72,6 +72,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                     )->a( n = `navigationRole`     v = `Navigation`
                     )->a( n = `navigationLabel`    v = `Order navigation`
                     )->a( n = `headerContentLabel` v = `Header Content Label`
+
             )->end(
 
             )->ele( `headerTitle`
@@ -99,6 +100,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                             )->a( n = `hideText` v = `false`
                             )->a( n = `type`     v = `Emphasized`
                             )->a( n = `press`    v = client->_event( `TOGGLE_FOOTER` )
+
                     )->end(
 
                     )->ele( `breadcrumbs`
@@ -114,6 +116,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                 )->a( n = `text`  v = `Page 2 long link`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Page 2 long link clicked` ) ) )
+
                         )->end(
                     )->end(
                 )->end(
@@ -125,6 +128,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                         )->a( n = `text` v = `+33 6 4512 5158`
                     )->tag( n = `Link` ns = `m`
                         )->a( n = `text` v = `DeniseSmith@sap.com`
+
                 )->end(
 
                 )->ele( n = `HorizontalLayout` ns = `layout`
@@ -132,6 +136,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                         )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/linkedin.png`
                     )->tag( n = `Image` ns = `m`
                         )->a( n = `src` v = `https://sdk.openui5.org/test-resources/sap/uxap/images/Twitter.png`
+
                 )->end(
 
                 )->ele( n = `VerticalLayout` ns = `layout`
@@ -147,12 +152,14 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                             )->a( n = `displayValue` v = `30%`
                             )->a( n = `showValue`    v = `true`
                             )->a( n = `state`        v = `None`
+
                     )->end(
                 )->end(
 
                 )->ele( n = `VerticalLayout` ns = `layout`
                     )->tag( n = `Label` ns = `m`
                         )->a( n = `text` v = `San Jose, USA`
+
                 )->end(
             )->end(
 
@@ -194,6 +201,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                         )->a( n = `text`  v = `Hello from a typed view`
                                         )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                         t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Button was presed` ) ) )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -218,6 +226,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                     )->a( n = `text`  v = `Hello from JSON view`
                                     )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                     t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Button was presed` ) ) )
+
                             )->end(
                         )->end(
                     )->end(
@@ -244,6 +253,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                         )->a( n = `text`  v = `Hello from HTML view`
                                         )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                         t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Button was presed` ) ) )
+
                                 )->end(
                             )->end(
                         )->end(
@@ -276,6 +286,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
                                         )->a( n = `text` v = `Mentor junior developers`
                                     )->tag( n = `Text` ns = `m`
                                         )->a( n = `text` v = `Due Dec 31 Cascaded`
+
                                 )->end(
                             )->end(
                         )->end(

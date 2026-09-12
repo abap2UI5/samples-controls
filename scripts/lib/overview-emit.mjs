@@ -532,7 +532,7 @@ CLASS ${CLASS} IMPLEMENTATION.
               )->a( n = \`icon\`    v = \`sap-icon://document-text\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` v = lv_api
+              )->a( n = \`tooltip\` t = lv_api
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
               )->a( n = \`press\`   v = link_press( lv_api ) ).
         ENDIF.
@@ -542,7 +542,7 @@ CLASS ${CLASS} IMPLEMENTATION.
               )->a( n = \`icon\`    v = \`sap-icon://sys-monitor\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` v = lv_ui5
+              )->a( n = \`tooltip\` t = lv_ui5
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
               )->a( n = \`press\`   v = link_press( lv_ui5 ) ).
         ENDIF.
@@ -552,7 +552,7 @@ CLASS ${CLASS} IMPLEMENTATION.
               )->a( n = \`icon\`    v = \`sap-icon://source-code\`
               )->a( n = \`type\`    v = \`Transparent\`
               )->a( n = \`width\`   v = \`100%\`
-              )->a( n = \`tooltip\` v = lv_js
+              )->a( n = \`tooltip\` t = lv_js
               )->a( n = \`class\`   v = \`sapUiTinyMarginBottom\`
               )->a( n = \`press\`   v = link_press( lv_js ) ).
         ENDIF.
@@ -561,7 +561,7 @@ CLASS ${CLASS} IMPLEMENTATION.
             )->a( n = \`icon\`    v = \`sap-icon://syntax\`
             )->a( n = \`type\`    v = \`Transparent\`
             )->a( n = \`width\`   v = \`100%\`
-            )->a( n = \`tooltip\` v = lv_abap
+            )->a( n = \`tooltip\` t = lv_abap
             )->a( n = \`press\`   v = link_press( lv_abap ) ).
 
         " say why the reference links are missing rather than leaving a gap
@@ -602,13 +602,13 @@ CLASS ${CLASS} IMPLEMENTATION.
 
         IF lv_checked IS NOT INITIAL.
           ibox->tag( \`ObjectStatus\`
-              )->a( n = \`text\`  v = lv_checked
+              )->a( n = \`text\`  t = lv_checked
               )->a( n = \`state\` v = \`Success\` ).
         ENDIF.
 
         IF lv_post171 IS NOT INITIAL.
           ibox->tag( \`ObjectStatus\`
-              )->a( n = \`text\`  v = |Needs a UI5 release newer than 1.71: { lv_post171 }|
+              )->a( n = \`text\`  t = |Needs a UI5 release newer than 1.71: { lv_post171 }|
               )->a( n = \`state\` v = \`Warning\`
               )->a( n = \`class\` v = \`sapUiTinyMarginTop\` ).
         ENDIF.
@@ -636,7 +636,7 @@ CLASS ${CLASS} IMPLEMENTATION.
           ENDLOOP.
           lv_html = |{ lv_html }</ul>|.
           ibox->tag( \`FormattedText\`
-              )->a( n = \`htmlText\` v = lv_html ).
+              )->a( n = \`htmlText\` t = lv_html ).
         ENDIF.
 
         client->popover_display( xml = info->stringify( ) by_id = client->get_event_arg( 2 ) ).
@@ -972,7 +972,7 @@ ${catalogStatements}
         )->a( n = \`press\`   v = client->_event_nav_app_leave( ) ).
 
     left->tag( \`Title\`
-        )->a( n = \`text\`  v = title
+        )->a( n = \`text\`  t = title
         )->a( n = \`level\` v = \`H2\` ).
 
     " right: the sample repositories of the abap2UI5 family, one icon each ...
@@ -1031,7 +1031,7 @@ ${catalogStatements}
         )->a( n = \`xmlns:core\` v = \`sap.ui.core\`
 
         )->ele( \`Popover\`
-            )->a( n = \`title\`        v = |{ name } - not installed|
+            )->a( n = \`title\`        t = |{ name } - not installed|
             )->a( n = \`placement\`    v = \`Bottom\`
             )->a( n = \`contentWidth\` v = \`26rem\`
 
@@ -1039,7 +1039,7 @@ ${catalogStatements}
                 )->a( n = \`class\` v = \`sapUiContentPadding\`
 
                 )->tag( \`Text\`
-                    )->a( n = \`text\` v = |This system does not have { name } installed, so there is no app to | &&
+                    )->a( n = \`text\` t = |This system does not have { name } installed, so there is no app to | &&
                                           |jump to. Install the repository with abapGit, then this icon opens it right here.|
                 )->tag( \`Link\`
                     )->a( n = \`text\`   v = href
@@ -1117,21 +1117,21 @@ ${catalogStatements}
                                    ELSE \`sapUiTinyMarginBeginEnd\` ).
 
     toolbar->tag( n = \`Icon\` ns = \`core\`
-        )->a( n = \`src\`     v = icon
+        )->a( n = \`src\`     t = icon
         )->a( n = \`size\`    v = \`1.125rem\`
-        )->a( n = \`class\`   v = css_class
-        )->a( n = \`tooltip\` v = hint ).
+        )->a( n = \`class\`   t = css_class
+        )->a( n = \`tooltip\` t = hint ).
 
     " a( ) writes on the element just added, and an EMPTY attribute would be
     " rendered as one - color="" is not a valid IconColor and press="" is not a
     " valid handler, so the three optional ones are added only when they carry
     " something
     IF class IS NOT INITIAL.
-      toolbar->a( n = \`id\` v = class ).
+      toolbar->a( n = \`id\` t = class ).
     ENDIF.
 
     IF color IS NOT INITIAL.
-      toolbar->a( n = \`color\` v = color ).
+      toolbar->a( n = \`color\` t = color ).
     ENDIF.
 
     IF press IS NOT INITIAL.

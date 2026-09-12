@@ -91,6 +91,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsDragAndDrop`
                         )->a( n = `state` v = client->_bind( enable_dnd )
+
                 )->end(
 
                 )->ele( `VBox`
@@ -101,6 +102,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsResize`
                         )->a( n = `state` v = client->_bind( enable_resize )
+
                 )->end(
 
                 )->ele( `VBox`
@@ -110,6 +112,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `Switch`
                         )->a( n = `id`    v = `enableAppointmentsCreate`
                         )->a( n = `state` v = client->_bind( enable_create )
+
                 )->end(
             )->end(
 
@@ -178,6 +181,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                     )->tag( `SinglePlanningCalendarWeekView`
                         )->a( n = `key`   v = `WeekView`
                         )->a( n = `title` v = `Week`
+
                 )->end(
 
                 )->ele( `appointments`
@@ -188,6 +192,7 @@ CLASS z2ui5_cl_smpc_app_610 IMPLEMENTATION.
                         )->a( n = `icon`      v = `{ICON}`
                         )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                         )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
+
                 )->end(
             )->end(
         )->end( ).
