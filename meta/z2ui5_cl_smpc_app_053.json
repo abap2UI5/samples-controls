@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_053.mjs: the three toolbars boot at 100% and one ArrowLeft on the focused slider handle moves all three widths to 80% through the expression binding with no round trip)"
   },
   "deviations": [
     {

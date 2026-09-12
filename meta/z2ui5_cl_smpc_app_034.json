@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-21",
-    "note": "verified in a running system - human visual check 2026-07-21: the Products list renders all 123 rows with their Quantity counters (display-only app, no interaction to exercise)."
+    "note": "verified in a running system - human visual check 2026-07-21: the Products list renders all 123 rows with their Quantity counters (display-only app, no interaction to exercise). **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_034.mjs: the first rendered row's counter equals the QUANTITY its binding context carries, with a counter per row over the 100 rows the JSONModel sizeLimit yields)"
   },
   "deviations": [
     {

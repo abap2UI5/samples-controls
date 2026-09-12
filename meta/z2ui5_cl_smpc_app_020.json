@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port"
+    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_020.mjs: the element-bound List resolves its four relative DisplayListItem values - Red Point Stores, Main St 1618, 31415 Maintown, Germany - against the serialized model)"
   },
   "deviations": [
     {

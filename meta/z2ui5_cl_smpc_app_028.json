@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-19",
-    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the KPI tiles float left via the injected tileLayout CSS and render like the original."
+    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the KPI tiles float left via the injected tileLayout CSS and render like the original. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_028.mjs: the injected .tileLayout float:left rule applies and clicking the first GenericTile raises the client-composed 'The tile is pressed.' toast)"
   },
   "deviations": [
     {

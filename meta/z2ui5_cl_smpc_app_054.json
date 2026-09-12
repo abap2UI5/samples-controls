@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-19",
-    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the nested-table hierarchy renders as an expandable Tree like the original."
+    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the nested-table hierarchy renders as an expandable Tree like the original. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_054.mjs: the two root nodes render and dispatching the mouse sequence on Node1's expander reveals the nested Node1-1)"
   },
   "deviations": []
 }

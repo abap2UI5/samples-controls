@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-15",
-    "note": "manually verified in a running system - renders and scrolls like the original (see the note below on the flattened image model)."
+    "note": "manually verified in a running system - renders and scrolls like the original (see the note below on the flattened image model). **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_006.mjs: the Carousel renders its five pages, the bound product list on the fourth page fills from the model (>= 100 items, Notebook Basic 15 among them) and ArrowRight on the focused carousel scrolls to the second page)"
   },
   "deviations": [
     {

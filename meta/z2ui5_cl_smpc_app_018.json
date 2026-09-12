@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_018.mjs: DTP2 renders its seeded 2016 value through the DateTime type, and a value typed into DTP1 and committed with Enter round-trips CHANGE so the bound Text reads 'Change - Event 1: DateTimePicker ...DTP1:'. The valueState half rides on the BOOLEAN valid arg and stays with the human check)"
   },
   "deviations": [
     {

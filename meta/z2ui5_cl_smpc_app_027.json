@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port"
+    "note": "verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_027.mjs: ten or more GenericTags render with their ObjectNumber values (3.5M, 96), the situation tags and the valueState Error icon)"
   },
   "deviations": [
     {

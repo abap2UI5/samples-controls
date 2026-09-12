@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-20",
-    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed)"
+    "note": "verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_009.mjs: the rows render in NAME order, the ToggleButton pressed TWICE hides and re-shows the infoToolbar through the !pressed expression, and typing 'Grid Small' into the ComboBox moves the Table popinLayout to GridSmall through the expression binding. The sticky CheckBoxes carry a BOOLEAN selected arg the transpiled runtime delivers as the string 'true', so that leg stays with the human check)"
   },
   "deviations": [
     {

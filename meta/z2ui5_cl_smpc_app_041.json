@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-19",
-    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the element binding {/S_PRODUCT} resolves all relative field bindings incl. the Currency number - the ObjectHeader renders fully populated."
+    "note": "verified in a running system - human visual pass 2026-07-19 over all apps: the element binding {/S_PRODUCT} resolves all relative field bindings incl. the Currency number - the ObjectHeader renders fully populated. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_041.mjs: the element-bound ObjectHeader resolves title, the Currency composite number 956.00 EUR, the three relative attribute texts and both statuses)"
   },
   "deviations": [
     {

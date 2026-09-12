@@ -12,7 +12,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-27",
-    "note": "verified in a running system 2026-07-27 - MessageManager cc: add of app-authored messages reconciled (the REMOVE arm is not exercised by this port - corrected 2026-08-23: t_messages is assigned in one place, always to the same four rows, nothing clears or shrinks it, and the cc control's removal path only runs when a row leaves items or the view is destroyed), MessagePopover shows both sources"
+    "note": "verified in a running system 2026-07-27 - MessageManager cc: add of app-authored messages reconciled (the REMOVE arm is not exercised by this port - corrected 2026-08-23: t_messages is assigned in one place, always to the same four rows, nothing clears or shrinks it, and the cc control's removal path only runs when a row leaves items or the view is destroyed), MessagePopover shows both sources. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_065.mjs: Save round-trips SAVE, the message> model then carries the four authored messages (3 Errors + 1 Warning, read off Messaging.getMessageModel), the footer button shows 4 and the openBy follow-up opens the MessagePopover with the 'Personal, Contact' group)"
   },
   "deviations": [
     {

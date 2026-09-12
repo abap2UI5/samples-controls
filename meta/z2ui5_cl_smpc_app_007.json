@@ -11,7 +11,7 @@
   "status": "checked",
   "checked": {
     "date": "2026-07-15",
-    "note": "manually verified in a running system - the select-all parent checkbox and its tri-state expression bindings behave like the original.; live-checked reference example for: expression bindings, two-way bind, boolean event arg"
+    "note": "manually verified in a running system - the select-all parent checkbox and its tri-state expression bindings behave like the original.; live-checked reference example for: expression bindings, two-way bind, boolean event arg. **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_007.mjs: the parent CheckBox boots selected+partiallySelected from the seeded true/false/true, ticking German clears partiallySelected and unticking all three clears selected - the two expression bindings re-evaluate client-side with no round trip. The PARENT_CLICKED round trip carries a BOOLEAN t_arg the transpiled runtime delivers as the string 'true', so that leg stays with the human check)"
   },
   "deviations": []
 }
