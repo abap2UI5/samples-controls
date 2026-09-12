@@ -8,7 +8,8 @@ import { waitForUi5, ui5All, waitForIdle } from '../../scripts/lib-e2e.mjs';
 
 // runs in the PAGE (stringified), so the wanted page travels as the arg
 const onPage = (suffix) => {
-  const nav = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.App' && !c.bIsDestroyed && c.getDomRef());
+  // the framework hosts the view in an outer sap.m.App of its own — the port's is rootControl
+  const nav = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.App' && c.getId().endsWith('rootControl') && !c.bIsDestroyed && c.getDomRef());
   const cur = nav && nav.getCurrentPage();
   return !!cur && cur.getId().endsWith(suffix);
 };
@@ -42,7 +43,7 @@ export default async (page, expect) => {
   await waitForIdle(page);
   await page.goBack();
   await waitForUi5(page, () => {
-    const nav = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.App' && !c.bIsDestroyed && c.getDomRef());
+    const nav = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.App' && c.getId().endsWith('rootControl') && !c.bIsDestroyed && c.getDomRef());
     const cur = nav && nav.getCurrentPage();
     return !!cur && !cur.getId().endsWith('page-comparison');
   }, 'browser Back (HASH_CHANGED) never brought the NavContainer back to the first page');

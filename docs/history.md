@@ -7,6 +7,87 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-12 — the ecosystem review, implemented: what 622 ports asked of the framework, the linter and themselves
+
+One session, three repositories, one question — with the portable backlog at
+zero, what should this corpus improve? The analysis (three parallel reads:
+the linter's rule catalogue against the corpus, the IMPROVISED/NOTE
+deviations against the framework API, and 25 ports read as sample code)
+became this change. Numbers are the day's tree.
+
+**samples-controls — the corpus.** 173,937 → 161,528 lines under `src/01`
+and `src/02` with every port still rendering what it rendered (`view-gates
+--strict` with the render gate on: 622 ports, 0 failing; structural-diff 0
+undeclared; data-fidelity 0 errors; abaplint standard and cloud 0 issues):
+
+- the 382 standing pattern-lint layout warnings are 0 and the three rules
+  are errors, as is `chain-house-layout`; the warning channel carries signal
+  again;
+- `statement-too-long` (75,000; the kernel limit stays unmeasured, app 012's
+  72k `model_init` is live-verified), `unrolled-chain-repetition` (a 5-line
+  block over 40 times — it counted single lines first and read a form view
+  with 189 Labels as a loop), `types-layout`, `hungarian-prefix` and
+  `line-headroom` (> 240; header comments exempt) hold five §8 sentences
+  that stood unenforced;
+- the unroll pass: app 599's 359 identical Buttons are a `DO` over a
+  sub-handle (2,851 → 264 lines, the view chain 182,335 → under 2,000
+  characters), 592, 593, 263, 588, 594, 596, 620 and 343 the same idiom
+  (343's render proven byte-identical on the transpiled backend); seven
+  uxap/toolbar classes stay unrolled on purpose, their blocks differ;
+- the style sweep: Hungarian prefixes gone (466 `lv_` in 36 ports), one
+  `TYPES` layout (167 vs 140 classes), the retired `{PRODUCT_ID}` bindings
+  migrated, method declarations in implementation order (47), apps 119/120
+  in the corpus blank-line style, one canonical prefix per namespace (`f`
+  was `sap.f` in 46 classes and `sap.ui.layout.form` in 59), src/03 on the
+  port lifecycle names with an `@origin` line, the 26 clipped DESCRIPTs and
+  the status word in every `@origin` line spelled out;
+- `structural-diff` compares controls by namespace URI + local name, so a
+  canonical prefix is fine and a `List` under `xmlns="sap.uxap"` still is
+  not `m:List`;
+- the overview app has a version gate of its own (`check:overview`), its
+  `get_catalog( )` is declared data to the linter, `sap-icon://information`
+  (@1.80) is `message-information` — and the red `chain-format` on main
+  since #191 is green, together with the emitter writing `a( t = )` where
+  #191 had edited the generated class by hand;
+- `z2ui5_cl_smpc_mock=>products( )` holds the ProductCollection once: 58
+  ports project it (`VALUE #( FOR … ( CORRESPONDING #( … ) ) )` — the
+  table-level form does not downport), `HT-####` lines 15,256 → 7,279,
+  data-fidelity compares the provider 1:1 with products.json and each
+  consumer through its projection; 64 carriers stay inline, 27 of them
+  because they type a numeric column as `string` (a decision recorded in
+  STATUS.md);
+- the Form family 312–337 keeps 26 generated classes and loses its
+  thirteen repeated family comments (10,016 → 9,844 lines);
+- 42 `checked` ports without an e2e interaction module get one (the rung
+  with the most claimed verification carried the least proof), each run
+  against the transpiled backend;
+- STATUS.md carries the hold-out set as the generator KPI, and two probes
+  cluster the 1,915 NOTEs by idiom and list every statement over a size
+  (`note-cluster`, `statement-length`).
+
+**abap2UI5/linter 0.7 (unreleased): nine rules**, measured on this corpus
+before shipping — `unused-namespace-declaration` (92 classes, fixable),
+`undefined-css-class` (15), `external-link-without-target` (3),
+`insecure-asset-url` (12), and five promoted out of pattern-lint
+(`unbound-public-attribute`, `default-key-table`, `abapdoc-html-tag`,
+`event-arg-default-index`, `client-handle-capture`); two of the promoted
+ones found what the copies here had missed (a path regex matching inside a
+comment in 557/607, the plain assignment form of a captured handle). The six
+pattern-lint copies stay until the bump that gates them (`scripts/pattern-lint.mjs`
+header). The three real findings are fixed here ahead of it; app 269's
+wikimedia assets are https.
+
+**abap2UI5 — `check_queue_last`** on the event wire: the last event fired
+while a round-trip is in flight is kept and dispatched after the response
+instead of dropped, which is what 48 ports' `liveChange` NOTEs are about
+(app 280 measured `abc` → `a`). Usable here from the pin that carries it.
+
+Not done, on purpose: an app base class (declined 2026-08-11 — the ten-line
+dispatcher is the lesson), a shared helper for the Form family (one chain
+per view, structural-diff per port), and every other framework API the
+analysis proposed — those wait for a maintainer read (`docs/history.md` is
+not where they live; the proposals went to the session's report).
+
 ## 2026-09-12 — the shared ProductCollection exists once, and the Form family's comments say less
 
 Measured before the change: the demo kit's shared `ProductCollection` mock

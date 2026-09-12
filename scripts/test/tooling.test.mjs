@@ -1154,14 +1154,27 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
     r = lint(`" @summary ${'x'.repeat(244)}\n${base}`);
     assert.doesNotMatch(r.out, /line-headroom/, 'a header comment line is outside the rule');
 
-    // unrolled-chain-repetition: the same chain line 41 times in one method warns, 40 do not
-    // (the fixture's xmlns attribute already normalises to the same key, so it counts as one)
-    const rep = (n) => Array.from({ length: n }, () => '                )->a( n = `text` v = `hello`').join('\n');
-    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(40)}\n                )->a( n = \`t\` v = \`h\` ).`));
-    assert.equal(r.code, 0, 'repetition is a warning');
-    assert.match(r.out, /WARN .*\[unrolled-chain-repetition\] view_display: 41 x \)->a\( n = `~` v = `~`/);
-    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${rep(39)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    // unrolled-chain-repetition: the same 5-line BLOCK (values masked, names
+    // kept) 41 times in one method fails, 40 do not - and 41 identical single
+    // lines do not, because a form view with 189 Labels is not an unrolled loop
+    const block = (i) => [
+      '                )->tag( `Button`',
+      '                    )->a( n = `id` v = `btn' + i + '`',
+      '                    )->a( n = `text` v = `Button ' + i + '`',
+      '                    )->a( n = `press` v = `x`',
+      '                    )->a( n = `type` v = `Default`',
+    ].join('\n');
+    const blocks = (n) => Array.from({ length: n }, (_, i) => block(i)).join('\n');
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${blocks(41)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.equal(r.code, 1, 'an unrolled block over the budget fails');
+    assert.match(r.out, /ERROR .*\[unrolled-chain-repetition\] view_display: a 5-line block repeats 41 x/);
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${blocks(40)}\n                )->a( n = \`t\` v = \`h\` ).`));
     assert.ok(!/unrolled-chain-repetition/.test(r.out), '40 is the budget, not over it');
+    // a long run of varied lines (a form view: many controls, no period) stays under the budget
+    const names = ['text', 'tooltip', 'width', 'class', 'visible', 'enabled', 'design'];
+    const varied = (n) => Array.from({ length: n }, (_, i) => '                )->a( n = `' + names[i % names.length] + '` v = `v`').join('\n');
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).', `${varied(120)}\n                )->a( n = \`t\` v = \`h\` ).`));
+    assert.ok(!/unrolled-chain-repetition/.test(r.out), 'varied lines are content, not an unrolled loop');
 
     // statement-too-long: one statement over the budget fails, and the finding names the method
     r = lint(inMain(`    DATA(blob) = \`${'x'.repeat(76000)}\`.`));

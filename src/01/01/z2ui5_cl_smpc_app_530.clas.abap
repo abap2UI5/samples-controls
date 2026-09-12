@@ -233,8 +233,10 @@ CLASS z2ui5_cl_smpc_app_530 IMPLEMENTATION.
 
         )->tag( `MessageStrip`
             )->a( n = `class`    v = `sapUiTinyMargin`
-            )->a( n = `text`     v = `The available priorities for the toolbar items are: AlwaysOverflow, Disappear, Low, High and NeverOverflow. By default the priority of each toolbar item is High. Items with AlwaysOverflow priority remain visible ` &&
-                                     `in the overflow area. Items with NeverOverflow priority remain visible in the toolbar. Items with Disappear, Low and High priority overflow depending on their priority and position in the toolbar. Items with ` &&
+            )->a( n = `text`     v = `The available priorities for the toolbar items are: AlwaysOverflow, Disappear, Low, High and NeverOverflow. By default the ` &&
+                                     `priority of each toolbar item is High. Items with AlwaysOverflow priority remain visible ` &&
+                                     `in the overflow area. Items with NeverOverflow priority remain visible in the toolbar. Items with Disappear, Low and High ` &&
+                                     `priority overflow depending on their priority and position in the toolbar. Items with ` &&
                                      `Disappear priority overflow but they are not displayed in the overflow area.`
             )->a( n = `type`     v = `Information`
             )->a( n = `showIcon` v = `true`
@@ -334,8 +336,10 @@ CLASS z2ui5_cl_smpc_app_530 IMPLEMENTATION.
 
         )->tag( `MessageStrip`
             )->a( n = `class`    v = `sapUiTinyMargin`
-            )->a( n = `text`     v = `Toolbar items can overflow together even if they are on different positions. This is possible using the group property of the OverflowToolbarLayoutData element. By default the group value is 0, which means that ` &&
-                                     `the element does not belong to any group. When two or more elements have the same group value, this means that they belong to the same group. Elements that belong to a group are not allowed to have AlwaysOverflow ` &&
+            )->a( n = `text`     v = `Toolbar items can overflow together even if they are on different positions. This is possible using the group property of the ` &&
+                                     `OverflowToolbarLayoutData element. By default the group value is 0, which means that ` &&
+                                     `the element does not belong to any group. When two or more elements have the same group value, this means that they belong to ` &&
+                                     `the same group. Elements that belong to a group are not allowed to have AlwaysOverflow ` &&
                                      `or NeverOverflow priority.`
             )->a( n = `type`     v = `Information`
             )->a( n = `showIcon` v = `true`
@@ -436,7 +440,8 @@ CLASS z2ui5_cl_smpc_app_530 IMPLEMENTATION.
 
         )->tag( `MessageStrip`
             )->a( n = `class`    v = `sapUiTinyMargin`
-            )->a( n = `text`     v = `Toolbar separators are shown as horizontal lines in the overflow area. If the separator happens to be the first or the last element in the overflow area, it won't be displayed. It is recommended to use the ` &&
+            )->a( n = `text`     v = `Toolbar separators are shown as horizontal lines in the overflow area. If the separator happens to be the first or the last ` &&
+                                     `element in the overflow area, it won't be displayed. It is recommended to use the ` &&
                                      `separator within group, so it won't be left behind in an inappropriate positions.`
             )->a( n = `type`     v = `Information`
             )->a( n = `showIcon` v = `true`

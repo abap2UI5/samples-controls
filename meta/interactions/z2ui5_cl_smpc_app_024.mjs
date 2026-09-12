@@ -19,7 +19,9 @@ export default async (page, expect) => {
   await ta.fill('e2e feed entry');
   const post = page.locator('.sapMFeedIn .sapMBtn').first();
   if (!(await post.count())) throw new Error('the FeedInput rendered no post button');
-  await post.dispatchEvent('click');
+  // the post button keeps a 57x22 box unthemed; a dispatched click does NOT
+  // reach its press (measured 2026-09-12), a real one does
+  await post.click();
   await expect(list.locator('.sapMFeedListItem').first(), 'the posted entry inserted at the top').toContainText('e2e feed entry');
   await expect(list.locator('.sapMFeedListItem').first(), 'the posted entry\'s Reply info').toContainText('Reply');
   const after = await page.locator('.sapMFeedListItem').count();

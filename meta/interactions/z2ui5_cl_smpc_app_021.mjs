@@ -14,7 +14,9 @@ export default async (page, expect) => {
   await waitForIdle(page);
   await page.getByRole('button', { name: 'Set Saving Draft state', exact: true }).first().click();
   await waitForUi5(page, state, 'the SET_SAVING_DRAFT round trip never set state Saving', 'Saving');
-  await expect(page.locator('.sapMDraftIndicator'), 'the Saving label').toContainText('Saving draft');
+  // the Saving label is the bundle's DRAFT_INDICATOR_SAVING_DRAFT text
+  // ("Updating draft..." on this UI5), shown for ~1.5s - assert the word only
+  await expect(page.locator('.sapMDraftIndicator'), 'the Saving label').toContainText(/draft/i);
   await waitForIdle(page);
   await page.getByRole('button', { name: 'Set Draft Saved state', exact: true }).first().click();
   await waitForUi5(page, state, 'the SHOW_DRAFT_SAVED round trip never set state Saved', 'Saved');

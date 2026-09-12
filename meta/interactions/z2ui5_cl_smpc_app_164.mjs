@@ -1,9 +1,11 @@
 // sap.ui.table RowModes: the 123-row set reaches the rows binding, and the
 // footer SegmentedButton's selectedKey shares the rowMode field with the
 // Table's rowMode — picking Auto has to switch the table's row mode with no
-// round trip. The items are icon-only (a zero box unthemed), so the press is
-// dispatched
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+// round trip. At the smoke's viewport the footer OverflowToolbar folds the
+// SegmentedButton into its "Additional Options" popover, where it renders as
+// a Select (the app-247 lesson) — so the mode is picked from that Select's
+// picker
+import { waitForUi5, ui5All, revealInOverflow } from '../../scripts/lib-e2e.mjs';
 
 // runs in the PAGE (stringified), so the wanted mode travels as the arg
 const modeIs = (want) => {
@@ -22,8 +24,9 @@ export default async (page, expect) => {
     return !!b && b.getLength() === 123;
   }, 'the rows binding never carried the 123-row set');
   await waitForUi5(page, modeIs, 'the table did not boot in the seeded Fixed row mode', 'Fixed');
-  const item = page.locator('[id$="rowMode"] li, [id$="rowMode"] .sapMSegBBtn').filter({ has: page.locator('[title="Auto"], [aria-label="Auto"]') }).first();
-  const auto = (await item.count()) ? item : page.locator('[id$="rowMode"] .sapMSegBBtn').nth(1);
-  await auto.dispatchEvent('click');
+  const select = page.locator('[id$="rowMode-select"]').first();
+  await revealInOverflow(page, select);
+  await select.click();
+  await page.locator('.sapMSltPicker').getByText('Auto', { exact: true }).first().click();
   await waitForUi5(page, modeIs, 'picking Auto did not switch the Table rowMode through the shared bound field', 'Auto');
 };

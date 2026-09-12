@@ -74,11 +74,47 @@ same cut AGENTS §10 already makes between the rule and the war story._
   change to a `checked` port RESETS it.
   Two things do reduce the cost of the check without replacing it, and both
   are worth doing first: the e2e interaction modules (see the advisory
-  `validate-meta` prints — 42 of the 59 `checked` ports have none, so the
-  rung with the most claimed verification carries the least automated proof
-  of it), and keeping the sidecar's `checked.note` specific enough that a
-  re-check knows what to re-check. Neither promotes a port; both make a live
-  session shorter.
+  `validate-meta` prints — 42 of the 59 `checked` ports had none until
+  2026-09-12, so the rung with the most claimed verification carried the
+  least automated proof of it; every one of the 42 has a module now, run
+  against the transpiled backend), and keeping the sidecar's `checked.note`
+  specific enough that a re-check knows what to re-check. Neither promotes a
+  port; both make a live session shorter.
+
+- [ ] **48 `liveChange`/`liveSearch` wires are lossy by design of the current
+  pin, and the framework has the flag since 2026-09-12.** Every one of those
+  NOTEs says the same thing: a keystroke typed while a round-trip is in
+  flight is dropped, the backend stays on the last completed value (app 280
+  measured `abc` → `a`). abap2UI5 `check_queue_last` (appended to
+  `ty_s_event_control`, abap2UI5 PR #2736) keeps the LAST event fired during
+  a flight and dispatches it after the response — one round-trip at a time,
+  order kept. When `A2UI5_PIN` moves past that commit: set the flag on the
+  48 wires (grep the NOTEs for "lossy"/"dropped"), retire the NOTE and the
+  artificial typing delay in their interaction modules, and add the idiom to
+  CAPABILITIES.md. Not before — the wire would carry a positional argument
+  the pinned frontend does not read.
+
+- [ ] **64 ports still inline the ProductCollection, 27 of them because they
+  type a numeric column as `string` (2026-09-12).** `z2ui5_cl_smpc_mock`
+  types `price`/`weightmeasure`/`width`… packed, so a port that shows `956`
+  where the packed projection would say `956.00` keeps its own literal (012
+  033 092 094 103 104 170 210 214 215 218 225 238 245 252 298 377 420 454
+  488 505 565 570 571 573 574 576 607 612 613 617 618 619 621). Two ways to
+  close it, both a decision: a string-typed twin of the provider row (the
+  port's own type does the conversion, as today), or retyping those ports
+  to packed — the second changes what they render. The other 37 stay inline
+  for real reasons (demo-only columns, subsets, edited rows, a single
+  record) and are listed in the 2026-09-12 journal entry. App 595 is the
+  same string-typed class and was left by the unroll pass.
+
+- [ ] **`check:shared` in abap2UI5 reports two drifts this repository owns
+  (2026-09-12).** `scripts/check-prose-names.mjs` (#189 made it walk `src/`
+  through `lib/src-tree.mjs`) and the "Metadata" section of AGENTS.md (#190
+  added the `@origin` row) differ from their source copies in abap2UI5
+  (`.github/shared/`); the weekly `sync-shared.yaml` would revert both. The
+  fix belongs upstream, exactly as the standing `check-prose-names` finding
+  above already says for the `docs/` gap — carry the two changes to
+  `.github/shared/` there, then let the sync bring them back.
 
 - [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
   close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,

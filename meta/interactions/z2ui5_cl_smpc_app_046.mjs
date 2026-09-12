@@ -5,7 +5,8 @@ import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await expect(page.locator('.sapMScrollCont').first(), 'the ScrollContainer').toBeVisible();
-  const vertical = await page.locator('.sapMScrollContV').count();
+  // vertical-only renders sapMScrollContVH (the H is the horizontal scroll delegate marker)
+  const vertical = await page.locator('.sapMScrollContV, .sapMScrollContVH').count();
   if (!vertical) throw new Error('the ScrollContainer did not render as a vertical scroller');
   await waitForUi5(page, () => {
     const img = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.Image' && c.getDomRef());

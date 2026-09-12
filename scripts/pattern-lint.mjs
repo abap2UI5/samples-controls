@@ -108,11 +108,22 @@ const SRC = path.join(ROOT, 'src');
  * has to cover. */
 const STATEMENT_BUDGET = 75000;
 
-/* unrolled-chain-repetition: how often the same chain line (backtick literals
- * replaced by a placeholder) may recur inside ONE method before it reads as an
- * unrolled loop - a bound aggregation with one template, or a helper per
- * subtree, is what a repeated subtree wants. 40 is the 2026-09-12 first cut;
- * `)->end(` lines are not counted, they carry no content. */
+/* unrolled-chain-repetition: how often the same BLOCK of chain lines may recur
+ * inside ONE method before it reads as an unrolled loop - a bound aggregation
+ * with one template, a DO/LOOP over a sub-handle (app 520/599), or a helper
+ * per subtree is what a repeated subtree wants. A block is REPEAT_WINDOW
+ * consecutive chain lines with attribute VALUES masked and element and
+ * attribute NAMES kept: counting single lines (the 2026-09-12 first cut, 40)
+ * read a form view with 189 Labels as unrolled, and it is not - 412's blocks
+ * differ in content; 599's 359 Buttons were the same four lines each time.
+ * Measured on the swept corpus (2026-09-12): the largest static list is the
+ * 20 appointment-type core:Items of apps 548/555 (a JS loop upstream, 60
+ * lines here, kept as data) at exactly 40 repeats of a window; the seven
+ * uxap/toolbar classes the unroll pass deliberately left (412, 402, 530,
+ * 401, 261, 595, 620) sit at 22-32; app 599's 359 Buttons sat in the
+ * thousands before it was looped. 40 is therefore the ceiling of what the
+ * corpus writes out by hand, and above it the rule is an error. */
+const REPEAT_WINDOW = 5;
 const REPEAT_BUDGET = 40;
 
 /* line-headroom: abaplint holds a line to 255 characters (`line_length`), and
@@ -439,27 +450,36 @@ const RULES = [
   },
   {
     id: 'unrolled-chain-repetition',
-    level: 'warn',
-    doc: `the same chain line (literals ignored) more than ${REPEAT_BUDGET} times in one method reads as an unrolled loop — bind the repeated subtree to a table with one template, or build it in a helper (AGENTS §8)`,
+    level: 'error',
+    doc: `the same block of ${REPEAT_WINDOW} chain lines (values masked, names kept) more than ${REPEAT_BUDGET} times in one method reads as an unrolled loop — bind the repeated subtree to a table with one template, or loop it over a sub-handle (AGENTS §8, app 520/599)`,
     find(content) {
       const out = [];
       let method = null;
-      let counts = new Map();
+      let lines = [];
+      let first = 0;
       const flush = () => {
-        for (const [key, e] of counts) {
-          if (e.n > REPEAT_BUDGET) out.push({ line: e.first, text: `${method}: ${e.n} x ${key.slice(0, 70)}` });
+        const counts = new Map();
+        for (let i = 0; i + REPEAT_WINDOW <= lines.length; i++) {
+          const key = lines.slice(i, i + REPEAT_WINDOW).map((x) => x.key).join('\n');
+          const e = counts.get(key) || { n: 0, first: lines[i].line };
+          e.n += 1;
+          counts.set(key, e);
         }
-        counts = new Map();
+        let worst = null;
+        for (const e of counts.values()) if (e.n > REPEAT_BUDGET && (!worst || e.n > worst.n)) worst = e;
+        if (worst) out.push({ line: worst.first, text: `${method}: a ${REPEAT_WINDOW}-line block repeats ${worst.n} x` });
+        lines = [];
       };
       content.split('\n').forEach((l, i) => {
         const m = l.match(/^\s*METHOD\s+(\S+?)\s*\.\s*$/);
         if (m) { method = m[1]; return; }
         if (/^\s*ENDMETHOD\s*\./.test(l)) { flush(); method = null; return; }
-        if (!method || !l.includes(')->') || /\)->end\(/.test(l)) return;
-        const key = l.trim().replace(/`(?:``|[^`])*`/g, '`~`');
-        const e = counts.get(key) || { n: 0, first: i + 1 };
-        e.n += 1;
-        counts.set(key, e);
+        if (!method || !l.includes(')->')) return;
+        // mask attribute VALUES (v = / t = / b = and |...| templates), keep names
+        const key = l.trim()
+          .replace(/\b([vtb])\s*=\s*`(?:``|[^`])*`/g, '$1 = `~`')
+          .replace(/\b([vtb])\s*=\s*\|(?:[^|]|\\\|)*\|/g, '$1 = |~|');
+        lines.push({ key, line: i + 1 });
       });
       return out;
     },
