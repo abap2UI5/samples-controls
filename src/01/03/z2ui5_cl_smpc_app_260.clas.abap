@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageheaderexpanded objectpagedynamicheadertitle title text button overflowtoolbarbutton flexbox verticallayout
 " @summary This is an example of an ObjectPage with property alwaysShowContentHeader set to true. In this case the HeaderContent won't snap on a desktop.
+" @origin sap.uxap.sample.ObjectPageHeaderExpanded - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageHeaderExpanded (status: reviewed)
 CLASS z2ui5_cl_smpc_app_260 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

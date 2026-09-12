@@ -1,5 +1,6 @@
 " @keywords objectpageheader object header sap.uxap childobjectpage objectpagelayout objectpageheaderactionbutton breadcrumbs link verticallayout objectstatus text
 " @summary This is an example of an ObjectPage Child page.
+" @origin sap.uxap.sample.ChildObjectPage - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ChildObjectPage (status: reviewed)
 CLASS z2ui5_cl_smpc_app_416 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

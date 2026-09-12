@@ -1,5 +1,6 @@
 " @keywords objectpageheader object header sap.uxap alternativeprofileobjectpageheader objectpagelayout objectpageheaderactionbutton verticallayout link label horizontallayout image
 " @summary This is a different example of ObjectPageHeader hiding the headerTitle area entirely until user scrolls down.
+" @origin sap.uxap.sample.AlternativeProfileObjectPageHeader - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.AlternativeProfileObjectPageHeader (status: reviewed)
 CLASS z2ui5_cl_smpc_app_414 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

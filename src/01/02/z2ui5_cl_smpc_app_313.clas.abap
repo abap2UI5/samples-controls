@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form354wide bar button vbox title responsivegridlayout formcontainer formelement text input
 " @summary Form with one single group in a fullscreen app for long labels and fields, so some more space is available on medium screens (4:7:0).
+" @origin sap.ui.layout.sample.Form354wide - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form354wide (status: reviewed)
 CLASS z2ui5_cl_smpc_app_313 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

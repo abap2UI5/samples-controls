@@ -1,5 +1,6 @@
 " @keywords gridcontainer grid container sap.f scrollcontainer togglebutton panel hbox label switch text gridcontainersettings
 " @summary This sample represents the general usage of GridContainer.
+" @origin sap.f.sample.GridContainer - https://sdk.openui5.org/entity/sap.f.GridContainer/sample/sap.f.sample.GridContainer (status: reviewed)
 CLASS z2ui5_cl_smpc_app_168 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords formattedtext formatted text sap.m html vbox
 " @summary The control can be used for embedding formatted HTML text into your application.
+" @origin sap.m.sample.FormattedText - https://sdk.openui5.org/entity/sap.m.FormattedText/sample/sap.m.sample.FormattedText (status: reviewed)
 CLASS z2ui5_cl_smpc_app_154 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

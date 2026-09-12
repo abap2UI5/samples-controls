@@ -1,5 +1,6 @@
 " @keywords messagestrip message strip sap.m strips formatted text verticallayout link
 " @summary A sample MessageStrip that shows status messages with additional formatting.
+" @origin sap.m.sample.MessageStripWithEnableFormattedText - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.MessageStripWithEnableFormattedText (status: reviewed)
 CLASS z2ui5_cl_smpc_app_062 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

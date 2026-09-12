@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form480_12120 bar button vbox title responsivegridlayout formcontainer formelement text input
 " @summary Form with two groups. On large screens a two-column layout (4:8:0) is used; on medium screens a one-column layout (12:12:0); on small screens also a one-column layout (12:12:0).
+" @origin sap.ui.layout.sample.Form480_12120 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form480_12120 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_317 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

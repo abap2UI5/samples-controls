@@ -1,5 +1,6 @@
 " @keywords tabcontainer tab container sap.m tabcontainermhc navcontainer overflowtoolbar toolbarspacer overflowtoolbarbutton column text columnlistitem
 " @summary Allows detail view / edit in sap.m.TabContainer after selecting items from table.
+" @origin sap.m.sample.TabContainerMHC - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerMHC (status: generated)
 CLASS z2ui5_cl_smpc_app_558 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

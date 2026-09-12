@@ -1,5 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f master-detail table label columnlistitem text button
 " @summary Clicking on a link in a column opens the next column.
+" @origin sap.f.sample.FlexibleColumnLayoutSimple - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutSimple (status: reviewed)
 CLASS z2ui5_cl_smpc_app_234 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords standardmargins standard margins sap.ui.core standardnomargins text objectheader objectstatus objectattribute
 " @summary Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides.
+" @origin sap.m.sample.StandardNoMargins - https://sdk.openui5.org/entity/sap.ui.core.StandardMargins/sample/sap.m.sample.StandardNoMargins (status: generated)
 CLASS z2ui5_cl_smpc_app_500 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

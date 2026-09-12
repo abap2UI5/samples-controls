@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m objectheaderresponsivevi objectattribute objectstatus objectmarker
 " @summary A responsive Object Header whose intro and title are active links to sap.com, with a Currency-typed number, one attribute, a status and two markers.
+" @origin sap.m.sample.ObjectHeaderResponsiveVI - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderResponsiveVI (status: generated)
 CLASS z2ui5_cl_smpc_app_476 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

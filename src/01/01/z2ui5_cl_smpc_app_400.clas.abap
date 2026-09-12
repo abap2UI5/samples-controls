@@ -1,5 +1,6 @@
 " @keywords objectheader object header sap.m objectheadercircleimage objectattribute
 " @summary An Object Header can set shape of the image by using 'imageShape' property. The shapes could be Square (by default) and Circle. Note: This example shows the image inside ObjectHeader with the responsive property set to true.
+" @origin sap.m.sample.ObjectHeaderCircleImage - https://sdk.openui5.org/entity/sap.m.ObjectHeader/sample/sap.m.sample.ObjectHeaderCircleImage (status: reviewed)
 CLASS z2ui5_cl_smpc_app_400 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

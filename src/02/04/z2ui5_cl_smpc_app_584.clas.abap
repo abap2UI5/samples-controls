@@ -1,5 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f shellbarwithflexiblecolumnlayout shellbar menu menuitem avatar dynamicpage dynamicpagetitle
 " @summary Example of Shell Bar in combination with Flexible Column Layout.
+" @origin sap.f.sample.ShellBarWithFlexibleColumnLayout - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.ShellBarWithFlexibleColumnLayout (status: generated)
 CLASS z2ui5_cl_smpc_app_584 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

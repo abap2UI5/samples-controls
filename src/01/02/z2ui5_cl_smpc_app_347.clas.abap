@@ -1,5 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridgap html slider panel overflowtoolbar title text simpleform label input
 " @summary Example of setting the gridGap property and using of Layout Data.
+" @origin sap.ui.layout.sample.GridGap - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridGap (status: reviewed)
 CLASS z2ui5_cl_smpc_app_347 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

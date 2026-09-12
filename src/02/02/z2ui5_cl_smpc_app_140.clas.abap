@@ -1,5 +1,6 @@
 " @keywords blocklayout block layout sap.ui.layout backgrounds html vbox hbox label select item blocklayoutrow
 " @summary Block Layout in which all cells use the same background color set and different color shade.
+" @origin sap.ui.layout.sample.BlockLayoutCustomBackground - https://sdk.openui5.org/entity/sap.ui.layout.BlockLayout/sample/sap.ui.layout.sample.BlockLayoutCustomBackground (status: checked)
 CLASS z2ui5_cl_smpc_app_140 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

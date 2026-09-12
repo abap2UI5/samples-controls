@@ -1,5 +1,6 @@
 " @keywords wizard sap.m wizardbranching navcontainer wizardstep objectheader objectattribute list standardlistitem text hbox segmentedbutton
 " @summary The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one.
+" @origin sap.m.sample.WizardBranching - https://sdk.openui5.org/entity/sap.m.Wizard/sample/sap.m.sample.WizardBranching (status: generated)
 CLASS z2ui5_cl_smpc_app_535 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

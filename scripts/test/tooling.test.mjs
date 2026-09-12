@@ -270,9 +270,12 @@ test('abap-scope: a path in neither list, and an empty list, run the downport', 
  * the property is about THESE ports and this emitter, not about a fixture, and
  * a fixture would only prove the emitter reproduces itself. 1.7 s for the set.
  *
- * The first two lines are excluded because the emitter deliberately does not
- * write them: `npm run keywords` and `npm run summary` own `" @keywords` and
- * `" @summary`, and two generators writing one file would fight.
+ * The generated header lines are excluded because the emitter deliberately
+ * does not write them: `npm run keywords`, `npm run summary` and
+ * `npm run origin` own `" @keywords`, `" @summary` and `" @origin`, and two
+ * generators writing one file would fight. Stripped by shape rather than by
+ * count, so a fourth line one day does not turn this test red for the wrong
+ * reason.
  */
 test('form-family-to-abap: all 26 ports regenerate byte-identically below their header lines', () => {
   const out = fs.mkdtempSync(path.join(os.tmpdir(), 'demokit-form-family-'));
@@ -302,7 +305,7 @@ test('form-family-to-abap: all 26 ports regenerate byte-identically below their 
       assert.equal(r.status, 0,
         `${cls}: the emitter failed — it has rotted behind a corpus sweep\n${r.stderr}`);
 
-      const committed = fs.readFileSync(path.join(REPO, meta.file), 'utf8').split('\n').slice(2).join('\n');
+      const committed = fs.readFileSync(path.join(REPO, meta.file), 'utf8').replace(/^(" @\w+ .*\n)+/, '');
       assert.equal(fs.readFileSync(emitted, 'utf8'), committed,
         `${cls}: regenerating it does NOT reproduce the committed class.\n`
         + 'Either a sweep moved the ports and left the emitter behind (fix the emitter — this is the\n'

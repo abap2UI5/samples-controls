@@ -1,5 +1,6 @@
 " @keywords checkbox check box sap.m states vbox simpleform label griddata
 " @summary Checkboxes allow users to select a subset of options. If you want to offer an off/on setting you should use the Switch control instead.
+" @origin sap.m.sample.CheckBox - https://sdk.openui5.org/entity/sap.m.CheckBox/sample/sap.m.sample.CheckBox (status: reviewed)
 CLASS z2ui5_cl_smpc_app_155 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

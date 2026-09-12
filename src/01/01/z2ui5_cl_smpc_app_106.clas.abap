@@ -1,5 +1,6 @@
 " @keywords semanticpage semantic sap.m.semantic floating footer splitcontainer masterpage sortselect item filteraction groupaction addaction
 " @summary Integration of Floating Footer inside Semantic Page
+" @origin sap.m.sample.SemanticPageFloatingFooter - https://sdk.openui5.org/entity/sap.m.semantic.SemanticPage/sample/sap.m.sample.SemanticPageFloatingFooter (status: reviewed)
 CLASS z2ui5_cl_smpc_app_106 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords simpleform simple form sap.ui.layout.form simpleform480_12120 bar button vbox title label text input
 " @summary Form with two groups. On large screens a two-column layout (4:8:0) is used; on medium screens a one-column layout (12:12:0); on small screens also a one-column layout (12:12:0).
+" @origin sap.ui.layout.sample.SimpleForm480_12120 - https://sdk.openui5.org/entity/sap.ui.layout.form.SimpleForm/sample/sap.ui.layout.sample.SimpleForm480_12120 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_330 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

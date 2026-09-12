@@ -1,5 +1,6 @@
 " @keywords objectidentifier object identifier sap.m active title press verticallayout
 " @summary The object identifier is a small building block representing an object by a title and short description. Often it is used in the first column of a table.
+" @origin sap.m.sample.ObjectIdentifier - https://sdk.openui5.org/entity/sap.m.ObjectIdentifier/sample/sap.m.sample.ObjectIdentifier (status: reviewed)
 CLASS z2ui5_cl_smpc_app_071 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

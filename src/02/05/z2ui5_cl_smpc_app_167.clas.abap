@@ -1,5 +1,6 @@
 " @keywords toolpage tool sap.tnt toolheader button overflowtoolbarlayoutdata toolbarspacer toolheaderutilityseparator sidenavigation navigationlist navigationlistitem navcontainer
 " @summary A tool page layout with vertical navigation
+" @origin sap.tnt.sample.ToolPage - https://sdk.openui5.org/entity/sap.tnt.ToolPage/sample/sap.tnt.sample.ToolPage (status: reviewed)
 CLASS z2ui5_cl_smpc_app_167 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

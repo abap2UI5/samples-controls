@@ -1,5 +1,6 @@
 " @keywords carousel sap.m carouselemptymessages hbox panel slider title
 " @summary When the carousel has no pages loaded or provided illustrated message will be shown.
+" @origin sap.m.sample.CarouselEmptyMessages - https://sdk.openui5.org/entity/sap.m.Carousel/sample/sap.m.sample.CarouselEmptyMessages (status: generated)
 CLASS z2ui5_cl_smpc_app_427 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form354 bar button vbox title responsivegridlayout formcontainer formelement text input
 " @summary Form with one single group in a fullscreen app with a label field ratio of 3:5:4 in all sizes besides size S (12:12:0).
+" @origin sap.ui.layout.sample.Form354 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form354 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_312 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

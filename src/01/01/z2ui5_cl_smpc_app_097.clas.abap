@@ -1,5 +1,6 @@
 " @keywords splitapp split app sap.m master-detail navigation label button vbox text radiobuttongroup radiobutton
 " @summary The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control.
+" @origin sap.m.sample.SplitApp - https://sdk.openui5.org/entity/sap.m.SplitApp/sample/sap.m.sample.SplitApp (status: reviewed)
 CLASS z2ui5_cl_smpc_app_097 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

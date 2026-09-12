@@ -1,5 +1,6 @@
 " @keywords objectpageheadercontent object header content sap.uxap objectpageheadercontentpriorities objectpagelayout objectpagedynamicheadertitle title flexbox avatar text
 " @summary The sample shows how to set priorities of the ObjectPageHeader content items by using the ObjectPageHeaderContentLayoutData element
+" @origin sap.uxap.sample.ObjectPageHeaderContentPriorities - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.ObjectPageHeaderContentPriorities (status: reviewed)
 CLASS z2ui5_cl_smpc_app_188 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

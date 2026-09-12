@@ -1,5 +1,6 @@
 " @keywords objectpageheader object header sap.uxap objectpageheaderwithallcontrols objectpagelayout objectpageheaderactionbutton breadcrumbs link verticallayout objectstatus text
 " @summary This is an example of an ObjectPageHeader containing all possible controls in it.
+" @origin sap.uxap.sample.ObjectPageHeaderWithAllControls - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeader/sample/sap.uxap.sample.ObjectPageHeaderWithAllControls (status: reviewed)
 CLASS z2ui5_cl_smpc_app_415 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

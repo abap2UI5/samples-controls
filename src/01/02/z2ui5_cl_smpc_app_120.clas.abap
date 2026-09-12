@@ -1,5 +1,6 @@
 " @keywords html sap.ui.core raw injection verticallayout
 " @summary With the HTML controls you can easily embed any kind of HTML content into your UI5 mobile application.
+" @origin sap.ui.core.sample.Html - https://sdk.openui5.org/entity/sap.ui.core.HTML/sample/sap.ui.core.sample.Html (status: reviewed)
 CLASS z2ui5_cl_smpc_app_120 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.

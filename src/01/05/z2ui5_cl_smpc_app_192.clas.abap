@@ -1,5 +1,6 @@
 " @keywords infolabel info label sap.tnt infolabelintable table toolbar title toolbarspacer combobox item column
 " @summary InfoLabel used in content of Table
+" @origin sap.tnt.sample.InfoLabelInTable - https://sdk.openui5.org/entity/sap.tnt.InfoLabel/sample/sap.tnt.sample.InfoLabelInTable (status: reviewed)
 CLASS z2ui5_cl_smpc_app_192 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

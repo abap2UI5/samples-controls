@@ -1,5 +1,6 @@
 " @keywords table sap.ui.table aggregations hbox icon title overflowtoolbar toolbarspacer searchfield facetfilter facetfilterlist facetfilteritem
 " @summary Example which shows the different aggregations of the table
+" @origin sap.ui.table.sample.Aggregations - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.Aggregations (status: reviewed)
 CLASS z2ui5_cl_smpc_app_352 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

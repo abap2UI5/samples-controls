@@ -1,5 +1,6 @@
 " @keywords datepicker date picker sap.m open another title vbox label button link
 " @summary This example shows Date Picker which is opened by another control.
+" @origin sap.m.sample.DatePickerHidden - https://sdk.openui5.org/entity/sap.m.DatePicker/sample/sap.m.sample.DatePickerHidden (status: checked)
 CLASS z2ui5_cl_smpc_app_016 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords quickview quick sap.m quickviewavatarconfiguration button quickviewpage avatar quickviewgroup quickviewgroupelement
 " @summary QuickView with fallback icon, initials, display shape and other avatar properties.
+" @origin sap.m.sample.QuickViewAvatarConfiguration - https://sdk.openui5.org/entity/sap.m.QuickView/sample/sap.m.sample.QuickViewAvatarConfiguration (status: generated)
 CLASS z2ui5_cl_smpc_app_531 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

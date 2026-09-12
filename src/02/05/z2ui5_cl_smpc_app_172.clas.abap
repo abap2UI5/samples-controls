@@ -1,5 +1,6 @@
 " @keywords sidenavigation side navigation sap.tnt sidenavigationunselectableparents vbox button navigationlist navigationlistitem
 " @summary SideNavigation with unselectable parent items.
+" @origin sap.tnt.sample.SideNavigationUnselectableParents - https://sdk.openui5.org/entity/sap.tnt.SideNavigation/sample/sap.tnt.sample.SideNavigationUnselectableParents (status: reviewed)
 CLASS z2ui5_cl_smpc_app_172 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords title sap.m titlewrapping simpleform label switch slider panel messagestrip
 " @summary This sample shows the different behaviors of a title.
+" @origin sap.m.sample.TitleWrapping - https://sdk.openui5.org/entity/sap.m.Title/sample/sap.m.sample.TitleWrapping (status: generated)
 CLASS z2ui5_cl_smpc_app_418 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

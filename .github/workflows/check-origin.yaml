@@ -1,0 +1,37 @@
+name: check-origin
+
+# Every port carries a `" @origin` line naming the demo kit sample it rebuilds,
+# the page of that sample in the demo kit, and the sidecar's verification
+# status - the two facts a reader in the system, on GitHub raw or in an agent
+# could not get from the class before, because they lived in meta/, which
+# abapGit never pulls (AGENTS.md, "Metadata: what goes on the class").
+#
+# Generated and committed by scripts/generate-origin.mjs, so this checks the
+# line is still what the sidecar says: a status that moved in meta/ without a
+# regeneration is a class that lies about how far it is verified.
+#
+# Its own workflow like check-keywords and check-summary: the three lines
+# answer three questions, and one going red must not hide the others.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-origin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-origin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: '22'
+    - run: node scripts/generate-origin.mjs --check

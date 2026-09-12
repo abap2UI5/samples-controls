@@ -1,5 +1,6 @@
 " @keywords modelmapping model mapping sap.uxap mpmodelmapping simpleform title text
 " @summary Use of dynamic model mapping
+" @origin sap.uxap.sample.MPModelMapping - https://sdk.openui5.org/entity/sap.uxap.ModelMapping/sample/sap.uxap.sample.MPModelMapping (status: reviewed)
 CLASS z2ui5_cl_smpc_app_411 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

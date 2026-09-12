@@ -1,5 +1,6 @@
 " @keywords multicombobox multi combo box sap.m items could gr verticallayout item
 " @summary Items in the MultiComboBox could be grouped by a property
+" @origin sap.m.sample.MultiComboBoxGrouping - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxGrouping (status: checked)
 CLASS z2ui5_cl_smpc_app_039 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

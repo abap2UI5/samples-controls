@@ -9,7 +9,9 @@
  * UI5 1.71; hint button opens the deviations popup). Every link opens in
  * a NEW browser tab (target="_blank"; the ↗ start link uses ?app_start=).
  * Reads everything from the meta/ sidecars (the source of truth for sample,
- * entity, checked and deviations - the port classes carry no header).
+ * entity, checked and deviations - the three `"` header lines a port carries,
+ * @keywords / @summary / @origin, are themselves generated from the sidecar
+ * and the DESCRIPT, so the sidecar stays the one source).
  *
  * Run:  node scripts/generate-overview.mjs
  *       node scripts/generate-overview.mjs --update-entities

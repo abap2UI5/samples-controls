@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarviews vbox title label select item datetyperange planningcalendarview
 " @summary PlanningCalendar with custom views to set number of hours, days and months and change view description. It illustrates both built-in and custom views. Sub-intervals are shown. Custom non-working days and hours are set.
+" @origin sap.m.sample.PlanningCalendarViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarViews (status: generated)
 CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

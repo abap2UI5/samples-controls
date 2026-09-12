@@ -1,5 +1,6 @@
 " @keywords overflowtoolbar overflow toolbar sap.m overflowtoolbarfooter messagestrip slider toolbarspacer searchfield overflowtoolbarlayoutdata button overflowtoolbarbutton
 " @summary Overflow Toolbar Button is useful for showing lists of action buttons that can display an icon in the toolbar, and icon+text when in the overflow.
+" @origin sap.m.sample.OverflowToolbarFooter - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.OverflowToolbarFooter (status: generated)
 CLASS z2ui5_cl_smpc_app_607 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

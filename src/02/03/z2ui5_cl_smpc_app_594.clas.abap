@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageselectedsection objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary Object Page sample showing a layout where the selected section is defined by the user.
+" @origin sap.uxap.sample.ObjectPageSelectedSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageSelectedSection (status: generated)
 CLASS z2ui5_cl_smpc_app_594 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

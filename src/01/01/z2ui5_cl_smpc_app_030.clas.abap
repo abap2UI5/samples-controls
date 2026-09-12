@@ -1,5 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m height icontabfilter scrollcontainer list standardlistitem text
 " @summary In this example, the IconTabBar height is stretched to the maximum height of the page content. Note: The height of the parent container must be defined as a fixed value.
+" @origin sap.m.sample.IconTabBarStretchContent - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarStretchContent (status: checked)
 CLASS z2ui5_cl_smpc_app_030 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

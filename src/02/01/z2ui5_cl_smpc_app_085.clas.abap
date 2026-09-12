@@ -1,5 +1,6 @@
 " @keywords tokenizer sap.m tokens editable delete horizontallayout input button checkbox verticallayout token label
 " @summary Basic Tokenizer with tokens
+" @origin sap.m.sample.TokenizerBasic - https://sdk.openui5.org/entity/sap.m.Tokenizer/sample/sap.m.sample.TokenizerBasic (status: checked)
 CLASS z2ui5_cl_smpc_app_085 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

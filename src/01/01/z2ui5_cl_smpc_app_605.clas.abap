@@ -1,5 +1,6 @@
 " @keywords headercontainer header container sap.m headercontainerlazyloading objectheader objectattribute objectstatus objectmarker numericcontent
 " @summary The header container with lazy loading functionality on pressing the scroll button.
+" @origin sap.m.sample.HeaderContainerLazyLoading - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerLazyLoading (status: generated)
 CLASS z2ui5_cl_smpc_app_605 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

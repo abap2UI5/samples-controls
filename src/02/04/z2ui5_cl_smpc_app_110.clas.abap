@@ -1,5 +1,6 @@
 " @keywords shellbar shell bar sap.f application header menu menuitem avatar
 " @summary Shell Bar example showing the control title as part of a mega menu, configurable by the app developer.
+" @origin sap.f.sample.ShellBar - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBar (status: reviewed)
 CLASS z2ui5_cl_smpc_app_110 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagetitleonleft objectpagedynamicheadertitle title flexbox avatar text button overflowtoolbarbutton
 " @summary Object Page sample showing a layout with subsection titles on the left.
+" @origin sap.uxap.sample.ObjectPageTitleOnLeft - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageTitleOnLeft (status: reviewed)
 CLASS z2ui5_cl_smpc_app_261 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

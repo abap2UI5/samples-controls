@@ -1,5 +1,6 @@
 " @keywords combobox combo box sap.m comboboxvaluestate verticallayout listitem formattedtext link
 " @summary The combo box can show different value states.
+" @origin sap.m.sample.ComboBoxValueState - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValueState (status: generated)
 CLASS z2ui5_cl_smpc_app_616 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

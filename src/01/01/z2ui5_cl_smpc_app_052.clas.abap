@@ -1,5 +1,6 @@
 " @keywords textarea text area sap.m allows enter multi-line te verticallayout
 " @summary The Text Area allows to enter multi-line text and automatically breaks to a new line for overflow text. If the text gets too big to be displayed at once the user can scroll up and down.
+" @origin sap.m.sample.TextArea - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextArea (status: reviewed)
 CLASS z2ui5_cl_smpc_app_052 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords actionlistitem action list item sap.m
 " @summary Use the Action List Item to trigger an action directly from a list
+" @origin sap.m.sample.ActionListItem - https://sdk.openui5.org/entity/sap.m.ActionListItem/sample/sap.m.sample.ActionListItem (status: checked)
 CLASS z2ui5_cl_smpc_app_001 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

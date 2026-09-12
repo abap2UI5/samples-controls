@@ -1,5 +1,6 @@
 " @keywords list sap.m listswipe standardlistitem button
 " @summary With a swipe gesture you can show additional content for an item without having to navigate to a detail page. This feature is only available for touch devices.
+" @origin sap.m.sample.ListSwipe - https://sdk.openui5.org/entity/sap.m.List/sample/sap.m.sample.ListSwipe (status: generated)
 CLASS z2ui5_cl_smpc_app_497 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

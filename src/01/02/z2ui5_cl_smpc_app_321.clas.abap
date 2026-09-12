@@ -1,5 +1,6 @@
 " @keywords form sap.ui.layout.form form_column_onegroup234 bar button vbox title columnlayout formcontainer formelement text link
 " @summary Form with one large single group in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size).
+" @origin sap.ui.layout.sample.Form_Column_oneGroup234 - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.Form_Column_oneGroup234 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_321 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords inputmodelupdate input model update sap.m late binding app vbox text button
 " @summary The sample demonstrates how to rebind a control to a different data source after a certain delay.
+" @origin sap.m.sample.InputModelUpdate - https://sdk.openui5.org/entity/sap.m.InputModelUpdate/sample/sap.m.sample.InputModelUpdate (status: reviewed)
 CLASS z2ui5_cl_smpc_app_102 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

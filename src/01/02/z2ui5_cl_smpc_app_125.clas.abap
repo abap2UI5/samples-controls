@@ -1,5 +1,6 @@
 " @keywords splitter sap.ui.layout layout data app button splitterlayoutdata
 " @summary Simple splitter example with two content areas
+" @origin sap.ui.layout.sample.Splitter2 - https://sdk.openui5.org/entity/sap.ui.layout.Splitter/sample/sap.ui.layout.sample.Splitter2 (status: reviewed)
 CLASS z2ui5_cl_smpc_app_125 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

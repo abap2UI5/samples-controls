@@ -1,5 +1,6 @@
 " @keywords calendar sap.ui.unified calendarsingleintervalselection html verticallayout horizontallayout label text
 " @summary Calendar where the user can select an interval or entire week (either by selecting its week number or by using SHIFT + Space).
+" @origin sap.ui.unified.sample.CalendarSingleIntervalSelection - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarSingleIntervalSelection (status: reviewed)
 CLASS z2ui5_cl_smpc_app_306 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarwithstickyheader vbox title planningcalendarrow calendarappointment label multicombobox item
 " @summary PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view.
+" @origin sap.m.sample.PlanningCalendarWithStickyHeader - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWithStickyHeader (status: generated)
 CLASS z2ui5_cl_smpc_app_542 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords menu sap.m menuendcontent vbox button menuitem
 " @summary EndContent (Button and/or Icon) can be added to some of the menu items.
+" @origin sap.m.sample.MenuEndContent - https://sdk.openui5.org/entity/sap.m.Menu/sample/sap.m.sample.MenuEndContent (status: generated)
 CLASS z2ui5_cl_smpc_app_440 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

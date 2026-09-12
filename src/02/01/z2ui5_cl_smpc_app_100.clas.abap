@@ -1,5 +1,6 @@
 " @keywords quickview quick sap.m popover entity pages vbox button quickviewpage avatar quickviewgroup quickviewgroupelement
 " @summary QuickView basic samples.
+" @origin sap.m.sample.QuickView - https://sdk.openui5.org/entity/sap.m.QuickView/sample/sap.m.sample.QuickView (status: reviewed)
 CLASS z2ui5_cl_smpc_app_100 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

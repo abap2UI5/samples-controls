@@ -1,5 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarminmax vbox title planningcalendarrow calendarappointment
 " @summary PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31
+" @origin sap.m.sample.PlanningCalendarMinMax - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarMinMax (status: generated)
 CLASS z2ui5_cl_smpc_app_540 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

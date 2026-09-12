@@ -1,5 +1,6 @@
 " @keywords datetimepicker date time picker sap.m enables users select bet panel label text
 " @summary With the DateTimePicker a Date can be entered or selected including the time part.
+" @origin sap.m.sample.DateTimePicker - https://sdk.openui5.org/entity/sap.m.DateTimePicker/sample/sap.m.sample.DateTimePicker (status: checked)
 CLASS z2ui5_cl_smpc_app_018 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageresetselectedsection navcontainer verticallayout messagestrip list standardlistitem checkbox objectpagedynamicheadertitle
 " @summary Object Page sample showing how to ensure the page is always scrolled to the top on any subsequent navigation to the page, regardless of its previously selected section in the preceding navigation.
+" @origin sap.uxap.sample.ObjectPageResetSelectedSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageResetSelectedSection (status: reviewed)
 CLASS z2ui5_cl_smpc_app_263 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

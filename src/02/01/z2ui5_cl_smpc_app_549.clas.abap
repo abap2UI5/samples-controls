@@ -1,5 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m vbox overflowtoolbar label select listitem toolbarseparator togglebutton
 " @summary This sample demonstrates most of the features available for the SinglePlanningCalendar control.
+" @origin sap.m.sample.SinglePlanningCalendar - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendar (status: generated)
 CLASS z2ui5_cl_smpc_app_549 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

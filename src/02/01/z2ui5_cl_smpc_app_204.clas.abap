@@ -1,5 +1,6 @@
 " @keywords standardlistitem standard list item sap.m standardlistiteminfostateinverted
 " @summary This sample demonstrates the inverted rendering behavior of the info text and the info state of the StandardListItem control.
+" @origin sap.m.sample.StandardListItemInfoStateInverted - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemInfoStateInverted (status: reviewed)
 CLASS z2ui5_cl_smpc_app_204 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,5 +1,6 @@
 " @keywords progressindicator progress indicator sap.m progressindicatorwithannouncement verticallayout text flexbox button
 " @summary Announce the progress of the ProgressIndicator.
+" @origin sap.m.sample.ProgressIndicatorWithAnnouncement - https://sdk.openui5.org/entity/sap.m.ProgressIndicator/sample/sap.m.sample.ProgressIndicatorWithAnnouncement (status: generated)
 CLASS z2ui5_cl_smpc_app_435 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

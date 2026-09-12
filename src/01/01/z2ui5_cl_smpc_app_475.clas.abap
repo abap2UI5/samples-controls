@@ -1,5 +1,6 @@
 " @keywords combobox combo box sap.m comboboxvalidation verticallayout label item
 " @summary The combo box control could be restricted to allow selection only from the items in the list.
+" @origin sap.m.sample.ComboBoxValidation - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxValidation (status: generated)
 CLASS z2ui5_cl_smpc_app_475 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

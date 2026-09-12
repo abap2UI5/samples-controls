@@ -1,5 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpagelazyloadingwithoutblocks objectpagedynamicheadertitle title button overflowtoolbarbutton objectpagesection objectpagesubsection objectpagelazyloader
 " @summary This sample showcases the lazy loading using the stashed property of the ObjectPageLazyLoader. It enables usage of lazy loading without the need to have Blocks
+" @origin sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks (status: generated)
 CLASS z2ui5_cl_smpc_app_592 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
