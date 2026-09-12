@@ -107,8 +107,8 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
                     )->a( n = `dragStart`         v = client->_event(
                         val    = `DRAG_START`
                         s_ctrl = VALUE #( prevent_default_expr =
-                            `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` &&
-                            `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1` ) )
+                                                      `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` &&
+                                                      `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1` ) )
                     " onDrop moves the dragged node under the dropped one; the two
                     " node texts are what travels (app 569 idiom)
                     )->a( n = `drop`              v = client->_event( val   = `DROP_NODE`

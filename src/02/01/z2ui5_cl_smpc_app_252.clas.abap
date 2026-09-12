@@ -53,14 +53,14 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:f`    v = `sap.f`
-        )->a( n = `xmlns:card` v = `sap.f.cards`
-        )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`      v = `sap.f`
+        )->a( n = `xmlns:card`   v = `sap.f.cards`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `height`       v = `100%`
         " the Input's value has to carry a TYPE, or the two-way write-back
         " stores the typed text as a STRING and CarouselLayout.visiblePagesCount
         " (an int property) throws on every keystroke - validateProperty casts
@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_252 IMPLEMENTATION.
                     )->tag( `CarouselLayout`
                         )->a( n = `visiblePagesCount` v = client->_bind( pagescount )
                         " OnScrollModeChange folded into the binding (declared)
-                        )->a( n = `scrollMode` v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
+                        )->a( n = `scrollMode`        v = |\{= ${ client->_bind( scroll_visible ) } ? 'VisiblePages' : 'SinglePage' \}|
 
                 )->end(
 

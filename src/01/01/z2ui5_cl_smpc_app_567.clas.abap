@@ -74,8 +74,8 @@ CLASS z2ui5_cl_smpc_app_567 IMPLEMENTATION.
             )->a( n = `showIcon` v = `true`
 
         )->ele( `Table`
-            )->a( n = `id`   v = `table`
-            )->a( n = `mode` v = `MultiSelect`
+            )->a( n = `id`          v = `table`
+            )->a( n = `mode`        v = `MultiSelect`
             " setFixedLayout( selected ? 'Strict' : true ) - the property takes a
             " boolean OR the string Strict, so the expression yields both
             )->a( n = `fixedLayout` v = |\{= ${ client->_bind( strict_layout ) } ? 'Strict' : true \}|

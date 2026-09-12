@@ -286,14 +286,14 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     " handleMessagePopoverPress: this.oMP.toggle(oEvent.getSource()) - a pure
                     " client-side toggle, so wired roundtrip-free onto the button's own id
-                    )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
+                    )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                            t_arg = VALUE #( ( `messagePopover` ) ( `toggleBy` ) ( `messagePopoverBtn` ) ) )
 
                     )->ele( `dependents`
                         )->ele( `MessagePopover`
-                            )->a( n = `id`         v = `messagePopover`
-                            )->a( n = `items`      v = `{message>/}`
-                            )->a( n = `groupItems` v = `true`
+                            )->a( n = `id`               v = `messagePopover`
+                            )->a( n = `items`            v = `{message>/}`
+                            )->a( n = `groupItems`       v = `true`
                             " activeTitlePress ships the pressed message's target control id so
                             " the handler can scroll to it and focus it
                             )->a( n = `activeTitlePress` v = client->_event( val = `ACTIVE_TITLE` arg = `${$parameters>/item}.getBindingContext('message').getObject().getControlIds()[0]` )
@@ -307,7 +307,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                                 " getGroupName reads the form titles around the target control -
                                 " a domain classification, so it is computed in the backend and
                                 " rides on the Message code field (see model below)
-                                )->a( n = `groupName` v = `{message>code}`
+                                )->a( n = `groupName`   v = `{message>code}`
 
                         )->end(
                     )->end(

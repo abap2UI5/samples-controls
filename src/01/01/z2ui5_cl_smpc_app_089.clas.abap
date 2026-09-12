@@ -57,9 +57,9 @@ CLASS z2ui5_cl_smpc_app_089 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `Page`
-            )->a( n = `id`    v = `idPage`
-            )->a( n = `title` v = ` Product XY`
-            )->a( n = `class` v = `sapUiResponsivePadding--header`
+            )->a( n = `id`      v = `idPage`
+            )->a( n = `title`   v = ` Product XY`
+            )->a( n = `class`   v = `sapUiResponsivePadding--header`
             " element binding kept 1:1 - a one-record structure /S_PRODUCT instead of {/ProductCollection/0}
             )->a( n = `binding` v = client->_bind( s_product )
 

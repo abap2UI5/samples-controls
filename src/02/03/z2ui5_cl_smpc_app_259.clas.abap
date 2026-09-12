@@ -169,9 +169,9 @@ CLASS z2ui5_cl_smpc_app_259 IMPLEMENTATION.
 
                         )->tag( n = `Text` ns = `m`
                             )->a( n = `text` v = `Top-design high-quality coffee mug - ideal for a comforting moment; `
-                                              && `Pack: 6; material: Porcelain - durable dishwasher and microwave-safe `
-                                              && `porcelain that cleans easily and is ideal for everyday service. `
-                                              && `Comes in two bright colors.`
+                                                 && `Pack: 6; material: Porcelain - durable dishwasher and microwave-safe `
+                                                 && `porcelain that cleans easily and is ideal for everyday service. `
+                                                 && `Comes in two bright colors.`
 
                     )->end(
                 )->end(

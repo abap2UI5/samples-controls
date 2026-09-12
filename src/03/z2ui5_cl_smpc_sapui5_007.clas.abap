@@ -79,11 +79,11 @@ CLASS z2ui5_cl_smpc_sapui5_007 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`   v = `true`
-        )->a( n = `height`         v = `100%`
-        )->a( n = `xmlns`          v = `sap.m`
-        )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:commons`  v = `sap.suite.ui.commons`
+        )->a( n = `displayBlock`  v = `true`
+        )->a( n = `height`        v = `100%`
+        )->a( n = `xmlns`         v = `sap.m`
+        )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:commons` v = `sap.suite.ui.commons`
 
         )->ele( `Shell`
             )->ele( `Page`

@@ -57,8 +57,8 @@ CLASS z2ui5_cl_smpc_app_094 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         " the rule behind disablePointerEvents/enablePointerEvents. The css
@@ -192,20 +192,20 @@ CLASS z2ui5_cl_smpc_app_094 IMPLEMENTATION.
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`
             )->ele( `Popover`
-                )->a( n = `id`        v = `myPopover`
-                )->a( n = `title`     v = `{PRODUCTID}`
-                )->a( n = `class`     v = `sapUiContentPadding`
-                )->a( n = `placement` v = `Right`
+                )->a( n = `id`           v = `myPopover`
+                )->a( n = `title`        v = `{PRODUCTID}`
+                )->a( n = `class`        v = `sapUiContentPadding`
+                )->a( n = `placement`    v = `Right`
                 )->a( n = `initialFocus` v = `action`
                 " attachAfterOpen -> disablePointerEvents, afterClose -> enable:
                 " clicks on the table are dead while the popover is open, which
                 " is the behaviour the page header advertises
-                )->a( n = `afterOpen`  v = client->follow_up_action(
-                                              val   = client->cs_event-control_by_id
-                                              t_arg = VALUE #( ( `idProductsTable` ) ( `addStyleClass` ) ( `tableNoPointerEvents` ) ) )
-                )->a( n = `afterClose` v = client->follow_up_action(
-                                              val   = client->cs_event-control_by_id
-                                              t_arg = VALUE #( ( `idProductsTable` ) ( `removeStyleClass` ) ( `tableNoPointerEvents` ) ) )
+                )->a( n = `afterOpen`    v = client->follow_up_action(
+                                                val   = client->cs_event-control_by_id
+                                                t_arg = VALUE #( ( `idProductsTable` ) ( `addStyleClass` ) ( `tableNoPointerEvents` ) ) )
+                )->a( n = `afterClose`   v = client->follow_up_action(
+                                                val   = client->cs_event-control_by_id
+                                                t_arg = VALUE #( ( `idProductsTable` ) ( `removeStyleClass` ) ( `tableNoPointerEvents` ) ) )
                 )->ele( `footer`
                     )->ele( `Toolbar`
                         )->tag( `ToolbarSpacer`

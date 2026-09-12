@@ -94,9 +94,9 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
         )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`         v = `gridList1`
-        )->a( n = `headerText` v = `GridList 1`
-        )->a( n = `items`      v = client->_bind( t_items1 )
+        )->a( n = `id`            v = `gridList1`
+        )->a( n = `headerText`    v = `GridList 1`
+        )->a( n = `items`         v = client->_bind( t_items1 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
         )->a( n = `borderReached` v = client->follow_up_action(
@@ -135,9 +135,9 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`         v = `gridList2`
-        )->a( n = `headerText` v = `GridList 2`
-        )->a( n = `items`      v = client->_bind( t_items2 )
+        )->a( n = `id`            v = `gridList2`
+        )->a( n = `headerText`    v = `GridList 2`
+        )->a( n = `items`         v = client->_bind( t_items2 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
         )->a( n = `borderReached` v = client->follow_up_action(
@@ -176,9 +176,9 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`         v = `gridList3`
-        )->a( n = `headerText` v = `GridList 3`
-        )->a( n = `items`      v = client->_bind( t_items3 )
+        )->a( n = `id`            v = `gridList3`
+        )->a( n = `headerText`    v = `GridList 3`
+        )->a( n = `items`         v = client->_bind( t_items3 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
         )->a( n = `borderReached` v = client->follow_up_action(
@@ -217,9 +217,9 @@ CLASS z2ui5_cl_smpc_app_582 IMPLEMENTATION.
     )->end( ).
 
     container->ele( n = `GridList` ns = `f`
-        )->a( n = `id`         v = `gridList4`
-        )->a( n = `headerText` v = `GridList 4`
-        )->a( n = `items`      v = client->_bind( t_items4 )
+        )->a( n = `id`            v = `gridList4`
+        )->a( n = `headerText`    v = `GridList 4`
+        )->a( n = `items`         v = client->_bind( t_items4 )
         " onBorderReached toasts the grid the focus left and then moves it into
         " the neighbouring one; only the toast can travel (see sidecar)
         )->a( n = `borderReached` v = client->follow_up_action(

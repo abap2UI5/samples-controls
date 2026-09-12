@@ -88,17 +88,17 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
             )->ele( `content`
 
                 )->ele( n = `SimpleForm` ns = `form`
-                    )->a( n = `id`               v = `FieldGroupView`
-                    )->a( n = `maxContainerCols` v = `2`
-                    )->a( n = `editable`         v = `true`
-                    )->a( n = `layout`           v = `ResponsiveGridLayout`
-                    )->a( n = `title`            v = `Shopping Cart - Checkout`
-                    )->a( n = `labelSpanL`       v = `4`
-                    )->a( n = `labelSpanM`       v = `4`
-                    )->a( n = `emptySpanL`       v = `0`
-                    )->a( n = `emptySpanM`       v = `0`
-                    )->a( n = `columnsL`         v = `2`
-                    )->a( n = `columnsM`         v = `2`
+                    )->a( n = `id`                 v = `FieldGroupView`
+                    )->a( n = `maxContainerCols`   v = `2`
+                    )->a( n = `editable`           v = `true`
+                    )->a( n = `layout`             v = `ResponsiveGridLayout`
+                    )->a( n = `title`              v = `Shopping Cart - Checkout`
+                    )->a( n = `labelSpanL`         v = `4`
+                    )->a( n = `labelSpanM`         v = `4`
+                    )->a( n = `emptySpanL`         v = `0`
+                    )->a( n = `emptySpanM`         v = `0`
+                    )->a( n = `columnsL`           v = `2`
+                    )->a( n = `columnsM`           v = `2`
                     " onValidateFieldGroup: the event carries the ids of the
                     " group that lost focus. The parameter reaches the backend
                     " as the JSON array (["Billing Information"]), so the arg

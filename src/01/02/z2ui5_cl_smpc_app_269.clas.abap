@@ -62,10 +62,10 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
     " flags in sync exactly like updateToggleButtonState /
     " updateShowSideContentButtonVisibility.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         " the sample's own style.css - the view carries sapUiDSCExplored and the
         " rules behind them have to come with it (apps 122/124/133/138).
@@ -100,37 +100,37 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
                             )->a( n = `width`        v = `10em`
                         )->tag( `Text`
                             )->a( n = `text` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor `
-                                              && `incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud `
-                                              && `exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure `
-                                              && `dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
-                                              && ` Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt `
-                                              && `mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, `
-                                              && `sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim `
-                                              && `veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo `
-                                              && `consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum `
-                                              && `dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt `
-                                              && `in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, `
-                                              && `consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore `
-                                              && `magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi `
-                                              && `ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in `
-                                              && `voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat `
-                                              && `cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
-                                              && ` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor `
-                                              && `incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud `
-                                              && `exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure `
-                                              && `dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
-                                              && ` Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt `
-                                              && `mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, `
-                                              && `sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim `
-                                              && `veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo `
-                                              && `consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum `
-                                              && `dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt `
-                                              && `in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, `
-                                              && `consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore `
-                                              && `magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi `
-                                              && `ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in `
-                                              && `voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat `
-                                              && `cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+                                                 && `incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud `
+                                                 && `exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure `
+                                                 && `dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
+                                                 && ` Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt `
+                                                 && `mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, `
+                                                 && `sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim `
+                                                 && `veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo `
+                                                 && `consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum `
+                                                 && `dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt `
+                                                 && `in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, `
+                                                 && `consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore `
+                                                 && `magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi `
+                                                 && `ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in `
+                                                 && `voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat `
+                                                 && `cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+                                                 && ` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor `
+                                                 && `incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud `
+                                                 && `exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure `
+                                                 && `dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
+                                                 && ` Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt `
+                                                 && `mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, `
+                                                 && `sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim `
+                                                 && `veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo `
+                                                 && `consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum `
+                                                 && `dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt `
+                                                 && `in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, `
+                                                 && `consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore `
+                                                 && `magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi `
+                                                 && `ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in `
+                                                 && `voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat `
+                                                 && `cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
 
                     )->end(
 
@@ -186,9 +186,9 @@ CLASS z2ui5_cl_smpc_app_269 IMPLEMENTATION.
                         )->a( n = `visible` v = client->_bind( show_side_btn )
                         )->a( n = `press`   v = client->_event( `SIDE_CONTENT_SHOW` )
                     )->tag( `Slider`
-                        )->a( n = `id`      v = `DSCWidthSlider`
-                        )->a( n = `value`   v = `100`
-                        )->a( n = `visible` v = |\{= !$\{device>/system/phone\}\}|
+                        )->a( n = `id`         v = `DSCWidthSlider`
+                        )->a( n = `value`      v = `100`
+                        )->a( n = `visible`    v = |\{= !$\{device>/system/phone\}\}|
                         " handleSliderChange: the container is a sap.m.Page, which
                         " has no width property - the `css` control method writes
                         " the percentage onto its DOM node like the original jQuery

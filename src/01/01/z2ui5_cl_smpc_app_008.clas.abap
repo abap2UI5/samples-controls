@@ -1,4 +1,4 @@
-" @keywords colorpalette color palette sap.m standalone contai simpleform toolbar title label
+" @keywords colorpalette color palette sap.m standalone simpleform toolbar title label
 " @summary The standalone ColorPalette in a container (sap.ui.layout.SimpleForm).
 " @origin sap.m.sample.ColorPalette - https://sdk.openui5.org/entity/sap.m.ColorPalette/sample/sap.m.sample.ColorPalette (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_008 DEFINITION PUBLIC.
@@ -55,8 +55,8 @@ CLASS z2ui5_cl_smpc_app_008 IMPLEMENTATION.
             )->tag( `ColorPalette`
                 )->a( n = `colorSelect` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                        && |\n|
-                                                                                                                        && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) ) ).
+                                            && |\n|
+                                            && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) ) ).
 
     client->view_display( view->stringify( ) ).
 

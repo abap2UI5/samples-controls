@@ -114,9 +114,9 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         )->a( n = `title` v = `Product List` ).
 
     table_page->ele( `Table`
-        )->a( n = `id`    v = `idProductsTable`
-        )->a( n = `mode`  v = `MultiSelect`
-        )->a( n = `items` v = client->_bind( t_products )
+        )->a( n = `id`              v = `idProductsTable`
+        )->a( n = `mode`            v = `MultiSelect`
+        )->a( n = `items`           v = client->_bind( t_products )
         " onInit attaches selectionChange to keep the footer button in sync
         )->a( n = `selectionChange` v = client->_event( `SELECTION_CHANGE` )
 
@@ -192,11 +192,11 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " closes the tab itself once the user has confirmed. check_prevent_default
         " IS that call: the control does not close the tab, the event still
         " reaches the backend, and tab_close( ) decides
-        )->a( n = `itemClose` v = client->_event( val    = `TAB_CLOSE`
+        )->a( n = `itemClose`         v = client->_event( val    = `TAB_CLOSE`
                                                           arg    = `${$parameters>/item}.getKey()`
                                                           s_ctrl = VALUE #( check_prevent_default = abap_true ) )
-        )->a( n = `itemSelect` v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/item}.getKey()` )
-        )->a( n = `items`      v = client->_bind( t_tabs )
+        )->a( n = `itemSelect`        v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/item}.getKey()` )
+        )->a( n = `items`             v = client->_bind( t_tabs )
 
         )->ele( `items`
             )->ele( `TabContainerItem`

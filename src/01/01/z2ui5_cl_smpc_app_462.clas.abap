@@ -55,16 +55,16 @@ CLASS z2ui5_cl_smpc_app_462 IMPLEMENTATION.
             " It needs no round-trip either: setText on the Text by id, with the
             " keystroke value as the argument, is the same write done on the client
             )->tag( `Input`
-                )->a( n = `value`            v = client->_bind( inputvalue )
-                )->a( n = `valueLiveUpdate`  v = client->_bind( valueliveupdate )
-                )->a( n = `liveChange`       v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `getValue` ) ( `setText` ) ( `${$parameters>/value}` ) ) )
+                )->a( n = `value`           v = client->_bind( inputvalue )
+                )->a( n = `valueLiveUpdate` v = client->_bind( valueliveupdate )
+                )->a( n = `liveChange`      v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                          t_arg = VALUE #( ( `getValue` ) ( `setText` ) ( `${$parameters>/value}` ) ) )
             )->tag( `Label`
                 )->a( n = `text` v = `oInput.getValue()`
             " no text of its own, exactly as the original: the Text is written
             " by the liveChange wire alone
             )->tag( `Text`
-                )->a( n = `id`   v = `getValue`
+                )->a( n = `id` v = `getValue`
             )->tag( `Label`
                 )->a( n = `text` v = `oModel.getProperty()`
             )->tag( `Text`

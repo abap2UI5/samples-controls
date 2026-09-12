@@ -1,4 +1,4 @@
-" @keywords link sap.m usually object identifier fir table toolbar title column text columnlistitem
+" @keywords link sap.m usually object identifier table toolbar title column text columnlistitem objectnumber
 " @summary Usually you use an Object Identifier in the first column of a table. But if you need an active identifier you should use an 'emphasized' link instead.
 " @origin sap.m.sample.LinkEmphasized - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.LinkEmphasized (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_033 DEFINITION PUBLIC.

@@ -1,4 +1,4 @@
-" @keywords text sap.m embedding long vbox
+" @keywords text sap.m embedding vbox
 " @summary The text control can be used for embedding longer paragraphs of text into your application, that need text wrapping.
 " @origin sap.m.sample.Text - https://sdk.openui5.org/entity/sap.m.Text/sample/sap.m.sample.Text (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_051 DEFINITION PUBLIC.

@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_589 IMPLEMENTATION.
             )->a( n = `upperCaseAnchorBar`       v = `false`
             " the third action button's toggleFooter does setShowFooter( !getShowFooter( ) );
             " a bindable property beats a frontend action, so it is bound two-way
-            )->a( n = `showFooter` v = client->_bind( show_footer )
+            )->a( n = `showFooter`               v = client->_bind( show_footer )
 
             )->ele( `landmarkInfo`
                 )->tag( `ObjectPageAccessibleLandmarkInfo`

@@ -49,9 +49,9 @@ CLASS z2ui5_cl_smpc_app_079 IMPLEMENTATION.
 
         )->ele( `Page`
             )->a( n = `enableScrolling` v = `true`
-            )->a( n = `title`          v = `Page Header Title`
-            )->a( n = `titleLevel`     v = `H2`
-            )->a( n = `showFooter`     v = `false`
+            )->a( n = `title`           v = `Page Header Title`
+            )->a( n = `titleLevel`      v = `H2`
+            )->a( n = `showFooter`      v = `false`
 
             )->ele( `List`
                 )->a( n = `items` v = client->_bind( t_products )

@@ -84,19 +84,19 @@ CLASS z2ui5_cl_smpc_app_104 IMPLEMENTATION.
 
         )->ele( n = `dependents` ns = `mvc`
             )->ele( `TableSelectDialog`
-                )->a( n = `id`         v = `myDialog`
-                )->a( n = `noDataText` v = `No Products Found`
-                )->a( n = `title`      v = `Select Product`
-                )->a( n = `search`     v = client->follow_up_action( val   = client->cs_event-binding_call
-                                                                     t_arg = VALUE #( ( `myDialog` ) ( `items` ) ( `filter` ) ( `NAME` ) ( `Contains` ) ( `${$parameters>/value}` ) ) )
-                )->a( n = `confirm`    v = client->_event( `CONFIRM` )
-                )->a( n = `cancel`     v = client->_event( `CONFIRM` )
+                )->a( n = `id`                 v = `myDialog`
+                )->a( n = `noDataText`         v = `No Products Found`
+                )->a( n = `title`              v = `Select Product`
+                )->a( n = `search`             v = client->follow_up_action( val   = client->cs_event-binding_call
+                                                                             t_arg = VALUE #( ( `myDialog` ) ( `items` ) ( `filter` ) ( `NAME` ) ( `Contains` ) ( `${$parameters>/value}` ) ) )
+                )->a( n = `confirm`            v = client->_event( `CONFIRM` )
+                )->a( n = `cancel`             v = client->_event( `CONFIRM` )
                 )->a( n = `multiSelect`        v = client->_bind( multi_select )
                 )->a( n = `draggable`          v = client->_bind( draggable )
                 )->a( n = `resizable`          v = client->_bind( resizable )
                 )->a( n = `rememberSelections` v = client->_bind( remember )
                 )->a( n = `confirmButtonText`  v = client->_bind( confirm_text )
-                )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
+                )->a( n = `items`              v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
 
                 )->ele( `ColumnListItem`
                     )->a( n = `vAlign` v = `Middle`
@@ -177,7 +177,7 @@ CLASS z2ui5_cl_smpc_app_104 IMPLEMENTATION.
                 )->a( n = `cancel`            v = client->_event( `VH_CLOSE` )
                 )->a( n = `showClearButton`   v = `true`
                 )->a( n = `id`                v = `valueHelpDialog`
-                )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
+                )->a( n = `items`             v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
 
                 )->ele( `ColumnListItem`
                     )->a( n = `selected` v = `{SELECTED}`
@@ -254,14 +254,14 @@ CLASS z2ui5_cl_smpc_app_104 IMPLEMENTATION.
             )->a( n = `width` v = `100%`
 
             )->tag( `Input`
-                )->a( n = `id`            v = `productInput`
-                )->a( n = `type`          v = `Text`
-                )->a( n = `value`         v = client->_bind( product_value )
-                )->a( n = `placeholder`   v = `Enter Product ...`
-                )->a( n = `showValueHelp` v = `true`
+                )->a( n = `id`               v = `productInput`
+                )->a( n = `type`             v = `Text`
+                )->a( n = `value`            v = client->_bind( product_value )
+                )->a( n = `placeholder`      v = `Enter Product ...`
+                )->a( n = `showValueHelp`    v = `true`
                 )->a( n = `valueHelpRequest` v = client->_event( `VALUE_HELP` )
-                )->a( n = `width`         v = `15rem`
-                )->a( n = `class`         v = `sapUiSmallMarginBottom`
+                )->a( n = `width`            v = `15rem`
+                )->a( n = `class`            v = `sapUiSmallMarginBottom`
 
             )->ele( `Button`
                 )->a( n = `class` v = `sapUiSmallMarginBottom`

@@ -108,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
         )->ele( n = `dependents` ns = `mvc`
 
             )->ele( n = `Menu` ns = `tcm`
-                )->a( n = `id`         v = `columnHeaderMenu`
+                )->a( n = `id` v = `columnHeaderMenu`
 
                 )->ele( n = `QuickSort` ns = `tcm`
                     " QuickSort.change DECLARES key and sortOrder in its event

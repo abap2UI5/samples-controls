@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
             )->a( n = `placement` v = `Left`
 
             )->ele( `QuickViewPage`
-                )->a( n = `header`      v = `Employee`
+                )->a( n = `header` v = `Employee`
                 )->a( n = `title`       t = node-title
                 )->a( n = `description` t = node-position
 
@@ -92,11 +92,11 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label` v = `Mobile`
                         )->a( n = `value` t = node-phone
-                        )->a( n = `type`  v = `phone`
+                        )->a( n = `type` v = `phone`
                     )->tag( `QuickViewGroupElement`
-                        )->a( n = `label`        v = `Email`
+                        )->a( n = `label` v = `Email`
                         )->a( n = `value`        t = node-email
-                        )->a( n = `type`         v = `email`
+                        )->a( n = `type` v = `email`
                         )->a( n = `emailSubject` t = |Contact{ node-id }|
 
                 )->end( ).
@@ -138,12 +138,12 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`      v = `true`
-        )->a( n = `height`            v = `100%`
-        )->a( n = `xmlns`             v = `sap.m`
-        )->a( n = `xmlns:mvc`         v = `sap.ui.core.mvc`
+        )->a( n = `displayBlock`       v = `true`
+        )->a( n = `height`             v = `100%`
+        )->a( n = `xmlns`              v = `sap.m`
+        )->a( n = `xmlns:mvc`          v = `sap.ui.core.mvc`
         )->a( n = `xmlns:networkgraph` v = `sap.suite.ui.commons.networkgraph`
-        )->a( n = `xmlns:nglayout`    v = `sap.suite.ui.commons.networkgraph.layout`
+        )->a( n = `xmlns:nglayout`     v = `sap.suite.ui.commons.networkgraph.layout`
 
         )->ele( `Page`
             )->a( n = `title`          v = `abap2UI5 - Network Graph - Org Tree`

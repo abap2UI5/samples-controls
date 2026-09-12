@@ -130,7 +130,7 @@ CLASS z2ui5_cl_smpc_app_604 IMPLEMENTATION.
         )->a( n = `renderType`     v = `Bare`
 
         )->ele( `Panel`
-            )->a( n = `id` v = `carouselContainer`
+            )->a( n = `id`               v = `carouselContainer`
             " onResizeCarouselContainer sets width to <value>% and height to
             " floor( 650 * value / 100 )px - both are expressions over the slider
             )->a( n = `width`            v = |\{= ${ client->_bind( slider_value ) } + '%' \}|

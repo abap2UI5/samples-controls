@@ -96,27 +96,27 @@ CLASS z2ui5_cl_smpc_app_536 IMPLEMENTATION.
                 " new selected state and the number of selected appointments - or, when
                 " the interval selection hit no appointment, the count of them. Every
                 " value is client-readable, so it travels and ABAP composes both branches
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleRowHeaderPress names the pressed row's id in a MessageBox
-                )->a( n = `rowHeaderPress`           v = client->_event( val = `ROW_HEADER_PRESS` arg = `${$parameters>/row}.getId()` )
-                )->a( n = `showEmptyIntervalHeaders` v = `false`
-                )->a( n = `showWeekNumbers`          v = `true`
+                )->a( n = `rowHeaderPress`            v = client->_event( val = `ROW_HEADER_PRESS` arg = `${$parameters>/row}.getId()` )
+                )->a( n = `showEmptyIntervalHeaders`  v = `false`
+                )->a( n = `showWeekNumbers`           v = `true`
                 " onCalendarTypeSelect / onCalendarSecondaryTypeSelect call the two
                 " setters; both properties are bindable, so the two Selects share
                 " their key with the calendar and the handlers are dropped
-                )->a( n = `primaryCalendarType` v = client->_bind( primary_type )
+                )->a( n = `primaryCalendarType`       v = client->_bind( primary_type )
                 " the secondary Select's None entry means "no secondary type" -
                 " the original passes undefined, which the expression reproduces
-                )->a( n = `secondaryCalendarType` v = |\{= ${ client->_bind( secondary_type ) } === 'None' ? undefined : ${ client->_bind( secondary_type ) } \}|
+                )->a( n = `secondaryCalendarType`     v = |\{= ${ client->_bind( secondary_type ) } === 'None' ? undefined : ${ client->_bind( secondary_type ) } \}|
                 " handleSelectionFinish hands the MultiComboBox's selected keys to
                 " setBuiltInViews - a bindable string[] property, bound here
-                )->a( n = `builtInViews` v = client->_bind( t_built_in )
+                )->a( n = `builtInViews`              v = client->_bind( t_built_in )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

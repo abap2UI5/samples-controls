@@ -72,8 +72,8 @@ CLASS z2ui5_cl_smpc_app_066 IMPLEMENTATION.
 
                         )->ele( `dependents`
                             )->ele( `MessagePopover`
-                                )->a( n = `id`              v = `messagePopover`
-                                )->a( n = `items`           v = client->_bind( t_messages )
+                                )->a( n = `id`               v = `messagePopover`
+                                )->a( n = `items`            v = client->_bind( t_messages )
                                 )->a( n = `activeTitlePress` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Active title is pressed` ) ) )
 

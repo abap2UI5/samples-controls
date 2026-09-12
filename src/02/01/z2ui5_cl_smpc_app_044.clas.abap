@@ -1,4 +1,4 @@
-" @keywords pdfviewer sap.m pdf viewer opening popup dialog. carousel image
+" @keywords pdfviewer sap.m pdf viewer opening popup dialog carousel image
 " @summary A PDF viewer opening as a popup dialog.
 " @origin sap.m.sample.PDFViewerPopup - https://sdk.openui5.org/entity/sap.m.PDFViewer/sample/sap.m.sample.PDFViewerPopup (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_044 DEFINITION PUBLIC.
@@ -60,12 +60,12 @@ CLASS z2ui5_cl_smpc_app_044 IMPLEMENTATION.
 
             )->ele( `pages`
                 )->tag( `Image`
-                    )->a( n = `id`    v = `image1`
+                    )->a( n = `id` v = `image1`
                     )->a( n = `src`   t = c_base_url && `sample1.jpg`
                     )->a( n = `alt`   v = `Example Picture 1`
                     )->a( n = `press` v = client->_event( val = `SHOW_PDF` arg = `sample1.pdf` )
                 )->tag( `Image`
-                    )->a( n = `id`    v = `image2`
+                    )->a( n = `id` v = `image2`
                     )->a( n = `src`   t = c_base_url && `sample2.jpg`
                     )->a( n = `alt`   v = `Example Picture 2`
                     )->a( n = `press` v = client->_event( val = `SHOW_PDF` arg = `sample2.pdf` ) ).

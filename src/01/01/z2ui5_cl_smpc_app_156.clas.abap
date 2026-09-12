@@ -37,10 +37,10 @@ CLASS z2ui5_cl_smpc_app_156 IMPLEMENTATION.
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
 
         )->tag( `NumericContent`
-            )->a( n = `value`          v = `888.8`
-            )->a( n = `scale`          v = `MM`
-            )->a( n = `class`          v = `sapUiSmallMargin`
-            )->a( n = `press`          v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The numeric content is pressed.` ) ) )
+            )->a( n = `value`           v = `888.8`
+            )->a( n = `scale`           v = `MM`
+            )->a( n = `class`           v = `sapUiSmallMargin`
+            )->a( n = `press`           v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The numeric content is pressed.` ) ) )
             )->a( n = `truncateValueTo` v = `4`
         )->tag( `NumericContent`
             )->a( n = `value`      v = `65.5`

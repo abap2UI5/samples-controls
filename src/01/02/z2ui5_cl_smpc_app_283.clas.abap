@@ -53,7 +53,7 @@ CLASS z2ui5_cl_smpc_app_283 IMPLEMENTATION.
 
         )->tag( `MessageStrip`
             )->a( n = `text`     v = `These css classes are only a subset of the less theming parameters. Be aware that they can not be applied to all use cases. `
-                                    && `If possible make use of the less theming parameters. `
+                                     && `If possible make use of the less theming parameters. `
             )->a( n = `type`     v = `Warning`
             )->a( n = `showIcon` v = `true`
             )->a( n = `class`    v = `sapUiMediumMarginBottom`

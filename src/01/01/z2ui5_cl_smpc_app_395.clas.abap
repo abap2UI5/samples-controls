@@ -32,9 +32,9 @@ CLASS z2ui5_cl_smpc_app_395 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`     v = `sap.m`
 
         )->ele( `OverflowToolbar`
             )->a( n = `design` v = `Transparent`

@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
             " itemCloseHandler calls oEvent.preventDefault() unconditionally and lets a
             " MessageBox.confirm decide - the eBP wire cancels the built-in close and
             " transports the tab name plus its row index (app 093 precedent)
-            )->a( n = `itemClose` v = client->_event( val    = `CLOSE`
+            )->a( n = `itemClose`         v = client->_event( val    = `CLOSE`
                                                               t_arg  = VALUE #( ( `${$parameters>/item}.getName()` ) ( `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` ) )
                                                               s_ctrl = VALUE #( check_prevent_default = abap_true ) )
 

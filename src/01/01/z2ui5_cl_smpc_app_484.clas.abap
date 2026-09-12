@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_484 IMPLEMENTATION.
         )->end(
 
         )->tag( `Text`
-            )->a( n = `text` v = `The IconTabBar above does not have a width property and renders a default width of '100%'. ` &&
+            )->a( n = `text`  v = `The IconTabBar above does not have a width property and renders a default width of '100%'. ` &&
                                   `Therefore we use margin class 'sapUiForceWidthAuto' to set its width to 'auto'. To clear a ` &&
                                   `16px (1rem) space all around, we use class 'sapUiSmallMargin'.`
             )->a( n = `class` v = `sapUiExploredNoMarginInfo` ).

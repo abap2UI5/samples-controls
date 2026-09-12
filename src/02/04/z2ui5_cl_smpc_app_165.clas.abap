@@ -65,9 +65,9 @@ CLASS z2ui5_cl_smpc_app_165 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiContentPadding`
 
             )->tag( `Button`
-                )->a( n = `id`   v = `pSwitchBtn`
-                )->a( n = `icon` v = `sap-icon://menu`
-                )->a( n = `text` v = `Open Product Switch`
+                )->a( n = `id`    v = `pSwitchBtn`
+                )->a( n = `icon`  v = `sap-icon://menu`
+                )->a( n = `text`  v = `Open Product Switch`
                 " fnOpen loads ProductSwitchPopover.fragment.xml and opens it at this
                 " button - rebuilt as a core:FragmentDefinition shown through
                 " popover_display( by_id = ... ), the documented fragment-popover path

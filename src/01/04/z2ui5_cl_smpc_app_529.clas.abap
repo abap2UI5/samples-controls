@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
             )->a( n = `titleAreaShrinkRatio`        v = `1:1.6:1.6`
             " showFooter is static true in the view and the ToggleFooter button
             " flips it in the controller - bound here so the toggle can reach it
-            )->a( n = `showFooter` v = client->_bind( showfooter )
+            )->a( n = `showFooter`                  v = client->_bind( showfooter )
 
             )->ele( n = `titleHeading` ns = `semantic`
                 )->tag( `Title`
@@ -321,7 +321,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
 
             )->ele( n = `messagesIndicator` ns = `semantic`
                 )->ele( n = `MessagesIndicator` ns = `semantic`
-                    )->a( n = `id` v = `messagesIndicatorBtn`
+                    )->a( n = `id`    v = `messagesIndicatorBtn`
                     " onMessagesButtonPress builds a MessagePopover over the message>
                     " model and opens it at the button - declared in dependents and
                     " opened roundtrip-free (app 066 idiom)

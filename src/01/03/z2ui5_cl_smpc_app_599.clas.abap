@@ -1,4 +1,4 @@
-" @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionsized objectpagelayout objectpageheader togglebutton objectpagesection button
+" @keywords objectpagesubsection object sub section sap.uxap objectpagesubsectionsized objectpagelayout objectpageheader togglebutton
 " @summary This example shows how the size of the blocks and be either specified or automatic
 " @origin sap.uxap.sample.ObjectPageSubSectionSized - https://sdk.openui5.org/entity/sap.uxap.ObjectPageSubSection/sample/sap.uxap.sample.ObjectPageSubSectionSized (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_599 DEFINITION PUBLIC.

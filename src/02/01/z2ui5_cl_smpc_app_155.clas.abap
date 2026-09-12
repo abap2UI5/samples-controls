@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_155 IMPLEMENTATION.
                 )->a( n = `selected`          v = `true`
                 )->a( n = `partiallySelected` v = `true`
             )->tag( `CheckBox`
-                )->a( n = `text` v = `Required option`
+                )->a( n = `text`     v = `Required option`
                 " required is @since 1.121 - kept 1:1 (POST_171)
                 )->a( n = `required` v = `true`
             )->tag( `CheckBox`

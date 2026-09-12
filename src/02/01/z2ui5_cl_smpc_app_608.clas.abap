@@ -142,11 +142,11 @@ CLASS z2ui5_cl_smpc_app_608 IMPLEMENTATION.
         )->end(
 
         )->ele( `Select`
-            )->a( n = `id`                   v = `select`
-            )->a( n = `showSecondaryValues`  v = `true`
-            )->a( n = `columnRatio`          v = client->_bind( column_ratio )
-            )->a( n = `wrapItemsText`        v = client->_bind( wrap_items )
-            )->a( n = `items`                v = client->_bind( t_items1 )
+            )->a( n = `id`                  v = `select`
+            )->a( n = `showSecondaryValues` v = `true`
+            )->a( n = `columnRatio`         v = client->_bind( column_ratio )
+            )->a( n = `wrapItemsText`       v = client->_bind( wrap_items )
+            )->a( n = `items`               v = client->_bind( t_items1 )
             )->ele( `items`
                 )->tag( n = `ListItem` ns = `core`
                     )->a( n = `text`           v = `{FIRSTCOLUMNTEXT}`

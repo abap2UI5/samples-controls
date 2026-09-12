@@ -85,30 +85,30 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
                 " handleAppointmentSelect: MessageBox with the appointment title, its
                 " new selected state and the number of selected appointments - or, when
                 " the interval selection hit no appointment, the count of them
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleIntervalSelect pushes a 'new appointment' (Type09) into the row
                 " it hit, or into every selected row. The interval's start and end travel
                 " as their LOCAL parts - a UTC toISOString( ) would shift the day
-                )->a( n = `intervalSelect` v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                )->a( n = `intervalSelect`            v = client->_event(
+                                     val   = `INTERVAL_SELECT`
+                                     t_arg = VALUE #(
+                                       ( `${$parameters>/startDate}.getFullYear()` )
+                                       ( `${$parameters>/startDate}.getMonth() + 1` )
+                                       ( `${$parameters>/startDate}.getDate()` )
+                                       ( `${$parameters>/startDate}.getHours()` )
+                                       ( `${$parameters>/startDate}.getMinutes()` )
+                                       ( `${$parameters>/endDate}.getFullYear()` )
+                                       ( `${$parameters>/endDate}.getMonth() + 1` )
+                                       ( `${$parameters>/endDate}.getDate()` )
+                                       ( `${$parameters>/endDate}.getHours()` )
+                                       ( `${$parameters>/endDate}.getMinutes()` )
+                                       ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

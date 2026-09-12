@@ -155,35 +155,35 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
                                     ( `${$parameters>/calendarRow}.getBindingContext().getPath()` )
                                     ( `${$parameters>/copy} ? 'X' : ''` )
                                     ( `${$parameters>/calendarRow}.getTitle()` ) ) )
-                        )->a( n = `appointmentResize` v = client->_event(
-                                  val   = `APPT_RESIZE`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointmentCreate` v = client->_event(
-                                  val   = `APPT_CREATE`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointments` v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
+                        )->a( n = `appointmentResize`             v = client->_event(
+                                              val   = `APPT_RESIZE`
+                                              t_arg = VALUE #(
+                                                ( `${$parameters>/startDate}.getFullYear()` )
+                                                ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                ( `${$parameters>/startDate}.getDate()` )
+                                                ( `${$parameters>/startDate}.getHours()` )
+                                                ( `${$parameters>/startDate}.getMinutes()` )
+                                                ( `${$parameters>/endDate}.getFullYear()` )
+                                                ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                ( `${$parameters>/endDate}.getDate()` )
+                                                ( `${$parameters>/endDate}.getHours()` )
+                                                ( `${$parameters>/endDate}.getMinutes()` )
+                                                ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
+                        )->a( n = `appointmentCreate`             v = client->_event(
+                                              val   = `APPT_CREATE`
+                                              t_arg = VALUE #(
+                                                ( `${$parameters>/startDate}.getFullYear()` )
+                                                ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                ( `${$parameters>/startDate}.getDate()` )
+                                                ( `${$parameters>/startDate}.getHours()` )
+                                                ( `${$parameters>/startDate}.getMinutes()` )
+                                                ( `${$parameters>/endDate}.getFullYear()` )
+                                                ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                ( `${$parameters>/endDate}.getDate()` )
+                                                ( `${$parameters>/endDate}.getHours()` )
+                                                ( `${$parameters>/endDate}.getMinutes()` )
+                                                ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
+                        )->a( n = `appointments`                  v = `{path: 'T_APPOINTMENTS', templateShareable: false}`
 
                         )->ele( `appointments`
                             )->tag( n = `CalendarAppointment` ns = `u`

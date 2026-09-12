@@ -54,10 +54,10 @@ CLASS z2ui5_cl_smpc_app_467 IMPLEMENTATION.
         " onInit adds the 12 IconTabFilters in a loop - a bound items aggregation
         " over the same 12 rows, which is the abap2UI5 form of addItem( )
         )->ele( `IconTabBar`
-            )->a( n = `id`    v = `idIconTabBar`
-            )->a( n = `class` v = `sapUiResponsiveContentPadding`
+            )->a( n = `id`         v = `idIconTabBar`
+            )->a( n = `class`      v = `sapUiResponsiveContentPadding`
             )->a( n = `headerMode` v = `Inline`
-            )->a( n = `items` v = client->_bind( t_tabs )
+            )->a( n = `items`      v = client->_bind( t_tabs )
 
             )->ele( `items`
                 )->ele( `IconTabFilter`

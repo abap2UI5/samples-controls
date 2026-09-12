@@ -62,12 +62,12 @@ CLASS z2ui5_cl_smpc_app_519 IMPLEMENTATION.
                     )->a( n = `text`     v = `MultiComboBox with suggestions and success value state with a a long message:`
                     )->a( n = `labelFor` v = `MCBSuccess`
                 )->ele( `MultiComboBox`
-                    )->a( n = `id`         v = `MCBSuccess`
-                    )->a( n = `class`      v = `sapUiSmallMarginBottom`
-                    )->a( n = `maxWidth`   v = `500px`
-                    )->a( n = `valueState` v = `Success`
+                    )->a( n = `id`             v = `MCBSuccess`
+                    )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                    )->a( n = `maxWidth`       v = `500px`
+                    )->a( n = `valueState`     v = `Success`
                     )->a( n = `valueStateText` v = `Success message. Extra long text used as a success message. Extra long text used as a success message - 2. Extra long text used as a success message.`
-                    )->a( n = `items`      v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
+                    )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{PRODUCTID}`
@@ -79,12 +79,12 @@ CLASS z2ui5_cl_smpc_app_519 IMPLEMENTATION.
                     )->a( n = `text`     v = `MultiComboBox with suggestions and information value state with a a long message:`
                     )->a( n = `labelFor` v = `MCBInformation`
                 )->ele( `MultiComboBox`
-                    )->a( n = `id`         v = `MCBInformation`
-                    )->a( n = `class`      v = `sapUiSmallMarginBottom`
-                    )->a( n = `maxWidth`   v = `500px`
-                    )->a( n = `valueState` v = `Information`
+                    )->a( n = `id`             v = `MCBInformation`
+                    )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                    )->a( n = `maxWidth`       v = `500px`
+                    )->a( n = `valueState`     v = `Information`
                     )->a( n = `valueStateText` v = `Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message.`
-                    )->a( n = `items`      v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
+                    )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{PRODUCTID}`
@@ -131,12 +131,12 @@ CLASS z2ui5_cl_smpc_app_519 IMPLEMENTATION.
                     )->a( n = `text`     v = `MultiComboBox with suggestions and warning value state with a a long message:`
                     )->a( n = `labelFor` v = `MCBWarning`
                 )->ele( `MultiComboBox`
-                    )->a( n = `id`         v = `MCBWarning`
-                    )->a( n = `class`      v = `sapUiSmallMarginBottom`
-                    )->a( n = `maxWidth`   v = `500px`
-                    )->a( n = `valueState` v = `Warning`
+                    )->a( n = `id`             v = `MCBWarning`
+                    )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                    )->a( n = `maxWidth`       v = `500px`
+                    )->a( n = `valueState`     v = `Warning`
                     )->a( n = `valueStateText` v = `Warning message. Extra long text used as a warning message. Extra long text used as a information message - 2. Extra long text used as a warning message.`
-                    )->a( n = `items`      v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
+                    )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{PRODUCTID}`
@@ -148,12 +148,12 @@ CLASS z2ui5_cl_smpc_app_519 IMPLEMENTATION.
                     )->a( n = `text`     v = `MultiComboBox with suggestions and a warning value state with a link:`
                     )->a( n = `labelFor` v = `MCBWarningLink`
                 )->ele( `MultiComboBox`
-                    )->a( n = `id`         v = `MCBWarningLink`
-                    )->a( n = `class`      v = `sapUiSmallMarginBottom`
-                    )->a( n = `maxWidth`   v = `500px`
-                    )->a( n = `valueState` v = `Warning`
+                    )->a( n = `id`             v = `MCBWarningLink`
+                    )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                    )->a( n = `maxWidth`       v = `500px`
+                    )->a( n = `valueState`     v = `Warning`
                     )->a( n = `valueStateText` v = `Warning message. Extra long text used as a warning message.`
-                    )->a( n = `items`      v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
+                    )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{PRODUCTID}`
@@ -179,12 +179,12 @@ CLASS z2ui5_cl_smpc_app_519 IMPLEMENTATION.
                     )->a( n = `text`     v = `MultiComboBox with suggestions and an error value state with a a long message:`
                     )->a( n = `labelFor` v = `MCBError`
                 )->ele( `MultiComboBox`
-                    )->a( n = `id`         v = `MCBError`
-                    )->a( n = `class`      v = `sapUiSmallMarginBottom`
-                    )->a( n = `maxWidth`   v = `500px`
-                    )->a( n = `valueState` v = `Error`
+                    )->a( n = `id`             v = `MCBError`
+                    )->a( n = `class`          v = `sapUiSmallMarginBottom`
+                    )->a( n = `maxWidth`       v = `500px`
+                    )->a( n = `valueState`     v = `Error`
                     )->a( n = `valueStateText` v = `Error message. Extra long text used as a warning message. Extra long text used as an error message - 2. Extra long text used as an error message.`
-                    )->a( n = `items`      v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
+                    )->a( n = `items`          v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
                     )->tag( n = `Item` ns = `core`
                         )->a( n = `key`  v = `{PRODUCTID}`

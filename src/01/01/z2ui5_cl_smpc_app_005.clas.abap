@@ -1,4 +1,4 @@
-" @keywords button sap.m buttons: types icons press events toolbar toolbarspacer title hbox flexitemdata
+" @keywords button sap.m buttons types icons press events toolbar toolbarspacer title hbox flexitemdata
 " @summary Buttons trigger user actions and come in a variety of shapes and colors. Placing a button on a page header or footer changes its appearance.
 " @origin sap.m.sample.Button - https://sdk.openui5.org/entity/sap.m.Button/sample/sap.m.sample.Button (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_005 DEFINITION PUBLIC.

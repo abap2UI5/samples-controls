@@ -73,13 +73,13 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
             )->a( n = `content` v = `<style>.tileLayout\{float:left\}</style>`
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Country-Specific Profit Margin`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Country-Specific Profit Margin`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `OneByHalf`
             )->a( n = `subheader` v = `Subtitle`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
 
@@ -90,29 +90,29 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Sales Fulfillment Application Title`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Sales Fulfillment Application Title`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `TwoByHalf`
             )->a( n = `subheader` v = `Subtitle`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->tag( `TileContent`
 
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Manage Activity Master Data Type`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Manage Activity Master Data Type`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `TwoByHalf`
             )->a( n = `subheader` v = `Subtitle`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
-                )->a( n = `unit` v = `EUR`
+                )->a( n = `unit`   v = `EUR`
                 )->a( n = `footer` v = `Current Quarter`
 
                 )->tag( `ImageContent`
@@ -122,13 +122,13 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Right click to open in new tab`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Right click to open in new tab`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `subheader` v = `Link tile`
-            )->a( n = `url` v = `https://www.sap.com/`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `url`       v = `https://www.sap.com/`
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
 
@@ -139,15 +139,15 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Sales Fulfillment Application Title`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Sales Fulfillment Application Title`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `subheader` v = `Subtitle`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
-                )->a( n = `unit` v = `EUR`
+                )->a( n = `unit`   v = `EUR`
                 )->a( n = `footer` v = `Current Quarter`
 
                 )->tag( `ImageContent`
@@ -157,12 +157,12 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Manage Activity Master Data Type`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Manage Activity Master Data Type`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `subheader` v = `Subtitle`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
 
@@ -173,30 +173,30 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Manage Activity Master Data Type With a Long Title Without an Icon`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Manage Activity Master Data Type With a Long Title Without an Icon`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `subheader` v = `Subtitle Launch Tile`
-            )->a( n = `mode` v = `HeaderMode`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `mode`      v = `HeaderMode`
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
-                )->a( n = `unit` v = `EUR`
+                )->a( n = `unit`   v = `EUR`
                 )->a( n = `footer` v = `Current Quarter`
 
             )->end(
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Jessica D. Prince Senior Consultant`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
-            )->a( n = `subheader` v = `Department`
+            )->a( n = `class`       v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`      v = `Jessica D. Prince Senior Consultant`
+            )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `subheader`   v = `Department`
             )->a( n = `appShortcut` v = `shortcut`
-            )->a( n = `systemInfo` v = `systeminfo`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `systemInfo`  v = `systeminfo`
+            )->a( n = `state`       v = client->_bind( tile_state )
 
             )->ele( `TileContent`
 
@@ -207,43 +207,43 @@ CLASS z2ui5_cl_smpc_app_517 IMPLEMENTATION.
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Sales Fulfillment Application Title`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Sales Fulfillment Application Title`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `OneByHalf`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
-                )->a( n = `unit` v = `EUR`
+                )->a( n = `unit`   v = `EUR`
                 )->a( n = `footer` v = `Current Quarter`
 
             )->end(
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Sales Fulfillment Application Title`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Sales Fulfillment Application Title`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `TwoByHalf`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
-                )->a( n = `unit` v = `EUR`
+                )->a( n = `unit`   v = `EUR`
                 )->a( n = `footer` v = `Current Quarter`
 
             )->end(
         )->end(
 
         )->ele( `GenericTile`
-            )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
-            )->a( n = `header` v = `Jessica D. Prince Senior Consultant`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
+            )->a( n = `class`     v = `sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout`
+            )->a( n = `header`    v = `Jessica D. Prince Senior Consultant`
+            )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `The GenericTile is pressed.` ) ) )
             )->a( n = `frameType` v = `TwoByHalf`
             )->a( n = `subheader` v = `Department`
-            )->a( n = `state` v = client->_bind( tile_state )
+            )->a( n = `state`     v = client->_bind( tile_state )
 
             )->ele( `TileContent`
 

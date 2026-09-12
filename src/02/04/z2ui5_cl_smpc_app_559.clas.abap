@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                     )->a( n = `status` v = `Error`
                     )->a( n = `design` v = `StatusIconHidden`
                     " onGenericTagPress anchors the card popover on the pressed tag
-                    )->a( n = `press` v = client->_event( val = `GENERIC_TAG` arg = `$event.oSource.sId` )
+                    )->a( n = `press`  v = client->_event( val = `GENERIC_TAG` arg = `$event.oSource.sId` )
 
                     )->tag( `ObjectNumber`
                         )->a( n = `number`     v = `2`
@@ -249,7 +249,7 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                 )->a( n = `text` v = `Status`
             )->ele( n = `template` ns = `table`
                 )->tag( `ObjectStatus`
-                    )->a( n = `text` v = `{STATUS}`
+                    )->a( n = `text`  v = `{STATUS}`
                     " formatAvailableToObjectState is computed in ABAP (thin frontend)
                     )->a( n = `state` v = `{AVAILABLESTATE}`
 

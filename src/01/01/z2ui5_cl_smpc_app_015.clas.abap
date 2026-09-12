@@ -1,4 +1,4 @@
-" @keywords customtreeitem custom tree item sap.m con flexbox button input flexitemdata
+" @keywords customtreeitem custom tree item sap.m flexbox button input flexitemdata
 " @summary With the Custom Tree Item you can add any kind of content to Tree.
 " @origin sap.m.sample.CustomTreeItem - https://sdk.openui5.org/entity/sap.m.CustomTreeItem/sample/sap.m.sample.CustomTreeItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_015 DEFINITION PUBLIC.

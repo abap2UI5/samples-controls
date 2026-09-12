@@ -69,11 +69,11 @@ CLASS z2ui5_cl_smpc_app_438 IMPLEMENTATION.
                         " the original's own device model (isNoTouch / isTouch) folds onto
                         " the framework's raw device> model
                         )->tag( `SearchField`
-                            )->a( n = `id`                 v = `searchField`
-                            )->a( n = `showRefreshButton`  v = `{= !${device>/support/touch} }`
-                            )->a( n = `value`              v = client->_bind( search )
-                            )->a( n = `search`             v = client->_event( `REFRESH` )
-                            )->a( n = `width`              v = `100%`
+                            )->a( n = `id`                v = `searchField`
+                            )->a( n = `showRefreshButton` v = `{= !${device>/support/touch} }`
+                            )->a( n = `value`             v = client->_bind( search )
+                            )->a( n = `search`            v = client->_event( `REFRESH` )
+                            )->a( n = `width`             v = `100%`
 
                     )->end(
                 )->end(

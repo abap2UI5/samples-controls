@@ -56,8 +56,8 @@ CLASS z2ui5_cl_smpc_app_244 IMPLEMENTATION.
         )->a( n = `height`    v = `100%`
 
         )->ele( n = `DynamicPage` ns = `f`
-            )->a( n = `id`         v = `dynamicPageId`
-            )->a( n = `showFooter` v = client->_bind( show_footer )
+            )->a( n = `id`               v = `dynamicPageId`
+            )->a( n = `showFooter`       v = client->_bind( show_footer )
             " added wire (declared): the controller attaches this in onInit
             )->a( n = `breakpointChange` v = client->_event( val   = `BREAKPOINT_CHANGE`
                                                              t_arg = VALUE #( ( `${$parameters>/currentRange}` ) ( `${$parameters>/currentWidth}` ) ) )

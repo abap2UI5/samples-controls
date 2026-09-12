@@ -104,11 +104,11 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
             )->end(
 
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`                v = `SPC1`
-                )->a( n = `class`             v = `sapUiSmallMarginTop`
-                )->a( n = `title`             v = `My Calendar`
-                )->a( n = `dateSelectionMode` v = client->_bind( date_selection_mode )
-                )->a( n = `viewChange`        v = client->_event( `VIEW_CHANGE` )
+                )->a( n = `id`                  v = `SPC1`
+                )->a( n = `class`               v = `sapUiSmallMarginTop`
+                )->a( n = `title`               v = `My Calendar`
+                )->a( n = `dateSelectionMode`   v = client->_bind( date_selection_mode )
+                )->a( n = `viewChange`          v = client->_event( `VIEW_CHANGE` )
                 " the WHOLE selectedDates parameter travels in one arg: the
                 " frontend marshals each DateRange into its public properties
                 " (Lib.normalizeEventArgs), which is the loop the client

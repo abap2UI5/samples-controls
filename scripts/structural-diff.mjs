@@ -10,7 +10,11 @@
  *
  * What it compares:
  *  - the multiset of CONTROLS used (UpperCamelCase elements; lowercase
- *    aggregation elements are ignored on both sides, they are optional in XML)
+ *    aggregation elements are ignored on both sides, they are optional in XML),
+ *    keyed by NAMESPACE URI + local name: each side's prefixes are resolved
+ *    through its own xmlns declarations, so the port's canonical prefix
+ *    (AGENTS §8) and the original's spelling meet on the library, and an
+ *    unprefixed control under a different default namespace still differs
  *  - per control, the set of attribute/property NAMES used
  *  - per control+attribute, simple BINDING VALUES (`{path}`): when the
  *    original attribute is a plain property binding and the port writes a
@@ -67,6 +71,22 @@ const IGNORED_ATTRS = new Set(['controllerName']);
 // (found 2026-07-27).
 const isControl = (qname) => /^([A-Za-z_][\w.-]*:)?[A-Z]/.test(qname);
 const simpleName = (qname) => qname.split(':').pop();
+// A prefix is a per-document alias, not a control: `c:HTML` and `core:HTML`
+// are the same sap.ui.core.HTML when both prefixes map to that library, and
+// `List` under xmlns="sap.uxap" is NOT the original's `m:List`. So both sides
+// resolve every qualified name to `<namespace uri>:<local name>` through their
+// own xmlns declarations before the counts are compared (since 2026-09-12 —
+// the port prefixes were canonicalised corpus-wide, see AGENTS §8, and the
+// comparison used to read the prefix as part of the control). A prefix no
+// declaration covers keeps its spelling, so an undeclared prefix still
+// surfaces as a difference rather than vanishing.
+const resolveName = (qname, ns) => {
+  const i = qname.indexOf(':');
+  const prefix = i < 0 ? '' : qname.slice(0, i);
+  const local = i < 0 ? qname : qname.slice(i + 1);
+  const uri = ns.get(prefix);
+  return uri === undefined ? qname : `${uri}:${local}`;
+};
 
 // ---------- original side: parse view.xml ----------
 function parseXml(xml) {
@@ -74,6 +94,9 @@ function parseXml(xml) {
   const attrs = new Map();             // simple control name -> Set(attr names)
   const values = new Map();            // simple control name -> Map(attr -> Set(values))
   const clean = xml.replace(/<!--[\s\S]*?-->/g, '');
+  const ns = new Map();
+  for (const d of clean.matchAll(/\bxmlns(?::([\w.-]+))?\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) ns.set(d[1] || '', d[2] ?? d[3]);
+  const spelling = new Map();          // resolved name -> qname as written
   // XML permits BOTH quote styles, so the tag body must skip single-quoted runs
   // too — otherwise a `text='7" Widescreen …'` value opens a double-quote run
   // that swallows the tag boundary and merges the following sibling into this
@@ -85,7 +108,9 @@ function parseXml(xml) {
   while ((m = tagRe.exec(clean)) !== null) {
     const qname = m[1];
     if (!isControl(qname)) continue;
-    controls.set(qname, (controls.get(qname) || 0) + 1);
+    const key = resolveName(qname, ns);
+    if (!spelling.has(key)) spelling.set(key, qname);
+    controls.set(key, (controls.get(key) || 0) + 1);
     const set = attrs.get(simpleName(qname)) || new Set();
     const vmap = values.get(simpleName(qname)) || new Map();
     for (const a of m[2].matchAll(attrRe)) {
@@ -98,17 +123,33 @@ function parseXml(xml) {
     attrs.set(simpleName(qname), set);
     values.set(simpleName(qname), vmap);
   }
-  return { controls, attrs, values };
+  return { controls, attrs, values, spelling, ns };
 }
 
 // ---------- port side: parse the builder calls out of the ABAP ----------
-function parseAbap(abap) {
+function parseAbap(abap, fallbackNs = new Map()) {
   const controls = new Map();
   const attrs = new Map();
   const values = new Map();   // simple control name -> Map(attr -> Set(LITERAL values))
   // one pass over element creations; attributes are associated with the
   // element created last (that is exactly the builder's a() contract)
   const elemRe = /->\s*(ele|tag)\(\s*(?:n\s*=\s*)?`([\w:.-]+)`(?:\s+ns\s*=\s*`(\w+)`)?/g;
+  // the class's own xmlns declarations (every chain declares its own root;
+  // a prefix is expected to mean the same library in all of them)
+  // (each chain's declarations govern the elements that follow them, so a
+  // popup chain declaring xmlns="sap.m" after a main view on sap.uxap does not
+  // retarget the main view's unprefixed controls)
+  const decls = [...abap.matchAll(/->\s*a\(\s*n\s*=\s*`xmlns(?::([\w.-]+))?`\s+v\s*=\s*`([^`]*)`/g)]
+    .map((d) => ({ at: d.index, prefix: d[1] || '', uri: d[2] }));
+  // a prefix the class never declares means what it means in the original
+  // (a port that writes `mvc:View` without xmlns lines — the fixtures — is
+  // compared by spelling, exactly as before)
+  const nsAt = (at) => {
+    const ns = new Map(fallbackNs);
+    for (const d of decls) if (d.at < at) ns.set(d.prefix, d.uri);
+    return ns;
+  };
+  const spelling = new Map();
   const marks = [];
   let m;
   while ((m = elemRe.exec(abap)) !== null) {
@@ -118,7 +159,11 @@ function parseAbap(abap) {
   for (let i = 0; i < marks.length; i++) {
     const { qname } = marks[i];
     if (!isControl(qname)) continue;
-    controls.set(qname, (controls.get(qname) || 0) + 1);
+    // the root's xmlns a( ) calls follow its own ele( ), so a declaration
+    // counts for an element when it precedes the NEXT element mark
+    const key = resolveName(qname, nsAt(i + 1 < marks.length ? marks[i + 1].at : Infinity));
+    if (!spelling.has(key)) spelling.set(key, qname);
+    controls.set(key, (controls.get(key) || 0) + 1);
     const slice = abap.slice(marks[i].at, i + 1 < marks.length ? marks[i + 1].at : undefined);
     const set = attrs.get(simpleName(qname)) || new Set();
     const vmap = values.get(simpleName(qname)) || new Map();
@@ -148,7 +193,7 @@ function parseAbap(abap) {
   for (const block of abap.matchAll(/\b(?:LOOP AT|DO\b|WHILE\b)[\s\S]*?\b(?:ENDLOOP|ENDDO|ENDWHILE)\b/g)) {
     if (/->\s*(?:ele|tag)\(/.test(block[0])) { dynamic = true; break; }
   }
-  return { controls, attrs, values, dynamic };
+  return { controls, attrs, values, dynamic, spelling };
 }
 
 // ---------- binding-value comparison helpers ----------
@@ -208,10 +253,12 @@ for (const metaFile of fs.readdirSync(META).sort()) {
     lines.push(`${meta.class} (${meta.sample}): no original view.xml archived — SKIPPED`);
     continue;
   }
-  const orig = { controls: new Map(), attrs: new Map(), values: new Map() };
+  const orig = { controls: new Map(), attrs: new Map(), values: new Map(), spelling: new Map(), ns: new Map() };
   for (const v of views) {
     const p = parseXml(fs.readFileSync(v, 'utf8'));
+    for (const [k, uri] of p.ns) if (!orig.ns.has(k)) orig.ns.set(k, uri);
     for (const [k, n] of p.controls) orig.controls.set(k, (orig.controls.get(k) || 0) + n);
+    for (const [k, q] of p.spelling) if (!orig.spelling.has(k)) orig.spelling.set(k, q);
     for (const [k, s] of p.attrs) {
       const set = orig.attrs.get(k) || new Set();
       for (const a of s) set.add(a);
@@ -227,20 +274,26 @@ for (const metaFile of fs.readdirSync(META).sort()) {
       orig.values.set(k, dst);
     }
   }
-  const port = parseAbap(fs.readFileSync(abapPath, 'utf8'));
+  const port = parseAbap(fs.readFileSync(abapPath, 'utf8'), orig.ns);
 
   const declaredText = ((meta.deviations || []).map((d) => d.what).join(' ') + ' ' + (meta.checked?.note || '')).toLowerCase();
   const declared = (name) => declaredText.includes(name.toLowerCase());
 
   const diffs = [];
   const names = new Set([...orig.controls.keys(), ...port.controls.keys()]);
-  for (const qname of names) {
-    if (qname === 'mvc:View' || qname === 'core:FragmentDefinition') continue;
-    const o = orig.controls.get(qname) || 0;
-    const p = port.controls.get(qname) || 0;
+  for (const key of names) {
+    if (key === 'sap.ui.core.mvc:View' || key === 'sap.ui.core:FragmentDefinition') continue;
+    const o = orig.controls.get(key) || 0;
+    const p = port.controls.get(key) || 0;
     if (o === p) continue;
     if (port.dynamic && p > 0) continue; // loop-built counts cannot match statically
-    diffs.push({ kind: o > p ? 'control missing' : 'control extra', name: simpleName(qname), detail: `${qname}: original ${o} vs port ${p}` });
+    // reported under the original's spelling (the port's where the original
+    // has none); a deviation may name either spelling or the bare name
+    const oq = orig.spelling.get(key);
+    const pq = port.spelling.get(key);
+    const shown = oq || pq;
+    const altNames = [...new Set([oq, pq].filter(Boolean))];
+    diffs.push({ kind: o > p ? 'control missing' : 'control extra', name: simpleName(shown), altNames, detail: `${shown}: original ${o} vs port ${p}` });
   }
   for (const [ctrl, oSet] of orig.attrs) {
     const pSet = port.attrs.get(ctrl);

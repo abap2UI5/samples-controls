@@ -77,9 +77,9 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc` ).
 
     DATA(bar) = panel->ele( `IconTabBar`
-        )->a( n = `id`                      v = `idIconTabBar`
-        )->a( n = `class`                   v = `sapUiResponsiveContentPadding`
-        )->a( n = `select`                  v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
+        )->a( n = `id`     v = `idIconTabBar`
+        )->a( n = `class`  v = `sapUiResponsiveContentPadding`
+        )->a( n = `select` v = client->_event( val = `FILTER` arg = `${$parameters>/key}` ) ).
 
     bar->ele( `items`
         )->tag( `IconTabFilter`
@@ -182,7 +182,7 @@ CLASS z2ui5_cl_smpc_app_618 IMPLEMENTATION.
                     )->a( n = `state`  v = `{WEIGHT_STATE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                          | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
 
             )->end(

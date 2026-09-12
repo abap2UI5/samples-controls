@@ -226,14 +226,14 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                         )->a( n = `ariaHasPopup` v = `Dialog`
                         " original: this.oMP.toggle(oEvent.getSource()) - a pure client-side toggle, so
                         " wired roundtrip-free (no on_event) anchored to the button by its own id
-                        )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
+                        )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                t_arg = VALUE #( ( `messagePopover` ) ( `toggleBy` ) ( `messagePopoverBtn` ) ) )
 
                         )->ele( `dependents`
                             )->ele( `MessagePopover`
-                                )->a( n = `id`         v = `messagePopover`
-                                )->a( n = `items`      v = `{message>/}`
-                                )->a( n = `groupItems` v = `true`
+                                )->a( n = `id`               v = `messagePopover`
+                                )->a( n = `items`            v = `{message>/}`
+                                )->a( n = `groupItems`       v = `true`
                                 " activeTitlePress is a MessagePopover event (not MessageItem); it ships the
                                 " pressed message's target control id so the handler can scroll+focus it
                                 )->a( n = `activeTitlePress` v = client->_event( val = `ACTIVE_TITLE` arg = `${$parameters>/item}.getBindingContext('message').getObject().getControlIds()[0]` )
@@ -247,7 +247,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                                     " the backend (see model above) and carried on the Message code field,
                                     " NOT a frontend expression - the original derives it in its controller's
                                     " getGroupName; only Email sits in the Contact group, the rest in Information
-                                    )->a( n = `groupName` v = `{message>code}`
+                                    )->a( n = `groupName`   v = `{message>code}`
 
                             )->end(
                         )->end(

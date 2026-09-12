@@ -92,19 +92,19 @@ CLASS z2ui5_cl_smpc_app_542 IMPLEMENTATION.
                 " handleAppointmentSelect: MessageBox with the appointment title, its
                 " new selected state and the number of selected appointments - or, when
                 " the interval selection hit no appointment, the count of them
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
-                )->a( n = `showEmptyIntervalHeaders` v = `false`
-                )->a( n = `stickyHeader`             v = `true`
-                )->a( n = `showWeekNumbers`          v = `true`
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                )->a( n = `showEmptyIntervalHeaders`  v = `false`
+                )->a( n = `stickyHeader`              v = `true`
+                )->a( n = `showWeekNumbers`           v = `true`
                 " handleSelectionFinish hands the MultiComboBox's selected keys to
                 " setBuiltInViews - a bindable string[] property, bound here
-                )->a( n = `builtInViews` v = client->_bind( t_built_in )
+                )->a( n = `builtInViews`              v = client->_bind( t_built_in )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

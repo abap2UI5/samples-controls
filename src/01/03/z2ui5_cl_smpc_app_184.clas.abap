@@ -75,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_184 IMPLEMENTATION.
                             )->ele( `blocks`
                                 )->tag( n = `HTML` ns = `core`
                                     )->a( n = `content` v = `<div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">The title of the first section is not shown in the page but it is` &&
-                                        ` shown in the AnchorBar. Subsection titles are displayed.</div>`
+                                                            ` shown in the AnchorBar. Subsection titles are displayed.</div>`
 
                             )->end(
                         )->end(
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_smpc_app_184 IMPLEMENTATION.
                             )->ele( `blocks`
                                 )->tag( n = `HTML` ns = `core`
                                     )->a( n = `content` v = `<div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">If there are several Subsections in a section, the subsection names are` &&
-                                        ` displayed in a popup when clicking the section name in the AnchorBar.</div>`
+                                                            ` displayed in a popup when clicking the section name in the AnchorBar.</div>`
 
                             )->end(
                         )->end(

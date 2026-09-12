@@ -109,8 +109,8 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
             )->a( n = `sideContentVisibility` v = `AlwaysShow`
             " the original keeps the legend flag in a second named model; abap2UI5
             " keeps one default model, so the flag is a field here
-            )->a( n = `showSideContent` v = client->_bind( legend_shown )
-            )->a( n = `containerQuery`  v = `true`
+            )->a( n = `showSideContent`       v = client->_bind( legend_shown )
+            )->a( n = `containerQuery`        v = `true`
 
             )->ele( `VBox`
 
@@ -162,16 +162,16 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                     " onChange calls setFirstDayOfWeek( Number( key ) ); the property is
                     " an INT and the Select's key is a string, so the expression multiplies
                     " by 1 - the Number( ) the original calls
-                    )->a( n = `firstDayOfWeek` v = |\{= ${ client->_bind( first_day ) } * 1 \}|
+                    )->a( n = `firstDayOfWeek`            v = |\{= ${ client->_bind( first_day ) } * 1 \}|
                     " handleViewChange only recomputes the legend's standardItems;
                     " viewKey is bindable, so the key is the shared field and the
                     " legend reads it through an expression
-                    )->a( n = `viewKey` v = client->_bind( view_key )
-                    )->a( n = `legend`  v = `PlanningCalendarLegend`
+                    )->a( n = `viewKey`                   v = client->_bind( view_key )
+                    )->a( n = `legend`                    v = `PlanningCalendarLegend`
                     " ROOT-level aggregation - a bare 'T_' path is RELATIVE and resolves
                     " against nothing outside a row context, and an unbound table is not
                     " serialized at all (app 553 has the same two fixes)
-                    )->a( n = `specialDates` v = |\{ path: '{ client->_bind_path( t_special_dates ) }', templateShareable: false \}|
+                    )->a( n = `specialDates`              v = |\{ path: '{ client->_bind_path( t_special_dates ) }', templateShareable: false \}|
 
                     )->ele( `toolbarContent`
                         )->tag( `ToggleButton`
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                 )->a( n = `width` v = `200px`
 
                 )->ele( `PlanningCalendarLegend`
-                    )->a( n = `id` v = `PlanningCalendarLegend`
+                    )->a( n = `id`               v = `PlanningCalendarLegend`
                     " ROOT-level aggregations - a bare 'T_' path is RELATIVE and resolves
                     " against nothing outside a row context, and an unbound table is not
                     " serialized at all (app 553 has the same two fixes)
@@ -244,7 +244,7 @@ CLASS z2ui5_cl_smpc_app_541 IMPLEMENTATION.
                     " changeStandardItemsPerView swaps Selected for WorkingDay off the
                     " OneMonth view; the property is bindable, so the expression over
                     " the shared view key carries the same switch
-                    )->a( n = `standardItems` v = |\{= ${ client->_bind( view_key ) } === 'One Month' ? ['Today','Selected','NonWorkingDay'] : ['Today','WorkingDay','NonWorkingDay'] \}|
+                    )->a( n = `standardItems`    v = |\{= ${ client->_bind( view_key ) } === 'One Month' ? ['Today','Selected','NonWorkingDay'] : ['Today','WorkingDay','NonWorkingDay'] \}|
 
                     )->ele( `items`
                         )->tag( n = `CalendarLegendItem` ns = `u`

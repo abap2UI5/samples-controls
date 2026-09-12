@@ -128,15 +128,15 @@ CLASS z2ui5_cl_smpc_app_241 IMPLEMENTATION.
                         " the row's own text
                         )->a( n = `items`      v = `{ITEMS}`
                         )->a( n = `press`      v = client->_event( val    = `ITEM_PRESS`
-                                                              t_arg  = VALUE #( ( `${$parameters>/item}.getText()` ) ( `${$parameters>/ctrlKey}` ) ( `${$parameters>/shiftKey}` ) ( `${$parameters>/altKey}` ) ( `${$parameters>/metaKey}` ) )
-                                                              s_ctrl = VALUE #( check_prevent_default = prevent_default ) )
+                                                                   t_arg  = VALUE #( ( `${$parameters>/item}.getText()` ) ( `${$parameters>/ctrlKey}` ) ( `${$parameters>/shiftKey}` ) ( `${$parameters>/altKey}` ) ( `${$parameters>/metaKey}` ) )
+                                                                   s_ctrl = VALUE #( check_prevent_default = prevent_default ) )
 
                         )->ele( n = `items` ns = `tnt`
                             )->tag( n = `NavigationListItem` ns = `tnt`
                                 )->a( n = `text`  v = `{TEXT}`
                                 )->a( n = `press` v = client->_event( val    = `ITEM_PRESS`
-                                                              t_arg  = VALUE #( ( `${$parameters>/item}.getText()` ) ( `${$parameters>/ctrlKey}` ) ( `${$parameters>/shiftKey}` ) ( `${$parameters>/altKey}` ) ( `${$parameters>/metaKey}` ) )
-                                                              s_ctrl = VALUE #( check_prevent_default = prevent_default ) )
+                                                                      t_arg  = VALUE #( ( `${$parameters>/item}.getText()` ) ( `${$parameters>/ctrlKey}` ) ( `${$parameters>/shiftKey}` ) ( `${$parameters>/altKey}` ) ( `${$parameters>/metaKey}` ) )
+                                                                      s_ctrl = VALUE #( check_prevent_default = prevent_default ) )
 
                         )->end(
                     )->end(

@@ -58,10 +58,10 @@ CLASS z2ui5_cl_smpc_app_137 IMPLEMENTATION.
 
             )->ele( n = `content` ns = `m`
                 )->ele( `Table`
-                    )->a( n = `id`                v = `table1`
-                    )->a( n = `ariaLabelledBy`    v = `title`
-                    )->a( n = `selectionMode`     v = `MultiToggle`
-                    )->a( n = `rows`              v = client->_bind( modeldata )
+                    )->a( n = `id`                 v = `table1`
+                    )->a( n = `ariaLabelledBy`     v = `title`
+                    )->a( n = `selectionMode`      v = `MultiToggle`
+                    )->a( n = `rows`               v = client->_bind( modeldata )
                     )->a( n = `enableColumnFreeze` v = `true`
 
                     )->ele( `extension`
@@ -160,7 +160,7 @@ CLASS z2ui5_cl_smpc_app_137 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `Column`
-                            )->a( n = `width` v = `8rem`
+                            )->a( n = `width`  v = `8rem`
                             )->a( n = `hAlign` v = `End`
                             )->ele( `multiLabels`
                                 )->tag( n = `Label` ns = `m`

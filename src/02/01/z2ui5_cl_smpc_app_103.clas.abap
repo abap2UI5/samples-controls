@@ -103,13 +103,13 @@ CLASS z2ui5_cl_smpc_app_103 IMPLEMENTATION.
 
         )->ele( n = `dependents` ns = `mvc`
             )->ele( `SelectDialog`
-                )->a( n = `id`         v = `mySelectDialog`
-                )->a( n = `noDataText` v = `No Products Found`
-                )->a( n = `title`      v = `Select Product`
-                )->a( n = `search`     v = client->follow_up_action( val   = client->cs_event-binding_call
-                                                                     t_arg = VALUE #( ( `mySelectDialog` ) ( `items` ) ( `filter` ) ( `NAME` ) ( `Contains` ) ( `${$parameters>/value}` ) ) )
-                )->a( n = `confirm`    v = client->_event( val = `CONFIRM` arg = `${$parameters>/selectedItems}` )
-                )->a( n = `cancel`     v = client->_event( val = `CONFIRM` arg = `${$parameters>/selectedItems}` )
+                )->a( n = `id`                 v = `mySelectDialog`
+                )->a( n = `noDataText`         v = `No Products Found`
+                )->a( n = `title`              v = `Select Product`
+                )->a( n = `search`             v = client->follow_up_action( val   = client->cs_event-binding_call
+                                                                             t_arg = VALUE #( ( `mySelectDialog` ) ( `items` ) ( `filter` ) ( `NAME` ) ( `Contains` ) ( `${$parameters>/value}` ) ) )
+                )->a( n = `confirm`            v = client->_event( val = `CONFIRM` arg = `${$parameters>/selectedItems}` )
+                )->a( n = `cancel`             v = client->_event( val = `CONFIRM` arg = `${$parameters>/selectedItems}` )
                 )->a( n = `multiSelect`        v = client->_bind( multi_select )
                 )->a( n = `growing`            v = client->_bind( growing )
                 )->a( n = `growingThreshold`   v = client->_bind( growing_threshold )
@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_103 IMPLEMENTATION.
                 )->a( n = `confirmButtonText`  v = client->_bind( confirm_text )
                 )->a( n = `draggable`          v = client->_bind( draggable )
                 )->a( n = `resizable`          v = client->_bind( resizable )
-                )->a( n = `items` v = client->_bind( t_products )
+                )->a( n = `items`              v = client->_bind( t_products )
 
                 )->tag( `StandardListItem`
                     )->a( n = `title`            v = `{NAME}`
@@ -139,7 +139,7 @@ CLASS z2ui5_cl_smpc_app_103 IMPLEMENTATION.
                 )->a( n = `confirm`           v = client->_event( val = `VH_CLOSE` arg = `${$parameters>/selectedItem} ? ${$parameters>/selectedItem}.getTitle() : ''` )
                 )->a( n = `cancel`            v = client->_event( `VH_CLOSE` )
                 )->a( n = `showClearButton`   v = `true`
-                )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
+                )->a( n = `items`             v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME', descending: false \} \}|
 
                 )->tag( `StandardListItem`
                     )->a( n = `selected`         v = `{SELECTED}`

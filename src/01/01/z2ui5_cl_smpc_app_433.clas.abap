@@ -62,8 +62,8 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_s
-                    )->a( n = `class`        v = `sapUiSmallMarginEnd`
+                    )->a( n = `width` v = width_s
+                    )->a( n = `class` v = `sapUiSmallMarginEnd`
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -75,8 +75,8 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_m
-                    )->a( n = `class`        v = `sapUiSmallMarginEnd`
+                    )->a( n = `width` v = width_m
+                    )->a( n = `class` v = `sapUiSmallMarginEnd`
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
@@ -88,7 +88,7 @@ CLASS z2ui5_cl_smpc_app_433 IMPLEMENTATION.
                 )->ele( `Image`
                     )->a( n = `densityAware` v = `false`
                     )->a( n = `src`          t = pic1
-                    )->a( n = `width`        v = width_l
+                    )->a( n = `width` v = width_l
 
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`

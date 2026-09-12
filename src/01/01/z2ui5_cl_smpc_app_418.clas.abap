@@ -78,8 +78,8 @@ CLASS z2ui5_cl_smpc_app_418 IMPLEMENTATION.
             )->a( n = `width`      v = |\{= ${ client->_bind( width_pct ) } + '%' \}|
 
             )->tag( `Title`
-                )->a( n = `id`       v = `WrappingTitle`
-                )->a( n = `wrapping` v = client->_bind( wrapping )
+                )->a( n = `id`           v = `WrappingTitle`
+                )->a( n = `wrapping`     v = client->_bind( wrapping )
                 " onHyphenationChange: wrappingType follows the second Switch
                 )->a( n = `wrappingType` v = |\{= ${ client->_bind( hyphenate ) } ? 'Hyphenated' : 'Normal' \}|
                 )->a( n = `text`         v = `The Title control represents a single line of text with explicit header / title semantics. ` &&

@@ -98,9 +98,9 @@ CLASS z2ui5_cl_smpc_app_528 IMPLEMENTATION.
                     )->end(
 
                     )->ele( n = `GridContainer` ns = `f`
-                        )->a( n = `id`             v = `grid1`
-                        )->a( n = `borderReached`  v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                 t_arg = VALUE #( ( border ) ( `show` ) ( `Group 1 border reached` ) ) )
+                        )->a( n = `id`            v = `grid1`
+                        )->a( n = `borderReached` v = client->follow_up_action( val   = client->cs_event-control_global
+                                                                                t_arg = VALUE #( ( border ) ( `show` ) ( `Group 1 border reached` ) ) )
 
                         )->ele( `GenericTile`
                             )->a( n = `header`    v = `Cumulative Totals`

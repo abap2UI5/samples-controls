@@ -1,4 +1,4 @@
-" @keywords generictag generic tag sap.m displays app-speci verticallayout grid flexbox text objectnumber
+" @keywords generictag generic tag sap.m displays verticallayout grid flexbox text objectnumber
 " @summary Previews of the GenericTag control based on combinations of different sets of properties.
 " @origin sap.m.sample.GenericTag - https://sdk.openui5.org/entity/sap.m.GenericTag/sample/sap.m.sample.GenericTag (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_027 DEFINITION PUBLIC.

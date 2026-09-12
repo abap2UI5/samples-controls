@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_107 IMPLEMENTATION.
                         )->ele( n = `SortSelect` ns = `semantic`
                             )->a( n = `change`      v = client->_event( `SELECT_CHANGE` )
                             )->a( n = `selectedKey` v = client->_bind( sort_key )
-                            )->a( n = `items` v = |\{ path: '{ client->_bind_path( t_filters ) }', sorter: \{ path: 'Name' \} \}|
+                            )->a( n = `items`       v = |\{ path: '{ client->_bind_path( t_filters ) }', sorter: \{ path: 'Name' \} \}|
 
                             )->tag( n = `Item` ns = `core`
                                 )->a( n = `key`  v = `{TYPE}`

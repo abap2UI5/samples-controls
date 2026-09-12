@@ -83,12 +83,12 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
             )->a( n = `backgroundDesign`             v = `Translucent`
             " List.controller attaches columnResize on the FCL: once the begin
             " column is back to full width the indexed section is re-selected
-            )->a( n = `columnResize` v = client->_event( val = `COLUMN_RESIZE` arg = `${$parameters>/beginColumn}` )
+            )->a( n = `columnResize`                 v = client->_event( val = `COLUMN_RESIZE` arg = `${$parameters>/beginColumn}` )
             " the original wires stateChange to onStateChanged: only a layout
             " change by a NAVIGATION ARROW replace-navTo's the URL - the flag
             " and the new layout travel with the event, the backend guards on it
-            )->a( n = `stateChange` v = client->_event( val = `STATE_CHANGED` t_arg = VALUE #( ( `${$parameters>/isNavigationArrow}` ) ( `${$parameters>/layout}` ) ) )
-            )->a( n = `layout`      v = client->_bind( layout ) ).
+            )->a( n = `stateChange`                  v = client->_event( val = `STATE_CHANGED` t_arg = VALUE #( ( `${$parameters>/isNavigationArrow}` ) ( `${$parameters>/layout}` ) ) )
+            )->a( n = `layout`                       v = client->_bind( layout ) ).
 
     " List.view.xml - the ObjectPage whose sections come from the model.
     " The original attaches the ObjectPage's navigate event to

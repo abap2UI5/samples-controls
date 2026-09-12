@@ -239,7 +239,7 @@ CLASS z2ui5_cl_smpc_app_166 IMPLEMENTATION.
 
             )->ele( n = `messagesIndicator` ns = `semantic`
                 )->ele( n = `MessagesIndicator` ns = `semantic`
-                    )->a( n = `id` v = `messagesIndicatorBtn`
+                    )->a( n = `id`    v = `messagesIndicatorBtn`
                     " onMessagesButtonPress builds a MessagePopover over the message>
                     " model and opens it at the button - declared in dependents and
                     " opened roundtrip-free (app 066 idiom)

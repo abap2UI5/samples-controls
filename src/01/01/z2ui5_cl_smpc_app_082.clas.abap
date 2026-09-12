@@ -48,8 +48,8 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                 )->a( n = `class` v = `sapUiTinyMarginBegin sapUiTinyMarginTop`
                 )->ele( `GenericTile`
                     )->a( n = `backgroundImage` t = |{ img }NewsImage2.png|
-                    )->a( n = `frameType`       v = `TwoByOne`
-                    )->a( n = `press`           v = client->_event( `PRESS_ONE` )
+                    )->a( n = `frameType` v = `TwoByOne`
+                    )->a( n = `press`     v = client->_event( `PRESS_ONE` )
                     )->ele( `TileContent`
                         )->a( n = `footer` v = `August 21, 2016`
                         )->tag( `NewsContent`
@@ -60,8 +60,8 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                 )->end(
                 )->ele( `GenericTile`
                     )->a( n = `backgroundImage` t = |{ img }NewsImage1.png|
-                    )->a( n = `frameType`       v = `TwoByOne`
-                    )->a( n = `press`           v = client->_event( `PRESS_TWO` )
+                    )->a( n = `frameType` v = `TwoByOne`
+                    )->a( n = `press`     v = client->_event( `PRESS_TWO` )
                     )->ele( `TileContent`
                         )->a( n = `footer` v = `August 21, 2016`
                         )->tag( `NewsContent`
@@ -78,8 +78,8 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                 )->a( n = `displayTime`    v = `2500`
                 )->ele( `GenericTile`
                     )->a( n = `backgroundImage` t = |{ img }NewsImage1.png|
-                    )->a( n = `frameType`       v = `TwoByOne`
-                    )->a( n = `press`           v = client->_event( `PRESS_ONE` )
+                    )->a( n = `frameType` v = `TwoByOne`
+                    )->a( n = `press`     v = client->_event( `PRESS_ONE` )
                     )->ele( `TileContent`
                         )->a( n = `footer` v = `August 21, 2016`
                         )->tag( `NewsContent`
@@ -90,8 +90,8 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
                 )->end(
                 )->ele( `GenericTile`
                     )->a( n = `backgroundImage` t = |{ img }NewsImage2.png|
-                    )->a( n = `frameType`       v = `TwoByOne`
-                    )->a( n = `state`           v = `Failed`
+                    )->a( n = `frameType` v = `TwoByOne`
+                    )->a( n = `state`     v = `Failed`
                     )->ele( `TileContent`
                         )->a( n = `footer` v = `August 21, 2016`
                         )->tag( `NewsContent`

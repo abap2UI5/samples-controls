@@ -88,21 +88,21 @@ CLASS z2ui5_cl_smpc_app_096 IMPLEMENTATION.
 
                             )->ele( `buttons`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-1`
-                                    )->a( n = `text`               v = `show/hide`
-                                    )->a( n = `selected`           v = `true`
+                                    )->a( n = `id`                  v = `RB1-1`
+                                    )->a( n = `text`                v = `show/hide`
+                                    )->a( n = `selected`            v = `true`
                                     )->a( n = `custom:splitAppMode` v = `ShowHideMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-2`
-                                    )->a( n = `text`               v = `stretch/compress`
+                                    )->a( n = `id`                  v = `RB1-2`
+                                    )->a( n = `text`                v = `stretch/compress`
                                     )->a( n = `custom:splitAppMode` v = `StretchCompressMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-3`
-                                    )->a( n = `text`               v = `hide`
+                                    )->a( n = `id`                  v = `RB1-3`
+                                    )->a( n = `text`                v = `hide`
                                     )->a( n = `custom:splitAppMode` v = `HideMode`
                                 )->tag( `RadioButton`
-                                    )->a( n = `id`                 v = `RB1-4`
-                                    )->a( n = `text`               v = `popover`
+                                    )->a( n = `id`                  v = `RB1-4`
+                                    )->a( n = `text`                v = `popover`
                                     )->a( n = `custom:splitAppMode` v = `PopoverMode`
 
                             )->end(

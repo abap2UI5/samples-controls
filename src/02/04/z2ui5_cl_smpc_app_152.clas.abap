@@ -39,9 +39,9 @@ CLASS z2ui5_cl_smpc_app_152 IMPLEMENTATION.
         )->a( n = `height`    v = `100%`
 
         )->ele( `ShellBar`
-            )->a( n = `id`          v = `sapFShellBarSample`
-            )->a( n = `title`       v = `Application Title`
-            )->a( n = `secondTitle` v = `Short description`
+            )->a( n = `id`                  v = `sapFShellBarSample`
+            )->a( n = `title`               v = `Application Title`
+            )->a( n = `secondTitle`         v = `Short description`
             " homeIcon absolutized to the OpenUI5 host (original: ./resources/...)
             )->a( n = `homeIcon`            v = `https://sdk.openui5.org/resources/sap/ui/documentation/sdk/images/logo_sap.png`
             )->a( n = `showCopilot`         v = `true`

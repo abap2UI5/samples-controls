@@ -44,8 +44,8 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                 )->a( n = `defaultColor` v = `black`
                 )->a( n = `colorSelect`  v = client->follow_up_action( val   = client->cs_event-control_global
                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                         && |\n|
-                                                                                                                         && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
+                                             && |\n|
+                                             && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
             )->tag( `ColorPalettePopover`
                 )->a( n = `id`                     v = `oColorPalettePopoverCustom`
                 )->a( n = `defaultColor`           v = `white`
@@ -56,32 +56,32 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                 )->a( n = `colors`                 v = `#292f36,#4ecdc4,#3a506b,#ff6b6b,white,lightcyan,#ffeaea`
                 )->a( n = `colorSelect`            v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                                   && |\n|
-                                                                                                                                   && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
+                                                       && |\n|
+                                                       && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
             )->tag( `ColorPalettePopover`
                 )->a( n = `id`                   v = `oColorPalettePopoverMinDef`
                 )->a( n = `showMoreColorsButton` v = `false`
                 )->a( n = `colors`               v = `red,#ffff00`
                 )->a( n = `colorSelect`          v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                                 && |\n|
-                                                                                                                                 && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
+                                                     && |\n|
+                                                     && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
             )->tag( `ColorPalettePopover`
                 )->a( n = `id`                     v = `oColorPalettePopoverMin`
                 )->a( n = `showDefaultColorButton` v = `false`
                 )->a( n = `showMoreColorsButton`   v = `false`
                 )->a( n = `colorSelect`            v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                                   && |\n|
-                                                                                                                                   && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
+                                                       && |\n|
+                                                       && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
             )->tag( `ColorPalettePopover`
                 )->a( n = `id`                     v = `oColorPaletteDisplayMode`
                 )->a( n = `showDefaultColorButton` v = `false`
                 )->a( n = `displayMode`            v = `Simplified`
                 )->a( n = `colorSelect`            v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Color Selected: value - {0}, `
-                                                                                                                                   && |\n|
-                                                                                                                                   && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
+                                                       && |\n|
+                                                       && ` defaultAction - {1}` ) ( `${$parameters>/value}` ) ( `${$parameters>/defaultAction}` ) ) )
                 " handleLiveChange paints the liveChangeButton's icon in the
                 " colour being picked. The original writes the rgba() straight
                 " onto the ICON's DOM node; the `css` action writes on the
@@ -101,7 +101,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                                            ( `css` )
                                            ( `color` )
                                            ( `${$parameters>/r} !== undefined ? 'rgba(' + ${$parameters>/r} + ',' + ${$parameters>/g} + ',' + ` &&
-                                             `${$parameters>/b} + ',' + ${$parameters>/alpha} + ')' : ''` ) ) )
+                                                       `${$parameters>/b} + ',' + ${$parameters>/alpha} + ')' : ''` ) ) )
             )->tag( `ColorPalettePopover`
                 )->a( n = `id`                      v = `oColorPaletteSelectedColor`
                 )->a( n = `colors`                  v = `lightgray,lightblue,cornflowerblue,darkslateblue`

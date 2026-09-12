@@ -79,8 +79,8 @@ CLASS z2ui5_cl_smpc_app_502 IMPLEMENTATION.
             )->a( n = `titleSelectorPress` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                          t_arg = VALUE #( ( `myPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
             )->a( n = `number`             v = |\{ parts:[\{path:'{ client->_bind_path( sel_price ) }'\},| &&
-                                                |\{path:'{ client->_bind_path( sel_currencycode ) }'\}],| &&
-                                                | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                               |\{path:'{ client->_bind_path( sel_currencycode ) }'\}],| &&
+                                               | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
             )->a( n = `numberUnit`         v = client->_bind( sel_currencycode )
             )->a( n = `class`              v = `sapUiResponsivePadding--header`
 

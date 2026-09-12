@@ -39,6 +39,19 @@
  *                              parse either — and the linter carries that as
  *                              abap-date-formatter-mismatch.
  *
+ * The 2026-09-12 round promoted five more into the linter - unbound-public-
+ * attribute, default-key-table, abapdoc-html-tag, event-arg-default-index and
+ * client-handle-capture (abap2UI5/linter commit 7174bae, unreleased at the
+ * time of writing) - and taught event-without-handler the single-branch IF
+ * dispatcher form that dead-event-wire existed to know. All six rules STAY
+ * here until the linter release carrying them reaches package-lock.json and
+ * view_gates gates them; the bump PR deletes them from this file in the same
+ * change (one rule set, two enforcement points is the drift this header
+ * warns against, and a week of it is the price of not gating on a release).
+ * Two of the promoted rules found what the copies here missed: the path
+ * regex of unbound-public-attribute matched inside a comment (apps 557/607),
+ * and client-handle-capture never saw the plain assignment form.
+ *
  * Do NOT re-add a rule here that the linter can express — one rule set, two enforcement
  * points was exactly how the editor and CI drifted apart before.
  *

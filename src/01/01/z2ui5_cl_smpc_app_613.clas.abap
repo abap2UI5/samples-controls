@@ -48,10 +48,10 @@ CLASS z2ui5_cl_smpc_app_613 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(layout) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:l`    v = `sap.ui.layout`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`       v = `sap.m`
+        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns:l`     v = `sap.ui.layout`
+        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
         )->a( n = `xmlns:z2ui5` v = `z2ui5.cc`
 
         )->ele( n = `VerticalLayout` ns = `l`
@@ -145,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_613 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(

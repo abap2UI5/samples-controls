@@ -133,7 +133,7 @@ CLASS z2ui5_cl_smpc_app_273 IMPLEMENTATION.
         )->a( n = `xmlns`      v = `sap.m`
 
         )->ele( `Dialog`
-            )->a( n = `type`  v = `Message`
+            )->a( n = `type` v = `Message`
             )->a( n = `title` t = title ).
 
     " the default dialog is the only one the original builds without a state

@@ -50,7 +50,7 @@ CLASS z2ui5_cl_smpc_app_310 IMPLEMENTATION.
                 )->a( n = `class` v = `sapUiSmallMargin`
 
                 )->tag( `ColorPicker`
-                    )->a( n = `id`   v = `cp`
+                    )->a( n = `id`          v = `cp`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `displayMode` v = `Large`
 

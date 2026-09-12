@@ -62,10 +62,10 @@ CLASS z2ui5_cl_smpc_app_470 IMPLEMENTATION.
                             )->a( n = `text`     v = `Enter a search term, e.g. "Ge", and see filtered list.`
                             )->a( n = `labelFor` v = `combobox1`
                         )->ele( `ComboBox`
-                            )->a( n = `id`                  v = `combobox1`
-                            )->a( n = `showSecondaryValues` v = `true`
+                            )->a( n = `id`                    v = `combobox1`
+                            )->a( n = `showSecondaryValues`   v = `true`
                             )->a( n = `filterSecondaryValues` v = `true`
-                            )->a( n = `items`               v = |\{ path: '{ client->_bind_path( t_countries ) }', sorter: \{ path: 'TEXT' \} \}|
+                            )->a( n = `items`                 v = |\{ path: '{ client->_bind_path( t_countries ) }', sorter: \{ path: 'TEXT' \} \}|
 
                             )->tag( n = `ListItem` ns = `core`
                                 )->a( n = `key`            v = `{KEY}`

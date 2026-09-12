@@ -1,4 +1,4 @@
-" @keywords slider sap.m variants: tickmarks tooltips scale verticallayout text responsivescale
+" @keywords slider sap.m variants tickmarks tooltips scale verticallayout text responsivescale
 " @summary With the Slider a user can choose a value from a numerical range.
 " @origin sap.m.sample.Slider - https://sdk.openui5.org/entity/sap.m.Slider/sample/sap.m.sample.Slider (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_068 DEFINITION PUBLIC.

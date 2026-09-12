@@ -121,10 +121,10 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
                 )->ele( n = `content` ns = `f`
                     )->ele( `Wizard`
-                        )->a( n = `id`             v = `CreateProductWizard`
-                        )->a( n = `class`          v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
-                        )->a( n = `showNextButton` v = `false`
-                        )->a( n = `renderMode`     v = `Page`
+                        )->a( n = `id`               v = `CreateProductWizard`
+                        )->a( n = `class`            v = `sapUiResponsivePadding--header sapUiResponsivePadding--content`
+                        )->a( n = `showNextButton`   v = `false`
+                        )->a( n = `renderMode`       v = `Page`
                         " handleNavigationChange reads the step off the event and
                         " recomputes the index; the step TITLE travels here
                         )->a( n = `navigationChange` v = client->_event( val = `NAVIGATION_CHANGE` arg = `${$parameters>/step}.getTitle()` )
@@ -187,8 +187,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->a( n = `showIcon` v = `true`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. ` &&
-                                                    `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
-                                                    `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
+                                                     `Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, ` &&
+                                                     `eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis.`
 
                             )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `editable` v = `true`
@@ -262,8 +262,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                 )->a( n = `showIcon` v = `true`
                             )->tag( `Text`
                                 )->a( n = `text` v = `Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                    `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                    `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
+                                                     `Donec pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
+                                                     `Donec pulvinar, sapien corper eu, posuere malesuada nisl.`
 
                             )->ele( n = `SimpleForm` ns = `form`
                                 )->a( n = `editable` v = `true`
@@ -333,9 +333,9 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                             )->a( n = `title`     v = `Pricing`
 
                             )->tag( `MessageStrip`
-                                )->a( n = `class` v = `sapUiSmallMarginBottom`
-                                )->a( n = `text`  v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
-                                                        `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
+                                )->a( n = `class`    v = `sapUiSmallMarginBottom`
+                                )->a( n = `text`     v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
+                                                         `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
                                 )->a( n = `showIcon` v = `true`
 
                             )->ele( n = `SimpleForm` ns = `form`

@@ -126,11 +126,11 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
             )->a( n = `xmlns:core` v = `sap.ui.core`
 
             )->ele( `ResponsivePopover`
-                )->a( n = `id`                 v = `myFooterPopover`
-                )->a( n = `title`              v = client->_bind( name )
-                )->a( n = `class`              v = `sapUiContentPadding`
-                )->a( n = `placement`          v = `Bottom`
-                )->a( n = `contentWidth`       v = `320px`
+                )->a( n = `id`                  v = `myFooterPopover`
+                )->a( n = `title`               v = client->_bind( name )
+                )->a( n = `class`               v = `sapUiContentPadding`
+                )->a( n = `placement`           v = `Bottom`
+                )->a( n = `contentWidth`        v = `320px`
                 )->a( n = `horizontalScrolling` v = `false`
 
                 )->ele( `content`

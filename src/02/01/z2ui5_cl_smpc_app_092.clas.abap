@@ -76,8 +76,8 @@ CLASS z2ui5_cl_smpc_app_092 IMPLEMENTATION.
             )->a( n = `class`           v = `sapUiMediumMarginBottom`
 
         )->tag( `Slider`
-            )->a( n = `id`         v = `widthSlider`
-            )->a( n = `value`      v = client->_bind( width_pct )
+            )->a( n = `id`    v = `widthSlider`
+            )->a( n = `value` v = client->_bind( width_pct )
 
         )->ele( `Table`
             )->a( n = `id`              v = `idProductsTable`

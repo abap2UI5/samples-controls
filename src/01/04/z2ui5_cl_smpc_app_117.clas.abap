@@ -125,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_117 IMPLEMENTATION.
                                       t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                        ( `show` )
                                                        ( `By pressing the 'Book' button a new application can be opened where the actual booking happens. ` &&
-                                                         `This can be in the same window, in a new tab or in a dialog.` ) ) )
+                                                  `This can be in the same window, in a new tab or in a dialog.` ) ) )
                             )->a( n = `type`  v = `Emphasized`
                             )->a( n = `class` v = `sapUiTinyMarginBegin`
 

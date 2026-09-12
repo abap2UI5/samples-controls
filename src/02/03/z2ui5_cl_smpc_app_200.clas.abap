@@ -207,7 +207,7 @@ CLASS z2ui5_cl_smpc_app_200 IMPLEMENTATION.
 
                     )->ele( `subSections`
                         )->ele( `ObjectPageSubSection`
-                            )->a( n = `title` v = `Order Details`
+                            )->a( n = `title`     v = `Order Details`
                             " POST-1.71: showTitle (since 1.77) kept 1:1, here and on the Products subsection
                             )->a( n = `showTitle` v = `false`
 

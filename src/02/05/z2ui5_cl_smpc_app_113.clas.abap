@@ -41,9 +41,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
             )->a( n = `height`   v = `100%`
 
             )->ele( `FlexBox`
-                )->a( n = `direction` v = `Column`
+                )->a( n = `direction`  v = `Column`
                 )->a( n = `alignItems` v = `Start`
-                )->a( n = `class`     v = `sapUiMediumMargin`
+                )->a( n = `class`      v = `sapUiMediumMargin`
 
                 )->ele( `FlexBox`
                     )->a( n = `direction`  v = `Row`
@@ -54,9 +54,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 1`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il1`
-                        )->a( n = `text` v = `2`
-                        )->a( n = `renderMode` v = `Narrow`
+                        )->a( n = `id`          v = `il1`
+                        )->a( n = `text`        v = `2`
+                        )->a( n = `renderMode`  v = `Narrow`
                         )->a( n = `colorScheme` v = `1`
 
                 )->end(
@@ -69,9 +69,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 2`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il2`
-                        )->a( n = `text` v = `5`
-                        )->a( n = `renderMode` v = `Narrow`
+                        )->a( n = `id`          v = `il2`
+                        )->a( n = `text`        v = `5`
+                        )->a( n = `renderMode`  v = `Narrow`
                         )->a( n = `colorScheme` v = `2`
 
                 )->end(
@@ -84,9 +84,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 3`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il3`
-                        )->a( n = `text` v = `12.5`
-                        )->a( n = `renderMode` v = `Narrow`
+                        )->a( n = `id`          v = `il3`
+                        )->a( n = `text`        v = `12.5`
+                        )->a( n = `renderMode`  v = `Narrow`
                         )->a( n = `colorScheme` v = `3`
 
                 )->end(
@@ -99,9 +99,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 4`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il4`
-                        )->a( n = `text` v = `2k`
-                        )->a( n = `renderMode` v = `Narrow`
+                        )->a( n = `id`          v = `il4`
+                        )->a( n = `text`        v = `2k`
+                        )->a( n = `renderMode`  v = `Narrow`
                         )->a( n = `colorScheme` v = `4`
 
                 )->end(
@@ -114,9 +114,9 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 5`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il5`
-                        )->a( n = `text` v = `text info label`
-                        )->a( n = `renderMode` v = `Loose`
+                        )->a( n = `id`          v = `il5`
+                        )->a( n = `text`        v = `text info label`
+                        )->a( n = `renderMode`  v = `Loose`
                         )->a( n = `colorScheme` v = `5`
 
                 )->end(
@@ -129,10 +129,10 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 6`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il6`
-                        )->a( n = `text` v = `just a long info label`
+                        )->a( n = `id`          v = `il6`
+                        )->a( n = `text`        v = `just a long info label`
                         )->a( n = `colorScheme` v = `6`
-                        )->a( n = `width` v = `140px`
+                        )->a( n = `width`       v = `140px`
 
                 )->end(
                 )->ele( `FlexBox`
@@ -144,10 +144,10 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 7`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il7`
-                        )->a( n = `text` v = `label shorter than width`
+                        )->a( n = `id`          v = `il7`
+                        )->a( n = `text`        v = `label shorter than width`
                         )->a( n = `colorScheme` v = `7`
-                        )->a( n = `width` v = `250px`
+                        )->a( n = `width`       v = `250px`
 
                 )->end(
                 )->ele( `FlexBox`
@@ -159,10 +159,10 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 8`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il8`
-                        )->a( n = `text` v = `with icon`
+                        )->a( n = `id`          v = `il8`
+                        )->a( n = `text`        v = `with icon`
                         )->a( n = `colorScheme` v = `8`
-                        )->a( n = `icon` v = `sap-icon://home-share`
+                        )->a( n = `icon`        v = `sap-icon://home-share`
 
                 )->end(
                 )->ele( `FlexBox`
@@ -174,8 +174,8 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Color Scheme 9`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il9`
-                        )->a( n = `text` v = `in warehouse`
+                        )->a( n = `id`          v = `il9`
+                        )->a( n = `text`        v = `in warehouse`
                         )->a( n = `colorScheme` v = `9`
 
                 )->end(
@@ -188,8 +188,8 @@ CLASS z2ui5_cl_smpc_app_113 IMPLEMENTATION.
                         )->a( n = `text`  v = `Any Color Scheme in Display Only Mode`
                         )->a( n = `class` v = `sapUiTinyMarginEnd`
                     )->tag( n = `InfoLabel` ns = `tnt`
-                        )->a( n = `id`   v = `il10`
-                        )->a( n = `text` v = `display only in form`
+                        )->a( n = `id`          v = `il10`
+                        )->a( n = `text`        v = `display only in form`
                         )->a( n = `colorScheme` v = `1`
                         )->a( n = `displayOnly` v = `true`
 

@@ -89,8 +89,8 @@ CLASS z2ui5_cl_smpc_app_335 IMPLEMENTATION.
                 )->ele( `Bar`
                     )->ele( `contentRight`
                         )->tag( `Button`
-                            )->a( n = `id`   v = `edit`
-                            )->a( n = `text` v = `Edit`
+                            )->a( n = `id`      v = `edit`
+                            )->a( n = `text`    v = `Edit`
                             " the original enables Edit once the mock request completes;
                             " the ABAP model is seeded synchronously, so it starts enabled
                             )->a( n = `enabled` v = `true`

@@ -252,7 +252,7 @@ CLASS z2ui5_cl_smpc_app_249 IMPLEMENTATION.
                         )->a( n = `class`    v = `sapUiTinyMargin`
                         )->a( n = `wrapping` v = `true`
                         )->a( n = `text`     v = `2. If an application developer wants to control more precisely the value and appearance of the Badge, ` &&
-                                                   `that can be done as it is presented in this sample, but the constraints mentioned in (1) cannot be exceeded!`
+                                                 `that can be done as it is presented in this sample, but the constraints mentioned in (1) cannot be exceeded!`
                     )->tag( `Text`
                         )->a( n = `class`    v = `sapUiTinyMargin`
                         )->a( n = `wrapping` v = `true`

@@ -108,7 +108,10 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
   const seen = new Set();
   const out = [];
   const add = (w) => {
-    const t = String(w).toLowerCase().replace(/[^a-z0-9.:_-]/g, '');
+    // a term keeps its inner dots (sap.m) but not a marker or punctuation at
+    // either end: a DESCRIPT cut at a word boundary ends in `...`, and
+    // `reflects...` is not a word anybody types (2026-09-12)
+    const t = String(w).toLowerCase().replace(/[^a-z0-9.:_-]/g, '').replace(/^[.:_-]+|[.:_-]+$/g, '');
     if (!t || t.length < 2 || NOISE.has(t) || seen.has(t)) return;
     seen.add(t);
     out.push(t);

@@ -174,37 +174,37 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         " onAppointmentCreate opens the create dialog on the row the
                         " drag started in; onAppointmentDrop moves, copies or just
                         " reschedules by the dragged delta
-                        )->a( n = `appointmentCreate` v = client->_event(
-                                  val   = `APPT_CREATE`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
-                        )->a( n = `appointmentDrop` v = client->_event(
-                                  val   = `APPT_DROP`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/startDate}.getFullYear()` )
-                                    ( `${$parameters>/startDate}.getMonth() + 1` )
-                                    ( `${$parameters>/startDate}.getDate()` )
-                                    ( `${$parameters>/startDate}.getHours()` )
-                                    ( `${$parameters>/startDate}.getMinutes()` )
-                                    ( `${$parameters>/endDate}.getFullYear()` )
-                                    ( `${$parameters>/endDate}.getMonth() + 1` )
-                                    ( `${$parameters>/endDate}.getDate()` )
-                                    ( `${$parameters>/endDate}.getHours()` )
-                                    ( `${$parameters>/endDate}.getMinutes()` )
-                                    ( `${$parameters>/appointment}.getBindingContext() ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
-                                    ( `${$parameters>/calendarRow}.getBindingContext().getPath()` )
-                                    ( `${$parameters>/copy} ? 'X' : ''` )
-                                    ( `${$parameters>/calendarRow}.getTitle()` ) ) )
+                        )->a( n = `appointmentCreate`             v = client->_event(
+                                              val   = `APPT_CREATE`
+                                              t_arg = VALUE #(
+                                                ( `${$parameters>/startDate}.getFullYear()` )
+                                                ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                ( `${$parameters>/startDate}.getDate()` )
+                                                ( `${$parameters>/startDate}.getHours()` )
+                                                ( `${$parameters>/startDate}.getMinutes()` )
+                                                ( `${$parameters>/endDate}.getFullYear()` )
+                                                ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                ( `${$parameters>/endDate}.getDate()` )
+                                                ( `${$parameters>/endDate}.getHours()` )
+                                                ( `${$parameters>/endDate}.getMinutes()` )
+                                                ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
+                        )->a( n = `appointmentDrop`               v = client->_event(
+                                                val   = `APPT_DROP`
+                                                t_arg = VALUE #(
+                                                  ( `${$parameters>/startDate}.getFullYear()` )
+                                                  ( `${$parameters>/startDate}.getMonth() + 1` )
+                                                  ( `${$parameters>/startDate}.getDate()` )
+                                                  ( `${$parameters>/startDate}.getHours()` )
+                                                  ( `${$parameters>/startDate}.getMinutes()` )
+                                                  ( `${$parameters>/endDate}.getFullYear()` )
+                                                  ( `${$parameters>/endDate}.getMonth() + 1` )
+                                                  ( `${$parameters>/endDate}.getDate()` )
+                                                  ( `${$parameters>/endDate}.getHours()` )
+                                                  ( `${$parameters>/endDate}.getMinutes()` )
+                                                  ( `${$parameters>/appointment}.getBindingContext() ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
+                                                  ( `${$parameters>/calendarRow}.getBindingContext().getPath()` )
+                                                  ( `${$parameters>/copy} ? 'X' : ''` )
+                                                  ( `${$parameters>/calendarRow}.getTitle()` ) ) )
 
                         )->ele( `customData`
                             )->tag( n = `CustomData` ns = `core`
@@ -378,14 +378,14 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         " empty value a cleared picker sends (the app-549/609 reasoning)
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd HH:mm`
-                        )->a( n = `value` v = client->_bind( c_start )
+                        )->a( n = `value`         v = client->_bind( c_start )
                     )->tag( `Label`
                         )->a( n = `text` v = `End`
                     )->tag( `DateTimePicker`
                         " see the Start picker above - same contract
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd HH:mm`
-                        )->a( n = `value` v = client->_bind( c_end )
+                        )->a( n = `value`         v = client->_bind( c_end )
 
                     )->tag( n = `Title` ns = `core`
                         )->a( n = `text` v = `Recurrence (optional)`
@@ -487,24 +487,24 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                     )->tag( `Label`
                         )->a( n = `text`    v = `On day`
                         )->a( n = `visible` v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                 |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
+                                                |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
                     )->tag( `Input`
                         )->a( n = `value`       v = client->_bind( c_rule_dom )
                         )->a( n = `type`        v = `Number`
                         )->a( n = `width`       v = `80px`
                         )->a( n = `visible`     v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                     |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
+                                                    |${ client->_bind( c_rule_type ) } === 'DayOfMonth' \}|
                         )->a( n = `placeholder` v = `e.g. 15`
 
                     )->tag( `Label`
                         )->a( n = `text`    v = `On the`
                         )->a( n = `visible` v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                 |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
+                                                |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
 
                     )->ele( `HBox`
                         )->a( n = `alignItems` v = `Center`
                         )->a( n = `visible`    v = |\{= (${ client->_bind( c_rec_type ) } === 'Monthly' \|\| ${ client->_bind( c_rec_type ) } === 'Yearly') && | &&
-                                                     |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
+                                                   |${ client->_bind( c_rule_type ) } === 'DayOfWeek' \}|
 
                         )->ele( `Select`
                             )->a( n = `selectedKey` v = client->_bind( c_rule_wom )
@@ -606,7 +606,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         )->a( n = `text`    v = `Until`
                         )->a( n = `visible` v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
                     )->tag( `DatePicker`
-                        )->a( n = `visible` v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
+                        )->a( n = `visible`       v = |\{= ${ client->_bind( c_rec_type ) } !== '' \}|
                         " the original binds this typed too (sap.ui.model.type.Date,
                         " pattern 'yyyy-MM-dd'); valueFormat carries the same contract
                         " without raising on the empty value this field seeds with.
@@ -614,7 +614,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         " recurrenceenddate matches the port's own seeded rows
                         )->a( n = `valueFormat`   v = `yyyy-MM-dd'T'HH:mm:ss`
                         )->a( n = `displayFormat` v = `yyyy-MM-dd`
-                        )->a( n = `value`   v = client->_bind( c_rec_end )
+                        )->a( n = `value`         v = client->_bind( c_rec_end )
 
                 )->end(
             )->end(

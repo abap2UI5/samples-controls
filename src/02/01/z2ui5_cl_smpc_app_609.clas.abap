@@ -113,16 +113,16 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
-                )->a( n = `headerDateSelect` v = client->_event(
-                          val   = `HEADER_DATE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/date}.getFullYear()` )
-                            ( `${$parameters>/date}.getMonth() + 1` )
-                            ( `${$parameters>/date}.getDate()` ) ) )
+                )->a( n = `headerDateSelect`  v = client->_event(
+                           val   = `HEADER_DATE`
+                           t_arg = VALUE #(
+                             ( `${$parameters>/date}.getFullYear()` )
+                             ( `${$parameters>/date}.getMonth() + 1` )
+                             ( `${$parameters>/date}.getDate()` ) ) )
                 " handleStartDateChange names the new start date in a toast
-                )->a( n = `startDateChange` v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
-                )->a( n = `startDate`       v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `appointments`    v = client->_bind( t_appointments )
+                )->a( n = `startDateChange`   v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
+                )->a( n = `startDate`         v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `appointments`      v = client->_bind( t_appointments )
 
                 )->ele( `actions`
                     )->tag( `Button`

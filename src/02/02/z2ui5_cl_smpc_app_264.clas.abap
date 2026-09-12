@@ -67,12 +67,12 @@ CLASS z2ui5_cl_smpc_app_264 IMPLEMENTATION.
            |\{ path: 'LASTNAME', operator: 'StartsWith', value1: '{ client->_bind( lastname ) }' \}| ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `class`       v = `sapUiSizeCompact`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
-        )->a( n = `xmlns:table` v = `sap.ui.table`
-        )->a( n = `xmlns:trm`   v = `sap.ui.table.rowmodes`
+        )->a( n = `class`        v = `sapUiSizeCompact`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
+        )->a( n = `xmlns:table`  v = `sap.ui.table`
+        )->a( n = `xmlns:trm`    v = `sap.ui.table.rowmodes`
         " use odata types as they map empty input to null
         )->a( n = `core:require` v = `{StringType: 'sap/ui/model/odata/type/String'}`
 

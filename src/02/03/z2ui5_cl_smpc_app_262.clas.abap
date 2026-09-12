@@ -66,12 +66,12 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
             )->a( n = `showEditHeaderButton`     v = `true`
             )->a( n = `editHeaderButtonPress`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Edit header button pressed` ) ) )
-            )->a( n = `upperCaseAnchorBar` v = `false`
+            )->a( n = `upperCaseAnchorBar`       v = `false`
             " added wires (declared): the footer flag the controller toggles
             " imperatively, and the breakpointChange the controller attaches
             " in onInit
-            )->a( n = `showFooter`       v = client->_bind( show_footer )
-            )->a( n = `breakpointChange` v = client->_event( val   = `BREAKPOINT_CHANGE`
+            )->a( n = `showFooter`               v = client->_bind( show_footer )
+            )->a( n = `breakpointChange`         v = client->_event( val   = `BREAKPOINT_CHANGE`
                                                                      t_arg = VALUE #( ( `${$parameters>/currentRange}` ) ( `${$parameters>/currentWidth}` ) ) )
 
             )->ele( `headerTitle`
@@ -187,9 +187,9 @@ CLASS z2ui5_cl_smpc_app_262 IMPLEMENTATION.
                 )->end(
 
                 )->tag( n = `MessageStrip` ns = `m`
-                    )->a( n = `text` v = `The Avatar size changes automatically based on screen size: `
-                                          && `Phone (M), Tablet (L), Desktop/DesktopExtraLarge (XL). `
-                                          && `This is handled using the breakpointChange event.`
+                    )->a( n = `text`     v = `The Avatar size changes automatically based on screen size: `
+                                             && `Phone (M), Tablet (L), Desktop/DesktopExtraLarge (XL). `
+                                             && `This is handled using the breakpointChange event.`
                     )->a( n = `type`     v = `Information`
                     )->a( n = `showIcon` v = `true`
                     )->a( n = `class`    v = `sapUiTinyMarginTopBottom`

@@ -75,8 +75,8 @@ CLASS z2ui5_cl_smpc_app_615 IMPLEMENTATION.
             )->a( n = `titlePress`          v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                           t_arg = VALUE #( ( `myPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
             )->a( n = `number`              v = |\{ parts:[\{path:'{ client->_bind_path( price ) }'\},| &&
-                                                 |\{path:'{ client->_bind_path( currencycode ) }'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                                |\{path:'{ client->_bind_path( currencycode ) }'\}],| &&
+                                                | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
             )->a( n = `numberUnit`          v = client->_bind( currencycode )
             )->a( n = `showTitleSelector`   v = `true`
             " onPress - MessageBox.alert( 'Link was clicked!' )
@@ -126,8 +126,8 @@ CLASS z2ui5_cl_smpc_app_615 IMPLEMENTATION.
 
                     )->ele( `items`
                         )->ele( `IconTabFilter`
-                            )->a( n = `key`   v = `info`
-                            )->a( n = `icon`  v = `sap-icon://hint`
+                            )->a( n = `key`  v = `info`
+                            )->a( n = `icon` v = `sap-icon://hint`
 
                             )->tag( `Text`
                                 )->a( n = `text` v = `Info content goes here ...`
@@ -155,8 +155,8 @@ CLASS z2ui5_cl_smpc_app_615 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `IconTabFilter`
-                            )->a( n = `key`   v = `people`
-                            )->a( n = `icon`  v = `sap-icon://group`
+                            )->a( n = `key`  v = `people`
+                            )->a( n = `icon` v = `sap-icon://group`
 
                             )->tag( `Text`
                                 )->a( n = `text` v = `People content goes here ...`
@@ -164,8 +164,8 @@ CLASS z2ui5_cl_smpc_app_615 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `IconTabFilter`
-                            )->a( n = `key`   v = `info2`
-                            )->a( n = `icon`  v = `sap-icon://hint`
+                            )->a( n = `key`  v = `info2`
+                            )->a( n = `icon` v = `sap-icon://hint`
 
                             )->tag( `Text`
                                 )->a( n = `text` v = `Info content goes here ...`
@@ -193,8 +193,8 @@ CLASS z2ui5_cl_smpc_app_615 IMPLEMENTATION.
                         )->end(
 
                         )->ele( `IconTabFilter`
-                            )->a( n = `key`   v = `people2`
-                            )->a( n = `icon`  v = `sap-icon://group`
+                            )->a( n = `key`  v = `people2`
+                            )->a( n = `icon` v = `sap-icon://group`
 
                             )->tag( `Text`
                                 )->a( n = `text` v = `People content goes here ...`

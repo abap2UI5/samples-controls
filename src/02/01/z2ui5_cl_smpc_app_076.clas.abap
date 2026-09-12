@@ -50,10 +50,10 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
 
                 )->ele( `NotificationListItem`
                     )->a( n = `title`           v = `New order (#2525) With a very long title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio ` &&
-                                                     `vehicula dolor, nec elementum lectus turpis at nunc.`
+                                                    `vehicula dolor, nec elementum lectus turpis at nunc.`
                     )->a( n = `description`     v = `And with a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ` &&
-                                                     `scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
-                                                     `turpis at nunc.`
+                                                    `scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
+                                                    `turpis at nunc.`
                     )->a( n = `showCloseButton` v = `true`
                     )->a( n = `datetime`        v = `1 hour`
                     )->a( n = `unread`          v = `true`
@@ -139,7 +139,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                 )->tag( `NotificationListItem`
                     )->a( n = `title`             v = `New order (#2522)`
                     )->a( n = `description`       v = `With a very long description - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula ` &&
-                                                       `dolor, nec elementum lectus turpis at nunc.`
+                                                      `dolor, nec elementum lectus turpis at nunc.`
                     )->a( n = `showCloseButton`   v = `true`
                     )->a( n = `datetime`          v = `3 days`
                     )->a( n = `unread`            v = `true`
@@ -161,8 +161,8 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                 )->tag( `NotificationListItem`
                     )->a( n = `title`           v = `New order (#2521)`
                     )->a( n = `description`     v = `With a very long description and no action buttons below - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque ` &&
-                                                     `pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at ` &&
-                                                     `nunc.`
+                                                    `pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at ` &&
+                                                    `nunc.`
                     )->a( n = `showCloseButton` v = `true`
                     )->a( n = `datetime`        v = `3 days`
                     )->a( n = `unread`          v = `true`
@@ -182,11 +182,11 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
 
                 )->ele( `NotificationListItem`
                     )->a( n = `title`           v = `New order (#2525) With a very long title and truncation disabled by default! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ` &&
-                                                     `scelerisque pharetra, tellus odio vehicula dolor, nec elementum ` &&
-                                                     `lectus turpis at nunc.`
+                                                    `scelerisque pharetra, tellus odio vehicula dolor, nec elementum ` &&
+                                                    `lectus turpis at nunc.`
                     )->a( n = `description`     v = `And a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque ` &&
-                                                     `pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
-                                                     `turpis at nunc.`
+                                                    `pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
+                                                    `turpis at nunc.`
                     )->a( n = `showCloseButton` v = `true`
                     )->a( n = `datetime`        v = `2 day`
                     )->a( n = `unread`          v = `false`
@@ -214,11 +214,11 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
 
                 )->ele( `NotificationListItem`
                     )->a( n = `title`              v = `New order (#2525) With a very long title and with truncation enabled but 'Show More' hidden! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ` &&
-                                                        `feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, ` &&
-                                                        `nec elementum lectus turpis at nunc.`
+                                                       `feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, ` &&
+                                                       `nec elementum lectus turpis at nunc.`
                     )->a( n = `description`        v = `And a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque ` &&
-                                                        `pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
-                                                        `turpis at nunc.`
+                                                       `pharetra, tellus odio vehicula dolor, nec elementum lectus ` &&
+                                                       `turpis at nunc.`
                     )->a( n = `showCloseButton`    v = `true`
                     )->a( n = `datetime`           v = `2 day`
                     )->a( n = `unread`             v = `false`

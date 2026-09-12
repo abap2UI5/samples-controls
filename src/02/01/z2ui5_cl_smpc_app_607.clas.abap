@@ -83,10 +83,10 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
         )->a( n = `text` v = `Label text` ).
 
     DATA(page) = root->ele( `Page`
-        )->a( n = `showHeader`       v = `false`
-        )->a( n = `enableScrolling`  v = `true`
-        )->a( n = `class`            v = `sapUiContentPadding`
-        )->a( n = `showNavButton`    v = `false` ).
+        )->a( n = `showHeader`      v = `false`
+        )->a( n = `enableScrolling` v = `true`
+        )->a( n = `class`           v = `sapUiContentPadding`
+        )->a( n = `showNavButton`   v = `false` ).
 
     DATA(content) = page->ele( `content` ).
 
@@ -217,7 +217,7 @@ CLASS z2ui5_cl_smpc_app_607 IMPLEMENTATION.
                     )->a( n = `text` v = `{WIDTH} x {DEPTH} x {HEIGHT} {DIMUNIT}`
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                          | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
                     )->a( n = `unit`   v = `{CURRENCYCODE}`
 
             )->end(

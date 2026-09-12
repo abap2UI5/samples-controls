@@ -155,7 +155,7 @@ CLASS z2ui5_cl_smpc_sapui5_014 IMPLEMENTATION.
                             )->ele( n = `table` ns = `gantt`
                                 )->ele( n = `TreeTable` ns = `table`
                                     )->a( n = `rows` v = |\{ path: '{ client->_bind_path( s_root ) }', | &&
-                                                          |parameters: \{ arrayNames: ['CHILDREN'], numberOfExpandedLevels: 2 \} \}|
+                                                         |parameters: \{ arrayNames: ['CHILDREN'], numberOfExpandedLevels: 2 \} \}|
 
                                     )->ele( n = `columns` ns = `table`
                                         )->ele( n = `Column` ns = `table`

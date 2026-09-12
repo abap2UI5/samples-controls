@@ -160,11 +160,11 @@ CLASS z2ui5_cl_smpc_app_606 IMPLEMENTATION.
                 )->a( n = `unit`   v = `{UNIT}`
                 )->a( n = `footer` v = `{FOOTER}`
                 )->tag( `NumericContent`
-                    )->a( n = `withMargin`  v = `false`
-                    )->a( n = `value`       v = `{KPIVALUE}`
-                    )->a( n = `valueColor`  v = `{COLOR}`
-                    )->a( n = `indicator`   v = `{TREND}`
-                    )->a( n = `scale`       v = `{SCALE}`
+                    )->a( n = `withMargin` v = `false`
+                    )->a( n = `value`      v = `{KPIVALUE}`
+                    )->a( n = `valueColor` v = `{COLOR}`
+                    )->a( n = `indicator`  v = `{TREND}`
+                    )->a( n = `scale`      v = `{SCALE}`
 
             )->end(
         )->end(

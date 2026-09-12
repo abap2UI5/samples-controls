@@ -54,7 +54,7 @@ CLASS z2ui5_cl_smpc_app_255 IMPLEMENTATION.
             )->ele( `VBox`
                 )->a( n = `class` v = `sapUiTinyMargin`
                 )->tag( `Label`
-                    )->a( n = `text` v = `{LABEL}`
+                    )->a( n = `text`     v = `{LABEL}`
                     )->a( n = `labelFor` v = `DTP`
                 )->tag( `DateTimePicker`
                     )->a( n = `id`             v = `DTP`

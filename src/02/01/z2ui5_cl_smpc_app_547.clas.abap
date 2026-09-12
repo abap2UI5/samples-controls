@@ -114,35 +114,35 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
                 )->a( n = `appointmentsVisualization` v = `Filled`
                 " handleAppointmentSelect opens the details popover on a single
                 " appointment, or the group popover on a collapsed group
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` )
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` )
                             " the "do the types differ" test used to be a fifth arg
                             " holding a JS callback (.some(function(a){...})), which is
                             " not in the UI5 expression grammar - it threw and lost the
                             " whole handler. CalendarAppointment.selected is bindable,
                             " so ABAP reads the selected rows and compares them itself.
                             ( `${$parameters>/appointments} ? ${$parameters>/appointments}[0].getType() : ''` ) ) )
-                )->a( n = `showEmptyIntervalHeaders` v = `false`
+                )->a( n = `showEmptyIntervalHeaders`  v = `false`
                 " handleAppointmentAddWithContext opens the same dialog pre-set to
                 " the selected interval
-                )->a( n = `intervalSelect` v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                )->a( n = `intervalSelect`            v = client->_event(
+                                     val   = `INTERVAL_SELECT`
+                                     t_arg = VALUE #(
+                                       ( `${$parameters>/startDate}.getFullYear()` )
+                                       ( `${$parameters>/startDate}.getMonth() + 1` )
+                                       ( `${$parameters>/startDate}.getDate()` )
+                                       ( `${$parameters>/startDate}.getHours()` )
+                                       ( `${$parameters>/startDate}.getMinutes()` )
+                                       ( `${$parameters>/endDate}.getFullYear()` )
+                                       ( `${$parameters>/endDate}.getMonth() + 1` )
+                                       ( `${$parameters>/endDate}.getDate()` )
+                                       ( `${$parameters>/endDate}.getHours()` )
+                                       ( `${$parameters>/endDate}.getMinutes()` )
+                                       ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

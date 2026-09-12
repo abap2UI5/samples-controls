@@ -48,9 +48,9 @@ CLASS z2ui5_cl_smpc_app_128 IMPLEMENTATION.
         )->a( n = `height`    v = `100%`
 
         )->ele( `VBox`
-            )->a( n = `renderType`  v = `Bare`
-            )->a( n = `alignItems`  v = `Start`
-            )->a( n = `height`      v = `100%`
+            )->a( n = `renderType` v = `Bare`
+            )->a( n = `alignItems` v = `Start`
+            )->a( n = `height`     v = `100%`
 
             )->tag( `Button`
                 )->a( n = `text`  v = `Toggle Collapse/Expand`

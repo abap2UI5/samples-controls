@@ -96,9 +96,9 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
 
             )->ele( `columns`
                 )->ele( `Column`
-                    )->a( n = `width`         v = `16em`
-                    )->a( n = `app:bindings`  v = `ProductId,Name`
-                    )->a( n = `app:template`  v = `\{1\}\n\{0\}`
+                    )->a( n = `width`        v = `16em`
+                    )->a( n = `app:bindings` v = `ProductId,Name`
+                    )->a( n = `app:template` v = `\{1\}\n\{0\}`
 
                     )->tag( `Text`
                         )->a( n = `text` v = `Product`

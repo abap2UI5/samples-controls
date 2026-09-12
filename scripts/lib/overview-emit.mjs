@@ -1160,6 +1160,12 @@ ${catalogStatements}
       toolbar->a( n = \`color\` t = color ).
     ENDIF.
 
+    " press is decided per branch above and written here once: the linter's
+    " reconstructor follows neither a handle held in a variable (it drops the
+    " attribute - client-handle-capture) nor an attribute written in several
+    " IF branches (it reads them as one control set thrice - duplicate-
+    " property), and of the two the dropped wire is the one that only costs
+    " this generated class a finding, which its own config accepts
     IF press IS NOT INITIAL.
       toolbar->a( n = \`press\` v = press ).
     ENDIF.

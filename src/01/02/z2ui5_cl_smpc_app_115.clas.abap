@@ -95,15 +95,15 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
 
             )->ele( n = `content` ns = `m`
                 )->ele( `Table`
-                    )->a( n = `rows`          v = client->_bind( productcollection )
-                    )->a( n = `selectionMode` v = `MultiToggle`
+                    )->a( n = `rows`           v = client->_bind( productcollection )
+                    )->a( n = `selectionMode`  v = `MultiToggle`
                     " onPaste toasts the pasted data - composed on the client
-                    )->a( n = `paste` v = client->follow_up_action(
-                              val   = client->cs_event-control_global
-                              t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                               ( `show` )
-                                               ( `Pasted Data: {0}` )
-                                               ( `${$parameters>/data}` ) ) )
+                    )->a( n = `paste`          v = client->follow_up_action(
+                                       val   = client->cs_event-control_global
+                                       t_arg = VALUE #( ( `MESSAGE_TOAST` )
+                                                        ( `show` )
+                                                        ( `Pasted Data: {0}` )
+                                                        ( `${$parameters>/data}` ) ) )
                     )->a( n = `ariaLabelledBy` v = `title`
 
                     )->ele( `extension`
@@ -258,11 +258,11 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                                     " The removedTokens guard is required: an ADD fires the
                                     " same event with removedTokens = [], and an unguarded
                                     " [0].getKey() throws before the round-trip even starts
-                                    )->a( n = `tokenUpdate` v = client->_event(
-                                              val   = `TOKEN_UPDATE`
-                                              t_arg = VALUE #( ( `${$parameters>/type}` )
-                                                               ( `${$parameters>/removedTokens}[0] ? ${$parameters>/removedTokens}[0].getKey() : ''` )
-                                                               ( `$event.oSource.getBindingContext().getPath()` ) ) )
+                                    )->a( n = `tokenUpdate`     v = client->_event(
+                                                  val   = `TOKEN_UPDATE`
+                                                  t_arg = VALUE #( ( `${$parameters>/type}` )
+                                                                   ( `${$parameters>/removedTokens}[0] ? ${$parameters>/removedTokens}[0].getKey() : ''` )
+                                                                   ( `$event.oSource.getBindingContext().getPath()` ) ) )
                                     )->a( n = `value`           v = `{ADDITIONALCATEGORY}`
                                     )->a( n = `tokens`          v = |\{ path: 'ADDITIONALCATEGORIESSELECTION', templateShareable: false \}|
                                     )->a( n = `suggestionItems` v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false, sorter: \{ path: 'NAME' \} \}|

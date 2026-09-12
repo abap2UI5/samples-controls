@@ -39,8 +39,8 @@ CLASS z2ui5_cl_smpc_app_275 IMPLEMENTATION.
     " pressed.') - a constant text, so every press is the roundtrip-free
     " client toast (app 005 idiom) and the app stays init-only
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         " the sample's style.css, injected via a core:HTML content attribute
@@ -135,7 +135,7 @@ CLASS z2ui5_cl_smpc_app_275 IMPLEMENTATION.
 
                 )->tag( `FeedContent`
                     )->a( n = `contentText` v = `@@notify Great outcome of the Presentation today. The new functionality and the ` &&
-                                               `design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London`
+                                                `design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London`
                     )->a( n = `subheader`   v = `Subheader`
                     )->a( n = `value`       v = `9`
 
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_275 IMPLEMENTATION.
 
                 )->tag( `FeedContent`
                     )->a( n = `contentText` v = `@@notify Great outcome of the Presentation today. The new functionality and the ` &&
-                                               `design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London`
+                                                `design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London`
                     )->a( n = `subheader`   v = `Subheader`
                     )->a( n = `value`       v = `9`
 

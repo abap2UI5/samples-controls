@@ -72,8 +72,8 @@ CLASS z2ui5_cl_smpc_app_449 IMPLEMENTATION.
 
             )->ele( n = `midColumnPages` ns = `f`
                 )->ele( `Page`
-                    )->a( n = `id`               v = `detailPage`
-                    )->a( n = `title`            v = `Middle Column`
+                    )->a( n = `id`    v = `detailPage`
+                    )->a( n = `title` v = `Middle Column`
 
                     )->ele( `VBox`
                         )->tag( `Button`

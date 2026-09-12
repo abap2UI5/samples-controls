@@ -60,9 +60,9 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `Table`
-                )->a( n = `id`    v = `selectionTable`
-                )->a( n = `mode`  v = `MultiSelect`
-                )->a( n = `items` v = client->_bind( t_products )
+                )->a( n = `id`              v = `selectionTable`
+                )->a( n = `mode`            v = `MultiSelect`
+                )->a( n = `items`           v = client->_bind( t_products )
                 " handleTableSelectionChange only enables the button when at least
                 " one row is selected; the row flag is bound two-way, so the
                 " selection reaches the backend and the button reads it from there
@@ -140,7 +140,7 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
 
             )->ele( `beginButton`
                 )->tag( `Button`
-                    )->a( n = `text` v = `OK`
+                    )->a( n = `text`    v = `OK`
                     " handleCalendarSelect enables OK once a date is picked
                     )->a( n = `enabled` v = |\{= ${ client->_bind( selected_date ) } !== '' \}|
                     )->a( n = `press`   v = client->_event( `DATE_OK` )

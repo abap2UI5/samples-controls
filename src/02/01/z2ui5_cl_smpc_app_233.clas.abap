@@ -90,9 +90,9 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
         " Dialog.fragment.xml - loaded in the controller via oView.addDependent
         )->ele( n = `dependents` ns = `mvc`
             )->ele( `SelectDialog`
-                )->a( n = `id`    v = `selectDialog`
-                )->a( n = `title` v = `Purchases`
-                )->a( n = `items` v = client->_bind( t_purchases )
+                )->a( n = `id`      v = `selectDialog`
+                )->a( n = `title`   v = `Purchases`
+                )->a( n = `items`   v = client->_bind( t_purchases )
                 " handleValueHelpSearch/_getCombinedFilter build an OR over PurchaseID
                 " and SupplierName. The compound binding_call payload is one JSON
                 " string, so the value cannot be substituted client-side - the search
@@ -119,25 +119,25 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                     )->ele( n = `heading` ns = `uxap`
                         " Input.fragment.xml
                         )->ele( `Input`
-                            )->a( n = `class`          v = `sapUiTinyMarginBottom`
-                            )->a( n = `id`             v = `purchaseInput`
-                            )->a( n = `value`          v = client->_bind( input_value )
-                            )->a( n = `textFormatMode` v = `KeyValue`
-                            )->a( n = `submit`         v = client->_event( `SUBMIT` )
-                            )->a( n = `placeholder`    v = `Enter product`
-                            )->a( n = `showSuggestion` v = `true`
-                            )->a( n = `autocomplete`   v = `false`
-                            )->a( n = `showValueHelp`  v = `true`
-                            )->a( n = `change`         v = client->_event( `CHANGE` )
+                            )->a( n = `class`                  v = `sapUiTinyMarginBottom`
+                            )->a( n = `id`                     v = `purchaseInput`
+                            )->a( n = `value`                  v = client->_bind( input_value )
+                            )->a( n = `textFormatMode`         v = `KeyValue`
+                            )->a( n = `submit`                 v = client->_event( `SUBMIT` )
+                            )->a( n = `placeholder`            v = `Enter product`
+                            )->a( n = `showSuggestion`         v = `true`
+                            )->a( n = `autocomplete`           v = `false`
+                            )->a( n = `showValueHelp`          v = `true`
+                            )->a( n = `change`                 v = client->_event( `CHANGE` )
                             " _filterAndOpenValueHelpDialog does TWO things: it applies the
                             " combined filter to the dialog's binding and THEN opens it with
                             " the current input value. SelectDialog.open( ) only seeds the
                             " search field - it does not filter - so both are chained here
-                            )->a( n = `valueHelpRequest` v = client->follow_up_action(
-                                      val   = client->cs_event-binding_call
-                                      t_arg = VALUE #( ( `selectDialog` )
-                                                       ( `items` )
-                                                       ( `filter` )
+                            )->a( n = `valueHelpRequest`       v = client->follow_up_action(
+                                            val   = client->cs_event-binding_call
+                                            t_arg = VALUE #( ( `selectDialog` )
+                                                             ( `items` )
+                                                             ( `filter` )
                                                        " the expression MUST begin with $ : get_t_arg only leaves an
                                                        " argument raw when it starts with $ or { (or is an .eB/.eF
                                                        " call) - anything else, a leading quote included, is wrapped

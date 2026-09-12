@@ -103,7 +103,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(
@@ -129,21 +129,21 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
 
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `10rem`
+                    )->a( n = `width`  v = `10rem`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Product ID`
 
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `10rem`
+                    )->a( n = `width`  v = `10rem`
                     )->a( n = `hAlign` v = `Center`
                     )->tag( `Label`
                         )->a( n = `text` v = `Supplier Name`
 
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `10rem`
+                    )->a( n = `width`  v = `10rem`
                     )->a( n = `hAlign` v = `End`
                     )->tag( `Label`
                         )->a( n = `text` v = `Price`
@@ -161,7 +161,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(
@@ -192,19 +192,19 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
 
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `10rem`
-                    )->a( n = `popinDisplay` v = `Inline`
+                    )->a( n = `width`          v = `10rem`
+                    )->a( n = `popinDisplay`   v = `Inline`
                     )->a( n = `minScreenWidth` v = `Large`
-                    )->a( n = `demandPopin` v = `true`
+                    )->a( n = `demandPopin`    v = `true`
                     )->tag( `Label`
                         )->a( n = `text` v = `Supplier Name`
 
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `10rem`
-                    )->a( n = `popinDisplay` v = `Inline`
+                    )->a( n = `width`          v = `10rem`
+                    )->a( n = `popinDisplay`   v = `Inline`
                     )->a( n = `minScreenWidth` v = `Large`
-                    )->a( n = `demandPopin` v = `true`
+                    )->a( n = `demandPopin`    v = `true`
                     )->tag( `Label`
                         )->a( n = `text` v = `Price`
 
@@ -221,7 +221,7 @@ CLASS z2ui5_cl_smpc_app_621 IMPLEMENTATION.
                         )->a( n = `text` v = `{SUPPLIERNAME}`
                     )->tag( `Label`
                         )->a( n = `text` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                                 | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
+                                             | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: true\} \}|
 
                 )->end(
             )->end(

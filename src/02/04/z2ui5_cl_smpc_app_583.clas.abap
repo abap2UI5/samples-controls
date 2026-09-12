@@ -59,9 +59,9 @@ CLASS z2ui5_cl_smpc_app_583 IMPLEMENTATION.
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
 
         )->ele( `ShellBar`
-            )->a( n = `homeIcon`            v = `https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg.adapt.svg/1493030643828.svg`
-            )->a( n = `showCopilot`         v = `true`
-            )->a( n = `showProductSwitcher` v = `true`
+            )->a( n = `homeIcon`               v = `https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg.adapt.svg/1493030643828.svg`
+            )->a( n = `showCopilot`            v = `true`
+            )->a( n = `showProductSwitcher`    v = `true`
             " fnOpen anchors the popover on the product-switcher button the event ships
             )->a( n = `productSwitcherPressed` v = client->_event( val = `OPEN_SWITCHER` arg = `${$parameters>/button}.getId()` )
 

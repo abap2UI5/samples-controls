@@ -69,13 +69,13 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
             " sap.m.OverflowToolbarTokenizer is @ui5-experimental-since 1.139 (no plain @since tag,
             " invisible to scope-of/property gate) - out of 1.71 scope, see the sidecar deviation
             )->ele( `OverflowToolbarTokenizer`
-                )->a( n = `id`        v = `toolbarTokenizer`
-                )->a( n = `width`     v = `50%`
-                )->a( n = `labelText` v = `Tokenizer in sap.m.Toolbar:`
+                )->a( n = `id`          v = `toolbarTokenizer`
+                )->a( n = `width`       v = `50%`
+                )->a( n = `labelText`   v = `Tokenizer in sap.m.Toolbar:`
                 " this is the tokenizer onAddToken/onTokenDelete work on, so its three
                 " static tokens are folded into a bound aggregation (the app-085 pattern):
                 " adding appends a row, deleting removes the row by its key
-                )->a( n = `tokens`    v = client->_bind( t_tokens )
+                )->a( n = `tokens`      v = client->_bind( t_tokens )
                 " onTokenDelete iterates ALL deleted tokens - the event carries the
                 " whole selection, not one token - so the ARRAY travels and ABAP
                 " loops. The frontend marshals each control into its properties
@@ -126,9 +126,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `overflowToolbarTokenizer`
-                        )->a( n = `width`     v = `75%`
-                        )->a( n = `labelText` v = `Filter by:`
+                        )->a( n = `id`          v = `overflowToolbarTokenizer`
+                        )->a( n = `width`       v = `75%`
+                        )->a( n = `labelText`   v = `Filter by:`
                         " onTokenDelete removes the token and toasts its text. The token is
                         " static here, so the wire removes it by ID - removeAggregation accepts
                         " an id (measured, scripts/probes/event-arg-expression-probe.mjs) - and
@@ -199,10 +199,10 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `tokenizerMaxWidth`
-                        )->a( n = `width`     v = `45%`
-                        )->a( n = `maxWidth`  v = `85%`
-                        )->a( n = `labelText` v = `Random label text:`
+                        )->a( n = `id`          v = `tokenizerMaxWidth`
+                        )->a( n = `width`       v = `45%`
+                        )->a( n = `maxWidth`    v = `85%`
+                        )->a( n = `labelText`   v = `Random label text:`
                         " onTokenDelete removes the token and toasts its text. The token is
                         " static here, so the wire removes it by ID - removeAggregation accepts
                         " an id (measured, scripts/probes/event-arg-expression-probe.mjs) - and
@@ -366,9 +366,9 @@ CLASS z2ui5_cl_smpc_app_203 IMPLEMENTATION.
                         )->end(
                     )->end(
                     )->ele( `OverflowToolbarTokenizer`
-                        )->a( n = `id`        v = `tokenizerShowItems`
-                        )->a( n = `width`     v = `35%`
-                        )->a( n = `labelText` v = `Show items:`
+                        )->a( n = `id`          v = `tokenizerShowItems`
+                        )->a( n = `width`       v = `35%`
+                        )->a( n = `labelText`   v = `Show items:`
                         )->a( n = `tokenDelete` v = client->follow_up_action(
                                   val   = client->cs_event-control_global
                                   t_arg = VALUE #( ( `MESSAGE_TOAST` )

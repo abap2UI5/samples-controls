@@ -93,15 +93,15 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
                 )->a( n = `text`  v = client->_bind( info_text )
             )->tag( `Text`
                 )->a( n = `text` v = `Responsive behaviour is fully configurable by the developer. It is possible to `
-                                  && `pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and `
-                                  && `configure how it will look in different breakpoints (S, M, L, XL). The breakpoints `
-                                  && `can be calculated either by the screen size or by the grid container (with `
-                                  && `containerQuery property).`
+                                     && `pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and `
+                                     && `configure how it will look in different breakpoints (S, M, L, XL). The breakpoints `
+                                     && `can be calculated either by the screen size or by the grid container (with `
+                                     && `containerQuery property).`
 
             )->ele( `HBox`
-                )->a( n = `alignItems`  v = `Center`
-                )->a( n = `renderType`  v = `Bare`
-                )->a( n = `class`       v = `sapUiSmallMarginBottom sapUiSmallMarginTop`
+                )->a( n = `alignItems` v = `Center`
+                )->a( n = `renderType` v = `Bare`
+                )->a( n = `class`      v = `sapUiSmallMarginBottom sapUiSmallMarginTop`
 
                 )->tag( `Text`
                     )->a( n = `text`  v = `GridResponsiveLayout containerQuery:`

@@ -51,12 +51,12 @@ CLASS z2ui5_cl_smpc_app_385 IMPLEMENTATION.
                 )->a( n = `width` v = `350px`
 
                 )->tag( n = `Item` ns = `core`
-                    )->a( n = `key`  v = `1`
+                    )->a( n = `key` v = `1`
                     )->a( n = `text`
                              v = `Wireless DSL/ Repeater and Print Server Lorem ipsum dolar st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor incidunt ut labore et ` &&
                                  `dolore magna aliquyam erat, diam nonumy eirmod tempor individunt ut labore et dolore magna aliquyam erat, sed justo et ea rebum.`
                 )->tag( n = `Item` ns = `core`
-                    )->a( n = `key`  v = `2`
+                    )->a( n = `key` v = `2`
                     )->a( n = `text`
                              v = `7" Widescreen Portable DVD Player w MP3, consetetur sadipscing, sed diam nonumy eirmod tempor invidunt ut labore et dolore et dolore magna aliquyam ` &&
                                  `erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergen, no sea takimata. Tortor pretium viverra ` &&

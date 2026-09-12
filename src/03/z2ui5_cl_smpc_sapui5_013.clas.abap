@@ -71,17 +71,17 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `displayBlock`    v = `true`
-        )->a( n = `height`          v = `100%`
-        )->a( n = `xmlns`           v = `sap.m`
-        )->a( n = `xmlns:mvc`       v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:core`      v = `sap.ui.core`
-        )->a( n = `xmlns:gantt`     v = `sap.gantt.simple`
-        )->a( n = `xmlns:axistime`  v = `sap.gantt.axistime`
-        )->a( n = `xmlns:config`    v = `sap.gantt.config`
-        )->a( n = `xmlns:shapes`    v = `sap.gantt.simple.shapes`
-        )->a( n = `xmlns:table`     v = `sap.ui.table`
-        )->a( n = `core:require`    v = `{Formatter:'z2ui5/model/formatter'}`
+        )->a( n = `displayBlock`   v = `true`
+        )->a( n = `height`         v = `100%`
+        )->a( n = `xmlns`          v = `sap.m`
+        )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:core`     v = `sap.ui.core`
+        )->a( n = `xmlns:gantt`    v = `sap.gantt.simple`
+        )->a( n = `xmlns:axistime` v = `sap.gantt.axistime`
+        )->a( n = `xmlns:config`   v = `sap.gantt.config`
+        )->a( n = `xmlns:shapes`   v = `sap.gantt.simple.shapes`
+        )->a( n = `xmlns:table`    v = `sap.ui.table`
+        )->a( n = `core:require`   v = `{Formatter:'z2ui5/model/formatter'}`
 
         )->ele( `Page`
             )->a( n = `id`             v = `page_main`
@@ -126,7 +126,7 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
                     )->ele( n = `table` ns = `gantt`
                         )->ele( n = `TreeTable` ns = `table`
                             )->a( n = `rows` v = |\{ path: '{ client->_bind_path( s_root ) }', | &&
-                                                  |parameters: \{ arrayNames: ['CHILDREN'], numberOfExpandedLevels: 1 \} \}|
+                                                 |parameters: \{ arrayNames: ['CHILDREN'], numberOfExpandedLevels: 1 \} \}|
 
                             )->ele( n = `columns` ns = `table`
                                 )->ele( n = `Column` ns = `table`

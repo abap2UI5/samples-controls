@@ -59,20 +59,20 @@ CLASS z2ui5_cl_smpc_app_414 IMPLEMENTATION.
             )->a( n = `id`                       v = `ObjectPageLayout`
             )->a( n = `showTitleInHeaderContent` v = `true`
             " handlePress toggles the header content imperatively; bound two-way instead
-            )->a( n = `showHeaderContent` v = client->_bind( show_header_content )
+            )->a( n = `showHeaderContent`        v = client->_bind( show_header_content )
 
             )->ele( `headerTitle`
                 )->ele( `ObjectPageHeader`
-                    )->a( n = `id`                v = `headerForTest`
-                    )->a( n = `objectTitle`       v = `Denise Smith`
-                    )->a( n = `showTitleSelector` v = `true`
-                    )->a( n = `showMarkers`       v = `true`
-                    )->a( n = `markFavorite`      v = `true`
-                    )->a( n = `markFlagged`       v = `true`
-                    )->a( n = `markChanges`       v = `true`
+                    )->a( n = `id`                            v = `headerForTest`
+                    )->a( n = `objectTitle`                   v = `Denise Smith`
+                    )->a( n = `showTitleSelector`             v = `true`
+                    )->a( n = `showMarkers`                   v = `true`
+                    )->a( n = `markFavorite`                  v = `true`
+                    )->a( n = `markFlagged`                   v = `true`
+                    )->a( n = `markChanges`                   v = `true`
                     " handleMarkChangesPress: unsaved-changes popover, anchored at the pressed control
-                    )->a( n = `markChangesPress` v = client->_event( val = `MARK_CHANGES_PRESS` arg = `$event.oSource.sId` )
-                    )->a( n = `objectSubtitle`   v = `Senior Developer`
+                    )->a( n = `markChangesPress`              v = client->_event( val = `MARK_CHANGES_PRESS` arg = `$event.oSource.sId` )
+                    )->a( n = `objectSubtitle`                v = `Senior Developer`
                     " asset URI absolutized to the OpenUI5 host per the offline asset-URL rule
                     )->a( n = `objectImageURI`                v = `https://sdk.openui5.org/test-resources/sap/uxap/images/imageID_273624.png`
                     )->a( n = `objectImageShape`              v = `Circle`

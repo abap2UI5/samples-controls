@@ -127,9 +127,9 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
-                                    )->a( n = `value` v = `Updated`
-                                    )->a( n = `icon` v = `sap-icon://status-in-process`
-                                    )->a( n = `state` v = `Indication03`
+                                    )->a( n = `value`            v = `Updated`
+                                    )->a( n = `icon`             v = `sap-icon://status-in-process`
+                                    )->a( n = `state`            v = `Indication03`
                                     )->a( n = `announcementText` v = `The card is recently updated.`
 
                             )->end(
@@ -172,11 +172,11 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
-                                    )->a( n = `value` v = `New`
+                                    )->a( n = `value`            v = `New`
                                     )->a( n = `announcementText` v = `Card was newly added.`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
-                                    )->a( n = `icon` v = `sap-icon://pushpin-off`
-                                    )->a( n = `visibilityMode` v = `Persist`
+                                    )->a( n = `icon`             v = `sap-icon://pushpin-off`
+                                    )->a( n = `visibilityMode`   v = `Persist`
                                     )->a( n = `announcementText` v = `The card is pinned on top.`
 
                             )->end(
@@ -201,7 +201,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
-                                    )->a( n = `value` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna.`
+                                    )->a( n = `value`            v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna.`
                                     )->a( n = `announcementText` v = `Lorem ipsum`
 
                             )->end(
@@ -239,7 +239,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `layoutData` ns = `w`
                                 )->tag( n = `GridContainerItemLayoutData` ns = `f`
-                                    )->a( n = `rows` v = `5`
+                                    )->a( n = `rows`    v = `5`
                                     )->a( n = `columns` v = `4`
 
                             )->end(
@@ -249,7 +249,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
                             )->ele( n = `layoutData` ns = `w`
                                 )->tag( n = `GridContainerItemLayoutData` ns = `f`
-                                    )->a( n = `rows` v = `4`
+                                    )->a( n = `rows`    v = `4`
                                     )->a( n = `columns` v = `4`
 
                             )->end(

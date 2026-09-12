@@ -151,75 +151,75 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
             )->end(
 
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`    v = `SPC1`
-                )->a( n = `class` v = `sapUiSmallMarginTop`
-                )->a( n = `title` v = `My Calendar`
+                )->a( n = `id`                            v = `SPC1`
+                )->a( n = `class`                         v = `sapUiSmallMarginTop`
+                )->a( n = `title`                         v = `My Calendar`
                 " handleViewChange toasts a constant text - composed on the client
-                )->a( n = `viewChange` v = client->follow_up_action(
-                          val   = client->cs_event-control_global
-                          t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
-                )->a( n = `headerDateSelect` v = client->_event(
-                          val   = `HEADER_DATE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/date}.getFullYear()` )
-                            ( `${$parameters>/date}.getMonth() + 1` )
-                            ( `${$parameters>/date}.getDate()` ) ) )
+                )->a( n = `viewChange`                    v = client->follow_up_action(
+                                             val   = client->cs_event-control_global
+                                             t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `'viewChange' event fired.` ) ) )
+                )->a( n = `appointmentSelect`             v = client->_event(
+                                      val   = `APPT_SELECT`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
+                                        ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` ) ) )
+                )->a( n = `headerDateSelect`              v = client->_event(
+                                       val   = `HEADER_DATE`
+                                       t_arg = VALUE #(
+                                         ( `${$parameters>/date}.getFullYear()` )
+                                         ( `${$parameters>/date}.getMonth() + 1` )
+                                         ( `${$parameters>/date}.getDate()` ) ) )
                 " handleStartDateChange names the new start date in a toast
-                )->a( n = `startDateChange` v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
-                )->a( n = `appointmentDrop` v = client->_event(
-                          val   = `APPT_DROP`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` )
-                            ( `${$parameters>/copy} ? 'X' : ''` ) ) )
-                )->a( n = `appointmentResize` v = client->_event(
-                          val   = `APPT_RESIZE`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
-                )->a( n = `appointmentCreate` v = client->_event(
-                          val   = `APPT_CREATE_DND`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` ) ) )
+                )->a( n = `startDateChange`               v = client->_event( val = `START_DATE_CHANGE` arg = `${$parameters>/date}.toString()` )
+                )->a( n = `appointmentDrop`               v = client->_event(
+                                        val   = `APPT_DROP`
+                                        t_arg = VALUE #(
+                                          ( `${$parameters>/startDate}.getFullYear()` )
+                                          ( `${$parameters>/startDate}.getMonth() + 1` )
+                                          ( `${$parameters>/startDate}.getDate()` )
+                                          ( `${$parameters>/startDate}.getHours()` )
+                                          ( `${$parameters>/startDate}.getMinutes()` )
+                                          ( `${$parameters>/endDate}.getFullYear()` )
+                                          ( `${$parameters>/endDate}.getMonth() + 1` )
+                                          ( `${$parameters>/endDate}.getDate()` )
+                                          ( `${$parameters>/endDate}.getHours()` )
+                                          ( `${$parameters>/endDate}.getMinutes()` )
+                                          ( `${$parameters>/appointment}.getBindingContext().getPath()` )
+                                          ( `${$parameters>/copy} ? 'X' : ''` ) ) )
+                )->a( n = `appointmentResize`             v = client->_event(
+                                      val   = `APPT_RESIZE`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` )
+                                        ( `${$parameters>/appointment}.getBindingContext().getPath()` ) ) )
+                )->a( n = `appointmentCreate`             v = client->_event(
+                                      val   = `APPT_CREATE_DND`
+                                      t_arg = VALUE #(
+                                        ( `${$parameters>/startDate}.getFullYear()` )
+                                        ( `${$parameters>/startDate}.getMonth() + 1` )
+                                        ( `${$parameters>/startDate}.getDate()` )
+                                        ( `${$parameters>/startDate}.getHours()` )
+                                        ( `${$parameters>/startDate}.getMinutes()` )
+                                        ( `${$parameters>/endDate}.getFullYear()` )
+                                        ( `${$parameters>/endDate}.getMonth() + 1` )
+                                        ( `${$parameters>/endDate}.getDate()` )
+                                        ( `${$parameters>/endDate}.getHours()` )
+                                        ( `${$parameters>/endDate}.getMinutes()` ) ) )
                 " handleMoreLinkPress switches to the Day view on the clicked date
-                )->a( n = `moreLinkPress` v = client->_event(
-                          val   = `MORE_LINK`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/date}.getFullYear()` )
-                            ( `${$parameters>/date}.getMonth() + 1` )
-                            ( `${$parameters>/date}.getDate()` ) ) )
+                )->a( n = `moreLinkPress`                 v = client->_event(
+                                          val   = `MORE_LINK`
+                                          t_arg = VALUE #(
+                                            ( `${$parameters>/date}.getFullYear()` )
+                                            ( `${$parameters>/date}.getMonth() + 1` )
+                                            ( `${$parameters>/date}.getDate()` ) ) )
                 )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `enableAppointmentsDragAndDrop` v = client->_bind( enable_dnd )
                 )->a( n = `enableAppointmentsResize`      v = client->_bind( enable_size )

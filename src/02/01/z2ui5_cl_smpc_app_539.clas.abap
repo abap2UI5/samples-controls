@@ -88,14 +88,14 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `PlanningCalendar`
-                )->a( n = `id`                        v = `PC1`
-                )->a( n = `stickyHeader`              v = `true`
-                )->a( n = `showIntervalHeaders`       v = `true`
-                )->a( n = `showEmptyIntervalHeaders`  v = `false`
-                )->a( n = `appointmentHeight`         v = `Automatic`
-                )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `rows`                      v = client->_bind( t_people )
-                )->a( n = `appointmentsVisualization` v = `Filled`
+                )->a( n = `id`                            v = `PC1`
+                )->a( n = `stickyHeader`                  v = `true`
+                )->a( n = `showIntervalHeaders`           v = `true`
+                )->a( n = `showEmptyIntervalHeaders`      v = `false`
+                )->a( n = `appointmentHeight`             v = `Automatic`
+                )->a( n = `startDate`                     v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `rows`                          v = client->_bind( t_people )
+                )->a( n = `appointmentsVisualization`     v = `Filled`
                 " onPress flips setMultipleAppointmentsSelection; the property is
                 " bindable, so the ToggleButton and the calendar share the flag
                 )->a( n = `multipleAppointmentsSelection` v = client->_bind( multi_select )
@@ -106,20 +106,20 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
                             ( `$event.oSource.getSelectedAppointments().length` )
                             ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
-                )->a( n = `intervalSelect` v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                )->a( n = `intervalSelect`                v = client->_event(
+                                         val   = `INTERVAL_SELECT`
+                                         t_arg = VALUE #(
+                                           ( `${$parameters>/startDate}.getFullYear()` )
+                                           ( `${$parameters>/startDate}.getMonth() + 1` )
+                                           ( `${$parameters>/startDate}.getDate()` )
+                                           ( `${$parameters>/startDate}.getHours()` )
+                                           ( `${$parameters>/startDate}.getMinutes()` )
+                                           ( `${$parameters>/endDate}.getFullYear()` )
+                                           ( `${$parameters>/endDate}.getMonth() + 1` )
+                                           ( `${$parameters>/endDate}.getDate()` )
+                                           ( `${$parameters>/endDate}.getHours()` )
+                                           ( `${$parameters>/endDate}.getMinutes()` )
+                                           ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`
@@ -127,8 +127,8 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                         )->a( n = `titleStyle` v = `H4`
 
                     )->ele( `ToggleButton`
-                        )->a( n = `id`   v = `MultiSelect`
-                        )->a( n = `icon` v = `sap-icon://select-appointments`
+                        )->a( n = `id`      v = `MultiSelect`
+                        )->a( n = `icon`    v = `sap-icon://select-appointments`
                         " onPress also swaps the tooltip between the two texts
                         )->a( n = `tooltip` v = client->_bind( multi_tooltip )
                         )->a( n = `pressed` v = client->_bind( multi_select )

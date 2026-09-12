@@ -1,4 +1,4 @@
-" @keywords input sap.m shows different value state vbox formattedtext link
+" @keywords input sap.m shows different value vbox formattedtext link
 " @summary This example shows different input value states.
 " @origin sap.m.sample.InputValueState - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputValueState (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_032 DEFINITION PUBLIC.
@@ -56,11 +56,11 @@ CLASS z2ui5_cl_smpc_app_032 IMPLEMENTATION.
                 )->a( n = `class`         v = `sapUiSmallMarginTopBottom`
 
             )->tag( `Input`
-                )->a( n = `showClearIcon`  v = `true`
-                )->a( n = `valueState`     v = `Warning`
+                )->a( n = `showClearIcon` v = `true`
+                )->a( n = `valueState`    v = `Warning`
                 )->a( n = `valueStateText` t = warning_text
-                )->a( n = `value`          v = `Value state Warning.`
-                )->a( n = `class`          v = `sapUiSmallMarginTopBottom`
+                )->a( n = `value` v = `Value state Warning.`
+                )->a( n = `class` v = `sapUiSmallMarginTopBottom`
 
             )->ele( `Input`
                 )->a( n = `showClearIcon` v = `true`

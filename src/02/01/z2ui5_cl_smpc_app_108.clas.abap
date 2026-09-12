@@ -81,7 +81,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `PlanningCalendar`
-                )->a( n = `id` v = `PC1`
+                )->a( n = `id`                        v = `PC1`
                 " toggleDayNamesLine flips PC1.showDayNamesLine - a bindable property
                 " (@since 1.50), so the ToggleButton and the calendar share the field
                 )->a( n = `showDayNamesLine`          v = client->_bind( show_day_names )
@@ -95,31 +95,31 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                 " the interval selection hit no appointment, the count of them. Every
                 " value is client-readable, so it travels and ABAP composes both
                 " branches (the message is modal anyway, so the round-trip is free)
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleIntervalSelect pushes a new appointment ('new appointment',
                 " Type09) over the selected interval into the model - reproduced by
                 " appending that row, with the interval's start/end carried as their
                 " LOCAL parts (a UTC toISOString( ) would shift the day)
-                )->a( n = `intervalSelect` v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` ) ) )
-                )->a( n = `showEmptyIntervalHeaders` v = `false`
+                )->a( n = `intervalSelect`            v = client->_event(
+                                     val   = `INTERVAL_SELECT`
+                                     t_arg = VALUE #(
+                                       ( `${$parameters>/startDate}.getFullYear()` )
+                                       ( `${$parameters>/startDate}.getMonth() + 1` )
+                                       ( `${$parameters>/startDate}.getDate()` )
+                                       ( `${$parameters>/startDate}.getHours()` )
+                                       ( `${$parameters>/startDate}.getMinutes()` )
+                                       ( `${$parameters>/endDate}.getFullYear()` )
+                                       ( `${$parameters>/endDate}.getMonth() + 1` )
+                                       ( `${$parameters>/endDate}.getDate()` )
+                                       ( `${$parameters>/endDate}.getHours()` )
+                                       ( `${$parameters>/endDate}.getMinutes()` ) ) )
+                )->a( n = `showEmptyIntervalHeaders`  v = `false`
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

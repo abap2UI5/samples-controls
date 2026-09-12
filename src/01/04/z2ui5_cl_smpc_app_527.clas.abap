@@ -106,11 +106,11 @@ CLASS z2ui5_cl_smpc_app_527 IMPLEMENTATION.
                 )->end(
 
                 )->ele( n = `GridContainer` ns = `f`
-                    )->a( n = `id`         v = `grid1`
-                    )->a( n = `class`      v = `sapUiSmallMargin`
-                    )->a( n = `width`      v = `100%`
-                    )->a( n = `snapToRow`  v = `true`
-                    )->a( n = `items`      v = client->_bind( t_grid )
+                    )->a( n = `id`        v = `grid1`
+                    )->a( n = `class`     v = `sapUiSmallMargin`
+                    )->a( n = `width`     v = `100%`
+                    )->a( n = `snapToRow` v = `true`
+                    )->a( n = `items`     v = client->_bind( t_grid )
 
                     )->ele( n = `dragDropConfig` ns = `f`
                         )->tag( n = `DragInfo` ns = `dnd`

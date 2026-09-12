@@ -131,11 +131,11 @@ CLASS z2ui5_cl_smpc_app_551 IMPLEMENTATION.
             )->end(
 
             )->ele( `SinglePlanningCalendar`
-                )->a( n = `id`         v = `SPC1`
-                )->a( n = `class`      v = `sapUiSmallMarginTop`
-                )->a( n = `title`      v = `My Calendar`
-                )->a( n = `startDate`  v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
-                )->a( n = `stickyMode` v = client->_bind( stickymode )
+                )->a( n = `id`             v = `SPC1`
+                )->a( n = `class`          v = `sapUiSmallMarginTop`
+                )->a( n = `title`          v = `My Calendar`
+                )->a( n = `startDate`      v = |\{ path: '{ client->_bind_path( startdate ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `stickyMode`     v = client->_bind( stickymode )
                 " firstDayOfWeek is an INT property and the Select's key is a string,
                 " so the expression multiplies by 1 - the Number( ) the original calls
                 )->a( n = `firstDayOfWeek` v = |\{= ${ client->_bind( first_day ) } * 1 \}|

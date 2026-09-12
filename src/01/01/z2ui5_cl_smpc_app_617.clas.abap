@@ -128,8 +128,8 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
     )->end( ).
 
     DATA(bar) = panel->ele( `IconTabBar`
-        )->a( n = `id`    v = `idIconTabBar`
-        )->a( n = `class` v = `sapUiResponsiveContentPadding`
+        )->a( n = `id`                     v = `idIconTabBar`
+        )->a( n = `class`                  v = `sapUiResponsiveContentPadding`
         " the null fallback keeps an unset enum out of the property before the
         " first round trip (apps 548/555/604 idiom)
         )->a( n = `backgroundDesign`       v = |\{= ${ client->_bind( background_design ) } \|\| null \}|
@@ -172,7 +172,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
             )->a( n = `headerText`     v = `Products`
             " the rows binding carries a sorter on Name; a thin frontend sorts
             " the data it sends (app 298 idiom)
-            )->a( n = `items` v = client->_bind( t_products ) ).
+            )->a( n = `items`          v = client->_bind( t_products ) ).
 
     table->ele( `infoToolbar`
         )->ele( `OverflowToolbar`
@@ -236,8 +236,8 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                     )->a( n = `state`  v = `{WEIGHT_STATE}`
                 )->tag( `ObjectNumber`
                     )->a( n = `number` v = |\{ parts:[\{path:'PRICE'\},\{path:'CURRENCYCODE'\}],| &&
-                                          | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
-                    )->a( n = `unit` v = `{CURRENCYCODE}`
+                                           | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|
+                    )->a( n = `unit`   v = `{CURRENCYCODE}`
 
             )->end(
         )->end(

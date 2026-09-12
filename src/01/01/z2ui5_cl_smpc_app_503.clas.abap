@@ -65,16 +65,16 @@ CLASS z2ui5_cl_smpc_app_503 IMPLEMENTATION.
                 )->a( n = `labelFor` v = `productInput`
 
             )->ele( `Input`
-                )->a( n = `id`                          v = `productInput`
-                )->a( n = `textFormatMode`              v = `ValueKey`
-                )->a( n = `placeholder`                 v = `Enter Product ...`
-                )->a( n = `showSuggestion`              v = `true`
+                )->a( n = `id`                           v = `productInput`
+                )->a( n = `textFormatMode`               v = `ValueKey`
+                )->a( n = `placeholder`                  v = `Enter Product ...`
+                )->a( n = `showSuggestion`               v = `true`
                 )->a( n = `showTableSuggestionValueHelp` v = `false`
-                )->a( n = `suggestionRows`              v = client->_bind( t_products )
+                )->a( n = `suggestionRows`               v = client->_bind( t_products )
                 " onSuggestionItemSelected reads the Input's selectedKey, which the JS
                 " suggestionRowValidator fills from the row's second cell - the same
                 " cell travels straight from the selected row instead
-                )->a( n = `suggestionItemSelected`      v = client->_event( val = `ITEM_SELECTED` arg = `${$parameters>/selectedRow}.getCells()[1].getText()` )
+                )->a( n = `suggestionItemSelected`       v = client->_event( val = `ITEM_SELECTED` arg = `${$parameters>/selectedRow}.getCells()[1].getText()` )
 
                 )->ele( `suggestionColumns`
                     )->ele( `Column`

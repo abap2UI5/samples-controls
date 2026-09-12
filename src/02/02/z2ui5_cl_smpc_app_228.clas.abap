@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_228 IMPLEMENTATION.
 
                 )->ele( `dependents`
                     )->ele( n = `Menu` ns = `u`
-                        )->a( n = `id` v = `theMenu`
+                        )->a( n = `id`         v = `theMenu`
                         " menu-level eventing: one handler for every item, composed on the frontend
                         " (1:1 with MessageToast.show("'" + item.getText() + "' pressed"))
                         " handleMenuItemPress branches on the runtime item: a parent that

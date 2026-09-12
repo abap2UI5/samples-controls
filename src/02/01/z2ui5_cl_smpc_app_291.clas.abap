@@ -88,8 +88,8 @@ CLASS z2ui5_cl_smpc_app_291 IMPLEMENTATION.
                 " validateProperty THROWS out of the binding rather than falling back
                 " to the control's Accent6 default
                 )->a( n = `items` v = |\{ path: '{ client->_bind( val                = t_groups
-                                                                 path               = abap_true
-                                                                 omit_initial_paths = VALUE #( ( `AUTHORAVATARCOLOR` ) ) ) }', templateShareable: true \}|
+                                                                  path               = abap_true
+                                                                  omit_initial_paths = VALUE #( ( `AUTHORAVATARCOLOR` ) ) ) }', templateShareable: true \}|
 
                 )->ele( `layoutData`
                     )->tag( `FlexItemData`

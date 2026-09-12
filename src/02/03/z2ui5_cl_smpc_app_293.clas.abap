@@ -42,8 +42,8 @@ CLASS z2ui5_cl_smpc_app_293 IMPLEMENTATION.
         )->a( n = `xmlns`     v = `sap.uxap`
 
         )->ele( `ObjectPageLayout`
-            )->a( n = `id`                  v = `ObjectPageLayout`
-            )->a( n = `upperCaseAnchorBar`  v = `false`
+            )->a( n = `id`                 v = `ObjectPageLayout`
+            )->a( n = `upperCaseAnchorBar` v = `false`
 
             )->ele( `headerTitle`
                 )->tag( `ObjectPageHeader`

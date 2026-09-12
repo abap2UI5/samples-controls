@@ -43,19 +43,19 @@ CLASS z2ui5_cl_smpc_app_114 IMPLEMENTATION.
         )->tag( `CodeEditor`
             )->a( n = `type`   v = `json`
             )->a( n = `value`  v = `\{` &&
-                                    |\n\t\t"Chinese" : "你好世界",| &&
-                                    |\n\t\t"Dutch" : "Hallo wereld",| &&
-                                    |\n\t\t"English" : "Hello world",| &&
-                                    |\n\t\t"French" : "Bonjour monde",| &&
-                                    |\n\t\t"German" : "Hallo Welt",| &&
-                                    |\n\t\t"Greek" : "γειά σου κόσμος",| &&
-                                    |\n\t\t"Italian" : "Ciao mondo",| &&
-                                    |\n\t\t"Japanese" : "こんにちは世界",| &&
-                                    |\n\t\t"Korean" : "여보세요 세계",| &&
-                                    |\n\t\t"Portuguese" : "Olá mundo",| &&
-                                    |\n\t\t"Russian" : "Здравствуй мир",| &&
-                                    |\n\t\t"Spanish" : "Hola mundo"| &&
-                                    |\n\t| && `\}`
+                                   |\n\t\t"Chinese" : "你好世界",| &&
+                                   |\n\t\t"Dutch" : "Hallo wereld",| &&
+                                   |\n\t\t"English" : "Hello world",| &&
+                                   |\n\t\t"French" : "Bonjour monde",| &&
+                                   |\n\t\t"German" : "Hallo Welt",| &&
+                                   |\n\t\t"Greek" : "γειά σου κόσμος",| &&
+                                   |\n\t\t"Italian" : "Ciao mondo",| &&
+                                   |\n\t\t"Japanese" : "こんにちは世界",| &&
+                                   |\n\t\t"Korean" : "여보세요 세계",| &&
+                                   |\n\t\t"Portuguese" : "Olá mundo",| &&
+                                   |\n\t\t"Russian" : "Здравствуй мир",| &&
+                                   |\n\t\t"Spanish" : "Hola mundo"| &&
+                                   |\n\t| && `\}`
             )->a( n = `height` v = `300px` ).
 
     client->view_display( view->stringify( ) ).

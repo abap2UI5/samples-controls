@@ -56,11 +56,11 @@ CLASS z2ui5_cl_smpc_app_083 IMPLEMENTATION.
 
             )->ele( `items`
                 )->ele( `StandardListItem`
-                    )->a( n = `title`          v = `{0/NAME}`
-                    )->a( n = `description`    v = `{0/PRODUCTID}`
+                    )->a( n = `title`            v = `{0/NAME}`
+                    )->a( n = `description`      v = `{0/PRODUCTID}`
                     )->a( n = `iconDensityAware` v = `false`
-                    )->a( n = `iconInset`      v = `false`
-                    )->a( n = `adaptTitleSize` v = `false`
+                    )->a( n = `iconInset`        v = `false`
+                    )->a( n = `adaptTitleSize`   v = `false`
                     " the avatar aggregation (since UI5 1.98) and sap.m.Avatar (since 1.73) are kept 1:1 - needs UI5 >= 1.98
                     )->ele( `avatar`
                         )->tag( `Avatar`
@@ -84,11 +84,11 @@ CLASS z2ui5_cl_smpc_app_083 IMPLEMENTATION.
                     )->end(
                 )->end(
                 )->ele( `StandardListItem`
-                    )->a( n = `title`          v = `{2/NAME}`
-                    )->a( n = `description`    v = `{2/PRODUCTID}`
+                    )->a( n = `title`            v = `{2/NAME}`
+                    )->a( n = `description`      v = `{2/PRODUCTID}`
                     )->a( n = `iconDensityAware` v = `false`
-                    )->a( n = `iconInset`      v = `true`
-                    )->a( n = `adaptTitleSize` v = `false`
+                    )->a( n = `iconInset`        v = `true`
+                    )->a( n = `adaptTitleSize`   v = `false`
                     )->ele( `avatar`
                         )->tag( `Avatar`
                             )->a( n = `src`          v = `{2/PRODUCTPICURL}`
@@ -98,11 +98,11 @@ CLASS z2ui5_cl_smpc_app_083 IMPLEMENTATION.
                     )->end(
                 )->end(
                 )->tag( `StandardListItem`
-                    )->a( n = `title`          v = `{3/NAME}`
-                    )->a( n = `icon`           v = `{3/PRODUCTPICURL}`
+                    )->a( n = `title`            v = `{3/NAME}`
+                    )->a( n = `icon`             v = `{3/PRODUCTPICURL}`
                     )->a( n = `iconDensityAware` v = `false`
-                    )->a( n = `iconInset`      v = `false`
-                    )->a( n = `adaptTitleSize` v = `false`
+                    )->a( n = `iconInset`        v = `false`
+                    )->a( n = `adaptTitleSize`   v = `false`
 
             )->end(
         )->end( ).

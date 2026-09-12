@@ -67,13 +67,13 @@ CLASS z2ui5_cl_smpc_app_515 IMPLEMENTATION.
             " the input's value and opens it - the same fragment, shown with
             " popup_display and pre-filtered on the same round-trip
             )->ele( `Input`
-                )->a( n = `id`              v = `productInput`
-                )->a( n = `placeholder`     v = `Enter product`
-                )->a( n = `showSuggestion`  v = `true`
-                )->a( n = `showValueHelp`   v = `true`
-                )->a( n = `value`           v = client->_bind( value )
+                )->a( n = `id`               v = `productInput`
+                )->a( n = `placeholder`      v = `Enter product`
+                )->a( n = `showSuggestion`   v = `true`
+                )->a( n = `showValueHelp`    v = `true`
+                )->a( n = `value`            v = client->_bind( value )
                 )->a( n = `valueHelpRequest` v = client->_event( `VALUE_HELP` )
-                )->a( n = `suggestionItems` v = client->_bind( t_products )
+                )->a( n = `suggestionItems`  v = client->_bind( t_products )
 
                 )->ele( `suggestionItems`
                     )->tag( n = `Item` ns = `core`

@@ -82,8 +82,8 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
         )->ele( `IconTabBar`
             )->a( n = `id`          v = `idIconTabBar`
             )->a( n = `selectedKey` v = client->_bind( selected_tab )
-            )->a( n = `select` v = client->_event( val = `FILTER_SELECT` arg = `${$parameters>/key}` )
-            )->a( n = `class`  v = `sapUiResponsiveContentPadding`
+            )->a( n = `select`      v = client->_event( val = `FILTER_SELECT` arg = `${$parameters>/key}` )
+            )->a( n = `class`       v = `sapUiResponsiveContentPadding`
 
             )->ele( `items`
                 )->tag( `IconTabFilter`

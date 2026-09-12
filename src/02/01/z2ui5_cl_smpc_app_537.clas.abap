@@ -101,8 +101,8 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
             )->a( n = `class` v = `sapUiSmallMargin`
 
             )->ele( `PlanningCalendar`
-                )->a( n = `id`        v = `PC1`
-                )->a( n = `startDate` v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+                )->a( n = `id`                        v = `PC1`
+                )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
                 " handleViewChange only recomputes the two visibilities; viewKey is
                 " bindable, so the key itself is the shared field and the two
                 " expressions below read it - the handler is dropped
@@ -112,36 +112,36 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
                 )->a( n = `groupAppointmentsMode`     v = client->_bind( group_mode )
                 " handleNonWorkingSpecialDates toggles a NonWorking DateTypeRange
                 " on the selected interval - the specialDates aggregation is bound
-                )->a( n = `specialDates` v = client->_bind( t_special )
+                )->a( n = `specialDates`              v = client->_bind( t_special )
                 " handleSelectionFinish hands the MultiComboBox's selected keys to
                 " setBuiltInViews - a bindable string[] property, bound here
-                )->a( n = `builtInViews`      v = client->_bind( t_built_in )
-                )->a( n = `appointmentSelect` v = client->_event(
-                          val   = `APPT_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                            ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                )->a( n = `builtInViews`              v = client->_bind( t_built_in )
+                )->a( n = `appointmentSelect`         v = client->_event(
+                                  val   = `APPT_SELECT`
+                                  t_arg = VALUE #(
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
+                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
+                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleIntervalSelect: in the nonWorking view it toggles the special
                 " date, otherwise it pushes a 'new appointment' into the row it hit
                 " (or into every selected row). The interval's start/end travel as
                 " their LOCAL parts - a UTC toISOString( ) would shift the day
-                )->a( n = `intervalSelect` v = client->_event(
-                          val   = `INTERVAL_SELECT`
-                          t_arg = VALUE #(
-                            ( `${$parameters>/startDate}.getFullYear()` )
-                            ( `${$parameters>/startDate}.getMonth() + 1` )
-                            ( `${$parameters>/startDate}.getDate()` )
-                            ( `${$parameters>/startDate}.getHours()` )
-                            ( `${$parameters>/startDate}.getMinutes()` )
-                            ( `${$parameters>/endDate}.getFullYear()` )
-                            ( `${$parameters>/endDate}.getMonth() + 1` )
-                            ( `${$parameters>/endDate}.getDate()` )
-                            ( `${$parameters>/endDate}.getHours()` )
-                            ( `${$parameters>/endDate}.getMinutes()` )
-                            ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
-                )->a( n = `showEmptyIntervalHeaders` v = `false`
+                )->a( n = `intervalSelect`            v = client->_event(
+                                     val   = `INTERVAL_SELECT`
+                                     t_arg = VALUE #(
+                                       ( `${$parameters>/startDate}.getFullYear()` )
+                                       ( `${$parameters>/startDate}.getMonth() + 1` )
+                                       ( `${$parameters>/startDate}.getDate()` )
+                                       ( `${$parameters>/startDate}.getHours()` )
+                                       ( `${$parameters>/startDate}.getMinutes()` )
+                                       ( `${$parameters>/endDate}.getFullYear()` )
+                                       ( `${$parameters>/endDate}.getMonth() + 1` )
+                                       ( `${$parameters>/endDate}.getDate()` )
+                                       ( `${$parameters>/endDate}.getHours()` )
+                                       ( `${$parameters>/endDate}.getMinutes()` )
+                                       ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                )->a( n = `showEmptyIntervalHeaders`  v = `false`
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

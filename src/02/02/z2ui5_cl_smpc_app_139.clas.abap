@@ -50,13 +50,13 @@ CLASS z2ui5_cl_smpc_app_139 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns:u`   v = `sap.ui.unified`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `class`     v = `viewPadding`
+        )->a( n = `xmlns:l`      v = `sap.ui.layout`
+        )->a( n = `xmlns:u`      v = `sap.ui.unified`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `class`        v = `viewPadding`
 
-        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:core`   v = `sap.ui.core`
         " the selectedDates formatter has to be loaded, or the XMLView parser
         " rejects the binding with "formatter function ... not found"
         )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}`
@@ -84,11 +84,11 @@ CLASS z2ui5_cl_smpc_app_139 IMPLEMENTATION.
                 " Greenwich. The length guard is defensive only - in single-selection
                 " mode Month._selectDay never leaves selectedDates empty, and the
                 " deselect path belongs to the sibling CalendarDateDeselection sample
-                )->a( n = `select` v = client->_event( val   = `CAL_SELECT`
-                                                       t_arg = VALUE #(
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                         ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                )->a( n = `select`        v = client->_event( val   = `CAL_SELECT`
+                                                              t_arg = VALUE #(
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
 
                 )->ele( n = `selectedDates` ns = `u`
                     )->tag( n = `DateRange` ns = `u`

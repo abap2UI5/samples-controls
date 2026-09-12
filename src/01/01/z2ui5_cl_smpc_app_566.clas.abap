@@ -102,12 +102,12 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
 
     page->ele( `content`
         )->ele( `Table`
-            )->a( n = `id`    v = `idProductsTable`
-            )->a( n = `inset` v = `false`
+            )->a( n = `id`              v = `idProductsTable`
+            )->a( n = `inset`           v = `false`
             " _setAggregation switches the mode with the level; the property is
             " bindable, so the expression follows the level instead
-            )->a( n = `mode`  v = |\{= ${ client->_bind( cur_level ) } === 3 ? 'MultiSelect' : 'SingleSelectMaster' \}|
-            )->a( n = `items` v = client->_bind( t_rows )
+            )->a( n = `mode`            v = |\{= ${ client->_bind( cur_level ) } === 3 ? 'MultiSelect' : 'SingleSelectMaster' \}|
+            )->a( n = `items`           v = client->_bind( t_rows )
             )->a( n = `selectionChange` v = client->_event( val   = `SELECTION_CHANGE`
                                                             t_arg = VALUE #( ( `${$parameters>/listItem}.getBindingContext().getProperty('NAME')` )
                                                                              ( `${$parameters>/selected}` ) ) )

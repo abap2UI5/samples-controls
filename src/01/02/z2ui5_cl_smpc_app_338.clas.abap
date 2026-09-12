@@ -32,10 +32,10 @@ CLASS z2ui5_cl_smpc_app_338 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:l`   v = `sap.ui.layout`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`     v = `100%`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
         " the sample's own css/style.css - without it the fixed and flexible
@@ -57,24 +57,24 @@ CLASS z2ui5_cl_smpc_app_338 IMPLEMENTATION.
 
                     )->tag( `Text`
                         )->a( n = `text` v = `Fix content - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever ` &&
-                                         `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
-                                         ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
-                                         `containing.`
+                                             `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
+                                             ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
+                                             `containing.`
                     )->tag( `Text`
                         )->a( n = `text` v = `Fix content - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever ` &&
-                                         `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
-                                         ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
-                                         `containing.`
+                                             `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
+                                             ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
+                                             `containing.`
                     )->tag( `Text`
                         )->a( n = `text` v = `Fix content - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever ` &&
-                                         `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
-                                         ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
-                                         `containing.`
+                                             `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
+                                             ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
+                                             `containing.`
                     )->tag( `Text`
                         )->a( n = `text` v = `Fix content - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever ` &&
-                                         `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
-                                         ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
-                                         `containing.`
+                                             `since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,` &&
+                                             ` but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets ` &&
+                                             `containing.`
 
                 )->end(
             )->end(

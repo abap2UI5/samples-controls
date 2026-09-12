@@ -132,13 +132,13 @@ CLASS z2ui5_cl_smpc_app_143 IMPLEMENTATION.
                 )->ele( n = `VerticalLayout` ns = `l`
                     )->tag( `Text`
                         )->a( n = `text` v = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula, nulla eget sagittis vulputate, sem dolor iaculis nisi, sit amet semper lectus nibh et leo. Nam ` &&
-                                         `luctus ac justo aliquet dignissim. Suspendisse ex magna, volutpat vitae neque ac, iaculis blandit mauris. Vestibulum at vestibulum nisl. Suspendisse eget finibus quam, ` &&
-                                         `nec maximus velit. Curabitur lacinia felis odio, quis bibendum nibh dignissim non. Nam consectetur ultricies massa, vel eleifend ligula iaculis in. Sed ac pretium mi, vel ` &&
-                                         `condimentum odio. Nulla facilisi. Etiam aliquet cursus tincidunt. Vivamus ex lorem, pharetra eget urna at, blandit mollis quam.`
+                                             `luctus ac justo aliquet dignissim. Suspendisse ex magna, volutpat vitae neque ac, iaculis blandit mauris. Vestibulum at vestibulum nisl. Suspendisse eget finibus quam, ` &&
+                                             `nec maximus velit. Curabitur lacinia felis odio, quis bibendum nibh dignissim non. Nam consectetur ultricies massa, vel eleifend ligula iaculis in. Sed ac pretium mi, vel ` &&
+                                             `condimentum odio. Nulla facilisi. Etiam aliquet cursus tincidunt. Vivamus ex lorem, pharetra eget urna at, blandit mollis quam.`
                     )->tag( `Text`
                         )->a( n = `text` v = `Nunc placerat laoreet cursus. Phasellus porttitor tincidunt consequat. Integer ut elit sodales, tincidunt dolor eu, auctor massa. Aenean venenatis orci a nisi pulvinar, ` &&
-                                         `pulvinar sodales sapien tempor. Curabitur metus turpis, tempor quis orci a, luctus tempus turpis. Aenean ac quam venenatis, tempor justo in, imperdiet leo. Duis quis ex ` &&
-                                         `et sapien iaculis posuere eu quis eros. Duis semper hendrerit elementum.`
+                                             `pulvinar sodales sapien tempor. Curabitur metus turpis, tempor quis orci a, luctus tempus turpis. Aenean ac quam venenatis, tempor justo in, imperdiet leo. Duis quis ex ` &&
+                                             `et sapien iaculis posuere eu quis eros. Duis semper hendrerit elementum.`
 
                 )->end(
             )->end(

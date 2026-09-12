@@ -69,8 +69,8 @@ CLASS z2ui5_cl_smpc_app_150 IMPLEMENTATION.
             )->a( n = `height` v = `300px`
             )->a( n = `type`   v = `javascript`
             )->a( n = `value`  v = |\{= ${ client->_bind( selected_key ) } === 'A' ? ${ client->_bind( code_a ) }| &&
-                                    | : (${ client->_bind( selected_key ) } === 'B' ? ${ client->_bind( code_b ) }| &&
-                                    | : ${ client->_bind( code_init ) }) \}| ).
+                                   | : (${ client->_bind( selected_key ) } === 'B' ? ${ client->_bind( code_b ) }| &&
+                                   | : ${ client->_bind( code_init ) }) \}| ).
 
     client->view_display( view->stringify( ) ).
 

@@ -33,9 +33,9 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
 
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`     v = `100%`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`     v = `sap.m`
 
         )->ele( `Page`
             )->a( n = `title` v = `Page`

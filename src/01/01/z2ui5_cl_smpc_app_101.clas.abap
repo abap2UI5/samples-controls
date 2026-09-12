@@ -95,9 +95,9 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                                           `Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat`
 
                                 )->ele( `HBox`
-                                    )->a( n = `alignItems`      v = `Center`
-                                    )->a( n = `justifyContent`  v = `Center`
-                                    )->a( n = `width`           v = `100%`
+                                    )->a( n = `alignItems`     v = `Center`
+                                    )->a( n = `justifyContent` v = `Center`
+                                    )->a( n = `width`          v = `100%`
 
                                     )->ele( `SegmentedButton`
                                         )->a( n = `width`           v = `320px`
@@ -135,12 +135,12 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `showIcon` v = `true`
                                 )->tag( `Text`
                                     )->a( n = `text` v = `Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in ` &&
-                                                        `libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget ` &&
-                                                        `commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis ` &&
-                                                        `mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam ` &&
-                                                        `in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien corper eu, posuere malesuada nisl. Integer ` &&
-                                                        `pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
-                                                        `Donec pulvinar, sapien `
+                                                         `libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget ` &&
+                                                         `commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis ` &&
+                                                         `mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam ` &&
+                                                         `in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien corper eu, posuere malesuada nisl. Integer ` &&
+                                                         `pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. ` &&
+                                                         `Donec pulvinar, sapien `
 
                                 )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
@@ -214,9 +214,9 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                     )->a( n = `showIcon` v = `true`
                                 )->tag( `Text`
                                     )->a( n = `text` v = `Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet ` &&
-                                                        `dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie ` &&
-                                                        `aliquet dui. Donec pulvinar, sapien corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in ` &&
-                                                        `libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien `
+                                                         `dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie ` &&
+                                                         `aliquet dui. Donec pulvinar, sapien corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in ` &&
+                                                         `libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien `
 
                                 )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `true`
@@ -290,7 +290,7 @@ CLASS z2ui5_cl_smpc_app_101 IMPLEMENTATION.
                                 )->tag( `MessageStrip`
                                     )->a( n = `class`    v = `sapUiSmallMarginBottom`
                                     )->a( n = `text`     v = `You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. ` &&
-                                                            `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
+                                                             `Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps.`
                                     )->a( n = `showIcon` v = `true`
 
                                 )->ele( n = `SimpleForm` ns = `form`
