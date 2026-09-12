@@ -38,13 +38,13 @@ CLASS z2ui5_cl_smpc_sapui5_012 DEFINITION PUBLIC.
 
     DATA ms_screen         TYPE ty_s_screen.
 
-    DATA mv_prop           TYPE string.
     DATA mt_feed_values    TYPE STANDARD TABLE OF string WITH EMPTY KEY.
 
     DATA mt_viztypes       TYPE STANDARD TABLE OF ty_s_viztype WITH EMPTY KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    DATA viz_properties TYPE string.
 
     METHODS view_display.
     METHODS on_event.
@@ -143,7 +143,7 @@ CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
                 )->ele( n = `content` ns = `f`
                     )->ele( n = `VizFrame` ns = `viz`
                         )->a( n = `id`            v = `idVizFrame`
-                        )->a( n = `vizProperties` v = mv_prop
+                        )->a( n = `vizProperties` v = viz_properties
                         )->a( n = `vizType`       v = client->_bind( ms_screen-viztype )
                         )->a( n = `height`        v = `500px`
                         )->a( n = `width`         v = `100%`
@@ -218,7 +218,7 @@ CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
                                revenue = `536000.34`
                                cost    = `280000.00` ) ).
     " ---------- Set vizframe properties (optional) ---------------------------------------------------
-    mv_prop = |\{| && |\n| &&
+    viz_properties = |\{| && |\n| &&
       |"plotArea": \{| && |\n| &&
         |"dataLabel": \{| && |\n| &&
             |"formatString": "",| && |\n| &&

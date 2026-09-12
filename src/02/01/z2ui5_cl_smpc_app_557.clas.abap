@@ -45,12 +45,14 @@ CLASS z2ui5_cl_smpc_app_557 DEFINITION PUBLIC.
     DATA t_sticky            TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     " the bound lists collection, and the unsearched original behind it
     DATA t_filters           TYPE ty_t_filter.
-    DATA t_filters_all       TYPE ty_t_filter.
     DATA popin_layout        TYPE string.
     DATA info_toolbar_hidden TYPE abap_bool.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    " the unfiltered rows the compound binding_call filter is rebuilt from -
+    " class state, not a bound field, so it lives outside the model
+    DATA t_filters_all TYPE ty_t_filter.
 
     " the compound filter the LIVE items binding was last given, so a rebuilt
     " view can be handed exactly the same one again (see view_display). Empty
