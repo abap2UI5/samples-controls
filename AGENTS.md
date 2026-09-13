@@ -1338,7 +1338,6 @@ repository.
 | `DESCRIPT` — `Titel - Kurzbeschreibung` | `.clas.xml` | 60 characters, hard. What ADT's object list shows |
 | `" @summary` — one sentence | first lines of `.clas.abap` | no limit. The line a catalogue puts under the title |
 | `" @keywords` — search terms | first lines of `.clas.abap` | what somebody would type who does not know the sample exists |
-| `" @origin` — the demo kit sample, its page, the status | third header line of a port's `.clas.abap` | where the port came from and whether a human ever saw it run: the two questions a reader IN THE SYSTEM asks, where the sidecar that holds the answer never arrives |
 | upstream sample, port batch, audit findings, verification date, deviations | a sidecar (`meta/<class>.json`) | not properties of the class; written by machinery; long-form; changes on a different schedule |
 
 ### Why the first three are not in a sidecar
@@ -1371,7 +1370,14 @@ class, and the sidecar is right for it.
 `meta/<class>.json`'s `entity`, the class `DESCRIPT` and the controls the port
 actually builds, and `npm run check:keywords` holds it to those sources.
 
-`" @origin` is **generated** from the sidecar alone: `npm run origin` writes
+`" @origin` is this repository's **fourth header line**, on the class rather
+than in the sidecar for the three reasons the shared table gives above: where
+the port came from and whether a human ever saw it run are the two questions a
+reader IN THE SYSTEM asks, and the sidecar that holds the answer never arrives
+there. (It is not in the shared table because only a port has an origin —
+`samples` and `samples-stack` write no such line.)
+
+It is **generated** from the sidecar alone: `npm run origin` writes
 `" @origin <sample> - <demo kit page> (status: checked|reviewed|generated)`
 under the summary line of every port, and `npm run check:origin` holds it to
 `meta/<class>.json`. The SAPUI5-only collection in `src/03` has no sidecar and

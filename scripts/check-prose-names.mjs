@@ -44,7 +44,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { walkFiles } from './lib/src-tree.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -144,14 +143,30 @@ const ABSENT = (() => {
   return new Map(Object.entries(raw).map(([n, why]) => [n.toLowerCase(), why]));
 })();
 
-/* Every class a src/ tree ships, by file name - through the shared walk, so
- * the git-ignored zz_dev scratch folder is skipped here like in every other
- * gate (two private walks used to read it, and a class that existed only
- * there made a prose reference to it pass). */
+/* Directory NAMES under `src/` that are on disk but are not the repository.
+ * `src/zz_dev` is where abap2UI5/mcp-server's `deploy_app` writes the class an
+ * agent is working on: it is in `.gitignore`, it is scratch, and it is the
+ * documented way an agent gets an app onto the transpiled backend to run it.
+ * A walk reads the filesystem, and the filesystem does not read `.gitignore`,
+ * so a class that exists ONLY in that scratch folder used to make a prose
+ * reference to it pass. Kept in step with the SKIPPED_DIRS the sample
+ * repositories' own walkers carry. */
+const SKIPPED_DIRS = new Set(['zz_dev']);
+
+/* Every class a src/ tree ships, by file name. */
 function classNames(root) {
-  const src = path.join(root, 'src');
-  if (!fs.existsSync(src)) return new Set();
-  return new Set(walkFiles(src, '.clas.abap').map((f) => path.basename(f, '.clas.abap').toLowerCase()));
+  const names = new Set();
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory() && SKIPPED_DIRS.has(e.name)) continue;
+      const f = path.join(dir, e.name);
+      if (e.isDirectory()) walk(f);
+      else if (e.name.endsWith('.clas.abap')) names.add(e.name.replace('.clas.abap', '').toLowerCase());
+    }
+  };
+  walk(path.join(root, 'src'));
+  return names;
 }
 
 const here = classNames(ROOT);

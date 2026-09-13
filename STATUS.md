@@ -94,15 +94,6 @@ same cut AGENTS §10 already makes between the rule and the war story._
   CAPABILITIES.md. Not before — the wire would carry a positional argument
   the pinned frontend does not read.
 
-- [ ] **`check:shared` in abap2UI5 reports two drifts this repository owns
-  (2026-09-12).** `scripts/check-prose-names.mjs` (#189 made it walk `src/`
-  through `lib/src-tree.mjs`) and the "Metadata" section of AGENTS.md (#190
-  added the `@origin` row) differ from their source copies in abap2UI5
-  (`.github/shared/`); the weekly `sync-shared.yaml` would revert both. The
-  fix belongs upstream, exactly as the standing `check-prose-names` finding
-  above already says for the `docs/` gap — carry the two changes to
-  `.github/shared/` there, then let the sync bring them back.
-
 - [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
   close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,
   `ui5/properties.json` 1.152.0-SNAPSHOT, and the `@openui5/*` /`@sapui5/*`
