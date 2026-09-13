@@ -37,6 +37,21 @@ looking for what is left had to skip past what is done to find it. They moved
 verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
 
+- [ ] **`render-error` is switched off for one file until the linter release
+  catches up (2026-09-13).** `abap2ui5lint-apps.jsonc` excludes
+  `z2ui5_cl_smpc_demo_004` from `render-error`: the Shopping Cart names the
+  bundled `<z2ui5:Storage>` control, and the pinned linter (0.6.1) mirrors two
+  of the eleven view-declarable companion controls, so view CREATION fails on
+  a control every real installation has. The mirror is complete upstream
+  (abap2UI5/linter, `lib/cc-controls.mjs`) and the app was verified against
+  that build with `.github/scripts/substitute-linter.sh` — nothing is left to
+  do here but delete the `rules` block when `package-lock.json` moves to a
+  release that carries the fix. The same pin costs one more waiver in the same
+  class: `z2ui5_cl_ui5_json`, the released JSON reader the storage round-trip
+  parses with, is in the linter's `RELEASED_OBJECTS` on main and not in 0.6.1,
+  so the call carries an `abap2ui5lint-disable-next-line non-released-api`
+  that goes with the same bump.
+
 - [ ] **The `src/04` demo apps do not appear in the in-system overview app
   (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the
   one way to find and start something after an abapGit pull, and it is built

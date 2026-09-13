@@ -16,12 +16,15 @@
 "!  - the OData V2 service and its mock server become ABAP data: the 123
 "!    products, the 16 categories and the 13 featured products of the demo
 "!    kit mock, verbatim.
-"!  - the CART IS SERVER-SIDE. The original keeps it in a LocalStorageModel,
-"!    so it survives a closed browser and nothing else; here it is app state
-"!    like every other bound attribute - it survives a reload through the
-"!    draft and reaches the backend without a round-trip of its own. That is
-"!    a different promise, and the honest one for an ABAP app: a cart the
-"!    server knows about is a cart a server can price, reserve and order.
+"!  - the cart and the saved-for-later list stay in the BROWSER's local
+"!    storage, exactly as the original's LocalStorageModel keeps them, under
+"!    the same key (SHOPPING_CART). abap2UI5 ships both halves: the
+"!    STORE_DATA frontend action writes, and the invisible z2ui5.cc.Storage
+"!    control reads the key back and reports it through its `finished` event,
+"!    where z2ui5_cl_ui5_json parses it into the bound tables. So a closed
+"!    browser loses nothing here either - and the backend still sees the
+"!    cart on every round-trip, which is where a price, a reservation or an
+"!    order would be decided.
 "!  - the formatter module is business logic and moves to the backend: the
 "!    price format, the status text and its ValueState, the cart total.
 "!  - search and category filtering run in ABAP, where the data is.
@@ -81,15 +84,31 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA t_promoted     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
     DATA t_viewed       TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
     DATA t_favorite     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    TYPES:
+      BEGIN OF ty_s_store,
+        cart  TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY,
+        saved TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY,
+      END OF ty_s_store.
+    TYPES:
+      BEGIN OF ty_s_storage,
+        type   TYPE string,
+        prefix TYPE string,
+        key    TYPE string,
+        value  TYPE ty_s_store,
+      END OF ty_s_storage.
+
     DATA t_cart         TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
     DATA t_saved        TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
+    " what the original's LocalStorageModel is: the cart under its own key in
+    " the browser's local storage. The whole structure is what STORE_DATA
+    " writes, and `value` is what the z2ui5.cc.Storage control reads back
+    DATA s_storage      TYPE ty_s_storage.
     DATA layout         TYPE string.
     DATA search_term    TYPE string.
     DATA search_visible TYPE abap_bool.
     DATA category_name  TYPE string.
     DATA cart_total     TYPE string.
     DATA cart_open      TYPE abap_bool.
-    DATA prod_id        TYPE string.
     DATA prod_name      TYPE string.
     DATA prod_supplier  TYPE string.
     DATA prod_desc      TYPE string.
@@ -156,6 +175,9 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     CONSTANTS c_base TYPE string VALUE `https://sdk.openui5.org/resources/`.
 
     DATA client        TYPE REF TO z2ui5_if_client.
+    " the product on show: the key ADD_TO_CART needs, never bound - so
+    " PROTECTED, where the round-trip still carries it
+    DATA prod_id       TYPE string.
     DATA t_all         TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA t_featured    TYPE STANDARD TABLE OF ty_s_featured WITH EMPTY KEY.
     DATA page_begin    TYPE string VALUE `page-home`.
@@ -199,6 +221,9 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
       IMPORTING
         productid TYPE string.
     METHODS cart_refresh.
+    METHODS cart_restore
+      IMPORTING
+        json TYPE string.
     METHODS order_submit.
     METHODS row_of
       IMPORTING
@@ -245,9 +270,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->a( n = `xmlns`        v = `sap.m`
             )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
             )->a( n = `xmlns:f`      v = `sap.f`
-            )->a( n = `xmlns:l`      v = `sap.ui.layout`
             )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
-            )->a( n = `xmlns:core`   v = `sap.ui.core` ).
+            )->a( n = `xmlns:z2ui5`  v = `z2ui5.cc` ).
+
+    " the read half of the original's LocalStorageModel: an invisible control
+    " that reads the key and fires `finished` when what it finds differs from
+    " the bound value. The write half is the STORE_DATA action in cart_store( )
+    view->tag( n = `Storage` ns = `z2ui5`
+        )->a( n = `type`     v = client->_bind( s_storage-type )
+        )->a( n = `prefix`   v = client->_bind( s_storage-prefix )
+        )->a( n = `key`      v = client->_bind( s_storage-key )
+        )->a( n = `value`    v = client->_bind( s_storage-value )
+        )->a( n = `finished` v = client->_event( val = `CART_LOADED`
+                                                 arg = `${$parameters>/value}` ) ).
 
     DATA(fcl) = view->ele( `App`
         )->a( n = `id` v = `app`
@@ -330,6 +365,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " view")
     content->ele( `List`
         )->a( n = `id`         v = `productList`
+        )->a( n = `visible`    b = search_visible
         )->a( n = `mode`       v = `SingleSelectMaster`
         )->a( n = `noDataText` v = `No products found`
         )->a( n = `items`      v = client->_bind( t_search )
@@ -1026,6 +1062,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     CASE client->get_event( ).
 
+      WHEN `CART_LOADED`.
+        " the browser had a cart under the key: it wins over what this app
+        " instance holds, exactly as the original's model does - the storage
+        " IS the model there
+        cart_restore( client->get_event_arg( ) ).
+
       WHEN `SEARCH`.
         " the home list is the search result; the original hides it while the
         " search is empty and shows the categories instead
@@ -1249,6 +1291,50 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ENDLOOP.
 
     cart_total = |Total: { price_text( |{ total }| ) } EUR|.
+
+    " the write half: the same two tables into the browser's local storage,
+    " under the key the original uses. The mirror is what keeps the reading
+    " control quiet - it compares by value and fires only on a difference
+    s_storage-value = VALUE #( cart = t_cart saved = t_saved ).
+    client->follow_up_action( val   = client->cs_event-store_data
+                              t_arg = VALUE #( ( |${ client->_bind( s_storage ) }| ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_restore.
+
+    " the control reports what it read as JSON; z2ui5_cl_ui5_json is the
+    " released reader for app code (a released JSON parser is the one thing
+    " no ABAP release ships portably - see its own documentation). The pinned
+    " linter 0.6.1 predates the class and reads it as an internal; its main
+    " branch already lists it, so this waiver goes with the next pin move
+    " abap2ui5lint-disable-next-line non-released-api -- released in src/02, newer than the pinned 0.6.1
+    DATA(reader) = z2ui5_cl_ui5_json=>factory( json ).
+
+    t_cart = VALUE #( ).
+    LOOP AT reader->members( `/CART` ) INTO DATA(cart_index).
+      DATA(cart_path) = |/CART/{ cart_index }|.
+      INSERT VALUE #( productid    = reader->get_string( |{ cart_path }/PRODUCTID| )
+                      name         = reader->get_string( |{ cart_path }/NAME| )
+                      pictureurl   = reader->get_string( |{ cart_path }/PICTUREURL| )
+                      price_text   = reader->get_string( |{ cart_path }/PRICE_TEXT| )
+                      currencycode = reader->get_string( |{ cart_path }/CURRENCYCODE| )
+                      quantity     = reader->get_integer( |{ cart_path }/QUANTITY| ) ) INTO TABLE t_cart.
+    ENDLOOP.
+
+    t_saved = VALUE #( ).
+    LOOP AT reader->members( `/SAVED` ) INTO DATA(saved_index).
+      DATA(saved_path) = |/SAVED/{ saved_index }|.
+      INSERT VALUE #( productid    = reader->get_string( |{ saved_path }/PRODUCTID| )
+                      name         = reader->get_string( |{ saved_path }/NAME| )
+                      pictureurl   = reader->get_string( |{ saved_path }/PICTUREURL| )
+                      price_text   = reader->get_string( |{ saved_path }/PRICE_TEXT| )
+                      currencycode = reader->get_string( |{ saved_path }/CURRENCYCODE| )
+                      quantity     = reader->get_integer( |{ saved_path }/QUANTITY| ) ) INTO TABLE t_saved.
+    ENDLOOP.
+
+    cart_refresh( ).
 
   ENDMETHOD.
 
@@ -1858,6 +1944,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ENDLOOP.
 
     layout = `TwoColumnsMidExpanded`.
+
+    " the original's LocalStorageModel("SHOPPING_CART", ...) - same storage,
+    " same key
+    s_storage-type = `local`.
+    s_storage-key  = `SHOPPING_CART`.
+
     cart_refresh( ).
 
   ENDMETHOD.

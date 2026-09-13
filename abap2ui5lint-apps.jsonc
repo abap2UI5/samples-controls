@@ -39,5 +39,32 @@
   // "" outright, so the whole view died before rendering a row.
   "render": true,
 
+  "rules": {
+    // ONE file, ONE rule, and a reason that names its own end date.
+    //
+    // z2ui5_cl_smpc_demo_004 (Shopping Cart) names the bundled
+    // <z2ui5:Storage> control - the read half of the browser-storage idiom
+    // the cart is built on, exactly as abap2UI5/samples z2ui5_cl_smp_app_327
+    // writes it. The render harness boots a metadata MIRROR of the bundled
+    // cc controls (@abap2ui5/linter lib/cc-controls.mjs) and that mirror
+    // carries two of them, MultiInputExt and MessageManager, so view
+    // CREATION fails on `z2ui5/cc/Storage.js` - a control that exists in
+    // every real installation. The app is right and the harness is short.
+    //
+    // FIXED UPSTREAM on 2026-09-13: abap2UI5/linter's mirror now carries all
+    // eleven view-declarable companion controls (and a `base` per control, so
+    // CameraSelector mirrors the ComboBox it extends). Verified here against
+    // that build with .github/scripts/substitute-linter.sh - demo_004 renders
+    // clean. This entry stays only until a release carrying it reaches
+    // package-lock.json, and the run says so when it goes stale.
+    //
+    // Not a `baseline` file, which was tried first and is the wrong tool
+    // twice over: a render error carries no finding key, so the baseline
+    // does not hold it at all - and what it DID hold was the two findings
+    // (an accessibility hint, a non-released-api warning) that are worth
+    // reading. Excluding one file from one rule hides exactly what it says.
+    "render-error": { "severity": "error", "exclude": ["src/04/z2ui5_cl_smpc_demo_004.clas.abap"] }
+  },
+
   "failOn": "error"
 }
