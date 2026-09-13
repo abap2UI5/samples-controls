@@ -37,6 +37,23 @@ looking for what is left had to skip past what is done to find it. They moved
 verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
 
+- [ ] **The `src/04` demo apps do not appear in the in-system overview app
+  (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the
+  one way to find and start something after an abapGit pull, and it is built
+  from `meta/` — which a demo app has no entry in, by construction (AGENTS §3).
+  So the five rebuilt demo apps are discoverable on GitHub (README,
+  [SAMPLES.md](SAMPLES.md#ui5-demo-apps--src04)) and invisible in a system,
+  where they have to be started by class name.
+  What it needs: `scripts/lib/overview-model.mjs` reads `ui5/demoapps.json`
+  beside the sidecars and emits rows with no control, no rating and no
+  deviation flags, and `overview-emit.mjs` gives them a section of their own —
+  the ports table's columns (Control, Since, deviations, the rating) are about
+  a 1:1 control port and say nothing true about a whole application, so this is
+  a second table rather than five more rows in the first. Deliberately not done
+  in the same change that created the package: the emitter is 1,245 lines and
+  the one class no gate reads for what it BUILDS except
+  `abap2ui5lint-overview.jsonc`.
+
 - [ ] **`check-prose-names.mjs` carries a dead exclusion and does not read
   `docs/` — and the fix belongs upstream (found 2026-08-28).** Two things,
   one file:
