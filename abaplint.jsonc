@@ -256,10 +256,15 @@
     // The shared mock provider holds the three `x`-as-multiplication-sign
     // descriptions of products.json that apps 558/572/575/578 carried until
     // they projected the collection from it (2026-09-12).
+    // z2ui5_cl_smpc_demo_* is the samples-controls demo-app package (src/04):
+    // a rebuilt demo app carries the demo kit app's own mock data, and that
+    // data has umlauts and accents in it (Schwarzwaelder Kirschtorte, Forets
+    // d'erables) - written here the way the original writes them.
     "7bit_ascii": {
       "exclude": [
         "z2ui5_cl_smpc_app_(012|040|092|103|104|114|134|185|191|194|215|218|254|290|302|303|350|356|357|358|360|445|525|558|565|572|575|578|579|580|584|611)\\.clas\\.",
-        "z2ui5_cl_smpc_app_000\\.clas\\."
+        "z2ui5_cl_smpc_app_000\\.clas\\.",
+        "z2ui5_cl_smpc_demo_\\d+\\.clas\\."
       ]
     },
     // --- on, scoped to what the RAP corpus can comply with -------------

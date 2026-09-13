@@ -54,6 +54,12 @@ const LIB_CTEXT = {
 const SAPUI5_ONLY =
   /^(sap\.suite(\.|$)|sap\.viz(\.|$)|sap\.gantt(\.|$)|sap\.ndc(\.|$)|sap\.ushell(\.|$)|sap\.collaboration(\.|$)|sap\.me(\.|$)|sap\.ui\.comp(\.|$)|sap\.ui\.vbm(\.|$)|sap\.ui\.generic(\.|$))/;
 
+/* The PORT categories. Only 01 and 02 can occur: a SAPUI5-only sample has no
+ * demo kit original to rebuild against and is out of scope (AGENTS §3), so 03
+ * and 04 are unreachable verdicts kept for the arithmetic in catFolder( ).
+ * The TOP-LEVEL FOLDERS src/03 and src/04 are something else entirely - the
+ * SAPUI5 collection and the demo apps - and neither is filed by this scheme;
+ * they hold no ports, and validate-meta only ever judges src/<cc>/<ll>/. */
 const CAT_CTEXT = {
   '01': 'OpenUI5 <= 1.71',
   '02': 'OpenUI5 > 1.71',

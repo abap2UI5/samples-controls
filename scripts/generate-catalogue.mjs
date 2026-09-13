@@ -29,6 +29,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { readDescript } from './lib/descript.mjs';
 import { walkFiles } from './lib/src-tree.mjs';
+import { isDemoApp, demoAppOf } from './lib/demoapps.mjs';
 import { libraryOf, descriptLibrary } from './lib/ui5-libs.mjs';
 import { loadUniverseSnapshot } from './lib-universe.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
@@ -55,6 +56,7 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
   const meta = fs.existsSync(metaPath) ? JSON.parse(fs.readFileSync(metaPath, 'utf8')) : null;
   const descript = readDescript(file);
   const collection = !meta && cls.includes('_sapui5_');
+  const demo = isDemoApp(rel) ? demoAppOf(ROOT, cls) : null;
 
   entries.push({
     class: cls,
@@ -66,16 +68,16 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
      * port (the namespace is not the library — see lib/ui5-libs.mjs), the
      * DESCRIPT's head for the src/03 collection, whose sidecar-less classes
      * name their library there. */
-    library: meta?.entity ? libraryOf(meta.entity) : descriptLibrary(descript, []),
+    library: meta?.entity ? libraryOf(meta.entity) : (demo?.library || descriptLibrary(descript, [])),
     sample: meta?.sample || '',
     entity: meta?.entity || '',
     /* The demo kit's own name for the sample (both snapshot blocks, cleaned —
      * scripts/lib/sample-names.mjs); the whole DESCRIPT only for the src/03
      * collection, which has no demo kit sample to be named after. */
-    title: (meta?.sample && nameOf(meta.sample)) || descript,
+    title: (meta?.sample && nameOf(meta.sample)) || demo?.name || descript,
     summary: (source.match(/^" @summary (.+?)\r?$/m) || [, ''])[1].trim(),
     keywords: (source.match(/^" @keywords (.+?)\r?$/m) || [, ''])[1].trim(),
-    status: meta?.status || (collection ? 'collection' : ''),
+    status: meta?.status || (collection ? 'collection' : '') || (demo ? 'demoapp' : ''),
     deviations: [...new Set((meta?.deviations || []).map((d) => d.type))].sort(),
   });
 }
@@ -100,12 +102,14 @@ const top = {
     'src/01': 'ports that run on any OpenUI5/SAPUI5 from 1.71 on',
     'src/02': 'ports that need a UI5 runtime newer than 1.71',
     'src/03': 'SAPUI5-only collection — hand-written samples, not 1:1 ports; no sidecar, no demo kit original',
+    'src/04': 'UI5 demo apps — a whole demo kit application per class, not a control sample; no sidecar',
   },
   statuses: {
     checked: 'a human watched this port run in a real system',
     reviewed: 'read against its original, not yet run',
     generated: 'machine-written, not yet reviewed',
     collection: 'src/03 — outside the port machinery',
+    demoapp: 'src/04 — a whole demo app rebuilt as one class; its verification rung is in ui5/demoapps.json',
   },
   deviationTypes: {
     POST_171: 'keeps something newer than UI5 1.71, for fidelity — the port needs a matching runtime',

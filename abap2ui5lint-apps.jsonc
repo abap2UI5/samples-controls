@@ -1,0 +1,70 @@
+{
+  // The view check for src/04 — the UI5 DEMO APPS (AGENTS §3).
+  //
+  // These are not ports, so the sidecar-driven corpus gate cannot see them:
+  // scripts/view-gates.mjs reads meta/<class>.json for the POST_171 deviations
+  // that decide a version finding, and a demo app has no sidecar — a whole
+  // application is not a rebuild of one demo kit sample, so there is nothing
+  // for structural_diff, data_fidelity or the coverage tables to compare it
+  // against. The question this config asks is the one that applies to every
+  // abap2UI5 class regardless: is the view it builds a view UI5 can load, and
+  // does it load on the release this package promises.
+  //
+  //   npm run check:apps
+  //
+  // Unlike the src/03 collection, the 1.71 rules are ERRORS here, not hints.
+  // src/03 collects controls that ship with SAPUI5 and frequently arrived long
+  // after 1.71, so the floor is not its question. A demo app has no such
+  // excuse: it is rebuilt from an OpenUI5 original with OpenUI5 controls, and
+  // the promise this package makes is the one src/01 makes — it runs on any
+  // system from 1.71 on. Where the original uses something newer (the
+  // IllustratedMessage @1.98 that four of the demo apps show as their "no
+  // data" state), the rebuild uses the 1.71 equivalent and the class header
+  // names the difference, in the same place it names every other deviation
+  // from the original.
+  "$schema": "./node_modules/@abap2ui5/linter/data/abap2ui5lint.schema.json",
+
+  "paths": ["src/04"],
+  "ui5": "1.71",
+  // rebuilt from OpenUI5 originals and installed wherever the ports are, so a
+  // SAPUI5-only control here is an error rather than the hint it is in src/03
+  "distribution": "openui5",
+
+  // ON, unlike in the chains and overview configs. This check runs in
+  // view-gates.yaml, which installs Chromium for the corpus gate anyway, and
+  // a demo app is exactly the shape that needs it: several pages in one
+  // document, most of them built from state that is still initial when the
+  // app starts. It earned its place on the first run — the object page's
+  // ObjectNumber carried an empty `state`, and an enum-typed property rejects
+  // "" outright, so the whole view died before rendering a row.
+  "render": true,
+
+  "rules": {
+    // ONE file, ONE rule, and a reason that names its own end date.
+    //
+    // z2ui5_cl_smpc_demo_004 (Shopping Cart) names the bundled
+    // <z2ui5:Storage> control - the read half of the browser-storage idiom
+    // the cart is built on, exactly as abap2UI5/samples z2ui5_cl_smp_app_327
+    // writes it. The render harness boots a metadata MIRROR of the bundled
+    // cc controls (@abap2ui5/linter lib/cc-controls.mjs) and that mirror
+    // carries two of them, MultiInputExt and MessageManager, so view
+    // CREATION fails on `z2ui5/cc/Storage.js` - a control that exists in
+    // every real installation. The app is right and the harness is short.
+    //
+    // FIXED UPSTREAM on 2026-09-13, abap2UI5/linter#104: the mirror now carries
+    // all eleven view-declarable companion controls (and a `base` per control,
+    // so CameraSelector mirrors the ComboBox it extends). Verified here against
+    // that build with .github/scripts/substitute-linter.sh - demo_004 renders
+    // clean. This entry stays only until a release carrying it reaches
+    // package-lock.json, and the run says so when it goes stale.
+    //
+    // Not a `baseline` file, which was tried first and is the wrong tool
+    // twice over: a render error carries no finding key, so the baseline
+    // does not hold it at all - and what it DID hold was the two findings
+    // (an accessibility hint, a non-released-api warning) that are worth
+    // reading. Excluding one file from one rule hides exactly what it says.
+    "render-error": { "severity": "error", "exclude": ["src/04/z2ui5_cl_smpc_demo_004.clas.abap"] }
+  },
+
+  "failOn": "error"
+}

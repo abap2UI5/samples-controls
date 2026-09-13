@@ -52,6 +52,13 @@ jobs:
     # SAPUI5 alone. Settings and the reasoning: abap2ui5lint-collection.jsonc
     - run: npm run check:collection
 
+    # The UI5 demo apps (src/04) are sidecar-less for the same structural
+    # reason - a whole application is not a rebuild of one demo kit sample -
+    # so view-gates cannot see them either. Same view check, with the 1.71
+    # rules as ERRORS: these are OpenUI5 rebuilds that promise to run wherever
+    # the src/01 ports run. Settings and the reasoning: abap2ui5lint-apps.jsonc
+    - run: npm run check:apps
+
     # The generated overview app (src/z2ui5_cl_smpc_app_000) has no sidecar
     # either and is not in src/03, so until 2026-09-12 nothing judged what it
     # BUILDS against the 1.71 floor - its INFO button carried a 1.80 icon.

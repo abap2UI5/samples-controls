@@ -453,11 +453,12 @@
     "sap.gantt.simple.shapes.Task",
     "sap.gantt.simple.BaseRectangle",
     "sap.gantt.simple.ContainerToolbar",
-    "sap.gantt.simple.Relationship"
+    "sap.gantt.simple.Relationship",
+    "z2ui5.cc.Storage"
   ],
   "counts": {
-    "ports": 636,
-    "controls": 386
+    "ports": 641,
+    "controls": 387
   },
   "ports": [
     {"class":"z2ui5_cl_smpc_app_001","description":"Use the Action List Item to trigger an action directly from a list","minUi5":"1.71","needs":[],"controls":[0,1,2],"controlCount":7},
@@ -1082,6 +1083,11 @@
     {"class":"z2ui5_cl_smpc_app_621","description":"In this example assisted input is provided with table-like suggestions where several columns can display more details.","minUi5":"1.89","needs":[{"type":"member-too-new","name":"sap.m.Input.enableTableAutoPopinMode","since":"1.89"}],"controls":[27,28,45,12,2,16],"controlCount":47},
     {"class":"z2ui5_cl_smpc_app_622","description":"Input checks are handled via the validation of the data binding. In this example there are two inputs that are validated (a) while the user types and (b) when the user continues the process. If the built-in validation types are not sufficient you can create your own, like the email type in this example.","minUi5":"1.71","needs":[],"controls":[3,45,12,2,16],"controlCount":7},
     {"class":"z2ui5_cl_smpc_app_623","description":"This example demonstrates the different input field states, e.g. disabled, editable, with value help and value help only.","minUi5":"1.71","needs":[],"controls":[45,12,163,76,18,2,16],"controlCount":13},
+    {"class":"z2ui5_cl_smpc_demo_001","description":"","minUi5":"1.71","needs":[],"controls":[247,248,229,230,3,27,28,68,69,58,73,74,106,12,1,118,81,30,31,83,46,205,6,332,32,7,20,21,8,2,16,26],"controlCount":62},
+    {"class":"z2ui5_cl_smpc_demo_002","description":"","minUi5":"1.71","needs":[],"controls":[236,239,243,246,229,230,40,3,27,28,73,74,12,13,1,81,30,100,31,83,4,52,6,32,7,20,21,8,9,114,115,116,107,2,61,16,26],"controlCount":82},
+    {"class":"z2ui5_cl_smpc_demo_003","description":"","minUi5":"1.71","needs":[],"controls":[36,38,3,12,175,290,176,288,171,14,178,179,265,180,20,9,18,15,2,16,177,291],"controlCount":34},
+    {"class":"z2ui5_cl_smpc_demo_004","description":"","minUi5":"1.71","needs":[],"controls":[236,40,102,3,23,44,55,45,12,1,118,81,82,100,83,4,5,46,6,86,87,76,7,60,20,33,21,8,9,119,120,2,26,386],"controlCount":158},
+    {"class":"z2ui5_cl_smpc_demo_005","description":"","minUi5":"1.71","needs":[],"controls":[27,28,73,74,12,118,82,30,31,6,32,7,33,21,8,130,133,2,26],"controlCount":32},
     {"class":"z2ui5_cl_smpc_sapui5_001","description":"","minUi5":"1.71","needs":[],"controls":[3,58,13,5,332,7,333,334,2,77,197,335,336],"controlCount":35},
     {"class":"z2ui5_cl_smpc_sapui5_002","description":"","minUi5":"1.71","needs":[],"controls":[58,13,5,332,7,337,338,2,77,197,16,335,336],"controlCount":36},
     {"class":"z2ui5_cl_smpc_sapui5_003","description":"","minUi5":"1.71","needs":[],"controls":[58,13,5,332,7,339,340,2,77,197,16,335,336],"controlCount":27},

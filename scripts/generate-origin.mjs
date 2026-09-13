@@ -29,9 +29,14 @@
  * moves in meta/ without a regeneration turns this gate red rather than
  * lying in the class.
  *
- * Ports only: the SAPUI5-only collection in src/03 has no sidecar, no demo
- * kit original and its own ABAP Doc naming the control, and the generated
- * overview app writes its own header (scripts/generate-overview.mjs).
+ * The src/04 demo apps get the same line from the other source this repository
+ * keeps: ui5/demoapps.json names the app a class rebuilds and how far it is
+ * verified, so an @origin line is writable for them too - it points at the demo
+ * apps page rather than at a sample page, because a demo app has no sample page.
+ *
+ * The SAPUI5-only collection in src/03 has no sidecar, no demo kit original and
+ * its own ABAP Doc naming the control, and the generated overview app writes
+ * its own header (scripts/generate-overview.mjs); neither gets a line.
  *
  *   node scripts/generate-origin.mjs          write the lines
  *   node scripts/generate-origin.mjs --check  fail if a line is missing or
@@ -41,6 +46,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { walkFiles } from './lib/src-tree.mjs';
+import { isDemoApp, demoAppOf } from './lib/demoapps.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHECK = process.argv.includes('--check');
@@ -75,11 +81,26 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
   const source = fs.readFileSync(file, 'utf8');
   if (!/INTERFACES\s+z2ui5_if_app\s*\./i.test(source)) continue;
 
-  const metaPath = path.join(ROOT, 'meta', `${cls}.json`);
-  if (!fs.existsSync(metaPath)) { skipped += 1; continue; }   // the src/03 collection
-  const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  const rel = path.relative(ROOT, file);
+  let line = '';
+  if (isDemoApp(rel)) {
+    const app = demoAppOf(ROOT, cls);
+    if (!app) {
+      problems.push(`${cls}: sits in src/04 but ui5/demoapps.json names no app for it - add it to the \`ports\` block`);
+      continue;
+    }
+    if (!STATUSES.has(app.status)) {
+      problems.push(`${cls}: ui5/demoapps.json gives it the status "${app.status}" - use generated, reviewed or checked`);
+      continue;
+    }
+    line = `" @origin demo app ${app.name} (${app.key}) - ${DEMOKIT}/demoapps (status: ${STATUSES.get(app.status)})`;
+  }
 
-  if (!meta.sample || !meta.entity || !STATUSES.has(meta.status)) {
+  const metaPath = path.join(ROOT, 'meta', `${cls}.json`);
+  if (!line && !fs.existsSync(metaPath)) { skipped += 1; continue; }   // the src/03 collection
+  const meta = line ? {} : JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+
+  if (!line && (!meta.sample || !meta.entity || !STATUSES.has(meta.status))) {
     problems.push(`${cls}: the sidecar names no sample, no entity or no known status - nothing to write an @origin line from`);
     continue;
   }
@@ -88,9 +109,9 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
    * (sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding, app
    * 365, lands at 260). Its meaning is on every sibling line, and a status
    * word is better than no line. */
-  const head = `" @origin ${meta.sample} - ${pageOf(meta.entity, meta.sample)}`;
-  let line = `${head} (status: ${STATUSES.get(meta.status)})`;
-  if (line.length > 255) line = `${head} (status: ${meta.status})`;
+  const head = line ? '' : `" @origin ${meta.sample} - ${pageOf(meta.entity, meta.sample)}`;
+  if (!line) line = `${head} (status: ${STATUSES.get(meta.status)})`;
+  if (head && line.length > 255) line = `${head} (status: ${meta.status})`;
   if (line.length > 255) {
     problems.push(`${cls}: the @origin line would be ${line.length} characters, over abaplint's 255`);
     continue;

@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.ui.demo.orderbrowser.controller.DetailObjectNotFound"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="page"
+		title="{i18n>detailTitle}"
+		showNavButton="{=
+			${device>/system/phone} ||
+			${device>/system/tablet} &amp;&amp;
+			${device>/orientation/portrait}
+		}"
+		navButtonPress=".onNavBack">
+		<IllustratedMessage
+			title="{i18n>noObjectFoundText}"
+			illustrationType="sapIllus-BeforeSearch"
+			enableDefaultTitleAndDescription="false"/>
+	</Page>
+</mvc:View>

@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="sap.ui.demo.cart.controller.NotFound"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<Page
+		id="page"
+		title="{i18n>categoryNoData}">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>NotFound_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>NotFound_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>NotFound_headerLabel}"/>
+		</landmarkInfo>
+		<content>
+			<IllustratedMessage
+				title="{i18n>categoryNoData}"
+				description="{i18n>notFoundDescription}"
+				illustrationType="NoSearchResults"
+			/>
+		</content>
+	</Page>
+</mvc:View>

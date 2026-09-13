@@ -35,8 +35,13 @@
  *                                        kit original, no 1:1 port, no meta
  *                                        sidecar. Their line is composed from
  *                                        the entity in their own ABAP Doc.
+ *   4. ui5/demoapps.json, for the        src/04 rebuilds whole demo kit
+ *      demo apps (src/04)                APPLICATIONS. The demo kit describes
+ *                                        those on its demo apps page, not on a
+ *                                        sample page, so the sentence comes
+ *                                        from that snapshot instead.
  *
- * A port that fits none of the three is a FAILURE, not a silent skip - it means
+ * A port that fits none of the four is a FAILURE, not a silent skip - it means
  * a new sample arrived that upstream does not describe, and somebody has to add
  * a `written` entry (with a `why`) rather than let the gap pass unnoticed.
  *
@@ -53,6 +58,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { walkFiles } from './lib/src-tree.mjs';
+import { isDemoApp, demoAppOf } from './lib/demoapps.mjs';
 import { clipAtWord } from './lib/clip.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -159,6 +165,21 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
   } else if (meta?.sample && written[meta.sample]?.description) {
     text = clean(written[meta.sample].description);
     from.written += 1;
+  } else if (isDemoApp(path.relative(ROOT, file))) {
+    /* A src/04 demo app: the demo kit describes it on the demo apps page
+     * rather than on a sample page, and that sentence is snapshotted in
+     * ui5/demoapps.json (scripts/fetch-demoapps.mjs). It says what the APP
+     * does; the half this repository adds is the one fact a reader of the
+     * class needs - that a whole application is in this single class. */
+    const app = demoAppOf(ROOT, cls);
+    if (app) {
+      text = `${clean(app.description)} - the UI5 demo app "${app.name}", rebuilt as one self-contained abap2UI5 class.`;
+      from.derived += 1;
+    } else {
+      problems.push(`${cls}: sits in src/04 but ui5/demoapps.json names no app for it`
+        + '\n      add it to the `ports` block: "<class>": { "app": "<key from `apps`>", "status": "generated" }');
+      continue;
+    }
   } else if (!meta) {
     /* The SAPUI5-only collection: no upstream sample, so no upstream sentence.
      * Its own ABAP Doc names the control - `"! <p class="shorttext">sap.gantt -
@@ -205,7 +226,7 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
 console.log(CHECK
   ? `summary: ${already} port(s) carry the sentence the snapshot holds`
   : `summary: ${write} written, ${already} already current`);
-console.log(`  ${from.demokit} from the demo kit, ${from.written} written by hand (with a reason), ${from.derived} derived (SAPUI5-only)`);
+console.log(`  ${from.demokit} from the demo kit, ${from.written} written by hand (with a reason), ${from.derived} derived (SAPUI5-only + demo apps)`);
 
 if (problems.length) {
   console.error(`\n${problems.length} problem(s):`);

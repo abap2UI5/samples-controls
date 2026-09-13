@@ -6,13 +6,15 @@
   "categories": {
     "src/01": "ports that run on any OpenUI5/SAPUI5 from 1.71 on",
     "src/02": "ports that need a UI5 runtime newer than 1.71",
-    "src/03": "SAPUI5-only collection — hand-written samples, not 1:1 ports; no sidecar, no demo kit original"
+    "src/03": "SAPUI5-only collection — hand-written samples, not 1:1 ports; no sidecar, no demo kit original",
+    "src/04": "UI5 demo apps — a whole demo kit application per class, not a control sample; no sidecar"
   },
   "statuses": {
     "checked": "a human watched this port run in a real system",
     "reviewed": "read against its original, not yet run",
     "generated": "machine-written, not yet reviewed",
-    "collection": "src/03 — outside the port machinery"
+    "collection": "src/03 — outside the port machinery",
+    "demoapp": "src/04 — a whole demo app rebuilt as one class; its verification rung is in ui5/demoapps.json"
   },
   "deviationTypes": {
     "POST_171": "keeps something newer than UI5 1.71, for fidelity — the port needs a matching runtime",
@@ -23,11 +25,12 @@
   },
   "ui5Snapshot": "1.152.0",
   "counts": {
-    "entries": 636,
+    "entries": 641,
     "byStatus": {
       "checked": 59,
       "reviewed": 355,
       "generated": 208,
+      "demoapp": 5,
       "collection": 14
     }
   },
@@ -654,6 +657,11 @@
     {"class":"z2ui5_cl_smpc_app_621","file":"src/02/01/z2ui5_cl_smpc_app_621.clas.abap","category":"src/02","library":"sap.m","sample":"sap.m.sample.InputAssistedTabularSuggestions","entity":"sap.m.Input","title":"Input - Assisted Tabular Suggestions","summary":"In this example assisted input is provided with table-like suggestions where several columns can display more details.","keywords":"input sap.m inputassistedtabularsuggestions verticallayout column label columnlistitem","status":"generated","deviations":["NOTE","POST_171"]},
     {"class":"z2ui5_cl_smpc_app_622","file":"src/01/01/z2ui5_cl_smpc_app_622.clas.abap","category":"src/01","library":"sap.m","sample":"sap.m.sample.InputChecked","entity":"sap.m.Input","title":"Input - Checked","summary":"Input checks are handled via the validation of the data binding. In this example there are two inputs that are validated (a) while the user types and (b) when the user continues the process.","keywords":"input sap.m inputchecked verticallayout label button","status":"generated","deviations":["IMPROVISED","NOTE"]},
     {"class":"z2ui5_cl_smpc_app_623","file":"src/01/01/z2ui5_cl_smpc_app_623.clas.abap","category":"src/01","library":"sap.m","sample":"sap.m.sample.InputStates","entity":"sap.m.Input","title":"Input - States","summary":"This example demonstrates the different input field states, e.g. disabled, editable, with value help and value help only.","keywords":"input sap.m inputstates verticallayout label selectdialog standardlistitem","status":"generated","deviations":["NOTE"]},
+    {"class":"z2ui5_cl_smpc_demo_001","file":"src/04/z2ui5_cl_smpc_demo_001.clas.abap","category":"src/04","library":"sap.m","sample":"","entity":"","title":"Manage Products","summary":"Created with the 'Worklist App' tutorial. - the UI5 demo app \"Manage Products\", rebuilt as one self-contained abap2UI5 class.","keywords":"manage products app navcontainer title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield","status":"demoapp","deviations":[]},
+    {"class":"z2ui5_cl_smpc_demo_002","file":"src/04/z2ui5_cl_smpc_demo_002.clas.abap","category":"src/04","library":"sap.m","sample":"","entity":"","title":"Browse Orders","summary":"Master-detail app for browsing orders. - the UI5 demo app \"Browse Orders\", rebuilt as one self-contained abap2UI5 class.","keywords":"browse orders app viewsettingsdialog viewsettingsfilteritem viewsettingsitem flexiblecolumnlayout semanticpage title list toolbar overflowtoolbar","status":"demoapp","deviations":[]},
+    {"class":"z2ui5_cl_smpc_demo_003","file":"src/04/z2ui5_cl_smpc_demo_003.clas.abap","category":"src/04","library":"sap.m","sample":"","entity":"","title":"Team Calendar","summary":"Calendar demo app for team and team members. - the UI5 demo app \"Team Calendar\", rebuilt as one self-contained abap2UI5 class.","keywords":"team calendar app dynamicpagetitle title verticallayout planningcalendar select item button planningcalendarview planningcalendarrow","status":"demoapp","deviations":[]},
+    {"class":"z2ui5_cl_smpc_demo_004","file":"src/04/z2ui5_cl_smpc_demo_004.clas.abap","category":"src/04","library":"sap.m","sample":"","entity":"","title":"Shopping Cart","summary":"The classic business process of finding and ordering products. - the UI5 demo app \"Shopping Cart\", rebuilt as one self-contained abap2UI5 class.","keywords":"shopping cart app flexiblecolumnlayout navcontainer toolbar searchfield objectlistitem objectattribute objectstatus standardlistitem bar","status":"demoapp","deviations":[]},
+    {"class":"z2ui5_cl_smpc_demo_005","file":"src/04/z2ui5_cl_smpc_demo_005.clas.abap","category":"src/04","library":"sap.m","sample":"","entity":"","title":"Bulletin Board","summary":"Worklist app created with the 'Testing' tutorial. - the UI5 demo app \"Bulletin Board\", rebuilt as one self-contained abap2UI5 class.","keywords":"bulletin board app table toolbar label toolbarspacer searchfield column text columnlistitem objectidentifier","status":"demoapp","deviations":[]},
     {"class":"z2ui5_cl_smpc_sapui5_001","file":"src/03/z2ui5_cl_smpc_sapui5_001.clas.abap","category":"src/03","library":"sap.suite.ui.microchart","sample":"","entity":"","title":"sap.suite.ui.microchart - InteractiveDonutChart","summary":"sap.suite.ui.microchart.InteractiveDonutChart expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.","keywords":"interactivedonutchart shell tabcontainer tab grid link text griddata flexbox interactivedonutchartsegment button","status":"collection","deviations":[]},
     {"class":"z2ui5_cl_smpc_sapui5_002","file":"src/03/z2ui5_cl_smpc_sapui5_002.clas.abap","category":"src/03","library":"sap.suite.ui.microchart","sample":"","entity":"","title":"sap.suite.ui.microchart - InteractiveLineChart","summary":"sap.suite.ui.microchart.InteractiveLineChart expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.","keywords":"interactivelinechart shell tabcontainer tab grid link text griddata flexbox interactivelinechartpoint verticallayout","status":"collection","deviations":[]},
     {"class":"z2ui5_cl_smpc_sapui5_003","file":"src/03/z2ui5_cl_smpc_sapui5_003.clas.abap","category":"src/03","library":"sap.suite.ui.microchart","sample":"","entity":"","title":"sap.suite.ui.microchart - InteractiveBarChart","summary":"sap.suite.ui.microchart.InteractiveBarChart expressed in abap2UI5 - a SAPUI5-only control, so the demo kit original is outside OpenUI5 and this is orientation rather than a 1:1 port.","keywords":"interactivebarchart shell tabcontainer tab grid link text griddata flexbox interactivebarchartbar verticallayout","status":"collection","deviations":[]},
