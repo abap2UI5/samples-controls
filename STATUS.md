@@ -50,7 +50,13 @@ same cut AGENTS §10 already makes between the rule and the war story._
   class: `z2ui5_cl_ui5_json`, the released JSON reader the storage round-trip
   parses with, is in the linter's `RELEASED_OBJECTS` on main and not in 0.6.1,
   so the call carries an `abap2ui5lint-disable-next-line non-released-api`
-  that goes with the same bump.
+  that goes with the same bump. And a third, in `z2ui5_cl_smpc_demo_003`:
+  `invalid-property-value` on `intervalType="OneMonth"`, the enum KEY the
+  Team Calendar original writes. 0.6.1 judges an enum by its runtime VALUES,
+  which is the one spelling an XML view cannot use — an attribute goes through
+  `parseValue( )` (key → value) before it is validated, so `"One Month"`
+  parses to `undefined` and the property keeps its default. Fixed in the same
+  upstream PR; all three lines come out together.
 
 - [ ] **The `src/04` demo apps do not appear in the in-system overview app
   (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the

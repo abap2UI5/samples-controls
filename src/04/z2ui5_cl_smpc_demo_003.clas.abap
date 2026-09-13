@@ -239,9 +239,13 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             )->a( n = `key`          v = `OneMonth`
             " the enum KEY, which is what the original writes and what an XML
             " view needs: DataType.createEnumType's parseValue( ) maps the key
-            " to the value ("One Month") and only then validates. The linter
-            " lists the VALUES as allowed, so it reads the correct spelling as
-            " wrong - reported upstream, waived here rather than broken
+            " to the value ("One Month") and only then validates. The pinned
+            " linter (0.6.1) lists the VALUES as allowed, so it reads the
+            " correct spelling as wrong - and would have accepted "One Month",
+            " which parses to undefined and leaves the property at its default.
+            " Fixed upstream in abap2UI5/linter#104; this line comes out
+            " with the pin bump, together with the other two waivers the same
+            " pin costs (STATUS.md carries all three)
             " abap2ui5lint-disable-next-line invalid-property-value
             )->a( n = `intervalType` v = `OneMonth`
             )->a( n = `description`  v = `Month` ).
