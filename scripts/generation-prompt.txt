@@ -87,15 +87,7 @@ Rules:
   default - get_event_arg( ) not get_event_arg( 1 ) (index only for 2+).
 - Move the sample's JSON model data into ABAP (VALUE #( ... )) and bind it
   with client->_bind (two-way; the former _bind_edit is obsolete - always use
-  _bind). ONE exception: the demo kit's shared ProductCollection
-  (sap/ui/demo/mock/products.json) is not inlined - it comes from the shared
-  provider class, projected row by row onto the port's own narrow row type
-  (the bound fields only, spelled as the provider spells them):
-    t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( )
-                          ( CORRESPONDING #( s_product ) ) ).
-  then compute any port-invented column in a LOOP. Anything else - a
-  sample-local JSON, /ProductCollection/0, a subset, a modified or a
-  demo-only row set - stays inline as a VALUE #( ... ) literal. Absent JSON properties must not serialize as empty strings: `""`
+  _bind). Absent JSON properties must not serialize as empty strings: `""`
   crashes enum-typed properties and overrides property defaults where the
   original's undefined picked the default - fill the UI5 default explicitly
   or split the aggregation into per-shape templates.

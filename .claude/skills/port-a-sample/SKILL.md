@@ -162,30 +162,6 @@ every row. Where the original itself binds a single record
 data, not a shortening. A packed field must carry enough `DECIMALS` for the mock
 (e.g. `Price` has 2-decimal values, so `TYPE p … DECIMALS 2`).
 
-**The shared `ProductCollection` is the one mock a port does not inline.**
-`z2ui5_cl_smpc_mock=>products( )` (AGENTS §3) holds all 123 rows of
-`ui5/mock/products.json` with every column, typed once; a port that binds it
-declares its own narrow row type exactly as before — the bound fields only,
-in the provider's spellings (`productid`, `suppliername`, `productpicurl`) —
-and projects the rows onto it, then fills a port-invented column
-(`weight_state`) in a LOOP:
-
-```abap
-t_products = VALUE #( FOR s_product IN z2ui5_cl_smpc_mock=>products( ) ( CORRESPONDING #( s_product ) ) ).
-```
-
-Row by row on purpose: a table-level `CORRESPONDING #( )` downports to a
-`MOVE-CORRESPONDING` between tables, which 7.02 rejects. The provider's
-numeric columns are packed (`price` DECIMALS 2, `weightmeasure` DECIMALS 3,
-`width`/`depth`/`height` DECIMALS 1, `quantity` an `i`), so a port that shows
-the JSON's textual form of a number in a `TYPE string` field (`30`, where a
-packed projection would give `30.0`) still inlines its literal; `productpicurl`
-arrives host-absolutized, so no per-row URL rebuild is needed. `data-fidelity`
-judges such a port as if it had inlined the projected rows, and the provider
-itself 1:1 against the JSON. Everything else — a sample-local JSON next to
-the shared mock (app 010), `/ProductCollection/0`, a subset, a reordered or
-edited row set, a demo-only column — is inlined exactly as described above.
-
 **Line the columns up.** A mock table of three or more rows with the same field
 list is written as a table: every cell padded to the width of its column, the
 LAST cell of a row left unpadded so no spaces pile up before the closing `)`.

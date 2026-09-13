@@ -94,28 +94,6 @@ same cut AGENTS §10 already makes between the rule and the war story._
   CAPABILITIES.md. Not before — the wire would carry a positional argument
   the pinned frontend does not read.
 
-- [ ] **64 ports still inline the ProductCollection, 27 of them because they
-  type a numeric column as `string` (2026-09-12).** `z2ui5_cl_smpc_mock`
-  types `price`/`weightmeasure`/`width`… packed, so a port that shows `956`
-  where the packed projection would say `956.00` keeps its own literal (012
-  033 092 094 103 104 170 210 214 215 218 225 238 245 252 298 377 420 454
-  488 505 565 570 571 573 574 576 607 612 613 617 618 619 621). Two ways to
-  close it, both a decision: a string-typed twin of the provider row (the
-  port's own type does the conversion, as today), or retyping those ports
-  to packed — the second changes what they render. The other 37 stay inline
-  for real reasons (demo-only columns, subsets, edited rows, a single
-  record) and are listed in the 2026-09-12 journal entry. App 595 is the
-  same string-typed class and was left by the unroll pass.
-
-- [ ] **`check:shared` in abap2UI5 reports two drifts this repository owns
-  (2026-09-12).** `scripts/check-prose-names.mjs` (#189 made it walk `src/`
-  through `lib/src-tree.mjs`) and the "Metadata" section of AGENTS.md (#190
-  added the `@origin` row) differ from their source copies in abap2UI5
-  (`.github/shared/`); the weekly `sync-shared.yaml` would revert both. The
-  fix belongs upstream, exactly as the standing `check-prose-names` finding
-  above already says for the `docs/` gap — carry the two changes to
-  `.github/shared/` there, then let the sync bring them back.
-
 - [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
   close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,
   `ui5/properties.json` 1.152.0-SNAPSHOT, and the `@openui5/*` /`@sapui5/*`
