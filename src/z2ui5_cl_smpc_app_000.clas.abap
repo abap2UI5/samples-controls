@@ -1744,7 +1744,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` selectedkey (bound to the SideNavigation's selectedKey, and written by the ITEM_SELECT branch), being two-way bound class state, survives the round trip and the draft. The app then showed one page` &&
             ` while its own navigation control claimed another. Fixed 2026-08-27 with the app-000 re-issue idiom: the end of view_display( ) sends the SAME control_by_id 'to' payload the ITEM_SELECT path last` &&
             ` sent, guarded so a fresh view already sitting on the initialPage="page2" issues nothing. The second view_display( ) is reached through the framework's own bookmark restore` &&
-            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL cs_event-clipboard_app_state hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft),` &&
+            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL app_state_get_href( ) hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft),` &&
             ` check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no other app renders twice. The interaction module asserts BOTH halves, the`.
     text1 = text1 && ` surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND selectedkey <> ``page2``. Measured 2026-08-27 on` &&
             ` the built backend, BEFORE the fix: select "Child Item 1" (key page1), restore the very same draft through the bookmark URL - the rebuilt view came back showing mainView--page2 while the` &&
@@ -2779,7 +2779,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` write TEXT (FacetFilterItem binds text and key one-way; only selected is two-way). Same conclusion as apps 022 and 235, which carry it as an inline comment. The residual case is a tampered client` &&
             ` model - t_filters is a public attribute and round-trips - but that is true of every bound field in the corpus and its only effect is a filter that fails to apply in the tamperer's own session. //` &&
             ` NOTE: Measured 2026-08-26 with a probe, before the fix: filter to Category=Accessories (34 of 123 products), then restore the very same draft through the framework's own bookmark URL` &&
-            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, what cs_event-clipboard_app_state hands out). That request carries no frontend id, so the backend takes factory_first_start -> db_load(draft):`.
+            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, what app_state_get_href( ) hands out). That request carries no frontend id, so the backend takes factory_first_start -> db_load(draft):`.
     text1 = text1 && ` check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls another app reaches view_display( ) a second time. The rebuilt` &&
             ` view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" - the client-side filter lives on the LIVE items binding and dies with it, the two-way bound selected` &&
             ` flags are class state and survive. Re-issuing the identical binding_call against the rebuilt binding put the 34 rows back, and the empty form ([] -> buildFilterGroups -> binding.filter([]) in` &&
@@ -2823,14 +2823,14 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` and bound state="{WEIGHT_STATE}", not via a frontend formatter (core:require dropped). Visually 1:1 with the original. // NOTE: the controller's onToggleInfoToolbar (ToggleButton press handler`.
     text1 = text1 && ` calling getInfoToolbar().setVisible(!pressed)) is expressed as bound properties instead of a round-trip: the ToggleButton's press attribute is dropped, its pressed property is bound two-way, and the` &&
             ` infoToolbar's OverflowToolbar gains a visible={= !pressed } expression binding. // NOTE: Measured 2026-08-26 with a probe, before the fix: filter to Category=Accessories (34 of 123 products), then` &&
-            ` restore the very same draft through the framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what cs_event-clipboard_app_state hands out). That request carries no frontend id,` &&
-            ` so the backend takes factory_first_start -> db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls` &&
-            ` another app reaches view_display( ) a second time. The rebuilt view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" - the client-side filter lives on the LIVE` &&
-            ` items binding and dies with it, the two-way bound selected flags are class state and survive. Re-issuing the identical binding_call against the rebuilt binding put the 34 rows back, and the empty`.
-    text1 = text1 && ` form ([] -> buildFilterGroups -> binding.filter([]) in core/actions/ControlCall.js) clears without error, which is why the guard is "has a filter ever been issued" and not a selection scan. Statement` &&
-            ` order in ABAP is irrelevant: View1.controller.js awaits every T_SYSTEM display before it runs a T_CUSTOM follow-up. This also bounds the 2026-07-20 human live check recorded above: it exercised the` &&
-            ` filter inside one running app instance, where the view is never rebuilt, so it could not have seen this. The port stays checked - what was checked passed - but the compound-binding_call reference` &&
-            ` claim now rests on the re-issue as well.`.
+            ` restore the very same draft through the framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what app_state_get_href( ) hands out). That request carries no frontend id, so the` &&
+            ` backend takes factory_first_start -> db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls another` &&
+            ` app reaches view_display( ) a second time. The rebuilt view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" - the client-side filter lives on the LIVE items`.
+    text1 = text1 && ` binding and dies with it, the two-way bound selected flags are class state and survive. Re-issuing the identical binding_call against the rebuilt binding put the 34 rows back, and the empty form ([]` &&
+            ` -> buildFilterGroups -> binding.filter([]) in core/actions/ControlCall.js) clears without error, which is why the guard is "has a filter ever been issued" and not a selection scan. Statement order in` &&
+            ` ABAP is irrelevant: View1.controller.js awaits every T_SYSTEM display before it runs a T_CUSTOM follow-up. This also bounds the 2026-07-20 human live check recorded above: it exercised the filter` &&
+            ` inside one running app instance, where the view is never rebuilt, so it could not have seen this. The port stays checked - what was checked passed - but the compound-binding_call reference claim now` &&
+            ` rests on the re-issue as well.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.FacetFilter`                     name = `FacetFilterLight`                              class = `z2ui5_cl_smpc_app_022` path = `src/01/01/z2ui5_cl_smpc_app_022.clas.abap`
         score = 5
@@ -2866,8 +2866,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` in the model - the app-000/607 idiom. // NOTE: the original derives the ObjectNumber weight state in its frontend Formatter.js (weightState: KG conversion + Success/Warning/Error thresholds). That is` &&
             ` business logic, so - abap2UI5 being a thin frontend - it is computed in ABAP model_init into a WEIGHT_STATE field and bound state="{WEIGHT_STATE}", not via a frontend formatter (core:require` &&
             ` dropped). Visually 1:1 with the original. // NOTE: Measured 2026-08-26 with a probe, before the fix: filter to Category=Accessories (34 of 123 products), then restore the very same draft through the` &&
-            ` framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what cs_event-clipboard_app_state hands out). That request carries no frontend id, so the backend takes factory_first_start` &&
-            ` -> db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls another app reaches view_display( ) a second`.
+            ` framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what app_state_get_href( ) hands out). That request carries no frontend id, so the backend takes factory_first_start ->` &&
+            ` db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls another app reaches view_display( ) a second`.
     text1 = text1 && ` time. The rebuilt view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" - the client-side filter lives on the LIVE items binding and dies with it, the two-way` &&
             ` bound selected flags are class state and survive. Re-issuing the identical binding_call against the rebuilt binding put the 34 rows back, and the empty form ([] -> buildFilterGroups ->` &&
             ` binding.filter([]) in core/actions/ControlCall.js) clears without error, which is why the guard is "has a filter ever been issued" and not a selection scan. Statement order in ABAP is irrelevant:` &&
@@ -8252,12 +8252,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` XML declares - while BOTH selectedkey (which the rebuilt popover's SideNavigation reads back) and page_text, which ITEM_SELECT writes onto the TARGET page and the home page does not even bind, being` &&
             ` two-way bound class state, survives the round trip and the draft. The app then showed one page while its own navigation control claimed another. Fixed 2026-08-27 with the app-000 re-issue idiom: the` &&
             ` end of view_display( ) sends the SAME control_by_id 'to' payload the ITEM_SELECT path last sent, guarded so a fresh view already sitting on the initialPage="home" issues nothing. The second` &&
-            ` view_display( ) is reached through the framework's own bookmark restore (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL cs_event-clipboard_app_state hands out): that request carries no`.
-    text1 = text1 && ` frontend id, so the backend takes factory_first_start -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no` &&
-            ` other app renders twice. The interaction module asserts BOTH halves, the surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard:` &&
-            ` selectedkey IS NOT INITIAL AND selectedkey <> ``home``. The class already fixed exactly this asymmetry for its POPOVER (the bound selectedkey that survives the per-open fragment rebuild) and missed` &&
-            ` the main view one level up. Measured 2026-08-27 on the built backend, BEFORE the fix: select "Sales Order" (key page7), restore that draft - the rebuilt view came back on mainView--home, i.e. showing` &&
-            ` the home lorem ipsum, while page_text still read "Fired event to load page 7".`.
+            ` view_display( ) is reached through the framework's own bookmark restore (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL app_state_get_href( ) hands out): that request carries no frontend id,`.
+    text1 = text1 && ` so the backend takes factory_first_start -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no other app` &&
+            ` renders twice. The interaction module asserts BOTH halves, the surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard: selectedkey IS NOT` &&
+            ` INITIAL AND selectedkey <> ``home``. The class already fixed exactly this asymmetry for its POPOVER (the bound selectedkey that survives the per-open fragment rebuild) and missed the main view one` &&
+            ` level up. Measured 2026-08-27 on the built backend, BEFORE the fix: select "Sales Order" (key page7), restore that draft - the rebuilt view came back on mainView--home, i.e. showing the home lorem` &&
+            ` ipsum, while page_text still read "Fired event to load page 7".`.
     text2 = `sap.m.Avatar (control @since 1.73) is kept 1:1 in the ShellBar's f:profile aggregation (initials 'SN'). Newer than UI5 1.71 (app 152 precedent, control-level declaration). //` &&
             ` sap.tnt.NavigationListGroup (control @since 1.121) is used 1:1 for the 'Business Areas for selected user role' group. Newer than UI5 1.71. // NavigationListItem.selectable (@since 1.116) is kept 1:1` &&
             ` (selectable=false on Manufacturing management, Employee Services, Create, App Finder and Legal). // NavigationListItem.design="Action" and NavigationListItem.ariaHasPopup="Dialog" (both @since 1.133)` &&
@@ -8569,12 +8569,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` declares - while selectedkey (bound to the SideNavigation's selectedKey), being two-way bound class state, survives the round trip and the draft. The app then showed one page while its own navigation` &&
             ` control claimed another. Fixed 2026-08-27 with the app-000 re-issue idiom: the end of view_display( ) sends the SAME control_by_id 'to' payload the ITEM_SELECT path last sent, guarded so a fresh view` &&
             ` already sitting on the initialPage="page2" issues nothing. The second view_display( ) is reached through the framework's own bookmark restore (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL` &&
-            ` cs_event-clipboard_app_state hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays` &&
-            ` false - the ELSEIF branch, and the only way a port that calls no other app renders twice. The interaction module asserts BOTH halves, the surviving key AND the re-issued page; asserting only the` &&
-            ` reset half would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND selectedkey <> ``page2``. This port's itemSelect is roundtrip-free, so the key reaches the backend only on`.
-    text1 = text1 && ` the NEXT event - the interaction module uses the user-name popover press for that before it takes the draft. Measured 2026-08-27 on the built backend, BEFORE the fix: select "Child Item 1" (key` &&
-            ` page1, a roundtrip-free itemSelect), press the user-name button so the model reaches the backend, restore that draft - the rebuilt view came back showing mainView--page2 while the SideNavigation` &&
-            ` still read page1.`.
+            ` app_state_get_href( ) hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays false -` &&
+            ` the ELSEIF branch, and the only way a port that calls no other app renders twice. The interaction module asserts BOTH halves, the surviving key AND the re-issued page; asserting only the reset half`.
+    text1 = text1 && ` would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND selectedkey <> ``page2``. This port's itemSelect is roundtrip-free, so the key reaches the backend only on the NEXT` &&
+            ` event - the interaction module uses the user-name popover press for that before it takes the draft. Measured 2026-08-27 on the built backend, BEFORE the fix: select "Child Item 1" (key page1, a` &&
+            ` roundtrip-free itemSelect), press the user-name button so the model reaches the backend, restore that draft - the rebuilt view came back showing mainView--page2 while the SideNavigation still read` &&
+            ` page1.`.
     text2 = `Several members newer than UI5 1.71 are kept 1:1 from the original. sap.tnt.NavigationListItem: selectable (@since 1.116), design (@since 1.133.0, sap.tnt.NavigationListItemDesign), press (event,` &&
             ` @since 1.133 on NavigationListItemBase), ariaHasPopup (@since 1.133.0). sap.m.Button.ariaHasPopup (@since 1.84) on the header 'Alan Smith' button. Declared per the property-171 policy; the tnt` &&
             ` members were previously mis/under-declared (the earlier note cited only sap.m.Button 1.84 for ariaHasPopup, which is the Button version, not the tnt member's 1.133) because the property gate is blind` &&
@@ -8607,11 +8607,11 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` builds a fresh control tree, so pageContainer comes back on the initialPage its XML declares - while selectedkey (bound to the IconTabHeader's selectedKey), being two-way bound class state, survives` &&
             ` the round trip and the draft. The app then showed one page while its own navigation control claimed another. Fixed 2026-08-27 with the app-000 re-issue idiom: the end of view_display( ) sends the` &&
             ` SAME control_by_id 'to' payload the ITEM_SELECT path last sent, guarded so a fresh view already sitting on the initialPage="page1" issues nothing. The second view_display( ) is reached through the` &&
-            ` framework's own bookmark restore (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL cs_event-clipboard_app_state hands out): that request carries no frontend id, so the backend takes`.
-    text1 = text1 && ` factory_first_start -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no other app renders twice. The` &&
-            ` interaction module asserts BOTH halves, the surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND` &&
-            ` selectedkey <> ``page1``. Measured 2026-08-27 on the built backend, BEFORE the fix: select "Applications" (key page2), restore the very same draft through the bookmark URL - the rebuilt view came` &&
-            ` back showing mainView--page1 while the IconTabHeader still read page2.`.
+            ` framework's own bookmark restore (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL app_state_get_href( ) hands out): that request carries no frontend id, so the backend takes factory_first_start`.
+    text1 = text1 && ` -> db_load(draft), check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no other app renders twice. The interaction module asserts` &&
+            ` BOTH halves, the surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND selectedkey <> ``page1``.` &&
+            ` Measured 2026-08-27 on the built backend, BEFORE the fix: select "Applications" (key page2), restore the very same draft through the bookmark URL - the rebuilt view came back showing mainView--page1` &&
+            ` while the IconTabHeader still read page2.`.
     text2 = `sap.tnt.ToolPage aggregation subHeader (@since 1.93) carries the horizontal IconTabHeader navigation - it is the whole point of this sample and is kept 1:1. Newer than UI5 1.71. //` &&
             ` IconTabFilter.interactionMode="SelectLeavesOnly" (the UI5 sources tag it @ui5-experimental-since 1.121, not @since - an EXPERIMENTAL property that arrived in 1.121, so it is above the floor AND may` &&
             ` still change) is kept 1:1 on the top-level filter template, and sap.m.Avatar (control @since 1.73) is kept 1:1 as the profile avatar of the ToolHeader. Both newer than UI5 1.71. //` &&
@@ -8652,7 +8652,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` declares - while selectedkey (bound to the IconTabHeader's and the phone SideNavigation's selectedKey), being two-way bound class state, survives the round trip and the draft. The app then showed one` &&
             ` page while its own navigation control claimed another. Fixed 2026-08-27 with the app-000 re-issue idiom: the end of view_display( ) sends the SAME control_by_id 'to' payload the ITEM_SELECT path last`.
     text1 = text1 && ` sent, guarded so a fresh view already sitting on the initialPage="page1" issues nothing. The second view_display( ) is reached through the framework's own bookmark restore` &&
-            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL cs_event-clipboard_app_state hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft),` &&
+            ` (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL app_state_get_href( ) hands out): that request carries no frontend id, so the backend takes factory_first_start -> db_load(draft),` &&
             ` check_on_navigated( ) is true while check_on_init( ) stays false - the ELSEIF branch, and the only way a port that calls no other app renders twice. The interaction module asserts BOTH halves, the` &&
             ` surviving key AND the re-issued page; asserting only the reset half would pass on a port that never navigated. Guard: selectedkey IS NOT INITIAL AND selectedkey <> ``page1``. Measured 2026-08-27 on` &&
             ` the built backend, BEFORE the fix: select "Applications" (key page2), restore the very same draft through the bookmark URL - the rebuilt view came back showing mainView--page1 while the IconTabHeader` &&
