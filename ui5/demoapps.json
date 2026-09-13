@@ -109,6 +109,10 @@
     "z2ui5_cl_smpc_demo_003": {
       "app": "sap.m/teamCalendar",
       "status": "generated"
+    },
+    "z2ui5_cl_smpc_demo_004": {
+      "app": "sap.m/cart",
+      "status": "generated"
     }
   }
 }

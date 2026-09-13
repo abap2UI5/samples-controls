@@ -1401,7 +1401,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 ## UI5 demo apps — `src/04`
 
-3 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
+4 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
 whole applications rather than single-control samples — each rebuilt as ONE
 self-contained abap2UI5 class. They are not 1:1 control ports and carry no
 sidecar: what deviates from the original (a router, a browser-side model, an
@@ -1412,6 +1412,7 @@ OData mock server) is named in the class's own ABAP Doc header.
 | **Manage Products**<br>Created with the 'Worklist App' tutorial. - the UI5 demo app "Manage Products", rebuilt as one self-contained abap2UI5 class.<br><sub>manage products app navcontainer title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_001`](src/04/z2ui5_cl_smpc_demo_001.clas.abap) |
 | **Browse Orders**<br>Master-detail app for browsing orders. - the UI5 demo app "Browse Orders", rebuilt as one self-contained abap2UI5 class.<br><sub>browse orders app viewsettingsdialog viewsettingsfilteritem viewsettingsitem flexiblecolumnlayout semanticpage title list toolbar overflowtoolbar</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_002`](src/04/z2ui5_cl_smpc_demo_002.clas.abap) |
 | **Team Calendar**<br>Calendar demo app for team and team members. - the UI5 demo app "Team Calendar", rebuilt as one self-contained abap2UI5 class.<br><sub>team calendar app dynamicpagetitle title verticallayout planningcalendar select item button planningcalendarview planningcalendarrow</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_003`](src/04/z2ui5_cl_smpc_demo_003.clas.abap) |
+| **Shopping Cart**<br>The classic business process of finding and ordering products. - the UI5 demo app "Shopping Cart", rebuilt as one self-contained abap2UI5 class.<br><sub>shopping cart app flexiblecolumnlayout navcontainer toolbar searchfield objectlistitem objectattribute objectstatus standardlistitem bar</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_004`](src/04/z2ui5_cl_smpc_demo_004.clas.abap) |
 
 ---
 
