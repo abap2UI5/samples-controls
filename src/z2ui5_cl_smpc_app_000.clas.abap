@@ -3735,11 +3735,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     text1 = `POST-1.71: showClearIcon (since UI5 1.94) on three inputs is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.94 to render it. // POST-1.71: the two formattedValueStateText` &&
             ` aggregations (a FormattedText carrying Links, since UI5 1.78) are newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.78 to render them. // NOTE: the Links' press` &&
-            ` (.onFormattedTextLinkPress) round-trips as event LINK_PRESS and shows the controller's toast text, docked at CenterCenter 1:1 via message_toast_display( my = 'center center' at = 'center center' )` &&
-            ` (the client method exposes the MessageToast options object - source-verified in Messages.js). The original's preventDefault is not needed: the Links carry no href, so there is no default navigation` &&
-            ` to suppress. // NOTE: The toast's my/at options moved from client->message_toast_display( ) to the whitelisted global call on 2026-09: they are sap.m.MessageToast options, and the option object of` &&
-            ` follow_up_action( cs_event-control_global, MESSAGE_TOAST ) is that API 1:1. Same wire, same showToast( ) on the client - the parameters simply left the ABAP signature, which now carries only what an`.
-    text1 = text1 && ` ABAP app decides (text, duration, the backend event).`.
+            ` (.onFormattedTextLinkPress) round-trips as event LINK_PRESS and shows the controller's toast text, docked at CenterCenter 1:1 (source-verified in Messages.js; how the two options travel is the` &&
+            ` 2026-09 note below). The original's preventDefault is not needed: the Links carry no href, so there is no default navigation to suppress. // NOTE: The toast's my/at options moved from` &&
+            ` client->message_toast_display( ) to the whitelisted global call on 2026-09: they are sap.m.MessageToast options, and the option object of follow_up_action( cs_event-control_global, MESSAGE_TOAST ) is` &&
+            ` that API 1:1. Same wire, same showToast( ) on the client - the parameters simply left the ABAP signature, which now carries only what an ABAP app decides (text, duration, the backend event).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputValueState`                               class = `z2ui5_cl_smpc_app_032` path = `src/02/01/z2ui5_cl_smpc_app_032.clas.abap`
         score = 3
@@ -4501,7 +4500,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` meta/interactions/z2ui5_cl_smpc_app_490.mjs). // NOTE: The client-composed toast template is written with BARE {0}/{1} placeholders. It had carried \{0\}, which is wrong in a backtick literal: only`.
     text1 = text1 && ` |...| templates treat \{ as an escape, so the backslashes were real characters and formatTemplate's /\{(\d+)...\}/ never matched - the placeholders rendered verbatim. The escape is not needed at all` &&
             ` on this path: the value lands in an EVENT attribute, which XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still` &&
-            ` needs \{ (see app 523's app:template).`.
+            ` needs \{ (see app 523's app:template). // NOTE: The selectionFinished toast moved to the whitelisted global call on 2026-09: width is a sap.m.MessageToast option and left` &&
+            ` client->message_toast_display( ), so it now travels in the option object of the call, which is the MessageToast.show( ) API 1:1.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBox`                                 class = `z2ui5_cl_smpc_app_490` path = `src/01/01/z2ui5_cl_smpc_app_490.clas.abap`
         score = 4
@@ -4515,11 +4515,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` Both wires and the clear icon are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_491.mjs). // NOTE: The client-composed` &&
             ` toast template is written with BARE {0}/{1} placeholders. It had carried \{0\}, which is wrong in a backtick literal: only |...| templates treat \{ as an escape, so the backslashes were real` &&
             ` characters and formatTemplate's /\{(\d+)...\}/ never matched - the placeholders rendered verbatim. The escape is not needed at all on this path: the value lands in an EVENT attribute, which`.
-    text1 = text1 && ` XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still needs \{ (see app 523's app:template).`.
+    text1 = text1 && ` XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still needs \{ (see app 523's app:template). // NOTE: The` &&
+            ` selectionFinished toast moved to the whitelisted global call on 2026-09: width is a sap.m.MessageToast option and left client->message_toast_display( ), so it now travels in the option object of the` &&
+            ` call, which is the MessageToast.show( ) API 1:1.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxClearIcon`                        class = `z2ui5_cl_smpc_app_491` path = `src/02/01/z2ui5_cl_smpc_app_491.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22.0`
         is_post171 = abap_true

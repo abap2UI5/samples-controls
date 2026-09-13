@@ -100,7 +100,14 @@ CLASS z2ui5_cl_smpc_app_490 IMPLEMENTATION.
         list = list && |'{ VALUE #( t_products[ productid = key ]-name OPTIONAL ) }'|.
       ENDLOOP.
 
-      client->message_toast_display( text = |Event 'selectionFinished': [{ list }]| width = `auto` ).
+      " width is a sap.m.MessageToast option - set on the control, in the
+      " option object of the global call
+      client->follow_up_action(
+          val   = client->cs_event-control_global
+          t_arg = VALUE #( ( `MESSAGE_TOAST` )
+                           ( `show` )
+                           ( |Event 'selectionFinished': [{ list }]| )
+                           ( `{"width":"auto"}` ) ) ).
 
     ENDIF.
 
