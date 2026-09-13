@@ -1401,7 +1401,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 ## UI5 demo apps — `src/04`
 
-1 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
+2 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
 whole applications rather than single-control samples — each rebuilt as ONE
 self-contained abap2UI5 class. They are not 1:1 control ports and carry no
 sidecar: what deviates from the original (a router, a browser-side model, an
@@ -1410,6 +1410,7 @@ OData mock server) is named in the class's own ABAP Doc header.
 | Sample | Class |
 |---|---|
 | **Manage Products**<br>Created with the 'Worklist App' tutorial. - the UI5 demo app "Manage Products", rebuilt as one self-contained abap2UI5 class.<br><sub>manage products app navcontainer title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_001`](src/04/z2ui5_cl_smpc_demo_001.clas.abap) |
+| **Browse Orders**<br>Master-detail app for browsing orders. - the UI5 demo app "Browse Orders", rebuilt as one self-contained abap2UI5 class.<br><sub>browse orders app viewsettingsdialog viewsettingsfilteritem viewsettingsitem flexiblecolumnlayout semanticpage title list toolbar overflowtoolbar</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_002`](src/04/z2ui5_cl_smpc_demo_002.clas.abap) |
 
 ---
 

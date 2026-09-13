@@ -1,0 +1,15 @@
+<mvc:View
+	controllerName="sap.ui.demo.orderbrowser.controller.NotFound"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="page"
+		title="{i18n>notFoundTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<IllustratedMessage
+			title="{i18n>notFoundText}"
+			illustrationType="sapIllus-PageNotFound"
+			enableDefaultTitleAndDescription="false"/>
+	</Page>
+</mvc:View>

@@ -101,6 +101,10 @@
     "z2ui5_cl_smpc_demo_001": {
       "app": "sap.m/tutorial/worklist",
       "status": "generated"
+    },
+    "z2ui5_cl_smpc_demo_002": {
+      "app": "sap.m/orderbrowser",
+      "status": "generated"
     }
   }
 }
