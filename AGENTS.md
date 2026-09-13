@@ -458,11 +458,15 @@ What a sidecar would have carried lives in two places instead:
 - **`ui5/demoapps.json`** — the snapshot of what the demo kit says about each
   app (name, description, category, upstream folder), written by
   `npm run demoapps -- --openui5 <checkout>` from the same `docuindex.json`
-  files the sample descriptions come from, plus a `ports` block mapping each
-  class to the app it rebuilds and its verification rung
-  (`generated` / `reviewed` / `checked`, the port ladder). `generate-summary`,
+  files the sample descriptions come from, plus two blocks this repository
+  owns: `ports`, mapping each class to the app it rebuilds and its
+  verification rung (`generated` / `reviewed` / `checked`, the port ladder),
+  and `skipped`, recording per app WHY it is deliberately not rebuilt — an
+  app in neither is simply not done yet. `generate-summary`,
   `generate-origin`, `generate-samples-md` and `generate-catalogue` read it;
-  an unmapped class in `src/04` FAILS them rather than being skipped.
+  an unmapped class in `src/04` FAILS them rather than being skipped, and
+  SAMPLES.md prints the `skipped` reasons under the demo-app table, so the
+  scope of the package is visible where its contents are.
 - **the class's own ABAP Doc header** — every deviation from the original,
   named and reasoned, where a port would write a typed `deviations` entry.
   A demo app deviates by design (no router, no browser-side model layer, no

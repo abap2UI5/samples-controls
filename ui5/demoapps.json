@@ -113,6 +113,15 @@
     "z2ui5_cl_smpc_demo_004": {
       "app": "sap.m/cart",
       "status": "generated"
+    },
+    "z2ui5_cl_smpc_demo_005": {
+      "app": "sap.m/tutorial/testing",
+      "status": "generated"
     }
+  },
+  "skipped": {
+    "sap.m/iconExplorer": "Maintainer decision 2026-09-13: left out. The app is a live search, filter and sort over ~1,800 icons with the favourites in the browser's local storage - the one demo app whose whole point is a smart client, and the clearest example of where abap2UI5 is the wrong shape (see the framework's insight #34).",
+    "sap.m/theming": "Needs a custom control and a runtime API that is not view-level: the ColorPreview control is the app's own JavaScript, and the toolbox reads sap/ui/core/theming/Parameters at runtime. Both are frontend code an abap2UI5 app would have to ship alongside the class, which is a deployment step this package does not take.",
+    "sap.tnt/toolpageapp": "Needs four custom D3 chart controls (D3PieChart, D3ColumnChart, D3ComparisonChart) plus sap.suite micro charts, which ship with SAPUI5 and not with OpenUI5. The sap.tnt.ToolPage shell itself is expressible - z2ui5_cl_smpc_app ports cover sap.tnt - so what is missing is the charts, not the app frame."
   }
 }

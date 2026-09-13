@@ -66,7 +66,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { readDescript } from './lib/descript.mjs';
 import { walkFiles } from './lib/src-tree.mjs';
-import { isDemoApp, demoAppOf } from './lib/demoapps.mjs';
+import { isDemoApp, demoAppOf, loadDemoApps } from './lib/demoapps.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -140,6 +140,15 @@ function scan() {
   }
   return out;
 }
+
+/* What the demo kit lists and this repository does NOT rebuild, with the
+ * reason - kept in ui5/demoapps.json so the decision sits next to the data
+ * rather than in a comment nobody reads. */
+const { apps: demokitApps, skipped } = loadDemoApps(ROOT);
+const notRebuilt = Object.keys(skipped).length
+  ? ['**Not rebuilt, on purpose:**', '', ...Object.entries(skipped).map(
+      ([key, why]) => `- **${cell(demokitApps[key]?.name || key)}** — ${cell(why)}`)].join('\n')
+  : '';
 
 const all = scan();
 const overview = all.find((s) => s.overview);
@@ -279,6 +288,8 @@ sidecar: what deviates from the original (a router, a browser-side model, an
 OData mock server) is named in the class's own ABAP Doc header.
 
 ${table(demoapps)}
+
+${notRebuilt}
 
 ---
 

@@ -27,12 +27,22 @@ export function isDemoApp(rel) {
   return /^src\/04\/[^/]+\.clas\.abap$/.test(String(rel || '').split(path.sep).join('/'));
 }
 
-/** the committed snapshot + this repository's class -> app mapping */
+/**
+ * The committed snapshot plus the two blocks this repository owns: `ports`
+ * (class -> the app it rebuilds, and how far it is verified) and `skipped`
+ * (app -> why it is deliberately NOT rebuilt). An app in neither is simply
+ * not done yet.
+ */
 export function loadDemoApps(root) {
   const file = path.join(root, 'ui5', 'demoapps.json');
-  if (!fs.existsSync(file)) return { source: {}, apps: {}, ports: {} };
+  if (!fs.existsSync(file)) return { source: {}, apps: {}, ports: {}, skipped: {} };
   const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-  return { source: data.source || {}, apps: data.apps || {}, ports: data.ports || {} };
+  return {
+    source: data.source || {},
+    apps: data.apps || {},
+    ports: data.ports || {},
+    skipped: data.skipped || {},
+  };
 }
 
 /**

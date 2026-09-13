@@ -1401,7 +1401,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 ## UI5 demo apps — `src/04`
 
-4 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
+5 of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
 whole applications rather than single-control samples — each rebuilt as ONE
 self-contained abap2UI5 class. They are not 1:1 control ports and carry no
 sidecar: what deviates from the original (a router, a browser-side model, an
@@ -1413,6 +1413,13 @@ OData mock server) is named in the class's own ABAP Doc header.
 | **Browse Orders**<br>Master-detail app for browsing orders. - the UI5 demo app "Browse Orders", rebuilt as one self-contained abap2UI5 class.<br><sub>browse orders app viewsettingsdialog viewsettingsfilteritem viewsettingsitem flexiblecolumnlayout semanticpage title list toolbar overflowtoolbar</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_002`](src/04/z2ui5_cl_smpc_demo_002.clas.abap) |
 | **Team Calendar**<br>Calendar demo app for team and team members. - the UI5 demo app "Team Calendar", rebuilt as one self-contained abap2UI5 class.<br><sub>team calendar app dynamicpagetitle title verticallayout planningcalendar select item button planningcalendarview planningcalendarrow</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_003`](src/04/z2ui5_cl_smpc_demo_003.clas.abap) |
 | **Shopping Cart**<br>The classic business process of finding and ordering products. - the UI5 demo app "Shopping Cart", rebuilt as one self-contained abap2UI5 class.<br><sub>shopping cart app flexiblecolumnlayout navcontainer toolbar searchfield objectlistitem objectattribute objectstatus standardlistitem bar</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_004`](src/04/z2ui5_cl_smpc_demo_004.clas.abap) |
+| **Bulletin Board**<br>Worklist app created with the 'Testing' tutorial. - the UI5 demo app "Bulletin Board", rebuilt as one self-contained abap2UI5 class.<br><sub>bulletin board app table toolbar label toolbarspacer searchfield column text columnlistitem objectidentifier</sub><br><sub>○ generated</sub> | [`Z2UI5_CL_SMPC_DEMO_005`](src/04/z2ui5_cl_smpc_demo_005.clas.abap) |
+
+**Not rebuilt, on purpose:**
+
+- **Icon Explorer** — Maintainer decision 2026-09-13: left out. The app is a live search, filter and sort over ~1,800 icons with the favourites in the browser's local storage - the one demo app whose whole point is a smart client, and the clearest example of where abap2UI5 is the wrong shape (see the framework's insight #34).
+- **Theme Parameter Toolbox** — Needs a custom control and a runtime API that is not view-level: the ColorPreview control is the app's own JavaScript, and the toolbox reads sap/ui/core/theming/Parameters at runtime. Both are frontend code an abap2UI5 app would have to ship alongside the class, which is a deployment step this package does not take.
+- **Shop Administration Tool** — Needs four custom D3 chart controls (D3PieChart, D3ColumnChart, D3ComparisonChart) plus sap.suite micro charts, which ship with SAPUI5 and not with OpenUI5. The sap.tnt.ToolPage shell itself is expressible - z2ui5_cl_smpc_app ports cover sap.tnt - so what is missing is the charts, not the app frame.
 
 ---
 

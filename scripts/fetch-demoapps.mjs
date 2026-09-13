@@ -23,10 +23,12 @@
  *
  *   node scripts/fetch-demoapps.mjs --openui5 <path to an openui5 checkout>
  *
- * The `ports` block in the output is NOT touched by this script: it is this
- * repository's own mapping from a `src/04` class to the app it rebuilds, the
- * join key generate-summary / generate-origin / generate-samples-md read (the
- * same role `written` plays in ui5/descriptions.json).
+ * The `ports` and `skipped` blocks in the output are NOT touched by this
+ * script: they are this repository's own - `ports` maps a `src/04` class to
+ * the app it rebuilds (the join key generate-summary / generate-origin /
+ * generate-samples-md read, the same role `written` plays in
+ * ui5/descriptions.json), and `skipped` records, per app, why it is NOT
+ * rebuilt. A demo app that is neither is simply not done yet.
  */
 import fs from 'fs';
 import path from 'path';
@@ -130,11 +132,12 @@ const out = {
   },
   apps: Object.fromEntries(Object.keys(apps).sort().map((k) => [k, apps[k]])),
   ports: previous.ports || {},
+  skipped: previous.skipped || {},
 };
 
 fs.writeFileSync(OUT, `${JSON.stringify(out, null, 2)}\n`);
 const external = Object.values(out.apps).filter((a) => a.external).length;
 console.log(`demoapps: ${Object.keys(apps).length} app(s) from ${files.length} docuindex file(s), ${external} hosted outside OpenUI5`);
 console.log(`  openui5 ${out.source.version} @ ${out.source.commit.slice(0, 12)} (${out.source.committed})`);
-console.log(`  rebuilt here: ${Object.keys(out.ports).length}`);
+console.log(`  rebuilt here: ${Object.keys(out.ports).length}, deliberately not rebuilt: ${Object.keys(out.skipped).length}`);
 console.log(`  -> ui5/demoapps.json`);
