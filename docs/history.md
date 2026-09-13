@@ -320,15 +320,16 @@ chain (the whole-row expression IS lowered with ASSIGNING) and bind
 six-row table is the entire gain of using a table, so it was thrown away
 again.
 
-The lowering is patched where it is wrong instead:
-`node/setup/patch-abaplint-downport.mjs` in abap2UI5 applies the upstream
-patch to the installed abaplint bundle, `npm run downport` runs it, and
-`scripts/e2e-build.mjs` here calls it before downporting the corpus. A shim
-with a stated end: it fails the build once its anchors stop matching, and
-`test_bind_tab_cell` upstream in the framework is the canary that it still
-works. Filed as `abaplint-downport-table-expression-copy` in abap2UI5's
-backlog with the patch it was written from (upstream `packages/core` green
-with it: 10885 passing).
+The lowering was patched where it is wrong instead:
+`node/setup/patch-abaplint-downport.mjs` in abap2UI5 applied the patch to the
+installed abaplint bundle, `npm run downport` ran it, and
+`scripts/e2e-build.mjs` here called it before downporting the corpus. A shim
+with a stated end - it failed the build once its anchors stopped matching -
+and it reached that end: the patch it carried is abaplint/abaplint#4276,
+merged 2026-09-11 and released in 2.120.51, so the shim, both call sites and
+the backlog item are gone. The canary stayed: `test_bind_tab_cell` in the
+framework still proves the cell form through the transpiled suite, now against
+stock abaplint.
 
 **What had to move first.** The framework's `_bind( tab / tab_index )` had no
 ABAP Doc, no test and no caller in any of the three corpora; it now has all

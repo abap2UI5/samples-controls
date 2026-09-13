@@ -110,17 +110,17 @@ function main() {
   base.global = { files: '/node/downport/**/*.*' };
   const cfg = path.join(A2, 'e2e-downport.jsonc');
   fs.writeFileSync(cfg, JSON.stringify(base, null, 2));
-  // abap2UI5's downport shim, run against ITS abaplint because that is the
-  // install this downport uses: stock abaplint outlines a component-level
-  // table expression into a work AREA, which loses the row reference that
-  // `client->_bind( tab / tab_index )` matches the bound cell by - so every
-  // cell-binding port would boot into BINDING_ERROR_TAB_CELL_LEVEL here while
-  // being correct on a system. Temporary, filed upstream; the script fails
-  // loudly when its anchors stop matching. See abap2UI5
-  // node/setup/patch-abaplint-downport.mjs.
-  execSync(`node ${path.join(A2, 'node/setup/patch-abaplint-downport.mjs')}`, { stdio: 'inherit' });
+  // No downport shim any more: abaplint outlines a component-level table
+  // expression with `READ TABLE ... ASSIGNING` from 2.120.51 on
+  // (abaplint/abaplint#4276), so the row reference that
+  // `client->_bind( tab / tab_index )` matches the bound cell by survives the
+  // downport of this corpus. It did not before, and every cell-binding port
+  // booted into BINDING_ERROR_TAB_CELL_LEVEL here while being correct on a
+  // system - which is what abap2UI5's node/setup/patch-abaplint-downport.mjs
+  // patched into the installed bundle until that release. This build uses the
+  // framework checkout's abaplint install, so it picks the fix up from there.
 
-  // ...and the framework's RUNTIME shim, for the same reason: this is the
+  // The framework's RUNTIME shim is still needed: this is the
   // install the transpiled backend runs on, and the framework applies this
   // script before every one of its own transpiled runs (auto_transpile, unit,
   // express). Without it a dynamic `ASSIGN obj->( name )` cannot reach a
