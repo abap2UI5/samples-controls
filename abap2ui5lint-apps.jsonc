@@ -51,9 +51,9 @@
     // CREATION fails on `z2ui5/cc/Storage.js` - a control that exists in
     // every real installation. The app is right and the harness is short.
     //
-    // FIXED UPSTREAM on 2026-09-13: abap2UI5/linter's mirror now carries all
-    // eleven view-declarable companion controls (and a `base` per control, so
-    // CameraSelector mirrors the ComboBox it extends). Verified here against
+    // FIXED UPSTREAM on 2026-09-13, abap2UI5/linter#104: the mirror now carries
+    // all eleven view-declarable companion controls (and a `base` per control,
+    // so CameraSelector mirrors the ComboBox it extends). Verified here against
     // that build with .github/scripts/substitute-linter.sh - demo_004 renders
     // clean. This entry stays only until a release carrying it reaches
     // package-lock.json, and the run says so when it goes stale.

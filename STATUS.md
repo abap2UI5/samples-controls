@@ -43,7 +43,7 @@ same cut AGENTS §10 already makes between the rule and the war story._
   bundled `<z2ui5:Storage>` control, and the pinned linter (0.6.1) mirrors two
   of the eleven view-declarable companion controls, so view CREATION fails on
   a control every real installation has. The mirror is complete upstream
-  (abap2UI5/linter, `lib/cc-controls.mjs`) and the app was verified against
+  (abap2UI5/linter#104, `lib/cc-controls.mjs`) and the app was verified against
   that build with `.github/scripts/substitute-linter.sh` — nothing is left to
   do here but delete the `rules` block when `package-lock.json` moves to a
   release that carries the fix. The same pin costs one more waiver in the same
