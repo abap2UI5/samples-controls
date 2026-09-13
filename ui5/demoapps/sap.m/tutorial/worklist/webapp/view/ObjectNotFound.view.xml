@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="mycompany.myapp.MyWorklistApp.controller.NotFound"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<Page
+	title="{i18n>objectTitle}"
+	titleAlignment="Center"
+	id="page">
+		<HBox
+			height="100%"
+			alignItems="Center">
+			<IllustratedMessage
+				id="notFoundIllustration"
+				illustrationType="sapIllus-PageNotFound"
+				description="{i18n>noObjectFoundText}">
+				<additionalContent>
+					<Button id="link" text="{i18n>backToWorklist}" press=".onLinkPressed" />
+				</additionalContent>
+				<layoutData>
+					<FlexItemData growFactor="1"/>
+				</layoutData>
+			</IllustratedMessage>
+		</HBox>
+	</Page>
+
+</mvc:View>

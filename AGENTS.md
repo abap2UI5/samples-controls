@@ -237,6 +237,7 @@ requirement.
 | `src/01` | `OpenUI5 <= 1.71` | any OpenUI5/SAPUI5 from 1.71 on — the portable half | ports |
 | `src/02` | `OpenUI5 > 1.71`  | needs a UI5 runtime newer than 1.71 | ports |
 | `src/03` | `SAPUI5-only controls - collection` | needs SAPUI5 (a library OpenUI5 does not ship) | samples, **not** ports — see below |
+| `src/04` | `UI5 demo apps - whole applications` | the same stack `src/01` needs — 1.71 on | demo apps, **not** ports — see below |
 
 The per-folder counts are **not** written here: they change with every batch,
 and [`STATUS.md`](STATUS.md) carries the generated live ones (`Ports` row) with
@@ -372,7 +373,11 @@ A knowledge store, so:
 
 - **flat** (`src/03/<class>.clas.abap`), because there is no path to derive:
   no library level, and no `<= 1.71` / `> 1.71` split — that split is a porting
-  concern about which runtime a *rebuild* needs. `src/04` was deleted with it;
+  concern about which runtime a *rebuild* needs. The `src/04` that was the
+  SAPUI5 `> 1.71` port category was deleted with it, and the folder name is
+  taken again since 2026-09-13, by the demo apps (next section) — a category
+  number in `lib-packages.mjs` and a top-level folder are two different
+  things, and only ports are filed by category;
 - **no `meta/<class>.json` sidecar, no `ui5/` template, no coverage row.** The
   AI machinery does not touch it and must not: `validate-meta`'s port detector
   matches `src/<cc>/<ll>/` (two numeric levels), and `structural_diff`,
@@ -421,6 +426,66 @@ plus its release facts, and reads them from the pinned `@sapui5/*` packages
 (eight of them, at 1.151.0) — so a control's `@since` / `@deprecated` is still
 answerable offline and reproducibly, which is what decides whether collecting it
 is worth it at all.
+
+### `src/04` — the demo apps
+
+The demo kit shows two kinds of thing, and the second one has nothing to do
+with a control. A **sample** is one control in one view — the 742 this
+repository counts coverage over. A **demo app** is a whole application:
+Shopping Cart, Manage Products, Browse Orders, Shop Administration Tool,
+listed on <https://sdk.openui5.org/demoapps>, eight of them in OpenUI5 (plus
+three hosted outside it). They have routers, several views, a model layer and
+an OData mock server, and answer a question the ports cannot: **can a whole
+UI5 application be built with abap2UI5, and what does it cost.**
+
+`src/04` holds those rebuilds. **One class per app**, flat
+(`src/04/z2ui5_cl_smpc_demo_<nnn>.clas.abap`), because an app is one snippet a
+reader copies and runs, exactly like every other class here (§3, "Every class
+stands alone") — the original's ten controllers are ten methods, not ten
+classes.
+
+Sidecar-less, and for a structural reason rather than convenience: `meta/` is
+keyed on a demo kit SAMPLE (`sap.m.sample.X`), which is also what
+`structural_diff`, `data_fidelity`, `api.md`, the coverage figures and the
+overview app are keyed on. A demo app has no sample id, no single control and
+no single original view, so there is nothing for any of them to compare
+against or count. `validate-meta`'s port detector matches `src/<cc>/<ll>/`
+(two numeric levels), so a flat `src/04` is outside all of it **by
+construction**, like `src/03`.
+
+What a sidecar would have carried lives in two places instead:
+
+- **`ui5/demoapps.json`** — the snapshot of what the demo kit says about each
+  app (name, description, category, upstream folder), written by
+  `npm run demoapps -- --openui5 <checkout>` from the same `docuindex.json`
+  files the sample descriptions come from, plus a `ports` block mapping each
+  class to the app it rebuilds and its verification rung
+  (`generated` / `reviewed` / `checked`, the port ladder). `generate-summary`,
+  `generate-origin`, `generate-samples-md` and `generate-catalogue` read it;
+  an unmapped class in `src/04` FAILS them rather than being skipped.
+- **the class's own ABAP Doc header** — every deviation from the original,
+  named and reasoned, where a port would write a typed `deviations` entry.
+  A demo app deviates by design (no router, no browser-side model layer, no
+  mock server), so this list is the honest part of the rebuild and belongs
+  where a reader in ADT sees it.
+
+The archive is `ui5/demoapps/<library>/<app folder>/` — the original webapp
+held verbatim, binaries left out (see its README).
+
+**The 1.71 floor is a hard error here**, not a hint as in `src/03`: these are
+OpenUI5 rebuilds that install wherever the `src/01` ports install, so where the
+original uses something newer (the `IllustratedMessage` @1.98 four of the demo
+apps show as their empty state) the rebuild uses the 1.71 equivalent and the
+header says so. The view check is `npm run check:apps`
+(`abap2ui5lint-apps.jsonc`, in `view-gates.yaml` and `gates:full`), and it is
+the one config here with the **render gate on**: an app builds several pages in
+one document, most of them from state that is still initial at startup, and the
+first run proved the point — an empty `state` on the object page's
+`ObjectNumber`, which an enum-typed property rejects outright, took the whole
+view down.
+
+The e2e harness is sidecar-driven too, so it does not boot these; the render
+gate is what stands in for it.
 
 ---
 
@@ -768,7 +833,7 @@ up to 24 hours later:
 | `chain-format.yaml` | `chain_format` | the view-chain layout (`npm run fmt:chains` fixes it) |
 | `structural-diff.yaml` | `structural_diff` | port vs. archived original, binding values included |
 | `data-fidelity.yaml` | `data_fidelity` | seeded values vs. the archived sample mocks |
-| `view-gates.yaml` | `view_gates` | properties + structure + headless render — the three former view gates, now run from [abap2UI5-linter](https://github.com/abap2UI5/linter) with only the corpus policy kept here in `scripts/view-gates.mjs`; also `npm run check:collection` for `src/03` and `npm run check:overview` for the generated overview app (`abap2ui5lint-overview.jsonc`), and it publishes the two README badges |
+| `view-gates.yaml` | `view_gates` | properties + structure + headless render — the three former view gates, now run from [abap2UI5-linter](https://github.com/abap2UI5/linter) with only the corpus policy kept here in `scripts/view-gates.mjs`; also `npm run check:collection` for `src/03`, `npm run check:apps` for the `src/04` demo apps (`abap2ui5lint-apps.jsonc`, render ON) and `npm run check:overview` for the generated overview app (`abap2ui5lint-overview.jsonc`), and it publishes the two README badges |
 | `meta-valid.yaml` | `meta_valid` | sidecar schema + referential integrity, the archive the sidecars point at (`check-archive`, §4), and that every generated artefact (overview app, `README.md`, `api.md`, `STATUS.md`, `SAMPLES.md`, `catalogue.json`, `catalogue-derived.json`) is in sync |
 | `tooling-tests.yaml` | `tooling_tests` | the gate/generator tooling's own fixture tests |
 | `check-prose-names.yaml` | `prose_names` | every `z2ui5_cl_*` class named in prose exists, here or in the repository that owns it |
@@ -780,8 +845,9 @@ What each gate checks, what a failure means and every legitimate escape hatch
 is in **`.claude/skills/run-the-gates/SKILL.md`** — read it the moment a gate
 fails, and before declaring any skip or deviation to satisfy one.
 
-**Three linter configs, one per thing that nothing else judges** (decided
-2026-09-12, when the 0.6 bump turned `chain-format` red on the overview app):
+**Four linter configs, one per thing that nothing else judges** (three decided
+2026-09-12, when the 0.6 bump turned `chain-format` red on the overview app;
+the fourth arrived with the demo apps on 2026-09-13):
 
 - `abap2ui5lint-chains.jsonc` — the layout, over the whole tree, property gate
   OFF. `chain-house-layout` is an `error` there now (it was `warning` only
@@ -792,6 +858,12 @@ fails, and before declaring any skip or deviation to satisfy one.
   not a decision that reaches any rule.
 - `abap2ui5lint-collection.jsonc` — `src/03`, property gate on, the 1.71
   rules as hints, `distribution: sapui5` because that is what the folder IS.
+- `abap2ui5lint-apps.jsonc` — `src/04`, the demo apps: property gate on, the
+  1.71 rules as ERRORS (a demo app is an OpenUI5 rebuild and promises the
+  `src/01` floor), `distribution: openui5`, and the only config here with
+  `render: true` — it runs in `view-gates.yaml`, which installs Chromium
+  anyway, and a multi-page app started on initial state is exactly what a
+  property gate cannot judge alone.
 - `abap2ui5lint-overview.jsonc` — `src/z2ui5_cl_smpc_app_000` alone, property
   gate on, the 1.71 floor as an error, `distribution: openui5` because the
   overview ships with the ports and has to load where they load. It exists

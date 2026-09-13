@@ -1,0 +1,106 @@
+{
+  "source": {
+    "repo": "https://github.com/SAP/openui5",
+    "commit": "16a7edf663f1dad927a40800df05d37bfcb460d1",
+    "committed": "2026-09-12",
+    "version": "1.153.0-SNAPSHOT",
+    "from": "src/*/test/**/demokit/docuindex.json -> demo.links[]",
+    "page": "https://sdk.openui5.org/demoapps",
+    "libraries": 2,
+    "scanned": 2,
+    "licence": "Apache-2.0 (OpenUI5). Held verbatim, like the sample sources under ui5/<lib>/<Sample>/."
+  },
+  "apps": {
+    "ai-integration": {
+      "name": "AI Integration",
+      "description": "This sample project demonstrates the seamless integration of UI5 Web Components into the OpenUI5 framework showing AI use cases",
+      "category": "Showcase",
+      "external": true,
+      "ref": "https://sap-samples.github.io/ai-seamless-integration/"
+    },
+    "sap.m/cart": {
+      "name": "Shopping Cart",
+      "description": "The classic business process of finding and ordering products.",
+      "category": "Showcase",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/cart",
+      "ref": "test-resources/sap/m/demokit/cart/webapp/index.html"
+    },
+    "sap.m/iconExplorer": {
+      "name": "Icon Explorer",
+      "description": "All our icons at your fingertips.",
+      "category": "Tool",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/iconExplorer",
+      "ref": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
+    },
+    "sap.m/orderbrowser": {
+      "name": "Browse Orders",
+      "description": "Master-detail app for browsing orders.",
+      "category": "Showcase",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/orderbrowser",
+      "ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html"
+    },
+    "sap.m/teamCalendar": {
+      "name": "Team Calendar",
+      "description": "Calendar demo app for team and team members.",
+      "category": "Showcase",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/teamCalendar",
+      "ref": "test-resources/sap/m/demokit/teamCalendar/webapp/index.html"
+    },
+    "sap.m/theming": {
+      "name": "Theme Parameter Toolbox",
+      "description": "Search, filter and preview semantic theme parameters.",
+      "category": "Tool",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/theming",
+      "ref": "test-resources/sap/m/demokit/theming/webapp/index.html"
+    },
+    "sap.m/tutorial/testing": {
+      "name": "Bulletin Board",
+      "description": "Worklist app created with the 'Testing' tutorial.",
+      "category": "Tutorial",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/tutorial/testing",
+      "ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html"
+    },
+    "sap.m/tutorial/worklist": {
+      "name": "Manage Products",
+      "description": "Created with the 'Worklist App' tutorial.",
+      "category": "Tutorial",
+      "library": "sap.m",
+      "source": "src/sap.m/test/sap/m/demokit/tutorial/worklist",
+      "ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html"
+    },
+    "sap.tnt/toolpageapp": {
+      "name": "Shop Administration Tool",
+      "description": "Backoffice tool, built with the sap.tnt.ToolPage.",
+      "category": "Showcase",
+      "library": "sap.tnt",
+      "source": "src/sap.tnt/test/sap/tnt/demokit/toolpageapp",
+      "ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html"
+    },
+    "typescript-hello-world": {
+      "name": "TypeScript Hello World",
+      "description": "This sample demonstrates a TypeScript setup for developing UI5 applications.",
+      "category": "Showcase",
+      "external": true,
+      "ref": "https://sap-samples.github.io/ui5-typescript-helloworld/"
+    },
+    "uxc-integration": {
+      "name": "UXC Integration",
+      "description": "This example illustrates the integration of UI5 Web Components into SAPUI5 applications.",
+      "category": "Showcase",
+      "external": true,
+      "ref": "https://sap-samples.github.io/uxc-integration/"
+    }
+  },
+  "ports": {
+    "z2ui5_cl_smpc_demo_001": {
+      "app": "sap.m/tutorial/worklist",
+      "status": "generated"
+    }
+  }
+}

@@ -32,8 +32,10 @@ how to express a control in ABAP? Its sample is already here — or on its way.
    **637 classes in 14 packages** — `src/01` (416 ports, OpenUI5 ≤ 1.71,
    what every system renders), `src/02` (221 ports that need a UI5 runtime
    newer than 1.71: they install and activate on any release, and on an
-   older UI5 the newer control simply does not render), and `src/03` (the
-   SAPUI5-only collection, which needs a SAPUI5 bootstrap). ABAP-wise every
+   older UI5 the newer control simply does not render), `src/03` (the
+   SAPUI5-only collection, which needs a SAPUI5 bootstrap) and `src/04` (the
+   demo kit's own [demo apps](https://sdk.openui5.org/demoapps) — whole
+   applications, one class each). ABAP-wise every
    class is Cloud-ready and runs from NetWeaver 7.02 on, see
    [Compatibility](#compatibility). There are no per-library branches yet
    (unlike [samples-stack](https://github.com/abap2UI5/samples-stack), which
@@ -59,6 +61,16 @@ family:
 | 1️⃣ | [**samples**](https://github.com/abap2UI5/samples) | **the abap2UI5 basics** — bindings, events, popups, navigation, complete apps | run `Z2UI5_CL_SMP_APP_000` |
 | 2️⃣ | **samples-controls** — 📍 *you are here* | **how to use every UI5 control** — the UI5 Demo Kit rebuilt with abap2UI5 | run `z2ui5_cl_smpc_app_000` |
 | 3️⃣ | [**samples-stack**](https://github.com/abap2UI5/samples-stack) | **how abap2UI5 plays with your stack** — OData, RAP, WebSockets, the Fiori Launchpad and more | pick your technology in its package table |
+
+#### Not only controls — the demo apps
+
+`src/04` answers the question the control samples cannot: **can a whole UI5
+application be built with abap2UI5?** The demo kit's own demo apps — Manage
+Products, Browse Orders, the Shopping Cart — are rebuilt there, one class per
+app, router and all. Each class header names what its rebuild does differently
+from the original and why, so the cost of the answer is on the page next to
+the answer. The list is in [SAMPLES.md](SAMPLES.md#ui5-demo-apps--src04);
+the originals are archived under [`ui5/demoapps/`](ui5/demoapps).
 
 #### Learn by comparing
 

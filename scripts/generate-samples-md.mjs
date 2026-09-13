@@ -66,6 +66,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { readDescript } from './lib/descript.mjs';
 import { walkFiles } from './lib/src-tree.mjs';
+import { isDemoApp, demoAppOf } from './lib/demoapps.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -105,6 +106,7 @@ function scan() {
     const header = cut === -1 ? descript : descript.slice(0, cut);
     const tail = cut === -1 ? '' : descript.slice(cut + 3);
     const collection = !meta && cls.includes('_sapui5_');
+    const demo = isDemoApp(rel) ? demoAppOf(ROOT, cls) : null;
     const name = meta?.sample ? nameOf(meta.sample) : '';
 
     out.push({
@@ -115,7 +117,7 @@ function scan() {
       /* The row title — the header comment up top says what and why. */
       title: meta?.entity
         ? meta.entity
-        : (collection && tail ? `${header}.${tail}` : header),
+        : (demo ? demo.name : (collection && tail ? `${header}.${tail}` : header)),
       variant: meta?.entity && name && token(name) !== token(meta.entity.split('.').pop())
         ? name
         : '',
@@ -130,8 +132,9 @@ function scan() {
         ? meta.entity.split('.').slice(0, -1).join('.')
         : header,
       sapui5: collection,
+      demo: Boolean(demo),
       overview: cls === 'z2ui5_cl_smpc_app_000',
-      status: meta?.status || '',
+      status: meta?.status || demo?.status || '',
       devCount: (meta?.deviations || []).length,
     });
   }
@@ -140,8 +143,9 @@ function scan() {
 
 const all = scan();
 const overview = all.find((s) => s.overview);
-const ports = all.filter((s) => !s.overview && !s.sapui5);
+const ports = all.filter((s) => !s.overview && !s.sapui5 && !s.demo);
 const sapui5 = all.filter((s) => s.sapui5);
+const demoapps = all.filter((s) => s.demo);
 
 /* The DESCRIPT's second half is NOT rendered here, unlike in the two sibling
  * catalogues, and the difference is a fact about this repository: a port's
@@ -266,6 +270,18 @@ ${body}
 
 ---
 
+## UI5 demo apps — \`src/04\`
+
+${demoapps.length} of the demo kit's own [demo apps](https://sdk.openui5.org/demoapps) —
+whole applications rather than single-control samples — each rebuilt as ONE
+self-contained abap2UI5 class. They are not 1:1 control ports and carry no
+sidecar: what deviates from the original (a router, a browser-side model, an
+OData mock server) is named in the class's own ABAP Doc header.
+
+${table(demoapps)}
+
+---
+
 ## SAPUI5-only controls — \`src/03\`
 
 ${sapui5.length} controls that ship with SAPUI5 and not with OpenUI5, so there is no demo
@@ -291,8 +307,8 @@ if (CHECK) {
     console.error('SAMPLES.md is stale — run `npm run samples:md` and commit the result.');
     process.exit(1);
   }
-  console.log(`SAMPLES.md: current (${ports.length} ports, ${sapui5.length} SAPUI5-only)`);
+  console.log(`SAMPLES.md: current (${ports.length} ports, ${demoapps.length} demo apps, ${sapui5.length} SAPUI5-only)`);
 } else {
   fs.writeFileSync(OUT, page);
-  console.log(`SAMPLES.md: ${ports.length} ports in ${libs.length} librarie(s), ${sapui5.length} SAPUI5-only`);
+  console.log(`SAMPLES.md: ${ports.length} ports in ${libs.length} librarie(s), ${demoapps.length} demo app(s), ${sapui5.length} SAPUI5-only`);
 }
