@@ -124,10 +124,15 @@ CLASS z2ui5_cl_smpc_app_032 IMPLEMENTATION.
   METHOD on_event.
 
     IF client->get_event( ) = `LINK_PRESS`.
-      client->message_toast_display(
-        text = `You have pressed a link in value state message`
-        my   = `center center`
-        at   = `center center` ).
+      " docked at CenterCenter 1:1 - my/at are sap.m.MessageToast options, so
+      " they are set on the control: the whitelisted global call takes the
+      " option object of MessageToast.show( ) as its last argument
+      client->follow_up_action(
+          val   = client->cs_event-control_global
+          t_arg = VALUE #( ( `MESSAGE_TOAST` )
+                           ( `show` )
+                           ( `You have pressed a link in value state message` )
+                           ( `{"my":"center center","at":"center center"}` ) ) ).
     ENDIF.
 
   ENDMETHOD.

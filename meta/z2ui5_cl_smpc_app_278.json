@@ -5,8 +5,8 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_278.clas.abap",
   "batch": "b15",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true
   },
   "status": "checked",
   "checked": {
@@ -29,6 +29,10 @@
     {
       "type": "POST_171",
       "what": "the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it."
+    },
+    {
+      "type": "NOTE",
+      "what": "The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND event name, so ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( )."
     }
   ]
 }

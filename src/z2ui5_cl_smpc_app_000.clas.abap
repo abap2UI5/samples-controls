@@ -3731,16 +3731,20 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputTypes`                                    class = `z2ui5_cl_smpc_app_159` path = `src/01/01/z2ui5_cl_smpc_app_159.clas.abap`
         score = 2
         score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        notes = `NOTE: Five Inputs demonstrating the input types Text / Email / Tel / Number / Url with labelFor Labels, reproduced 1:1.` )
+        notes = `NOTE: Five Inputs demonstrating the input types Text / Email / Tel / Number / Url with labelFor Labels, reproduced 1:1.` ) ).
+
+    text1 = `POST-1.71: showClearIcon (since UI5 1.94) on three inputs is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.94 to render it. // POST-1.71: the two formattedValueStateText` &&
+            ` aggregations (a FormattedText carrying Links, since UI5 1.78) are newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.78 to render them. // NOTE: the Links' press` &&
+            ` (.onFormattedTextLinkPress) round-trips as event LINK_PRESS and shows the controller's toast text, docked at CenterCenter 1:1 (source-verified in Messages.js; how the two options travel is the` &&
+            ` 2026-09 note below). The original's preventDefault is not needed: the Links carry no href, so there is no default navigation to suppress. // NOTE: The toast's my/at options moved from` &&
+            ` client->message_toast_display( ) to the whitelisted global call on 2026-09: they are sap.m.MessageToast options, and the option object of follow_up_action( cs_event-control_global, MESSAGE_TOAST ) is` &&
+            ` that API 1:1. Same wire, same showToast( ) on the client - the parameters simply left the ABAP signature, which now carries only what an ABAP app decides (text, duration, the backend event).`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputValueState`                               class = `z2ui5_cl_smpc_app_032` path = `src/02/01/z2ui5_cl_smpc_app_032.clas.abap`
         score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         is_post171 = abap_true
-        notes = `POST-1.71: showClearIcon (since UI5 1.94) on three inputs is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.94 to render it. // POST-1.71: the two formattedValueStateText` &&
-                 ` aggregations (a FormattedText carrying Links, since UI5 1.78) are newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.78 to render them. // NOTE: the Links' press` &&
-                 ` (.onFormattedTextLinkPress) round-trips as event LINK_PRESS and shows the controller's toast text, docked at CenterCenter 1:1 via message_toast_display( my = 'center center' at = 'center center' )` &&
-                 ` (the client method exposes the MessageToast options object - source-verified in Messages.js). The original's preventDefault is not needed: the Links carry no href, so there is no default navigation` &&
-                 ` to suppress.`
+        notes = text1
         post171 = `showClearIcon (since UI5 1.94) on three inputs is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.94 to render it. // the two formattedValueStateText aggregations (a` &&
                  ` FormattedText carrying Links, since UI5 1.78) are newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.78 to render them.` ) ).
 
@@ -4140,11 +4144,14 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` workaround. // NOTE: the onClose handler of the two action boxes composes its toast on the client in the original; here the pressed action rides back through the onclose event and ABAP builds the` &&
             ` same text with message_toast_display - same output, and the thin-frontend direction (the action becomes backend-visible, which is the point of the onclose return path). // POST-1.71: the MessageBox` &&
             ` emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5` &&
-            ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it.`.
+            ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it. // NOTE:`.
+    text1 = text1 && ` The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND event name, so` &&
+            ` ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( ).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBox`                                    class = `z2ui5_cl_smpc_app_278` path = `src/02/01/z2ui5_cl_smpc_app_278.clas.abap`
         score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
+                 ` close look.`
         since = `1.21.2`
         is_post171 = abap_true
         checked = `CHECKED (2026-08-02): verified in a running system - human live check 2026-08-02 (maintainer): app started and exercised, no findings. **e2e-verified 2026-09-12** (interaction module` &&
@@ -4167,11 +4174,15 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` sample has not got. The two error boxes are unaffected, since type = 'error' dispatches to MessageBox.error, which pins CLOSE. (c) Still NOT reproduced, and named here rather than left quiet:` &&
             ` MessageBox._formatDetails wraps an OBJECT in <pre> with JSON.stringify(v, null, '\t') and returns a STRING verbatim, so the original renders a tab-indented monospace block where the port renders one`.
     text1 = text1 && ` unindented line; and every details string passes Lib.sanitizeMessageDetails, which - when the markup contains any <li> - returns only a <ul> of the top-level items' textContent, so the FormattedText` &&
-            ` box loses its two <p> paragraphs and its <em>.`.
+            ` box loses its two <p> paragraphs and its <em>. // NOTE: All four boxes moved to the whitelisted global call on 2026-09, when contentWidth left client->message_box_display( ) with the other pure` &&
+            ` sap.m.MessageBox options. Two consequences, both in the port's favour: (a) the two information boxes no longer pin actions = ( 'OK' ) - the display method IS the box type on this path, so` &&
+            ` ``information`` reaches MessageBox.information( ), which is what the original calls, and the framework's remap onto show( ) (defaults [OK, CANCEL] WITH details) that grew the Cancel button does not` &&
+            ` happen at all; (b) the options travel as JSON, so the details payloads are escaped before they are embedded - a payload the backend cannot parse would be embedded as a plain string and the box would` &&
+            ` open with no options, quietly. title, details, contentWidth and styleClass are unchanged in value.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBoxInfo`                                class = `z2ui5_cl_smpc_app_447` path = `src/01/01/z2ui5_cl_smpc_app_447.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.21.2`
         notes = text1 ) ).
 
@@ -4179,11 +4190,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` 1:1 path (CAPABILITIES.md marks sap.m.MessageBox as expressible with app 036 as its evidence port), not a workaround. // POST-1.71: ariaHasPopup="Dialog" on both buttons (since UI5 1.84) is newer` &&
             ` than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.84 to render it. // POST-1.71: the MessageBox emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1` &&
             ` port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the` &&
-            ` view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it.`.
+            ` view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it. // NOTE: Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are sap.m.MessageBox` &&
+            ` options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction, initialFocus,`.
+    text1 = text1 && ` dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBoxInitialFocus`                        class = `z2ui5_cl_smpc_app_036` path = `src/02/01/z2ui5_cl_smpc_app_036.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.21.2`
         is_post171 = abap_true
         notes = text1
@@ -4487,7 +4500,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` meta/interactions/z2ui5_cl_smpc_app_490.mjs). // NOTE: The client-composed toast template is written with BARE {0}/{1} placeholders. It had carried \{0\}, which is wrong in a backtick literal: only`.
     text1 = text1 && ` |...| templates treat \{ as an escape, so the backslashes were real characters and formatTemplate's /\{(\d+)...\}/ never matched - the placeholders rendered verbatim. The escape is not needed at all` &&
             ` on this path: the value lands in an EVENT attribute, which XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still` &&
-            ` needs \{ (see app 523's app:template).`.
+            ` needs \{ (see app 523's app:template). // NOTE: The selectionFinished toast moved to the whitelisted global call on 2026-09: width is a sap.m.MessageToast option and left` &&
+            ` client->message_toast_display( ), so it now travels in the option object of the call, which is the MessageToast.show( ) API 1:1.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBox`                                 class = `z2ui5_cl_smpc_app_490` path = `src/01/01/z2ui5_cl_smpc_app_490.clas.abap`
         score = 4
@@ -4501,11 +4515,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` Both wires and the clear icon are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_491.mjs). // NOTE: The client-composed` &&
             ` toast template is written with BARE {0}/{1} placeholders. It had carried \{0\}, which is wrong in a backtick literal: only |...| templates treat \{ as an escape, so the backslashes were real` &&
             ` characters and formatTemplate's /\{(\d+)...\}/ never matched - the placeholders rendered verbatim. The escape is not needed at all on this path: the value lands in an EVENT attribute, which`.
-    text1 = text1 && ` XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still needs \{ (see app 523's app:template).`.
+    text1 = text1 && ` XMLTemplateProcessor routes through EventHandlerResolver without a BindingParser pass. An ordinary attribute is the opposite case and still needs \{ (see app 523's app:template). // NOTE: The` &&
+            ` selectionFinished toast moved to the whitelisted global call on 2026-09: width is a sap.m.MessageToast option and left client->message_toast_display( ), so it now travels in the option object of the` &&
+            ` call, which is the MessageToast.show( ) API 1:1.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxClearIcon`                        class = `z2ui5_cl_smpc_app_491` path = `src/02/01/z2ui5_cl_smpc_app_491.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22.0`
         is_post171 = abap_true
@@ -4556,11 +4572,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` the selectedKeys binding. The selectionChange leg is additionally e2e-verified for the BRANCH and the prefix only - restated 2026-08-23: the module asserts "Event 'selectionChange': Selected '",` &&
             ` which stops at the opening quote, so a toast whose item text arrived empty would pass it. The Selected/Deselected branch is genuinely covered; the transported item text is not. The selectionFinish` &&
             ` leg is NOT machine-checkable: it fires only when the picker CLOSES, and headless neither F4 nor Escape reaches the picker once focus sits in the item list, an outside click does not dismiss it and` &&
-            ` getPicker() is null on the registry instance (measured 2026-08-02) - the armed interaction covers the selectionChange leg only.`.
+            ` getPicker() is null on the registry instance (measured 2026-08-02) - the armed interaction covers the selectionChange leg only. // NOTE: The selectionChange toast moved to the whitelisted global call`.
+    text1 = text1 && ` on 2026-09: width is a sap.m.MessageToast option and left message_toast_display( ), so it now travels in the option object of the call, which is the MessageToast.show( ) API 1:1.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxSelectAll`                        class = `z2ui5_cl_smpc_app_281` path = `src/02/01/z2ui5_cl_smpc_app_281.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
+                 ` close look.`
         since = `1.22.0`
         is_post171 = abap_true
         checked = `CHECKED (2026-08-02): verified in a running system - human live check 2026-08-02 (maintainer): app started and exercised, no findings.`
@@ -4923,11 +4941,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` was already there, so the pair had been asymmetric and Cancel lost its red styling), and the toast is no longer a bare one-liner. The original shows it ON the still-open dialog with duration 2000 and` &&
             ` center/center docking and closes the dialog from its onClose; the port had destroyed the popup first and toasted with every default. It now passes duration/my/at and names an onclose event that` &&
             ` destroys the popup, so the ORDER matches too. Only ``of`` stays dropped - it takes a live control and the framework hands the option to MessageToast unresolved, so a control id cannot travel in it.`.
-    text1 = text1 && ` // POST-1.71: ObjectAttribute.ariaHasPopup (since UI5 1.97) is kept 1:1 on the feedback attribute; needs UI5 >= 1.97.`.
+    text1 = text1 && ` // POST-1.71: ObjectAttribute.ariaHasPopup (since UI5 1.97) is kept 1:1 on the feedback attribute; needs UI5 >= 1.97. // NOTE: The feedback toast moved to the whitelisted global call on 2026-09` &&
+            ` (my/at are sap.m.MessageToast options and left message_toast_display( )). duration rides in the same option object; onClose stays a BACKEND event name - the frontend turns it into the round-trip that` &&
+            ` closes the dialog, exactly as before.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ObjectAttribute`                 name = `ObjectAttributes`                              class = `z2ui5_cl_smpc_app_073` path = `src/02/01/z2ui5_cl_smpc_app_073.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.12`
         is_post171 = abap_true
         notes = text1

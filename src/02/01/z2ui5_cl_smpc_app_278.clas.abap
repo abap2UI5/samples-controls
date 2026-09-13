@@ -146,24 +146,28 @@ CLASS z2ui5_cl_smpc_app_278 IMPLEMENTATION.
 
       WHEN `ERROR_CUSTOM_ACTION`.
 
-        " dependentOn ties the message box to the layout's lifecycle (original: this.getView())
-        client->message_box_display(
-          text             = `Product A does not exist.`
-          type             = `error`
-          actions          = VALUE #( ( `Manage Products` ) ( `CLOSE` ) )
-          emphasizedaction = `Manage Products`
-          onclose          = `ACTION_SELECTED`
-          dependenton      = `messageBoxHost` ).
+        " dependentOn is a sap.m.MessageBox option, so the box travels as the
+        " control call it is - the type is the method, the options are the UI5
+        " option object. It ties the box to the layout's lifecycle (original:
+        " this.getView()); onClose stays a BACKEND event name
+        client->follow_up_action(
+            val   = client->cs_event-control_global
+            t_arg = VALUE #( ( `MESSAGE_BOX` )
+                             ( `error` )
+                             ( `Product A does not exist.` )
+                             ( `{"actions":["Manage Products","CLOSE"],"emphasizedAction":"Manage Products",` &&
+                               `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}` ) ) ).
 
       WHEN `WARNING_TWO_ACTIONS`.
 
-        client->message_box_display(
-          text             = `The quantity you have reported exceeds the quantity planned.`
-          type             = `warning`
-          actions          = VALUE #( ( `OK` ) ( `CANCEL` ) )
-          emphasizedaction = `OK`
-          onclose          = `ACTION_SELECTED`
-          dependenton      = `messageBoxHost` ).
+        " dependentOn as above
+        client->follow_up_action(
+            val   = client->cs_event-control_global
+            t_arg = VALUE #( ( `MESSAGE_BOX` )
+                             ( `warning` )
+                             ( `The quantity you have reported exceeds the quantity planned.` )
+                             ( `{"actions":["OK","CANCEL"],"emphasizedAction":"OK",` &&
+                               `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}` ) ) ).
 
       WHEN `ACTION_SELECTED`.
 
