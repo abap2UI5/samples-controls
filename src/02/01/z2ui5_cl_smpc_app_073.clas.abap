@@ -192,11 +192,16 @@ CLASS z2ui5_cl_smpc_app_073 IMPLEMENTATION.
         " the original toasts on the STILL-OPEN dialog and closes it from the
         " toast's onClose, so the order is toast first, close after - only the
         " 2s setBusy delay in front of it stays dropped
-        client->message_toast_display( text     = `Feedback sent.`
-                                       duration = `2000`
-                                       my       = `center center`
-                                       at       = `center center`
-                                       onclose  = `FEEDBACK_CLOSED` ).
+        " docked at CenterCenter, so the toast is steered as the control it
+        " is: my/at/duration are MessageToast options and travel in the option
+        " object of the global call. onClose stays a BACKEND event name - the
+        " frontend turns it into the round-trip that closes the dialog below
+        client->follow_up_action(
+            val   = client->cs_event-control_global
+            t_arg = VALUE #( ( `MESSAGE_TOAST` )
+                             ( `show` )
+                             ( `Feedback sent.` )
+                             ( `{"duration":2000,"my":"center center","at":"center center","onClose":"FEEDBACK_CLOSED"}` ) ) ).
 
       WHEN `FEEDBACK_CLOSED`.
         client->popup_destroy( ).

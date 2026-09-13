@@ -5,8 +5,8 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_036.clas.abap",
   "batch": "b03",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true
   },
   "status": "reviewed",
   "checked": null,
@@ -26,6 +26,10 @@
     {
       "type": "POST_171",
       "what": "the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it."
+    },
+    {
+      "type": "NOTE",
+      "what": "Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are sap.m.MessageBox options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction, initialFocus, dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124."
     }
   ]
 }

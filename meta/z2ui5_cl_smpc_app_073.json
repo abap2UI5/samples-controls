@@ -22,6 +22,10 @@
     {
       "type": "POST_171",
       "what": "ObjectAttribute.ariaHasPopup (since UI5 1.97) is kept 1:1 on the feedback attribute; needs UI5 >= 1.97."
+    },
+    {
+      "type": "NOTE",
+      "what": "The feedback toast moved to the whitelisted global call on 2026-09 (my/at are sap.m.MessageToast options and left message_toast_display( )). duration rides in the same option object; onClose stays a BACKEND event name - the frontend turns it into the round-trip that closes the dialog, exactly as before."
     }
   ]
 }

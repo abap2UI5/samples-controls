@@ -5,7 +5,7 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_281.clas.abap",
   "batch": "b15",
   "audit": {
-    "frontend_action": false,
+    "frontend_action": true,
     "event_t_arg": true
   },
   "status": "checked",
@@ -25,6 +25,10 @@
     {
       "type": "NOTE",
       "what": "live-verified on 2026-08-02 (maintainer live check): the selectionFinish toast lists the selected names and Select All fills the selectedKeys binding. The selectionChange leg is additionally e2e-verified for the BRANCH and the prefix only - restated 2026-08-23: the module asserts \"Event 'selectionChange': Selected '\", which stops at the opening quote, so a toast whose item text arrived empty would pass it. The Selected/Deselected branch is genuinely covered; the transported item text is not. The selectionFinish leg is NOT machine-checkable: it fires only when the picker CLOSES, and headless neither F4 nor Escape reaches the picker once focus sits in the item list, an outside click does not dismiss it and getPicker() is null on the registry instance (measured 2026-08-02) - the armed interaction covers the selectionChange leg only."
+    },
+    {
+      "type": "NOTE",
+      "what": "The selectionChange toast moved to the whitelisted global call on 2026-09: width is a sap.m.MessageToast option and left message_toast_display( ), so it now travels in the option object of the call, which is the MessageToast.show( ) API 1:1."
     }
   ]
 }
