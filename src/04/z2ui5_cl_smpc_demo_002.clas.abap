@@ -221,10 +221,16 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     view->ele( n = `dependents` ns = `mvc`
         )->ele( `ViewSettingsDialog`
             )->a( n = `id`      v = `viewSettingsDialog`
+            " `${ }` wraps the BINDING, not the expression around it: the
+            " corpus idiom is `${$parameters>/selectedItem}.getKey()` (apps
+            " 521, 534, 546, 558). Wrapped once more, as these three were, the
+            " whole attribute is a nested binding UI5 cannot parse - pressing
+            " OK then fires nothing at all, and the dialog looked broken while
+            " the filter, group and info-bar logic behind it was correct
             )->a( n = `confirm` v = client->_event( val   = `VIEW_SETTINGS`
-                                                    t_arg = VALUE #( ( `${$parameters>/filterString}` )
-                                                                     ( `${${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getKey() : ''}` )
-                                                                     ( `${${$parameters>/groupItem} ? ${$parameters>/groupItem}.getKey() : ''}` ) ) )
+                                                    t_arg = VALUE #( ( `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getText() : ''` )
+                                                                     ( `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getKey() : ''` )
+                                                                     ( `${$parameters>/groupItem} ? ${$parameters>/groupItem}.getKey() : ''` ) ) )
 
             )->ele( `filterItems`
                 )->ele( `ViewSettingsFilterItem`
@@ -618,8 +624,12 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                                   t_arg = VALUE #( ( `viewSettingsDialog` ) ( `open` ) ) ).
 
       WHEN `VIEW_SETTINGS`.
-        " filterString for the info bar, the chosen filter and group keys for
-        " the work - exactly the three the original reads off the event
+        " the selected filter item's TEXT for the info bar, and the chosen
+        " filter and group KEYS for the work - the three the original reads
+        " off the event. Not `filterString`, which UI5 composes as "Filtered
+        " By: Orders (Only Shipped Orders)" and which the original does not
+        " use: it joins the item texts itself, so its bar reads "Filtered by
+        " Only Shipped Orders"
         filter_bar_label   = |Filtered by { client->get_event_arg( ) }|.
         filter_bar_visible = xsdbool( client->get_event_arg( ) IS NOT INITIAL ).
         filter_key         = client->get_event_arg( 2 ).
@@ -634,7 +644,12 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
         order_shown      = 0.
         check_fullscreen = abap_false.
         layout           = `OneColumn`.
-        MODIFY t_rows FROM VALUE #( selected = abap_false ) TRANSPORTING selected WHERE selected = abap_true.
+        " an explicit work area rather than `FROM VALUE #( ... )`: the 702
+        " downport cannot infer the `#` of a VALUE constructor in a MODIFY
+        " source and emitted `type not found: #`, so the transpiled backend
+        " refused the class
+        DATA(clear_row) = VALUE ty_s_row( ).
+        MODIFY t_rows FROM clear_row TRANSPORTING selected WHERE selected = abap_true.
         client->hash_set( `/` ).
 
       WHEN `TOGGLE_FULLSCREEN`.
@@ -678,7 +693,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     DATA line_total TYPE ty_amount.
 
     ASSIGN t_orders[ orderid = orderid ] TO FIELD-SYMBOL(<order>).
-    IF sy-subrc <> 0.
+    IF <order> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
@@ -697,7 +712,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     det_shipcountry = <order>-shipcountry.
 
     ASSIGN t_employees[ employeeid = <order>-employeeid ] TO FIELD-SYMBOL(<employee>).
-    IF sy-subrc = 0.
+    IF <employee> IS ASSIGNED.
       det_employee   = |{ <employee>-firstname } { <employee>-lastname }|.
       det_employeeid = |{ <employee>-employeeid }|.
       det_jobtitle   = <employee>-title.

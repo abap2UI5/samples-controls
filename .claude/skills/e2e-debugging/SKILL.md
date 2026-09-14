@@ -372,14 +372,22 @@ verdicts below turned out to be harness effects.
   `getSuggestionItems()`/`getItems()` answers 100, so an assertion on the full
   mock row count fails against a perfectly faithful port (app 420). Assert the
   cap (or `>= 100`), and remember the original sample is capped the same way.
-- **A BOOLEAN event arg reaches the transpiled backend as the string
-  `'false'`/`'true'`, not as abap_bool.** On a real system the framework's
-  ajson path normalizes a JSON boolean `t_arg` to `X`/space (the
-  `port-a-sample` rule), but in the e2e runtime the same arg lands verbatim —
-  so `get_event_arg( ) = abap_false` never matches, the flag never flips, and
-  the response carries no model delta: the wire reads as dead while the port
-  is correct (app 099 still carries the latent form; app 421 hit it live).
-  For a wire the smoke must drive, transport a string token instead
-  (`${$parameters>/isTopPage} ? 'top' : 'sub'`) — deterministic on both
-  runtimes. The divergence itself belongs upstream (open-abap/ajson boolean
-  node handling); file it in the abap2UI5 backlog when touching this next.
+- **A BOOLEAN event arg is `X`/space on both runtimes — this divergence is
+  CLOSED, and the workaround it produced is no longer needed.** It was real:
+  a JSON boolean `t_arg` used to land in the transpiled backend verbatim as
+  `'true'`/`'false'`, so `get_event_arg( ) = abap_false` never matched, the
+  flag never flipped and the wire read as dead while the port was correct
+  (app 421 hit it live in the 2026-08-22 sweep, app 099 carries the latent
+  form). The framework now normalizes it at the boundary instead of leaving
+  it to the runtime: `request_parse_event_args` has a `node_type-boolean`
+  branch that runs `get_boolean( )`, so the argument reaches the app as `X`
+  or a space whichever backend it runs on, and `A2UI5_PIN` (9fd5c20) carries
+  it. abap2UI5's own suite pins all three cases on the transpiled backend -
+  `true` → `X`, `false` → a space, and the JSON STRING `"true"` → the WORD,
+  because the normalization is about the node TYPE and a port transporting
+  the token deliberately must keep it.
+  So: a new port may compare `= abap_true` directly and the smoke may drive
+  such a wire. App 421's string tokens (`${$parameters>/isTopPage} ? 'top' :
+  'sub'`) are left as they are - they work on both runtimes and rewriting a
+  gate-verified port to remove a now-unnecessary workaround buys nothing -
+  but do not copy them into anything new.
