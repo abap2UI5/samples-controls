@@ -31,7 +31,10 @@
 "!  - the Welcome page keeps its three panels (promoted, recently viewed,
 "!    favorites) but not the original's BlockLayout-and-Grid arrangement of
 "!    them: one list per panel instead of a hand-built cell per product.
-"!    Its carousel is dropped with the four teaser images it shows.
+"!    Its carousel is dropped with the four teaser images it shows. The
+"!    Emphasized cart-3 button the original puts on every tile stays, as an
+"!    ACTIVE ObjectAttribute on the row - an ObjectListItem takes no button,
+"!    and without it the welcome page had no way to fill the cart at all.
 "!  - the wizard validates in ABAP rather than through the Wizard's own
 "!    validated/setNextStep API, and reports with a MessageBox - which is
 "!    what the original's own validation does for the credit-card step.
@@ -171,8 +174,26 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         type      TYPE string,
       END OF ty_s_featured.
 
-    " what the original's pictureUrl formatter resolves a mock path against
-    CONSTANTS c_base TYPE string VALUE `https://sdk.openui5.org/resources/`.
+    " What the original's pictureUrl formatter resolves a mock path against.
+    "
+    " The mock rows carry the original's own spelling, `sap/ui/demo/mock/
+    " images/HT-1000.jpg` (data_fidelity compares them against Products.json,
+    " so they stay verbatim), and the original resolves it with
+    " `sap.ui.require.toUrl( )` against a resource root the app DECLARES:
+    " test/testsuite.qunit.js maps `sap/ui/demo/mock` to
+    " `./../localService/mockdata`, and its formatter unit test asserts
+    " exactly that. So the images are files of the demo app, not assets of
+    " the UI5 runtime - `/resources/sap/ui/demo/mock/...`, which is what this
+    " constant used to say, is a 404 and left every product without a
+    " picture.
+    "
+    " A port has no app folder to serve them from, so the prefix is replaced
+    " with the demo kit's deployed copy of that folder - the same
+    " sdk.openui5.org/test-resources host the src/03 collection already uses
+    " for sample images.
+    CONSTANTS c_mock_prefix TYPE string VALUE `sap/ui/demo/mock/`.
+    CONSTANTS c_base        TYPE string
+      VALUE `https://sdk.openui5.org/test-resources/sap/m/demokit/cart/webapp/localService/mockdata/`.
 
     DATA client        TYPE REF TO z2ui5_if_client.
     " the product on show: the key ADD_TO_CART needs, never bound - so
@@ -231,6 +252,11 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
       RETURNING
         VALUE(result) TYPE ty_s_row.
     METHODS price_text
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS picture_url
       IMPORTING
         val           TYPE string
       RETURNING
@@ -499,6 +525,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
                         )->a( n = `text` v = `{SUPPLIERNAME}`
+                    " Add to cart, from the list itself. The original puts an
+                    " Emphasized cart-3 Button on every welcome tile, and this
+                    " rebuild replaced its carousel with two lists (see the
+                    " class header) - which dropped the only way to fill the
+                    " cart without opening a product first. An ObjectListItem
+                    " takes no button, so the action is an ACTIVE
+                    " ObjectAttribute: the same idiom the original itself uses
+                    " for "Compare With" in its category list
+                    )->tag( `ObjectAttribute`
+                        )->a( n = `active` b = abap_true
+                        )->a( n = `text`   v = `Add to Cart`
+                        )->a( n = `press`  v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
 
                 )->end(
                 )->ele( `firstStatus`
@@ -532,6 +570,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
                         )->a( n = `text` v = `{SUPPLIERNAME}`
+                    " Add to cart, from the list itself. The original puts an
+                    " Emphasized cart-3 Button on every welcome tile, and this
+                    " rebuild replaced its carousel with two lists (see the
+                    " class header) - which dropped the only way to fill the
+                    " cart without opening a product first. An ObjectListItem
+                    " takes no button, so the action is an ACTIVE
+                    " ObjectAttribute: the same idiom the original itself uses
+                    " for "Compare With" in its category list
+                    )->tag( `ObjectAttribute`
+                        )->a( n = `active` b = abap_true
+                        )->a( n = `text`   v = `Add to Cart`
+                        )->a( n = `press`  v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
 
                 )->end(
                 )->ele( `firstStatus`
@@ -1229,7 +1279,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     prod_desc     = <product>-shortdescription.
     prod_price    = price_text( <product>-price ).
     prod_currency = <product>-currencycode.
-    prod_picture  = |{ c_base }{ <product>-pictureurl }|.
+    prod_picture  = picture_url( <product>-pictureurl ).
     prod_status   = SWITCH #( <product>-status
                               WHEN `A` THEN `Available`
                               WHEN `O` THEN `Out of stock`
@@ -1266,7 +1316,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ELSE.
       INSERT VALUE #( productid    = <product>-productid
                       name         = <product>-name
-                      pictureurl   = |{ c_base }{ <product>-pictureurl }|
+                      pictureurl   = picture_url( <product>-pictureurl )
                       price_text   = price_text( <product>-price )
                       currencycode = <product>-currencycode
                       quantity     = 1 ) INTO TABLE t_cart.
@@ -1358,7 +1408,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                       suppliername = product-suppliername
                       price_text   = price_text( product-price )
                       currencycode = product-currencycode
-                      pictureurl   = |{ c_base }{ product-pictureurl }|
+                      pictureurl   = picture_url( product-pictureurl )
                       status_text  = SWITCH #( product-status
                                                WHEN `A` THEN `Available`
                                                WHEN `O` THEN `Out of stock`
@@ -1369,6 +1419,23 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                                WHEN `O` THEN `Warning`
                                                WHEN `D` THEN `Error`
                                                ELSE `None` ) ).
+
+  ENDMETHOD.
+
+
+  METHOD picture_url.
+
+    " the original's pictureUrl formatter: `sap.ui.require.toUrl( )` against
+    " the resource root the app declares for `sap/ui/demo/mock`. Here that
+    " root is the demo kit's deployed copy of the folder (see c_base), so the
+    " prefix is what gets replaced - a path without it is left alone rather
+    " than silently prefixed, because then it is not a mock path
+    DATA(len) = strlen( c_mock_prefix ).
+
+    result = val.
+    IF strlen( result ) > len AND result(len) = c_mock_prefix.
+      result = |{ c_base }{ result+len }|.
+    ENDIF.
 
   ENDMETHOD.
 
