@@ -583,7 +583,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
           " (TABLE_INVALID_INDEX). Same defect the ports 352/354/298/377
           " carried and the same fix.
           DATA(keep) = t_tabs.
-          CLEAR t_tabs.
+          t_tabs = VALUE #( ).
           LOOP AT keep REFERENCE INTO DATA(tab).
             IF line_exists( t_products[ productid = tab->productid ] ).
               INSERT tab->* INTO TABLE t_tabs.
