@@ -574,10 +574,19 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
           add_mode = abap_false.
           nav_to_table( ).
           unsaved_reset( ).
-          " a tab whose product is gone goes with it
-          LOOP AT t_tabs REFERENCE INTO DATA(tab).
-            IF NOT line_exists( t_products[ productid = tab->productid ] ).
-              DELETE t_tabs INDEX sy-tabix.
+          " a tab whose product is gone goes with it.
+          "
+          " Built rather than deleted from: `DELETE t_tabs INDEX sy-tabix`
+          " inside `LOOP AT t_tabs` deletes by the LOOP'S OWN cursor, so the
+          " table shortens under the walk - the row after a deleted one is
+          " skipped, and deleting the last row leaves sy-tabix past the end
+          " (TABLE_INVALID_INDEX). Same defect the ports 352/354/298/377
+          " carried and the same fix.
+          DATA(keep) = t_tabs.
+          CLEAR t_tabs.
+          LOOP AT keep REFERENCE INTO DATA(tab).
+            IF line_exists( t_products[ productid = tab->productid ] ).
+              INSERT tab->* INTO TABLE t_tabs.
             ENDIF.
           ENDLOOP.
           view_display( ).

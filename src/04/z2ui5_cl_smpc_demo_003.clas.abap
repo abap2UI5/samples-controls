@@ -212,7 +212,12 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             )->a( n = `id`      v = `PlanningCalendarLegendButton`
             )->a( n = `icon`    v = `sap-icon://legend`
             )->a( n = `tooltip` v = `Open Planning Calendar legend`
-            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `$event.oSource.sId` ) ).
+            " the button's OWN id, not `$event.oSource.sId`: that resolves to
+            " the view-PREFIXED `mainView--PlanningCalendarLegendButton`, and
+            " popover_display( by_id = ) looks the anchor up inside the view,
+            " where the prefixed spelling matches nothing - so the event
+            " arrived, the handler ran, and no popover ever appeared
+            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `PlanningCalendarLegendButton` ) ).
 
     pc->ele( `views`
         )->ele( `PlanningCalendarView`
@@ -312,7 +317,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             )->a( n = `id`      v = `SinglePlanningCalendarLegendButton`
             )->a( n = `icon`    v = `sap-icon://legend`
             )->a( n = `tooltip` v = `Open Single Planning Calendar legend`
-            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `$event.oSource.sId` ) ).
+            " the button's own id - see the team calendar's legend button
+            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `SinglePlanningCalendarLegendButton` ) ).
 
     spc->ele( `views`
         )->tag( `SinglePlanningCalendarDayView`
