@@ -7,6 +7,52 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-14 (latest) — the Shopping Cart was never actually stored, and the test for it was right
+
+#209 ("No app class in this repository parses JSON any more", not journalled)
+took the removed framework reader out of `cart_restore( )` — `value` is bound
+two-way, so what the Storage control read is in `s_storage-value` before
+`on_event( )` runs and nothing needs parsing, which is the better answer and the
+one that stands. It also added exactly the right probe: reload, assert the cart
+comes back. That probe FAILS on main, with the message it was given —
+
+    FAIL  demo_004  the cart did not survive a reload - the stored value never
+                    reached s_storage-value
+
+— and it is not the read side. `localStorage` is EMPTY after adding a product, so
+there is nothing for the bound `value` to receive. Measured twice, on the commit
+before and the commit after: the browser never held the key at all.
+
+**The write.** `cart_refresh( )` passed `|${ client->_bind( s_storage ) }|` as the
+STORE_DATA argument, copied from abap2UI5/samples app 327 — where it works,
+because 327 wires that action INTO A VIEW ATTRIBUTE and UI5 resolves the binding
+there. Called from an event handler the same expression is queued and arrives as
+the literal text `${/S_STORAGE}`, so the frontend destructured
+`{ TYPE, PREFIX, KEY, VALUE }` out of a string, got four `undefined`s, and took
+the empty-VALUE branch: `oStorage.remove(KEY)`. No error, no console line —
+deleting a key is a legitimate thing to ask for. The action had been inert since
+the day it was written, through two changes that described the persistence as
+working, and no gate could see it: the view renders, the wire is in the XML, the
+handler runs.
+
+`storage_json( )` composes the payload as JSON instead (an argument that parses as
+JSON is embedded as real JSON by the event serializer), `entries_json( )` writes
+the rows and `json_escape( )` handles the two characters a JSON string cannot
+carry raw. `ty_t_entry` gets a name so the helper can take one. Measured after
+the fix: `state.key_-SHOPPING_CART` holds the cart, the reload probe passes, and
+all five demo apps are green.
+
+Two things worth keeping, beyond the rule in AGENTS §10:
+
+- **The probe was right and the diagnosis it suggested was wrong.** Its message
+  blames the read side, because that is what the change around it touched. A
+  failing assertion names a symptom; it does not name the cause.
+- **An action that works in one app can be inert in another.** The difference is
+  not the payload but WHERE the call sits — view attribute or handler — and
+  nothing in the call itself says which. That is the shape of the bug in
+  abap2UI5 apps generally, and the reason this is a §10 entry rather than a
+  sidecar note.
+
 ## 2026-09-14 — the demo apps are booted in a browser for the first time, and nine defects come out
 
 The five `src/04` demo apps had never run anywhere but in the render gate. That
