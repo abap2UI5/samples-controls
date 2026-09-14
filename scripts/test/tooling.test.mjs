@@ -649,7 +649,7 @@ test('validate-meta: an interaction module that cannot fail is rejected, comment
       "export default async (page, expect) => { await expect(page, 'x').toContainText('y'); };\n");
     const orphan = runIn(root, 'validate-meta.mjs');
     assert.equal(orphan.code, 1, 'an orphan module must fail');
-    assert.match(orphan.out, /matches no port sidecar .* orphan interaction module/);
+    assert.match(orphan.out, /matches no port sidecar.* orphan interaction module/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -1273,7 +1273,67 @@ test('e2e-changed: prose and generated artefacts boot nothing', async () => {
   const r = portsToRun(inert);
   assert.equal(r.all, false);
   assert.deepEqual(r.classes, []);
-  assert.match(r.reason, /no port, sidecar or interaction module changed/);
+  assert.match(r.reason, /no port, demo app, sidecar or interaction module changed/);
+});
+
+/*
+ * The src/04 demo apps. They are flat and sidecar-less, so the port pattern
+ * (two numeric levels) did not see them and a pull request touching only a demo
+ * app booted NOTHING - which is how six baked-in view flags reached main before
+ * 2026-09-14. Their registry is ui5/demoapps.json, so a change to it reaches
+ * all five.
+ */
+test('e2e-changed: a demo app, its interaction module and the registry all boot demo apps', async () => {
+  const { portsToRun } = await import('../e2e-changed.mjs');
+
+  assert.deepEqual(
+    portsToRun(['src/04/z2ui5_cl_smpc_demo_003.clas.abap']).classes,
+    ['z2ui5_cl_smpc_demo_003'],
+  );
+  assert.deepEqual(
+    portsToRun(['src/04/z2ui5_cl_smpc_demo_004.clas.xml']).classes,
+    ['z2ui5_cl_smpc_demo_004'],
+  );
+  assert.deepEqual(
+    portsToRun(['meta/interactions/z2ui5_cl_smpc_demo_001.mjs']).classes,
+    ['z2ui5_cl_smpc_demo_001'],
+  );
+
+  // the registry reaches every demo app, and only those
+  const registry = portsToRun(['ui5/demoapps.json']);
+  assert.equal(registry.all, false, 'the demo-app registry does not reach the 622 ports');
+  assert.deepEqual(registry.classes, Object.keys(
+    JSON.parse(fs.readFileSync(path.join(REPO, 'ui5/demoapps.json'), 'utf8')).ports,
+  ).sort());
+
+  // a port and a demo app in one change: both, sorted
+  assert.deepEqual(
+    portsToRun(['src/04/z2ui5_cl_smpc_demo_005.clas.abap', 'src/01/01/z2ui5_cl_smpc_app_462.clas.abap']).classes,
+    ['z2ui5_cl_smpc_app_462', 'z2ui5_cl_smpc_demo_005'],
+  );
+});
+
+/*
+ * And the other half of the same change: e2e-smoke takes the demo-app list from
+ * that registry, and validate-meta accepts an interaction module for each of
+ * those classes (they have no sidecar to match). Asserted against the real
+ * repository rather than the fixture, because the registry IS the contract.
+ */
+test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', () => {
+  const ports = Object.keys(JSON.parse(fs.readFileSync(path.join(REPO, 'ui5/demoapps.json'), 'utf8')).ports);
+  assert.ok(ports.length, 'the registry names at least one demo app');
+
+  for (const script of ['e2e-smoke.mjs', 'validate-meta.mjs']) {
+    const src = fs.readFileSync(path.join(REPO, 'scripts', script), 'utf8');
+    assert.match(src, /loadDemoApps/, `${script} must take the demo-app list from lib/demoapps.mjs`);
+  }
+
+  // every demo class in src/04 is mapped there (the generators fail otherwise,
+  // and the e2e list would silently miss it)
+  for (const f of fs.readdirSync(path.join(REPO, 'src/04'))) {
+    const m = /^(z2ui5_cl_smpc_demo_\d+)\.clas\.abap$/.exec(f);
+    if (m) assert.ok(ports.includes(m[1]), `${m[1]} is not mapped in ui5/demoapps.json`);
+  }
 });
 
 test('e2e-changed: a corpus-wide change answers `all` rather than a subset', async () => {

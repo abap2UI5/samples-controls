@@ -86,6 +86,24 @@ npm run e2e:build            # (re)build the transpiled backend — a port edite
 npm run e2e                  # boots each port headless, asserts boot+render+no-error
 ```
 
+The run covers the numbered ports, the overview app and the five `src/04`
+**demo apps** (from `ui5/demoapps.json`'s `ports` block). A single app is
+quicker to iterate on than the corpus: `E2E_ONLY` builds a backend with only
+the classes whose file name matches, and `--only` runs them.
+
+```bash
+E2E_ONLY='demo_' npm run e2e:build                 # ~4 minutes, five apps
+node scripts/e2e-smoke.mjs --only z2ui5_cl_smpc_demo_003 --strict
+```
+
+**Kill a backend that a crashed run left behind.** `e2e-smoke` starts its own
+server on port 3000 and kills it when it finishes — but a driver that throws
+half-way through leaves it listening, and every later run then talks to the
+OLD build while looking perfectly healthy. On 2026-09-14 that cost an hour:
+a fix was in `src/`, in the transpiled output and provably correct when the
+class was called directly, and the browser kept showing the pre-fix behaviour.
+`ps aux | grep express.mjs` is the check.
+
 `npm run e2e` takes two subsetting flags, and CI uses both:
 
 ```bash
@@ -97,7 +115,8 @@ The shard is taken round-robin over the SORTED class list, not in contiguous
 blocks: the ports are numbered in batch order, so blocks would put a whole
 library — and its whole class of failure — in one shard, and a shard that is
 always red stops being read. It is deterministic, so a red shard is
-reproducible with the same flag. The overview app rides with shard 1.
+reproducible with the same flag. The overview app and the demo apps ride with
+shard 1.
 
 `e2e-pr.yaml` runs the ports a pull request touches (`--only`, from
 `scripts/e2e-changed.mjs`) and `e2e-nightly.yaml` runs the corpus in four

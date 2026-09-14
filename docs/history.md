@@ -7,6 +7,92 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
+## 2026-09-14 — the demo apps are booted in a browser for the first time, and nine defects come out
+
+The five `src/04` demo apps had never run anywhere but in the render gate. That
+gate reconstructs a view and loads it once, which is exactly the blind spot the
+apps live in: a whole application is mostly state that changes AFTER the first
+render. This session booted all five against the transpiled backend and clicked
+through them next to the archived originals.
+
+**Nine defects, seven of them invisible to every static gate.**
+
+1. `demo_003` (Team Calendar): picking a team member showed the single calendar
+   and left the team calendar on screen. `visible b = check_team` is a VALUE
+   written into the XML, and `member_select( )` renders nothing; the negated
+   half WAS a live binding, which is why the way back looked correct.
+2. `demo_002` (Browse Orders): the filter info bar never appeared. Same cause —
+   its label updated (a live binding) inside a Toolbar whose `visible` was
+   baked in.
+3. `demo_004` (Shopping Cart): the search-result list held its rows invisibly
+   (same cause), and the category list it is supposed to replace stayed put —
+   the original's `_search( )` calls `setVisible` on both.
+4. `demo_001` (Manage Products): the object page's "Discontinued" status was
+   decided at startup, for a product nobody had opened yet.
+5. `demo_004`: the two cart buttons disagreed. `pressed` was a flag of its own,
+   so opening the cart column pressed the button on the page the user was on and
+   left the other one out. The original derives both from the layout
+   (`{= ${/layout}.startsWith('ThreeColumns') }`) — an expression binding, which
+   also cannot be written back, the trap a two-way bound `pressed` falls into
+   when the handler inverts it.
+6. `demo_004`: **no product could be opened by clicking it.** All five product
+   lists are `SingleSelectMaster`, and UI5's `ListItemBase.ontap` never fires
+   the item's `press` in that mode — it selects instead, whatever the type says.
+   The original wires the list's `selectionChange` for the desktop and keeps the
+   item press for the phone; the port had only the press. The whole navigation
+   of the showcase app was dead in a browser and green in every gate.
+7. `demo_004`: **the checkout could not leave the payment step.** The branching
+   Wizard's next step is an association the backend sets, and `pay_type` started
+   empty — the SegmentedButton's own default (Credit Card) is written into the
+   CLIENT model and never reaches ABAP. So the user who accepted the default got
+   no branch. `model_init( )` now seeds `SelectedPayment` / `SelectedDeliveryMethod`
+   the way the original's model does.
+8. Sort order, four lists: the worklist table (ProductName), the cart app's
+   categories (CategoryName), its search hits and its two cart lists (Name). The
+   originals sort on the list binding; the ports sent the mock's row order.
+9. `demo_005`: an empty result read `Posts (0)` where `onUpdateFinished` falls
+   back to the uncounted `Posts`.
+
+**Plus a literal sweep against the original bundles.** `demo_004` carried 20
+texts that were not the demo kit's: the home page title (`Shop` for
+`Product Catalog`), three panel headers, the cart list headers, five wizard step
+titles, seven field labels, the payment and delivery explanations (the original
+shows its conditions there, the port a one-liner), the order-completed message —
+and a bank account invented out of thin air (`SAP SE` / `Deutsche Bank` / a
+German IBAN) where the mock has `Singapore Hardware e-Commerce LTD`. The review
+page showed `creditCardStep`, the wizard step id it drives the branch with,
+where the original shows `Credit Card`.
+
+**What could not be fixed, and is declared instead.** `demo_003`'s single
+calendar opens on its Day view: the original selects the month from its
+controller, and `selectedView` is an association that neither binds nor has a
+whitelisted setter — set declaratively it logs "There is no such view", because
+UI5 resolves it while the views aggregation is still empty (the render gate
+caught that attempt, which is the gate working). Five more differences that were
+real but undeclared are now in the class headers: `demo_002`'s search matches
+the order number and the joined company name where the original filters the
+order's own `CustomerName`, and its amounts carry no thousands separator;
+`demo_001` gains an in-app back button the original does not have, and shows
+`ProductName` where the original renders a missing i18n key; `demo_003`'s single
+calendar draws the appointment info and picture its original binds from two
+paths that do not exist in its model.
+
+**The harness now boots them, so none of this can come back quietly.**
+`e2e-smoke` takes the demo-app list from `ui5/demoapps.json`'s `ports` block
+(the registry that already maps each class), they ride with shard 1 like the
+overview app, `validate-meta` accepts an interaction module for each, and
+`e2e-changed` maps `src/04/`, those modules and the registry itself so the PR
+job runs them. Five interaction modules assert exactly the classes of defect
+above — a bound `visible` that has to follow the round-trip, a list the search
+has to swap, two buttons that have to agree, a branch that has to exist for the
+default. The three cross-cutting rules are in AGENTS §10.
+
+**And one hour lost to a stale server.** A driver that threw half-way through
+left its backend listening on 3000; every run after it talked to the PRE-FIX
+build while looking healthy, so a fix that was provably right in the transpiled
+class kept "failing" in the browser. `ps aux | grep express.mjs` is now in
+E2E.md, next to the build-freshness warning it belongs with.
+
 ## 2026-09-12 — the shared provider is reverted: a sample is one snippet
 
 The provider of the entry below was built, measured and reverted the same

@@ -17,7 +17,18 @@
  * meta/interactions/<class>.mjs add a real click -> assert check as a richer
  * proof — extend them freely, but the boot+render+no-error gate already covers
  * every port. The overview app (not a numbered port) is checked last, with its
- * info-popover round-trip.
+ * info-popover round-trip, and so are the src/04 DEMO APPS.
+ *
+ * The demo apps are sidecar-less by construction (AGENTS section 3, `src/04`),
+ * so the port loop below — which walks meta/*.json — cannot see them, and until
+ * 2026-09-14 nothing booted them at all: the render gate stood in for the
+ * harness. That gate reconstructs a view; it cannot see a flag baked into the
+ * XML that no round-trip ever updates, and six of those had accumulated across
+ * the five apps (a team calendar that would not go away, a filter bar that
+ * never appeared, a search result list that stayed invisible). They are read
+ * from ui5/demoapps.json's `ports` block — the registry that already maps each
+ * class to the app it rebuilds — so a new demo app is covered the moment it is
+ * mapped there.
  *
  *   node scripts/e2e-smoke.mjs            advisory report
  *   node scripts/e2e-smoke.mjs --strict   exit 1 on any failing port
@@ -35,6 +46,7 @@ import { spawn } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { chromium } from 'playwright';
 import { resolveA2UI5 } from './lib-a2ui5.mjs';
+import { loadDemoApps } from './lib/demoapps.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
@@ -78,6 +90,11 @@ const SHARD = (() => {
 // the overview app is checked alongside the numbered ports (its interaction
 // module sits in meta/interactions/ like every other)
 const OVERVIEW = 'z2ui5_cl_smpc_app_000';
+
+/* the src/04 demo apps, from the registry that owns them. An unmapped class in
+ * src/04 already FAILS the generators (AGENTS section 3), so this list and the
+ * folder cannot drift apart. */
+const DEMO_APPS = Object.keys(loadDemoApps(ROOT).ports).sort();
 
 // richer per-port checks (optional): ONE MODULE PER PORT under
 // meta/interactions/<class>.mjs, each default-exporting
@@ -370,7 +387,22 @@ if ((!ONLY || ONLY.some((o) => OVERVIEW.endsWith(o))) && (!SHARD || SHARD.index 
   else console.log('pass  overview  (+interaction)');
 }
 
+/* the demo apps: the same generic gate plus their own interaction modules.
+ * They ride with shard 1 for the reason the overview does — five apps are not
+ * worth slicing, and a run that reported them n times would hide which shard
+ * actually failed. */
+let demosChecked = 0;
+for (const cls of DEMO_APPS) {
+  if (ONLY && !ONLY.some((o) => cls.endsWith(o))) continue;
+  if (SHARD && SHARD.index !== 1) continue;
+  demosChecked++;
+  const errs = await checkPortResilient(cls);
+  const name = cls.replace('z2ui5_cl_smpc_', '');
+  if (errs.length) { failed++; console.log(`FAIL  ${name}  ${errs[0]}`); }
+  else console.log(`pass  ${name}${INTERACTIONS[cls] ? '  (+interaction)' : ''}`);
+}
+
 await browser.close();
 backend.kill();
-console.log(`\ne2e-smoke: ${metas.length + overviewChecked} app(s), ${failed} failing.`);
+console.log(`\ne2e-smoke: ${metas.length + overviewChecked + demosChecked} app(s), ${failed} failing.`);
 if (STRICT && failed) process.exit(1);

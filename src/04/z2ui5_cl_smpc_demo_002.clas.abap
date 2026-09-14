@@ -42,6 +42,14 @@
 "!  - the share menu and the phone link open a mailto: / tel: URL from the
 "!    client, which is what sap.m.URLHelper does one layer down. Not verified
 "!    in a running system.
+"!  - the search matches the order NUMBER as well as the customer, and takes
+"!    the customer from the joined Customer/CompanyName. The original filters
+"!    Orders/CustomerName, the order's own copy of that name - which one mock
+"!    row leaves empty (order 3115), so a search for its customer finds it
+"!    here and not there. The tooltip of both says "order name".
+"!  - amounts carry two decimals and no thousands separator, where the
+"!    original's Currency type groups them for the browser's locale - the same
+"!    reason the dates are ISO.
 "!  - the i18n resource bundle becomes literals, and the busy handling has
 "!    nothing to do here - the server holds the data the view renders.
 "!
@@ -298,7 +306,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
         )->ele( `Toolbar`
             )->a( n = `id`      v = `filterBar`
             )->a( n = `active`  b = abap_true
-            )->a( n = `visible` b = filter_bar_visible
+            )->a( n = `visible` v = client->_bind( filter_bar_visible )
             )->a( n = `press`   v = client->_event( val = `OPEN_VIEW_SETTINGS` arg = `filter` )
 
             )->tag( `Title`
@@ -744,6 +752,19 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     det_items_title = COND #( WHEN t_items IS INITIAL THEN `Line Items` ELSE |Line Items ({ lines( t_items ) })| ).
 
     layout = COND #( WHEN check_fullscreen = abap_true THEN `MidColumnFullScreen` ELSE `TwoColumnsMidExpanded` ).
+
+    " what the original's ListSelector does after the route matched: the order
+    " on show is the selected row of the master list. A click already carries
+    " the flag back, a COLD DEEP LINK does not - list_refresh( ) ran before
+    " hash_apply( ) knew which order it is - and the list came up with nothing
+    " marked. An explicit work area rather than `FROM VALUE #( )`: see
+    " CLOSE_DETAIL on what the 702 downport makes of the inline form
+    DATA(clear_row) = VALUE ty_s_row( ).
+    MODIFY t_rows FROM clear_row TRANSPORTING selected WHERE selected = abap_true.
+    ASSIGN t_rows[ orderid = orderid ] TO FIELD-SYMBOL(<row>).
+    IF <row> IS ASSIGNED.
+      <row>-selected = abap_true.
+    ENDIF.
 
     " the router's navTo: a pushed history entry, and the deep link of the
     " original
