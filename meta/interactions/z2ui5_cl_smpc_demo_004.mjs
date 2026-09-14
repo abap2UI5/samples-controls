@@ -129,6 +129,28 @@ export default async (page, expect) => {
     return l('entryList').getItems().length === 2 && l('savedList').getItems().length === 0;
   }, 'Move to Cart did not put the row back');
 
+  /* THE CART SURVIVES A RESTART, which is the whole point of putting it in the
+   * browser's local storage - and the one thing about this app that only a
+   * SECOND page load can show. The z2ui5:Storage control reads the key back
+   * into its two-way bound `value`, so the restore is the framework's model
+   * write-back and not a parse: if the binding ever stopped carrying the value
+   * home, cart_restore( ) would assign two empty tables and the cart would
+   * come back empty - silently, with every static gate still green. */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--entryList$/.test(c.getId()));
+    return l && l.getItems().length === 2;
+  }, 'the cart did not survive a reload - the stored value never reached s_storage-value');
+  // the ROWS, not just the count: to_abap( iv_corresponding ) has to have filled
+  // the fields the view renders, not merely created two rows
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--entryList$/.test(c.getId()));
+    const items = l.getItems();
+    return items.some((i) => i.getTitle() === 'Astro Laptop 1516')
+      && items.every((i) => i.getTitle() && i.getNumber());
+  }, 'the restored cart rows came back without their fields - the write-back did not map the components');
+
   /* the checkout wizard. The payment step's next step is an ASSOCIATION, which
    * no binding carries: it is set from the backend and re-issued on every
    * render. Two things to prove, and the first one is why this is here at all -
