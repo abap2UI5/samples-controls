@@ -6288,9 +6288,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` document root to resolve against, so the port points at https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Declared 2026-08-21 for consistency, and RE-COUNTED 2026-08-23:` &&
             ` the sentence used to claim the rewrite was 'declared by all 77 ports that do it', which had stopped being true as the corpus grew past that day's snapshot - 126 ports do it now, and 17 of them`.
     text1 = text1 && ` declared it nowhere. Those 17 carry the declaration since today, so the claim holds again; a stale absolute count is what made it wrong, so this wording names the date the count was taken. // NOTE:` &&
-            ` The selectedItems payload is unmarshalled with z2ui5_cl_ajson, the framework's VENDORED ajson copy (src/00/01) - outside abap2UI5's released API (src/02), which the linter reports as non-released-api` &&
-            ` and which is waived on those two lines with an abap2ui5lint-disable-next-line naming the rule. Same reasoning and same waiver as app 298: there is no released JSON reader, and a sample class` &&
-            ` installed on its own cannot ship its own ajson copy. Revisit when the framework releases one.`.
+            ` The payload is read by hand - the frontend marshals each control into an object of its ID plus all its public properties, and this port walks that object for the fields it models. abap2UI5 releases` &&
+            ` no JSON reader and the vendored ajson copy is framework-internal (the linter's non-released-api rule reports it, correctly), so a targeted reader is the intended shape here; abap2UI5/samples` &&
+            ` Z2UI5_CL_SMP_APP_197 and _327 are the same pattern. It reads what the FRAMEWORK wrote, which is flat, and does not resolve escapes - a payload composed from free user input would need that.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.SelectDialog`                    name = `SelectDialog`                                  class = `z2ui5_cl_smpc_app_103` path = `src/02/01/z2ui5_cl_smpc_app_103.clas.abap`
         score = 5
@@ -6504,10 +6504,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` NOTE: onPress reproduced 1:1 since 2026-08-21. The port toasted a constant 'Day selection mode toggled' before and carried NO dateSelectionMode at all, so the one behaviour` &&
             ` SinglePlanningCalendarDateSelection exists to demonstrate was silently absent and undeclared - found by the review sweep. Both halves of the original handler are bindable properties, so both are held`.
     text1 = text1 && ` in the model and bound two-way rather than driven through a frontend action (the prefer-a-bindable-property rule): dateSelectionMode flips SingleSelect <-> MultiSelect and the ToggleButton's tooltip` &&
-            ` follows with 'Enable multi-day selection' / 'Disable multi-day selection', exactly the strings the original's setTooltip uses. // NOTE: The selectedDates payload is unmarshalled with z2ui5_cl_ajson,` &&
-            ` the framework's VENDORED ajson copy (src/00/01) - outside abap2UI5's released API (src/02), which the linter reports as non-released-api and which is waived on those two lines with an` &&
-            ` abap2ui5lint-disable-next-line naming the rule. Same reasoning and same waiver as apps 103, 298 and 307: there is no released JSON reader, and a sample class installed on its own cannot ship its own` &&
-            ` ajson copy. Revisit when the framework releases one.`.
+            ` follows with 'Enable multi-day selection' / 'Disable multi-day selection', exactly the strings the original's setTooltip uses. // NOTE: The payload is read by hand - the frontend marshals each` &&
+            ` control into an object of its ID plus all its public properties, and this port walks that object for the fields it models. abap2UI5 releases no JSON reader and the vendored ajson copy is` &&
+            ` framework-internal (the linter's non-released-api rule reports it, correctly), so a targeted reader is the intended shape here; abap2UI5/samples Z2UI5_CL_SMP_APP_197 and _327 are the same pattern. It` &&
+            ` reads what the FRAMEWORK wrote, which is flat, and does not resolve escapes - a payload composed from free user input would need that.`.
     text2 = `Formatter.DateCreateObject is referenced via core:require (UI5 >= 1.74). sap.m.SinglePlanningCalendar and its DayView/WorkWeekView/WeekView are since 1.61 and MonthView since 1.69 (corrected` &&
             ` 2026-08-23 - all four had been listed at 1.61; both figures sit inside the 1.71 floor, so scope and the version floor are unaffected, but the pinned fact was wrong). Also the SinglePlanningCalendar` &&
             ` events weekNumberPress and selectedDatesChange (@since 1.123) are kept 1:1 from the original view; newer than 1.71, declared per the property-171 policy. // the icon` &&
@@ -7351,19 +7351,19 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` reading, so it changed nothing observable. // IMPROVISED: The context-menu ToggleButton reports its state as a toast instead of attaching a sap.m.Menu as the table's contextMenu aggregation. The` &&
             ` original's onToggleContextMenu builds the Menu imperatively in the controller and swaps it in and out; the aggregation itself is not driven by any bindable property, and the sample's menu carries no` &&
             ` behaviour beyond opening. // NOTE: Device.system.desktop adds sapUiSizeCompact to each dialog in the original. The port drops that: abap2UI5 exposes the device data as {device>/system/desktop}, but a`.
-    text1 = text1 && ` style class is not a bindable property, and the density is a global app decision rather than a per-dialog one here. // NOTE: the ViewSettingsDialog confirm payloads are unmarshalled with` &&
-            ` z2ui5_cl_ajson, the framework's VENDORED ajson copy (src/00/01) - outside abap2UI5's released API (src/02), which the linter reports as non-released-api and which is waived on those two lines with an` &&
-            ` abap2ui5lint-disable-next-line naming the rule. There is no released alternative: src/02 carries the http handler, the view builder and the four interfaces, none of which parses a string, and a` &&
-            ` sample class installed on its own cannot ship its own ajson copy. The realistic alternative is a hand-rolled parser for a payload UI5 defines, which would be the more fragile of the two. Revisit when` &&
-            ` the framework releases a JSON reader. // NOTE: onResize's oColumn.setWidth( width + 'px' ) is reproduced through a bound Column.width: the QuickResize change event carries ${$parameters>/width} and` &&
-            ` the backend writes the CSS size. An unset value is a valid CSSSize (the type's 0* branch matches the empty string), so the column keeps its automatic width until the first drag, as in the original.`.
-    text1 = text1 && ` Until 2026-08-21 this wire round-tripped only to show a 'Column resized' toast the original does not have, behind a comment claiming onResize merely logs. // IMPROVISED: onBeforeColumnMenuOpen is` &&
-            ` dropped, and the Menu.beforeOpen attribute that wired it with it. It does oQuickResize.setWidth( parseInt( getComputedStyle( oColumn.getDomRef( ) ).width ) ) - it reads the column's RENDERED width` &&
-            ` out of the DOM so the resize control opens showing the current size. A rendered pixel width has no server-side equivalent, and the round-trip that used to be wired here did nothing at all with it, so` &&
-            ` the QuickResize opens at its own default instead. The port previously kept the wire as an empty RETURN branch, beside a comment saying the original 'only inspects the opener'. // NOTE: **e2e-caught` &&
-            ` 2026-08-22 on app 571 (this port has no interaction module of its own; the generic boot-and-render gate is all that runs for it)**: the sort ran but the table came back in its original order. The` &&
-            ` cause is the transpiled backend: ``SORT <itab> BY (field)`` - the DYNAMIC component form - loses its BY clause entirely (the emitted JS is ``abap.statements.sort(t, {})``), so every sort was a no-op.`.
-    text1 = text1 && ` The component is named statically per field now, in a CASE. Apps 298, 362 and 571 all carried the dynamic form and all three are fixed.`.
+    text1 = text1 && ` style class is not a bindable property, and the density is a global app decision rather than a per-dialog one here. // NOTE: The payload is read by hand - the frontend marshals each control into an` &&
+            ` object of its ID plus all its public properties, and this port walks that object for the fields it models. abap2UI5 releases no JSON reader and the vendored ajson copy is framework-internal (the` &&
+            ` linter's non-released-api rule reports it, correctly), so a targeted reader is the intended shape here; abap2UI5/samples Z2UI5_CL_SMP_APP_197 and _327 are the same pattern. It reads what the` &&
+            ` FRAMEWORK wrote, which is flat, and does not resolve escapes - a payload composed from free user input would need that. // NOTE: onResize's oColumn.setWidth( width + 'px' ) is reproduced through a` &&
+            ` bound Column.width: the QuickResize change event carries ${$parameters>/width} and the backend writes the CSS size. An unset value is a valid CSSSize (the type's 0* branch matches the empty string),` &&
+            ` so the column keeps its automatic width until the first drag, as in the original. Until 2026-08-21 this wire round-tripped only to show a 'Column resized' toast the original does not have, behind a`.
+    text1 = text1 && ` comment claiming onResize merely logs. // IMPROVISED: onBeforeColumnMenuOpen is dropped, and the Menu.beforeOpen attribute that wired it with it. It does oQuickResize.setWidth( parseInt(` &&
+            ` getComputedStyle( oColumn.getDomRef( ) ).width ) ) - it reads the column's RENDERED width out of the DOM so the resize control opens showing the current size. A rendered pixel width has no` &&
+            ` server-side equivalent, and the round-trip that used to be wired here did nothing at all with it, so the QuickResize opens at its own default instead. The port previously kept the wire as an empty` &&
+            ` RETURN branch, beside a comment saying the original 'only inspects the opener'. // NOTE: **e2e-caught 2026-08-22 on app 571 (this port has no interaction module of its own; the generic` &&
+            ` boot-and-render gate is all that runs for it)**: the sort ran but the table came back in its original order. The cause is the transpiled backend: ``SORT <itab> BY (field)`` - the DYNAMIC component` &&
+            ` form - loses its BY clause entirely (the emitted JS is ``abap.statements.sort(t, {})``), so every sort was a no-op. The component is named statically per field now, in a CASE. Apps 298, 362 and 571`.
+    text1 = text1 && ` all carried the dynamic form and all three are fixed.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableViewSettingsDialog`                       class = `z2ui5_cl_smpc_app_298` path = `src/02/01/z2ui5_cl_smpc_app_298.clas.abap`
         score = 5
@@ -11029,10 +11029,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` labelMarginLeft classes the view carries had no rule behind them and the port rendered flush against the page edge where the sample renders padded. The sheet now sits at ui5/sap.ui.unified/style.css` &&
             ` (closing the AGENTS section 4 archive gap) and only the rules this view actually uses are injected. Found by scripts/probes/orphan-style-class-probe.mjs. Corrected 2026-08-23: the sheet's .sap-phone` &&
             ` .sapUiCal{position:relative} rule was dropped as "not used by the view" and is injected now - sapUiCal is written by CalendarRenderer on the Calendar's own root, not by the author, so it does reach`.
-    text1 = text1 && ` this view on a phone. Same sweep as apps 139/177/220/240/305/306/307/308. The sheet's remaining rule targets .sapUiCancel, which no OpenUI5 renderer writes. // NOTE: The selectedDates payload is` &&
-            ` unmarshalled with z2ui5_cl_ajson, the framework's VENDORED ajson copy (src/00/01) - outside abap2UI5's released API (src/02), which the linter reports as non-released-api and which is waived on those` &&
-            ` two lines with an abap2ui5lint-disable-next-line naming the rule. Same reasoning and same waiver as apps 103 and 298: there is no released JSON reader, and a sample class installed on its own cannot` &&
-            ` ship its own ajson copy. Revisit when the framework releases one.`.
+    text1 = text1 && ` this view on a phone. Same sweep as apps 139/177/220/240/305/306/307/308. The sheet's remaining rule targets .sapUiCancel, which no OpenUI5 renderer writes. // NOTE: The payload is read by hand - the` &&
+            ` frontend marshals each control into an object of its ID plus all its public properties, and this port walks that object for the fields it models. abap2UI5 releases no JSON reader and the vendored` &&
+            ` ajson copy is framework-internal (the linter's non-released-api rule reports it, correctly), so a targeted reader is the intended shape here; abap2UI5/samples Z2UI5_CL_SMP_APP_197 and _327 are the` &&
+            ` same pattern. It reads what the FRAMEWORK wrote, which is flat, and does not resolve escapes - a payload composed from free user input would need that.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.unified`     control = `sap.ui.unified.Calendar`               name = `CalendarMultipleDaySelection`                  class = `z2ui5_cl_smpc_app_307` path = `src/01/02/z2ui5_cl_smpc_app_307.clas.abap`
         score = 4

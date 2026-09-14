@@ -49,7 +49,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the ViewSettingsDialog confirm payloads are unmarshalled with z2ui5_cl_ajson, the framework's VENDORED ajson copy (src/00/01) - outside abap2UI5's released API (src/02), which the linter reports as non-released-api and which is waived on those two lines with an abap2ui5lint-disable-next-line naming the rule. There is no released alternative: src/02 carries the http handler, the view builder and the four interfaces, none of which parses a string, and a sample class installed on its own cannot ship its own ajson copy. The realistic alternative is a hand-rolled parser for a payload UI5 defines, which would be the more fragile of the two. Revisit when the framework releases a JSON reader."
+      "what": "The payload is read by hand - the frontend marshals each control into an object of its ID plus all its public properties, and this port walks that object for the fields it models. abap2UI5 releases no JSON reader and the vendored ajson copy is framework-internal (the linter's non-released-api rule reports it, correctly), so a targeted reader is the intended shape here; abap2UI5/samples Z2UI5_CL_SMP_APP_197 and _327 are the same pattern. It reads what the FRAMEWORK wrote, which is flat, and does not resolve escapes - a payload composed from free user input would need that."
     },
     {
       "type": "NOTE",

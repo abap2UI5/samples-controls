@@ -200,28 +200,28 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    IF json(1) <> `[`.
-      json = |[{ json }]|.
-    ENDIF.
+    " a marshalled DateRange carries ALL its public properties (ID,
+    " startDate, endDate); this port models exactly one of them.
+    "
+    " Read by hand: abap2UI5 releases no JSON parser, and the vendored ajson
+    " copy is framework-internal (the linter's non-released-api rule reports
+    " it, correctly). For ONE property of a flat projection that is the whole
+    " job - walk every `"startdate":"` and take what stands up to the next quote.
+    " The same reader as Z2UI5_CL_SMP_APP_197 in abap2UI5/samples, and the
+    " same limit: it reads what the FRAMEWORK wrote, which is flat, and it
+    " would need to resolve escapes for a payload composed from free text.
+    DATA(marker) = |"startdate":"|.
+    DATA(rest)   = json.
 
-    TRY.
-        " a marshalled DateRange carries ALL its public properties (ID,
-        " startDate, endDate), so only the one field this port models is
-        " mapped - a plain to_abap( ) fails on the first extra one
-        "
-        " z2ui5_cl_ajson is the framework's VENDORED ajson copy and lives
-        " outside the released API (src/02), so it may be renamed or
-        " restructured without notice - the linter says so, and it is right.
-        " There is no released JSON reader to use instead, the same reasoning
-        " as apps 103 and 298; declared as a deviation in the sidecar
-        " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( json
-          )->to_abap_corresponding_only(
-          )->to_abap( IMPORTING ev_container = result ).
-        " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
-      CATCH z2ui5_cx_ajson_error.
-        result = VALUE #( ).
-    ENDTRY.
+    DO.
+      DATA(offset) = find( val = rest sub = marker case = abap_false ).
+      IF offset < 0.
+        EXIT.
+      ENDIF.
+
+      rest = substring( val = rest off = offset + strlen( marker ) ).
+      INSERT VALUE #( startdate = substring_before( val = rest sub = `"` ) ) INTO TABLE result.
+    ENDDO.
 
   ENDMETHOD.
 

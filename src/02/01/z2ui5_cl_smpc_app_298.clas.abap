@@ -69,6 +69,23 @@ CLASS z2ui5_cl_smpc_app_298 DEFINITION PUBLIC.
         val           TYPE string
       RETURNING
         VALUE(result) TYPE ty_t_event_item.
+    METHODS json_objects
+      IMPORTING
+        json          TYPE string
+      RETURNING
+        VALUE(result) TYPE string_table.
+    METHODS json_get_value
+      IMPORTING
+        json          TYPE string
+        name          TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS json_get_bool
+      IMPORTING
+        json          TYPE string
+        name          TYPE string
+      RETURNING
+        VALUE(result) TYPE abap_bool.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -546,36 +563,104 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    IF json(1) <> `[`.
-      json = |[{ json }]|.
-    ENDIF.
-
-    TRY.
-        " the frontend marshals a control with ALL its public properties
-        " (enabled, textDirection, wrapping, ...), so only the fields this port
-        " models are mapped - a plain to_abap( ) fails on the first extra one
-        "
-        " z2ui5_cl_ajson is the framework's VENDORED ajson copy and lives
-        " outside the released API (src/02), so it may be renamed or
-        " restructured without notice - the linter says so, and it is right.
-        " There is no released JSON reader to use instead: src/02 carries the
-        " http handler, the view builder and the four interfaces, and none of
-        " them parses a string. A sample class is installed on its own and
-        " cannot carry its own ajson copy either, so the choice here is this
-        " call or a hand-rolled parser for a payload UI5 defines - and a
-        " hand-rolled one would be the more fragile of the two. Declared as a
-        " deviation in the sidecar; revisit when the framework releases a JSON
-        " reader.
-        " abap2ui5lint-disable-next-line non-released-api -- no released JSON reader exists; see the comment above and the sidecar deviation
-        z2ui5_cl_ajson=>parse( json
-          )->to_abap_corresponding_only(
-          )->to_abap( IMPORTING ev_container = result ).
-        " abap2ui5lint-disable-next-line non-released-api -- the exception of the call above
-      CATCH z2ui5_cx_ajson_error.
-        result = VALUE #( ).
-    ENDTRY.
+    " The frontend marshals each control into an object of its ID plus ALL
+    " its public properties, so this reads the fields the port models and
+    " ignores the rest - which is what the corresponding-only mapping used
+    " to do. Written by hand: there is no released JSON parser, and the
+    " vendored ajson copy is framework-internal.
+    LOOP AT json_objects( json ) INTO DATA(object).
+      INSERT VALUE #( id       = json_get_value( json = object
+                                                 name = `id` )
+                      key      = json_get_value( json = object
+                                                 name = `key` )
+                      text     = json_get_value( json = object
+                                                 name = `text` )
+                      selected = json_get_bool( json = object
+                                                name = `selected` ) ) INTO TABLE result.
+    ENDLOOP.
 
   ENDMETHOD.
+
+
+  METHOD json_objects.
+
+    " Cut the array into its objects. abap2UI5 releases no JSON parser and
+    " the vendored ajson copy is framework-internal (the linter's
+    " non-released-api rule reports it, correctly), so the split is one
+    " character walk - and it is a walk rather than a SPLIT on `},{` because
+    " a brace inside a STRING is text, not structure.
+    DATA(depth)     = 0.
+    DATA(in_string) = abap_false.
+    DATA(escaped)   = abap_false.
+    DATA(start)     = 0.
+    DATA(pos)       = 0.
+    DATA(length)    = strlen( json ).
+
+    WHILE pos < length.
+      DATA(char) = substring( val = json off = pos len = 1 ).
+
+      IF escaped = abap_true.
+        escaped = abap_false.
+      ELSEIF in_string = abap_true AND char = `\`.
+        escaped = abap_true.
+      ELSEIF char = `"`.
+        in_string = xsdbool( in_string = abap_false ).
+      ELSEIF in_string = abap_false AND char = `{`.
+        IF depth = 0.
+          start = pos.
+        ENDIF.
+        depth = depth + 1.
+      ELSEIF in_string = abap_false AND char = `}`.
+        depth = depth - 1.
+        IF depth = 0.
+          INSERT substring( val = json off = start len = pos - start + 1 ) INTO TABLE result.
+        ENDIF.
+      ENDIF.
+
+      pos = pos + 1.
+    ENDWHILE.
+
+  ENDMETHOD.
+
+
+  METHOD json_get_value.
+
+    " One string field of ONE object: find `"<name>":"` and take what stands
+    " up to the next quote. The search is case-insensitive because the key is
+    " the UI5 property name (camelCase) and this reads it in lower case.
+    " Same reader as Z2UI5_CL_SMP_APP_327 in abap2UI5/samples, and the same
+    " limit: it reads what the FRAMEWORK wrote and does not resolve escapes,
+    " which a payload composed from free user input would need.
+    DATA(marker) = |"{ name }":"|.
+
+    DATA(offset) = find( val = json sub = marker case = abap_false ).
+    IF offset < 0.
+      RETURN.
+    ENDIF.
+
+    result = substring_before( val = substring( val = json
+                                                off = offset + strlen( marker ) )
+                               sub = `"` ).
+
+  ENDMETHOD.
+
+
+  METHOD json_get_bool.
+
+    " A JSON boolean carries no quotes, so the marker stops at the colon and
+    " what follows is `true` or `false` - the mapping ajson made onto
+    " abap_bool, written out.
+    DATA(marker) = |"{ name }":|.
+
+    DATA(offset) = find( val = json sub = marker case = abap_false ).
+    IF offset < 0.
+      RETURN.
+    ENDIF.
+
+    result = xsdbool( substring( val = json off = offset + strlen( marker ) ) CP `true*` ).
+
+  ENDMETHOD.
+
 
   METHOD model_init.
 
@@ -834,5 +919,6 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
     t_filtered = t_products.
 
   ENDMETHOD.
+
 
 ENDCLASS.
