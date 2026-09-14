@@ -299,7 +299,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
             )->a( n = `id`      v = `filterBar`
             )->a( n = `active`  b = abap_true
             )->a( n = `visible` b = filter_bar_visible
-            )->a( n = `press`   v = client->_event( `OPEN_VIEW_SETTINGS` )
+            )->a( n = `press`   v = client->_event( val = `OPEN_VIEW_SETTINGS` arg = `filter` )
 
             )->tag( `Title`
                 )->a( n = `id`   v = `filterBarLabel`
@@ -329,12 +329,12 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                 )->a( n = `id`    v = `filterButton`
                 )->a( n = `icon`  v = `sap-icon://filter`
                 )->a( n = `type`  v = `Transparent`
-                )->a( n = `press` v = client->_event( `OPEN_VIEW_SETTINGS` )
+                )->a( n = `press` v = client->_event( val = `OPEN_VIEW_SETTINGS` arg = `filter` )
             )->tag( `Button`
                 )->a( n = `id`    v = `groupButton`
                 )->a( n = `icon`  v = `sap-icon://group-2`
                 )->a( n = `type`  v = `Transparent`
-                )->a( n = `press` v = client->_event( `OPEN_VIEW_SETTINGS` ) ).
+                )->a( n = `press` v = client->_event( val = `OPEN_VIEW_SETTINGS` arg = `group` ) ).
 
     list->ele( `items`
         )->ele( `ObjectListItem`
@@ -620,8 +620,18 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
         ENDIF.
 
       WHEN `OPEN_VIEW_SETTINGS`.
+        " onOpenViewSettings picks the dialog PAGE from the button that fired
+        " it - a button id matching "sort"/"group" opens that tab, everything
+        " else (the info bar included, which is a Toolbar rather than a
+        " Button) opens "filter". The port carries the same decision as the
+        " event argument, so the group button lands on the group page instead
+        " of on the dialog's first one
+        DATA(dialog_tab) = client->get_event_arg( ).
+        IF dialog_tab IS INITIAL.
+          dialog_tab = `filter`.
+        ENDIF.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `viewSettingsDialog` ) ( `open` ) ) ).
+                                  t_arg = VALUE #( ( `viewSettingsDialog` ) ( `open` ) ( dialog_tab ) ) ).
 
       WHEN `VIEW_SETTINGS`.
         " the selected filter item's TEXT for the info bar, and the chosen

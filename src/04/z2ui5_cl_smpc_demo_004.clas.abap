@@ -24,7 +24,11 @@
 "!    where z2ui5_cl_ui5_json parses it into the bound tables. So a closed
 "!    browser loses nothing here either - and the backend still sees the
 "!    cart on every round-trip, which is where a price, a reservation or an
-"!    order would be decided.
+"!    order would be decided. Only a round-trip that CHANGED the cart writes
+"!    (cart_refresh); startup and the restore mirror the tables into the
+"!    bound structure without writing (cart_mirror), and the read wire
+"!    carries check_queue_last - the two halves of the restart that did not
+"!    survive until 2026-09-14.
 "!  - the formatter module is business logic and moves to the backend: the
 "!    price format, the status text and its ValueState, the cart total.
 "!  - search and category filtering run in ABAP, where the data is.
@@ -33,8 +37,12 @@
 "!    them: one list per panel instead of a hand-built cell per product.
 "!    Its carousel is dropped with the four teaser images it shows. The
 "!    Emphasized cart-3 button the original puts on every tile stays, as an
-"!    ACTIVE ObjectAttribute on the row - an ObjectListItem takes no button,
-"!    and without it the welcome page had no way to fill the cart at all.
+"!    ACTIVE ObjectStatus in the row's secondStatus - an ObjectListItem takes
+"!    no button, and without it the welcome page had no way to fill the cart
+"!    at all. ObjectStatus rather than the ACTIVE ObjectAttribute this was
+"!    until 2026-09-14: an ObjectAttribute carries no icon, so the original's
+"!    cart-3 was missing from every row - and the favorites panel had no
+"!    add-to-cart at all, where the original has it on all three sections.
 "!  - the wizard validates in ABAP rather than through the Wizard's own
 "!    validated/setNextStep API, and reports with a MessageBox - which is
 "!    what the original's own validation does for the credit-card step.
@@ -242,6 +250,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
       IMPORTING
         productid TYPE string.
     METHODS cart_refresh.
+    METHODS cart_mirror.
     METHODS cart_restore
       IMPORTING
         json TYPE string.
@@ -307,8 +316,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `prefix`   v = client->_bind( s_storage-prefix )
         )->a( n = `key`      v = client->_bind( s_storage-key )
         )->a( n = `value`    v = client->_bind( s_storage-value )
-        )->a( n = `finished` v = client->_event( val = `CART_LOADED`
-                                                 arg = `${$parameters>/value}` ) ).
+        )->a( n = `finished` v = client->_event( val    = `CART_LOADED`
+                                                 arg    = `${$parameters>/value}`
+                                                 " the control reads and fires while the INITIAL view
+                                                 " renders - i.e. while that very roundtrip still counts
+                                                 " as in flight, which drops an ordinary wire's event
+                                                 " (View1.eB busy guard) and with it the whole restore.
+                                                 " check_queue_last keeps it and dispatches it once the
+                                                 " response has landed
+                                                 s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
 
     DATA(fcl) = view->ele( `App`
         )->a( n = `id` v = `app`
@@ -525,24 +541,31 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
                         )->a( n = `text` v = `{SUPPLIERNAME}`
-                    " Add to cart, from the list itself. The original puts an
-                    " Emphasized cart-3 Button on every welcome tile, and this
-                    " rebuild replaced its carousel with two lists (see the
-                    " class header) - which dropped the only way to fill the
-                    " cart without opening a product first. An ObjectListItem
-                    " takes no button, so the action is an ACTIVE
-                    " ObjectAttribute: the same idiom the original itself uses
-                    " for "Compare With" in its category list
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `active` b = abap_true
-                        )->a( n = `text`   v = `Add to Cart`
-                        )->a( n = `press`  v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
 
                 )->end(
                 )->ele( `firstStatus`
                     )->tag( `ObjectStatus`
                         )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}` ).
+                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                " Add to cart, from the list itself. The original puts an
+                " Emphasized cart-3 Button on every welcome tile, and this
+                " rebuild replaced its carousel with three lists (see the
+                " class header) - which dropped the only way to fill the cart
+                " without opening a product first. An ObjectListItem takes no
+                " button, so the action is an ACTIVE ObjectStatus in the free
+                " secondStatus slot - active/press are @since 1.54, and unlike
+                " the ACTIVE ObjectAttribute this used to be it carries the
+                " original's cart-3 ICON
+
+                )->end(
+                )->ele( `secondStatus`
+                    )->tag( `ObjectStatus`
+                        )->a( n = `icon`    v = `sap-icon://cart-3`
+                        )->a( n = `text`    v = `Add to Cart`
+                        )->a( n = `active`  b = abap_true
+                        )->a( n = `tooltip` v = `Add to Shopping Cart`
+                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
 
     DATA(viewed) = content->ele( `Panel`
         )->a( n = `id`               v = `panelViewed`
@@ -570,24 +593,31 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
                         )->a( n = `text` v = `{SUPPLIERNAME}`
-                    " Add to cart, from the list itself. The original puts an
-                    " Emphasized cart-3 Button on every welcome tile, and this
-                    " rebuild replaced its carousel with two lists (see the
-                    " class header) - which dropped the only way to fill the
-                    " cart without opening a product first. An ObjectListItem
-                    " takes no button, so the action is an ACTIVE
-                    " ObjectAttribute: the same idiom the original itself uses
-                    " for "Compare With" in its category list
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `active` b = abap_true
-                        )->a( n = `text`   v = `Add to Cart`
-                        )->a( n = `press`  v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
 
                 )->end(
                 )->ele( `firstStatus`
                     )->tag( `ObjectStatus`
                         )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}` ).
+                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                " Add to cart, from the list itself. The original puts an
+                " Emphasized cart-3 Button on every welcome tile, and this
+                " rebuild replaced its carousel with three lists (see the
+                " class header) - which dropped the only way to fill the cart
+                " without opening a product first. An ObjectListItem takes no
+                " button, so the action is an ACTIVE ObjectStatus in the free
+                " secondStatus slot - active/press are @since 1.54, and unlike
+                " the ACTIVE ObjectAttribute this used to be it carries the
+                " original's cart-3 ICON
+
+                )->end(
+                )->ele( `secondStatus`
+                    )->tag( `ObjectStatus`
+                        )->a( n = `icon`    v = `sap-icon://cart-3`
+                        )->a( n = `text`    v = `Add to Cart`
+                        )->a( n = `active`  b = abap_true
+                        )->a( n = `tooltip` v = `Add to Shopping Cart`
+                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
 
     DATA(favorite) = content->ele( `Panel`
         )->a( n = `id`               v = `panelFavorite`
@@ -620,7 +650,26 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->ele( `firstStatus`
                     )->tag( `ObjectStatus`
                         )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}` ).
+                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                " Add to cart, from the list itself. The original puts an
+                " Emphasized cart-3 Button on every welcome tile, and this
+                " rebuild replaced its carousel with three lists (see the
+                " class header) - which dropped the only way to fill the cart
+                " without opening a product first. An ObjectListItem takes no
+                " button, so the action is an ACTIVE ObjectStatus in the free
+                " secondStatus slot - active/press are @since 1.54, and unlike
+                " the ACTIVE ObjectAttribute this used to be it carries the
+                " original's cart-3 ICON
+
+                )->end(
+                )->ele( `secondStatus`
+                    )->tag( `ObjectStatus`
+                        )->a( n = `icon`    v = `sap-icon://cart-3`
+                        )->a( n = `text`    v = `Add to Cart`
+                        )->a( n = `active`  b = abap_true
+                        )->a( n = `tooltip` v = `Add to Shopping Cart`
+                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
 
   ENDMETHOD.
 
@@ -1337,7 +1386,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cart_refresh.
+  METHOD cart_mirror.
 
     " the totalPrice formatter of the original, computed where the prices are
     DATA total TYPE ty_amount.
@@ -1356,10 +1405,23 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     cart_total = |Total: { price_text( |{ total }| ) } EUR|.
 
-    " the write half: the same two tables into the browser's local storage,
-    " under the key the original uses. The mirror is what keeps the reading
-    " control quiet - it compares by value and fires only on a difference
+    " the mirror is what keeps the reading control quiet - it compares by
+    " value and fires only on a difference
     s_storage-value = VALUE #( cart = t_cart saved = t_saved ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_refresh.
+
+    " the mirror plus the WRITE half: the same two tables into the browser's
+    " local storage, under the key the original uses. Only a round-trip that
+    " CHANGED the cart writes. Startup and the restore itself mirror without
+    " writing (cart_mirror): the app knows nothing about the browser's cart
+    " when model_init runs, and a write there put an empty cart over the
+    " stored one before the reading control had reported it - which is
+    " exactly the cart that went missing on every app restart
+    cart_mirror( ).
     client->follow_up_action( val   = client->cs_event-store_data
                               t_arg = VALUE #( ( |${ client->_bind( s_storage ) }| ) ) ).
 
@@ -1398,7 +1460,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                       quantity     = reader->get_integer( |{ saved_path }/QUANTITY| ) ) INTO TABLE t_saved.
     ENDLOOP.
 
-    cart_refresh( ).
+    " mirror, no write: what was just read IS what is stored, and the mirror
+    " is what stops the reading control from reporting it again on the next
+    " render
+    cart_mirror( ).
 
   ENDMETHOD.
 
@@ -2035,7 +2100,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     s_storage-type = `local`.
     s_storage-key  = `SHOPPING_CART`.
 
-    cart_refresh( ).
+    " mirror only - the browser's cart has not been read yet, so writing here
+    " would put this empty one over it
+    cart_mirror( ).
 
   ENDMETHOD.
 
