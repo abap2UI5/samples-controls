@@ -328,8 +328,11 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
                                             ELSE post-flagged ) ) INTO TABLE t_rows.
     ENDLOOP.
 
-    SORT t_rows BY title.
-    table_title = |Posts ({ lines( t_rows ) })|.
+    SORT t_rows BY title AS TEXT.
+
+    " onUpdateFinished takes the counted title only when the table HAS rows and
+    " falls back to the plain worklistTableTitle when it is empty
+    table_title = COND #( WHEN t_rows IS INITIAL THEN `Posts` ELSE |Posts ({ lines( t_rows ) })| ).
 
   ENDMETHOD.
 

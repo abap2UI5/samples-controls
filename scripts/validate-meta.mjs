@@ -20,6 +20,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { portPath, catFolder, libFolder, sampleLib, CAT_CTEXT, LIB_CTEXT } from './lib-packages.mjs';
 import { walkFiles } from './lib/src-tree.mjs';
+import { loadDemoApps } from './lib/demoapps.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
@@ -338,9 +339,12 @@ for (const cls of sidecarSet) if (!portSet.has(cls)) err(`meta/${cls}.json has n
 
 /* e2e interaction modules — meta/interactions/<class>.mjs (see the README
  * there; loaded by scripts/e2e-smoke.mjs, keyed by filename).
- *   - HARD: every module must belong to a port sidecar (or the overview app)
- *     — an orphan module is a renamed/deleted port's leftover and would never
- *     run again.
+ *   - HARD: every module must belong to a port sidecar, to the overview app or
+ *     to a src/04 demo app — an orphan module is a renamed/deleted port's
+ *     leftover and would never run again. The demo apps are sidecar-less by
+ *     construction (AGENTS section 3), so their keys come from the registry
+ *     that does name them, ui5/demoapps.json's `ports` block; e2e-smoke reads
+ *     the same list to decide what to boot.
  *   - HARD: every module must be able to FAIL. A module that only reads the
  *     DOM and console.logs it passes whatever the port does, and the whole
  *     coverage bookkeeping then counts the port as verified: the LIVE_TEST gap
@@ -375,6 +379,7 @@ for (const cls of sidecarSet) if (!portSet.has(cls)) err(`meta/${cls}.json has n
  *     as long as the backlog is non-empty. */
 const INTERACTIONS_DIR = path.join(META, 'interactions');
 const OVERVIEW_CLASS = 'z2ui5_cl_smpc_app_000';
+const DEMO_APP_CLASSES = Object.keys(loadDemoApps(ROOT).ports);
 let interactionGaps = [];
 {
   /* Not guarded on the directory EXISTING: an absent meta/interactions/ is
@@ -383,7 +388,7 @@ let interactionGaps = [];
   const mods = fs.existsSync(INTERACTIONS_DIR)
     ? fs.readdirSync(INTERACTIONS_DIR).filter((f) => f.endsWith('.mjs')).map((f) => f.replace(/\.mjs$/, ''))
     : [];
-  const validClasses = new Set([...sidecars.map((f) => f.replace(/\.json$/, '')), OVERVIEW_CLASS]);
+  const validClasses = new Set([...sidecars.map((f) => f.replace(/\.json$/, '')), OVERVIEW_CLASS, ...DEMO_APP_CLASSES]);
   /* An escape hatch keyed on free prose must be UNAMBIGUOUS (STATUS.md, the
    * lesson two prior incidents wrote). `waitFor` was a bare substring test
    * over the module SOURCE, so the comment `// waitFor the popover` satisfied
@@ -395,7 +400,7 @@ let interactionGaps = [];
    * lib-e2e helpers, or through an `expect` — both of which stay listed. */
   const CAN_FAIL = /expect\(|throw\s|lib-e2e/;
   for (const c of mods) {
-    if (!validClasses.has(c)) err(`meta/interactions/${c}.mjs matches no port sidecar (or the overview app) — orphan interaction module`);
+    if (!validClasses.has(c)) err(`meta/interactions/${c}.mjs matches no port sidecar, the overview app or a demo app mapped in ui5/demoapps.json — orphan interaction module`);
     const src = fs.readFileSync(path.join(INTERACTIONS_DIR, `${c}.mjs`), 'utf8');
     if (!CAN_FAIL.test(src)) {
       err(`meta/interactions/${c}.mjs asserts nothing — it can never fail, so it counts as coverage the nightly does not actually provide. Assert what the port really does: expect(…), a throw, or a lib-e2e helper (waitForUi5 / waitForCount and friends all throw).`);

@@ -39,6 +39,13 @@
 "!    down. Not verified in a running system.
 "!  - a posted comment is stamped with the server date and time in ISO form,
 "!    where the original formats the browser clock with a medium DateFormat.
+"!  - the object page gets an in-app back button in its footer. The original
+"!    has none - its Object view offers no way back and relies on the browser
+"!    Back button alone, while its onNavBack handler sits unused in the
+"!    controller. The button is that handler, wired.
+"!  - the name column header reads ProductName. The original binds
+"!    i18n>TableNameColumnTitle, a key its bundle does not have (it carries
+"!    tableNameColumnTitle), so the demo kit renders the raw key there.
 "!
 "! Original: src/sap.m/test/sap/m/demokit/tutorial/worklist/07 in OpenUI5,
 "! archived under ui5/demoapps/sap.m/tutorial/worklist.
@@ -370,7 +377,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         )->tag( `ObjectStatus`
             )->a( n = `text`    v = `Discontinued`
             )->a( n = `state`   v = `Error`
-            )->a( n = `visible` b = obj_discontinued
+            )->a( n = `visible` v = client->_bind( obj_discontinued )
         )->tag( `ProgressIndicator`
             )->a( n = `width`        v = `300px`
             )->a( n = `percentValue` v = client->_bind( obj_units_percent )
@@ -639,6 +646,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
                       selected           = xsdbool( line_exists( selection[ productid = product-productid selected = abap_true ] ) ) ) INTO TABLE t_rows.
       shown = shown + 1.
     ENDLOOP.
+
+    " the original's list binding sorts by ProductName ascending
+    SORT t_rows BY productname AS TEXT.
 
     " the four $count reads of the original, over the full stock
     count_all        = |{ lines( t_products ) }|.

@@ -30,6 +30,15 @@
 "!    _populateSelect( ), and it carries the person's NAME as its key, because
 "!    that is what the rowSelectionChange event hands back about the row that
 "!    was clicked.
+"!  - the single calendar opens on its DAY view, where the original's
+"!    _displayCalendar( ) selects the month the model names. selectedView is an
+"!    association: it cannot be bound, has no whitelisted setter, and a
+"!    declared id is resolved before the views exist. Same limit as app 549.
+"!  - an appointment of the SINGLE calendar shows its info line and its
+"!    picture. The original's SinglePlanningCalendar fragment binds `text` and
+"!    `icon` there, two paths its model does not have (the rows carry `info`
+"!    and `pic`, which its PlanningCalendar fragment binds correctly), so the
+"!    demo kit shows neither - the same row data as the team calendar, drawn.
 "!  - the i18n bundle becomes literals (the original ships de and en plus two
 "!    terminologies; an abap2UI5 app translates with ABAP text elements).
 "!
@@ -170,7 +179,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     " ------------------------------------------------- the team calendar
     DATA(pc) = content->ele( `VBox`
-        )->a( n = `visible` b = check_team
+        )->a( n = `visible` v = client->_bind( check_team )
 
         )->ele( `PlanningCalendar`
             )->a( n = `id`                        v = `PlanningCalendar`
@@ -287,6 +296,12 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
         )->ele( `SinglePlanningCalendar`
             )->a( n = `id`           v = `SinglePlanningCalendar`
+            " the month view the original selects from its controller cannot be
+            " preselected here: selectedView is an ASSOCIATION, which neither
+            " binds nor has a whitelisted setter (app 549 carries the same
+            " sentence), and setting the id declaratively logs "There is no such
+            " view" - UI5 resolves it while the views aggregation is still empty.
+            " So this calendar opens on the first view of its list, the Day view
             )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
             )->a( n = `appointments` v = client->_bind( t_selected ) ).
 

@@ -20,6 +20,13 @@
  *                                     claim about the live behaviour)
  *   meta/interactions/<class>.mjs     the assertions that run against it
  *
+ * The src/04 DEMO APPS are flat and sidecar-less (AGENTS section 3), so the two
+ * inputs that reach them are the class under src/04/ and its interaction
+ * module; ui5/demoapps.json is their registry, and a change to it reaches all
+ * five. They were invisible here until 2026-09-14 — the path pattern wanted two
+ * numeric levels — so a pull request touching only a demo app ran no app at
+ * all, which is how six baked-in view flags reached main.
+ *
  * A change to the FRAMEWORK PIN, the harness or the build reaches every port
  * at once, and there is no useful subset then: the answer is `all`, and the
  * caller decides whether to run the whole corpus or leave it to the nightly.
@@ -43,7 +50,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+
 const CLASS = /^(z2ui5_cl_smpc_app_\d+)$/;
+const DEMO_CLASS = /^(z2ui5_cl_smpc_demo_\d+)$/;
+/** the demo-app registry: a change to it reaches every class in src/04 */
+const DEMO_APPS = () => Object.keys(
+  JSON.parse(fs.readFileSync(path.join(ROOT, 'ui5/demoapps.json'), 'utf8')).ports || {},
+);
 
 /** Paths whose change reaches EVERY port's live behaviour. */
 const CORPUS_WIDE = [
@@ -73,12 +87,13 @@ export function portsToRun(files) {
 
   const classes = new Set();
   for (const f of list) {
-    let m = /^src\/(?:\d+\/\d+\/)?([a-z0-9_]+)\.clas\.(abap|xml)$/.exec(f);
-    if (m && CLASS.test(m[1])) { classes.add(m[1]); continue; }
+    if (/^ui5\/demoapps\.json$/.test(f)) { DEMO_APPS().forEach((c) => classes.add(c)); continue; }
+    let m = /^src\/(?:\d+\/(?:\d+\/)?)?([a-z0-9_]+)\.clas\.(abap|xml)$/.exec(f);
+    if (m && (CLASS.test(m[1]) || DEMO_CLASS.test(m[1]))) { classes.add(m[1]); continue; }
     m = /^meta\/([a-z0-9_]+)\.json$/.exec(f);
     if (m && CLASS.test(m[1])) { classes.add(m[1]); continue; }
     m = /^meta\/interactions\/([a-z0-9_]+)\.mjs$/.exec(f);
-    if (m && CLASS.test(m[1])) { classes.add(m[1]); }
+    if (m && (CLASS.test(m[1]) || DEMO_CLASS.test(m[1]))) { classes.add(m[1]); }
   }
 
   const sorted = [...classes].sort();
@@ -86,8 +101,8 @@ export function portsToRun(files) {
     all: false,
     classes: sorted,
     reason: sorted.length
-      ? `${sorted.length} port(s) touched`
-      : 'no port, sidecar or interaction module changed',
+      ? `${sorted.length} app(s) touched`
+      : 'no port, demo app, sidecar or interaction module changed',
   };
 }
 

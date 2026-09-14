@@ -488,8 +488,28 @@ first run proved the point — an empty `state` on the object page's
 `ObjectNumber`, which an enum-typed property rejects outright, took the whole
 view down.
 
-The e2e harness is sidecar-driven too, so it does not boot these; the render
-gate is what stands in for it.
+The e2e harness boots them as well, since 2026-09-14. It used to be purely
+sidecar-driven — it walks `meta/*.json`, and a demo app has no sidecar — so
+nothing ever ran these five in a browser and the render gate stood in for it.
+That gate reconstructs a view; it cannot see a value BAKED INTO the XML that no
+round-trip ever updates, and six of those had collected across the apps: a team
+calendar that stayed on screen beside the member's, a filter info bar that never
+appeared, a search-result list that held its rows invisibly, a "Discontinued"
+status decided at startup for a product nobody had opened, two cart buttons out
+of step with the column they toggle. A seventh only a browser could find: every
+`SingleSelectMaster` list in the cart app hung its navigation on the ITEM's
+`press`, which `ListItemBase.ontap` never fires in that mode — so no product
+could be opened by clicking it.
+
+`scripts/e2e-smoke.mjs` takes the class list from **`ui5/demoapps.json`'s
+`ports` block** — the registry that already maps each class to the app it
+rebuilds, and which already fails the generators for an unmapped class in
+`src/04` — so a new demo app is covered the moment it is mapped. They ride with
+shard 1, like the overview app, and take a `meta/interactions/<class>.mjs`
+module like every port (`validate-meta` accepts those five keys for the same
+reason: the registry names them). `scripts/e2e-changed.mjs` maps a change under
+`src/04/`, in one of those modules, or to `ui5/demoapps.json` itself, so the PR
+job runs them too.
 
 ---
 
@@ -842,7 +862,7 @@ up to 24 hours later:
 | `tooling-tests.yaml` | `tooling_tests` | the gate/generator tooling's own fixture tests |
 | `check-prose-names.yaml` | `prose_names` | every `z2ui5_cl_*` class named in prose exists, here or in the repository that owns it |
 | `check-mcp-contract.yaml` | `check-mcp-contract` | the file paths and shapes abap2UI5/mcp-server reads out of this checkout (§5, the generation prompt) |
-| `e2e-pr.yaml` | `e2e_pr` | the ports this pull request touches, booted as the real app (transpiled backend + headless Chromium) |
+| `e2e-pr.yaml` | `e2e_pr` | the ports and demo apps this pull request touches, booted as the real app (transpiled backend + headless Chromium) |
 | `check-app-rules.yaml`, `check-keywords.yaml`, `check-summary.yaml` | same | the shared abaplint app rules, the `@keywords` and the `@summary` lines |
 
 What each gate checks, what a failure means and every legitimate escape hatch
@@ -1279,6 +1299,44 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   exits non-zero, later steps never run, and the copy is left half-rewritten —
   every file then reports downport errors, including clean ones. Fix (or drop)
   parser-broken classes BEFORE downporting.
+- **A boolean attribute written with `b =` is a VALUE, not a binding — and a
+  value is decided once, when the view is built.** `)->a( n = `visible` b =
+  flag )` writes `true` or `false` into the XML; nothing updates it afterwards,
+  so it is only correct for a constant (`headerPinnable`, `editable`). For state
+  an event changes, bind it: `v = client->_bind( flag )`, or an expression over
+  a bound value for the negated half (`|\{= !${ client->_bind( flag ) } \}|`).
+  Six of these were live in the `src/04` demo apps at once (2026-09-14) and the
+  pattern is nastier than it reads: the handler that sets the flag usually does
+  NOT re-render (it is an event, not `view_display( )`), and when the *other*
+  half of the pair IS a live binding the app half-works — the team calendar's
+  replacement appeared and the calendar it replaced stayed on screen. The render
+  gate cannot see any of it: it reconstructs the view once, and a baked-in value
+  renders perfectly. `grep -n "b = " src/**/*.abap | grep -v abap_true | grep -v
+  abap_false` is the whole audit.
+  **A `pressed`/`selected` that the handler INVERTS must not be two-way bound**
+  — the press writes the new value into the model and the handler would flip it
+  back. Bind what it is derived FROM instead: the cart buttons of demo_004 take
+  `{= ${/LAYOUT}.startsWith('ThreeColumns') }`, which is what the original
+  binds, one-way by nature, and correct on both pages at once.
+- **`press` on a list ITEM never fires in `SingleSelectMaster` mode.** UI5's
+  `ListItemBase.ontap` takes the `isIncludedIntoSelection( )` branch there and
+  returns before `firePress( )` — whatever the item's `type` says. So a row
+  press is dead in that mode and the navigation has to hang off the LIST's
+  `selectionChange`, with the row read from
+  `${$parameters>/listItem}.getBindingContext().getProperty('<FIELD>')`. Every
+  original that uses the mode does exactly that (and keeps the item press for
+  the phone, where the mode is `None`); demo_004 had five such lists and not one
+  product could be opened by clicking it (2026-09-14). Nothing static catches
+  this — the view renders, the wire is in the XML, the handler is correct.
+- **A default a control picks for itself does not reach the backend.** A
+  `SegmentedButton`/`Select` whose bound key is initial selects its first item
+  and writes that key into the CLIENT model; the ABAP attribute stays empty
+  until some event round-trips. So anything the backend derives from it (in
+  demo_004: the branching Wizard's `setNextStep`, which `view_display( )`
+  re-issues only when the key is filled) is missing for exactly the user who
+  accepts the default — there, the checkout could not leave the payment step at
+  all. Seed the default in `model_init( )`, the way the original's own model
+  does (`SelectedPayment: "Credit Card"`).
 - **A per-keystroke round-trip is LOSSY, not queued.** abap2UI5 serializes
   round-trips: an event fired while one is in flight is **dropped**, so a
   `liveChange`/`liveSearch` wire that round-trips shows the value of the last

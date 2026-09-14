@@ -1,6 +1,6 @@
 name: e2e-pr
 
-# The ports a pull request TOUCHES, run as the real app.
+# The ports and demo apps a pull request TOUCHES, run as the real app.
 #
 # Nothing in the PR gate set exercised a port in a browser. Every gate that
 # runs there is static — structural-diff compares trees, view_gates
@@ -71,11 +71,11 @@ jobs:
           echo "reason=the change reaches every port (framework pin, harness or build) — the full corpus is e2e-nightly's job, not a subset's" >> "$GITHUB_OUTPUT"
         elif [ -z "$ports" ]; then
           echo "run=false" >> "$GITHUB_OUTPUT"
-          echo "reason=no port, sidecar or interaction module changed" >> "$GITHUB_OUTPUT"
+          echo "reason=no port, demo app, sidecar or interaction module changed" >> "$GITHUB_OUTPUT"
         else
           echo "run=true" >> "$GITHUB_OUTPUT"
           echo "only=$(echo "$ports" | paste -sd, -)" >> "$GITHUB_OUTPUT"
-          echo "reason=$(echo "$ports" | wc -l) port(s) touched" >> "$GITHUB_OUTPUT"
+          echo "reason=$(echo "$ports" | wc -l) app(s) touched" >> "$GITHUB_OUTPUT"
         fi
         echo "$ports"
 
@@ -107,7 +107,7 @@ jobs:
     # Never softened: a touched port that no longer runs is the correct reason
     # for this job to be red, and it is the whole point of running it here
     # rather than tomorrow.
-    - name: Run the touched ports as the real app
+    - name: Run the touched ports and demo apps as the real app
       if: steps.scope.outputs.run == 'true'
       env:
         A2UI5_HOME: ${{ github.workspace }}/.abap2UI5
@@ -123,6 +123,6 @@ jobs:
           if [ "${{ steps.scope.outputs.run }}" = "true" ]; then
             printf 'Ran: `%s`\n' "${{ steps.scope.outputs.only }}"
           else
-            printf 'No port was booted here. The full-corpus run is `e2e-nightly`.\n'
+            printf 'Nothing was booted here. The full-corpus run is `e2e-nightly`.\n'
           fi
         } >> "$GITHUB_STEP_SUMMARY"

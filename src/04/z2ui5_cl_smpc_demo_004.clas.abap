@@ -49,6 +49,12 @@
 "!  - the i18n resource bundle becomes literals, the device model's
 "!    smallScreenMode branches are gone (the FCL does that itself now), and
 "!    the LightBox on the product picture is dropped.
+"!  - the cart's Edit mode is not rebuilt: the original toggles the two lists
+"!    into Delete mode with an Edit/Save Changes button and confirms every
+"!    removal with a dialog. Here Save for Later and Remove are row links, so
+"!    the same two actions are reachable without a mode.
+"!  - the review page is one page with the summary on it, not the original's
+"!    per-section forms each with an edit button back into its wizard step.
 "!  - the product comparison view is not rebuilt: it is a desktop-only extra
 "!    reachable from one ObjectAttribute, and it needs a two-product
 "!    side-by-side layout that says nothing new about the framework. Named
@@ -135,6 +141,10 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     " the checkout wizard's own fields - one flat set, as the original's
     " one JSON model holds them
     DATA pay_type       TYPE string.
+    " the payment type as the summary shows it. pay_type carries the wizard
+    " STEP the branch jumps to, which is this port's mechanism and not a text
+    " the user should read
+    DATA pay_name       TYPE string.
     DATA cc_name        TYPE string.
     DATA cc_number      TYPE string.
     DATA cc_code        TYPE string.
@@ -249,6 +259,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     METHODS cart_add
       IMPORTING
         productid TYPE string.
+    METHODS search_refresh.
     METHODS cart_refresh.
     METHODS cart_mirror.
     METHODS cart_restore
@@ -385,7 +396,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(page) = parent->ele( `Page`
         )->a( n = `id`               v = `page-home`
-        )->a( n = `title`            v = `Shop`
+        )->a( n = `title`            v = `Product Catalog`
         )->a( n = `backgroundDesign` v = `Solid` ).
 
     page->ele( `subHeader`
@@ -407,8 +418,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " view")
     content->ele( `List`
         )->a( n = `id`         v = `productList`
-        )->a( n = `visible`    b = search_visible
+        )->a( n = `visible`    v = client->_bind( search_visible )
         )->a( n = `mode`       v = `SingleSelectMaster`
+        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
+        " takes the isIncludedIntoSelection( ) branch and never fires the item's
+        " press, whatever its type says. So the navigation hangs off the LIST's
+        " selectionChange, exactly as the original's does - its item press is
+        " the phone wire, where the mode is None
+        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
+                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
         )->a( n = `noDataText` v = `No products found`
         )->a( n = `items`      v = client->_bind( t_search )
 
@@ -436,6 +454,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     content->ele( `List`
         )->a( n = `id`         v = `categoryList`
         )->a( n = `headerText` v = `Categories`
+        " _search( ) shows ONE of the two lists: the categories give way to the
+        " search results and come back when the field is cleared
+        )->a( n = `visible`    v = |\{= !${ client->_bind( search_visible ) } \}|
         )->a( n = `mode`       v = `None`
         )->a( n = `items`      v = client->_bind( t_categories )
 
@@ -464,6 +485,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     content->ele( `List`
         )->a( n = `id`         v = `categoryProductList`
         )->a( n = `mode`       v = `SingleSelectMaster`
+        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
+        " takes the isIncludedIntoSelection( ) branch and never fires the item's
+        " press, whatever its type says. So the navigation hangs off the LIST's
+        " selectionChange, exactly as the original's does - its item press is
+        " the phone wire, where the mode is None
+        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
+                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
         )->a( n = `noDataText` v = `No products in this category`
         )->a( n = `items`      v = client->_bind( t_category )
 
@@ -502,28 +530,42 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->ele( `contentMiddle`
                 )->tag( `Title`
                     )->a( n = `level`   v = `H2`
-                    )->a( n = `text`    v = `Shopping Cart`
-                    )->a( n = `tooltip` v = `Welcome to the Shopping Cart`
+                    )->a( n = `text`    v = `Welcome to the Shopping Cart`
+                    )->a( n = `tooltip` v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
+                                            `You can browse and search a catalog of products, add the chosen products to your ` &&
+                                            `shopping cart and, once happy with your selection order the cart contents.`
 
             )->end(
             )->ele( `contentRight`
                 )->tag( `ToggleButton`
                     )->a( n = `icon`    v = `sap-icon://cart`
-                    )->a( n = `pressed` b = cart_open
-                    )->a( n = `tooltip` v = `Show the cart`
+                    " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
+                    " Derived from the bound layout rather than from a flag of its
+                    " own, so the button on the OTHER page follows too - and an
+                    " expression binding cannot be written back, which a two-way
+                    " bound `pressed` would be, inverting TOGGLE_CART twice
+                    )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
+                    )->a( n = `tooltip` v = `Show Shopping Cart`
                     )->a( n = `press`   v = client->_event( `TOGGLE_CART` ) ).
 
     DATA(content) = page->ele( `content` ).
 
     DATA(promoted) = content->ele( `Panel`
         )->a( n = `id`               v = `panelPromoted`
-        )->a( n = `headerText`       v = `Promoted Products`
+        )->a( n = `headerText`       v = `Promoted Items`
         )->a( n = `backgroundDesign` v = `Transparent` ).
     DATA(promoted_content) = promoted->ele( `content` ).
 
     promoted_content->ele( `List`
         )->a( n = `id`         v = `promotedList`
         )->a( n = `mode`       v = `SingleSelectMaster`
+        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
+        " takes the isIncludedIntoSelection( ) branch and never fires the item's
+        " press, whatever its type says. So the navigation hangs off the LIST's
+        " selectionChange, exactly as the original's does - its item press is
+        " the phone wire, where the mode is None
+        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
+                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
         )->a( n = `noDataText` v = `No promoted products`
         )->a( n = `items`      v = client->_bind( t_promoted )
 
@@ -569,13 +611,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(viewed) = content->ele( `Panel`
         )->a( n = `id`               v = `panelViewed`
-        )->a( n = `headerText`       v = `Recently Viewed`
+        )->a( n = `headerText`       v = `Recently Viewed Items`
         )->a( n = `backgroundDesign` v = `Transparent` ).
     DATA(viewed_content) = viewed->ele( `content` ).
 
     viewed_content->ele( `List`
         )->a( n = `id`         v = `viewedList`
         )->a( n = `mode`       v = `SingleSelectMaster`
+        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
+        " takes the isIncludedIntoSelection( ) branch and never fires the item's
+        " press, whatever its type says. So the navigation hangs off the LIST's
+        " selectionChange, exactly as the original's does - its item press is
+        " the phone wire, where the mode is None
+        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
+                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
         )->a( n = `noDataText` v = `Nothing viewed yet`
         )->a( n = `items`      v = client->_bind( t_viewed )
 
@@ -621,13 +670,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(favorite) = content->ele( `Panel`
         )->a( n = `id`               v = `panelFavorite`
-        )->a( n = `headerText`       v = `Your Favorites`
+        )->a( n = `headerText`       v = `Favorites`
         )->a( n = `backgroundDesign` v = `Transparent` ).
     DATA(favorite_content) = favorite->ele( `content` ).
 
     favorite_content->ele( `List`
         )->a( n = `id`         v = `favoriteList`
         )->a( n = `mode`       v = `SingleSelectMaster`
+        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
+        " takes the isIncludedIntoSelection( ) branch and never fires the item's
+        " press, whatever its type says. So the navigation hangs off the LIST's
+        " selectionChange, exactly as the original's does - its item press is
+        " the phone wire, where the mode is None
+        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
+                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
         )->a( n = `noDataText` v = `No favorites yet`
         )->a( n = `items`      v = client->_bind( t_favorite )
 
@@ -697,8 +753,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->ele( `contentRight`
                 )->tag( `ToggleButton`
                     )->a( n = `icon`    v = `sap-icon://cart`
-                    )->a( n = `pressed` b = cart_open
-                    )->a( n = `tooltip` v = `Show the cart`
+                    " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
+                    " Derived from the bound layout rather than from a flag of its
+                    " own, so the button on the OTHER page follows too - and an
+                    " expression binding cannot be written back, which a two-way
+                    " bound `pressed` would be, inverting TOGGLE_CART twice
+                    )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
+                    )->a( n = `tooltip` v = `Show Shopping Cart`
                     )->a( n = `press`   v = client->_event( `TOGGLE_CART` ) ).
 
     page->ele( `footer`
@@ -757,7 +818,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(page) = parent->ele( `Page`
         )->a( n = `id`             v = `page-cart`
-        )->a( n = `title`          v = `Your Cart`
+        )->a( n = `title`          v = `Shopping Cart`
         )->a( n = `showNavButton`  b = abap_true
         )->a( n = `navButtonPress` v = client->_event( `TOGGLE_CART` ) ).
 
@@ -765,7 +826,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     content->ele( `List`
         )->a( n = `id`         v = `entryList`
-        )->a( n = `headerText` v = `Your Items`
+        )->a( n = `headerText` v = `Items in Shopping Cart`
         )->a( n = `noDataText` v = `Your cart is empty`
         )->a( n = `items`      v = client->_bind( t_cart )
 
@@ -791,8 +852,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     content->ele( `List`
         )->a( n = `id`         v = `savedList`
-        )->a( n = `headerText` v = `Saved for Later`
-        )->a( n = `noDataText` v = `Nothing saved for later`
+        )->a( n = `headerText` v = `Items saved for later`
+        )->a( n = `noDataText` v = `No items saved for later`
         )->a( n = `items`      v = client->_bind( t_saved )
 
         )->ele( `items`
@@ -841,7 +902,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(contents) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `contentsStep`
-        )->a( n = `title`     v = `Contents`
+        )->a( n = `title`     v = `Items`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `paymentTypeStep` ).
 
@@ -867,7 +928,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `subsequentSteps` v = `creditCardStep, bankAccountStep, cashOnDeliveryStep` ).
 
     payment->tag( `Text`
-        )->a( n = `text` v = `Select the payment type` ).
+        )->a( n = `text` v = `We accept all major credit cards with no additional charging. ` &&
+                             `Bank transfer and cash on delivery are only possible for inland deliveries. ` &&
+                             `For those, we will charge additional 2.99 EUR. ` &&
+                             `Orders payed with bank transfer, will be shipped direcly after the payment is received.` ).
 
     payment->ele( `SegmentedButton`
         )->a( n = `selectedKey`     v = client->_bind( pay_type )
@@ -886,7 +950,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(credit) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `creditCardStep`
-        )->a( n = `title`     v = `Credit Card`
+        )->a( n = `title`     v = `Credit Card Details`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
@@ -896,7 +960,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Card Holder Name`
+                )->a( n = `text` v = `Cardholder's Name`
             )->tag( `Input`
                 )->a( n = `id`          v = `creditCardHolderName`
                 )->a( n = `value`       v = client->_bind( cc_name )
@@ -914,7 +978,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `value`       v = client->_bind( cc_code )
                 )->a( n = `placeholder` v = `3 digits`
             )->tag( `Label`
-                )->a( n = `text` v = `Expiration Date`
+                )->a( n = `text` v = `Expiration Date (MM/YYYY)`
             )->tag( `Input`
                 )->a( n = `id`          v = `creditCardExpirationDate`
                 )->a( n = `value`       v = client->_bind( cc_expire )
@@ -922,7 +986,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(bank) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `bankAccountStep`
-        )->a( n = `title`     v = `Bank Transfer`
+        )->a( n = `title`     v = `Bank Account Details`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
@@ -932,21 +996,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Beneficiary`
+                )->a( n = `text` v = `Beneficiary Name`
             )->tag( `Text`
-                )->a( n = `text` v = `SAP SE`
+                )->a( n = `text` v = `Singapore Hardware e-Commerce LTD`
             )->tag( `Label`
-                )->a( n = `text` v = `Bank Name`
+                )->a( n = `text` v = `Bank`
             )->tag( `Text`
-                )->a( n = `text` v = `Deutsche Bank`
+                )->a( n = `text` v = `CITY BANK, SINGAPORE BRANCH`
             )->tag( `Label`
                 )->a( n = `text` v = `Account Number`
             )->tag( `Text`
-                )->a( n = `text` v = `DE11 5001 0517 0648 4898 90` ).
+                )->a( n = `text` v = `06110702027218` ).
 
     DATA(cod) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `cashOnDeliveryStep`
-        )->a( n = `title`     v = `Cash on Delivery`
+        )->a( n = `title`     v = `Details for Cash on Delivery`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
@@ -966,12 +1030,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `id`    v = `cashOnDeliveryLastName`
                 )->a( n = `value` v = client->_bind( cod_lastname )
             )->tag( `Label`
-                )->a( n = `text` v = `Phone`
+                )->a( n = `text` v = `Phone Number`
             )->tag( `Input`
                 )->a( n = `id`    v = `cashOnDeliveryPhoneNumber`
                 )->a( n = `value` v = client->_bind( cod_phone )
             )->tag( `Label`
-                )->a( n = `text` v = `Email`
+                )->a( n = `text` v = `E-mail Address`
             )->tag( `Input`
                 )->a( n = `id`    v = `cashOnDeliveryEmail`
                 )->a( n = `value` v = client->_bind( cod_email ) ).
@@ -988,10 +1052,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Different Delivery Address`
+                )->a( n = `text` v = `Use Different Address for Delivery`
             )->tag( `CheckBox`
                 )->a( n = `id`       v = `differentDeliveryAddress`
-                )->a( n = `selected` b = del_different
+                )->a( n = `selected` v = client->_bind( del_different )
                 )->a( n = `select`   v = client->_event( val = `DELIVERY_DIFFERENT` arg = `${$parameters>/selected}` )
             )->tag( `Label`
                 )->a( n = `text` v = `Address`
@@ -1004,7 +1068,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `id`    v = `invoiceAddressCity`
                 )->a( n = `value` v = client->_bind( inv_city )
             )->tag( `Label`
-                )->a( n = `text` v = `ZIP Code`
+                )->a( n = `text` v = `Zip Code`
             )->tag( `Input`
                 )->a( n = `id`    v = `invoiceAddressZip`
                 )->a( n = `value` v = client->_bind( inv_zip )
@@ -1021,7 +1085,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(delivery) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `deliveryAddressStep`
-        )->a( n = `title`     v = `Delivery Address`
+        )->a( n = `title`     v = `Shipping Address`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `deliveryTypeStep` ).
 
@@ -1041,7 +1105,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `id`    v = `deliveryAddressCity`
                 )->a( n = `value` v = client->_bind( del_city )
             )->tag( `Label`
-                )->a( n = `text` v = `ZIP Code`
+                )->a( n = `text` v = `Zip Code`
             )->tag( `Input`
                 )->a( n = `id`    v = `deliveryAddressZip`
                 )->a( n = `value` v = client->_bind( del_zip )
@@ -1062,7 +1126,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `validated` b = abap_true ).
 
     delivery_type->tag( `Text`
-        )->a( n = `text` v = `Select the delivery type` ).
+        )->a( n = `text` v = `Standard delivery time is 5 workdays. During high-season sales, please allow one additional day. ` &&
+                             `Express delivery is delivered within 36 hours. For express delivery on workdays, we charge a ` &&
+                             `service fee of 5.49 EUR, for a express delivery on holidays, the service fee is 8,00 EUR. ` &&
+                             `Express delivery is only available for inland deliveries. For deliveries abroud, please check ` &&
+                             `the specific conditions.` ).
 
     delivery_type->ele( `SegmentedButton`
         )->a( n = `selectedKey` v = client->_bind( del_type )
@@ -1070,10 +1138,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->ele( `items`
             )->tag( `SegmentedButtonItem`
                 )->a( n = `key`  v = `Standard Delivery`
-                )->a( n = `text` v = `Standard Delivery`
+                )->a( n = `text` v = `Standard`
             )->tag( `SegmentedButtonItem`
                 )->a( n = `key`  v = `Express Delivery`
-                )->a( n = `text` v = `Express Delivery (10 EUR)` ).
+                )->a( n = `text` v = `Express` ).
 
   ENDMETHOD.
 
@@ -1089,7 +1157,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     DATA(content) = page->ele( `content` ).
 
     content->ele( `List`
-        )->a( n = `headerText` v = `Your Items`
+        )->a( n = `headerText` v = `Items`
         )->a( n = `items`      v = client->_bind( t_cart )
 
         )->ele( `items`
@@ -1105,15 +1173,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Payment Type`
+                )->a( n = `text` v = `Selected Payment Type`
             )->tag( `Text`
-                )->a( n = `text` v = client->_bind( pay_type )
+                " the payment NAME, not the step id pay_type carries for the
+                " branch: the original's summary reads {/SelectedPayment}, which
+                " is what its SegmentedButton keys are
+                )->a( n = `text` v = client->_bind( pay_name )
             )->tag( `Label`
                 )->a( n = `text` v = `Invoice Address`
             )->tag( `Text`
                 )->a( n = `text` v = client->_bind( inv_address )
             )->tag( `Label`
-                )->a( n = `text` v = `Delivery Type`
+                )->a( n = `text` v = `Selected Delivery Type`
             )->tag( `Text`
                 )->a( n = `text` v = client->_bind( del_type )
             )->tag( `Label`
@@ -1143,7 +1214,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     page->ele( `content`
         )->tag( `FormattedText`
-            )->a( n = `htmlText` v = `<p>Thank you for your order. You will receive a confirmation email shortly.</p>` ).
+            )->a( n = `htmlText` v = `<h3>Thank you for your order!</h3><p><strong>Your order number: 20171941</strong></p>` &&
+                                     `<p>You will receive an e-mail confirmation shortly.</p>` &&
+                                     `<p>When the shipment is ready, you will also get an e-mail notification.</p>` &&
+                                     `<p>Want to stay informed?</p><p>Please subscribe to our monthly newsletter. ` &&
+                                     `Send a mail to <em><a href="mailto:newsletter@openui5isgreat.corp">newsletter@openui5isgreat.corp</a></em>.</p>` ).
 
     page->ele( `footer`
         )->ele( `Bar`
@@ -1168,17 +1243,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         cart_restore( client->get_event_arg( ) ).
 
       WHEN `SEARCH`.
-        " the home list is the search result; the original hides it while the
-        " search is empty and shows the categories instead
-        t_search = VALUE #( ).
-        IF search_term IS NOT INITIAL.
-          LOOP AT t_all INTO DATA(found) WHERE name IS NOT INITIAL.
-            IF to_upper( found-name ) CS to_upper( search_term ).
-              INSERT row_of( found ) INTO TABLE t_search.
-            ENDIF.
-          ENDLOOP.
-        ENDIF.
-        search_visible = xsdbool( search_term IS NOT INITIAL ).
+        search_refresh( ).
 
       WHEN `CATEGORY`.
         DATA(category) = client->get_event_arg( ).
@@ -1187,7 +1252,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         LOOP AT t_all INTO DATA(product) WHERE category = category.
           INSERT row_of( product ) INTO TABLE t_category.
         ENDLOOP.
-        SORT t_category BY name.
+        SORT t_category BY name AS TEXT.
         nav_to( nav = `nav-begin` page = `page-category` ).
 
       WHEN `PRODUCT`.
@@ -1248,6 +1313,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " the branch of a branching Wizard is an association: it is set from
         " here and re-issued on every render (sample z2ui5_cl_smp_app_202)
         pay_type = client->get_event_arg( ).
+        pay_name = SWITCH #( pay_type
+                             WHEN `creditCardStep`      THEN `Credit Card`
+                             WHEN `bankAccountStep`     THEN `Bank Transfer`
+                             WHEN `cashOnDeliveryStep`  THEN `Cash on Delivery`
+                             ELSE pay_type ).
         client->follow_up_action( val   = client->cs_event-control_by_id
                                   t_arg = VALUE #( ( `checkoutWizard` ) ( `discardProgress` ) ( `paymentTypeStep` ) ) ).
         client->follow_up_action( val   = client->cs_event-control_by_id
@@ -1361,6 +1431,25 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD search_refresh.
+
+    " the home list IS the search result; the original hides it while the search
+    " is empty and shows the categories instead
+    t_search = VALUE #( ).
+    IF search_term IS NOT INITIAL.
+      LOOP AT t_all INTO DATA(found) WHERE name IS NOT INITIAL.
+        IF to_upper( found-name ) CS to_upper( search_term ).
+          INSERT row_of( found ) INTO TABLE t_search.
+        ENDIF.
+      ENDLOOP.
+      " the productList of the original sorts by Name
+      SORT t_search BY name AS TEXT.
+    ENDIF.
+    search_visible = xsdbool( search_term IS NOT INITIAL ).
+
+  ENDMETHOD.
+
+
   METHOD cart_add.
 
     ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
@@ -1404,6 +1493,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ENDLOOP.
 
     cart_total = |Total: { price_text( |{ total }| ) } EUR|.
+
+    " entryList and saveForLaterList both sort by Name in the original, and the
+    " checkout's two cart lists bind the same table
+    SORT t_cart BY name AS TEXT.
+    SORT t_saved BY name AS TEXT.
 
     " the mirror is what keeps the reading control quiet - it compares by
     " value and fires only on a difference
@@ -1544,7 +1638,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     FIELD-SYMBOLS <featured_product> TYPE ty_s_product.
 
-    " localService/mockdata/ProductCategories.json
+    " localService/mockdata/ProductCategories.json - the categoryList of the
+    " original sorts by CategoryName, so the rows are seeded verbatim (see
+    " data_fidelity) and sorted at the end of model_init
     t_categories = VALUE #(
         ( category = `AC`  categoryname = `Accessories`                 numberofproducts = 34 )
         ( category = `DC`  categoryname = `Desktop Computers`           numberofproducts = 5 )
@@ -2093,7 +2189,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDCASE.
     ENDLOOP.
 
+    " the categoryList's own sorter
+    SORT t_categories BY categoryname AS TEXT.
+
     layout = `TwoColumnsMidExpanded`.
+
+    " what the original's checkout model starts on: SelectedPayment "Credit Card"
+    " and SelectedDeliveryMethod "Standard Delivery". Not a cosmetic default - the
+    " payment step's branch is an association, and with pay_type initial nothing
+    " ever set it, so a user who ACCEPTED the default could not leave the step at
+    " all. The original does not have the problem because its own goToPaymentStep
+    " defaults to the credit-card step; here view_display( ) re-issues the branch
+    " on every render as long as pay_type is filled
+    pay_type = `creditCardStep`.
+    pay_name = `Credit Card`.
+    del_type = `Standard Delivery`.
 
     " the original's LocalStorageModel("SHOPPING_CART", ...) - same storage,
     " same key

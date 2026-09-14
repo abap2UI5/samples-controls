@@ -17,8 +17,18 @@ comment in that file, pending a merge decision).
 interaction (key + source) without needing the backend — the loader's
 contract check and the refactor-diff tool.
 `node scripts/validate-meta.mjs` enforces that every file here matches a
-port sidecar (or the overview app) and that every module can actually FAIL
-(`expect(`, a `throw`, or a lib-e2e helper — see below).
+port sidecar, the overview app or a `src/04` demo app (those five are
+sidecar-less by construction, so their keys come from `ui5/demoapps.json`'s
+`ports` block — the registry `e2e-smoke` reads to decide what to boot) and that
+every module can actually FAIL (`expect(`, a `throw`, or a lib-e2e helper — see
+below).
+
+The five `z2ui5_cl_smpc_demo_*` modules arrived on 2026-09-14, with the run that
+first booted those apps at all. They are worth reading as a group: each one
+asserts a value the RENDER gate cannot judge — a bound `visible` that has to
+follow the round-trip, a list the search has to swap, two buttons that have to
+agree — because that is the whole class of defect the static gate had been
+standing in for, and six of them were live in `main`.
 
 It also reports **interaction coverage** as an advisory, over the PORT SET and
 split by the status ladder: 247 of 622 ports (40%) have no module here —
