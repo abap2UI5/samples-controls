@@ -10,7 +10,7 @@
  *
  * The rebuild is driven through the framework's own bookmark restore —
  * `?app_start=<class>#/z2ui5-xapp-state=<draft>`, the URL
- * cs_event-clipboard_app_state hands out. That request carries no frontend id,
+ * app_state_get_href( ) hands out. That request carries no frontend id,
  * so the backend takes factory_first_start -> db_load(draft), which sets
  * check_on_navigated( ) while check_on_init( ) stays false (the latch travels
  * in the loaded draft): exactly the `ELSEIF check_on_navigated( )` branch, and

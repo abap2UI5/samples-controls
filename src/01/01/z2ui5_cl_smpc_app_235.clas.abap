@@ -262,7 +262,7 @@ CLASS z2ui5_cl_smpc_app_235 IMPLEMENTATION.
     " check_on_navigated( ) takes exactly this path: measured on the
     " framework's own bookmark restore
     " (?app_start=<class>#/z2ui5-xapp-state=<draft>, the URL
-    " cs_event-clipboard_app_state hands out) - 34 filtered rows before,
+    " app_state_get_href( ) hands out) - 34 filtered rows before,
     " 123 unfiltered rows and the facet still reading Accessories after.
     " Re-issuing the SAME payload is the app-000 idiom; statement order does
     " not matter, the frontend awaits every T_SYSTEM display before it runs a

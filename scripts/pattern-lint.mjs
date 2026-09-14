@@ -69,6 +69,18 @@
  * param-continuation-align) from warn to error: their 382 findings were cleared
  * the day before, and a warning nobody fails on is how they had accumulated.
  *
+ * The 2026-09-13 round added one, and it is the same category as
+ * statement-too-long - a KERNEL rule no offline linter models:
+ *   literal-no-separator      -> a literal that ends where the next token
+ *                                begins (`...`s_ctrl = ...). The SAP syntax
+ *                                check refuses it, abaplint's lexer does not
+ *                                (2.120.38, control probe fired), and it
+ *                                reached a pulled main in two _event( ) wires
+ *                                - apps 136 and 588, found by a user's Code
+ *                                Inspector run. Upstream candidate, gated here
+ *                                because one line of scan decides it
+ *                                (abap-check §2)
+ *
  * Levels: 'error' rules fail the run (exit 1) unless the exact file is listed
  * in BASELINE (a known, still-open backlog finding — see STATUS.md); 'warn'
  * rules are reported but never fail. When a baselined finding is fixed, its
@@ -535,6 +547,48 @@ const RULES = [
       for (const m of content.matchAll(/^\s*(?:CLASS-)?METHODS\s+[\s\S]*?\.[ \t]*$/gm)) {
         for (const p of m[0].matchAll(PARAM)) hit(m.index + p.index, p[1] || p[2]);
       }
+      return out;
+    },
+  },
+  {
+    /* A literal that ENDS where the next token begins - `...`s_ctrl = ... .
+     * The kernel wants a separator after a closing literal ("There must be a
+     * space or equivalent character (":", ",", ".") after ..."); abaplint's
+     * lexer does not, so the two _event( ) wires that carried it (apps 136 and
+     * 588) passed every gate here and failed the SAP syntax check on the
+     * system (2026-09-13). Until abaplint closes the lexer gap this is the
+     * only thing that sees it - same category as statement-too-long: a kernel
+     * rule no offline linter models.
+     *
+     * A closing quote followed by a name character is never legal ABAP - the
+     * one suffix form the language has, the text symbol 'text'(001), opens a
+     * parenthesis - so there is nothing to exempt. */
+    id: 'literal-no-separator',
+    level: 'error',
+    doc: 'a closing string literal is followed straight by a name character - `x`y - which the SAP kernel rejects ("There must be a space or equivalent character after ...") and abaplint\'s lexer lets through; put a blank after the closing quote',
+    find(content) {
+      const out = [];
+      content.split('\n').forEach((l, i) => {
+        if (/^\s*[*"]/.test(l)) return;
+        for (let j = 0; j < l.length; j++) {
+          const q = l[j];
+          if (q === '"') break;                       // trailing comment
+          if (q !== '`' && q !== "'" && q !== '|') continue;
+          j += 1;
+          while (j < l.length) {                      // to the closing delimiter
+            if (q === '|' && l[j] === '\\') { j += 2; continue; }
+            if (l[j] === q) {
+              if (q !== '|' && l[j + 1] === q) { j += 2; continue; }   // '' / `` escape
+              break;
+            }
+            j += 1;
+          }
+          if (j >= l.length) break;                   // literal runs past the line
+          if (/[A-Za-z0-9_]/.test(l[j + 1] || ' ')) {
+            out.push({ line: i + 1, text: `${l.slice(Math.max(0, j - 28), j + 12).trim()} - no separator after the closing ${q}` });
+          }
+        }
+      });
       return out;
     },
   },
