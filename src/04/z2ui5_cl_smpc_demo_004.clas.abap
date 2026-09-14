@@ -19,7 +19,11 @@
 "!  - the cart and the saved-for-later list stay in the BROWSER's local
 "!    storage, exactly as the original's LocalStorageModel keeps them, under
 "!    the same key (SHOPPING_CART). abap2UI5 ships both halves: the
-"!    STORE_DATA frontend action writes, and the invisible z2ui5.cc.Storage
+"!    STORE_DATA frontend action writes - with a payload this class composes
+"!    as JSON, because that action destructures its one argument and a
+"!    `${ _bind( ) }` in it is resolved only for a VIEW-WIRED action, so the
+"!    binding a handler passes arrives as text and the frontend deletes the
+"!    key instead of writing it - and the invisible z2ui5.cc.Storage
 "!    control reads the key back into its two-way bound `value`, so what it
 "!    found is in s_storage-value by the time the `finished` event is
 "!    handled - no JSON is parsed anywhere in this class. So a closed
@@ -95,6 +99,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         currencycode TYPE string,
         quantity     TYPE i,
       END OF ty_s_entry.
+    TYPES ty_t_entry TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
 
     DATA t_categories   TYPE STANDARD TABLE OF ty_s_category WITH EMPTY KEY.
     DATA t_search       TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
@@ -104,8 +109,8 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA t_favorite     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
     TYPES:
       BEGIN OF ty_s_store,
-        cart  TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY,
-        saved TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY,
+        cart  TYPE ty_t_entry,
+        saved TYPE ty_t_entry,
       END OF ty_s_store.
     TYPES:
       BEGIN OF ty_s_storage,
@@ -115,8 +120,8 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         value  TYPE ty_s_store,
       END OF ty_s_storage.
 
-    DATA t_cart         TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
-    DATA t_saved        TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
+    DATA t_cart         TYPE ty_t_entry.
+    DATA t_saved        TYPE ty_t_entry.
     " what the original's LocalStorageModel is: the cart under its own key in
     " the browser's local storage. The whole structure is what STORE_DATA
     " writes, and `value` is what the z2ui5.cc.Storage control reads back
@@ -262,6 +267,19 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         productid TYPE string.
     METHODS search_refresh.
     METHODS cart_refresh.
+    METHODS storage_json
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS entries_json
+      IMPORTING
+        entries       TYPE ty_t_entry
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS json_escape
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
     METHODS cart_mirror.
     METHODS cart_restore.
     METHODS order_submit.
@@ -1520,8 +1538,63 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " stored one before the reading control had reported it - which is
     " exactly the cart that went missing on every app restart
     cart_mirror( ).
+
+    " STORE_DATA takes ONE argument and the frontend destructures it as
+    " \{ TYPE, PREFIX, KEY, VALUE \}: an argument that parses as JSON is embedded
+    " as real JSON, anything else stays a string. `${ _bind( s_storage ) }` -
+    " what sample z2ui5_cl_smp_app_327 passes - is a BINDING, and only a
+    " VIEW-WIRED action has UI5 resolve one. From a handler the action is queued
+    " and the argument arrives as the literal text `${/S_STORAGE}`, whose
+    " TYPE/KEY/VALUE are all undefined - and an empty VALUE is the frontend's
+    " signal to REMOVE the key. So this wrote nothing, ever, and said nothing
+    " either: deleting a key is a legitimate thing to ask for. The payload is
+    " composed here instead
     client->follow_up_action( val   = client->cs_event-store_data
-                              t_arg = VALUE #( ( |${ client->_bind( s_storage ) }| ) ) ).
+                              t_arg = VALUE #( ( storage_json( ) ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD storage_json.
+
+    " the STORE_DATA payload, as JSON: the same two tables the Storage control
+    " holds in its bound `value`, so what is written is what the control reads
+    " back and compares against, and it stays quiet on the next render
+    result = |\{"TYPE":"{ s_storage-type }","PREFIX":"{ s_storage-prefix }",| &&
+             |"KEY":"{ s_storage-key }","VALUE":\{| &&
+             |"CART":{ entries_json( t_cart ) },"SAVED":{ entries_json( t_saved ) }\}\}|.
+
+  ENDMETHOD.
+
+
+  METHOD entries_json.
+
+    " a JSON array of the six fields the bound value carries back
+    DATA(rows) = ``.
+
+    LOOP AT entries INTO DATA(entry).
+      IF rows IS NOT INITIAL.
+        rows = |{ rows },|.
+      ENDIF.
+      rows = |{ rows }\{"PRODUCTID":"{ json_escape( entry-productid ) }",| &&
+             |"NAME":"{ json_escape( entry-name ) }",| &&
+             |"PICTUREURL":"{ json_escape( entry-pictureurl ) }",| &&
+             |"PRICE_TEXT":"{ json_escape( entry-price_text ) }",| &&
+             |"CURRENCYCODE":"{ json_escape( entry-currencycode ) }",| &&
+             |"QUANTITY":{ entry-quantity }\}|.
+    ENDLOOP.
+
+    result = |[{ rows }]|.
+
+  ENDMETHOD.
+
+
+  METHOD json_escape.
+
+    " the two characters a JSON string cannot carry raw. The backslash first, or
+    " it would escape the escapes added after it
+    result = replace( val = val sub = `\` with = `\\` occ = 0 ).
+    result = replace( val = result sub = `"` with = `\"` occ = 0 ).
 
   ENDMETHOD.
 
