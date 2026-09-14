@@ -46,11 +46,14 @@ same cut AGENTS §10 already makes between the rule and the war story._
   (abap2UI5/linter#104, `lib/cc-controls.mjs`) and the app was verified against
   that build with `.github/scripts/substitute-linter.sh` — nothing is left to
   do here but delete the `rules` block when `package-lock.json` moves to a
-  release that carries the fix. The same pin costs one more waiver in the same
-  class: `z2ui5_cl_ui5_json`, the released JSON reader the storage round-trip
-  parses with, is in the linter's `RELEASED_OBJECTS` on main and not in 0.6.1,
-  so the call carries an `abap2ui5lint-disable-next-line non-released-api`
-  that goes with the same bump. And a third, in `z2ui5_cl_smpc_demo_003`:
+  release that carries the fix. The second waiver this pin used to cost, on
+  the framework's short-lived released JSON reader, is gone with the call:
+  that class was removed on 2026-09-14 before it had shipped in any release,
+  and the storage round-trip parses nothing at all now — the control's
+  `value` is bound two-way, so the framework's own write-back fills
+  `s_storage-value`. The linter's `RELEASED_OBJECTS` on main still lists the
+  class it used to name; that is upstream's to drop, and nothing here waits
+  on it. The other one is in `z2ui5_cl_smpc_demo_003`:
   `invalid-property-value` on `intervalType="OneMonth"`, the enum KEY the
   Team Calendar original writes. 0.6.1 judges an enum by its runtime VALUES,
   which is the one spelling an XML view cannot use — an attribute goes through

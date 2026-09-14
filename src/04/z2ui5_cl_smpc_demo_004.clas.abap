@@ -20,8 +20,9 @@
 "!    storage, exactly as the original's LocalStorageModel keeps them, under
 "!    the same key (SHOPPING_CART). abap2UI5 ships both halves: the
 "!    STORE_DATA frontend action writes, and the invisible z2ui5.cc.Storage
-"!    control reads the key back and reports it through its `finished` event,
-"!    where z2ui5_cl_ui5_json parses it into the bound tables. So a closed
+"!    control reads the key back into its two-way bound `value`, so what it
+"!    found is in s_storage-value by the time the `finished` event is
+"!    handled - no JSON is parsed anywhere in this class. So a closed
 "!    browser loses nothing here either - and the backend still sees the
 "!    cart on every round-trip, which is where a price, a reservation or an
 "!    order would be decided. Only a round-trip that CHANGED the cart writes
@@ -262,9 +263,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     METHODS search_refresh.
     METHODS cart_refresh.
     METHODS cart_mirror.
-    METHODS cart_restore
-      IMPORTING
-        json TYPE string.
+    METHODS cart_restore.
     METHODS order_submit.
     METHODS row_of
       IMPORTING
@@ -328,7 +327,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `key`      v = client->_bind( s_storage-key )
         )->a( n = `value`    v = client->_bind( s_storage-value )
         )->a( n = `finished` v = client->_event( val    = `CART_LOADED`
-                                                 arg    = `${$parameters>/value}`
+                                                 " no arg: the value is BOUND, so it arrives in
+                                                 " s_storage-value with this event and the handler
+                                                 " reads it there (cart_restore). An event argument
+                                                 " would hand the same payload over a second time,
+                                                 " as JSON the app would then have to parse.
+                                                 "
                                                  " the control reads and fires while the INITIAL view
                                                  " renders - i.e. while that very roundtrip still counts
                                                  " as in flight, which drops an ordinary wire's event
@@ -1240,7 +1244,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " the browser had a cart under the key: it wins over what this app
         " instance holds, exactly as the original's model does - the storage
         " IS the model there
-        cart_restore( client->get_event_arg( ) ).
+        cart_restore( ).
 
       WHEN `SEARCH`.
         search_refresh( ).
@@ -1524,35 +1528,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD cart_restore.
 
-    " the control reports what it read as JSON; z2ui5_cl_ui5_json is the
-    " released reader for app code (a released JSON parser is the one thing
-    " no ABAP release ships portably - see its own documentation). The pinned
-    " linter 0.6.1 predates the class and reads it as an internal; its main
-    " branch already lists it, so this waiver goes with the next pin move
-    " abap2ui5lint-disable-next-line non-released-api -- released in src/02, newer than the pinned 0.6.1
-    DATA(reader) = z2ui5_cl_ui5_json=>factory( json ).
-
-    t_cart = VALUE #( ).
-    LOOP AT reader->members( `/CART` ) INTO DATA(cart_index).
-      DATA(cart_path) = |/CART/{ cart_index }|.
-      INSERT VALUE #( productid    = reader->get_string( |{ cart_path }/PRODUCTID| )
-                      name         = reader->get_string( |{ cart_path }/NAME| )
-                      pictureurl   = reader->get_string( |{ cart_path }/PICTUREURL| )
-                      price_text   = reader->get_string( |{ cart_path }/PRICE_TEXT| )
-                      currencycode = reader->get_string( |{ cart_path }/CURRENCYCODE| )
-                      quantity     = reader->get_integer( |{ cart_path }/QUANTITY| ) ) INTO TABLE t_cart.
-    ENDLOOP.
-
-    t_saved = VALUE #( ).
-    LOOP AT reader->members( `/SAVED` ) INTO DATA(saved_index).
-      DATA(saved_path) = |/SAVED/{ saved_index }|.
-      INSERT VALUE #( productid    = reader->get_string( |{ saved_path }/PRODUCTID| )
-                      name         = reader->get_string( |{ saved_path }/NAME| )
-                      pictureurl   = reader->get_string( |{ saved_path }/PICTUREURL| )
-                      price_text   = reader->get_string( |{ saved_path }/PRICE_TEXT| )
-                      currencycode = reader->get_string( |{ saved_path }/CURRENCYCODE| )
-                      quantity     = reader->get_integer( |{ saved_path }/QUANTITY| ) ) INTO TABLE t_saved.
-    ENDLOOP.
+    " NOTHING IS PARSED HERE. `value` is bound two-way
+    " (client->_bind( s_storage-value ) on the Storage control), so the
+    " value the control read out of the browser is written into the model by
+    " UI5, travels back with THIS very event, and the framework has put it
+    " into s_storage-value before on_event( ) runs - whole_value_apply in
+    " z2ui5_cl_ui5_srv_model converts a whole object with
+    " to_abap( iv_corresponding = abap_true ), which IS the
+    " corresponding-only mapping an app would otherwise reach a JSON reader
+    " for. The stored payload is nested (two arrays of six-field rows), and
+    " nested is exactly the case a hand-written `find` walk does not answer:
+    " binding the value is the answer instead.
+    t_cart  = s_storage-value-cart.
+    t_saved = s_storage-value-saved.
 
     " mirror, no write: what was just read IS what is stored, and the mirror
     " is what stops the reading control from reporting it again on the next
