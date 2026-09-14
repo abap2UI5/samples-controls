@@ -1151,7 +1151,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         nav_to( nav = `nav-mid` page = `page-welcome` ).
 
       WHEN `ADD_TO_CART`.
-        cart_add( prod_id ).
+        " two call shapes on one wire, as in the original: the product page's
+        " footer button adds the product it SHOWS and sends nothing, a row
+        " action on the welcome page sends the row's id. That is the same
+        " split the original has between BaseController onAddToCart and
+        " Welcome.controller onAddToCart
+        DATA(add_id) = client->get_event_arg( ).
+        IF add_id IS INITIAL.
+          add_id = prod_id.
+        ENDIF.
+        cart_add( add_id ).
 
       WHEN `TOGGLE_CART`.
         cart_open = xsdbool( cart_open = abap_false ).
@@ -1163,7 +1172,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN `SAVE_LATER`.
         DATA(saved_id) = client->get_event_arg( ).
         ASSIGN t_cart[ productid = saved_id ] TO FIELD-SYMBOL(<entry>).
-        IF sy-subrc = 0.
+        IF <entry> IS ASSIGNED.
           INSERT <entry> INTO TABLE t_saved.
           DELETE t_cart WHERE productid = saved_id.
           cart_refresh( ).
@@ -1269,7 +1278,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD product_show.
 
     ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
-    IF sy-subrc <> 0.
+    IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
@@ -1306,12 +1315,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD cart_add.
 
     ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
-    IF sy-subrc <> 0.
+    IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
     ASSIGN t_cart[ productid = productid ] TO FIELD-SYMBOL(<entry>).
-    IF sy-subrc = 0.
+    IF <entry> IS ASSIGNED.
       <entry>-quantity = <entry>-quantity + 1.
     ELSE.
       INSERT VALUE #( productid    = <product>-productid
@@ -1333,9 +1342,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the totalPrice formatter of the original, computed where the prices are
     DATA total TYPE ty_amount.
 
+    FIELD-SYMBOLS <product> TYPE ty_s_product.
+
     LOOP AT t_cart INTO DATA(entry).
-      ASSIGN t_all[ productid = entry-productid ] TO FIELD-SYMBOL(<product>).
-      IF sy-subrc = 0.
+      " UNASSIGN first: inside a loop a field symbol stays assigned from the
+      " previous round, so IS ASSIGNED alone would read the PREVIOUS row
+      UNASSIGN <product>.
+      ASSIGN t_all[ productid = entry-productid ] TO <product>.
+      IF <product> IS ASSIGNED.
         total = total + CONV ty_amount( <product>-price ) * entry-quantity.
       ENDIF.
     ENDLOOP.
@@ -1462,6 +1476,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD model_init.
+
+    FIELD-SYMBOLS <featured_product> TYPE ty_s_product.
 
     " localService/mockdata/ProductCategories.json
     t_categories = VALUE #(
@@ -1996,17 +2012,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ).
 
     LOOP AT t_featured INTO DATA(featured).
-      ASSIGN t_all[ productid = featured-productid ] TO FIELD-SYMBOL(<product>).
-      IF sy-subrc <> 0.
+      " UNASSIGN first - see cart_refresh
+      UNASSIGN <featured_product>.
+      ASSIGN t_all[ productid = featured-productid ] TO <featured_product>.
+      IF <featured_product> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
       CASE featured-type.
         WHEN `Promoted`.
-          INSERT row_of( <product> ) INTO TABLE t_promoted.
+          INSERT row_of( <featured_product> ) INTO TABLE t_promoted.
         WHEN `Viewed`.
-          INSERT row_of( <product> ) INTO TABLE t_viewed.
+          INSERT row_of( <featured_product> ) INTO TABLE t_viewed.
         WHEN OTHERS.
-          INSERT row_of( <product> ) INTO TABLE t_favorite.
+          INSERT row_of( <featured_product> ) INTO TABLE t_favorite.
       ENDCASE.
     ENDLOOP.
 

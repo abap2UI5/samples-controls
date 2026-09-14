@@ -83,6 +83,13 @@ function main() {
     const base = path.basename(f);
     const cls = base.replace(/\.(clas|intf)\..*$/, '');
     if (EXCLUDE.has(cls)) continue;
+    /* E2E_ONLY=<regex>: build a backend with only the classes whose file name
+     * matches, for DEBUGGING one app in a browser. The full build downports
+     * 623 ports + the framework and takes half an hour; five demo apps take
+     * four minutes, which is the difference between verifying a fix by
+     * clicking it and guessing at it. Never set in CI - the corpus gate wants
+     * the whole corpus. */
+    if (process.env.E2E_ONLY && !new RegExp(process.env.E2E_ONLY).test(base)) continue;
     fs.copyFileSync(f, path.join(downport, base));
     if (/^z2ui5_cl_smpc_app_\d+\.clas\.abap$/.test(base)) ports++;
   }

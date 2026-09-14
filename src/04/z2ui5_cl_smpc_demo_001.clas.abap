@@ -558,7 +558,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
   METHOD object_show.
 
     ASSIGN t_products[ productid = productid ] TO FIELD-SYMBOL(<product>).
-    IF sy-subrc <> 0.
+    IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
@@ -572,7 +572,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     obj_discontinued  = <product>-discontinued.
 
     ASSIGN t_suppliers[ supplierid = <product>-supplierid ] TO FIELD-SYMBOL(<supplier>).
-    IF sy-subrc = 0.
+    IF <supplier> IS ASSIGNED.
       obj_suppliername = <supplier>-companyname.
       obj_address      = <supplier>-address.
       obj_postal_city  = |{ <supplier>-postalcode } / { <supplier>-city }|.

@@ -400,8 +400,19 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     ENDIF.
 
     " the SinglePlanningCalendar shows one person, so the appointments of the
-    " selected row become the bound table
-    t_selected = VALUE #( ( LINES OF VALUE #( t_team[ name = name ]-t_appointments OPTIONAL ) ) ).
+    " selected row become the bound table.
+    "
+    " Written as a READ rather than as the one-liner it was - a nested
+    " `VALUE #( ( LINES OF VALUE #( t[ key ]-inner OPTIONAL ) ) )` is what the
+    " 702 downport cannot resolve: it emitted `READ TABLE ... WITH KEY
+    " undefined` and the transpiled backend refused the class outright
+    " (check_syntax, "undefined" not found). A row this port cannot run on a
+    " 702 system is a port that does not keep this package's promise.
+    CLEAR t_selected.
+    ASSIGN t_team[ name = name ] TO FIELD-SYMBOL(<member>).
+    IF <member> IS ASSIGNED.
+      t_selected = <member>-t_appointments.
+    ENDIF.
 
   ENDMETHOD.
 

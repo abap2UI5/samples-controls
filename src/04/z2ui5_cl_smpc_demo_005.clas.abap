@@ -286,7 +286,7 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
   METHOD post_show.
 
     ASSIGN t_all[ postid = postid ] TO FIELD-SYMBOL(<post>).
-    IF sy-subrc <> 0.
+    IF <post> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
