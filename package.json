@@ -57,7 +57,7 @@
   "homepage": "https://github.com/abap2UI5/samples-controls#readme",
   "devDependencies": {
     "@abap2ui5/linter": "^0.6.1",
-    "@abaplint/cli": "^2.120.38",
+    "@abaplint/cli": "^2.120.52",
     "@openui5/sap.f": "1.151.0",
     "@openui5/sap.m": "1.151.0",
     "@openui5/sap.tnt": "1.151.0",
@@ -77,7 +77,7 @@
     "@sapui5/sap.ui.vbm": "1.151.0",
     "@sapui5/sap.ui.vk": "1.151.0",
     "@sapui5/sap.viz": "1.151.0",
-    "playwright": "^1.62.1"
+    "playwright": "^1.63.0"
   },
   "engines": {
     "node": ">=22"
