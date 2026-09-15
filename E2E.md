@@ -128,11 +128,23 @@ See `scripts/e2e-build.mjs` / `scripts/e2e-smoke.mjs` for details, and AGENTS.md
 ## Patched `open-abap-core`
 
 `e2e-build` clones [open-abap-core](https://github.com/open-abap/open-abap-core)
-into `<abap2UI5 checkout>/node/open-abap-core`, patches it with
-`web/ci/patch_open_abap_xml.mjs` (which lives there because abap2UI5/mcp-server
-executes that exact path — see `web/README.md`) and
-transpiles against that copy. Upstream's `CALL TRANSFORMATION id … RESULT XML`
-writes character data unescaped, so any app whose model carries a `<` saves a
-draft its own `CL_IXML` cannot parse back — every later round-trip then fails
-with `Network error: ASSERTION_FAILED`. The clone is reused across builds;
-delete it to pick up a newer open-abap-core.
+into `<abap2UI5 checkout>/node/open-abap-core`, runs
+`web/ci/patch_open_abap_xml.mjs` over it (which lives there because
+abap2UI5/mcp-server executes that exact path — see `web/README.md`) and
+transpiles against that copy. `CALL TRANSFORMATION id … RESULT XML` used to
+write character data unescaped, so any app whose model carries a `<` saved a
+draft its own `CL_IXML` could not parse back — every later round-trip then
+failed with `Network error: ASSERTION_FAILED`.
+
+**Upstream fixed this**, in
+[open-abap-core#1193](https://github.com/open-abap/open-abap-core/pull/1193)
+(merged 2026-09-15): the writer escapes `&`, `<` and `>` in every elementary
+value and the reader resolves `&amp;` last. On a clone made since, the script
+checks both and reports `already correct, nothing to patch`.
+
+It still runs, and is still worth running, because **the clone is reused across
+builds** — delete it to pick up a newer open-abap-core. A checkout made before
+#1193 is therefore still a thing a machine can be holding, and on one of those
+the script applies the two edits exactly as it always did. A checkout with
+neither the upstream form nor the old anchor fails the build rather than
+transpiling something nobody has checked.
