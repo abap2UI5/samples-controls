@@ -38,10 +38,10 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -50,11 +50,47 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the full sample: the f:ShellBar, the four-tab IconTabBar and the two
     " f:GridContainers with all EIGHT integration Cards, each rendering from
     " its own declarative JSON manifest carried as a bound ABAP string
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `URL: {0}` INTO TABLE temp1.
+    INSERT `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `URL: {0}` INTO TABLE temp2.
+    INSERT `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp3.
+    INSERT `show` INTO TABLE temp3.
+    INSERT `URL: {0}` INTO TABLE temp3.
+    INSERT `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp4.
+    INSERT `show` INTO TABLE temp4.
+    INSERT `URL: {0}` INTO TABLE temp4.
+    INSERT `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp5.
+    INSERT `show` INTO TABLE temp5.
+    INSERT `URL: {0}` INTO TABLE temp5.
+    INSERT `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` INTO TABLE temp5.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -120,10 +156,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                             " resolves on the client, so the action needs no roundtrip
                             )->a( n = `action`   v = client->follow_up_action(
                                       val   = client->cs_event-control_global
-                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                       ( `show` )
-                                                       ( `URL: {0}` )
-                                                       ( `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` ) ) )
+                                      t_arg = temp1 )
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
@@ -147,10 +180,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                             " resolves on the client, so the action needs no roundtrip
                             )->a( n = `action`   v = client->follow_up_action(
                                       val   = client->cs_event-control_global
-                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                       ( `show` )
-                                                       ( `URL: {0}` )
-                                                       ( `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` ) ) )
+                                      t_arg = temp2 )
 
                             )->ele( n = `layoutData` ns = `w`
                                 )->tag( n = `GridContainerItemLayoutData` ns = `f`
@@ -165,10 +195,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                             " resolves on the client, so the action needs no roundtrip
                             )->a( n = `action`   v = client->follow_up_action(
                                       val   = client->cs_event-control_global
-                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                       ( `show` )
-                                                       ( `URL: {0}` )
-                                                       ( `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` ) ) )
+                                      t_arg = temp3 )
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
@@ -194,10 +221,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                             " resolves on the client, so the action needs no roundtrip
                             )->a( n = `action`   v = client->follow_up_action(
                                       val   = client->cs_event-control_global
-                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                       ( `show` )
-                                                       ( `URL: {0}` )
-                                                       ( `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` ) ) )
+                                      t_arg = temp4 )
 
                             )->ele( n = `customData` ns = `w`
                                 )->tag( n = `CardBadgeCustomData` ns = `card`
@@ -272,10 +296,7 @@ CLASS z2ui5_cl_smpc_app_118 IMPLEMENTATION.
                             " resolves on the client, so the action needs no roundtrip
                             )->a( n = `action`   v = client->follow_up_action(
                                       val   = client->cs_event-control_global
-                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                       ( `show` )
-                                                       ( `URL: {0}` )
-                                                       ( `${$parameters>/parameters}.url ? ${$parameters>/parameters}.url : ''` ) ) )
+                                      t_arg = temp5 )
 
                             )->ele( n = `layoutData` ns = `w`
                                 )->tag( n = `GridContainerItemLayoutData` ns = `f`

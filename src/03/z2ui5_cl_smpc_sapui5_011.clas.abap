@@ -23,18 +23,50 @@ ENDCLASS.
 CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
+      DATA t_arg TYPE string_table.
+      FIELD-SYMBOLS <temp1> LIKE LINE OF t_arg.
+      DATA temp2 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp3> LIKE LINE OF t_arg.
+      DATA temp4 LIKE sy-tabix.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp5 TYPE string_table.
+    DATA temp1 TYPE xsdboolean.
 
     IF client->get_event( ) = `ON_SCAN_SUCCESS`.
       client->message_box_display( `Scan finished!` ).
-      DATA(t_arg) = client->get( )-t_event_arg.
-      mv_scan_input = t_arg[ 1 ].
-      mv_scan_type  = t_arg[ 2 ].
+      
+      t_arg = client->get( )-t_event_arg.
+      
+      
+      temp2 = sy-tabix.
+      READ TABLE t_arg INDEX 1 ASSIGNING <temp1>.
+      sy-tabix = temp2.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      mv_scan_input = <temp1>.
+      
+      
+      temp4 = sy-tabix.
+      READ TABLE t_arg INDEX 2 ASSIGNING <temp3>.
+      sy-tabix = temp4.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      mv_scan_type  = <temp3>.
       "implement further processing here...
       "...
     ENDIF.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/text}` INTO TABLE temp5.
+    INSERT `${$parameters>/format}` INTO TABLE temp5.
+    
+    temp1 = boolc( client->get( )-check_launchpad_active = abap_false ).
     view->ele( n = `View` ns = `mvc`
         )->a( n = `displayBlock` v = `true`
         )->a( n = `height`       v = `100%`
@@ -48,7 +80,7 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
                 )->a( n = `title`          v = `abap2UI5`
                 )->a( n = `navButtonPress` v = client->_event_nav_app_leave( )
                 )->a( n = `showNavButton`  b = client->check_app_prev_stack( )
-                )->a( n = `showHeader`     b = xsdbool( client->get( )-check_launchpad_active = abap_false )
+                )->a( n = `showHeader`     b = temp1
 
                 )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `title`    v = `Information`
@@ -68,8 +100,7 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
                         )->tag( n = `BarcodeScannerButton` ns = `ndc`
                             )->a( n = `dialogTitle` v = `Barcode Scanner`
                             )->a( n = `scanSuccess` v = client->_event( val   = `ON_SCAN_SUCCESS`
-                                                                        t_arg = VALUE #( ( `${$parameters>/text}` )
-                                                                                         ( `${$parameters>/format}` ) ) ) ).
+                                                                        t_arg = temp5 ) ).
 
     client->view_display( view->stringify( ) ).
 

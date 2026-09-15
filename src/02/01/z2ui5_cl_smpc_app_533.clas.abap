@@ -44,12 +44,12 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -58,7 +58,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
@@ -78,15 +79,24 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
   METHOD popup_wizard_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA v_back TYPE string.
+    DATA v_next TYPE string.
+    DATA v_rev TYPE string.
+    DATA v_fin TYPE string.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " handleButtonsVisibility switches the five footer buttons on the SELECTED
     " STEP INDEX; the index is one bound field here and each button carries the
     " same condition as an expression binding
-    DATA(v_back) = |\{= ${ client->_bind( step_index ) } > 0 && ${ client->_bind( step_index ) } < 4 \}|.
-    DATA(v_next) = |\{= ${ client->_bind( step_index ) } < 3 \}|.
-    DATA(v_rev)  = |\{= ${ client->_bind( step_index ) } === 3 \}|.
-    DATA(v_fin)  = |\{= ${ client->_bind( step_index ) } === 4 \}|.
+    
+    v_back = |\{= ${ client->_bind( step_index ) } > 0 && ${ client->_bind( step_index ) } < 4 \}|.
+    
+    v_next = |\{= ${ client->_bind( step_index ) } < 3 \}|.
+    
+    v_rev  = |\{= ${ client->_bind( step_index ) } === 3 \}|.
+    
+    v_fin  = |\{= ${ client->_bind( step_index ) } === 4 \}|.
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
@@ -537,6 +547,10 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA step_title TYPE string.
+        DATA temp1 TYPE string_table.
+        DATA temp3 TYPE string_table.
+          DATA temp5 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -545,7 +559,8 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
 
       WHEN `NAVIGATION_CHANGE`.
         " handleNavigationChange: the selected step becomes the new index
-        DATA(step_title) = client->get_event_arg( ).
+        
+        step_title = client->get_event_arg( ).
         CASE step_title.
           WHEN `Product Type`.
             step_index = 0.
@@ -588,23 +603,36 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
         step_goto( 3 ).
 
       WHEN `WIZARD_CANCEL`.
+        
+        CLEAR temp1.
+        INSERT `YES` INTO TABLE temp1.
+        INSERT `NO` INTO TABLE temp1.
         client->message_box_display( text    = `Are you sure you want to cancel your report?`
                                      type    = `warning`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp1
                                      onclose = `WIZARD_CLOSED` ).
 
       WHEN `WIZARD_SUBMIT`.
+        
+        CLEAR temp3.
+        INSERT `YES` INTO TABLE temp3.
+        INSERT `NO` INTO TABLE temp3.
         client->message_box_display( text    = `Are you sure you want to submit your report?`
                                      type    = `confirm`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp3
                                      onclose = `WIZARD_CLOSED` ).
 
       WHEN `WIZARD_CLOSED`.
         " _handleMessageBoxOpen: YES discards the progress, closes the dialog and
         " resets the model to the initial oData
         IF client->get_event_arg( ) = `YES`.
+          
+          CLEAR temp5.
+          INSERT `CreateProductWizard` INTO TABLE temp5.
+          INSERT `discardProgress` INTO TABLE temp5.
+          INSERT `ProductTypeStep` INTO TABLE temp5.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `CreateProductWizard` ) ( `discardProgress` ) ( `ProductTypeStep` ) ) ).
+                                    t_arg = temp5 ).
           model_init( ).
           client->popup_destroy( ).
         ENDIF.
@@ -619,13 +647,38 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
     " goToStep( steps[ index ], true ) - Wizard.currentStep is an ASSOCIATION and
     " cannot be bound, so the navigation goes through the control_by_id call the
     " framework whitelists for exactly this (app 101 idiom)
-    DATA(steps) = VALUE string_table( ( `ProductTypeStep` ) ( `ProductInfoStep` )
-                                      ( `OptionalInfoStep` ) ( `PricingStep` ) ( `ReviewPage` ) ).
+    DATA temp7 TYPE string_table.
+    DATA steps LIKE temp7.
+      FIELD-SYMBOLS <temp9> LIKE LINE OF steps.
+      DATA temp10 LIKE sy-tabix.
+      DATA temp11 TYPE string_table.
+    CLEAR temp7.
+    INSERT `ProductTypeStep` INTO TABLE temp7.
+    INSERT `ProductInfoStep` INTO TABLE temp7.
+    INSERT `OptionalInfoStep` INTO TABLE temp7.
+    INSERT `PricingStep` INTO TABLE temp7.
+    INSERT `ReviewPage` INTO TABLE temp7.
+    
+    steps = temp7.
     IF index >= 0 AND index < lines( steps ).
       step_index   = index.
-      current_step = steps[ index + 1 ].
+      
+      
+      temp10 = sy-tabix.
+      READ TABLE steps INDEX index + 1 ASSIGNING <temp9>.
+      sy-tabix = temp10.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      current_step = <temp9>.
+      
+      CLEAR temp11.
+      INSERT `CreateProductWizard` INTO TABLE temp11.
+      INSERT `goToStep` INTO TABLE temp11.
+      INSERT current_step INTO TABLE temp11.
+      INSERT `true` INTO TABLE temp11.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `CreateProductWizard` ) ( `goToStep` ) ( current_step ) ( `true` ) ) ).
+                                t_arg = temp11 ).
     ENDIF.
 
   ENDMETHOD.
@@ -636,13 +689,38 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
     " additionalInfoValidation: a name of at least six characters and a numeric
     " weight; both drive their value state, the step's validated flag and the
     " Next button
-    DATA(name_ok)   = xsdbool( strlen( productname ) >= 6 ).
-    DATA(weight_ok) = xsdbool( productweight IS NOT INITIAL AND productweight CO `0123456789.` ).
+    DATA name_ok TYPE abap_bool.
+    DATA temp1 TYPE xsdboolean.
+    DATA weight_ok TYPE abap_bool.
+    DATA temp2 TYPE xsdboolean.
+    DATA temp13 TYPE string.
+    DATA temp14 TYPE string.
+    DATA temp3 TYPE xsdboolean.
+    temp1 = boolc( strlen( productname ) >= 6 ).
+    name_ok   = temp1.
+    
+    
+    temp2 = boolc( productweight IS NOT INITIAL AND productweight CO `0123456789.` ).
+    weight_ok = temp2.
 
-    productnamestate   = COND #( WHEN name_ok   = abap_true THEN `None` ELSE `Error` ).
-    productweightstate = COND #( WHEN weight_ok = abap_true THEN `None` ELSE `Error` ).
+    
+    IF name_ok = abap_true.
+      temp13 = `None`.
+    ELSE.
+      temp13 = `Error`.
+    ENDIF.
+    productnamestate   = temp13.
+    
+    IF weight_ok = abap_true.
+      temp14 = `None`.
+    ELSE.
+      temp14 = `Error`.
+    ENDIF.
+    productweightstate = temp14.
 
-    step2_validated = xsdbool( name_ok = abap_true AND weight_ok = abap_true ).
+    
+    temp3 = boolc( name_ok = abap_true AND weight_ok = abap_true ).
+    step2_validated = temp3.
     next_enabled    = step2_validated.
 
     IF step2_validated = abap_false AND step_index > 1.

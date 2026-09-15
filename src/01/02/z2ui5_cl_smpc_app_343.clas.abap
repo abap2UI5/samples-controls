@@ -28,7 +28,7 @@ CLASS z2ui5_cl_smpc_app_343 DEFINITION PUBLIC.
         key  TYPE string,
         text TYPE string,
       END OF ty_s_shade.
-    TYPES ty_t_shade TYPE STANDARD TABLE OF ty_s_shade WITH EMPTY KEY.
+    TYPES ty_t_shade TYPE STANDARD TABLE OF ty_s_shade WITH DEFAULT KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
 
@@ -45,10 +45,10 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -57,7 +57,16 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA layout TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA custom_color TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA row2 TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA an_icon TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA simple_form TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA right_aligned TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA left_aligned TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA default_aligned TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the sample's six BlockLayoutRows, one statement per cell. Each bound cell
     " carries its OWN context (binding="{/cellN}") and hands itself to
@@ -67,7 +76,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
     " context exactly like in the original.
     " resources/sample.css is injected through a core:HTML <style> (CSS braces
     " escaped \{ \} so the XMLView parser does not read them as bindings).
-    DATA(layout) = view->ele( n = `View` ns = `mvc`
+    
+    layout = view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -85,7 +95,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
             )->a( n = `id` v = `blockLayout` ).
 
     " row 1: the colour picker alone
-    DATA(custom_color) = layout->ele( n = `BlockLayoutRow` ns = `l`
+    
+    custom_color = layout->ele( n = `BlockLayoutRow` ns = `l`
         )->ele( n = `BlockLayoutCell` ns = `l`
             )->a( n = `id`                   v = `cell-1`
             )->a( n = `binding`              v = |\{{ client->_bind_path( cell1 ) }\}|
@@ -96,7 +107,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
     color_select( custom_color ).
 
     " row 2: the image cell (the one cell without a picker), then the icon cell
-    DATA(row2) = layout->ele( n = `BlockLayoutRow` ns = `l` ).
+    
+    row2 = layout->ele( n = `BlockLayoutRow` ns = `l` ).
 
     row2->ele( n = `BlockLayoutCell` ns = `l`
         )->a( n = `title`          v = `The Title`
@@ -106,7 +118,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
         )->tag( `Text`
             )->a( n = `text` v = `Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin.` ).
 
-    DATA(an_icon) = row2->ele( n = `BlockLayoutCell` ns = `l`
+    
+    an_icon = row2->ele( n = `BlockLayoutCell` ns = `l`
         )->a( n = `id`                   v = `cell-2`
         )->a( n = `binding`              v = |\{{ client->_bind_path( cell2 ) }\}|
         )->a( n = `title`                v = `An Icon`
@@ -119,7 +132,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
         )->a( n = `src` v = `sap-icon://add-activity` ).
 
     " row 3: picker and form share one VBox
-    DATA(simple_form) = layout->ele( n = `BlockLayoutRow` ns = `l`
+    
+    simple_form = layout->ele( n = `BlockLayoutRow` ns = `l`
         )->ele( n = `BlockLayoutCell` ns = `l`
             )->a( n = `id`                   v = `cell-3`
             )->a( n = `binding`              v = |\{{ client->_bind_path( cell3 ) }\}|
@@ -156,7 +170,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
                                  `in ligula.` ).
 
     " rows 4-6: the three title alignments, each over the same text
-    DATA(right_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+    
+    right_aligned = layout->ele( n = `BlockLayoutRow` ns = `l`
         )->ele( n = `BlockLayoutCell` ns = `l`
             )->a( n = `id`                   v = `cell-4`
             )->a( n = `binding`              v = |\{{ client->_bind_path( cell4 ) }\}|
@@ -172,7 +187,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
                              `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
                              `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
-    DATA(left_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+    
+    left_aligned = layout->ele( n = `BlockLayoutRow` ns = `l`
         )->ele( n = `BlockLayoutCell` ns = `l`
             )->a( n = `id`                   v = `cell-5`
             )->a( n = `binding`              v = |\{{ client->_bind_path( cell5 ) }\}|
@@ -188,7 +204,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
                              `sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque ` &&
                              `suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui.` ).
 
-    DATA(default_aligned) = layout->ele( n = `BlockLayoutRow` ns = `l`
+    
+    default_aligned = layout->ele( n = `BlockLayoutRow` ns = `l`
         )->ele( n = `BlockLayoutCell` ns = `l`
             )->a( n = `id`                   v = `cell-6`
             )->a( n = `binding`              v = |\{{ client->_bind_path( cell6 ) }\}|
@@ -214,33 +231,66 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
     " references it from six cells): a VBox with the two Labels and the two
     " Selects. The eleven ColorSets are numbered, the last one carrying a theme
     " note in its text; the six shades A..F likewise, on the last two
-    DATA(vbox) = cell->ele( `VBox` ).
+    DATA vbox TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA colorset TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp1 TYPE string.
+    DATA colorshade TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp2 TYPE ty_t_shade.
+    DATA temp3 LIKE LINE OF temp2.
+    DATA t_shades LIKE temp2.
+    DATA shade LIKE LINE OF t_shades.
+    vbox = cell->ele( `VBox` ).
 
-    DATA(colorset) = vbox->tag( `Label`
+    
+    colorset = vbox->tag( `Label`
         )->a( n = `text` v = `Cell Color Set`
         )->ele( `Select`
             )->a( n = `selectedKey` v = `{COLORSET}` ).
 
     DO 11 TIMES.
+      
+      IF sy-index = 11.
+        temp1 = `ColorSet11 (transparent in SAP Horizon theme)`.
+      ELSE.
+        temp1 = |ColorSet{ sy-index }|.
+      ENDIF.
       colorset->tag( n = `Item` ns = `core`
           )->a( n = `key`  v = |ColorSet{ sy-index }|
-          )->a( n = `text` v = COND #( WHEN sy-index = 11 THEN `ColorSet11 (transparent in SAP Horizon theme)` ELSE |ColorSet{ sy-index }| ) ).
+          )->a( n = `text` v = temp1 ).
     ENDDO.
 
-    DATA(colorshade) = vbox->tag( `Label`
+    
+    colorshade = vbox->tag( `Label`
         )->a( n = `text` v = `Cell Color Shade`
         )->ele( `Select`
             )->a( n = `selectedKey` v = `{COLORSHADE}` ).
 
-    DATA(t_shades) = VALUE ty_t_shade(
-        ( key = `ShadeA` text = `ShadeA` )
-        ( key = `ShadeB` text = `ShadeB` )
-        ( key = `ShadeC` text = `ShadeC` )
-        ( key = `ShadeD` text = `ShadeD` )
-        ( key = `ShadeE` text = `ShadeE (only available for SAP Quartz and Horizon themes)` )
-        ( key = `ShadeF` text = `ShadeF (only available for SAP Quartz and Horizon themes)` ) ).
+    
+    CLEAR temp2.
+    
+    temp3-key = `ShadeA`.
+    temp3-text = `ShadeA`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-key = `ShadeB`.
+    temp3-text = `ShadeB`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-key = `ShadeC`.
+    temp3-text = `ShadeC`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-key = `ShadeD`.
+    temp3-text = `ShadeD`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-key = `ShadeE`.
+    temp3-text = `ShadeE (only available for SAP Quartz and Horizon themes)`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-key = `ShadeF`.
+    temp3-text = `ShadeF (only available for SAP Quartz and Horizon themes)`.
+    INSERT temp3 INTO TABLE temp2.
+    
+    t_shades = temp2.
 
-    LOOP AT t_shades INTO DATA(shade).
+    
+    LOOP AT t_shades INTO shade.
       colorshade->tag( n = `Item` ns = `core`
           )->a( n = `key`  v = shade-key
           )->a( n = `text` v = shade-text ).
@@ -253,12 +303,24 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
     " the controller's _modelData verbatim - every cell starts on ColorSet6,
     " with shades A..F one per cell
-    cell1 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeA` ).
-    cell2 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeB` ).
-    cell3 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeC` ).
-    cell4 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeD` ).
-    cell5 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeE` ).
-    cell6 = VALUE #( colorset = `ColorSet6` colorshade = `ShadeF` ).
+    CLEAR cell1.
+    cell1-colorset = `ColorSet6`.
+    cell1-colorshade = `ShadeA`.
+    CLEAR cell2.
+    cell2-colorset = `ColorSet6`.
+    cell2-colorshade = `ShadeB`.
+    CLEAR cell3.
+    cell3-colorset = `ColorSet6`.
+    cell3-colorshade = `ShadeC`.
+    CLEAR cell4.
+    cell4-colorset = `ColorSet6`.
+    cell4-colorshade = `ShadeD`.
+    CLEAR cell5.
+    cell5-colorset = `ColorSet6`.
+    cell5-colorshade = `ShadeE`.
+    CLEAR cell6.
+    cell6-colorset = `ColorSet6`.
+    cell6-colorshade = `ShadeF`.
 
   ENDMETHOD.
 

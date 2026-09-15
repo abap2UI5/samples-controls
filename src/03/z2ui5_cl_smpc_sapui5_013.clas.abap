@@ -22,7 +22,7 @@ CLASS z2ui5_cl_smpc_sapui5_013 DEFINITION PUBLIC.
         starttime TYPE string,
         endtime   TYPE string,
       END OF ty_s_shape.
-    TYPES ty_t_shape TYPE STANDARD TABLE OF ty_s_shape WITH EMPTY KEY.
+    TYPES ty_t_shape TYPE STANDARD TABLE OF ty_s_shape WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_level2,
         id      TYPE string,
@@ -34,11 +34,11 @@ CLASS z2ui5_cl_smpc_sapui5_013 DEFINITION PUBLIC.
         id       TYPE string,
         text     TYPE string,
         task     TYPE ty_t_shape,
-        children TYPE STANDARD TABLE OF ty_s_level2 WITH EMPTY KEY,
+        children TYPE STANDARD TABLE OF ty_s_level2 WITH DEFAULT KEY,
       END OF ty_s_level1.
     TYPES:
       BEGIN OF ty_s_root,
-        children TYPE STANDARD TABLE OF ty_s_level1 WITH EMPTY KEY,
+        children TYPE STANDARD TABLE OF ty_s_level1 WITH DEFAULT KEY,
       END OF ty_s_root.
     DATA s_root TYPE ty_s_root.
 
@@ -56,10 +56,10 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -68,7 +68,8 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `displayBlock`   v = `true`
@@ -166,23 +167,50 @@ CLASS z2ui5_cl_smpc_sapui5_013 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp1 TYPE z2ui5_cl_smpc_sapui5_013=>ty_s_root-children.
+    DATA temp2 LIKE LINE OF temp1.
+    DATA temp3 TYPE z2ui5_cl_smpc_sapui5_013=>ty_t_shape.
+    DATA temp4 LIKE LINE OF temp3.
+    DATA temp5 TYPE z2ui5_cl_smpc_sapui5_013=>ty_s_level1-children.
+    DATA temp6 LIKE LINE OF temp5.
+    DATA temp7 TYPE z2ui5_cl_smpc_sapui5_013=>ty_t_shape.
+    DATA temp8 LIKE LINE OF temp7.
 
-    s_root = VALUE #(
-        children = VALUE #(
-            ( id       = `line`
-              text     = `Level 1`
-              task     = VALUE #( ( id        = `rectangle1`
-                                    starttime = `2018-11-01T09:00:00`
-                                    endtime   = `2018-11-27T09:00:00` ) )
-              children = VALUE #(
-                  ( id      = `line2`
-                    text    = `Level 2`
-                    subtask = VALUE #( ( id        = `chevron1`
-                                         starttime = `2018-11-01T09:00:00`
-                                         endtime   = `2018-11-13T09:00:00` )
-                                       ( id        = `chevron2`
-                                         starttime = `2018-11-15T09:00:00`
-                                         endtime   = `2018-11-27T09:00:00` ) ) ) ) ) ) ).
+    CLEAR s_root.
+    
+    CLEAR temp1.
+    
+    temp2-id = `line`.
+    temp2-text = `Level 1`.
+    
+    CLEAR temp3.
+    
+    temp4-id = `rectangle1`.
+    temp4-starttime = `2018-11-01T09:00:00`.
+    temp4-endtime = `2018-11-27T09:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp2-task = temp3.
+    
+    CLEAR temp5.
+    
+    temp6-id = `line2`.
+    temp6-text = `Level 2`.
+    
+    CLEAR temp7.
+    
+    temp8-id = `chevron1`.
+    temp8-starttime = `2018-11-01T09:00:00`.
+    temp8-endtime = `2018-11-13T09:00:00`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-id = `chevron2`.
+    temp8-starttime = `2018-11-15T09:00:00`.
+    temp8-endtime = `2018-11-27T09:00:00`.
+    INSERT temp8 INTO TABLE temp7.
+    temp6-subtask = temp7.
+    INSERT temp6 INTO TABLE temp5.
+    temp2-children = temp5.
+    INSERT temp2 INTO TABLE temp1.
+    s_root-children = temp1.
 
   ENDMETHOD.
 

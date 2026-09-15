@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_308 DEFINITION PUBLIC.
         type TYPE string,
         text TYPE string,
       END OF ty_s_legend.
-    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
+    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_special,
         start_date     TYPE string,
@@ -21,7 +21,7 @@ CLASS z2ui5_cl_smpc_app_308 DEFINITION PUBLIC.
         tooltip        TYPE string,
         color          TYPE string,
       END OF ty_s_special.
-    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
+    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH DEFAULT KEY.
 
     DATA pressed    TYPE abap_bool.
     DATA t_legend1  TYPE ty_t_legend.
@@ -45,9 +45,9 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -56,7 +56,10 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " DateTypeRange.startDate/endDate are typed "object" and demand a real JS Date;
     " the model keeps ABAP DATS strings and Formatter.DateAbapDateToDateObject converts them at
@@ -64,6 +67,16 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
     " guard: DateAbapDateToDateObject answers null for a non-date, where
     " DateCreateObject's new Date('') is an Invalid Date - truthy, and enough to
     " kill the whole view
+    
+    CLEAR temp1.
+    INSERT `COLOR` INTO TABLE temp1.
+    INSERT `SECONDARY_TYPE` INTO TABLE temp1.
+    INSERT `TOOLTIP` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `COLOR` INTO TABLE temp2.
+    INSERT `SECONDARY_TYPE` INTO TABLE temp2.
+    INSERT `TOOLTIP` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`      v = `sap.ui.layout`
         )->a( n = `xmlns:u`      v = `sap.ui.unified`
@@ -90,9 +103,7 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
                 )->a( n = `intervalSelection` v = `true`
                 )->a( n = `specialDates`      v = client->_bind(
                                                       val                = t_special1
-                                                      omit_initial_paths = VALUE #( ( `COLOR` )
-                                                                                    ( `SECONDARY_TYPE` )
-                                                                                    ( `TOOLTIP` ) ) )
+                                                      omit_initial_paths = temp1 )
 
                 )->ele( n = `specialDates` ns = `u`
                     )->tag( n = `DateTypeRange` ns = `u`
@@ -135,9 +146,7 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
                 )->a( n = `legend`       v = `legend2`
                 )->a( n = `specialDates` v = client->_bind(
                                                  val                = t_special2
-                                                 omit_initial_paths = VALUE #( ( `COLOR` )
-                                                                               ( `SECONDARY_TYPE` )
-                                                                               ( `TOOLTIP` ) ) )
+                                                 omit_initial_paths = temp2 )
 
                 )->ele( n = `specialDates` ns = `u`
                     )->tag( n = `DateTypeRange` ns = `u`
@@ -187,6 +196,10 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+        DATA temp4 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+        DATA temp5 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
+        DATA temp6 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
 
     IF client->get_event( ) = `SHOW_SPECIAL_DAYS`.
       " handleShowSpecialDays: the pressed state adds the special dates and the
@@ -196,10 +209,18 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
       IF pressed = abap_true.
         special_days_fill( ).
       ELSE.
-        t_special1 = VALUE #( ).
-        t_special2 = VALUE #( ).
-        t_legend1 = VALUE #( ).
-        t_legend2 = VALUE #( ).
+        
+        CLEAR temp3.
+        t_special1 = temp3.
+        
+        CLEAR temp4.
+        t_special2 = temp4.
+        
+        CLEAR temp5.
+        t_legend1 = temp5.
+        
+        CLEAR temp6.
+        t_legend2 = temp6.
       ENDIF.
     ENDIF.
 
@@ -217,36 +238,131 @@ CLASS z2ui5_cl_smpc_app_308 IMPLEMENTATION.
     " Formatter.DateCreateObject until 2026-08-21, and `new Date('yyyy-mm-dd')`
     " is UTC midnight, so west of Greenwich every marked day landed one day
     " early. Same defect and same fix as apps 220 and 017.
-    DATA(prefix) = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
+    DATA prefix TYPE string.
+    DATA temp7 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+    DATA temp8 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+    DATA temp9 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
+    DATA temp10 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
+      DATA i LIKE sy-index.
+      DATA type TYPE string.
+      DATA text TYPE string.
+      DATA day TYPE string.
+      DATA temp11 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+      DATA temp12 LIKE LINE OF temp11.
+      DATA temp13 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+      DATA temp14 LIKE LINE OF temp13.
+      DATA temp15 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
+      DATA temp16 LIKE LINE OF temp15.
+      DATA temp17 TYPE z2ui5_cl_smpc_app_308=>ty_t_legend.
+      DATA temp18 LIKE LINE OF temp17.
+    DATA temp19 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+    DATA temp20 LIKE LINE OF temp19.
+    DATA temp21 TYPE z2ui5_cl_smpc_app_308=>ty_t_special.
+    DATA temp22 LIKE LINE OF temp21.
+    prefix = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
 
-    t_special1 = VALUE #( ).
-    t_special2 = VALUE #( ).
-    t_legend1 = VALUE #( ).
-    t_legend2 = VALUE #( ).
+    
+    CLEAR temp7.
+    t_special1 = temp7.
+    
+    CLEAR temp8.
+    t_special2 = temp8.
+    
+    CLEAR temp9.
+    t_legend1 = temp9.
+    
+    CLEAR temp10.
+    t_legend2 = temp10.
     DO 10 TIMES.
-      DATA(i)    = sy-index.
-      DATA(type) = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
-      DATA(text) = |Placeholder { i }|.
-      DATA(day)  = |{ prefix }{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      
+      i = sy-index.
+      
+      type = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      
+      text = |Placeholder { i }|.
+      
+      day  = |{ prefix }{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
 
-      t_special1 = VALUE #( BASE t_special1 ( start_date = day type = type tooltip = text ) ).
-      t_special2 = VALUE #( BASE t_special2 ( start_date = day type = type tooltip = text ) ).
-      t_legend1  = VALUE #( BASE t_legend1 ( type = type text = text ) ).
-      t_legend2  = VALUE #( BASE t_legend2 ( type = type text = text ) ).
+      
+      CLEAR temp11.
+      temp11 = t_special1.
+      
+      temp12-start_date = day.
+      temp12-type = type.
+      temp12-tooltip = text.
+      INSERT temp12 INTO TABLE temp11.
+      t_special1 = temp11.
+      
+      CLEAR temp13.
+      temp13 = t_special2.
+      
+      temp14-start_date = day.
+      temp14-type = type.
+      temp14-tooltip = text.
+      INSERT temp14 INTO TABLE temp13.
+      t_special2 = temp13.
+      
+      CLEAR temp15.
+      temp15 = t_legend1.
+      
+      temp16-type = type.
+      temp16-text = text.
+      INSERT temp16 INTO TABLE temp15.
+      t_legend1  = temp15.
+      
+      CLEAR temp17.
+      temp17 = t_legend2.
+      
+      temp18-type = type.
+      temp18-text = text.
+      INSERT temp18 INTO TABLE temp17.
+      t_legend2  = temp17.
     ENDDO.
 
-    t_special1 = VALUE #( BASE t_special1
-      ( start_date = |{ prefix }12| type = `Type11` color = `#ff0000` )
-      ( start_date = |{ prefix }13| type = `Type11` color = `#ff69b4` )
-      ( start_date = |{ prefix }11| end_date = |{ prefix }21| type = `NonWorking` )
-      ( start_date = |{ prefix }25| type = `Working` ) ).
+    
+    CLEAR temp19.
+    temp19 = t_special1.
+    
+    temp20-start_date = |{ prefix }12|.
+    temp20-type = `Type11`.
+    temp20-color = `#ff0000`.
+    INSERT temp20 INTO TABLE temp19.
+    temp20-start_date = |{ prefix }13|.
+    temp20-type = `Type11`.
+    temp20-color = `#ff69b4`.
+    INSERT temp20 INTO TABLE temp19.
+    temp20-start_date = |{ prefix }11|.
+    temp20-end_date = |{ prefix }21|.
+    temp20-type = `NonWorking`.
+    INSERT temp20 INTO TABLE temp19.
+    temp20-start_date = |{ prefix }25|.
+    temp20-type = `Working`.
+    INSERT temp20 INTO TABLE temp19.
+    t_special1 = temp19.
 
-    t_special2 = VALUE #( BASE t_special2
-      ( start_date = |{ prefix }12| type = `Type11` color = `#ff0000` )
-      ( start_date = |{ prefix }13| type = `Type11` color = `#add8e6` )
-      ( start_date = |{ prefix }22| type = `Type03` secondary_type = `NonWorking` )
-      ( start_date = |{ prefix }24| type = `Working` )
-      ( start_date = |{ prefix }24| type = `Type03` ) ).
+    
+    CLEAR temp21.
+    temp21 = t_special2.
+    
+    temp22-start_date = |{ prefix }12|.
+    temp22-type = `Type11`.
+    temp22-color = `#ff0000`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-start_date = |{ prefix }13|.
+    temp22-type = `Type11`.
+    temp22-color = `#add8e6`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-start_date = |{ prefix }22|.
+    temp22-type = `Type03`.
+    temp22-secondary_type = `NonWorking`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-start_date = |{ prefix }24|.
+    temp22-type = `Working`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-start_date = |{ prefix }24|.
+    temp22-type = `Type03`.
+    INSERT temp22 INTO TABLE temp21.
+    t_special2 = temp21.
 
   ENDMETHOD.
 

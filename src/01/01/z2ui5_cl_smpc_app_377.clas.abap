@@ -21,7 +21,8 @@ CLASS z2ui5_cl_smpc_app_377 DEFINITION PUBLIC.
         height        TYPE string,
         dimunit       TYPE string,
       END OF ty_s_product.
-    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    TYPES temp1_3a5bcee211 TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+DATA t_products TYPE temp1_3a5bcee211.
 
     " /ProductCollectionStats/Counts of the shared mock, bound to the tab counts
     " the IconTabBar's selected tab, bound to selectedKey. The original has no
@@ -40,7 +41,8 @@ CLASS z2ui5_cl_smpc_app_377 DEFINITION PUBLIC.
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
 
-    DATA t_all TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    TYPES temp2_3a5bcee211 TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+DATA t_all TYPE temp2_3a5bcee211.
 
     METHODS view_display.
     METHODS on_event.
@@ -59,12 +61,12 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -73,7 +75,8 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -215,20 +218,44 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
     " a LOOP over the same table shifts the rows under the loop's own cursor -
     " on a system it silently SKIPS the row after each deletion, on the
     " transpiled backend it raises TABLE_INVALID_INDEX (2026-08-17).
-    t_products = VALUE #( ).
+    DATA temp1 LIKE t_products.
+    DATA row LIKE LINE OF t_all.
+      DATA keep LIKE abap_false.
+      DATA temp2 TYPE z2ui5_cl_smpc_app_377=>ty_s_product-weightmeasure.
+      DATA grams LIKE temp2.
+          DATA temp3 TYPE xsdboolean.
+          DATA temp4 TYPE xsdboolean.
+          DATA temp5 TYPE xsdboolean.
+    CLEAR temp1.
+    t_products = temp1.
     selected_tab = key.
 
-    LOOP AT t_all INTO DATA(row).
-      DATA(keep) = abap_false.
-      DATA(grams) = COND #( WHEN row-weightunit = `G` THEN row-weightmeasure ELSE row-weightmeasure * 1000 ).
+    
+    LOOP AT t_all INTO row.
+      
+      keep = abap_false.
+      
+      IF row-weightunit = `G`.
+        temp2 = row-weightmeasure.
+      ELSE.
+        temp2 = row-weightmeasure * 1000.
+      ENDIF.
+      
+      grams = temp2.
 
       CASE key.
         WHEN `Ok`.
-          keep = xsdbool( grams < 1000 ).
+          
+          temp3 = boolc( grams < 1000 ).
+          keep = temp3.
         WHEN `Heavy`.
-          keep = xsdbool( grams >= 1000 AND grams <= 5000 ).
+          
+          temp4 = boolc( grams >= 1000 AND grams <= 5000 ).
+          keep = temp4.
         WHEN `Overweight`.
-          keep = xsdbool( grams > 5000 ).
+          
+          temp5 = boolc( grams > 5000 ).
+          keep = temp5.
         WHEN OTHERS.
           keep = abap_true.
       ENDCASE.
@@ -252,21 +279,34 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
     " should be Warning and HT-1030 at 21 KG should be Error. Same body as the
     " live-checked app 009, and the same normalisation table_filter above
     " already does for its own thresholds.
-    LOOP AT t_all ASSIGNING FIELD-SYMBOL(<row>).
-      DATA(weight_kg) = <row>-weightmeasure.
+    FIELD-SYMBOLS <row> LIKE LINE OF t_all.
+      DATA weight_kg LIKE <row>-weightmeasure.
+      DATA temp3 TYPE z2ui5_cl_smpc_app_377=>ty_s_product-weight_state.
+    LOOP AT t_all ASSIGNING <row>.
+      
+      weight_kg = <row>-weightmeasure.
       IF <row>-weightunit = `G`.
         weight_kg = weight_kg / 1000.
       ENDIF.
-      <row>-weight_state = COND #( WHEN weight_kg < 0 THEN `None`
-                                   WHEN weight_kg < 1 THEN `Success`
-                                   WHEN weight_kg < 5 THEN `Warning`
-                                   ELSE `Error` ).
+      
+      IF weight_kg < 0.
+        temp3 = `None`.
+      ELSEIF weight_kg < 1.
+        temp3 = `Success`.
+      ELSEIF weight_kg < 5.
+        temp3 = `Warning`.
+      ELSE.
+        temp3 = `Error`.
+      ENDIF.
+      <row>-weight_state = temp3.
     ENDLOOP.
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp4 LIKE t_all.
+    DATA temp5 LIKE LINE OF temp4.
 
     " /ProductCollectionStats/Counts of the shared mock
     count_total      = 123.
@@ -275,253 +315,1486 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
     count_overweight = 19.
 
     " the shared mock /ProductCollection flattened to the bound columns, all 123 rows kept verbatim
-    t_all = VALUE #(
-      ( productid = `HT-1000` name = `Notebook Basic 15` suppliername = `Very Best Screens`
-        weightmeasure = '4.2' weightunit = `KG` price = '956' currencycode = `EUR` width = '30' depth = '18' height = '3' dimunit = `cm` )
-      ( productid = `HT-1001` name = `Notebook Basic 17` suppliername = `Very Best Screens`
-        weightmeasure = '4.5' weightunit = `KG` price = '1249' currencycode = `EUR` width = '29' depth = '17' height = '3.1' dimunit = `cm` )
-      ( productid = `HT-1002` name = `Notebook Basic 18` suppliername = `Very Best Screens`
-        weightmeasure = '4.2' weightunit = `KG` price = '1570' currencycode = `EUR` width = '28' depth = '19' height = '2.5' dimunit = `cm` )
-      ( productid = `HT-1003` name = `Notebook Basic 19` suppliername = `Smartcards`
-        weightmeasure = '4.2' weightunit = `KG` price = '1650' currencycode = `EUR` width = '32' depth = '21' height = '4' dimunit = `cm` )
-      ( productid = `HT-1007` name = `ITelO Vault` suppliername = `Technocom`
-        weightmeasure = '0.2' weightunit = `KG` price = '299' currencycode = `EUR` width = '32' depth = '22' height = '3' dimunit = `cm` )
-      ( productid = `HT-1010` name = `Notebook Professional 15` suppliername = `Very Best Screens`
-        weightmeasure = '4.3' weightunit = `KG` price = '1999' currencycode = `EUR` width = '33' depth = '20' height = '3' dimunit = `cm` )
-      ( productid = `HT-1011` name = `Notebook Professional 17` suppliername = `Very Best Screens`
-        weightmeasure = '4.1' weightunit = `KG` price = '2299' currencycode = `EUR` width = '33' depth = '23' height = '2' dimunit = `cm` )
-      ( productid = `HT-1020` name = `ITelO Vault Net` suppliername = `Technocom`
-        weightmeasure = '0.16' weightunit = `KG` price = '459' currencycode = `EUR` width = '10' depth = '1.8' height = '17' dimunit = `cm` )
-      ( productid = `HT-1021` name = `ITelO Vault SAT` suppliername = `Technocom`
-        weightmeasure = '0.18' weightunit = `KG` price = '149' currencycode = `EUR` width = '11' depth = '1.7' height = '18' dimunit = `cm` )
-      ( productid = `HT-1022` name = `Comfort Easy` suppliername = `Technocom`
-        weightmeasure = '0.2' weightunit = `KG` price = '1679' currencycode = `EUR` width = '84' depth = '1.5' height = '14' dimunit = `cm` )
-      ( productid = `HT-1023` name = `Comfort Senior` suppliername = `Technocom`
-        weightmeasure = '0.8' weightunit = `KG` price = '512' currencycode = `EUR` width = '80' depth = '1.6' height = '13' dimunit = `cm` )
-      ( productid = `HT-1030` name = `Ergo Screen E-I` suppliername = `Very Best Screens`
-        weightmeasure = '21' weightunit = `KG` price = '230' currencycode = `EUR` width = '37' depth = '12' height = '36' dimunit = `cm` )
-      ( productid = `HT-1031` name = `Ergo Screen E-II` suppliername = `Very Best Screens`
-        weightmeasure = '21' weightunit = `KG` price = '285' currencycode = `EUR` width = '40.8' depth = '19' height = '43' dimunit = `cm` )
-      ( productid = `HT-1032` name = `Ergo Screen E-III` suppliername = `Very Best Screens`
-        weightmeasure = '21' weightunit = `KG` price = '345' currencycode = `EUR` width = '40.8' depth = '19' height = '43' dimunit = `cm` )
-      ( productid = `HT-1035` name = `Flat Basic` suppliername = `Very Best Screens`
-        weightmeasure = '14' weightunit = `KG` price = '399' currencycode = `EUR` width = '39' depth = '20' height = '41' dimunit = `cm` )
-      ( productid = `HT-1036` name = `Flat Future` suppliername = `Very Best Screens`
-        weightmeasure = '15' weightunit = `KG` price = '430' currencycode = `EUR` width = '45' depth = '26' height = '46' dimunit = `cm` )
-      ( productid = `HT-1037` name = `Flat XL` suppliername = `Very Best Screens`
-        weightmeasure = '17' weightunit = `KG` price = '1230' currencycode = `EUR` width = '54.5' depth = '22.1' height = '39.1' dimunit = `cm` )
-      ( productid = `HT-1040` name = `Laser Professional Eco` suppliername = `Alpha Printers`
-        weightmeasure = '32' weightunit = `KG` price = '830' currencycode = `EUR` width = '51' depth = '46' height = '30' dimunit = `cm` )
-      ( productid = `HT-1041` name = `Laser Basic` suppliername = `Alpha Printers`
-        weightmeasure = '23' weightunit = `KG` price = '490' currencycode = `EUR` width = '48' depth = '42' height = '26' dimunit = `cm` )
-      ( productid = `HT-1042` name = `Laser Allround` suppliername = `Alpha Printers`
-        weightmeasure = '17' weightunit = `KG` price = '349' currencycode = `EUR` width = '53' depth = '50' height = '65' dimunit = `cm` )
-      ( productid = `HT-1050` name = `Ultra Jet Super Color` suppliername = `Alpha Printers`
-        weightmeasure = '3' weightunit = `KG` price = '139' currencycode = `EUR` width = '41' depth = '41' height = '28' dimunit = `cm` )
-      ( productid = `HT-1051` name = `Ultra Jet Mobile` suppliername = `Printer for All`
-        weightmeasure = '1.9' weightunit = `KG` price = '99' currencycode = `EUR` width = '46' depth = '32' height = '25' dimunit = `cm` )
-      ( productid = `HT-1052` name = `Ultra Jet Super Highspeed` suppliername = `Printer for All`
-        weightmeasure = '18' weightunit = `KG` price = '170' currencycode = `EUR` width = '41' depth = '41' height = '28' dimunit = `cm` )
-      ( productid = `HT-1055` name = `Multi Print` suppliername = `Printer for All`
-        weightmeasure = '6.3' weightunit = `KG` price = '99' currencycode = `EUR` width = '55' depth = '45' height = '29' dimunit = `cm` )
-      ( productid = `HT-1056` name = `Multi Color` suppliername = `Printer for All`
-        weightmeasure = '4.3' weightunit = `KG` price = '119' currencycode = `EUR` width = '51' depth = '41.3' height = '22' dimunit = `cm` )
-      ( productid = `HT-1060` name = `Cordless Mouse` suppliername = `Oxynum`
-        weightmeasure = '0.09' weightunit = `KG` price = '9' currencycode = `EUR` width = '6' depth = '14.5' height = '3.5' dimunit = `cm` )
-      ( productid = `HT-1061` name = `Speed Mouse` suppliername = `Oxynum`
-        weightmeasure = '0.09' weightunit = `KG` price = '7' currencycode = `EUR` width = '7' depth = '15' height = '3.1' dimunit = `cm` )
-      ( productid = `HT-1062` name = `Track Mouse` suppliername = `Oxynum`
-        weightmeasure = '0.03' weightunit = `KG` price = '11' currencycode = `EUR` width = '3' depth = '7' height = '4' dimunit = `cm` )
-      ( productid = `HT-1063` name = `Ergonomic Keyboard` suppliername = `Oxynum`
-        weightmeasure = '2.1' weightunit = `KG` price = '14' currencycode = `EUR` width = '50' depth = '21' height = '3.5' dimunit = `cm` )
-      ( productid = `HT-1064` name = `Internet Keyboard` suppliername = `Oxynum`
-        weightmeasure = '1.8' weightunit = `KG` price = '16' currencycode = `EUR` width = '52' depth = '25' height = '3' dimunit = `cm` )
-      ( productid = `HT-1065` name = `Media Keyboard` suppliername = `Oxynum`
-        weightmeasure = '2.3' weightunit = `KG` price = '26' currencycode = `EUR` width = '51.4' depth = '23' height = '4' dimunit = `cm` )
-      ( productid = `HT-1066` name = `Mousepad` suppliername = `Oxynum`
-        weightmeasure = '80' weightunit = `G` price = '6.99' currencycode = `EUR` width = '15' depth = '6' height = '0.2' dimunit = `cm` )
-      ( productid = `HT-1067` name = `Ergo Mousepad` suppliername = `Oxynum`
-        weightmeasure = '80' weightunit = `G` price = '8.99' currencycode = `EUR` width = '15' depth = '6' height = '0.2' dimunit = `cm` )
-      ( productid = `HT-1068` name = `Designer Mousepad` suppliername = `Fasttech`
-        weightmeasure = '90' weightunit = `G` price = '12.99' currencycode = `EUR` width = '24' depth = '24' height = '0.6' dimunit = `cm` )
-      ( productid = `HT-1069` name = `Universal card reader` suppliername = `Fasttech`
-        weightmeasure = '45' weightunit = `G` price = '14' currencycode = `EUR` width = '6' depth = '6' height = '3' dimunit = `cm` )
-      ( productid = `HT-1070` name = `Proctra X` suppliername = `Ultrasonic United`
-        weightmeasure = '0.255' weightunit = `KG` price = '70.9' currencycode = `EUR` width = '22' depth = '35' height = '17' dimunit = `cm` )
-      ( productid = `HT-1071` name = `Gladiator MX` suppliername = `Ultrasonic United`
-        weightmeasure = '0.3' weightunit = `KG` price = '81.7' currencycode = `EUR` width = '22' depth = '35' height = '17' dimunit = `cm` )
-      ( productid = `HT-1072` name = `Hurricane GX` suppliername = `Ultrasonic United`
-        weightmeasure = '0.4' weightunit = `KG` price = '101.2' currencycode = `EUR` width = '22' depth = '35' height = '17' dimunit = `cm` )
-      ( productid = `HT-1073` name = `Hurricane GX/LN` suppliername = `Smartcards`
-        weightmeasure = '0.4' weightunit = `KG` price = '139.99' currencycode = `EUR` width = '22' depth = '35' height = '17' dimunit = `cm` )
-      ( productid = `HT-1080` name = `Photo Scan` suppliername = `Printer for All`
-        weightmeasure = '2.3' weightunit = `KG` price = '129' currencycode = `EUR` width = '34' depth = '48' height = '5' dimunit = `cm` )
-      ( productid = `HT-1081` name = `Power Scan` suppliername = `Printer for All`
-        weightmeasure = '2.4' weightunit = `KG` price = '89' currencycode = `EUR` width = '31' depth = '43' height = '7' dimunit = `cm` )
-      ( productid = `HT-1082` name = `Jet Scan Professional` suppliername = `Printer for All`
-        weightmeasure = '3.2' weightunit = `KG` price = '169' currencycode = `EUR` width = '33' depth = '41' height = '12' dimunit = `cm` )
-      ( productid = `HT-1083` name = `Jet Scan Professional` suppliername = `Printer for All`
-        weightmeasure = '3.2' weightunit = `KG` price = '189' currencycode = `EUR` width = '35' depth = '40' height = '10' dimunit = `cm` )
-      ( productid = `HT-1085` name = `Copymaster` suppliername = `Alpha Printers`
-        weightmeasure = '23.2' weightunit = `KG` price = '1499' currencycode = `EUR` width = '45' depth = '42' height = '22' dimunit = `cm` )
-      ( productid = `HT-1090` name = `Surround Sound` suppliername = `Speaker Experts`
-        weightmeasure = '3' weightunit = `KG` price = '39' currencycode = `EUR` width = '12' depth = '10' height = '16' dimunit = `cm` )
-      ( productid = `HT-1091` name = `Blaster Extreme` suppliername = `Speaker Experts`
-        weightmeasure = '1.4' weightunit = `KG` price = '26' currencycode = `EUR` width = '13' depth = '11' height = '17.5' dimunit = `cm` )
-      ( productid = `HT-1092` name = `Sound Booster` suppliername = `Speaker Experts`
-        weightmeasure = '2.1' weightunit = `KG` price = '45' currencycode = `EUR` width = '12.4' depth = '10.4' height = '18.1' dimunit = `cm` )
-      ( productid = `HT-1095` name = `Lovely Sound 5.1 Wireless` suppliername = `Fasttech`
-        weightmeasure = '80' weightunit = `G` price = '49' currencycode = `EUR` width = '24' depth = '19' height = '23' dimunit = `cm` )
-      ( productid = `HT-1096` name = `Lovely Sound 5.1` suppliername = `Fasttech`
-        weightmeasure = '130' weightunit = `G` price = '39' currencycode = `EUR` width = '25' depth = '17' height = '19' dimunit = `cm` )
-      ( productid = `HT-1097` name = `Lovely Sound Stereo` suppliername = `Fasttech`
-        weightmeasure = '60' weightunit = `G` price = '29' currencycode = `EUR` width = '21.3' depth = '2.4' height = '19.7' dimunit = `cm` )
-      ( productid = `HT-1100` name = `Smart Office` suppliername = `Technocom`
-        weightmeasure = '1.2' weightunit = `KG` price = '89.9' currencycode = `EUR` width = '15' depth = '6.5' height = '2.1' dimunit = `cm` )
-      ( productid = `HT-1101` name = `Smart Design` suppliername = `Technocom`
-        weightmeasure = '0.8' weightunit = `KG` price = '79.9' currencycode = `EUR` width = '14' depth = '6.7' height = '24' dimunit = `cm` )
-      ( productid = `HT-1102` name = `Smart Network` suppliername = `Technocom`
-        weightmeasure = '0.8' weightunit = `KG` price = '69' currencycode = `EUR` width = '16' depth = '6' height = '27' dimunit = `cm` )
-      ( productid = `HT-1103` name = `Smart Multimedia` suppliername = `Technocom`
-        weightmeasure = '0.8' weightunit = `KG` price = '77' currencycode = `EUR` width = '11' depth = '3.4' height = '22' dimunit = `cm` )
-      ( productid = `HT-1104` name = `Smart Games` suppliername = `Technocom`
-        weightmeasure = '1.1' weightunit = `KG` price = '55' currencycode = `EUR` width = '10' depth = '3' height = '30' dimunit = `cm` )
-      ( productid = `HT-1105` name = `Smart Internet Antivirus` suppliername = `Brainsoft`
-        weightmeasure = '0.7' weightunit = `KG` price = '29' currencycode = `EUR` width = '16' depth = '4' height = '21' dimunit = `cm` )
-      ( productid = `HT-1106` name = `Smart Firewall` suppliername = `Brainsoft`
-        weightmeasure = '0.9' weightunit = `KG` price = '34' currencycode = `EUR` width = '17.9' depth = '4.2' height = '23.1' dimunit = `cm` )
-      ( productid = `HT-1107` name = `Smart Money` suppliername = `Brainsoft`
-        weightmeasure = '0.5' weightunit = `KG` price = '29.9' currencycode = `EUR` width = '12' depth = '1.5' height = '19' dimunit = `cm` )
-      ( productid = `HT-1110` name = `PC Lock` suppliername = `Red Point Stores`
-        weightmeasure = '0.03' weightunit = `KG` price = '8.9' currencycode = `EUR` width = '20' depth = '8' height = '4.3' dimunit = `cm` )
-      ( productid = `HT-1111` name = `Notebook Lock` suppliername = `Red Point Stores`
-        weightmeasure = '0.02' weightunit = `KG` price = '6.9' currencycode = `EUR` width = '31' depth = '9' height = '7' dimunit = `cm` )
-      ( productid = `HT-1112` name = `Web cam reality` suppliername = `Red Point Stores`
-        weightmeasure = '0.075' weightunit = `KG` price = '39' currencycode = `EUR` width = '9' depth = '8.2' height = '1.3' dimunit = `cm` )
-      ( productid = `HT-1113` name = `Screen clean` suppliername = `Red Point Stores`
-        weightmeasure = '0.05' weightunit = `KG` price = '2.3' currencycode = `EUR` width = '2' depth = '2' height = '0.1' dimunit = `cm` )
-      ( productid = `HT-1114` name = `Fabric bag professional` suppliername = `Red Point Stores`
-        weightmeasure = '1.8' weightunit = `KG` price = '31' currencycode = `EUR` width = '42' depth = '32' height = '7' dimunit = `cm` )
-      ( productid = `HT-1115` name = `Wireless DSL Router` suppliername = `Red Point Stores`
-        weightmeasure = '0.45' weightunit = `KG` price = '49' currencycode = `EUR` width = '19.3' depth = '18' height = '5' dimunit = `cm` )
-      ( productid = `HT-1116` name = `Wireless DSL Router / Repeater` suppliername = `Red Point Stores`
-        weightmeasure = '0.45' weightunit = `KG` price = '59' currencycode = `EUR` width = '19.3' depth = '18' height = '5' dimunit = `cm` )
-      ( productid = `HT-1117` name = `Wireless DSL Router / Repeater and Print Server` suppliername = `Technocom`
-        weightmeasure = '0.45' weightunit = `KG` price = '69' currencycode = `EUR` width = '19.3' depth = '18' height = '5' dimunit = `cm` )
-      ( productid = `HT-1118` name = `USB Stick` suppliername = `Technocom`
-        weightmeasure = '0.015' weightunit = `KG` price = '35' currencycode = `EUR` width = '1.5' depth = '8.7' height = '1.2' dimunit = `cm` )
-      ( productid = `HT-1119` name = `Travel Adapter` suppliername = `Titanium`
-        weightmeasure = '88' weightunit = `G` price = '79' currencycode = `EUR` width = '2' depth = '3.1' height = '3.9' dimunit = `cm` )
-      ( productid = `HT-1120` name = `Cordless Bluetooth Keyboard, english international` suppliername = `Technocom`
-        weightmeasure = '1' weightunit = `KG` price = '29' currencycode = `EUR` width = '51.4' depth = '23' height = '4' dimunit = `cm` )
-      ( productid = `HT-1137` name = `Flat XXL` suppliername = `Technocom`
-        weightmeasure = '18' weightunit = `KG` price = '1430' currencycode = `EUR` width = '54' depth = '22' height = '38' dimunit = `cm` )
-      ( productid = `HT-1138` name = `Pocket Mouse` suppliername = `Technocom`
-        weightmeasure = '0.02' weightunit = `KG` price = '23' currencycode = `EUR` width = '0.3' depth = '0.5' height = '1' dimunit = `cm` )
-      ( productid = `HT-1210` name = `PC Power Station` suppliername = `Technocom`
-        weightmeasure = '2.3' weightunit = `KG` price = '2399' currencycode = `EUR` width = '28' depth = '31' height = '43' dimunit = `cm` )
-      ( productid = `HT-1251` name = `Astro Laptop 1516` suppliername = `Ultrasonic United`
-        weightmeasure = '4.2' weightunit = `KG` price = '989' currencycode = `EUR` width = '30' depth = '18' height = '3' dimunit = `cm` )
-      ( productid = `HT-1252` name = `Astro Phone 6` suppliername = `Ultrasonic United`
-        weightmeasure = '0.75' weightunit = `KG` price = '649' currencycode = `EUR` width = '8' depth = '6' height = '1.5' dimunit = `cm` )
-      ( productid = `HT-1253` name = `Benda Laptop 1408` suppliername = `Ultrasonic United`
-        weightmeasure = '4.2' weightunit = `KG` price = '976' currencycode = `EUR` width = '30' depth = '18' height = '3' dimunit = `cm` )
-      ( productid = `HT-1254` name = `Bending Screen 21HD` suppliername = `Ultrasonic United`
-        weightmeasure = '15' weightunit = `KG` price = '250' currencycode = `EUR` width = '37' depth = '12' height = '36' dimunit = `cm` )
-      ( productid = `HT-1255` name = `Broad Screen 22HD` suppliername = `Ultrasonic United`
-        weightmeasure = '16' weightunit = `KG` price = '270' currencycode = `EUR` width = '39' depth = '12' height = '38' dimunit = `cm` )
-      ( productid = `HT-1256` name = `Cerdik Phone 7` suppliername = `Ultrasonic United`
-        weightmeasure = '0.75' weightunit = `KG` price = '549' currencycode = `EUR` width = '9' depth = '15' height = '1.5' dimunit = `cm` )
-      ( productid = `HT-1257` name = `Cepat Tablet 10.5` suppliername = `Ultrasonic United`
-        weightmeasure = '2.8' weightunit = `KG` price = '549' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-1258` name = `Cepat Tablet 8` suppliername = `Ultrasonic United`
-        weightmeasure = '2.5' weightunit = `KG` price = '529' currencycode = `EUR` width = '38' depth = '21' height = '3.5' dimunit = `cm` )
-      ( productid = `HT-1500` name = `Server Basic` suppliername = `Technocom`
-        weightmeasure = '18' weightunit = `KG` price = '5000' currencycode = `EUR` width = '34' depth = '35' height = '23' dimunit = `cm` )
-      ( productid = `HT-1501` name = `Server Professional` suppliername = `Technocom`
-        weightmeasure = '25' weightunit = `KG` price = '15000' currencycode = `EUR` width = '29' depth = '30' height = '27' dimunit = `cm` )
-      ( productid = `HT-1502` name = `Server Power Pro` suppliername = `Technocom`
-        weightmeasure = '35' weightunit = `KG` price = '25000' currencycode = `EUR` width = '22' depth = '27.3' height = '37' dimunit = `cm` )
-      ( productid = `HT-1600` name = `Family PC Basic` suppliername = `Titanium`
-        weightmeasure = '4.8' weightunit = `KG` price = '600' currencycode = `EUR` width = '21.4' depth = '29' height = '38' dimunit = `cm` )
-      ( productid = `HT-1601` name = `Family PC Pro` suppliername = `Titanium`
-        weightmeasure = '5.3' weightunit = `KG` price = '900' currencycode = `EUR` width = '25' depth = '31.7' height = '40.2' dimunit = `cm` )
-      ( productid = `HT-1602` name = `Gaming Monster` suppliername = `Titanium`
-        weightmeasure = '5.9' weightunit = `KG` price = '1200' currencycode = `EUR` width = '26.5' depth = '34' height = '47' dimunit = `cm` )
-      ( productid = `HT-1603` name = `Gaming Monster Pro` suppliername = `Titanium`
-        weightmeasure = '6.8' weightunit = `KG` price = '1700' currencycode = `EUR` width = '27' depth = '28' height = '42' dimunit = `cm` )
-      ( productid = `HT-2000` name = `7" Widescreen Portable DVD Player w MP3` suppliername = `Titanium`
-        weightmeasure = '0.79' weightunit = `KG` price = '249.99' currencycode = `EUR` width = '21.4' depth = '19' height = '27.6' dimunit = `cm` )
-      ( productid = `HT-2001` name = `10" Portable DVD player` suppliername = `Titanium`
-        weightmeasure = '0.84' weightunit = `KG` price = '449.99' currencycode = `EUR` width = '24' depth = '19.5' height = '29' dimunit = `cm` )
-      ( productid = `HT-2002` name = `Portable DVD Player with 9" LCD Monitor` suppliername = `Technocom`
-        weightmeasure = '0.72' weightunit = `KG` price = '853.99' currencycode = `EUR` width = '21' depth = '16.5' height = '14' dimunit = `cm` )
-      ( productid = `HT-2025` name = `CD/DVD case: 264 sleeves` suppliername = `Titanium`
-        weightmeasure = '0.65' weightunit = `KG` price = '44.99' currencycode = `EUR` width = '13' depth = '13' height = '20' dimunit = `cm` )
-      ( productid = `HT-2026` name = `Audio/Video Cable Kit - 4m` suppliername = `Titanium`
-        weightmeasure = '0.2' weightunit = `KG` price = '29.99' currencycode = `EUR` width = '21' depth = '10.2' height = '13' dimunit = `cm` )
-      ( productid = `HT-2027` name = `Removable CD/DVD Laser Labels` suppliername = `Titanium`
-        weightmeasure = '0.15' weightunit = `KG` price = '8.99' currencycode = `EUR` width = '5.5' depth = '2' height = '2' dimunit = `cm` )
-      ( productid = `HT-6100` name = `Beam Breaker B-1` suppliername = `Titanium`
-        weightmeasure = '1.7' weightunit = `KG` price = '469' currencycode = `EUR` width = '30.4' depth = '23.1' height = '23' dimunit = `cm` )
-      ( productid = `HT-6101` name = `Beam Breaker B-2` suppliername = `Technocom`
-        weightmeasure = '2' weightunit = `KG` price = '679' currencycode = `EUR` width = '30.4' depth = '23.1' height = '23' dimunit = `cm` )
-      ( productid = `HT-6102` name = `Beam Breaker B-3` suppliername = `Technocom`
-        weightmeasure = '2.5' weightunit = `KG` price = '889' currencycode = `EUR` width = '30.4' depth = '23.1' height = '23' dimunit = `cm` )
-      ( productid = `HT-6110` name = `Play Movie` suppliername = `Fasttech`
-        weightmeasure = '2.4' weightunit = `KG` price = '130' currencycode = `EUR` width = '37' depth = '24' height = '6' dimunit = `cm` )
-      ( productid = `HT-6111` name = `Record Movie` suppliername = `Fasttech`
-        weightmeasure = '3.1' weightunit = `KG` price = '288' currencycode = `EUR` width = '38' depth = '26' height = '6.2' dimunit = `cm` )
-      ( productid = `HT-6120` name = `ITelo MusicStick` suppliername = `Fasttech`
-        weightmeasure = '134' weightunit = `G` price = '45' currencycode = `EUR` width = '1.5' depth = '6' height = '1' dimunit = `cm` )
-      ( productid = `HT-6121` name = `ITelo Jog-Mate` suppliername = `Fasttech`
-        weightmeasure = '134' weightunit = `G` price = '63' currencycode = `EUR` width = '5.1' depth = '8' height = '9.2' dimunit = `cm` )
-      ( productid = `HT-6122` name = `Power Pro Player 40` suppliername = `Fasttech`
-        weightmeasure = '266' weightunit = `G` price = '167' currencycode = `EUR` width = '5.1' depth = '8' height = '9.2' dimunit = `cm` )
-      ( productid = `HT-6123` name = `Power Pro Player 80` suppliername = `Fasttech`
-        weightmeasure = '267' weightunit = `G` price = '299' currencycode = `EUR` width = '4' depth = '6' height = '0.8' dimunit = `cm` )
-      ( productid = `HT-6130` name = `Flat Watch HD32` suppliername = `Very Best Screens`
-        weightmeasure = '2.6' weightunit = `KG` price = '1459' currencycode = `EUR` width = '78' depth = '22.1' height = '55' dimunit = `cm` )
-      ( productid = `HT-6131` name = `Flat Watch HD37` suppliername = `Very Best Screens`
-        weightmeasure = '2.2' weightunit = `KG` price = '1199' currencycode = `EUR` width = '99.1' depth = '26' height = '61' dimunit = `cm` )
-      ( productid = `HT-6132` name = `Flat Watch HD41` suppliername = `Very Best Screens`
-        weightmeasure = '1.8' weightunit = `KG` price = '899' currencycode = `EUR` width = '128' depth = '23' height = '79.1' dimunit = `cm` )
-      ( productid = `HT-7000` name = `Copperberry` suppliername = `Fasttech`
-        weightmeasure = '0.5' weightunit = `KG` price = '549' currencycode = `EUR` width = '8.1' depth = '13' height = '12.1' dimunit = `cm` )
-      ( productid = `HT-7010` name = `Silverberry` suppliername = `Fasttech`
-        weightmeasure = '0.5' weightunit = `KG` price = '549' currencycode = `EUR` width = '8.1' depth = '13' height = '12.1' dimunit = `cm` )
-      ( productid = `HT-7020` name = `Goldberry` suppliername = `Fasttech`
-        weightmeasure = '0.5' weightunit = `KG` price = '549' currencycode = `EUR` width = '8.1' depth = '13' height = '12.1' dimunit = `cm` )
-      ( productid = `HT-7030` name = `Platinberry` suppliername = `Fasttech`
-        weightmeasure = '0.5' weightunit = `KG` price = '549' currencycode = `EUR` width = '8.1' depth = '13' height = '12.1' dimunit = `cm` )
-      ( productid = `HT-8000` name = `ITelO FlexTop I4000` suppliername = `Titanium`
-        weightmeasure = '4' weightunit = `KG` price = '799' currencycode = `EUR` width = '31' depth = '19' height = '3.1' dimunit = `cm` )
-      ( productid = `HT-8001` name = `ITelO FlexTop I6300c` suppliername = `Titanium`
-        weightmeasure = '4.2' weightunit = `KG` price = '799' currencycode = `EUR` width = '32' depth = '20' height = '3.4' dimunit = `cm` )
-      ( productid = `HT-8002` name = `ITelO FlexTop I9100` suppliername = `Titanium`
-        weightmeasure = '3.5' weightunit = `KG` price = '1199' currencycode = `EUR` width = '38' depth = '21' height = '4.1' dimunit = `cm` )
-      ( productid = `HT-8003` name = `ITelO FlexTop I9800` suppliername = `Titanium`
-        weightmeasure = '3.8' weightunit = `KG` price = '1388' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9991` name = `Smartphone Leather Case` suppliername = `Ultrasonic United`
-        weightmeasure = '0.02' weightunit = `KG` price = '25' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9992` name = `Smartphone Alpha` suppliername = `Ultrasonic United`
-        weightmeasure = '0.75' weightunit = `KG` price = '599' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9993` name = `Mini Tablet` suppliername = `Ultrasonic United`
-        weightmeasure = '3.8' weightunit = `KG` price = '833' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9994` name = `Camcorder View` suppliername = `Ultrasonic United`
-        weightmeasure = '3.8' weightunit = `KG` price = '1388' currencycode = `EUR` width = '48' depth = '31' height = '27' dimunit = `cm` )
-      ( productid = `HT-9995` name = `Tablet Pouch` suppliername = `Titanium`
-        weightmeasure = '0.03' weightunit = `KG` price = '20' currencycode = `EUR` width = '25' depth = '40' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9996` name = `Tablet Pouch` suppliername = `Titanium`
-        weightmeasure = '0.03' weightunit = `KG` price = '20' currencycode = `EUR` width = '25' depth = '40' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9997` name = `e-Book Reader ReadMe` suppliername = `Titanium`
-        weightmeasure = '3.8' weightunit = `KG` price = '33' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9998` name = `Smartphone Beta` suppliername = `Titanium`
-        weightmeasure = '0.75' weightunit = `KG` price = '30' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `HT-9999` name = `Maxi Tablet` suppliername = `Titanium`
-        weightmeasure = '3.8' weightunit = `KG` price = '749' currencycode = `EUR` width = '48' depth = '31' height = '4.5' dimunit = `cm` )
-      ( productid = `PF-1000` name = `Flyer` suppliername = `Titanium`
-        weightmeasure = '0.01' weightunit = `KG` price = '0' currencycode = `EUR` width = '46' depth = '30' height = '3' dimunit = `cm` ) ).
+    
+    CLEAR temp4.
+    
+    temp5-productid = `HT-1000`.
+    temp5-name = `Notebook Basic 15`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '956'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30'.
+    temp5-depth = '18'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1001`.
+    temp5-name = `Notebook Basic 17`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '4.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1249'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '29'.
+    temp5-depth = '17'.
+    temp5-height = '3.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1002`.
+    temp5-name = `Notebook Basic 18`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1570'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '28'.
+    temp5-depth = '19'.
+    temp5-height = '2.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1003`.
+    temp5-name = `Notebook Basic 19`.
+    temp5-suppliername = `Smartcards`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1650'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '32'.
+    temp5-depth = '21'.
+    temp5-height = '4'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1007`.
+    temp5-name = `ITelO Vault`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '299'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '32'.
+    temp5-depth = '22'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1010`.
+    temp5-name = `Notebook Professional 15`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '4.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1999'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '33'.
+    temp5-depth = '20'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1011`.
+    temp5-name = `Notebook Professional 17`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '4.1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '2299'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '33'.
+    temp5-depth = '23'.
+    temp5-height = '2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1020`.
+    temp5-name = `ITelO Vault Net`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.16'.
+    temp5-weightunit = `KG`.
+    temp5-price = '459'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '10'.
+    temp5-depth = '1.8'.
+    temp5-height = '17'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1021`.
+    temp5-name = `ITelO Vault SAT`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.18'.
+    temp5-weightunit = `KG`.
+    temp5-price = '149'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '11'.
+    temp5-depth = '1.7'.
+    temp5-height = '18'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1022`.
+    temp5-name = `Comfort Easy`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1679'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '84'.
+    temp5-depth = '1.5'.
+    temp5-height = '14'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1023`.
+    temp5-name = `Comfort Senior`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '512'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '80'.
+    temp5-depth = '1.6'.
+    temp5-height = '13'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1030`.
+    temp5-name = `Ergo Screen E-I`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '21'.
+    temp5-weightunit = `KG`.
+    temp5-price = '230'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '37'.
+    temp5-depth = '12'.
+    temp5-height = '36'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1031`.
+    temp5-name = `Ergo Screen E-II`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '21'.
+    temp5-weightunit = `KG`.
+    temp5-price = '285'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '40.8'.
+    temp5-depth = '19'.
+    temp5-height = '43'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1032`.
+    temp5-name = `Ergo Screen E-III`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '21'.
+    temp5-weightunit = `KG`.
+    temp5-price = '345'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '40.8'.
+    temp5-depth = '19'.
+    temp5-height = '43'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1035`.
+    temp5-name = `Flat Basic`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '14'.
+    temp5-weightunit = `KG`.
+    temp5-price = '399'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '39'.
+    temp5-depth = '20'.
+    temp5-height = '41'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1036`.
+    temp5-name = `Flat Future`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '15'.
+    temp5-weightunit = `KG`.
+    temp5-price = '430'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '45'.
+    temp5-depth = '26'.
+    temp5-height = '46'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1037`.
+    temp5-name = `Flat XL`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '17'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1230'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '54.5'.
+    temp5-depth = '22.1'.
+    temp5-height = '39.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1040`.
+    temp5-name = `Laser Professional Eco`.
+    temp5-suppliername = `Alpha Printers`.
+    temp5-weightmeasure = '32'.
+    temp5-weightunit = `KG`.
+    temp5-price = '830'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '51'.
+    temp5-depth = '46'.
+    temp5-height = '30'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1041`.
+    temp5-name = `Laser Basic`.
+    temp5-suppliername = `Alpha Printers`.
+    temp5-weightmeasure = '23'.
+    temp5-weightunit = `KG`.
+    temp5-price = '490'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '42'.
+    temp5-height = '26'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1042`.
+    temp5-name = `Laser Allround`.
+    temp5-suppliername = `Alpha Printers`.
+    temp5-weightmeasure = '17'.
+    temp5-weightunit = `KG`.
+    temp5-price = '349'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '53'.
+    temp5-depth = '50'.
+    temp5-height = '65'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1050`.
+    temp5-name = `Ultra Jet Super Color`.
+    temp5-suppliername = `Alpha Printers`.
+    temp5-weightmeasure = '3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '139'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '41'.
+    temp5-depth = '41'.
+    temp5-height = '28'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1051`.
+    temp5-name = `Ultra Jet Mobile`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '1.9'.
+    temp5-weightunit = `KG`.
+    temp5-price = '99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '46'.
+    temp5-depth = '32'.
+    temp5-height = '25'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1052`.
+    temp5-name = `Ultra Jet Super Highspeed`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '18'.
+    temp5-weightunit = `KG`.
+    temp5-price = '170'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '41'.
+    temp5-depth = '41'.
+    temp5-height = '28'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1055`.
+    temp5-name = `Multi Print`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '6.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '55'.
+    temp5-depth = '45'.
+    temp5-height = '29'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1056`.
+    temp5-name = `Multi Color`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '4.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '119'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '51'.
+    temp5-depth = '41.3'.
+    temp5-height = '22'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1060`.
+    temp5-name = `Cordless Mouse`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '0.09'.
+    temp5-weightunit = `KG`.
+    temp5-price = '9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '6'.
+    temp5-depth = '14.5'.
+    temp5-height = '3.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1061`.
+    temp5-name = `Speed Mouse`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '0.09'.
+    temp5-weightunit = `KG`.
+    temp5-price = '7'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '7'.
+    temp5-depth = '15'.
+    temp5-height = '3.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1062`.
+    temp5-name = `Track Mouse`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '0.03'.
+    temp5-weightunit = `KG`.
+    temp5-price = '11'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '3'.
+    temp5-depth = '7'.
+    temp5-height = '4'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1063`.
+    temp5-name = `Ergonomic Keyboard`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '2.1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '14'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '50'.
+    temp5-depth = '21'.
+    temp5-height = '3.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1064`.
+    temp5-name = `Internet Keyboard`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '1.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '16'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '52'.
+    temp5-depth = '25'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1065`.
+    temp5-name = `Media Keyboard`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '2.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '26'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '51.4'.
+    temp5-depth = '23'.
+    temp5-height = '4'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1066`.
+    temp5-name = `Mousepad`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '80'.
+    temp5-weightunit = `G`.
+    temp5-price = '6.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '15'.
+    temp5-depth = '6'.
+    temp5-height = '0.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1067`.
+    temp5-name = `Ergo Mousepad`.
+    temp5-suppliername = `Oxynum`.
+    temp5-weightmeasure = '80'.
+    temp5-weightunit = `G`.
+    temp5-price = '8.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '15'.
+    temp5-depth = '6'.
+    temp5-height = '0.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1068`.
+    temp5-name = `Designer Mousepad`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '90'.
+    temp5-weightunit = `G`.
+    temp5-price = '12.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '24'.
+    temp5-depth = '24'.
+    temp5-height = '0.6'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1069`.
+    temp5-name = `Universal card reader`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '45'.
+    temp5-weightunit = `G`.
+    temp5-price = '14'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '6'.
+    temp5-depth = '6'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1070`.
+    temp5-name = `Proctra X`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.255'.
+    temp5-weightunit = `KG`.
+    temp5-price = '70.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '22'.
+    temp5-depth = '35'.
+    temp5-height = '17'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1071`.
+    temp5-name = `Gladiator MX`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '81.7'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '22'.
+    temp5-depth = '35'.
+    temp5-height = '17'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1072`.
+    temp5-name = `Hurricane GX`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '101.2'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '22'.
+    temp5-depth = '35'.
+    temp5-height = '17'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1073`.
+    temp5-name = `Hurricane GX/LN`.
+    temp5-suppliername = `Smartcards`.
+    temp5-weightmeasure = '0.4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '139.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '22'.
+    temp5-depth = '35'.
+    temp5-height = '17'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1080`.
+    temp5-name = `Photo Scan`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '2.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '129'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '34'.
+    temp5-depth = '48'.
+    temp5-height = '5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1081`.
+    temp5-name = `Power Scan`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '2.4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '89'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '31'.
+    temp5-depth = '43'.
+    temp5-height = '7'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1082`.
+    temp5-name = `Jet Scan Professional`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '3.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '169'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '33'.
+    temp5-depth = '41'.
+    temp5-height = '12'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1083`.
+    temp5-name = `Jet Scan Professional`.
+    temp5-suppliername = `Printer for All`.
+    temp5-weightmeasure = '3.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '189'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '35'.
+    temp5-depth = '40'.
+    temp5-height = '10'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1085`.
+    temp5-name = `Copymaster`.
+    temp5-suppliername = `Alpha Printers`.
+    temp5-weightmeasure = '23.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1499'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '45'.
+    temp5-depth = '42'.
+    temp5-height = '22'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1090`.
+    temp5-name = `Surround Sound`.
+    temp5-suppliername = `Speaker Experts`.
+    temp5-weightmeasure = '3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '39'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '12'.
+    temp5-depth = '10'.
+    temp5-height = '16'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1091`.
+    temp5-name = `Blaster Extreme`.
+    temp5-suppliername = `Speaker Experts`.
+    temp5-weightmeasure = '1.4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '26'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '13'.
+    temp5-depth = '11'.
+    temp5-height = '17.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1092`.
+    temp5-name = `Sound Booster`.
+    temp5-suppliername = `Speaker Experts`.
+    temp5-weightmeasure = '2.1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '45'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '12.4'.
+    temp5-depth = '10.4'.
+    temp5-height = '18.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1095`.
+    temp5-name = `Lovely Sound 5.1 Wireless`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '80'.
+    temp5-weightunit = `G`.
+    temp5-price = '49'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '24'.
+    temp5-depth = '19'.
+    temp5-height = '23'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1096`.
+    temp5-name = `Lovely Sound 5.1`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '130'.
+    temp5-weightunit = `G`.
+    temp5-price = '39'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '25'.
+    temp5-depth = '17'.
+    temp5-height = '19'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1097`.
+    temp5-name = `Lovely Sound Stereo`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '60'.
+    temp5-weightunit = `G`.
+    temp5-price = '29'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '21.3'.
+    temp5-depth = '2.4'.
+    temp5-height = '19.7'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1100`.
+    temp5-name = `Smart Office`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '1.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '89.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '15'.
+    temp5-depth = '6.5'.
+    temp5-height = '2.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1101`.
+    temp5-name = `Smart Design`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '79.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '14'.
+    temp5-depth = '6.7'.
+    temp5-height = '24'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1102`.
+    temp5-name = `Smart Network`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '69'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '16'.
+    temp5-depth = '6'.
+    temp5-height = '27'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1103`.
+    temp5-name = `Smart Multimedia`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '77'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '11'.
+    temp5-depth = '3.4'.
+    temp5-height = '22'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1104`.
+    temp5-name = `Smart Games`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '1.1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '55'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '10'.
+    temp5-depth = '3'.
+    temp5-height = '30'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1105`.
+    temp5-name = `Smart Internet Antivirus`.
+    temp5-suppliername = `Brainsoft`.
+    temp5-weightmeasure = '0.7'.
+    temp5-weightunit = `KG`.
+    temp5-price = '29'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '16'.
+    temp5-depth = '4'.
+    temp5-height = '21'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1106`.
+    temp5-name = `Smart Firewall`.
+    temp5-suppliername = `Brainsoft`.
+    temp5-weightmeasure = '0.9'.
+    temp5-weightunit = `KG`.
+    temp5-price = '34'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '17.9'.
+    temp5-depth = '4.2'.
+    temp5-height = '23.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1107`.
+    temp5-name = `Smart Money`.
+    temp5-suppliername = `Brainsoft`.
+    temp5-weightmeasure = '0.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '29.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '12'.
+    temp5-depth = '1.5'.
+    temp5-height = '19'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1110`.
+    temp5-name = `PC Lock`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.03'.
+    temp5-weightunit = `KG`.
+    temp5-price = '8.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '20'.
+    temp5-depth = '8'.
+    temp5-height = '4.3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1111`.
+    temp5-name = `Notebook Lock`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.02'.
+    temp5-weightunit = `KG`.
+    temp5-price = '6.9'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '31'.
+    temp5-depth = '9'.
+    temp5-height = '7'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1112`.
+    temp5-name = `Web cam reality`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.075'.
+    temp5-weightunit = `KG`.
+    temp5-price = '39'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '9'.
+    temp5-depth = '8.2'.
+    temp5-height = '1.3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1113`.
+    temp5-name = `Screen clean`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.05'.
+    temp5-weightunit = `KG`.
+    temp5-price = '2.3'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '2'.
+    temp5-depth = '2'.
+    temp5-height = '0.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1114`.
+    temp5-name = `Fabric bag professional`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '1.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '31'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '42'.
+    temp5-depth = '32'.
+    temp5-height = '7'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1115`.
+    temp5-name = `Wireless DSL Router`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.45'.
+    temp5-weightunit = `KG`.
+    temp5-price = '49'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '19.3'.
+    temp5-depth = '18'.
+    temp5-height = '5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1116`.
+    temp5-name = `Wireless DSL Router / Repeater`.
+    temp5-suppliername = `Red Point Stores`.
+    temp5-weightmeasure = '0.45'.
+    temp5-weightunit = `KG`.
+    temp5-price = '59'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '19.3'.
+    temp5-depth = '18'.
+    temp5-height = '5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1117`.
+    temp5-name = `Wireless DSL Router / Repeater and Print Server`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.45'.
+    temp5-weightunit = `KG`.
+    temp5-price = '69'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '19.3'.
+    temp5-depth = '18'.
+    temp5-height = '5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1118`.
+    temp5-name = `USB Stick`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.015'.
+    temp5-weightunit = `KG`.
+    temp5-price = '35'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '1.5'.
+    temp5-depth = '8.7'.
+    temp5-height = '1.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1119`.
+    temp5-name = `Travel Adapter`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '88'.
+    temp5-weightunit = `G`.
+    temp5-price = '79'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '2'.
+    temp5-depth = '3.1'.
+    temp5-height = '3.9'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1120`.
+    temp5-name = `Cordless Bluetooth Keyboard, english international`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '29'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '51.4'.
+    temp5-depth = '23'.
+    temp5-height = '4'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1137`.
+    temp5-name = `Flat XXL`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '18'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1430'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '54'.
+    temp5-depth = '22'.
+    temp5-height = '38'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1138`.
+    temp5-name = `Pocket Mouse`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.02'.
+    temp5-weightunit = `KG`.
+    temp5-price = '23'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '0.3'.
+    temp5-depth = '0.5'.
+    temp5-height = '1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1210`.
+    temp5-name = `PC Power Station`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '2.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '2399'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '28'.
+    temp5-depth = '31'.
+    temp5-height = '43'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1251`.
+    temp5-name = `Astro Laptop 1516`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '989'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30'.
+    temp5-depth = '18'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1252`.
+    temp5-name = `Astro Phone 6`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.75'.
+    temp5-weightunit = `KG`.
+    temp5-price = '649'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '8'.
+    temp5-depth = '6'.
+    temp5-height = '1.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1253`.
+    temp5-name = `Benda Laptop 1408`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '976'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30'.
+    temp5-depth = '18'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1254`.
+    temp5-name = `Bending Screen 21HD`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '15'.
+    temp5-weightunit = `KG`.
+    temp5-price = '250'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '37'.
+    temp5-depth = '12'.
+    temp5-height = '36'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1255`.
+    temp5-name = `Broad Screen 22HD`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '16'.
+    temp5-weightunit = `KG`.
+    temp5-price = '270'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '39'.
+    temp5-depth = '12'.
+    temp5-height = '38'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1256`.
+    temp5-name = `Cerdik Phone 7`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.75'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '9'.
+    temp5-depth = '15'.
+    temp5-height = '1.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1257`.
+    temp5-name = `Cepat Tablet 10.5`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '2.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1258`.
+    temp5-name = `Cepat Tablet 8`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '2.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '529'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '38'.
+    temp5-depth = '21'.
+    temp5-height = '3.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1500`.
+    temp5-name = `Server Basic`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '18'.
+    temp5-weightunit = `KG`.
+    temp5-price = '5000'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '34'.
+    temp5-depth = '35'.
+    temp5-height = '23'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1501`.
+    temp5-name = `Server Professional`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '25'.
+    temp5-weightunit = `KG`.
+    temp5-price = '15000'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '29'.
+    temp5-depth = '30'.
+    temp5-height = '27'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1502`.
+    temp5-name = `Server Power Pro`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '35'.
+    temp5-weightunit = `KG`.
+    temp5-price = '25000'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '22'.
+    temp5-depth = '27.3'.
+    temp5-height = '37'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1600`.
+    temp5-name = `Family PC Basic`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '4.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '600'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '21.4'.
+    temp5-depth = '29'.
+    temp5-height = '38'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1601`.
+    temp5-name = `Family PC Pro`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '5.3'.
+    temp5-weightunit = `KG`.
+    temp5-price = '900'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '25'.
+    temp5-depth = '31.7'.
+    temp5-height = '40.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1602`.
+    temp5-name = `Gaming Monster`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '5.9'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1200'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '26.5'.
+    temp5-depth = '34'.
+    temp5-height = '47'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-1603`.
+    temp5-name = `Gaming Monster Pro`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '6.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1700'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '27'.
+    temp5-depth = '28'.
+    temp5-height = '42'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2000`.
+    temp5-name = `7" Widescreen Portable DVD Player w MP3`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.79'.
+    temp5-weightunit = `KG`.
+    temp5-price = '249.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '21.4'.
+    temp5-depth = '19'.
+    temp5-height = '27.6'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2001`.
+    temp5-name = `10" Portable DVD player`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.84'.
+    temp5-weightunit = `KG`.
+    temp5-price = '449.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '24'.
+    temp5-depth = '19.5'.
+    temp5-height = '29'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2002`.
+    temp5-name = `Portable DVD Player with 9" LCD Monitor`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '0.72'.
+    temp5-weightunit = `KG`.
+    temp5-price = '853.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '21'.
+    temp5-depth = '16.5'.
+    temp5-height = '14'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2025`.
+    temp5-name = `CD/DVD case: 264 sleeves`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.65'.
+    temp5-weightunit = `KG`.
+    temp5-price = '44.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '13'.
+    temp5-depth = '13'.
+    temp5-height = '20'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2026`.
+    temp5-name = `Audio/Video Cable Kit - 4m`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '29.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '21'.
+    temp5-depth = '10.2'.
+    temp5-height = '13'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-2027`.
+    temp5-name = `Removable CD/DVD Laser Labels`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.15'.
+    temp5-weightunit = `KG`.
+    temp5-price = '8.99'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '5.5'.
+    temp5-depth = '2'.
+    temp5-height = '2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6100`.
+    temp5-name = `Beam Breaker B-1`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '1.7'.
+    temp5-weightunit = `KG`.
+    temp5-price = '469'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30.4'.
+    temp5-depth = '23.1'.
+    temp5-height = '23'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6101`.
+    temp5-name = `Beam Breaker B-2`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '679'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30.4'.
+    temp5-depth = '23.1'.
+    temp5-height = '23'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6102`.
+    temp5-name = `Beam Breaker B-3`.
+    temp5-suppliername = `Technocom`.
+    temp5-weightmeasure = '2.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '889'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '30.4'.
+    temp5-depth = '23.1'.
+    temp5-height = '23'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6110`.
+    temp5-name = `Play Movie`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '2.4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '130'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '37'.
+    temp5-depth = '24'.
+    temp5-height = '6'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6111`.
+    temp5-name = `Record Movie`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '3.1'.
+    temp5-weightunit = `KG`.
+    temp5-price = '288'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '38'.
+    temp5-depth = '26'.
+    temp5-height = '6.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6120`.
+    temp5-name = `ITelo MusicStick`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '134'.
+    temp5-weightunit = `G`.
+    temp5-price = '45'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '1.5'.
+    temp5-depth = '6'.
+    temp5-height = '1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6121`.
+    temp5-name = `ITelo Jog-Mate`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '134'.
+    temp5-weightunit = `G`.
+    temp5-price = '63'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '5.1'.
+    temp5-depth = '8'.
+    temp5-height = '9.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6122`.
+    temp5-name = `Power Pro Player 40`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '266'.
+    temp5-weightunit = `G`.
+    temp5-price = '167'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '5.1'.
+    temp5-depth = '8'.
+    temp5-height = '9.2'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6123`.
+    temp5-name = `Power Pro Player 80`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '267'.
+    temp5-weightunit = `G`.
+    temp5-price = '299'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '4'.
+    temp5-depth = '6'.
+    temp5-height = '0.8'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6130`.
+    temp5-name = `Flat Watch HD32`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '2.6'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1459'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '78'.
+    temp5-depth = '22.1'.
+    temp5-height = '55'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6131`.
+    temp5-name = `Flat Watch HD37`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '2.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1199'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '99.1'.
+    temp5-depth = '26'.
+    temp5-height = '61'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-6132`.
+    temp5-name = `Flat Watch HD41`.
+    temp5-suppliername = `Very Best Screens`.
+    temp5-weightmeasure = '1.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '899'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '128'.
+    temp5-depth = '23'.
+    temp5-height = '79.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-7000`.
+    temp5-name = `Copperberry`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '0.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '8.1'.
+    temp5-depth = '13'.
+    temp5-height = '12.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-7010`.
+    temp5-name = `Silverberry`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '0.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '8.1'.
+    temp5-depth = '13'.
+    temp5-height = '12.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-7020`.
+    temp5-name = `Goldberry`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '0.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '8.1'.
+    temp5-depth = '13'.
+    temp5-height = '12.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-7030`.
+    temp5-name = `Platinberry`.
+    temp5-suppliername = `Fasttech`.
+    temp5-weightmeasure = '0.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '549'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '8.1'.
+    temp5-depth = '13'.
+    temp5-height = '12.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-8000`.
+    temp5-name = `ITelO FlexTop I4000`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '4'.
+    temp5-weightunit = `KG`.
+    temp5-price = '799'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '31'.
+    temp5-depth = '19'.
+    temp5-height = '3.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-8001`.
+    temp5-name = `ITelO FlexTop I6300c`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '4.2'.
+    temp5-weightunit = `KG`.
+    temp5-price = '799'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '32'.
+    temp5-depth = '20'.
+    temp5-height = '3.4'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-8002`.
+    temp5-name = `ITelO FlexTop I9100`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '3.5'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1199'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '38'.
+    temp5-depth = '21'.
+    temp5-height = '4.1'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-8003`.
+    temp5-name = `ITelO FlexTop I9800`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '3.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1388'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9991`.
+    temp5-name = `Smartphone Leather Case`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.02'.
+    temp5-weightunit = `KG`.
+    temp5-price = '25'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9992`.
+    temp5-name = `Smartphone Alpha`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '0.75'.
+    temp5-weightunit = `KG`.
+    temp5-price = '599'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9993`.
+    temp5-name = `Mini Tablet`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '3.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '833'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9994`.
+    temp5-name = `Camcorder View`.
+    temp5-suppliername = `Ultrasonic United`.
+    temp5-weightmeasure = '3.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '1388'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '27'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9995`.
+    temp5-name = `Tablet Pouch`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.03'.
+    temp5-weightunit = `KG`.
+    temp5-price = '20'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '25'.
+    temp5-depth = '40'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9996`.
+    temp5-name = `Tablet Pouch`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.03'.
+    temp5-weightunit = `KG`.
+    temp5-price = '20'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '25'.
+    temp5-depth = '40'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9997`.
+    temp5-name = `e-Book Reader ReadMe`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '3.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '33'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9998`.
+    temp5-name = `Smartphone Beta`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.75'.
+    temp5-weightunit = `KG`.
+    temp5-price = '30'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `HT-9999`.
+    temp5-name = `Maxi Tablet`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '3.8'.
+    temp5-weightunit = `KG`.
+    temp5-price = '749'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '48'.
+    temp5-depth = '31'.
+    temp5-height = '4.5'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-productid = `PF-1000`.
+    temp5-name = `Flyer`.
+    temp5-suppliername = `Titanium`.
+    temp5-weightmeasure = '0.01'.
+    temp5-weightunit = `KG`.
+    temp5-price = '0'.
+    temp5-currencycode = `EUR`.
+    temp5-width = '46'.
+    temp5-depth = '30'.
+    temp5-height = '3'.
+    temp5-dimunit = `cm`.
+    INSERT temp5 INTO TABLE temp4.
+    t_all = temp4.
 
     weight_state_set( ).
     t_products   = t_all.

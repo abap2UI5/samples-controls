@@ -18,7 +18,7 @@ CLASS z2ui5_cl_smpc_app_558 DEFINITION PUBLIC.
         " _oNewUnsavedItems: rows the add-new button created and nobody saved yet
         unsaved      TYPE abap_bool,
       END OF ty_s_product.
-    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
     " one row per open tab - a COPY of the product, which is what makes Cancel a
     " pure discard (the original edits a deepExtend copy in its own JSONModel)
@@ -32,7 +32,7 @@ CLASS z2ui5_cl_smpc_app_558 DEFINITION PUBLIC.
         currencycode TYPE string,
         modified     TYPE abap_bool,
       END OF ty_s_tab.
-    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_s_tab WITH EMPTY KEY.
+    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_s_tab WITH DEFAULT KEY.
 
     DATA t_products     TYPE ty_t_product.
     DATA t_tabs         TYPE ty_t_tab.
@@ -84,12 +84,12 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -98,9 +98,20 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA pages TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA table_page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA tab_page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA tab_item TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA tab_content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA add_page TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp2 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(pages) = view->ele( n = `View` ns = `mvc`
+    
+    pages = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -109,7 +120,8 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         )->ele( `NavContainer`
             )->a( n = `id` v = `navCon` ).
 
-    DATA(table_page) = pages->ele( `Page`
+    
+    table_page = pages->ele( `Page`
         )->a( n = `id`    v = `table`
         )->a( n = `title` v = `Product List` ).
 
@@ -174,7 +186,8 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
                 )->a( n = `visible` v = client->_bind( open_visible )
                 )->a( n = `press`   v = client->_event( `OPEN_SELECTED` ) ).
 
-    DATA(tab_page) = pages->ele( `Page`
+    
+    tab_page = pages->ele( `Page`
         )->a( n = `id`             v = `tabContainerPage`
         )->a( n = `title`          v = `Tab Container`
         )->a( n = `showNavButton`  v = `true`
@@ -184,7 +197,11 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
     " into the page; here it is declared and its items are bound to the open tabs
     " sap.m.TabContainer has no default aggregation, so the item template sits in
     " an explicit items element next to the items binding
-    DATA(tab_item) = tab_page->ele( `TabContainer`
+    
+    CLEAR temp1.
+    temp1-check_prevent_default = abap_true.
+    
+    tab_item = tab_page->ele( `TabContainer`
         )->a( n = `id`                v = `idTabContainer`
         )->a( n = `showAddNewButton`  v = `true`
         )->a( n = `addNewButtonPress` v = client->_event( `TAB_ADD_NEW` )
@@ -194,7 +211,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " reaches the backend, and tab_close( ) decides
         )->a( n = `itemClose`         v = client->_event( val    = `TAB_CLOSE`
                                                           arg    = `${$parameters>/item}.getKey()`
-                                                          s_ctrl = VALUE #( check_prevent_default = abap_true ) )
+                                                          s_ctrl = temp1 )
         )->a( n = `itemSelect`        v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/item}.getKey()` )
         )->a( n = `items`             v = client->_bind( t_tabs )
 
@@ -204,7 +221,8 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
                 )->a( n = `name`     v = `{NAME}`
                 )->a( n = `modified` v = `{MODIFIED}` ).
 
-    DATA(tab_content) = tab_item->ele( `content` ).
+    
+    tab_content = tab_item->ele( `content` ).
 
     " the Display fragment - what a tab shows while it is not being edited
     tab_content->ele( `ObjectHeader`
@@ -249,7 +267,8 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         )->tag( `TextArea`
             )->a( n = `value` v = `{DESCRIPTION}` ).
 
-    DATA(add_page) = pages->ele( `Page`
+    
+    add_page = pages->ele( `Page`
         )->a( n = `id`             v = `addItemPage`
         )->a( n = `showNavButton`  v = `true`
         )->a( n = `navButtonPress` v = client->_event( `NAV_BACK` ) ).
@@ -330,15 +349,24 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
     " tab_close redirect when the last tab goes) park `table` and are skipped
     " here by the same guard. The app-000 idiom
     IF nav_page IS NOT INITIAL AND nav_page <> `table`.
+      
+      CLEAR temp2.
+      INSERT `navCon` INTO TABLE temp2.
+      INSERT `to` INTO TABLE temp2.
+      INSERT nav_page INTO TABLE temp2.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `navCon` ) ( `to` ) ( nav_page ) ) ).
+                                t_arg = temp2 ).
     ENDIF.
 
     " onInit: oModel.setSizeLimit(200) - the collection is 123 rows and the
     " JSONModel caps a bound aggregation at 100, so without this the table
     " stops 23 rows short (the app-252 / app-444 idiom)
+    
+    CLEAR temp4.
+    INSERT `200` INTO TABLE temp4.
+    INSERT client->cs_view-main INTO TABLE temp4.
     client->follow_up_action( val   = client->cs_event-set_size_limit
-                              t_arg = VALUE #( ( `200` ) ( client->cs_view-main ) ) ).
+                              t_arg = temp4 ).
 
   ENDMETHOD.
 
@@ -356,10 +384,21 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
     " fnGoBackToTablePage: back to the table page, and the footer button follows
     " the selection that is left
+    DATA temp6 TYPE string_table.
+    DATA temp8 LIKE sy-subrc.
+    DATA temp1 TYPE xsdboolean.
+    CLEAR temp6.
+    INSERT `navCon` INTO TABLE temp6.
+    INSERT `back` INTO TABLE temp6.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `navCon` ) ( `back` ) ) ).
+                              t_arg = temp6 ).
     nav_page = `table`.
-    open_visible = xsdbool( line_exists( t_products[ selected = abap_true ] ) ).
+    
+    READ TABLE t_products WITH KEY selected = abap_true TRANSPORTING NO FIELDS.
+    temp8 = sy-subrc.
+    
+    temp1 = boolc( temp8 = 0 ).
+    open_visible = temp1.
 
   ENDMETHOD.
 
@@ -367,17 +406,25 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
   METHOD nav_back.
 
     " fnNavBackButton: leaving a page with unsaved edits asks first
-    DATA(modified_names) = ``.
-    LOOP AT t_tabs INTO DATA(tab) WHERE modified = abap_true.
+    DATA modified_names TYPE string.
+    DATA tab LIKE LINE OF t_tabs.
+      DATA temp9 TYPE string_table.
+    modified_names = ``.
+    
+    LOOP AT t_tabs INTO tab WHERE modified = abap_true.
       modified_names = modified_names && |\n| && tab-name.
     ENDLOOP.
 
     IF add_mode = abap_true OR modified_names IS NOT INITIAL.
+      
+      CLEAR temp9.
+      INSERT `Leave Page` INTO TABLE temp9.
+      INSERT `CANCEL` INTO TABLE temp9.
       client->message_box_display(
           text         = |Your changes to the following tabs will be lost when you leave the page: \n{ modified_names }|
           type         = `warning`
           title        = `Warning`
-          actions      = VALUE #( ( `Leave Page` ) ( `CANCEL` ) )
+          actions      = temp9
           initialfocus = `CANCEL`
           onclose      = `LEAVE_CLOSED` ).
       RETURN.
@@ -389,13 +436,15 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
 
   METHOD unsaved_reset.
+    DATA del_id LIKE productid.
 
     " _resetUnsavedItems: drop the rows the add-new button created and nobody saved
     IF productid IS INITIAL.
       DELETE t_products WHERE unsaved = abap_true.
       RETURN.
     ENDIF.
-    DATA(del_id) = productid.
+    
+    del_id = productid.
     DELETE t_products WHERE unsaved = abap_true AND productid = del_id.
 
   ENDMETHOD.
@@ -403,11 +452,14 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
   METHOD tab_close.
 
-    DATA(del_id) = productid.
+    DATA del_id LIKE productid.
+    FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_app_558=>ty_s_product.
+    del_id = productid.
     DELETE t_tabs WHERE productid = del_id.
 
     " un-check the row in the table, exactly as _closeItemInTabContainer does
-    ASSIGN t_products[ productid = del_id ] TO FIELD-SYMBOL(<product>).
+    
+    READ TABLE t_products WITH KEY productid = del_id ASSIGNING <product>.
     IF sy-subrc = 0.
       <product>-selected = abap_false.
     ENDIF.
@@ -425,13 +477,16 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
   METHOD tab_save.
 
     " handleTabContainerSaveItem: the tab's copy is written back to the product
-    ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<saved_tab>).
+    FIELD-SYMBOLS <saved_tab> TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+    FIELD-SYMBOLS <target> TYPE z2ui5_cl_smpc_app_558=>ty_s_product.
+    READ TABLE t_tabs WITH KEY productid = selected_tab ASSIGNING <saved_tab>.
     IF sy-subrc <> 0.
       RETURN.
     ENDIF.
     <saved_tab>-modified = abap_false.
 
-    ASSIGN t_products[ productid = selected_tab ] TO FIELD-SYMBOL(<target>).
+    
+    READ TABLE t_products WITH KEY productid = selected_tab ASSIGNING <target>.
     IF sy-subrc = 0.
       <target>-name         = <saved_tab>-name.
       <target>-suppliername = <saved_tab>-suppliername.
@@ -448,33 +503,97 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp11 LIKE sy-subrc.
+        DATA temp2 TYPE xsdboolean.
+        DATA temp12 TYPE z2ui5_cl_smpc_app_558=>ty_t_tab.
+        DATA product LIKE LINE OF t_products.
+          DATA temp13 TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+        DATA temp14 TYPE string.
+        DATA temp15 TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+        DATA temp16 TYPE string_table.
+        DATA is_modified TYPE abap_bool.
+        DATA temp1 LIKE sy-subrc.
+        DATA temp4 TYPE xsdboolean.
+        DATA temp5 TYPE xsdboolean.
+        FIELD-SYMBOLS <tab> TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+        DATA temp18 LIKE sy-subrc.
+          FIELD-SYMBOLS <reset_tab> TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+            FIELD-SYMBOLS <temp2> LIKE LINE OF t_products.
+            DATA temp3 LIKE sy-tabix.
+        DATA temp19 LIKE sy-subrc.
+          DATA temp20 TYPE string_table.
+        DATA new_id TYPE string.
+        DATA temp22 TYPE z2ui5_cl_smpc_app_558=>ty_s_product.
+        DATA temp23 TYPE z2ui5_cl_smpc_app_558=>ty_s_tab.
+        DATA temp24 TYPE string.
+        DATA temp25 TYPE string.
+        DATA temp26 TYPE string.
+        DATA temp27 TYPE string_table.
+        DATA temp29 TYPE z2ui5_cl_smpc_app_558=>ty_s_product.
+          DATA keep LIKE t_tabs.
+          DATA temp30 TYPE z2ui5_cl_smpc_app_558=>ty_t_tab.
+          DATA temp31 LIKE LINE OF keep.
+          DATA tab LIKE REF TO temp31.
+            DATA temp32 LIKE sy-subrc.
 
     CASE client->get_event( ).
 
       WHEN `SELECTION_CHANGE`.
-        open_visible = xsdbool( line_exists( t_products[ selected = abap_true ] ) ).
+        
+        READ TABLE t_products WITH KEY selected = abap_true TRANSPORTING NO FIELDS.
+        temp11 = sy-subrc.
+        
+        temp2 = boolc( temp11 = 0 ).
+        open_visible = temp2.
 
       WHEN `OPEN_SELECTED`.
         " openSelectedItems: one tab per selected row, filtered by ProductId
-        t_tabs = VALUE #( ).
-        LOOP AT t_products INTO DATA(product) WHERE selected = abap_true.
-          APPEND CORRESPONDING #( product ) TO t_tabs.
+        
+        CLEAR temp12.
+        t_tabs = temp12.
+        
+        LOOP AT t_products INTO product WHERE selected = abap_true.
+          
+          CLEAR temp13.
+          MOVE-CORRESPONDING product TO temp13.
+          APPEND temp13 TO t_tabs.
         ENDLOOP.
-        selected_tab = VALUE #( t_tabs[ 1 ]-productid OPTIONAL ).
+        
+        CLEAR temp14.
+        
+        READ TABLE t_tabs INTO temp15 INDEX 1.
+        IF sy-subrc = 0.
+          temp14 = temp15-productid.
+        ENDIF.
+        selected_tab = temp14.
         buttons_state( edit = abap_true ).
         nav_page = `tabContainerPage`.
+        
+        CLEAR temp16.
+        INSERT `navCon` INTO TABLE temp16.
+        INSERT `to` INTO TABLE temp16.
+        INSERT nav_page INTO TABLE temp16.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `navCon` ) ( `to` ) ( nav_page ) ) ).
+                                  t_arg = temp16 ).
 
       WHEN `TAB_SELECT`.
         selected_tab = client->get_event_arg( ).
         " _handleTabContainerItemSelect: the buttons follow the tab's modified flag
-        DATA(is_modified) = xsdbool( line_exists( t_tabs[ productid = selected_tab modified = abap_true ] ) ).
-        buttons_state( edit = xsdbool( is_modified = abap_false ) save = is_modified cancel = is_modified ).
+        
+        
+        READ TABLE t_tabs WITH KEY productid = selected_tab modified = abap_true TRANSPORTING NO FIELDS.
+        temp1 = sy-subrc.
+        
+        temp4 = boolc( temp1 = 0 ).
+        is_modified = temp4.
+        
+        temp5 = boolc( is_modified = abap_false ).
+        buttons_state( edit = temp5 save = is_modified cancel = is_modified ).
 
       WHEN `TAB_EDIT`.
         " handleTabContainerEditItem: the tab goes into edit mode over its own copy
-        ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<tab>).
+        
+        READ TABLE t_tabs WITH KEY productid = selected_tab ASSIGNING <tab>.
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.
@@ -488,12 +607,24 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " handleTabContainerCancelUpdate: a never-saved row disappears with its tab,
         " an existing one falls back to the stored product
         buttons_state( edit = abap_true ).
-        IF line_exists( t_products[ productid = selected_tab unsaved = abap_true ] ).
+        
+        READ TABLE t_products WITH KEY productid = selected_tab unsaved = abap_true TRANSPORTING NO FIELDS.
+        temp18 = sy-subrc.
+        IF temp18 = 0.
           tab_close( selected_tab ).
         ELSE.
-          ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<reset_tab>).
+          
+          READ TABLE t_tabs WITH KEY productid = selected_tab ASSIGNING <reset_tab>.
           IF sy-subrc = 0.
-            <reset_tab> = CORRESPONDING #( t_products[ productid = selected_tab ] ).
+            
+            
+            temp3 = sy-tabix.
+            READ TABLE t_products WITH KEY productid = selected_tab ASSIGNING <temp2>.
+            sy-tabix = temp3.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            MOVE-CORRESPONDING <temp2> TO <reset_tab>.
           ENDIF.
         ENDIF.
         view_display( ).
@@ -501,11 +632,18 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
       WHEN `TAB_CLOSE`.
         pending_close = client->get_event_arg( ).
         " _handleTabContainerItemClose: a modified tab asks before it goes
-        IF line_exists( t_tabs[ productid = pending_close modified = abap_true ] ).
+        
+        READ TABLE t_tabs WITH KEY productid = pending_close modified = abap_true TRANSPORTING NO FIELDS.
+        temp19 = sy-subrc.
+        IF temp19 = 0.
+          
+          CLEAR temp20.
+          INSERT `Close Tab` INTO TABLE temp20.
+          INSERT `CANCEL` INTO TABLE temp20.
           client->message_box_display( text         = `Your changes will be lost when you close this tab`
                                        type         = `warning`
                                        title        = `Warning`
-                                       actions      = VALUE #( ( `Close Tab` ) ( `CANCEL` ) )
+                                       actions      = temp20
                                        initialfocus = `CANCEL`
                                        onclose      = `CLOSE_TAB_CLOSED` ).
         ELSE.
@@ -526,12 +664,21 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " _handleTabContainerAddNewButtonPress: a blank product joins the collection,
         " gets selected in the table, opens as a tab and starts in edit mode
         new_counter = new_counter + 1.
-        DATA(new_id) = |ProductId-{ new_counter }|.
-        APPEND VALUE #( productid    = new_id
-                        currencycode = `EUR`
-                        selected     = abap_true
-                        unsaved      = abap_true ) TO t_products.
-        APPEND VALUE #( productid = new_id currencycode = `EUR` modified = abap_true ) TO t_tabs.
+        
+        new_id = |ProductId-{ new_counter }|.
+        
+        CLEAR temp22.
+        temp22-productid = new_id.
+        temp22-currencycode = `EUR`.
+        temp22-selected = abap_true.
+        temp22-unsaved = abap_true.
+        APPEND temp22 TO t_products.
+        
+        CLEAR temp23.
+        temp23-productid = new_id.
+        temp23-currencycode = `EUR`.
+        temp23-modified = abap_true.
+        APPEND temp23 TO t_tabs.
         selected_tab = new_id.
         buttons_state( save = abap_true cancel = abap_true ).
         view_display( ).
@@ -540,23 +687,37 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " handleNewItemAdd: a fresh edit model on the add page
         new_counter = new_counter + 1.
         add_product_id = |ProductId-{ new_counter }|.
-        add_name = VALUE #( ).
-        add_supplier = VALUE #( ).
-        add_description = VALUE #( ).
+        
+        CLEAR temp24.
+        add_name = temp24.
+        
+        CLEAR temp25.
+        add_supplier = temp25.
+        
+        CLEAR temp26.
+        add_description = temp26.
         add_price = 0.
         add_mode = abap_true.
         nav_page = `addItemPage`.
+        
+        CLEAR temp27.
+        INSERT `navCon` INTO TABLE temp27.
+        INSERT `to` INTO TABLE temp27.
+        INSERT nav_page INTO TABLE temp27.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `navCon` ) ( `to` ) ( nav_page ) ) ).
+                                  t_arg = temp27 ).
 
       WHEN `NEW_ITEM_SAVE`.
         " handleNewItemSave: the form's data joins the collection
-        APPEND VALUE #( productid    = add_product_id
-                        name         = add_name
-                        suppliername = add_supplier
-                        description  = add_description
-                        price        = add_price
-                        currencycode = `EUR` ) TO t_products.
+        
+        CLEAR temp29.
+        temp29-productid = add_product_id.
+        temp29-name = add_name.
+        temp29-suppliername = add_supplier.
+        temp29-description = add_description.
+        temp29-price = add_price.
+        temp29-currencycode = `EUR`.
+        APPEND temp29 TO t_products.
         add_mode = abap_false.
         nav_to_table( ).
 
@@ -582,10 +743,18 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
           " skipped, and deleting the last row leaves sy-tabix past the end
           " (TABLE_INVALID_INDEX). Same defect the ports 352/354/298/377
           " carried and the same fix.
-          DATA(keep) = t_tabs.
-          t_tabs = VALUE #( ).
-          LOOP AT keep REFERENCE INTO DATA(tab).
-            IF line_exists( t_products[ productid = tab->productid ] ).
+          
+          keep = t_tabs.
+          
+          CLEAR temp30.
+          t_tabs = temp30.
+          
+          
+          LOOP AT keep REFERENCE INTO tab.
+            
+            READ TABLE t_products WITH KEY productid = tab->productid TRANSPORTING NO FIELDS.
+            temp32 = sy-subrc.
+            IF temp32 = 0.
               INSERT tab->* INTO TABLE t_tabs.
             ENDIF.
           ENDLOOP.
@@ -601,376 +770,872 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
     " the full mock /ProductCollection (sap/ui/demo/mock/products.json), all 123
     " rows - onInit raises the model size limit to 200 so the table shows them all
-    t_products = VALUE #(
-      ( productid = `HT-1000` name = `Notebook Basic 15`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `956`
-        description = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro` )
-      ( productid = `HT-1001` name = `Notebook Basic 17`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1249`
-        description = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro` )
-      ( productid = `HT-1002` name = `Notebook Basic 18`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1570`
-        description = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro` )
-      ( productid = `HT-1003` name = `Notebook Basic 19`
-        suppliername = `Smartcards` currencycode = `EUR` price = `1650`
-        description = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro` )
-      ( productid = `HT-1007` name = `ITelO Vault`
-        suppliername = `Technocom` currencycode = `EUR` price = `299`
-        description = `Digital Organizer with State-of-the-Art Storage Encryption` )
-      ( productid = `HT-1010` name = `Notebook Professional 15`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1999`
-        description = `Notebook Professional 15 with 2,80 GHz quad core, 15" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro` )
-      ( productid = `HT-1011` name = `Notebook Professional 17`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `2299`
-        description = `Notebook Professional 17 with 2,80 GHz quad core, 17" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro` )
-      ( productid = `HT-1020` name = `ITelO Vault Net`
-        suppliername = `Technocom` currencycode = `EUR` price = `459`
-        description = `Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications` )
-      ( productid = `HT-1021` name = `ITelO Vault SAT`
-        suppliername = `Technocom` currencycode = `EUR` price = `149`
-        description = `Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link` )
-      ( productid = `HT-1022` name = `Comfort Easy`
-        suppliername = `Technocom` currencycode = `EUR` price = `1679`
-        description = `32 GB Digital Assistant with high-resolution color screen` )
-      ( productid = `HT-1023` name = `Comfort Senior`
-        suppliername = `Technocom` currencycode = `EUR` price = `512`
-        description = `64 GB Digital Assistant with high-resolution color screen and synthesized voice output` )
-      ( productid = `HT-1030` name = `Ergo Screen E-I`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `230`
-        description = `Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm` )
-      ( productid = `HT-1031` name = `Ergo Screen E-II`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `285`
-        description = `Optimum Hi-Resolution max. 1920 x 1200 @ 85Hz, Dot Pitch: 0.26mm` )
-      ( productid = `HT-1032` name = `Ergo Screen E-III`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `345`
-        description = `Optimum Hi-Resolution max. 2560 x 1440 @ 85Hz, Dot Pitch: 0.25mm` )
-      ( productid = `HT-1035` name = `Flat Basic`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `399`
-        description = `Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm` )
-      ( productid = `HT-1036` name = `Flat Future`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `430`
-        description = `Optimum Hi-Resolution max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.26mm` )
-      ( productid = `HT-1037` name = `Flat XL`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1230`
-        description = `Optimum Hi-Resolution max. 2016 x 1512 @ 85Hz, Dot Pitch: 0.24mm` )
-      ( productid = `HT-1040` name = `Laser Professional Eco`
-        suppliername = `Alpha Printers` currencycode = `EUR` price = `830`
-        description = `Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory` )
-      ( productid = `HT-1041` name = `Laser Basic`
-        suppliername = `Alpha Printers` currencycode = `EUR` price = `490`
-        description = `Up to 22 ppm color or 24 ppm monochrome A4/letter, powerful 500 MHz processor and 128MB of memory` )
-      ( productid = `HT-1042` name = `Laser Allround`
-        suppliername = `Alpha Printers` currencycode = `EUR` price = `349`
-        description = `Print up to 25 ppm letter and 24 ppm A4 color or monochrome, with Available first-page-out-time of less than 13 seconds for monochrome and less than 15 seconds for color` )
-      ( productid = `HT-1050` name = `Ultra Jet Super Color`
-        suppliername = `Alpha Printers` currencycode = `EUR` price = `139`
-        description = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB, Ethernet` )
-      ( productid = `HT-1051` name = `Ultra Jet Mobile`
-        suppliername = `Printer for All` currencycode = `EUR` price = `99`
-        description = `1000 dpi x 1000 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB - excellent dimensions for the small office` )
-      ( productid = `HT-1052` name = `Ultra Jet Super Highspeed`
-        suppliername = `Printer for All` currencycode = `EUR` price = `170`
-        description = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet` )
-      ( productid = `HT-1055` name = `Multi Print`
-        suppliername = `Printer for All` currencycode = `EUR` price = `99`
-        description = `1000 dpi x 1000 dpi - up to 16 ppm (mono) / up to 15 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 1200dpi x 2400dpi)` )
-      ( productid = `HT-1056` name = `Multi Color`
-        suppliername = `Printer for All` currencycode = `EUR` price = `119`
-        description = `1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 2400dpi x 4800dpi, high resolution)` )
-      ( productid = `HT-1060` name = `Cordless Mouse`
-        suppliername = `Oxynum` currencycode = `EUR` price = `9`
-        description = `Cordless Optical USB Mice, Laptop, Color: Black, Plug&Play` )
-      ( productid = `HT-1061` name = `Speed Mouse`
-        suppliername = `Oxynum` currencycode = `EUR` price = `7`
-        description = `Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)` )
-      ( productid = `HT-1062` name = `Track Mouse`
-        suppliername = `Oxynum` currencycode = `EUR` price = `11`
-        description = `Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play` )
-      ( productid = `HT-1063` name = `Ergonomic Keyboard`
-        suppliername = `Oxynum` currencycode = `EUR` price = `14`
-        description = `Ergonomic USB Keyboard for Desktop, Plug&Play` )
-      ( productid = `HT-1064` name = `Internet Keyboard`
-        suppliername = `Oxynum` currencycode = `EUR` price = `16`
-        description = `Corded Keyboard with special keys for Internet Usability, USB` )
-      ( productid = `HT-1065` name = `Media Keyboard`
-        suppliername = `Oxynum` currencycode = `EUR` price = `26`
-        description = `Corded Ergonomic Keyboard with special keys for Media Usability, USB` )
-      ( productid = `HT-1066` name = `Mousepad`
-        suppliername = `Oxynum` currencycode = `EUR` price = `6.99`
-        description = `Nice mouse pad with ITelO Logo` )
-      ( productid = `HT-1067` name = `Ergo Mousepad`
-        suppliername = `Oxynum` currencycode = `EUR` price = `8.99`
-        description = `Ergonomic mouse pad with ITelO Logo` )
-      ( productid = `HT-1068` name = `Designer Mousepad`
-        suppliername = `Fasttech` currencycode = `EUR` price = `12.99`
-        description = `ITelO Mousepad Special Edition` )
-      ( productid = `HT-1069` name = `Universal card reader`
-        suppliername = `Fasttech` currencycode = `EUR` price = `14`
-        description = `Universal card reader` )
-      ( productid = `HT-1070` name = `Proctra X`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `70.9`
-        description = `Proctra X: PCI-E GDDR5 3072MB` )
-      ( productid = `HT-1071` name = `Gladiator MX`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `81.7`
-        description = `Gladiator XLN: PCI-E GDDR5 3072MB DVI Out, TV Out low-noise` )
-      ( productid = `HT-1072` name = `Hurricane GX`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `101.2`
-        description = `Hurricane GX: PCI-E 691 GFLOPS game-optimized` )
-      ( productid = `HT-1073` name = `Hurricane GX/LN`
-        suppliername = `Smartcards` currencycode = `EUR` price = `139.99`
-        description = `Hurricane GX/LN: PCI-E 691 GFLOPS game-optimized, low-noise.` )
-      ( productid = `HT-1080` name = `Photo Scan`
-        suppliername = `Printer for All` currencycode = `EUR` price = `129`
-        description = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - Hi-Speed USB - Bluetooth` )
-      ( productid = `HT-1081` name = `Power Scan`
-        suppliername = `Printer for All` currencycode = `EUR` price = `89`
-        description = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - SCSI for backward compatibility` )
-      ( productid = `HT-1082` name = `Jet Scan Professional`
-        suppliername = `Printer for All` currencycode = `EUR` price = `169`
-        description = `Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module` )
-      ( productid = `HT-1083` name = `Jet Scan Professional`
-        suppliername = `Printer for All` currencycode = `EUR` price = `189`
-        description = `Flatbed scanner - A4 - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module` )
-      ( productid = `HT-1085` name = `Copymaster`
-        suppliername = `Alpha Printers` currencycode = `EUR` price = `1499`
-        description = `Copymaster` )
-      ( productid = `HT-1090` name = `Surround Sound`
-        suppliername = `Speaker Experts` currencycode = `EUR` price = `39`
-        description = `PC multimedia speakers - 5 Watt (Total)` )
-      ( productid = `HT-1091` name = `Blaster Extreme`
-        suppliername = `Speaker Experts` currencycode = `EUR` price = `26`
-        description = `PC multimedia speakers - 10 Watt (Total) - 2-way` )
-      ( productid = `HT-1092` name = `Sound Booster`
-        suppliername = `Speaker Experts` currencycode = `EUR` price = `45`
-        description = `PC multimedia speakers - optimized for Blutooth/A2DP` )
-      ( productid = `HT-1095` name = `Lovely Sound 5.1 Wireless`
-        suppliername = `Fasttech` currencycode = `EUR` price = `49`
-        description = `5.1 Headset, 40 Hz-20 kHz, Wireless` )
-      ( productid = `HT-1096` name = `Lovely Sound 5.1`
-        suppliername = `Fasttech` currencycode = `EUR` price = `39`
-        description = `5.1 Headset, 40 Hz-20 kHz, 3m cable` )
-      ( productid = `HT-1097` name = `Lovely Sound Stereo`
-        suppliername = `Fasttech` currencycode = `EUR` price = `29`
-        description = `5.1 Headset, 40 Hz-20 kHz, 1m cable` )
-      ( productid = `HT-1100` name = `Smart Office`
-        suppliername = `Technocom` currencycode = `EUR` price = `89.9`
-        description = `Complete package, 1 User, Office Applications (word processing, spreadsheet, presentations)` )
-      ( productid = `HT-1101` name = `Smart Design`
-        suppliername = `Technocom` currencycode = `EUR` price = `79.9`
-        description = `Complete package, 1 User, Image editing, processing` )
-      ( productid = `HT-1102` name = `Smart Network`
-        suppliername = `Technocom` currencycode = `EUR` price = `69`
-        description = `Complete package, 1 User, Network Software Utilities, Useful Applications and Documentation` )
-      ( productid = `HT-1103` name = `Smart Multimedia`
-        suppliername = `Technocom` currencycode = `EUR` price = `77`
-        description = `Complete package, 1 User, different Multimedia applications, playing music, watching DVDs, only with this Smart package` )
-      ( productid = `HT-1104` name = `Smart Games`
-        suppliername = `Technocom` currencycode = `EUR` price = `55`
-        description = `Complete package, 1 User, various games for amusement, logic, action, jump&run` )
-      ( productid = `HT-1105` name = `Smart Internet Antivirus`
-        suppliername = `Brainsoft` currencycode = `EUR` price = `29`
-        description = `Complete package, 1 User, highly recommended for internet users as anti-virus protection` )
-      ( productid = `HT-1106` name = `Smart Firewall`
-        suppliername = `Brainsoft` currencycode = `EUR` price = `34`
-        description = `Complete package, 1 User, recommended for internet users, protect your PC against cyber-crime` )
-      ( productid = `HT-1107` name = `Smart Money`
-        suppliername = `Brainsoft` currencycode = `EUR` price = `29.9`
-        description = `Complete package, 1 User, bring your money in your mind, see what you have and what you want` )
-      ( productid = `HT-1110` name = `PC Lock`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `8.9`
-        description = `Robust 3m anti-burglary protection for your laptop computer` )
-      ( productid = `HT-1111` name = `Notebook Lock`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `6.9`
-        description = `Robust 1m anti-burglary protection for your desktop computer` )
-      ( productid = `HT-1112` name = `Web cam reality`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `39`
-        description = `Color webcam, color, High-Speed USB` )
-      ( productid = `HT-1113` name = `Screen clean`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `2.3`
-        description = `10 separately packed screen wipes` )
-      ( productid = `HT-1114` name = `Fabric bag professional`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `31`
-        description = `Notebook bag, plenty of room for stationery and writing materials` )
-      ( productid = `HT-1115` name = `Wireless DSL Router`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `49`
-        description = `Wireless DSL Router (available in blue, black and silver)` )
-      ( productid = `HT-1116` name = `Wireless DSL Router / Repeater`
-        suppliername = `Red Point Stores` currencycode = `EUR` price = `59`
-        description = `Wireless DSL Router / Repeater (available in blue, black and silver)` )
-      ( productid = `HT-1117` name = `Wireless DSL Router / Repeater and Print Server`
-        suppliername = `Technocom` currencycode = `EUR` price = `69`
-        description = `Wireless DSL Router / Repeater and Print Server (available in blue, black and silver)` )
-      ( productid = `HT-1118` name = `USB Stick`
-        suppliername = `Technocom` currencycode = `EUR` price = `35`
-        description = `USB 2.0 High-Speed 64 GB` )
-      ( productid = `HT-1119` name = `Travel Adapter`
-        suppliername = `Titanium` currencycode = `EUR` price = `79`
-        description = `Universal Travel Adapter` )
-      ( productid = `HT-1120` name = `Cordless Bluetooth Keyboard, english international`
-        suppliername = `Technocom` currencycode = `EUR` price = `29`
-        description = `Cordless Bluetooth Keyboard with English keys` )
-      ( productid = `HT-1137` name = `Flat XXL`
-        suppliername = `Technocom` currencycode = `EUR` price = `1430`
-        description = `Optimum Hi-Resolution max. 2048 × 1536 @ 85Hz, Dot Pitch: 0.24mm` )
-      ( productid = `HT-1138` name = `Pocket Mouse`
-        suppliername = `Technocom` currencycode = `EUR` price = `23`
-        description = `Portable pocket Mouse with retracting cord` )
-      ( productid = `HT-1210` name = `PC Power Station`
-        suppliername = `Technocom` currencycode = `EUR` price = `2399`
-        description = `PC Power Station with 3,4 Ghz quad-core, 32 GB DDR3 SDRAM, feels like Available PC, Windows 8 Pro` )
-      ( productid = `HT-1251` name = `Astro Laptop 1516`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `989`
-        description = `Flexible Laptop with 2,5 GHz Quad Core, 15" HD TN, 16 GB DDR SDRAM, 256 GB SSD, Windows 10 Pro` )
-      ( productid = `HT-1252` name = `Astro Phone 6`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `649`
-        description = `6 inch 1280x800 HD display (216 ppi), Quad-core processor, 8 GB internal storage (actual formatted capacity will be less), 3050 mAh battery (Up to 8 hours of active use), grey or black` )
-      ( productid = `HT-1253` name = `Benda Laptop 1408`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `976`
-        description = `Flexible Laptop with 2,5 GHz Dual Core, 14" HD+ TN, 8 GB DDR SDRAM, 324 GB SSD, Windows 10 Pro` )
-      ( productid = `HT-1254` name = `Bending Screen 21HD`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `250`
-        description = `Optimum Hi-Resolution Widescreen max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, Discontinued-Sub` )
-      ( productid = `HT-1255` name = `Broad Screen 22HD`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `270`
-        description = `Optimum Hi-Resolution Widescreen max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, Discontinued-Sub` )
-      ( productid = `HT-1256` name = `Cerdik Phone 7`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `549`
-        description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black` )
-      ( productid = `HT-1257` name = `Cepat Tablet 10.5`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `549`
-        description = `10.5-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor` )
-      ( productid = `HT-1258` name = `Cepat Tablet 8`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `529`
-        description = `8-inch Multitouch HD Screen (2000 x 1500) 32GB Internal Memory, Wireless N Wi-Fi, Bluetooth, GPS Enabled, 1.5 GHz Quad-Core Processor` )
-      ( productid = `HT-1500` name = `Server Basic`
-        suppliername = `Technocom` currencycode = `EUR` price = `5000`
-        description = `Dual socket, quad-core processing server with 1333 MHz Front Side Bus with 10Gb connectivity` )
-      ( productid = `HT-1501` name = `Server Professional`
-        suppliername = `Technocom` currencycode = `EUR` price = `15000`
-        description = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 10Gb connectivity` )
-      ( productid = `HT-1502` name = `Server Power Pro`
-        suppliername = `Technocom` currencycode = `EUR` price = `25000`
-        description = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 100Gb connectivity` )
-      ( productid = `HT-1600` name = `Family PC Basic`
-        suppliername = `Titanium` currencycode = `EUR` price = `600`
-        description = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Graphic Card: Proctra X, Windows 8` )
-      ( productid = `HT-1601` name = `Family PC Pro`
-        suppliername = `Titanium` currencycode = `EUR` price = `900`
-        description = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8` )
-      ( productid = `HT-1602` name = `Gaming Monster`
-        suppliername = `Titanium` currencycode = `EUR` price = `1200`
-        description = `3,4 Ghz quad core, 8 GB DDR3 SDRAM, 2000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8` )
-      ( productid = `HT-1603` name = `Gaming Monster Pro`
-        suppliername = `Titanium` currencycode = `EUR` price = `1700`
-        description = `3,4 Ghz quad core, 16 GB DDR3 SDRAM, 4000 GB Hard Disc, Graphic Card: Hurricane GX, Windows 8` )
-      ( productid = `HT-2000` name = `7" Widescreen Portable DVD Player w MP3`
-        suppliername = `Titanium` currencycode = `EUR` price = `249.99`
-        description = `7" LCD Screen, storage battery holds up to 6 hours!` )
-      ( productid = `HT-2001` name = `10" Portable DVD player`
-        suppliername = `Titanium` currencycode = `EUR` price = `449.99`
-        description = `10" LCD Screen, storage battery holds up to 8 hours` )
-      ( productid = `HT-2002` name = `Portable DVD Player with 9" LCD Monitor`
-        suppliername = `Technocom` currencycode = `EUR` price = `853.99`
-        description = `9" LCD Screen, storage holds up to 8 hours, 2 speakers included` )
-      ( productid = `HT-2025` name = `CD/DVD case: 264 sleeves`
-        suppliername = `Titanium` currencycode = `EUR` price = `44.99`
-        description = `Organizer and protective case for 264 CDs and DVDs` )
-      ( productid = `HT-2026` name = `Audio/Video Cable Kit - 4m`
-        suppliername = `Titanium` currencycode = `EUR` price = `29.99`
-        description = `Quality cables for notebooks and projectors` )
-      ( productid = `HT-2027` name = `Removable CD/DVD Laser Labels`
-        suppliername = `Titanium` currencycode = `EUR` price = `8.99`
-        description = `Removable jewel case labels, zero residues (100)` )
-      ( productid = `HT-6100` name = `Beam Breaker B-1`
-        suppliername = `Titanium` currencycode = `EUR` price = `469`
-        description = `720p, DLP Projector max. 8,45 Meter, 2D` )
-      ( productid = `HT-6101` name = `Beam Breaker B-2`
-        suppliername = `Technocom` currencycode = `EUR` price = `679`
-        description = `1080p, DLP max.9,34 Meter, 2D-ready` )
-      ( productid = `HT-6102` name = `Beam Breaker B-3`
-        suppliername = `Technocom` currencycode = `EUR` price = `889`
-        description = `1080p, DLP max. 12,3 Meter, 3D-ready` )
-      ( productid = `HT-6110` name = `Play Movie`
-        suppliername = `Fasttech` currencycode = `EUR` price = `130`
-        description = `CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid` )
-      ( productid = `HT-6111` name = `Record Movie`
-        suppliername = `Fasttech` currencycode = `EUR` price = `288`
-        description = `160 GB HDD, CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid` )
-      ( productid = `HT-6120` name = `ITelo MusicStick`
-        suppliername = `Fasttech` currencycode = `EUR` price = `45`
-        description = `64 GB USB Music-on-Available-Stick` )
-      ( productid = `HT-6121` name = `ITelo Jog-Mate`
-        suppliername = `Fasttech` currencycode = `EUR` price = `63`
-        description = `ITelo Jog-Mate 64 GB HDD and Color Display, can play movies` )
-      ( productid = `HT-6122` name = `Power Pro Player 40`
-        suppliername = `Fasttech` currencycode = `EUR` price = `167`
-        description = `MP3-Player with 40 GB HDD and Color Display, can play movies` )
-      ( productid = `HT-6123` name = `Power Pro Player 80`
-        suppliername = `Fasttech` currencycode = `EUR` price = `299`
-        description = `MP3-Player with 80 GB SSD and Color Display, can play movies` )
-      ( productid = `HT-6130` name = `Flat Watch HD32`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1459`
-        description = `32-inch, 1366x768 Pixel, 16:9, HDTV ready` )
-      ( productid = `HT-6131` name = `Flat Watch HD37`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `1199`
-        description = `37-inch, 1366x768 Pixel, 16:9, HDTV ready` )
-      ( productid = `HT-6132` name = `Flat Watch HD41`
-        suppliername = `Very Best Screens` currencycode = `EUR` price = `899`
-        description = `41-inch, 1366x768 Pixel, 16:9, HDTV ready` )
-      ( productid = `HT-7000` name = `Copperberry`
-        suppliername = `Fasttech` currencycode = `EUR` price = `549`
-        description = `Our new multifunctional Handheld with phone function in copper` )
-      ( productid = `HT-7010` name = `Silverberry`
-        suppliername = `Fasttech` currencycode = `EUR` price = `549`
-        description = `Our new multifunctional Handheld with phone function in silver` )
-      ( productid = `HT-7020` name = `Goldberry`
-        suppliername = `Fasttech` currencycode = `EUR` price = `549`
-        description = `Our new multifunctional Handheld with phone function in gold` )
-      ( productid = `HT-7030` name = `Platinberry`
-        suppliername = `Fasttech` currencycode = `EUR` price = `549`
-        description = `Our new multifunctional Handheld with phone function in platinum` )
-      ( productid = `HT-8000` name = `ITelO FlexTop I4000`
-        suppliername = `Titanium` currencycode = `EUR` price = `799`
-        description = `Notebook with 2,80 GHz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8` )
-      ( productid = `HT-8001` name = `ITelO FlexTop I6300c`
-        suppliername = `Titanium` currencycode = `EUR` price = `799`
-        description = `Notebook with 2,80 GHz dual core, 8 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8` )
-      ( productid = `HT-8002` name = `ITelO FlexTop I9100`
-        suppliername = `Titanium` currencycode = `EUR` price = `1199`
-        description = `Notebook with 2,80 GHz quad core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8` )
-      ( productid = `HT-8003` name = `ITelO FlexTop I9800`
-        suppliername = `Titanium` currencycode = `EUR` price = `1388`
-        description = `Notebook with 2,80 GHz quad core, 8 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8` )
-      ( productid = `HT-9991` name = `Smartphone Leather Case`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `25`
-        description = `Button Clasp, Quality Material, 100% Leather, compatible with many smartphone models` )
-      ( productid = `HT-9992` name = `Smartphone Alpha`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `599`
-        description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black` )
-      ( productid = `HT-9993` name = `Mini Tablet`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `833`
-        description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage, 4325 mAh battery (Up to 8 hours of active use)` )
-      ( productid = `HT-9994` name = `Camcorder View`
-        suppliername = `Ultrasonic United` currencycode = `EUR` price = `1388`
-        description = `1920x1080 Full HD, image stabilization reduces blur, 27x Optical / 32x Extended Zoom, wide angle Lens, 2.7" wide LCD display` )
-      ( productid = `HT-9995` name = `Tablet Pouch`
-        suppliername = `Titanium` currencycode = `EUR` price = `20`
-        description = `Stylish tablet pouch, protects from scratches, color: black` )
-      ( productid = `HT-9996` name = `Tablet Pouch`
-        suppliername = `Titanium` currencycode = `EUR` price = `20`
-        description = `Stylish tablet pouch, protects from scratches, color: black` )
-      ( productid = `HT-9997` name = `e-Book Reader ReadMe`
-        suppliername = `Titanium` currencycode = `EUR` price = `33`
-        description = `6-Inch E Ink Screen, Access To e-book Store, Adjustable Font Styles and Sizes, Stores Up To 1,000 Books` )
-      ( productid = `HT-9998` name = `Smartphone Beta`
-        suppliername = `Titanium` currencycode = `EUR` price = `30`
-        description = `5 Megapixel Camera, Wi-Fi 802.11 b/g/n, Bluetooth, GPS Available-GPS support` )
-      ( productid = `HT-9999` name = `Maxi Tablet`
-        suppliername = `Titanium` currencycode = `EUR` price = `749`
-        description = `10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor` )
-      ( productid = `PF-1000` name = `Flyer`
-        suppliername = `Titanium` currencycode = `EUR` price = `0`
-        description = `Flyer for our product palette` ) ).
+    DATA temp33 TYPE z2ui5_cl_smpc_app_558=>ty_t_product.
+    DATA temp34 LIKE LINE OF temp33.
+    CLEAR temp33.
+    
+    temp34-productid = `HT-1000`.
+    temp34-name = `Notebook Basic 15`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `956`.
+    temp34-description = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1001`.
+    temp34-name = `Notebook Basic 17`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1249`.
+    temp34-description = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1002`.
+    temp34-name = `Notebook Basic 18`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1570`.
+    temp34-description = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1003`.
+    temp34-name = `Notebook Basic 19`.
+    temp34-suppliername = `Smartcards`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1650`.
+    temp34-description = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1007`.
+    temp34-name = `ITelO Vault`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `299`.
+    temp34-description = `Digital Organizer with State-of-the-Art Storage Encryption`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1010`.
+    temp34-name = `Notebook Professional 15`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1999`.
+    temp34-description = `Notebook Professional 15 with 2,80 GHz quad core, 15" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1011`.
+    temp34-name = `Notebook Professional 17`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `2299`.
+    temp34-description = `Notebook Professional 17 with 2,80 GHz quad core, 17" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1020`.
+    temp34-name = `ITelO Vault Net`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `459`.
+    temp34-description = `Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1021`.
+    temp34-name = `ITelO Vault SAT`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `149`.
+    temp34-description = `Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1022`.
+    temp34-name = `Comfort Easy`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1679`.
+    temp34-description = `32 GB Digital Assistant with high-resolution color screen`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1023`.
+    temp34-name = `Comfort Senior`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `512`.
+    temp34-description = `64 GB Digital Assistant with high-resolution color screen and synthesized voice output`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1030`.
+    temp34-name = `Ergo Screen E-I`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `230`.
+    temp34-description = `Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1031`.
+    temp34-name = `Ergo Screen E-II`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `285`.
+    temp34-description = `Optimum Hi-Resolution max. 1920 x 1200 @ 85Hz, Dot Pitch: 0.26mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1032`.
+    temp34-name = `Ergo Screen E-III`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `345`.
+    temp34-description = `Optimum Hi-Resolution max. 2560 x 1440 @ 85Hz, Dot Pitch: 0.25mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1035`.
+    temp34-name = `Flat Basic`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `399`.
+    temp34-description = `Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1036`.
+    temp34-name = `Flat Future`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `430`.
+    temp34-description = `Optimum Hi-Resolution max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.26mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1037`.
+    temp34-name = `Flat XL`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1230`.
+    temp34-description = `Optimum Hi-Resolution max. 2016 x 1512 @ 85Hz, Dot Pitch: 0.24mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1040`.
+    temp34-name = `Laser Professional Eco`.
+    temp34-suppliername = `Alpha Printers`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `830`.
+    temp34-description = `Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1041`.
+    temp34-name = `Laser Basic`.
+    temp34-suppliername = `Alpha Printers`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `490`.
+    temp34-description = `Up to 22 ppm color or 24 ppm monochrome A4/letter, powerful 500 MHz processor and 128MB of memory`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1042`.
+    temp34-name = `Laser Allround`.
+    temp34-suppliername = `Alpha Printers`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `349`.
+    temp34-description = `Print up to 25 ppm letter and 24 ppm A4 color or monochrome, with Available first-page-out-time of less than 13 seconds for monochrome and less than 15 seconds for color`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1050`.
+    temp34-name = `Ultra Jet Super Color`.
+    temp34-suppliername = `Alpha Printers`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `139`.
+    temp34-description = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB, Ethernet`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1051`.
+    temp34-name = `Ultra Jet Mobile`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `99`.
+    temp34-description = `1000 dpi x 1000 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB - excellent dimensions for the small office`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1052`.
+    temp34-name = `Ultra Jet Super Highspeed`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `170`.
+    temp34-description = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1055`.
+    temp34-name = `Multi Print`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `99`.
+    temp34-description = `1000 dpi x 1000 dpi - up to 16 ppm (mono) / up to 15 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 1200dpi x 2400dpi)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1056`.
+    temp34-name = `Multi Color`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `119`.
+    temp34-description = `1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 2400dpi x 4800dpi, high resolution)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1060`.
+    temp34-name = `Cordless Mouse`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `9`.
+    temp34-description = `Cordless Optical USB Mice, Laptop, Color: Black, Plug&Play`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1061`.
+    temp34-name = `Speed Mouse`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `7`.
+    temp34-description = `Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1062`.
+    temp34-name = `Track Mouse`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `11`.
+    temp34-description = `Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1063`.
+    temp34-name = `Ergonomic Keyboard`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `14`.
+    temp34-description = `Ergonomic USB Keyboard for Desktop, Plug&Play`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1064`.
+    temp34-name = `Internet Keyboard`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `16`.
+    temp34-description = `Corded Keyboard with special keys for Internet Usability, USB`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1065`.
+    temp34-name = `Media Keyboard`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `26`.
+    temp34-description = `Corded Ergonomic Keyboard with special keys for Media Usability, USB`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1066`.
+    temp34-name = `Mousepad`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `6.99`.
+    temp34-description = `Nice mouse pad with ITelO Logo`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1067`.
+    temp34-name = `Ergo Mousepad`.
+    temp34-suppliername = `Oxynum`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `8.99`.
+    temp34-description = `Ergonomic mouse pad with ITelO Logo`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1068`.
+    temp34-name = `Designer Mousepad`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `12.99`.
+    temp34-description = `ITelO Mousepad Special Edition`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1069`.
+    temp34-name = `Universal card reader`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `14`.
+    temp34-description = `Universal card reader`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1070`.
+    temp34-name = `Proctra X`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `70.9`.
+    temp34-description = `Proctra X: PCI-E GDDR5 3072MB`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1071`.
+    temp34-name = `Gladiator MX`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `81.7`.
+    temp34-description = `Gladiator XLN: PCI-E GDDR5 3072MB DVI Out, TV Out low-noise`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1072`.
+    temp34-name = `Hurricane GX`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `101.2`.
+    temp34-description = `Hurricane GX: PCI-E 691 GFLOPS game-optimized`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1073`.
+    temp34-name = `Hurricane GX/LN`.
+    temp34-suppliername = `Smartcards`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `139.99`.
+    temp34-description = `Hurricane GX/LN: PCI-E 691 GFLOPS game-optimized, low-noise.`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1080`.
+    temp34-name = `Photo Scan`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `129`.
+    temp34-description = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - Hi-Speed USB - Bluetooth`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1081`.
+    temp34-name = `Power Scan`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `89`.
+    temp34-description = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - SCSI for backward compatibility`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1082`.
+    temp34-name = `Jet Scan Professional`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `169`.
+    temp34-description = `Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1083`.
+    temp34-name = `Jet Scan Professional`.
+    temp34-suppliername = `Printer for All`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `189`.
+    temp34-description = `Flatbed scanner - A4 - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1085`.
+    temp34-name = `Copymaster`.
+    temp34-suppliername = `Alpha Printers`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1499`.
+    temp34-description = `Copymaster`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1090`.
+    temp34-name = `Surround Sound`.
+    temp34-suppliername = `Speaker Experts`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `39`.
+    temp34-description = `PC multimedia speakers - 5 Watt (Total)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1091`.
+    temp34-name = `Blaster Extreme`.
+    temp34-suppliername = `Speaker Experts`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `26`.
+    temp34-description = `PC multimedia speakers - 10 Watt (Total) - 2-way`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1092`.
+    temp34-name = `Sound Booster`.
+    temp34-suppliername = `Speaker Experts`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `45`.
+    temp34-description = `PC multimedia speakers - optimized for Blutooth/A2DP`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1095`.
+    temp34-name = `Lovely Sound 5.1 Wireless`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `49`.
+    temp34-description = `5.1 Headset, 40 Hz-20 kHz, Wireless`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1096`.
+    temp34-name = `Lovely Sound 5.1`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `39`.
+    temp34-description = `5.1 Headset, 40 Hz-20 kHz, 3m cable`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1097`.
+    temp34-name = `Lovely Sound Stereo`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `29`.
+    temp34-description = `5.1 Headset, 40 Hz-20 kHz, 1m cable`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1100`.
+    temp34-name = `Smart Office`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `89.9`.
+    temp34-description = `Complete package, 1 User, Office Applications (word processing, spreadsheet, presentations)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1101`.
+    temp34-name = `Smart Design`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `79.9`.
+    temp34-description = `Complete package, 1 User, Image editing, processing`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1102`.
+    temp34-name = `Smart Network`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `69`.
+    temp34-description = `Complete package, 1 User, Network Software Utilities, Useful Applications and Documentation`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1103`.
+    temp34-name = `Smart Multimedia`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `77`.
+    temp34-description = `Complete package, 1 User, different Multimedia applications, playing music, watching DVDs, only with this Smart package`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1104`.
+    temp34-name = `Smart Games`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `55`.
+    temp34-description = `Complete package, 1 User, various games for amusement, logic, action, jump&run`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1105`.
+    temp34-name = `Smart Internet Antivirus`.
+    temp34-suppliername = `Brainsoft`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `29`.
+    temp34-description = `Complete package, 1 User, highly recommended for internet users as anti-virus protection`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1106`.
+    temp34-name = `Smart Firewall`.
+    temp34-suppliername = `Brainsoft`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `34`.
+    temp34-description = `Complete package, 1 User, recommended for internet users, protect your PC against cyber-crime`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1107`.
+    temp34-name = `Smart Money`.
+    temp34-suppliername = `Brainsoft`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `29.9`.
+    temp34-description = `Complete package, 1 User, bring your money in your mind, see what you have and what you want`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1110`.
+    temp34-name = `PC Lock`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `8.9`.
+    temp34-description = `Robust 3m anti-burglary protection for your laptop computer`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1111`.
+    temp34-name = `Notebook Lock`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `6.9`.
+    temp34-description = `Robust 1m anti-burglary protection for your desktop computer`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1112`.
+    temp34-name = `Web cam reality`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `39`.
+    temp34-description = `Color webcam, color, High-Speed USB`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1113`.
+    temp34-name = `Screen clean`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `2.3`.
+    temp34-description = `10 separately packed screen wipes`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1114`.
+    temp34-name = `Fabric bag professional`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `31`.
+    temp34-description = `Notebook bag, plenty of room for stationery and writing materials`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1115`.
+    temp34-name = `Wireless DSL Router`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `49`.
+    temp34-description = `Wireless DSL Router (available in blue, black and silver)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1116`.
+    temp34-name = `Wireless DSL Router / Repeater`.
+    temp34-suppliername = `Red Point Stores`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `59`.
+    temp34-description = `Wireless DSL Router / Repeater (available in blue, black and silver)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1117`.
+    temp34-name = `Wireless DSL Router / Repeater and Print Server`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `69`.
+    temp34-description = `Wireless DSL Router / Repeater and Print Server (available in blue, black and silver)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1118`.
+    temp34-name = `USB Stick`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `35`.
+    temp34-description = `USB 2.0 High-Speed 64 GB`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1119`.
+    temp34-name = `Travel Adapter`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `79`.
+    temp34-description = `Universal Travel Adapter`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1120`.
+    temp34-name = `Cordless Bluetooth Keyboard, english international`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `29`.
+    temp34-description = `Cordless Bluetooth Keyboard with English keys`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1137`.
+    temp34-name = `Flat XXL`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1430`.
+    temp34-description = `Optimum Hi-Resolution max. 2048 × 1536 @ 85Hz, Dot Pitch: 0.24mm`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1138`.
+    temp34-name = `Pocket Mouse`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `23`.
+    temp34-description = `Portable pocket Mouse with retracting cord`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1210`.
+    temp34-name = `PC Power Station`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `2399`.
+    temp34-description = `PC Power Station with 3,4 Ghz quad-core, 32 GB DDR3 SDRAM, feels like Available PC, Windows 8 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1251`.
+    temp34-name = `Astro Laptop 1516`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `989`.
+    temp34-description = `Flexible Laptop with 2,5 GHz Quad Core, 15" HD TN, 16 GB DDR SDRAM, 256 GB SSD, Windows 10 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1252`.
+    temp34-name = `Astro Phone 6`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `649`.
+    temp34-description = `6 inch 1280x800 HD display (216 ppi), Quad-core processor, 8 GB internal storage (actual formatted capacity will be less), 3050 mAh battery (Up to 8 hours of active use), grey or black`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1253`.
+    temp34-name = `Benda Laptop 1408`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `976`.
+    temp34-description = `Flexible Laptop with 2,5 GHz Dual Core, 14" HD+ TN, 8 GB DDR SDRAM, 324 GB SSD, Windows 10 Pro`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1254`.
+    temp34-name = `Bending Screen 21HD`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `250`.
+    temp34-description = `Optimum Hi-Resolution Widescreen max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, Discontinued-Sub`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1255`.
+    temp34-name = `Broad Screen 22HD`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `270`.
+    temp34-description = `Optimum Hi-Resolution Widescreen max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, Discontinued-Sub`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1256`.
+    temp34-name = `Cerdik Phone 7`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1257`.
+    temp34-name = `Cepat Tablet 10.5`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `10.5-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1258`.
+    temp34-name = `Cepat Tablet 8`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `529`.
+    temp34-description = `8-inch Multitouch HD Screen (2000 x 1500) 32GB Internal Memory, Wireless N Wi-Fi, Bluetooth, GPS Enabled, 1.5 GHz Quad-Core Processor`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1500`.
+    temp34-name = `Server Basic`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `5000`.
+    temp34-description = `Dual socket, quad-core processing server with 1333 MHz Front Side Bus with 10Gb connectivity`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1501`.
+    temp34-name = `Server Professional`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `15000`.
+    temp34-description = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 10Gb connectivity`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1502`.
+    temp34-name = `Server Power Pro`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `25000`.
+    temp34-description = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 100Gb connectivity`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1600`.
+    temp34-name = `Family PC Basic`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `600`.
+    temp34-description = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Graphic Card: Proctra X, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1601`.
+    temp34-name = `Family PC Pro`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `900`.
+    temp34-description = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1602`.
+    temp34-name = `Gaming Monster`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1200`.
+    temp34-description = `3,4 Ghz quad core, 8 GB DDR3 SDRAM, 2000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-1603`.
+    temp34-name = `Gaming Monster Pro`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1700`.
+    temp34-description = `3,4 Ghz quad core, 16 GB DDR3 SDRAM, 4000 GB Hard Disc, Graphic Card: Hurricane GX, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2000`.
+    temp34-name = `7" Widescreen Portable DVD Player w MP3`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `249.99`.
+    temp34-description = `7" LCD Screen, storage battery holds up to 6 hours!`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2001`.
+    temp34-name = `10" Portable DVD player`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `449.99`.
+    temp34-description = `10" LCD Screen, storage battery holds up to 8 hours`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2002`.
+    temp34-name = `Portable DVD Player with 9" LCD Monitor`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `853.99`.
+    temp34-description = `9" LCD Screen, storage holds up to 8 hours, 2 speakers included`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2025`.
+    temp34-name = `CD/DVD case: 264 sleeves`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `44.99`.
+    temp34-description = `Organizer and protective case for 264 CDs and DVDs`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2026`.
+    temp34-name = `Audio/Video Cable Kit - 4m`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `29.99`.
+    temp34-description = `Quality cables for notebooks and projectors`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-2027`.
+    temp34-name = `Removable CD/DVD Laser Labels`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `8.99`.
+    temp34-description = `Removable jewel case labels, zero residues (100)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6100`.
+    temp34-name = `Beam Breaker B-1`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `469`.
+    temp34-description = `720p, DLP Projector max. 8,45 Meter, 2D`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6101`.
+    temp34-name = `Beam Breaker B-2`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `679`.
+    temp34-description = `1080p, DLP max.9,34 Meter, 2D-ready`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6102`.
+    temp34-name = `Beam Breaker B-3`.
+    temp34-suppliername = `Technocom`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `889`.
+    temp34-description = `1080p, DLP max. 12,3 Meter, 3D-ready`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6110`.
+    temp34-name = `Play Movie`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `130`.
+    temp34-description = `CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6111`.
+    temp34-name = `Record Movie`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `288`.
+    temp34-description = `160 GB HDD, CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6120`.
+    temp34-name = `ITelo MusicStick`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `45`.
+    temp34-description = `64 GB USB Music-on-Available-Stick`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6121`.
+    temp34-name = `ITelo Jog-Mate`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `63`.
+    temp34-description = `ITelo Jog-Mate 64 GB HDD and Color Display, can play movies`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6122`.
+    temp34-name = `Power Pro Player 40`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `167`.
+    temp34-description = `MP3-Player with 40 GB HDD and Color Display, can play movies`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6123`.
+    temp34-name = `Power Pro Player 80`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `299`.
+    temp34-description = `MP3-Player with 80 GB SSD and Color Display, can play movies`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6130`.
+    temp34-name = `Flat Watch HD32`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1459`.
+    temp34-description = `32-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6131`.
+    temp34-name = `Flat Watch HD37`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1199`.
+    temp34-description = `37-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-6132`.
+    temp34-name = `Flat Watch HD41`.
+    temp34-suppliername = `Very Best Screens`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `899`.
+    temp34-description = `41-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-7000`.
+    temp34-name = `Copperberry`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `Our new multifunctional Handheld with phone function in copper`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-7010`.
+    temp34-name = `Silverberry`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `Our new multifunctional Handheld with phone function in silver`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-7020`.
+    temp34-name = `Goldberry`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `Our new multifunctional Handheld with phone function in gold`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-7030`.
+    temp34-name = `Platinberry`.
+    temp34-suppliername = `Fasttech`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `549`.
+    temp34-description = `Our new multifunctional Handheld with phone function in platinum`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-8000`.
+    temp34-name = `ITelO FlexTop I4000`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `799`.
+    temp34-description = `Notebook with 2,80 GHz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-8001`.
+    temp34-name = `ITelO FlexTop I6300c`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `799`.
+    temp34-description = `Notebook with 2,80 GHz dual core, 8 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-8002`.
+    temp34-name = `ITelO FlexTop I9100`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1199`.
+    temp34-description = `Notebook with 2,80 GHz quad core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-8003`.
+    temp34-name = `ITelO FlexTop I9800`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1388`.
+    temp34-description = `Notebook with 2,80 GHz quad core, 8 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9991`.
+    temp34-name = `Smartphone Leather Case`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `25`.
+    temp34-description = `Button Clasp, Quality Material, 100% Leather, compatible with many smartphone models`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9992`.
+    temp34-name = `Smartphone Alpha`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `599`.
+    temp34-description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9993`.
+    temp34-name = `Mini Tablet`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `833`.
+    temp34-description = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage, 4325 mAh battery (Up to 8 hours of active use)`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9994`.
+    temp34-name = `Camcorder View`.
+    temp34-suppliername = `Ultrasonic United`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `1388`.
+    temp34-description = `1920x1080 Full HD, image stabilization reduces blur, 27x Optical / 32x Extended Zoom, wide angle Lens, 2.7" wide LCD display`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9995`.
+    temp34-name = `Tablet Pouch`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `20`.
+    temp34-description = `Stylish tablet pouch, protects from scratches, color: black`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9996`.
+    temp34-name = `Tablet Pouch`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `20`.
+    temp34-description = `Stylish tablet pouch, protects from scratches, color: black`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9997`.
+    temp34-name = `e-Book Reader ReadMe`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `33`.
+    temp34-description = `6-Inch E Ink Screen, Access To e-book Store, Adjustable Font Styles and Sizes, Stores Up To 1,000 Books`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9998`.
+    temp34-name = `Smartphone Beta`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `30`.
+    temp34-description = `5 Megapixel Camera, Wi-Fi 802.11 b/g/n, Bluetooth, GPS Available-GPS support`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `HT-9999`.
+    temp34-name = `Maxi Tablet`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `749`.
+    temp34-description = `10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = `PF-1000`.
+    temp34-name = `Flyer`.
+    temp34-suppliername = `Titanium`.
+    temp34-currencycode = `EUR`.
+    temp34-price = `0`.
+    temp34-description = `Flyer for our product palette`.
+    INSERT temp34 INTO TABLE temp33.
+    t_products = temp33.
 
   ENDMETHOD.
 

@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_501 DEFINITION PUBLIC.
         key  TYPE string,
         text TYPE string,
       END OF ty_s_token.
-    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
+    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
 
     DATA t_tokens1 TYPE ty_t_token.
     DATA t_tokens2 TYPE ty_t_token.
@@ -38,9 +38,9 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -49,7 +49,8 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
@@ -149,20 +150,38 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA text1 TYPE string.
+          DATA temp1 TYPE z2ui5_cl_smpc_app_501=>ty_s_token.
+        DATA temp2 TYPE string.
+        DATA temp3 TYPE string.
+          DATA temp4 TYPE z2ui5_cl_smpc_app_501=>ty_s_token.
+        DATA temp5 TYPE string.
+        DATA text3 TYPE string.
+          DATA temp6 TYPE z2ui5_cl_smpc_app_501=>ty_s_token.
+        DATA temp7 TYPE string.
 
     CASE client->get_event( ).
 
       WHEN `VALIDATE1`.
         " validator 1 only produces a token while the CheckBox is selected;
         " validator 2 then rewrites its text to "#: <text>"
-        DATA(text1) = client->get_event_arg( ).
+        
+        text1 = client->get_event_arg( ).
         IF validate = abap_true AND text1 IS NOT INITIAL.
-          APPEND VALUE #( key = text1 text = |#: { text1 }| ) TO t_tokens1.
+          
+          CLEAR temp1.
+          temp1-key = text1.
+          temp1-text = |#: { text1 }|.
+          APPEND temp1 TO t_tokens1.
         ENDIF.
-        value1 = VALUE #( ).
+        
+        CLEAR temp2.
+        value1 = temp2.
       WHEN `VALIDATE2`.
         pending = client->get_event_arg( ).
-        value2 = VALUE #( ).
+        
+        CLEAR temp3.
+        value2 = temp3.
         IF pending IS NOT INITIAL.
           client->message_box_display( text    = |Do you really want to add token "{ pending }"?|
                                        type    = `confirm`
@@ -172,15 +191,27 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
 
       WHEN `VALIDATE2_DECIDE`.
         IF client->get_event_arg( ) = `OK`.
-          APPEND VALUE #( key = pending text = pending ) TO t_tokens2.
+          
+          CLEAR temp4.
+          temp4-key = pending.
+          temp4-text = pending.
+          APPEND temp4 TO t_tokens2.
         ENDIF.
-        pending = VALUE #( ).
+        
+        CLEAR temp5.
+        pending = temp5.
       WHEN `VALIDATE3`.
-        DATA(text3) = client->get_event_arg( ).
+        
+        text3 = client->get_event_arg( ).
         IF text3 IS NOT INITIAL.
-          APPEND VALUE #( text = text3 ) TO t_tokens3.
+          
+          CLEAR temp6.
+          temp6-text = text3.
+          APPEND temp6 TO t_tokens3.
         ENDIF.
-        value3 = VALUE #( ).
+        
+        CLEAR temp7.
+        value3 = temp7.
     ENDCASE.
 
   ENDMETHOD.
