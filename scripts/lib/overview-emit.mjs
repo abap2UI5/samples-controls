@@ -1107,8 +1107,7 @@ ${catalogStatements}
       IF target IS NOT INITIAL.
         " installed on this system: jump right into it, the back button returns
         hint  = tooltip.
-        press = client->_event( val   = \`${EV_NAV}\`
-                                t_arg = VALUE #( ( target ) ) ).
+        press = client->_event( val = \`${EV_NAV}\` arg = target ).
 
       ELSEIF class IS INITIAL.
         " no CLASS to look for: the documentation and GitHub entries are no
