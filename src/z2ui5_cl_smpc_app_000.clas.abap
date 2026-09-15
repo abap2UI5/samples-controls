@@ -12736,8 +12736,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       IF target IS NOT INITIAL.
         " installed on this system: jump right into it, the back button returns
         hint  = tooltip.
-        press = client->_event( val   = `NAV_APP`
-                                t_arg = VALUE #( ( target ) ) ).
+        press = client->_event( val = `NAV_APP` arg = target ).
 
       ELSEIF class IS INITIAL.
         " no CLASS to look for: the documentation and GitHub entries are no
