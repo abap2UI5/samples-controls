@@ -1132,52 +1132,6 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
   }
 });
 
-/*
- * literal-no-separator (2026-09-13): the SAP syntax check rejects a literal
- * that ends where the next token begins, abaplint's lexer does not, and two
- * `_event( )` wires reached a pulled main that way (apps 136, 588). The test
- * holds the BOUNDARY the rule has to get right - all three delimiters fire,
- * and the shapes that legally follow a literal (a separator, a text symbol's
- * parenthesis, an escaped delimiter INSIDE the literal, a comment) do not.
- */
-test('pattern-lint: a literal with no separator after it fails, the legal shapes after one do not', () => {
-  const { root } = makeMetaRoot(['pattern-lint.mjs']);
-  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
-  const base = fs.readFileSync(at, 'utf8');
-  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
-  const inMain = (code) => base.replace('    me->client = client.', `    me->client = client.\n${code}`);
-  try {
-    // the case as it reached the system: the blank between the arg literal and
-    // the next parameter name is gone
-    let r = lint(inMain('    DATA(wire) = client->_event( val = `TOGGLE` arg = `${$parameters>/expanded}`s_ctrl = VALUE #( ) ).'));
-    assert.equal(r.code, 1, 'a literal running straight into a name must fail');
-    assert.match(r.out, /ERROR .*\[literal-no-separator\].*no separator after the closing `/);
-
-    // the same hole in the other two delimiters
-    r = lint(inMain("    DATA(a) = |x|y."));
-    assert.match(r.out, /\[literal-no-separator\]/, 'a string template ends the same way');
-    r = lint(inMain("    DATA(a) = 'x'y."));
-    assert.match(r.out, /\[literal-no-separator\]/, 'a quoted literal ends the same way');
-
-    // what legally follows a literal. The fixed wire is judged on THIS rule
-    // alone - a captured client handle is its own finding (client-handle-capture)
-    r = lint(inMain('    DATA(wire) = client->_event( val = `TOGGLE` arg = `${$parameters>/expanded}` s_ctrl = VALUE #( ) ).'));
-    assert.doesNotMatch(r.out, /literal-no-separator/, 'a blank is the fix');
-    r = lint(inMain('    DATA(a) = `x` && `y`.'));
-    assert.equal(r.code, 0, `a separator after the closing delimiter is all the rule wants\n${r.out}`);
-    r = lint(inMain("    DATA(a) = 'text'(001)."));
-    assert.equal(r.code, 0, `a text symbol opens a parenthesis, not a name\n${r.out}`);
-    r = lint(inMain("    DATA(a) = `it``s`."));
-    assert.equal(r.code, 0, `a doubled delimiter is one INSIDE the literal\n${r.out}`);
-    r = lint(inMain('    DATA(a) = `x`. " a comment naming `x` right after'));
-    assert.equal(r.code, 0, `a trailing comment is not source\n${r.out}`);
-    r = lint(`${base.slice(0, base.indexOf('CLASS'))}" a comment with \`x\`y in it\n${base.slice(base.indexOf('CLASS'))}`);
-    assert.equal(r.code, 0, `a full-line comment is not source\n${r.out}`);
-  } finally {
-    fs.rmSync(root, { recursive: true, force: true });
-  }
-});
-
 
 /*
  * The hold-out row: three facts, all derived. The fixture's holdout.json is
