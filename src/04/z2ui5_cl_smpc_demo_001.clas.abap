@@ -611,6 +611,10 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
   METHOD list_refresh.
 
+    " declared here, not inline at the ASSIGN below, so it can be UNASSIGNed
+    " before each one - see there
+    FIELD-SYMBOLS <supplier> LIKE LINE OF t_suppliers.
+
     DATA(shown) = 0.
     DATA(selection) = t_rows.
     t_rows = VALUE #( ).
@@ -635,10 +639,16 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
-      ASSIGN t_suppliers[ supplierid = product-supplierid ] TO FIELD-SYMBOL(<supplier>).
+      " IS ASSIGNED, not sy-subrc (#1937: a SUCCESSFUL dynamic ASSIGN does not
+      " reset sy-subrc on every release, so a product whose supplier IS in the
+      " table lost its supplier name). UNASSIGN first because this sits in a
+      " LOOP: a failed ASSIGN leaves the previous iteration's binding in place,
+      " and IS ASSIGNED would then read TRUE - and print the WRONG supplier
+      UNASSIGN <supplier>.
+      ASSIGN t_suppliers[ supplierid = product-supplierid ] TO <supplier>.
       INSERT VALUE #( productid          = product-productid
                       productname        = product-productname
-                      suppliername       = COND #( WHEN sy-subrc = 0 THEN <supplier>-companyname )
+                      suppliername       = COND #( WHEN <supplier> IS ASSIGNED THEN <supplier>-companyname )
                       unitprice_text     = number_unit( product-unitprice )
                       unitsonorder_text  = number_unit( product-unitsonorder )
                       unitsinstock_text  = number_unit( product-unitsinstock )

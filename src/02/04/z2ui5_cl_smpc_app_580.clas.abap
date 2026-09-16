@@ -519,8 +519,10 @@ CLASS z2ui5_cl_smpc_app_580 IMPLEMENTATION.
     " Detail.controller's bindElement( '/ProductCollection/<n>' ) - the relative
     " bindings of the original resolve against the bound element, the port folds
     " them to root-seeded fields (app 229 idiom)
+    " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+    " sy-subrc on every release (abap2UI5 #1937)
     ASSIGN t_products[ productid = productid ] TO FIELD-SYMBOL(<product>).
-    IF sy-subrc <> 0.
+    IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
     d_name          = <product>-name.

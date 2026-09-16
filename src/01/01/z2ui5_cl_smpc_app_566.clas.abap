@@ -268,9 +268,11 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
             cur_category = row_name.
             cur_level = 3.
           WHEN OTHERS.
+            " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+            " sy-subrc on every release (abap2UI5 #1937)
             ASSIGN t_nodes[ level = 3 supplier = cur_supplier category = cur_category name = row_name ]
                    TO FIELD-SYMBOL(<node>).
-            IF sy-subrc = 0.
+            IF <node> IS ASSIGNED.
               <node>-selected = is_selected.
             ENDIF.
             order_refresh( ).

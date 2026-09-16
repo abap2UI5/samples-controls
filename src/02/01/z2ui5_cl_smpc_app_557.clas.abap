@@ -340,16 +340,28 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
 
   METHOD list_search.
 
+    " declared here rather than inline at the ASSIGNs below, so both can be
+    " UNASSIGNed first - see there
+    FIELD-SYMBOLS <master>       TYPE ty_s_filter.
+    FIELD-SYMBOLS <master_value> TYPE ty_s_value.
+
     " the selection flags arrive on the bound table; they are carried over to the
     " master so that a later, wider term widens the list again without losing them
     LOOP AT t_filters INTO DATA(shown).
-      ASSIGN t_filters_all[ type = shown-type ] TO FIELD-SYMBOL(<master>).
-      IF sy-subrc <> 0.
+      " IS ASSIGNED, not sy-subrc (#1937: a SUCCESSFUL dynamic ASSIGN does not
+      " reset sy-subrc on every release), and UNASSIGN first because both sit
+      " in a LOOP - a failed assign leaves the previous round's binding in
+      " place, so IS ASSIGNED would read TRUE for the failure and the
+      " selection flag would be carried over to the WRONG filter value
+      UNASSIGN <master>.
+      ASSIGN t_filters_all[ type = shown-type ] TO <master>.
+      IF <master> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
       LOOP AT shown-values INTO DATA(shown_value).
-        ASSIGN <master>-values[ text = shown_value-text ] TO FIELD-SYMBOL(<master_value>).
-        IF sy-subrc = 0.
+        UNASSIGN <master_value>.
+        ASSIGN <master>-values[ text = shown_value-text ] TO <master_value>.
+        IF <master_value> IS ASSIGNED.
           <master_value>-selected = shown_value-selected.
         ENDIF.
       ENDLOOP.
