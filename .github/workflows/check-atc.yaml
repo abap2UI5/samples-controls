@@ -1,0 +1,45 @@
+name: check-atc
+
+# The extended program check (SLIN / ATC) runs in the systems these samples are
+# INSTALLED on and nowhere here - abaplint models none of its findings. So a
+# sample passes every other gate in this repository and the problem surfaces on
+# somebody's system, which is worse than a missing sample: it is the code they
+# copied because it was published as the way to do the thing.
+#
+# Three findings, each named by the rule that decides it:
+#
+#   subrc_after_assign 20 sy-subrc tests sat after a dynamic ASSIGN, one of them
+#                      giving a product the PREVIOUS product's supplier
+#   nowhere            none here yet - the rule travels with its siblings
+#   text_symbol_arg    none here yet - the rule travels with its siblings,
+#                      because any port picking up a text symbol picks up the
+#                      trap with it
+#
+# A JOB of its own, not a step of `npm run check`: this repository runs one
+# workflow per gate, because a gate that only exists in the local chain cannot
+# turn a pull request red - the same reason check-abapdoc has one.
+#
+# Plain node, no dependencies, so it stays a few seconds.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-atc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-atc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: '22'
+    - run: node scripts/check-atc.mjs
