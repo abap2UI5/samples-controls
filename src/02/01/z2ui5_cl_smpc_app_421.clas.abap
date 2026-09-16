@@ -210,8 +210,10 @@ CLASS z2ui5_cl_smpc_app_421 IMPLEMENTATION.
       WHEN `HEADER_TOGGLE`.
         " onHeaderSwitchChange: show/clear the first page's header data
         DATA(header_on) = CONV abap_bool( client->get_event_arg( ) ).
+        " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+        " sy-subrc on every release (abap2UI5 #1937)
         ASSIGN t_pages[ 1 ] TO FIELD-SYMBOL(<s_page>).
-        IF sy-subrc = 0.
+        IF <s_page> IS ASSIGNED.
           IF header_on = abap_true.
             <s_page>-iconvisibility = abap_true.
             <s_page>-title          = `Adventure Company`.

@@ -242,8 +242,10 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
 
     " moveToSelectedProductsTable: the selected available row joins the selected
     " table ABOVE its current first row (ranking.Before)
+    " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+    " sy-subrc on every release (abap2UI5 #1937)
     ASSIGN t_products[ selected = abap_true rank = 0 ] TO FIELD-SYMBOL(<row>).
-    IF sy-subrc <> 0.
+    IF <row> IS NOT ASSIGNED.
       client->message_toast_display( `Please select a row!` ).
       RETURN.
     ENDIF.
@@ -264,7 +266,7 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
 
     " moveToAvailableProductsTable: the rank goes back to Initial
     ASSIGN t_products[ selected = abap_true ] TO FIELD-SYMBOL(<row>).
-    IF sy-subrc <> 0 OR <row>-rank = 0.
+    IF <row> IS NOT ASSIGNED OR <row>-rank = 0.
       client->message_toast_display( `Please select a row!` ).
       RETURN.
     ENDIF.
@@ -298,11 +300,11 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
     DATA(sibling_rank) = ordered[ sibling ]-rank.
 
     ASSIGN t_products[ name = moved_name ] TO FIELD-SYMBOL(<moved>).
-    IF sy-subrc = 0.
+    IF <moved> IS ASSIGNED.
       <moved>-rank = sibling_rank.
     ENDIF.
     ASSIGN t_products[ name = sibling_name ] TO FIELD-SYMBOL(<sibling>).
-    IF sy-subrc = 0.
+    IF <sibling> IS ASSIGNED.
       <sibling>-rank = moved_rank.
     ENDIF.
 
@@ -313,7 +315,7 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
 
     " onDropSelectedProductsTable: Before/After/Between of Utils.ranking
     ASSIGN t_products[ name = dragged ] TO FIELD-SYMBOL(<dragged>).
-    IF sy-subrc <> 0.
+    IF <dragged> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
@@ -377,7 +379,7 @@ CLASS z2ui5_cl_smpc_app_569 IMPLEMENTATION.
         " onDropAvailableProductsTable: the rank is reset to Initial
         DATA(back_name) = client->get_event_arg( ).
         ASSIGN t_products[ name = back_name ] TO FIELD-SYMBOL(<row>).
-        IF sy-subrc = 0.
+        IF <row> IS ASSIGNED.
           <row>-rank = 0.
         ENDIF.
         view_display( ).

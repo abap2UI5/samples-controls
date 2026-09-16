@@ -407,8 +407,10 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
     DELETE t_tabs WHERE productid = del_id.
 
     " un-check the row in the table, exactly as _closeItemInTabContainer does
+    " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+    " sy-subrc on every release (abap2UI5 #1937)
     ASSIGN t_products[ productid = del_id ] TO FIELD-SYMBOL(<product>).
-    IF sy-subrc = 0.
+    IF <product> IS ASSIGNED.
       <product>-selected = abap_false.
     ENDIF.
 
@@ -426,13 +428,13 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
     " handleTabContainerSaveItem: the tab's copy is written back to the product
     ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<saved_tab>).
-    IF sy-subrc <> 0.
+    IF <saved_tab> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
     <saved_tab>-modified = abap_false.
 
     ASSIGN t_products[ productid = selected_tab ] TO FIELD-SYMBOL(<target>).
-    IF sy-subrc = 0.
+    IF <target> IS ASSIGNED.
       <target>-name         = <saved_tab>-name.
       <target>-suppliername = <saved_tab>-suppliername.
       <target>-description  = <saved_tab>-description.
@@ -475,7 +477,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
       WHEN `TAB_EDIT`.
         " handleTabContainerEditItem: the tab goes into edit mode over its own copy
         ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<tab>).
-        IF sy-subrc <> 0.
+        IF <tab> IS NOT ASSIGNED.
           RETURN.
         ENDIF.
         <tab>-modified = abap_true.
@@ -492,7 +494,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
           tab_close( selected_tab ).
         ELSE.
           ASSIGN t_tabs[ productid = selected_tab ] TO FIELD-SYMBOL(<reset_tab>).
-          IF sy-subrc = 0.
+          IF <reset_tab> IS ASSIGNED.
             <reset_tab> = CORRESPONDING #( t_products[ productid = selected_tab ] ).
           ENDIF.
         ENDIF.

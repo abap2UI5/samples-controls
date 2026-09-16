@@ -174,8 +174,10 @@ CLASS z2ui5_cl_smpc_app_565 IMPLEMENTATION.
       WHEN `NAV_TO_PRODUCT`.
         " onNavToProduct: navigate to the detail page and bind it to the pressed row
         DATA(productid) = client->get_event_arg( ).
+        " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
+        " sy-subrc on every release (abap2UI5 #1937)
         ASSIGN t_products[ productid = productid ] TO FIELD-SYMBOL(<product>).
-        IF sy-subrc = 0.
+        IF <product> IS ASSIGNED.
           d_name          = <product>-name.
           d_weightmeasure = <product>-weightmeasure.
           d_weightunit    = <product>-weightunit.
