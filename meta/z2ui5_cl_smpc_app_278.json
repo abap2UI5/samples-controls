@@ -28,7 +28,7 @@
     },
     {
       "type": "POST_171",
-      "what": "the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it."
+      "what": "the MessageBox dependentOn option (since UI5 1.124) is restored in the option object of the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it."
     },
     {
       "type": "NOTE",

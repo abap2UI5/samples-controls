@@ -1328,18 +1328,23 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   the phone, where the mode is `None`); demo_004 had five such lists and not one
   product could be opened by clicking it (2026-09-14). Nothing static catches
   this — the view renders, the wire is in the XML, the handler is correct.
-- **A `${ _bind( ) }` inside a `follow_up_action` ARGUMENT is resolved only when
-  the action is wired into the VIEW.** There it is an attribute UI5 parses, so
-  the binding is live; called from an event handler the same call is QUEUED and
-  its arguments travel as the literal text `${/S_STORAGE}`. demo_004's cart was
-  written that way - copied from a sample that does it from a view - and
-  STORE_DATA, which destructures its one argument as `{ TYPE, PREFIX, KEY,
-  VALUE }`, got four undefineds and REMOVED the key instead of writing it. So
-  nothing was ever stored, and nothing said so: an empty VALUE is a legitimate
-  delete. Compose the payload as JSON in ABAP instead - an argument that parses
-  as JSON is embedded as real JSON by the event serializer. The failure mode is
-  the reason this is a rule: a wire that works in one sample and silently does
-  nothing in another, with no error on either side.
+- **A `${ _bind( ) }` inside a `follow_up_action` ARGUMENT is resolved by UI5
+  only when the action is wired into the VIEW.** There it is an attribute UI5
+  parses, so the binding is live; called from an event handler the same call
+  is QUEUED and its arguments travel as the literal text `${/S_STORAGE}`. For
+  every action but one that text is what the frontend gets. STORE_DATA is the
+  exception since abap2UI5 8574816 (2026-09-14, inside the pin): a string
+  payload is read as a MODEL PATH and resolved against the view model when
+  the action runs, and a string that is no path is logged. Before that it
+  destructured the text as `{ TYPE, PREFIX, KEY, VALUE }`, got four undefineds
+  and REMOVED the key instead of writing it - demo_004's cart was written
+  that way, copied from a sample that does it from a view, and nothing was
+  ever stored or said so (an empty VALUE is a legitimate delete). demo_004
+  still composes the payload as JSON in ABAP, the form that works on every
+  pin: an argument that parses as JSON is embedded as real JSON by the event
+  serializer. The failure mode is the reason this is a rule: a wire that works
+  in one sample and silently does nothing in another, with no error on either
+  side - so for any OTHER action, never put a binding into a queued argument.
 - **A default a control picks for itself does not reach the backend.** A
   `SegmentedButton`/`Select` whose bound key is initial selects its first item
   and writes that key into the CLIENT model; the ABAP attribute stays empty

@@ -4144,9 +4144,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` workaround. // NOTE: the onClose handler of the two action boxes composes its toast on the client in the original; here the pressed action rides back through the onclose event and ABAP builds the` &&
             ` same text with message_toast_display - same output, and the thin-frontend direction (the action becomes backend-visible, which is the point of the onclose return path). // POST-1.71: the MessageBox` &&
             ` emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5` &&
-            ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it. // NOTE:`.
-    text1 = text1 && ` The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND event name, so` &&
-            ` ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( ).`.
+            ` 1.124) is restored in the option object of the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for`.
+    text1 = text1 && ` it. // NOTE: The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND` &&
+            ` event name, so ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( ).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBox`                                    class = `z2ui5_cl_smpc_app_278` path = `src/02/01/z2ui5_cl_smpc_app_278.clas.abap`
         score = 4
@@ -4159,7 +4159,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` carries back through the onclose action as the 'Action selected: OK' toast)`
         notes = text1
         post171 = `the MessageBox emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5` &&
-                 ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it.` ) ).
+                 ` 1.124) is restored in the option object of the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for` &&
+                 ` it.` ) ).
 
     text1 = `NOTE: All four MessageBoxes are opened through client->message_box_display with the same title, type, details, contentWidth and styleClass the controller passes; the dependentOn: this.getView() option` &&
             ` has no equivalent (abap2UI5 owns the view) and is dropped - it only decides which control the popup is a dependent of, not what it shows. The per-box ids (messageBoxId1..4) are dropped with it. //` &&
@@ -4189,10 +4190,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `NOTE: the sample opens a sap.m.MessageBox from its controller; there is no such control in the view. It is driven by two buttons wired to events that call client->message_box_display - the documented` &&
             ` 1:1 path (CAPABILITIES.md marks sap.m.MessageBox as expressible with app 036 as its evidence port), not a workaround. // POST-1.71: ariaHasPopup="Dialog" on both buttons (since UI5 1.84) is newer` &&
             ` than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.84 to render it. // POST-1.71: the MessageBox emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1` &&
-            ` port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the` &&
-            ` view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it. // NOTE: Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are sap.m.MessageBox` &&
-            ` options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction, initialFocus,`.
-    text1 = text1 && ` dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124.`.
+            ` port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5 1.124) is restored in the option object of the control_global MESSAGE_BOX call,` &&
+            ` pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it. // NOTE: Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are` &&
+            ` sap.m.MessageBox options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction,`.
+    text1 = text1 && ` initialFocus, dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBoxInitialFocus`                        class = `z2ui5_cl_smpc_app_036` path = `src/02/01/z2ui5_cl_smpc_app_036.clas.abap`
         score = 3
@@ -4201,8 +4202,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         is_post171 = abap_true
         notes = text1
         post171 = `ariaHasPopup="Dialog" on both buttons (since UI5 1.84) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.84 to render it. // the MessageBox emphasizedAction option (since` &&
-                 ` UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's` &&
-                 ` dependenton parameter, pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it.` ) ).
+                 ` UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5 1.124) is restored in the option object of` &&
+                 ` the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it.` ) ).
 
     text1 = `POST-1.71: Button.ariaHasPopup (since UI5 1.84) kept on the message-popover button. The Button.type value 'Negative' (a sap.m.ButtonType value since 1.73) is what the sample's buttonTypeFormatter` &&
             ` returns for the highest-severity Error message. // NOTE: the MessagePopover (built in the controller and addDependent'ed to the button) is declared 1:1 in the button's ``dependents`` aggregation; the` &&

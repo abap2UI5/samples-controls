@@ -429,7 +429,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     " undefined` and the transpiled backend refused the class outright
     " (check_syntax, "undefined" not found). A row this port cannot run on a
     " 702 system is a port that does not keep this package's promise.
-    CLEAR t_selected.
+    t_selected = VALUE #( ).
     ASSIGN t_team[ name = name ] TO FIELD-SYMBOL(<member>).
     IF <member> IS ASSIGNED.
       t_selected = <member>-t_appointments.
