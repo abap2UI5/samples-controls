@@ -864,11 +864,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                         )->a( n = `title` v = `Quantity`
                         )->a( n = `text`  v = `{QUANTITY}`
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Save for Later`
                         )->a( n = `press`  v = client->_event( val = `SAVE_LATER` arg = `${PRODUCTID}` )
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Remove`
                         )->a( n = `press`  v = client->_event( val = `CART_REMOVE` arg = `${PRODUCTID}` ) ).
 
@@ -887,7 +887,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Move to Cart`
                         )->a( n = `press`  v = client->_event( val = `MOVE_TO_CART` arg = `${PRODUCTID}` ) ).
 
@@ -1542,13 +1542,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " STORE_DATA takes ONE argument and the frontend destructures it as
     " \{ TYPE, PREFIX, KEY, VALUE \}: an argument that parses as JSON is embedded
     " as real JSON, anything else stays a string. `${ _bind( s_storage ) }` -
-    " what sample z2ui5_cl_smp_app_327 passes - is a BINDING, and only a
-    " VIEW-WIRED action has UI5 resolve one. From a handler the action is queued
-    " and the argument arrives as the literal text `${/S_STORAGE}`, whose
-    " TYPE/KEY/VALUE are all undefined - and an empty VALUE is the frontend's
-    " signal to REMOVE the key. So this wrote nothing, ever, and said nothing
-    " either: deleting a key is a legitimate thing to ask for. The payload is
-    " composed here instead
+    " what sample z2ui5_cl_smp_app_327 passes - is a BINDING, which only a
+    " VIEW-WIRED action has UI5 resolve; from a handler the action is queued
+    " and the argument arrives as the literal text `${/S_STORAGE}`. Until
+    " abap2UI5 8574816 (2026-09-14, in the pin since #211) that text was
+    " destructured as the payload, all four parts undefined, and an empty
+    " VALUE is the frontend's signal to REMOVE the key - so this wrote nothing,
+    " ever, and said nothing either. The frontend reads a string payload as a
+    " MODEL PATH now and resolves it itself, so the binding form works from a
+    " handler too; the payload stays composed here because a JSON argument is
+    " the form that works on every pin this class has run on
     client->follow_up_action( val   = client->cs_event-store_data
                               t_arg = VALUE #( ( storage_json( ) ) ) ).
 
@@ -1591,10 +1594,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD json_escape.
 
-    " the two characters a JSON string cannot carry raw. The backslash first, or
-    " it would escape the escapes added after it
-    result = replace( val = val sub = `\` with = `\\` occ = 0 ).
-    result = replace( val = result sub = `"` with = `\"` occ = 0 ).
+    " the characters a JSON string cannot carry raw: the two delimiters and
+    " the three line/tab controls a text field can hold (same shape as
+    " samples-stack app 489). The backslash first, or it would escape the
+    " escapes added after it
+    result = replace( val = val    sub = `\`  with = `\\` occ = 0 ).
+    result = replace( val = result sub = |\n| with = `\n`  occ = 0 ).
+    result = replace( val = result sub = |\r| with = `\r`  occ = 0 ).
+    result = replace( val = result sub = |\t| with = `\t`  occ = 0 ).
+    result = replace( val = result sub = `"`  with = `\"`  occ = 0 ).
 
   ENDMETHOD.
 

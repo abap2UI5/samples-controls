@@ -111,6 +111,11 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
     DATA check_fullscreen   TYPE abap_bool.
 
   PROTECTED SECTION.
+    " the grouping the LIST BINDING carries right now - bookkeeping the view
+    " never binds, so it is no model field; PROTECTED rather than PRIVATE
+    " because the draft serializer reaches every section but the private one
+    DATA group_live TYPE string.
+
     TYPES:
       BEGIN OF ty_s_order,
         orderid      TYPE i,
@@ -586,6 +591,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " a grouping is a sorter on the LIST BINDING, not on the model: a rebuilt
     " view starts ungrouped, so an active grouping is re-applied here
+    group_live = ``.
     group_apply( ).
 
   ENDMETHOD.
@@ -594,8 +600,16 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
   METHOD group_apply.
 
     IF group_key IS INITIAL.
+      " the sorter lives on the list binding and binding_call has no form
+      " that takes it off again (the original calls oBinding.sort( [] )): a
+      " grouping the user just cleared in the dialog stays on the list until
+      " the view is rebuilt - so rebuild it, once, when there is one to clear
+      IF group_live IS NOT INITIAL.
+        view_display( ).
+      ENDIF.
       RETURN.
     ENDIF.
+    group_live = group_key.
 
     " the client-side equivalent of the original's new Sorter(path, false,
     " groupFunction): group = X makes UI5 draw a GroupHeaderListItem per value

@@ -38,9 +38,11 @@ export default async (page, expect) => {
   await expect(page.locator('.sapMDialog:visible'), 'the dialog after Cancel').toHaveCountBelow(1);
 
   // (c) the per-keystroke filter round-trip. typeLive waits for the bound
-  // value after EVERY character: this wire is lossy, not queued, and a fixed
-  // delay only makes a dropped keystroke less likely — a 300ms one swallowed
-  // the "a" here and made the backend filter on "Sles".
+  // value after EVERY character; the wire carries check_queue_last since
+  // 2026-09-19, so a keystroke fired during a trip is kept rather than
+  // dropped (before that a fixed 300ms delay swallowed the "a" here and made
+  // the backend filter on "Sles") — settling per character still keeps the
+  // assertion independent of round-trip timing.
   const input = page.locator(`${FIELD} input`).first();
   await expect(input, 'the side navigation search field').toBeVisibleEnabled();
   await typeLive(page, input, 'Sales', 'sideNavigationSearchField');

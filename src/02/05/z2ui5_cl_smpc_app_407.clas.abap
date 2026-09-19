@@ -195,7 +195,7 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
                             )->a( n = `id`           v = `sideNavigationSearchField`
                             )->a( n = `ariaControls` v = `sideNavigation`
                             )->a( n = `value`        v = client->_bind( search_value )
-                            )->a( n = `liveChange`   v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/newValue}` )
+                            )->a( n = `liveChange`   v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/newValue}` s_ctrl = VALUE #( check_queue_last = abap_true ) )
                             )->a( n = `search`       v = client->_event( val = `SEARCH` arg = `${$parameters>/query}` )
 
                     )->end(

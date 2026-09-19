@@ -1328,18 +1328,23 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   the phone, where the mode is `None`); demo_004 had five such lists and not one
   product could be opened by clicking it (2026-09-14). Nothing static catches
   this — the view renders, the wire is in the XML, the handler is correct.
-- **A `${ _bind( ) }` inside a `follow_up_action` ARGUMENT is resolved only when
-  the action is wired into the VIEW.** There it is an attribute UI5 parses, so
-  the binding is live; called from an event handler the same call is QUEUED and
-  its arguments travel as the literal text `${/S_STORAGE}`. demo_004's cart was
-  written that way - copied from a sample that does it from a view - and
-  STORE_DATA, which destructures its one argument as `{ TYPE, PREFIX, KEY,
-  VALUE }`, got four undefineds and REMOVED the key instead of writing it. So
-  nothing was ever stored, and nothing said so: an empty VALUE is a legitimate
-  delete. Compose the payload as JSON in ABAP instead - an argument that parses
-  as JSON is embedded as real JSON by the event serializer. The failure mode is
-  the reason this is a rule: a wire that works in one sample and silently does
-  nothing in another, with no error on either side.
+- **A `${ _bind( ) }` inside a `follow_up_action` ARGUMENT is resolved by UI5
+  only when the action is wired into the VIEW.** There it is an attribute UI5
+  parses, so the binding is live; called from an event handler the same call
+  is QUEUED and its arguments travel as the literal text `${/S_STORAGE}`. For
+  every action but one that text is what the frontend gets. STORE_DATA is the
+  exception since abap2UI5 8574816 (2026-09-14, inside the pin): a string
+  payload is read as a MODEL PATH and resolved against the view model when
+  the action runs, and a string that is no path is logged. Before that it
+  destructured the text as `{ TYPE, PREFIX, KEY, VALUE }`, got four undefineds
+  and REMOVED the key instead of writing it - demo_004's cart was written
+  that way, copied from a sample that does it from a view, and nothing was
+  ever stored or said so (an empty VALUE is a legitimate delete). demo_004
+  still composes the payload as JSON in ABAP, the form that works on every
+  pin: an argument that parses as JSON is embedded as real JSON by the event
+  serializer. The failure mode is the reason this is a rule: a wire that works
+  in one sample and silently does nothing in another, with no error on either
+  side - so for any OTHER action, never put a binding into a queued argument.
 - **A default a control picks for itself does not reach the backend.** A
   `SegmentedButton`/`Select` whose bound key is initial selects its first item
   and writes that key into the CLIENT model; the ABAP attribute stays empty
@@ -1349,16 +1354,21 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   accepts the default — there, the checkout could not leave the payment step at
   all. Seed the default in `model_init( )`, the way the original's own model
   does (`SelectedPayment: "Credit Card"`).
-- **A per-keystroke round-trip is LOSSY, not queued.** abap2UI5 serializes
-  round-trips: an event fired while one is in flight is **dropped**, so a
-  `liveChange`/`liveSearch` wire that round-trips shows the value of the last
-  *completed* trip, skipping intermediate ones under fast typing (measured on
-  app 280 — typing `abc` with no delay left the bound field at `a` while the
-  TextArea held `abc`; it converges as soon as typing pauses). Prefer a two-way
-  binding or an expression binding whenever the sample's point allows it; when
-  the round-trip is required, say so in the sidecar and make any e2e
-  interaction **type with a delay** — a no-delay `pressSequentially` asserts a
-  value the wire never promised.
+- **A per-keystroke round-trip is serialized — register the wire with
+  `check_queue_last`.** abap2UI5 runs one round-trip at a time, and an
+  ordinary wire DROPS an event fired while one is in flight, so a
+  `liveChange`/`liveSearch`/`suggest` wire that round-trips showed the value
+  of the last *completed* trip (measured on app 280 — typing `abc` with no
+  delay left the bound field at `a` while the TextArea held `abc`). Since
+  2026-09-19 every such wire in the corpus carries
+  `s_ctrl = VALUE #( check_queue_last = abap_true )` (abap2UI5 PR #2739, in
+  the pin): the LAST event fired during a flight is kept and dispatched after
+  the response, order kept, so the backend ends on the typed value.
+  Intermediate values can still be skipped under fast typing — prefer a
+  two-way binding or an expression binding whenever the sample's point allows
+  it; when the round-trip is required, set the flag, and an e2e interaction
+  may then type with no delay and assert the final value. The overlay half
+  of the pair, `check_no_busy`, is not in the pin yet.
 - **ABAP Doc (`"!`) is HTML** — no raw `<tag>` (e.g. `<mvc:View>`); see §8.
 - **Literal braces in attribute values are read as a BINDING by the XMLView
   parser** — CSS/JS braces inside a `core:HTML` `content` (or any literal

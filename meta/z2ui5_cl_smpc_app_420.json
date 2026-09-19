@@ -25,7 +25,7 @@
     },
     {
       "type": "NOTE",
-      "what": "The per-keystroke suggest round-trip is serialized and lossy under fast typing (events fired while a trip is in flight are dropped; it converges when typing pauses); the filter + suggest() follow-up pair is unverified in a running system. **e2e-verified 2026-08-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_420.mjs)."
+      "what": "The per-keystroke suggest round-trip is serialized, and until 2026-09-19 it was lossy under fast typing (events fired while a trip was in flight were dropped; it converged when typing paused). The wire carries s_ctrl-check_queue_last now (abap2UI5 #2739, in the pin since #211): the last SUGGEST fired during a flight is kept and dispatched after the response, so the popover ends on the typed value. The filter + suggest() follow-up pair is unverified in a running system. **e2e-verified 2026-08-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_420.mjs)."
     }
   ]
 }

@@ -3711,9 +3711,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         score = 3
         score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         notes = `NOTE: onSuggest builds a StartsWith filter on Name from the typed term (or an empty filter list) and applies it to the suggestionItems BINDING. Reproduced 1:1 through follow_up_action binding_call on` &&
-                 ` that aggregation, so the model stays untouched (app 022 precedent). The suggest event round-trips per keystroke, which is what the sample is about; abap2UI5 serializes round-trips, so an event fired` &&
-                 ` while one is in flight is dropped and the list catches up when typing pauses. // NOTE: The suggest wire and its binding_call filter are unverified in a running system. **e2e-verified 2026-08-22**` &&
-                 ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_473.mjs).` ) ).
+                 ` that aggregation, so the model stays untouched (app 022 precedent). The suggest event round-trips per keystroke, which is what the sample is about; abap2UI5 serializes round-trips, and the wire` &&
+                 ` carries s_ctrl-check_queue_last (since 2026-09-19), so an event fired while one is in flight is kept - the last one - and the list ends on the typed term instead of on the last completed trip. //` &&
+                 ` NOTE: The suggest wire and its binding_call filter are unverified in a running system. **e2e-verified 2026-08-22** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_473.mjs).` ) ).
 
     text1 = `NOTE: onSuggest asks an OpenSearchProvider that points at a local MockServer and replaces the Input's suggestion items with the answer. abap2UI5 has neither, so the same search runs in ABAP over the` &&
             ` product names and fills the bound suggestionItems aggregation - which also means the port declares one core:Item template the original's view does not have (structural-diff reports control extra` &&
@@ -4144,9 +4144,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` workaround. // NOTE: the onClose handler of the two action boxes composes its toast on the client in the original; here the pressed action rides back through the onclose event and ABAP builds the` &&
             ` same text with message_toast_display - same output, and the thin-frontend direction (the action becomes backend-visible, which is the point of the onclose return path). // POST-1.71: the MessageBox` &&
             ` emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5` &&
-            ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it. // NOTE:`.
-    text1 = text1 && ` The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND event name, so` &&
-            ` ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( ).`.
+            ` 1.124) is restored in the option object of the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for`.
+    text1 = text1 && ` it. // NOTE: The two boxes carrying dependentOn moved to the whitelisted global call on 2026-09 (dependentOn is a sap.m.MessageBox option and left message_box_display( )). onClose stays a BACKEND` &&
+            ` event name, so ACTION_SELECTED reaches the app as before. The third box, which carries no UI5-only option, still uses client->message_box_display( ).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBox`                                    class = `z2ui5_cl_smpc_app_278` path = `src/02/01/z2ui5_cl_smpc_app_278.clas.abap`
         score = 4
@@ -4159,7 +4159,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` carries back through the onclose action as the 'Action selected: OK' toast)`
         notes = text1
         post171 = `the MessageBox emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5` &&
-                 ` 1.124) is restored via message_box_display's dependenton parameter, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for it.` ) ).
+                 ` 1.124) is restored in the option object of the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost) instead of the view object; the app needs a UI5 release >= 1.124 for` &&
+                 ` it.` ) ).
 
     text1 = `NOTE: All four MessageBoxes are opened through client->message_box_display with the same title, type, details, contentWidth and styleClass the controller passes; the dependentOn: this.getView() option` &&
             ` has no equivalent (abap2UI5 owns the view) and is dropped - it only decides which control the popup is a dependent of, not what it shows. The per-box ids (messageBoxId1..4) are dropped with it. //` &&
@@ -4189,10 +4190,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `NOTE: the sample opens a sap.m.MessageBox from its controller; there is no such control in the view. It is driven by two buttons wired to events that call client->message_box_display - the documented` &&
             ` 1:1 path (CAPABILITIES.md marks sap.m.MessageBox as expressible with app 036 as its evidence port), not a workaround. // POST-1.71: ariaHasPopup="Dialog" on both buttons (since UI5 1.84) is newer` &&
             ` than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.84 to render it. // POST-1.71: the MessageBox emphasizedAction option (since UI5 1.75) is newer than 1.71 but kept for the 1:1` &&
-            ` port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's dependenton parameter, pointing at the` &&
-            ` view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it. // NOTE: Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are sap.m.MessageBox` &&
-            ` options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction, initialFocus,`.
-    text1 = text1 && ` dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124.`.
+            ` port - the app needs a UI5 release >= 1.75 to render it. // POST-1.71: the MessageBox dependentOn option (since UI5 1.124) is restored in the option object of the control_global MESSAGE_BOX call,` &&
+            ` pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it. // NOTE: Both boxes moved to the whitelisted global call on 2026-09: icon and dependentOn are` &&
+            ` sap.m.MessageBox options and left message_box_display( ). The display method IS the box type there (warning / show), and the option object is the MessageBox API 1:1 - actions, emphasizedAction,`.
+    text1 = text1 && ` initialFocus, dependentOn and styleClass travel in it. dependentOn still ties the box to the view layout (id messageBoxHost) and still needs UI5 1.124.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MessageBox`                      name = `MessageBoxInitialFocus`                        class = `z2ui5_cl_smpc_app_036` path = `src/02/01/z2ui5_cl_smpc_app_036.clas.abap`
         score = 3
@@ -4201,8 +4202,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         is_post171 = abap_true
         notes = text1
         post171 = `ariaHasPopup="Dialog" on both buttons (since UI5 1.84) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.84 to render it. // the MessageBox emphasizedAction option (since` &&
-                 ` UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5 1.124) is restored via message_box_display's` &&
-                 ` dependenton parameter, pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it.` ) ).
+                 ` UI5 1.75) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.75 to render it. // the MessageBox dependentOn option (since UI5 1.124) is restored in the option object of` &&
+                 ` the control_global MESSAGE_BOX call, pointing at the view layout (id messageBoxHost); the app needs a UI5 release >= 1.124 to render it.` ) ).
 
     text1 = `POST-1.71: Button.ariaHasPopup (since UI5 1.84) kept on the message-popover button. The Button.type value 'Negative' (a sap.m.ButtonType value since 1.73) is what the sample's buttonTypeFormatter` &&
             ` returns for the highest-severity Error message. // NOTE: the MessagePopover (built in the controller and addDependent'ed to the button) is declared 1:1 in the button's ``dependents`` aggregation; the` &&
@@ -6163,8 +6164,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` (case-insensitive indexOf on ProductId and Name) map to the Contains operator, which client JSON models match case-insensitively; an empty value clears the filter like the original's empty aFilters.` &&
             ` // NOTE: onSearch's MessageToast branches are composed on the client, roundtrip-free: a '{0}' template filled by the ternary ${$parameters>/suggestionItem} ? 'Search for: ' + getText() : 'Search is` &&
             ` fired!'. // NOTE: Price is kept TYPE string: it is display-only inside the SuggestionItem description text template {path:'PRICE'} {path:'CURRENCYCODE'}, and a packed field with fixed DECIMALS would` &&
-            ` add trailing zeros to the mock's variable-decimal values. // NOTE: The per-keystroke suggest round-trip is serialized and lossy under fast typing (events fired while a trip is in flight are dropped;`.
-    text1 = text1 && ` it converges when typing pauses); the filter + suggest() follow-up pair is unverified in a running system. **e2e-verified 2026-08-21** (nightly e2e interaction,` &&
+            ` add trailing zeros to the mock's variable-decimal values. // NOTE: The per-keystroke suggest round-trip is serialized, and until 2026-09-19 it was lossy under fast typing (events fired while a trip`.
+    text1 = text1 && ` was in flight were dropped; it converged when typing paused). The wire carries s_ctrl-check_queue_last now (abap2UI5 #2739, in the pin since #211): the last SUGGEST fired during a flight is kept and` &&
+            ` dispatched after the response, so the popover ends on the typed value. The filter + suggest() follow-up pair is unverified in a running system. **e2e-verified 2026-08-21** (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_420.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.SearchField`                     name = `SearchFieldSuggestions`                        class = `z2ui5_cl_smpc_app_420` path = `src/01/01/z2ui5_cl_smpc_app_420.clas.abap`
@@ -7511,9 +7513,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text2 = `NOTE: the sample's whole point is the difference between the control's own value and the model property while valueLiveUpdate is off, so the getValue Text must NOT be bound to the same field as the` &&
             ` TextArea. The port keeps them apart the same way: liveChange carries ${$parameters>/value} into the backend, which writes it to the separate field GET_VALUE - the second Text stays bound to the` &&
             ` TextArea's own model field, which only updates when valueLiveUpdate is on (or on blur). // NOTE: behavioural limit of the liveChange round-trip, measured 2026-08-02 in the e2e harness: abap2UI5` &&
-            ` serializes round-trips, so keystrokes typed while one is in flight are DROPPED, not queued - typing abc with no delay left GET_VALUE at a (the value of the last COMPLETED round-trip), while the` &&
-            ` TextArea itself held abc. The original updates its Text client-side on every keystroke, so under fast typing the port lags and can skip intermediate values; it converges as soon as typing pauses.` &&
-            ` Inherent to moving the handler into the backend, not a wiring defect - the e2e interaction therefore types with a delay.`.
+            ` serializes round-trips, and until 2026-09-19 a keystroke typed while one was in flight was DROPPED, not queued - typing abc with no delay left GET_VALUE at a (the value of the last COMPLETED` &&
+            ` round-trip), while the TextArea itself held abc; the e2e interaction therefore typed with a delay. CLOSED 2026-09-19: the wire carries s_ctrl-check_queue_last (abap2UI5 #2739, in the pin since #211),` &&
+            ` which keeps the LAST event fired during a flight and dispatches it once the response has landed - one round-trip at a time, order kept, the backend ends on the TextArea's current value. Intermediate`.
+    text2 = text2 && ` values can still be skipped under fast typing (the original updates its Text client-side on every keystroke); the last one is not lost, and the interaction module types with no delay.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.TextArea`                        name = `TextAreaValueUpdate`                           class = `z2ui5_cl_smpc_app_280` path = `src/01/01/z2ui5_cl_smpc_app_280.clas.abap`
         score = 3
@@ -8349,40 +8352,40 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` become one LIVE_CHANGE round-trip that filters the tables in ABAP and updates the model - NavigationList.highlightedText is a bindable property, so it shares the search field's two-way bound value` &&
             ` instead of the setter. onSearch's announceSearchMatchCount stays a control method (no bindable equivalent) and is invoked via follow_up_action( control_by_id, navigationList,` &&
             ` announceSearchMatchCount, <count> ) with the count computed in ABAP like the original's recursive title-only _countItems. abap2UI5 serializes round-trips, so very fast typing can skip intermediate` &&
-            ` filter states (they converge on the next pause); the search field's value is two-way bound so the filter state survives the round-trip. // NOTE: onMenuTogglePress toggles ToolPage.sideExpanded`.
-    text1 = text1 && ` imperatively; the property is bindable, so the port two-way binds it (sideExpanded, an attribute the original view does not declare) and flips it on the MENU_TOGGLE round-trip - collapsing also` &&
-            ` clears the bound search value and restores the unfiltered lists, like the original's reset of the search field, the highlight and the model (app 302 precedent). // NOTE: onItemSelect does` &&
-            ` navContainer.to(createId(key)) guarded by getPage(); the port transports ${$parameters>/item}.getKey() and calls the same method through follow_up_action( control_by_id, navContainer, to, <key> )` &&
-            ` guarded by the four page ids (home, myAccounts, myOrders, CustomerManagement) - the NavContainer has no bindable current-page property (app 302 precedent). onItemPress reads the pressed item's key` &&
-            ` from ${$source>/key} (the factory wires press on every created item, the port wires it on the Home item, both group templates, the nested sub-item template and the fixed template); only the` &&
-            ` quickCreate key acts, opening the controller-built Create Item Dialog 1:1 via popup_display (type Message, a content Text and two Button controls - the Emphasized Create and the Cancel - both just`.
-    text1 = text1 && ` close, so the port view carries that extra Dialog/Text/Button set). // NOTE: The ENABLED, HASEXPANDER, EXPANDED, SELECTABLE, ARIAHASPOPUP, DESIGN and TAGSTATE fields the templates bind are partly` &&
-            ` absent from model/data.json rows; every ABAP row carries the UI5 property default explicitly (true / true / true / true / None / Default / None) - a flat row would otherwise serialize an empty value,` &&
-            ` which UI5 rejects on the genuinely enum-typed properties - ARIAHASPOPUP (sap.ui.core.aria.HasPopup) and DESIGN (sap.tnt.NavigationListItemDesign) - and which would override the boolean defaults.` &&
-            ` TAGSTATE is NOT one of them: sap.m.ObjectStatus.state is declared { type: 'string', defaultValue: ValueState.None }, so an empty value there would not be rejected. Seeding None is still right, the` &&
-            ` reason just does not extend to that field. The header Image keeps the original's relative src ./images/SAP_Logo.png verbatim (the sample folder itself ships no such file upstream). // POST-1.71: The` &&
-            ` sample's core feature is newer than the 1.71 floor and is kept 1:1: sap.tnt.SideNavigationSearchField (control @since 1.151), the SideNavigation.filterSection aggregation that hosts it (@since`.
-    text1 = text1 && ` 1.151), NavigationList.highlightedText (@since 1.151), the NavigationList.announceSearchMatchCount control method (@since 1.151, invoked via follow_up_action - a method is invisible to the property` &&
-            ` gate, declared by policy) and the SearchField ariaControls association (@since 1.150). The app needs UI5 >= 1.151; the repo's @openui5 runtime pin was raised from 1.150.0 to 1.151.0 with this port so` &&
-            ` the render and e2e gates exercise it. // POST-1.71: Kept 1:1 but newer than UI5 1.71 in the navigation tree: sap.tnt.NavigationListGroup (control @since 1.121, the two group rows);` &&
-            ` NavigationListItem.selectable (@since 1.116); the tag aggregation (@since 1.149) with its sap.m.ObjectStatus and the IndicationColor enum values Indication15/16/17/18/20 (@since 1.120); design and` &&
-            ` ariaHasPopup (@since 1.133.0, incl. the design=Action / ariaHasPopup=Dialog values on the Quick Create row); and the press EVENT (@since 1.133), wired 1:1 on all six item templates - it is not` &&
-            ` declared on NavigationListItem at all any more, it lives on the new base class NavigationListItemBase, which is the relocated-member shape no gate can see. That last one was named only inside NOTEs`.
-    text1 = text1 && ` until 2026-08-24, and a NOTE describing what a member DOES is not a declaration that it is too new - the sibling tnt ports 300 and 301 closed the same gap on 2026-08-23 and this port was missed.` &&
-            ` expanded also lives on that base class and reads as @since 1.121, predating 1.71 on NavigationListItem itself, declared per the relocated-member note. hasExpander is NOT in that group: it carries no` &&
-            ` @since tag at all on NavigationListItemBase, so it reads as base version - naming it here was an over-declaration (harmless, since the port's floor is already set by the members above, but wrong` &&
-            ` about the source). // NOTE: not yet run in a system: the LIVE_CHANGE filter round-trip (bound group tables, visible flags, highlightedText), the SEARCH announceSearchMatchCount frontend action, the` &&
-            ` to-page action (which arrives as ITEM_PRESS, see above), the quickCreate popup and the MENU_TOGGLE collapse-resets-search path. **e2e-verified 2026-08-21** (nightly e2e interaction,` &&
-            ` meta/interactions/z2ui5_cl_smpc_app_407.mjs) - with two halves NOT covered by that module. highlightedText is never asserted: it checks which rows survive the filter, never that any text is`.
-    text1 = text1 && ` emphasized, so deleting the highlightedText binding leaves it green. And the selectable guard is only covered positively: it clicks 'My Orders' (selectable, must navigate) and asserts the page` &&
-            ` appears, but never clicks 'Customer Management' (selectable:false) to assert that nothing happens - which is the whole reason that guard exists. Relaxing the ELSEIF on get_event_arg( 2 ) to an` &&
-            ` unconditional ELSE passes the module unchanged. // NOTE: announceSearchMatchCount receives the match count as a STRING. It is not in the framework's CONTROL_METHODS, so no arg kinds are registered` &&
-            ` and castArgAuto passes anything that is not X/true/false through unchanged. NavigationList._announceSearchMatchCount then does ``iCount === 1 ? SIDE_NAVIGATION_SEARCH_MATCH_FOUND :` &&
-            ` SIDE_NAVIGATION_SEARCH_MATCHES_FOUND``, and "1" === 1 is false - so a single match is announced with the plural text where the original announces the singular. Closing this needs an ["int"] entry for` &&
-            ` the method upstream, the same shape as scrollToIndex; noted 2026-08-21. // NOTE: Each item's press wire carries ${$source>/selectable} beside its key, and ITEM_PRESS navigates only when it is true.`.
-    text1 = text1 && ` NavigationListItem._selectItem fires ``select`` unconditionally but reaches the list's _selectItem - and so itemSelect, and so the original's navigation - only if getSelectable( ) is true, while` &&
-            ` ``press`` fires either way. Customer Management is selectable:false in the mock, so upstream it navigates nowhere; the port navigated it until 2026-08-21, making a page unreachable in the original` &&
-            ` reachable here.`.
+            ` filter states; the wire carries s_ctrl-check_queue_last (since 2026-09-19), so the LAST keystroke is never dropped and the filter ends on the typed value, and the search field's value is two-way`.
+    text1 = text1 && ` bound so the filter state survives the round-trip. // NOTE: onMenuTogglePress toggles ToolPage.sideExpanded imperatively; the property is bindable, so the port two-way binds it (sideExpanded, an` &&
+            ` attribute the original view does not declare) and flips it on the MENU_TOGGLE round-trip - collapsing also clears the bound search value and restores the unfiltered lists, like the original's reset` &&
+            ` of the search field, the highlight and the model (app 302 precedent). // NOTE: onItemSelect does navContainer.to(createId(key)) guarded by getPage(); the port transports ${$parameters>/item}.getKey()` &&
+            ` and calls the same method through follow_up_action( control_by_id, navContainer, to, <key> ) guarded by the four page ids (home, myAccounts, myOrders, CustomerManagement) - the NavContainer has no` &&
+            ` bindable current-page property (app 302 precedent). onItemPress reads the pressed item's key from ${$source>/key} (the factory wires press on every created item, the port wires it on the Home item,` &&
+            ` both group templates, the nested sub-item template and the fixed template); only the quickCreate key acts, opening the controller-built Create Item Dialog 1:1 via popup_display (type Message, a`.
+    text1 = text1 && ` content Text and two Button controls - the Emphasized Create and the Cancel - both just close, so the port view carries that extra Dialog/Text/Button set). // NOTE: The ENABLED, HASEXPANDER,` &&
+            ` EXPANDED, SELECTABLE, ARIAHASPOPUP, DESIGN and TAGSTATE fields the templates bind are partly absent from model/data.json rows; every ABAP row carries the UI5 property default explicitly (true / true` &&
+            ` / true / true / None / Default / None) - a flat row would otherwise serialize an empty value, which UI5 rejects on the genuinely enum-typed properties - ARIAHASPOPUP (sap.ui.core.aria.HasPopup) and` &&
+            ` DESIGN (sap.tnt.NavigationListItemDesign) - and which would override the boolean defaults. TAGSTATE is NOT one of them: sap.m.ObjectStatus.state is declared { type: 'string', defaultValue:` &&
+            ` ValueState.None }, so an empty value there would not be rejected. Seeding None is still right, the reason just does not extend to that field. The header Image keeps the original's relative src` &&
+            ` ./images/SAP_Logo.png verbatim (the sample folder itself ships no such file upstream). // POST-1.71: The sample's core feature is newer than the 1.71 floor and is kept 1:1:`.
+    text1 = text1 && ` sap.tnt.SideNavigationSearchField (control @since 1.151), the SideNavigation.filterSection aggregation that hosts it (@since 1.151), NavigationList.highlightedText (@since 1.151), the` &&
+            ` NavigationList.announceSearchMatchCount control method (@since 1.151, invoked via follow_up_action - a method is invisible to the property gate, declared by policy) and the SearchField ariaControls` &&
+            ` association (@since 1.150). The app needs UI5 >= 1.151; the repo's @openui5 runtime pin was raised from 1.150.0 to 1.151.0 with this port so the render and e2e gates exercise it. // POST-1.71: Kept` &&
+            ` 1:1 but newer than UI5 1.71 in the navigation tree: sap.tnt.NavigationListGroup (control @since 1.121, the two group rows); NavigationListItem.selectable (@since 1.116); the tag aggregation (@since` &&
+            ` 1.149) with its sap.m.ObjectStatus and the IndicationColor enum values Indication15/16/17/18/20 (@since 1.120); design and ariaHasPopup (@since 1.133.0, incl. the design=Action / ariaHasPopup=Dialog` &&
+            ` values on the Quick Create row); and the press EVENT (@since 1.133), wired 1:1 on all six item templates - it is not declared on NavigationListItem at all any more, it lives on the new base class`.
+    text1 = text1 && ` NavigationListItemBase, which is the relocated-member shape no gate can see. That last one was named only inside NOTEs until 2026-08-24, and a NOTE describing what a member DOES is not a declaration` &&
+            ` that it is too new - the sibling tnt ports 300 and 301 closed the same gap on 2026-08-23 and this port was missed. expanded also lives on that base class and reads as @since 1.121, predating 1.71 on` &&
+            ` NavigationListItem itself, declared per the relocated-member note. hasExpander is NOT in that group: it carries no @since tag at all on NavigationListItemBase, so it reads as base version - naming it` &&
+            ` here was an over-declaration (harmless, since the port's floor is already set by the members above, but wrong about the source). // NOTE: not yet run in a system: the LIVE_CHANGE filter round-trip` &&
+            ` (bound group tables, visible flags, highlightedText), the SEARCH announceSearchMatchCount frontend action, the to-page action (which arrives as ITEM_PRESS, see above), the quickCreate popup and the` &&
+            ` MENU_TOGGLE collapse-resets-search path. **e2e-verified 2026-08-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_407.mjs) - with two halves NOT covered by that module.`.
+    text1 = text1 && ` highlightedText is never asserted: it checks which rows survive the filter, never that any text is emphasized, so deleting the highlightedText binding leaves it green. And the selectable guard is` &&
+            ` only covered positively: it clicks 'My Orders' (selectable, must navigate) and asserts the page appears, but never clicks 'Customer Management' (selectable:false) to assert that nothing happens -` &&
+            ` which is the whole reason that guard exists. Relaxing the ELSEIF on get_event_arg( 2 ) to an unconditional ELSE passes the module unchanged. // NOTE: announceSearchMatchCount receives the match count` &&
+            ` as a STRING. It is not in the framework's CONTROL_METHODS, so no arg kinds are registered and castArgAuto passes anything that is not X/true/false through unchanged.` &&
+            ` NavigationList._announceSearchMatchCount then does ``iCount === 1 ? SIDE_NAVIGATION_SEARCH_MATCH_FOUND : SIDE_NAVIGATION_SEARCH_MATCHES_FOUND``, and "1" === 1 is false - so a single match is` &&
+            ` announced with the plural text where the original announces the singular. Closing this needs an ["int"] entry for the method upstream, the same shape as scrollToIndex; noted 2026-08-21. // NOTE: Each`.
+    text1 = text1 && ` item's press wire carries ${$source>/selectable} beside its key, and ITEM_PRESS navigates only when it is true. NavigationListItem._selectItem fires ``select`` unconditionally but reaches the list's` &&
+            ` _selectItem - and so itemSelect, and so the original's navigation - only if getSelectable( ) is true, while ``press`` fires either way. Customer Management is selectable:false in the mock, so` &&
+            ` upstream it navigates nowhere; the port navigated it until 2026-08-21, making a page unreachable in the original reachable here.`.
     text2 = `The sample's core feature is newer than the 1.71 floor and is kept 1:1: sap.tnt.SideNavigationSearchField (control @since 1.151), the SideNavigation.filterSection aggregation that hosts it (@since` &&
             ` 1.151), NavigationList.highlightedText (@since 1.151), the NavigationList.announceSearchMatchCount control method (@since 1.151, invoked via follow_up_action - a method is invisible to the property` &&
             ` gate, declared by policy) and the SearchField ariaControls association (@since 1.150). The app needs UI5 >= 1.151; the repo's @openui5 runtime pin was raised from 1.150.0 to 1.151.0 with this port so` &&

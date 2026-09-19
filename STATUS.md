@@ -122,18 +122,17 @@ same cut AGENTS §10 already makes between the rule and the war story._
   specific enough that a re-check knows what to re-check. Neither promotes a
   port; both make a live session shorter.
 
-- [ ] **48 `liveChange`/`liveSearch` wires are lossy by design of the current
-  pin, and the framework has the flag since 2026-09-12.** Every one of those
-  NOTEs says the same thing: a keystroke typed while a round-trip is in
-  flight is dropped, the backend stays on the last completed value (app 280
-  measured `abc` → `a`). abap2UI5 `check_queue_last` (appended to
-  `ty_s_event_control`, abap2UI5 PR #2736) keeps the LAST event fired during
-  a flight and dispatches it after the response — one round-trip at a time,
-  order kept. When `A2UI5_PIN` moves past that commit: set the flag on the
-  48 wires (grep the NOTEs for "lossy"/"dropped"), retire the NOTE and the
-  artificial typing delay in their interaction modules, and add the idiom to
-  CAPABILITIES.md. Not before — the wire would carry a positional argument
-  the pinned frontend does not read.
+- [x] **The per-keystroke wires carry `check_queue_last` (2026-09-19).** 26
+  wires in 14 ports - every `liveChange`, `liveSearch` and `suggest` wired to
+  `_event( )` - are registered with `s_ctrl = VALUE #( check_queue_last =
+  abap_true )` (abap2UI5 PR #2739, in the pin since #211): the LAST event
+  fired during a round-trip is kept and dispatched after the response, one
+  round-trip at a time, order kept, so the backend ends on the typed value
+  (app 280 used to measure `abc` → `a`). The lossy NOTEs of 280, 407, 420
+  and 473 record the change, and the interaction modules of 280 and 420 type
+  with no delay. Its partner `check_no_busy` (abap2UI5 0709bd8, keeps the
+  busy overlay down for the wire) is NOT in the pin yet; the pair is what
+  samples 059 shows, so the overlay half waits for the next bump.
 
 - [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
   close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,

@@ -84,6 +84,7 @@ abap2UI5.
 | UI5 feature | Status | How in abap2UI5 | Evidence |
 |---|---|---|---|
 | Controller event handlers | ✅ | `client->_event( val = 'NAME' … )` + `check_on_event( )` CASE branches | all interactive ports |
+| A **per-keystroke** handler (`liveChange`, `liveSearch`, `suggest`) that must round-trip | ✅ | `client->_event( val = 'NAME' arg = … s_ctrl = VALUE #( check_queue_last = abap_true ) )` — round-trips are serialized and an ordinary wire DROPS an event fired while one is in flight; the flag keeps the LAST one and dispatches it after the response, order kept, so the backend ends on the typed value (intermediate values may still be skipped). Prefer a two-way or expression binding when the sample's point allows it. `check_no_busy`, which keeps the busy overlay down for the wire, is not in the pin yet | abap2UI5 PR #2739 (in the pin since #211); every such wire in the corpus since 2026-09-19 — apps 280 (TextArea liveChange, measured `abc` → `a` before), 420/473/509 (suggest), 407 (NavigationList filter) |
 | Passing event/source values to the backend | ✅ | `$`-prefixed `t_arg` forms: `${COL}`, `$event.oSource.sId`, `${$parameters>/value}` — never a bare `{COL}` | source-verified on both sides: abap2UI5 passes `$`/`{`-prefixed args raw (z2ui5_cl_ui5_srv_event `get_t_arg`), and UI5's `EventHandlerResolver` parses `${…}` via `BindingParser.parseExpression` — a bare `{COL}` is no binding there; apps 005, 053 |
 | Boolean event parameters | 🔶 | arrive as `abap_bool` (`X`/space) — map back to `true`/`false` when echoing to the UI | source-verified (z2ui5_cl_ui5_handler `request_parse_event_args`); app 007 (correct), app 008 fixed |
 | **A CONTROL-valued event parameter, or a whole ARRAY of them** (`ViewSettingsDialog.confirm` → `filterItems`/`sortItem`, `SelectDialog.confirm` → `selectedItems`, `SinglePlanningCalendar.selectedDatesChange` → a `DateRange` list) | ✅ (Date properties: ❌) | pass it like any other arg — `` `${$parameters>/selectedItems}` `` — and the frontend marshals each control into an object carrying its `ID` plus its public **properties** (`Lib.normalizeEventArgs`); `get_event_arg( )` returns the JSON, read with `z2ui5_cl_ajson`. **This is the loop the expression grammar does not have**: the array travels whole, so no per-entry map is needed. Three rules. **(a) Map corresponding fields only** — the payload carries *every* public property, so `parse( )->to_abap_corresponding_only( )->to_abap( )`, or a plain `to_abap( )` aborts on the first field your structure lacks. **(b) Never a display string** — not `filterString`, which is localized and no contract. **(c) A `Date`-typed property does NOT survive**: `JSON.stringify` writes it through `toISOString()`, so a control holding LOCAL midnight arrives as the PREVIOUS day everywhere east of Greenwich (measured, see the probe) — for those keep per-index expression args that format the local parts on the client. Note a binding **Context** is not a control and is not projected: `selectedContexts` would be handed to `JSON.stringify` untouched and its model graph is circular, which takes the whole round-trip body down — use the `selectedItems` twin | apps 298 (`filterItems`/`sortItem`) and 103 (`selectedItems` → the `You have chosen …` toast, 2026-08-23); the Date boundary holds apps 307 and 109 on their per-index wires — measured in `scripts/probes/control-valued-event-arg-probe.mjs` (candidate `dateRange-array`: local 2018-07-09 → `2018-07-08T22:00:00.000Z` at Europe/Berlin, correct in UTC and west of it), filed as `event-arg-date-utc-shift` in abap2UI5's `backlog/` |
@@ -109,13 +110,18 @@ abap2UI5.
 `client->follow_up_action( client->cs_event-… )` supports far
 more than the ports use so far — relevant when a sample's controller does
 browser things: `popup_close`, `popover_close`, `open_new_tab`,
-`location_reload`, `history_back`, `set_focus`, `scroll_to`,
+`location_reload`, `set_focus`, `scroll_to`,
 `scroll_into_view`, `set_title(_launchpad)`, `clipboard_copy`,
 `download_b64_file`, `urlhelper` (redirect / email / sms / tel),
 `store_data` (session/local storage), `play_audio`, `start_timer`,
-`display_message_box` / `display_message_toast` (options object 1:1),
-`wizard_set_next_step`, `set_size_limit`, `set_odata_model`, nav-container
+`set_size_limit`, `set_odata_model`, nav-container
 `*_nav_container_to` per view slot, `z2ui5` (call registered custom JS).
+Gone from `cs_event` and not to be looked for: `history_back` (1.143.0 -
+`history.back()` through `follow_up_action` or `nav_app_leave( )`),
+`display_message_box` / `display_message_toast` (the MessageBox/MessageToast
+options object rides the `control_global` `MESSAGE_BOX` / `MESSAGE_TOAST`
+call below, 1:1) and `wizard_set_next_step` (two `control_by_id` calls,
+`discardProgress` then `setNextStep`).
 Newest (branch, pending release): the generic **`cs_event-control_global`** /
 **`cs_event-control_by_id`** — call a *whitelisted* method on a global object
 (MessageToast, MessageBox, BusyIndicator, Theming, and since 2026-08-02

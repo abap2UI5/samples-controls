@@ -1,7 +1,9 @@
 // the suggest round-trip: SUGGEST transports the typed value, the server
 // applies the compound OR Contains filter via binding_call and re-opens the
-// popover via control_by_id suggest( ). Type WITH a delay - the round-trip is
-// serialized and lossy under fast typing (the port's LIVE_TEST names this).
+// popover via control_by_id suggest( ). Typed with no delay: the wire carries
+// check_queue_last, so the last SUGGEST fired during a trip is kept and the
+// popover ends on the typed value (until 2026-09-19 the wire was lossy and
+// this module paced the keys 1200ms apart - the port's NOTE names this).
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
@@ -13,9 +15,7 @@ export default async (page, expect) => {
     && c.getSuggestionItems().length === 100),
   'the unfiltered suggestionItems never reached the 100-row sizeLimit cap');
   await input.click();
-  // 1200ms between keys: each SUGGEST trip must COMPLETE before the next key,
-  // or the serialized wire drops the later event and converges on a prefix
-  await input.pressSequentially('mouse', { delay: 1200 });
+  await input.pressSequentially('mouse');
   // the compound filter narrows the aggregation to the OR-Contains matches
   await waitForUi5(page, () => ui5All().some((c) => c.getMetadata().getName() === 'sap.m.SearchField'
     && c.getSuggestionItems().length > 0 && c.getSuggestionItems().length < 20
