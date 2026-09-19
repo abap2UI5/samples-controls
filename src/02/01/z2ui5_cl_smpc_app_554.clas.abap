@@ -16,7 +16,7 @@ CLASS z2ui5_cl_smpc_app_554 DEFINITION PUBLIC.
         end_at    TYPE string,
         tentative TYPE abap_bool,
       END OF ty_s_appointment.
-    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_special,
         start_at TYPE string,
@@ -24,14 +24,14 @@ CLASS z2ui5_cl_smpc_app_554 DEFINITION PUBLIC.
         type     TYPE string,
         color    TYPE string,
       END OF ty_s_special.
-    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
+    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_legend,
         text  TYPE string,
         type  TYPE string,
         color TYPE string,
       END OF ty_s_legend.
-    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
+    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH DEFAULT KEY.
 
     DATA t_appointments      TYPE ty_t_appointment.
     DATA t_special_dates     TYPE ty_t_special.
@@ -59,12 +59,12 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -73,7 +73,8 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
@@ -211,6 +212,13 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp1 TYPE z2ui5_cl_smpc_app_554=>ty_t_special.
+    DATA temp2 TYPE z2ui5_cl_smpc_app_554=>ty_t_appointment.
+    DATA temp3 LIKE LINE OF temp2.
+    DATA temp4 TYPE z2ui5_cl_smpc_app_554=>ty_t_legend.
+    DATA temp5 LIKE LINE OF temp4.
+    DATA temp6 TYPE z2ui5_cl_smpc_app_554=>ty_t_legend.
+    DATA temp7 LIKE LINE OF temp6.
 
     startdate   = `2018-07-24T00:00:00`.
     legend_shown = abap_false.
@@ -219,43 +227,158 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
     scale_factor = 1.
 
     " the view binds /specialDates, which the sample's own model never fills
-    t_special_dates = VALUE #( ).
-    t_appointments = VALUE #(
-      ( title = `Meet John Miller` type = `Type05` start_at = `2018-07-24T08:00:00` end_at = `2018-07-24T08:05:00` )
-      ( title = `Discussion of the plan` type = `Type08` start_at = `2018-07-24T08:05:00` end_at = `2018-07-24T08:10:00` )
-      ( title = `Lunch` text = `canteen` type = `Type05` start_at = `2018-07-24T08:10:00` end_at = `2018-07-24T08:15:00` )
-      ( title = `New Product` text = `room 105` type = `Type01` icon = `sap-icon://meeting-room` start_at = `2018-07-24T08:15:00` end_at = `2018-07-24T08:20:00` )
-      ( title = `Team meeting` text = `Regular` type = `Type01` icon = `sap-icon://home` start_at = `2018-07-24T08:20:00` end_at = `2018-07-24T08:25:00` )
-      ( title = `Discussion with clients` text = `Online meeting` type = `Type08` icon = `sap-icon://home` start_at = `2018-07-24T08:25:00` end_at = `2018-07-24T08:30:00` )
-      ( title = `Discussion of the plan` text = `Online meeting` type = `Type08` icon = `sap-icon://home` start_at = `2018-07-24T08:30:00` end_at = `2018-07-24T08:35:00` tentative = abap_true )
-      ( title = `Discussion with clients` type = `Type08` icon = `sap-icon://home` start_at = `2018-07-24T08:35:00` end_at = `2018-07-24T08:40:00` )
-      ( title = `Meeting with the manager` type = `Type03` start_at = `2018-07-24T08:40:00` end_at = `2018-07-24T08:45:00` )
-      ( title = `Meeting with the manager` type = `Type03` start_at = `2018-07-24T08:45:00` end_at = `2018-07-24T08:50:00` )
-      ( title = `Lunch` type = `Type05` start_at = `2018-07-24T08:50:00` end_at = `2018-07-24T08:55:00` )
-      ( title = `Team meeting` text = `online` type = `Type01` start_at = `2018-07-24T08:55:00` end_at = `2018-07-24T09:00:00` )
-      ( title = `Discussion with clients` type = `Type08` start_at = `2018-07-25T08:00:00` end_at = `2018-07-25T09:00:00` )
-      ( title = `Team meeting` text = `room 5` type = `Type01` start_at = `2018-07-26T08:00:00` end_at = `2018-07-26T08:30:00` )
-      ( title = `Daily standup meeting` type = `Type01` start_at = `2018-07-26T08:30:00` end_at = `2018-07-26T09:00:00` )
-      ( title = `Private meeting` type = `Type03` start_at = `2018-07-27T08:00:00` end_at = `2018-07-27T08:20:00` )
-      ( title = `Team meeting` text = `room 5` type = `Type01` start_at = `2018-07-27T08:20:00` end_at = `2018-07-27T08:40:00` )
-      ( title = `Meeting with the manager` type = `Type03` start_at = `2018-07-27T08:40:00` end_at = `2018-07-27T09:00:00` )
-    ).
+    
+    CLEAR temp1.
+    t_special_dates = temp1.
+    
+    CLEAR temp2.
+    
+    temp3-title = `Meet John Miller`.
+    temp3-type = `Type05`.
+    temp3-start_at = `2018-07-24T08:00:00`.
+    temp3-end_at = `2018-07-24T08:05:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Discussion of the plan`.
+    temp3-type = `Type08`.
+    temp3-start_at = `2018-07-24T08:05:00`.
+    temp3-end_at = `2018-07-24T08:10:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Lunch`.
+    temp3-text = `canteen`.
+    temp3-type = `Type05`.
+    temp3-start_at = `2018-07-24T08:10:00`.
+    temp3-end_at = `2018-07-24T08:15:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `New Product`.
+    temp3-text = `room 105`.
+    temp3-type = `Type01`.
+    temp3-icon = `sap-icon://meeting-room`.
+    temp3-start_at = `2018-07-24T08:15:00`.
+    temp3-end_at = `2018-07-24T08:20:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Team meeting`.
+    temp3-text = `Regular`.
+    temp3-type = `Type01`.
+    temp3-icon = `sap-icon://home`.
+    temp3-start_at = `2018-07-24T08:20:00`.
+    temp3-end_at = `2018-07-24T08:25:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Discussion with clients`.
+    temp3-text = `Online meeting`.
+    temp3-type = `Type08`.
+    temp3-icon = `sap-icon://home`.
+    temp3-start_at = `2018-07-24T08:25:00`.
+    temp3-end_at = `2018-07-24T08:30:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Discussion of the plan`.
+    temp3-text = `Online meeting`.
+    temp3-type = `Type08`.
+    temp3-icon = `sap-icon://home`.
+    temp3-start_at = `2018-07-24T08:30:00`.
+    temp3-end_at = `2018-07-24T08:35:00`.
+    temp3-tentative = abap_true.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Discussion with clients`.
+    temp3-type = `Type08`.
+    temp3-icon = `sap-icon://home`.
+    temp3-start_at = `2018-07-24T08:35:00`.
+    temp3-end_at = `2018-07-24T08:40:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Meeting with the manager`.
+    temp3-type = `Type03`.
+    temp3-start_at = `2018-07-24T08:40:00`.
+    temp3-end_at = `2018-07-24T08:45:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Meeting with the manager`.
+    temp3-type = `Type03`.
+    temp3-start_at = `2018-07-24T08:45:00`.
+    temp3-end_at = `2018-07-24T08:50:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Lunch`.
+    temp3-type = `Type05`.
+    temp3-start_at = `2018-07-24T08:50:00`.
+    temp3-end_at = `2018-07-24T08:55:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Team meeting`.
+    temp3-text = `online`.
+    temp3-type = `Type01`.
+    temp3-start_at = `2018-07-24T08:55:00`.
+    temp3-end_at = `2018-07-24T09:00:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Discussion with clients`.
+    temp3-type = `Type08`.
+    temp3-start_at = `2018-07-25T08:00:00`.
+    temp3-end_at = `2018-07-25T09:00:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Team meeting`.
+    temp3-text = `room 5`.
+    temp3-type = `Type01`.
+    temp3-start_at = `2018-07-26T08:00:00`.
+    temp3-end_at = `2018-07-26T08:30:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Daily standup meeting`.
+    temp3-type = `Type01`.
+    temp3-start_at = `2018-07-26T08:30:00`.
+    temp3-end_at = `2018-07-26T09:00:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Private meeting`.
+    temp3-type = `Type03`.
+    temp3-start_at = `2018-07-27T08:00:00`.
+    temp3-end_at = `2018-07-27T08:20:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Team meeting`.
+    temp3-text = `room 5`.
+    temp3-type = `Type01`.
+    temp3-start_at = `2018-07-27T08:20:00`.
+    temp3-end_at = `2018-07-27T08:40:00`.
+    INSERT temp3 INTO TABLE temp2.
+    temp3-title = `Meeting with the manager`.
+    temp3-type = `Type03`.
+    temp3-start_at = `2018-07-27T08:40:00`.
+    temp3-end_at = `2018-07-27T09:00:00`.
+    INSERT temp3 INTO TABLE temp2.
+    t_appointments = temp2.
 
-    t_legend_items = VALUE #(
-      ( text = `Public holiday` type = `Type07` )
-      ( text = `Team building` type = `Type08` )
-      ( text = `Work from office 1` type = `Type09` )
-      ( text = `Work from office 2` type = `Type14` )
-      ( text = `Home office` type = `Type03` color = `#add8e6` )
-    ).
+    
+    CLEAR temp4.
+    
+    temp5-text = `Public holiday`.
+    temp5-type = `Type07`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-text = `Team building`.
+    temp5-type = `Type08`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-text = `Work from office 1`.
+    temp5-type = `Type09`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-text = `Work from office 2`.
+    temp5-type = `Type14`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-text = `Home office`.
+    temp5-type = `Type03`.
+    temp5-color = `#add8e6`.
+    INSERT temp5 INTO TABLE temp4.
+    t_legend_items = temp4.
 
-    t_legend_appt_items = VALUE #(
-      ( text = `Team Meeting`    type = `Type01` )
-      ( text = `Personal`        type = `Type05` )
-      ( text = `Discussions`     type = `Type08` )
-      ( text = `Out of office`   type = `Type09` )
-      ( text = `Private meeting` type = `Type03` )
-    ).
+    
+    CLEAR temp6.
+    
+    temp7-text = `Team Meeting`.
+    temp7-type = `Type01`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Personal`.
+    temp7-type = `Type05`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Discussions`.
+    temp7-type = `Type08`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Out of office`.
+    temp7-type = `Type09`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-text = `Private meeting`.
+    temp7-type = `Type03`.
+    INSERT temp7 INTO TABLE temp6.
+    t_legend_appt_items = temp6.
 
   ENDMETHOD.
 

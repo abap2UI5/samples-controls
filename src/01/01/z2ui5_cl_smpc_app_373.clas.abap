@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_373 DEFINITION PUBLIC.
         productid TYPE string,
         name      TYPE string,
       END OF ty_s_product.
-    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
     DATA selected_error       TYPE string.
     DATA selected_warning     TYPE string.
@@ -33,10 +33,10 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -45,7 +45,8 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
@@ -153,6 +154,8 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp1 LIKE t_products.
+    DATA temp2 LIKE LINE OF temp1.
 
     " Data of the inline JSON model defined in the original sample controller.
     " The original assigns the very same aProducts array to all four collection
@@ -162,23 +165,58 @@ CLASS z2ui5_cl_smpc_app_373 IMPLEMENTATION.
     selected_success     = `HT-1000`.
     selected_information = `HT-1007`.
 
-    t_products = VALUE #(
-      ( productid = `HT-998`  name = `Notebook Basic 11` )
-      ( productid = `HT-999`  name = `Notebook Basic 13` )
-      ( productid = `HT-1000` name = `Notebook Basic 15` )
-      ( productid = `HT-1001` name = `Notebook Basic 17` )
-      ( productid = `HT-1002` name = `Notebook Basic 18` )
-      ( productid = `HT-1003` name = `Notebook Basic 19` )
-      ( productid = `HT-1007` name = `ITelO Vault` )
-      ( productid = `HT-1008` name = `Notebook Professional 11` )
-      ( productid = `HT-1009` name = `Notebook Professional 13` )
-      ( productid = `HT-1010` name = `Notebook Professional 15` )
-      ( productid = `HT-1011` name = `Notebook Professional 17` )
-      ( productid = `HT-1012` name = `Notebook Professional 19` )
-      ( productid = `HT-1020` name = `ITelO Vault Net` )
-      ( productid = `HT-1021` name = `ITelO Vault SAT` )
-      ( productid = `HT-1022` name = `Comfort Easy` )
-      ( productid = `HT-1023` name = `Comfort Senior` ) ).
+    
+    CLEAR temp1.
+    
+    temp2-productid = `HT-998`.
+    temp2-name = `Notebook Basic 11`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-999`.
+    temp2-name = `Notebook Basic 13`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1000`.
+    temp2-name = `Notebook Basic 15`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1001`.
+    temp2-name = `Notebook Basic 17`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1002`.
+    temp2-name = `Notebook Basic 18`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1003`.
+    temp2-name = `Notebook Basic 19`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1007`.
+    temp2-name = `ITelO Vault`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1008`.
+    temp2-name = `Notebook Professional 11`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1009`.
+    temp2-name = `Notebook Professional 13`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1010`.
+    temp2-name = `Notebook Professional 15`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1011`.
+    temp2-name = `Notebook Professional 17`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1012`.
+    temp2-name = `Notebook Professional 19`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1020`.
+    temp2-name = `ITelO Vault Net`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1021`.
+    temp2-name = `ITelO Vault SAT`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1022`.
+    temp2-name = `Comfort Easy`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1023`.
+    temp2-name = `Comfort Senior`.
+    INSERT temp2 INTO TABLE temp1.
+    t_products = temp1.
 
   ENDMETHOD.
 

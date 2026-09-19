@@ -14,7 +14,7 @@ CLASS z2ui5_cl_smpc_app_560 DEFINITION PUBLIC.
         price         TYPE p LENGTH 8 DECIMALS 2,
         currencycode  TYPE string,
       END OF ty_s_product.
-    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    TYPES ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
     DATA productcollection    TYPE ty_t_product.
     DATA productstotalprice   TYPE p LENGTH 8 DECIMALS 2.
@@ -77,12 +77,12 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -91,8 +91,33 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp2 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp3 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp4 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp5 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp6 TYPE z2ui5_if_client=>ty_s_event_control.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
+    
+    CLEAR temp2.
+    temp2-check_queue_last = abap_true.
+    
+    CLEAR temp3.
+    temp3-check_queue_last = abap_true.
+    
+    CLEAR temp4.
+    temp4-check_queue_last = abap_true.
+    
+    CLEAR temp5.
+    temp5-check_queue_last = abap_true.
+    
+    CLEAR temp6.
+    temp6-check_queue_last = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.m`
@@ -229,7 +254,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( name )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CREDIT_CARD` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CREDIT_CARD` s_ctrl = temp1 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Card number`
@@ -318,7 +343,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( firstname )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CASH_ON_DELIVERY` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CASH_ON_DELIVERY` s_ctrl = temp2 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Last Name`
@@ -362,28 +387,28 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( address )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = temp3 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `City`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( city )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = temp4 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Zip Code`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( zipcode )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = temp5 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Country`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( country )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = temp6 )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Note`
@@ -711,12 +736,24 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA del_title TYPE string.
+          DATA temp2 TYPE string_table.
+          DATA temp4 TYPE string_table.
+          DATA temp6 TYPE string_table.
+        DATA temp1 TYPE xsdboolean.
+        DATA temp3 TYPE xsdboolean.
+        DATA temp5 TYPE xsdboolean.
+        DATA temp8 TYPE string_table.
+        DATA temp10 TYPE string_table.
+        DATA temp12 TYPE string_table.
+          DATA temp14 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `DELETE_ITEM`.
         " handleDelete removes the row by its title, but never the last one
-        DATA(del_title) = client->get_event_arg( ).
+        
+        del_title = client->get_event_arg( ).
         IF lines( productcollection ) > 1.
           DELETE productcollection WHERE name = del_title.
           total_calc( ).
@@ -734,9 +771,13 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
         " setDiscardableProperty: only ask once the wizard is past the step
         IF payment_passed = abap_true.
           pending_discard = `PaymentTypeStep`.
+          
+          CLEAR temp2.
+          INSERT `YES` INTO TABLE temp2.
+          INSERT `NO` INTO TABLE temp2.
           client->message_box_display( text    = `Are you sure you want to change the payment type ? This will discard your progress.`
                                        type    = `warning`
-                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       actions = temp2
                                        onclose = `DISCARD_DECIDE` ).
         ELSE.
           prev_payment = selectedpayment.
@@ -746,9 +787,13 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
       WHEN `SET_DIFFERENT_DELIVERY`.
         IF billing_passed = abap_true.
           pending_discard = `BillingStep`.
+          
+          CLEAR temp4.
+          INSERT `YES` INTO TABLE temp4.
+          INSERT `NO` INTO TABLE temp4.
           client->message_box_display( text    = `Are you sure you want to change the delivery address ? This will discard your progress`
                                        type    = `warning`
-                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       actions = temp4
                                        onclose = `DISCARD_DECIDE` ).
         ELSE.
           prev_diff_delivery = differentdeliveryaddress.
@@ -757,8 +802,13 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
       WHEN `DISCARD_DECIDE`.
         IF client->get_event_arg( ) = `YES`.
+          
+          CLEAR temp6.
+          INSERT `ShoppingCartWizard` INTO TABLE temp6.
+          INSERT `discardProgress` INTO TABLE temp6.
+          INSERT pending_discard INTO TABLE temp6.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `ShoppingCartWizard` ) ( `discardProgress` ) ( pending_discard ) ) ).
+                                    t_arg = temp6 ).
           IF pending_discard = `PaymentTypeStep`.
             prev_payment   = selectedpayment.
             payment_passed = abap_false.
@@ -777,11 +827,15 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
       WHEN `CHECK_CREDIT_CARD`.
         payment_passed       = abap_true.
-        creditcard_validated = xsdbool( strlen( name ) >= 3 ).
+        
+        temp1 = boolc( strlen( name ) >= 3 ).
+        creditcard_validated = temp1.
 
       WHEN `CHECK_CASH_ON_DELIVERY`.
         payment_passed = abap_true.
-        cod_validated  = xsdbool( strlen( firstname ) >= 3 ).
+        
+        temp3 = boolc( strlen( firstname ) >= 3 ).
+        cod_validated  = temp3.
 
       WHEN `PAYMENT_PASSED`.
         payment_passed = abap_true.
@@ -791,18 +845,22 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
         " button can ever appear, and only this answer can make it appear
         branch_delivery( ).
         payment_passed    = abap_true.
-        billing_validated = xsdbool( strlen( address ) >= 3
-                                 AND strlen( city ) >= 3
-                                 AND strlen( zipcode ) >= 3
-                                 AND strlen( country ) >= 3 ).
+        
+        temp5 = boolc( strlen( address ) >= 3 AND strlen( city ) >= 3 AND strlen( zipcode ) >= 3 AND strlen( country ) >= 3 ).
+        billing_validated = temp5.
 
       WHEN `BILLING_PASSED`.
         billing_passed = abap_true.
 
       WHEN `WIZARD_COMPLETE`.
         " completedHandler: NavContainer to the review page
+        
+        CLEAR temp8.
+        INSERT `navContainer` INTO TABLE temp8.
+        INSERT `to` INTO TABLE temp8.
+        INSERT `wizardBranchingReviewPage` INTO TABLE temp8.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `navContainer` ) ( `to` ) ( `wizardBranchingReviewPage` ) ) ).
+                                  t_arg = temp8 ).
 
       WHEN `EDIT_LIST`.
         nav_back_to_step( `ContentsStep` ).
@@ -823,22 +881,35 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
         nav_back_to_step( `DeliveryTypeStep` ).
 
       WHEN `WIZARD_CANCEL`.
+        
+        CLEAR temp10.
+        INSERT `YES` INTO TABLE temp10.
+        INSERT `NO` INTO TABLE temp10.
         client->message_box_display( text    = `Are you sure you want to cancel your purchase?`
                                      type    = `warning`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp10
                                      onclose = `WIZARD_CLOSED` ).
 
       WHEN `WIZARD_SUBMIT`.
+        
+        CLEAR temp12.
+        INSERT `YES` INTO TABLE temp12.
+        INSERT `NO` INTO TABLE temp12.
         client->message_box_display( text    = `Are you sure you want to submit your report?`
                                      type    = `confirm`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp12
                                      onclose = `WIZARD_CLOSED` ).
 
       WHEN `WIZARD_CLOSED`.
         " _handleMessageBoxOpen: YES discards the progress and goes back to the list
         IF client->get_event_arg( ) = `YES`.
+          
+          CLEAR temp14.
+          INSERT `ShoppingCartWizard` INTO TABLE temp14.
+          INSERT `discardProgress` INTO TABLE temp14.
+          INSERT `ContentsStep` INTO TABLE temp14.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `ShoppingCartWizard` ) ( `discardProgress` ) ( `ContentsStep` ) ) ).
+                                    t_arg = temp14 ).
           payment_passed = abap_false.
           billing_passed = abap_false.
           nav_back_to_step( `ContentsStep` ).
@@ -857,12 +928,26 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
     " WizardStep._complete fires complete and then calls
     " Wizard._handleNextButtonPress in the SAME tick, so a nextStep that only
     " arrives with the complete round trip is one press too late.
-    DATA(next) = SWITCH string( selectedpayment
-                                WHEN `Credit Card`   THEN `CreditCardStep`
-                                WHEN `Bank Transfer` THEN `BankAccountStep`
-                                ELSE `CashOnDeliveryStep` ).
+    DATA temp16 TYPE string.
+    DATA next LIKE temp16.
+    DATA temp17 TYPE string_table.
+    CASE selectedpayment.
+      WHEN `Credit Card`.
+        temp16 = `CreditCardStep`.
+      WHEN `Bank Transfer`.
+        temp16 = `BankAccountStep`.
+      WHEN OTHERS.
+        temp16 = `CashOnDeliveryStep`.
+    ENDCASE.
+    
+    next = temp16.
+    
+    CLEAR temp17.
+    INSERT `PaymentTypeStep` INTO TABLE temp17.
+    INSERT `setNextStep` INTO TABLE temp17.
+    INSERT next INTO TABLE temp17.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `PaymentTypeStep` ) ( `setNextStep` ) ( next ) ) ).
+                              t_arg = temp17 ).
 
   ENDMETHOD.
 
@@ -873,11 +958,23 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
     " declares NO nextStep, so after a rebuild it has no branch at all until this
     " runs. Also sent on the step's activate wire and on
     " every change of the checkbox - for the same reason as branch_payment
-    DATA(next) = COND string( WHEN differentdeliveryaddress = abap_true
-                              THEN `DeliveryAddressStep`
-                              ELSE `DeliveryTypeStep` ).
+    DATA temp19 TYPE string.
+    DATA next LIKE temp19.
+    DATA temp20 TYPE string_table.
+    IF differentdeliveryaddress = abap_true.
+      temp19 = `DeliveryAddressStep`.
+    ELSE.
+      temp19 = `DeliveryTypeStep`.
+    ENDIF.
+    
+    next = temp19.
+    
+    CLEAR temp20.
+    INSERT `BillingStep` INTO TABLE temp20.
+    INSERT `setNextStep` INTO TABLE temp20.
+    INSERT next INTO TABLE temp20.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `BillingStep` ) ( `setNextStep` ) ( next ) ) ).
+                              t_arg = temp20 ).
 
   ENDMETHOD.
 
@@ -885,10 +982,21 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
   METHOD nav_back_to_step.
 
     " _navBackToStep: back to the DynamicPage holding the wizard, then goToStep
+    DATA temp22 TYPE string_table.
+    DATA temp24 TYPE string_table.
+    CLEAR temp22.
+    INSERT `navContainer` INTO TABLE temp22.
+    INSERT `to` INTO TABLE temp22.
+    INSERT `dynamicPage` INTO TABLE temp22.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `navContainer` ) ( `to` ) ( `dynamicPage` ) ) ).
+                              t_arg = temp22 ).
+    
+    CLEAR temp24.
+    INSERT `ShoppingCartWizard` INTO TABLE temp24.
+    INSERT `goToStep` INTO TABLE temp24.
+    INSERT step_id INTO TABLE temp24.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `ShoppingCartWizard` ) ( `goToStep` ) ( step_id ) ) ).
+                              t_arg = temp24 ).
 
   ENDMETHOD.
 
@@ -900,8 +1008,12 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
     " fine); a REDUCE #( ) is left standing and reaches the v702 gate as a
     " parser_error. p LENGTH 8 DECIMALS 2 cannot be named inline, so the sum
     " is accumulated here instead
-    productstotalprice = VALUE #( ).
-    LOOP AT productcollection INTO DATA(row).
+    DATA temp26 LIKE productstotalprice.
+    DATA row LIKE LINE OF productcollection.
+    CLEAR temp26.
+    productstotalprice = temp26.
+    
+    LOOP AT productcollection INTO row.
       productstotalprice = productstotalprice + row-price.
     ENDLOOP.
 
@@ -912,27 +1024,41 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
 
     " attachRequestCompleted keeps the FIRST FIVE rows of the mock collection
     " and seeds the payment / delivery defaults
-    productcollection = VALUE #(
-      ( name = `Notebook Basic 15`
-        description = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1000.jpg`
-        price = '956.00' currencycode = `EUR` )
-      ( name = `Notebook Basic 17`
-        description = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1001.jpg`
-        price = '1249.00' currencycode = `EUR` )
-      ( name = `Notebook Basic 18`
-        description = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg`
-        price = '1570.00' currencycode = `EUR` )
-      ( name = `Notebook Basic 19`
-        description = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1003.jpg`
-        price = '1650.00' currencycode = `EUR` )
-      ( name = `ITelO Vault`
-        description = `Digital Organizer with State-of-the-Art Storage Encryption`
-        productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1007.jpg`
-        price = '299.00' currencycode = `EUR` ) ).
+    DATA temp27 TYPE z2ui5_cl_smpc_app_560=>ty_t_product.
+    DATA temp28 LIKE LINE OF temp27.
+    CLEAR temp27.
+    
+    temp28-name = `Notebook Basic 15`.
+    temp28-description = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    temp28-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1000.jpg`.
+    temp28-price = '956.00'.
+    temp28-currencycode = `EUR`.
+    INSERT temp28 INTO TABLE temp27.
+    temp28-name = `Notebook Basic 17`.
+    temp28-description = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    temp28-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1001.jpg`.
+    temp28-price = '1249.00'.
+    temp28-currencycode = `EUR`.
+    INSERT temp28 INTO TABLE temp27.
+    temp28-name = `Notebook Basic 18`.
+    temp28-description = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    temp28-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg`.
+    temp28-price = '1570.00'.
+    temp28-currencycode = `EUR`.
+    INSERT temp28 INTO TABLE temp27.
+    temp28-name = `Notebook Basic 19`.
+    temp28-description = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    temp28-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1003.jpg`.
+    temp28-price = '1650.00'.
+    temp28-currencycode = `EUR`.
+    INSERT temp28 INTO TABLE temp27.
+    temp28-name = `ITelO Vault`.
+    temp28-description = `Digital Organizer with State-of-the-Art Storage Encryption`.
+    temp28-productpicurl = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/HT-1007.jpg`.
+    temp28-price = '299.00'.
+    temp28-currencycode = `EUR`.
+    INSERT temp28 INTO TABLE temp27.
+    productcollection = temp27.
 
     selectedpayment          = `Credit Card`.
     selecteddeliverymethod   = `Standard Delivery`.

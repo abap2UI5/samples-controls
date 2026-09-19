@@ -24,9 +24,9 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -35,8 +35,13 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -54,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
                     )->tag( `Input`
                         )->a( n = `id`         v = `inputArtistName`
                         )->a( n = `value`      v = client->_bind( currentvalue )
-                        )->a( n = `liveChange` v = client->_event( val = `LIVE_CHANGE` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                        )->a( n = `liveChange` v = client->_event( val = `LIVE_CHANGE` s_ctrl = temp1 )
                     )->tag( `Button`
                         )->a( n = `press` v = client->_event( `REBIND` )
                         )->a( n = `text`  v = `Bind Input in 3 seconds` ).
@@ -65,13 +70,18 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp2 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `REBIND`.
         " original fnRebind: after ~3s (the OData dataReceived) late-bind the input
+        
+        CLEAR temp2.
+        INSERT `REBIND_DONE` INTO TABLE temp2.
+        INSERT `3000` INTO TABLE temp2.
         client->follow_up_action( val   = client->cs_event-start_timer
-                                  t_arg = VALUE #( ( `REBIND_DONE` ) ( `3000` ) ) ).
+                                  t_arg = temp2 ).
 
       WHEN `REBIND_DONE`.
         " original dataReceived: if the input is still untouched, bind it to Employees(1)/FirstName

@@ -25,12 +25,12 @@ CLASS z2ui5_cl_smpc_app_280 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       get_value = ` `.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -39,8 +39,13 @@ CLASS z2ui5_cl_smpc_app_280 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -61,7 +66,7 @@ CLASS z2ui5_cl_smpc_app_280 IMPLEMENTATION.
                 )->a( n = `id`              v = `TypeHere`
                 )->a( n = `value`           v = client->_bind( inputvalue )
                 )->a( n = `valueLiveUpdate` v = client->_bind( valueliveupdate )
-                )->a( n = `liveChange`      v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/value}` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                )->a( n = `liveChange`      v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/value}` s_ctrl = temp1 )
 
             )->tag( `Label`
                 )->a( n = `text` v = `input.getValue()`
