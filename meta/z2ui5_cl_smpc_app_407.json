@@ -21,7 +21,7 @@
     },
     {
       "type": "NOTE",
-      "what": "Thin frontend: onLiveChange's _executeSearch and setHighlightedText become one LIVE_CHANGE round-trip that filters the tables in ABAP and updates the model - NavigationList.highlightedText is a bindable property, so it shares the search field's two-way bound value instead of the setter. onSearch's announceSearchMatchCount stays a control method (no bindable equivalent) and is invoked via follow_up_action( control_by_id, navigationList, announceSearchMatchCount, <count> ) with the count computed in ABAP like the original's recursive title-only _countItems. abap2UI5 serializes round-trips, so very fast typing can skip intermediate filter states (they converge on the next pause); the search field's value is two-way bound so the filter state survives the round-trip."
+      "what": "Thin frontend: onLiveChange's _executeSearch and setHighlightedText become one LIVE_CHANGE round-trip that filters the tables in ABAP and updates the model - NavigationList.highlightedText is a bindable property, so it shares the search field's two-way bound value instead of the setter. onSearch's announceSearchMatchCount stays a control method (no bindable equivalent) and is invoked via follow_up_action( control_by_id, navigationList, announceSearchMatchCount, <count> ) with the count computed in ABAP like the original's recursive title-only _countItems. abap2UI5 serializes round-trips, so very fast typing can skip intermediate filter states; the wire carries s_ctrl-check_queue_last (since 2026-09-19), so the LAST keystroke is never dropped and the filter ends on the typed value, and the search field's value is two-way bound so the filter state survives the round-trip."
     },
     {
       "type": "NOTE",

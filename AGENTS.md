@@ -1354,16 +1354,21 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   accepts the default — there, the checkout could not leave the payment step at
   all. Seed the default in `model_init( )`, the way the original's own model
   does (`SelectedPayment: "Credit Card"`).
-- **A per-keystroke round-trip is LOSSY, not queued.** abap2UI5 serializes
-  round-trips: an event fired while one is in flight is **dropped**, so a
-  `liveChange`/`liveSearch` wire that round-trips shows the value of the last
-  *completed* trip, skipping intermediate ones under fast typing (measured on
-  app 280 — typing `abc` with no delay left the bound field at `a` while the
-  TextArea held `abc`; it converges as soon as typing pauses). Prefer a two-way
-  binding or an expression binding whenever the sample's point allows it; when
-  the round-trip is required, say so in the sidecar and make any e2e
-  interaction **type with a delay** — a no-delay `pressSequentially` asserts a
-  value the wire never promised.
+- **A per-keystroke round-trip is serialized — register the wire with
+  `check_queue_last`.** abap2UI5 runs one round-trip at a time, and an
+  ordinary wire DROPS an event fired while one is in flight, so a
+  `liveChange`/`liveSearch`/`suggest` wire that round-trips showed the value
+  of the last *completed* trip (measured on app 280 — typing `abc` with no
+  delay left the bound field at `a` while the TextArea held `abc`). Since
+  2026-09-19 every such wire in the corpus carries
+  `s_ctrl = VALUE #( check_queue_last = abap_true )` (abap2UI5 PR #2739, in
+  the pin): the LAST event fired during a flight is kept and dispatched after
+  the response, order kept, so the backend ends on the typed value.
+  Intermediate values can still be skipped under fast typing — prefer a
+  two-way binding or an expression binding whenever the sample's point allows
+  it; when the round-trip is required, set the flag, and an e2e interaction
+  may then type with no delay and assert the final value. The overlay half
+  of the pair, `check_no_busy`, is not in the pin yet.
 - **ABAP Doc (`"!`) is HTML** — no raw `<tag>` (e.g. `<mvc:View>`); see §8.
 - **Literal braces in attribute values are read as a BINDING by the XMLView
   parser** — CSS/JS braces inside a `core:HTML` `content` (or any literal

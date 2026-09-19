@@ -20,7 +20,7 @@
     },
     {
       "type": "NOTE",
-      "what": "behavioural limit of the liveChange round-trip, measured 2026-08-02 in the e2e harness: abap2UI5 serializes round-trips, so keystrokes typed while one is in flight are DROPPED, not queued - typing abc with no delay left GET_VALUE at a (the value of the last COMPLETED round-trip), while the TextArea itself held abc. The original updates its Text client-side on every keystroke, so under fast typing the port lags and can skip intermediate values; it converges as soon as typing pauses. Inherent to moving the handler into the backend, not a wiring defect - the e2e interaction therefore types with a delay."
+      "what": "behavioural limit of the liveChange round-trip, measured 2026-08-02 in the e2e harness: abap2UI5 serializes round-trips, and until 2026-09-19 a keystroke typed while one was in flight was DROPPED, not queued - typing abc with no delay left GET_VALUE at a (the value of the last COMPLETED round-trip), while the TextArea itself held abc; the e2e interaction therefore typed with a delay. CLOSED 2026-09-19: the wire carries s_ctrl-check_queue_last (abap2UI5 #2739, in the pin since #211), which keeps the LAST event fired during a flight and dispatches it once the response has landed - one round-trip at a time, order kept, the backend ends on the TextArea's current value. Intermediate values can still be skipped under fast typing (the original updates its Text client-side on every keystroke); the last one is not lost, and the interaction module types with no delay."
     }
   ]
 }

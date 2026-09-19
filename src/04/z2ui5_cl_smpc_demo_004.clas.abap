@@ -1594,10 +1594,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD json_escape.
 
-    " the two characters a JSON string cannot carry raw. The backslash first, or
-    " it would escape the escapes added after it
-    result = replace( val = val sub = `\` with = `\\` occ = 0 ).
-    result = replace( val = result sub = `"` with = `\"` occ = 0 ).
+    " the characters a JSON string cannot carry raw: the two delimiters and
+    " the three line/tab controls a text field can hold (same shape as
+    " samples-stack app 489). The backslash first, or it would escape the
+    " escapes added after it
+    result = replace( val = val    sub = `\`  with = `\\` occ = 0 ).
+    result = replace( val = result sub = |\n| with = `\n`  occ = 0 ).
+    result = replace( val = result sub = |\r| with = `\r`  occ = 0 ).
+    result = replace( val = result sub = |\t| with = `\t`  occ = 0 ).
+    result = replace( val = result sub = `"`  with = `\"`  occ = 0 ).
 
   ENDMETHOD.
 
