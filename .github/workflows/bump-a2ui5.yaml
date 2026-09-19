@@ -33,6 +33,11 @@ on:
     - cron: '11 5 * * 2'   # Tuesdays 05:11 UTC, off the full-hour load spikes
   workflow_dispatch:
 
+# one run at a time: a manual dispatch that overlaps the weekly cron would
+# open two pull requests for the same bump
+concurrency:
+  group: bump-a2ui5
+
 # No `issues: write`: see the header — the report is the PR and the step
 # summary, so this workflow never touches the (disabled) issue tracker.
 permissions:
@@ -50,6 +55,7 @@ jobs:
     - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: '22'
+        cache: 'npm'
 
     # The abaplint configs resolve the framework's MAIN branch, not this SHA -
     # abaplint's "branch" key feeds `git clone --branch` and takes a tag or a

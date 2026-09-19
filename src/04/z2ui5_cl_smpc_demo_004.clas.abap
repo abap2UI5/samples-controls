@@ -864,11 +864,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                         )->a( n = `title` v = `Quantity`
                         )->a( n = `text`  v = `{QUANTITY}`
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Save for Later`
                         )->a( n = `press`  v = client->_event( val = `SAVE_LATER` arg = `${PRODUCTID}` )
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Remove`
                         )->a( n = `press`  v = client->_event( val = `CART_REMOVE` arg = `${PRODUCTID}` ) ).
 
@@ -887,7 +887,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
-                        )->a( n = `active` v = `true`
+                        )->a( n = `active` b = abap_true
                         )->a( n = `text`   v = `Move to Cart`
                         )->a( n = `press`  v = client->_event( val = `MOVE_TO_CART` arg = `${PRODUCTID}` ) ).
 

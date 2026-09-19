@@ -111,14 +111,14 @@ CLASS z2ui5_cl_smpc_sapui5_012 IMPLEMENTATION.
                                 )->a( n = `visible` b = client->check_app_prev_stack( )
 
                             )->ele( n = `FilterBar` ns = `fb`
-                                )->a( n = `useToolbar` v = `false`
+                                )->a( n = `useToolbar` b = abap_false
 
                                 )->ele( n = `filterGroupItems` ns = `fb`
                                     )->ele( n = `FilterGroupItem` ns = `fb`
                                         )->a( n = `name`               v = `VizFrameType`
                                         )->a( n = `label`              v = `VizFrame type`
                                         )->a( n = `groupName`          v = |GroupVizFrameType|
-                                        )->a( n = `visibleInFilterBar` v = `true`
+                                        )->a( n = `visibleInFilterBar` b = abap_true
 
                                         )->ele( n = `control` ns = `fb`
                                             )->ele( `ComboBox`

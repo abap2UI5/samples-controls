@@ -32,6 +32,7 @@ jobs:
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: '22'
+        cache: 'npm'
 
     - name: Shallow clone OpenUI5 (sample universe)
       run: git clone --depth 1 https://github.com/SAP/openui5.git openui5

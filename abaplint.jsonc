@@ -253,9 +253,9 @@
     // original demo kit sample, where scripts/data-fidelity.mjs compares
     // them against that original. Changing them to ASCII would fail that
     // gate. app_185 is the non-breaking-space constant the sample is about.
-    // The shared mock provider holds the three `x`-as-multiplication-sign
-    // descriptions of products.json that apps 558/572/575/578 carried until
-    // they projected the collection from it (2026-09-12).
+    // Apps 558/572/575/578 carry the three `x`-as-multiplication-sign
+    // descriptions of products.json inline (a shared mock provider held them
+    // for one day, 2026-09-12, and was reverted for standalone snippets).
     // z2ui5_cl_smpc_demo_* is the samples-controls demo-app package (src/04):
     // a rebuilt demo app carries the demo kit app's own mock data, and that
     // data has umlauts and accents in it (Schwarzwaelder Kirschtorte, Forets

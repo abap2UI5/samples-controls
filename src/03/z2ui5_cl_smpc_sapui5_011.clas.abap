@@ -13,10 +13,14 @@ CLASS z2ui5_cl_smpc_sapui5_011 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    DATA mv_scan_input TYPE string.
-    DATA mv_scan_type TYPE string.
+    DATA scan_input TYPE string.
+    DATA scan_type  TYPE string.
 
   PROTECTED SECTION.
+    DATA client TYPE REF TO z2ui5_if_client.
+
+    METHODS view_display.
+
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -24,14 +28,21 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
 
-    IF client->get_event( ) = `ON_SCAN_SUCCESS`.
-      client->message_box_display( `Scan finished!` ).
-      DATA(t_arg) = client->get( )-t_event_arg.
-      mv_scan_input = t_arg[ 1 ].
-      mv_scan_type  = t_arg[ 2 ].
-      "implement further processing here...
-      "...
+    me->client = client.
+    IF client->check_on_navigated( ).
+      view_display( ).
+    ELSEIF client->check_on_event( `ON_SCAN_SUCCESS` ).
+      " get_event_arg( n ) answers empty for an argument the frontend did
+      " not send; a table expression on t_event_arg would dump instead
+      scan_input = client->get_event_arg( ).
+      scan_type  = client->get_event_arg( 2 ).
+      client->message_toast_display( |Scanned { scan_input } ({ scan_type })| ).
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD view_display.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
@@ -45,7 +56,7 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
         )->ele( `Shell`
             )->ele( `Page`
-                )->a( n = `title`          v = `abap2UI5`
+                )->a( n = `title`          v = `abap2UI5 - sap.ndc - BarcodeScannerButton`
                 )->a( n = `navButtonPress` v = client->_event_nav_app_leave( )
                 )->a( n = `showNavButton`  b = client->check_app_prev_stack( )
                 )->a( n = `showHeader`     b = xsdbool( client->get( )-check_launchpad_active = abap_false )
@@ -56,13 +67,13 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
                     )->ele( n = `content` ns = `form`
                         )->tag( `Label`
-                            )->a( n = `text` v = `mv_scan_input`
+                            )->a( n = `text` v = `Scanned text`
                         )->tag( `Input`
-                            )->a( n = `value` v = client->_bind( mv_scan_input )
+                            )->a( n = `value` v = client->_bind( scan_input )
                         )->tag( `Label`
-                            )->a( n = `text` v = `mv_scan_type`
+                            )->a( n = `text` v = `Format`
                         )->tag( `Input`
-                            )->a( n = `value` v = client->_bind( mv_scan_type )
+                            )->a( n = `value` v = client->_bind( scan_type )
                         )->tag( `Label`
                             )->a( n = `text` v = `scanner`
                         )->tag( n = `BarcodeScannerButton` ns = `ndc`

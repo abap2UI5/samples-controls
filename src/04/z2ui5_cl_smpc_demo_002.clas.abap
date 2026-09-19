@@ -111,6 +111,11 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
     DATA check_fullscreen   TYPE abap_bool.
 
   PROTECTED SECTION.
+    " the grouping the LIST BINDING carries right now - bookkeeping the view
+    " never binds, so it is no model field; PROTECTED rather than PRIVATE
+    " because the draft serializer reaches every section but the private one
+    DATA group_live TYPE string.
+
     TYPES:
       BEGIN OF ty_s_order,
         orderid      TYPE i,
@@ -182,10 +187,6 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
       RETURNING
         VALUE(result) TYPE string.
     METHODS model_init.
-    " the grouping the LIST BINDING carries right now - bookkeeping, not
-    " state the view shows, so it stays out of the model (only PUBLIC
-    " attributes are serialized; PRIVATE is unreachable for the runtime)
-    DATA group_live TYPE string.
 
   PRIVATE SECTION.
 ENDCLASS.
