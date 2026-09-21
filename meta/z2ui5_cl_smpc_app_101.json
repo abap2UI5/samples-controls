@@ -17,6 +17,10 @@
     },
     {
       "type": "NOTE",
+      "what": "The two liveChange wires round-trip per keystroke, which the original does NOT: additionalInfoValidation is a plain controller function there, so typing in the demo kit sample is instant and raises nothing. The round-trip is unavoidable while the check lives in ABAP; the OVERLAY was not. The wires carry s_ctrl-check_queue_last (so no keystroke is dropped) and, since the pin bump to ad0a2dd2, s_ctrl-check_no_busy (abap2UI5 #2759) - the round-trip and the busy STATE are unchanged, only the full-screen busy overlay stays down. Without the second flag the FIRST trip raises the indicator after the usual delay, but every keystroke landing on a trip already in flight raises it with NO delay, so from the second character on the overlay sat over the very field being typed into - which is also what forced the waitForIdle before the first click in meta/interactions/z2ui5_cl_smpc_app_101.mjs."
+    },
+    {
+      "type": "NOTE",
       "what": "The step-1 SegmentedButton gets item keys (Mobile/Desktop/Other) and a two-way selectedKey binding so the chosen product type reaches the model directly; the original reads evt.getParameters().item.getText() in setProductTypeFromSegmented. selectionChange is still wired. The PricingStep activate/complete handlers (which only toggle the unused navApiEnabled flag) are wired for fidelity but do nothing."
     },
     {

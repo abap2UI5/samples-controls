@@ -148,13 +148,32 @@ function main() {
   // framework had shipped the shim for it in #2707 and this build was simply
   // not running it.
   //
-  // Guarded: a pin older than #2707 has no such script, and there the build
-  // is what it always was.
+  // The script is ABSENT at two opposite kinds of pin, and saying the same
+  // thing at both is how #181 happens again: a pin older than #2707 never had
+  // it and really is unpatched, while a pin from #2728 on does not need it -
+  // the framework moved @abaplint/runtime 2.13.64 -> 2.13.83 and DELETED the
+  // shim, because both of its blocks are upstream there (block 1 as
+  // abaplint/transpiler#1822, block 2 as larshp's own 4b2a506 in 2.13.77, the
+  // same FRIENDS_ACCESS_INSTANCE fallback down to the caveat in its comment).
+  // So the framework's own runtime pin is the discriminator, not the file.
   const runtimeShim = path.join(A2, 'node/setup/patch-abaplint-runtime-assign.mjs');
   if (fs.existsSync(runtimeShim)) {
     execSync(`node ${runtimeShim}`, { stdio: 'inherit' });
   } else {
-    console.log(`e2e-build: no patch-abaplint-runtime-assign.mjs at this pin - a serializable class with a PRIVATE attribute will 500 on its first roundtrip`);
+    const RT_FIXED = [2, 13, 83];   // the release carrying BOTH blocks upstream
+    const raw = JSON.parse(fs.readFileSync(path.join(A2, 'package.json'), 'utf8'));
+    const spec = { ...raw.dependencies, ...raw.devDependencies }['@abaplint/runtime'] || '';
+    const got = (spec.match(/(\d+)\.(\d+)\.(\d+)/) || []).slice(1).map(Number);
+    // >= RT_FIXED, first differing field decides; an unreadable spec counts as older
+    const upstream = got.length === 3
+      && (got[0] !== RT_FIXED[0] ? got[0] > RT_FIXED[0]
+        : got[1] !== RT_FIXED[1] ? got[1] > RT_FIXED[1]
+        : got[2] >= RT_FIXED[2]);
+    if (upstream) {
+      console.log(`e2e-build: no runtime ASSIGN shim at this pin, and none needed - @abaplint/runtime ${spec} carries both fixes upstream (framework #2728 deleted the script)`);
+    } else {
+      console.log(`e2e-build: no patch-abaplint-runtime-assign.mjs at this pin and @abaplint/runtime ${spec || '(unread)'} is older than ${RT_FIXED.join('.')} - a serializable class with a PRIVATE attribute will 500 on its first roundtrip`);
+    }
   }
   console.log('e2e-build: downporting the copy to v702 …');
   for (let i = 0; i < 3; i++) fix(`npx abaplint e2e-downport.jsonc --fix`);

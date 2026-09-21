@@ -229,7 +229,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( name )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CREDIT_CARD` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CREDIT_CARD` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Card number`
@@ -318,7 +318,7 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( firstname )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CASH_ON_DELIVERY` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_CASH_ON_DELIVERY` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text` v = `Last Name`
@@ -362,28 +362,28 @@ CLASS z2ui5_cl_smpc_app_560 IMPLEMENTATION.
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( address )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `City`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( city )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Zip Code`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( zipcode )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Country`
                                         )->a( n = `required` v = `true`
                                     )->tag( `Input`
                                         )->a( n = `value`           v = client->_bind( country )
-                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                        )->a( n = `liveChange`      v = client->_event( val = `CHECK_BILLING` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                         )->a( n = `valueLiveUpdate` v = `true`
                                     )->tag( `Label`
                                         )->a( n = `text`     v = `Note`
