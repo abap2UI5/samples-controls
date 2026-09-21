@@ -229,3 +229,40 @@ export async function waitForIdle(page, { quiet = 400, timeout = 30000 } = {}) {
     throw new Error(`the app never went quiet for ${quiet}ms - it is still answering roundtrips of its own`);
   });
 }
+
+/*
+ * The busy-overlay half of a per-keystroke wire.
+ *
+ * `check_queue_last` stops keystrokes being lost; `check_no_busy` stops the
+ * full-screen busy overlay being raised for the wire. Only the second one is
+ * visible to a user, and it is the one no assertion could see: the port still
+ * ends on the typed value either way, so a module that checks the VALUE is
+ * green with the overlay flashing over the field on every keystroke from the
+ * second character on (the first trip raises the indicator after the usual
+ * delay; a keystroke landing on a trip already in flight raises it with NO
+ * delay - see z2ui5_cl_ui5f_view1_js `if (!noBusy) BusyIndicator.show(0)`).
+ * Reported from app 101 by a user typing into the Wizard's Name field.
+ *
+ * Counting calls to BusyIndicator.show( ) rather than polling for the DOM
+ * node: the frontend calls show( ) or it does not, so the count is exact,
+ * while a poll between two keystrokes can miss an overlay that came and went.
+ * The patch lives on the module, which a round-trip does not reload, so it
+ * survives the view rebuilds between keystrokes.
+ */
+export async function watchBusyOverlay(page) {
+  await page.evaluate(() => {
+    const BI = sap.ui.require('sap/ui/core/BusyIndicator');
+    if (!BI) throw new Error('sap/ui/core/BusyIndicator is not loaded - cannot watch the overlay');
+    window.__a2ui5BusyShows = 0;
+    if (!BI.__a2ui5Watched) {
+      BI.__a2ui5Watched = true;
+      const orig = BI.show.bind(BI);
+      BI.show = (delay) => { window.__a2ui5BusyShows += 1; return orig(delay); };
+    }
+  });
+}
+
+/* How often the GLOBAL busy indicator was raised since watchBusyOverlay( ). */
+export async function busyOverlayCount(page) {
+  return page.evaluate(() => window.__a2ui5BusyShows ?? -1);
+}

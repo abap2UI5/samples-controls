@@ -54,7 +54,7 @@ CLASS z2ui5_cl_smpc_app_102 IMPLEMENTATION.
                     )->tag( `Input`
                         )->a( n = `id`         v = `inputArtistName`
                         )->a( n = `value`      v = client->_bind( currentvalue )
-                        )->a( n = `liveChange` v = client->_event( val = `LIVE_CHANGE` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                        )->a( n = `liveChange` v = client->_event( val = `LIVE_CHANGE` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                     )->tag( `Button`
                         )->a( n = `press` v = client->_event( `REBIND` )
                         )->a( n = `text`  v = `Bind Input in 3 seconds` ).
