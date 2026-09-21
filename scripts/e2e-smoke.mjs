@@ -226,6 +226,13 @@ function makeExpect(errs) {
       const v = Number(locator);
       if (!(v >= n)) throw new Error(`${label}: ${v} is below ${n}`);
     },
+    // the other numeric bound. app 280 needs it for a count that must stay at
+    // ZERO: with check_no_busy the per-keystroke wire raises the global busy
+    // overlay no times at all, and an upper bound is the only way to say that.
+    async toBeAtMost(n) {
+      const v = Number(locator);
+      if (!(v <= n)) throw new Error(`${label}: ${v} is above ${n}`);
+    },
     // negative form — a filter assertion needs it (the row that must be GONE).
     // Polls until the text is absent so an async re-filter is tolerated.
     async notToContainText(txt) {

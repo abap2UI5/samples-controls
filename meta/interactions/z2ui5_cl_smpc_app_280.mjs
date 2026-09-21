@@ -21,8 +21,8 @@ export default async (page, expect) => {
   await watchBusyOverlay(page);
   await ta.click();
   await ta.pressSequentially('abc');
-  expect(await busyOverlayCount(page), 'busy-overlay raises while typing (check_no_busy keeps it down)')
-    .toBe(0);
+  await expect(await busyOverlayCount(page),
+    'busy-overlay raises while typing (check_no_busy keeps it down)').toBeAtMost(0);
   await expect(page.locator("[id$='getValue']"), 'the liveChange round-trip filling GET_VALUE').toContainText('abc');
   // two nodes end in the id — the SimpleForm's grid wrapper and the Text itself
   const lagging = await page.locator("[id$='getProperty']").last().innerText();

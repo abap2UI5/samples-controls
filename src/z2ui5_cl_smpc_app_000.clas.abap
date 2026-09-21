@@ -7530,7 +7530,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` carries s_ctrl-check_no_busy alongside it (abap2UI5 #2759, in the pin since the bump to ad0a2dd2): the round-trip and the busy STATE are unchanged, only the full-screen overlay stays down. That is` &&
             ` the second half a per-keystroke wire needs - check_queue_last stops the keystrokes from being lost, check_no_busy stops the overlay from flashing over the field while they are typed. It was the` &&
             ` visible half of the gap: the FIRST trip raises the indicator after the usual delay, but every keystroke landing on a trip already in flight raises it with NO delay, so from the second character on` &&
-            ` the original's round-trip-free typing was covered by an overlay the demo kit sample never shows.`.
+            ` the original's round-trip-free typing was covered by an overlay the demo kit sample never shows. The interaction module measures it rather than trusting it: it hooks BusyIndicator.show( ) before` &&
+            ` typing and asserts ZERO raises. That assertion is the kind that passes when it is broken - a watch that failed to attach reads zero forever - so the helper self-tests the hook before the module`.
+    text2 = text2 && ` relies on it, and the count was checked against an ordinary wire (app 101's Cancel press raises exactly 1).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.TextArea`                        name = `TextAreaValueUpdate`                           class = `z2ui5_cl_smpc_app_280` path = `src/01/01/z2ui5_cl_smpc_app_280.clas.abap`
         score = 3

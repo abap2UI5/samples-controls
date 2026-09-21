@@ -253,16 +253,40 @@ export async function watchBusyOverlay(page) {
   await page.evaluate(() => {
     const BI = sap.ui.require('sap/ui/core/BusyIndicator');
     if (!BI) throw new Error('sap/ui/core/BusyIndicator is not loaded - cannot watch the overlay');
-    window.__a2ui5BusyShows = 0;
     if (!BI.__a2ui5Watched) {
       BI.__a2ui5Watched = true;
       const orig = BI.show.bind(BI);
-      BI.show = (delay) => { window.__a2ui5BusyShows += 1; return orig(delay); };
+      // during the self-test below the real show( ) is skipped, so proving the
+      // hook never puts an actual overlay on screen for the next click to hit
+      BI.show = (delay) => {
+        window.__a2ui5BusyShows += 1;
+        return BI.__a2ui5SelfTest ? undefined : orig(delay);
+      };
+    }
+    /* Prove the hook is live BEFORE anything relies on it. An assertion that
+       the overlay stayed down is the kind that passes when it is broken: a
+       watch that silently failed to attach reads zero forever, and zero is
+       exactly what a green run looks like. So count one deliberate call and
+       fail here if it does not arrive. */
+    BI.__a2ui5SelfTest = true;
+    window.__a2ui5BusyShows = 0;
+    BI.show(0);
+    const seen = window.__a2ui5BusyShows;
+    BI.__a2ui5SelfTest = false;
+    window.__a2ui5BusyShows = 0;
+    if (seen !== 1) {
+      throw new Error(`the BusyIndicator.show( ) hook did not take (counted ${seen}, expected 1) - every overlay assertion built on it would be vacuous`);
     }
   });
 }
 
-/* How often the GLOBAL busy indicator was raised since watchBusyOverlay( ). */
+/* How often the GLOBAL busy indicator was raised since watchBusyOverlay( ).
+   Throws rather than reporting a sentinel: an unwatched page must not read as
+   "the overlay stayed down". */
 export async function busyOverlayCount(page) {
-  return page.evaluate(() => window.__a2ui5BusyShows ?? -1);
+  const n = await page.evaluate(() => window.__a2ui5BusyShows);
+  if (typeof n !== 'number') {
+    throw new Error('busyOverlayCount( ) without a preceding watchBusyOverlay( ) - nothing was counted');
+  }
+  return n;
 }
