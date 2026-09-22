@@ -105,7 +105,8 @@ the per-port modules here):
     2 → 3. The TabContainer's own add button (class sapMTSAddNewTabBtn, tooltip
     "Add New Tab", rendered into the control's TabStrip) takes a plain
     Playwright click with no force at 95x22 px. Every leg here that presses
-    after a round trip therefore waits for `!z2ui5.isBusy` first.
+    after a round trip therefore waits for the frontend to go idle first
+    (`waitForIdle` in scripts/lib-e2e.mjs, which reads AppState.state.isBusy).
     What the five restore legs measured BEFORE the fix, each against the very
     same draft: 585 and 167 came back on page2 while the SideNavigation read
     page1, 302 and 303 came back on page1 while the IconTabHeader read page2,

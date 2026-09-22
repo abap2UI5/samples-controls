@@ -115,13 +115,15 @@ browser things: `popup_close`, `popover_close`, `open_new_tab`,
 `download_b64_file`, `urlhelper` (redirect / email / sms / tel),
 `store_data` (session/local storage), `play_audio`, `start_timer`,
 `set_size_limit`, `set_odata_model`, nav-container
-`*_nav_container_to` per view slot, `z2ui5` (call registered custom JS).
+`*_nav_container_to` per view slot.
 Gone from `cs_event` and not to be looked for: `history_back` (1.143.0 -
 `history.back()` through `follow_up_action` or `nav_app_leave( )`),
 `display_message_box` / `display_message_toast` (the MessageBox/MessageToast
 options object rides the `control_global` `MESSAGE_BOX` / `MESSAGE_TOAST`
-call below, 1:1) and `wizard_set_next_step` (two `control_by_id` calls,
-`discardProgress` then `setNextStep`).
+call below, 1:1), `wizard_set_next_step` (two `control_by_id` calls,
+`discardProgress` then `setNextStep`) and `z2ui5` (2026-09-22, with the
+`z2ui5` frontend global whose functions it called - a function the app
+defines on `window` is called as a raw expression through `follow_up_action`).
 Newest (branch, pending release): the generic **`cs_event-control_global`** /
 **`cs_event-control_by_id`** — call a *whitelisted* method on a global object
 (MessageToast, MessageBox, BusyIndicator, Theming, and since 2026-08-02
