@@ -7949,38 +7949,44 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` keystroke while doing nothing. No wrong target, no exception: exactly the shape of the backToPage gap recorded in the navigation NOTE below, on this same port, one method over - and equally invisible` &&
             ` to every gate here, since the view renders and the handler runs. **The PORT was never wrong** and is unchanged by the fix, which is abap2UI5 #2775: ``setCurrentStep: ["controlId"]`` joins its three` &&
             ` Wizard siblings on the CONTROL_METHODS whitelist, so the argument is resolved to the control instead of travelling as a raw string. CLOSED here by the A2UI5_PIN bump to daa9dc68, which is the commit` &&
-            ` that carries it: the console error is gone and the failing-validation branch forces the wizard back to ProductInfoStep the way the original does. // NOTE: The two liveChange wires round-trip per`.
-    text1 = text1 && ` keystroke, which the original does NOT: additionalInfoValidation is a plain controller function there, so typing in the demo kit sample is instant and raises nothing. The round-trip is unavoidable` &&
-            ` while the check lives in ABAP; the OVERLAY was not. The wires carry s_ctrl-check_queue_last (so no keystroke is dropped) and, since the pin bump to ad0a2dd2, s_ctrl-check_no_busy (abap2UI5 #2759) -` &&
-            ` the round-trip and the busy STATE are unchanged, only the full-screen busy overlay stays down. Without the second flag the FIRST trip raises the indicator after the usual delay, but every keystroke` &&
-            ` landing on a trip already in flight raises it with NO delay, so from the second character on the overlay sat over the very field being typed into - which is also what forced the waitForIdle before` &&
-            ` the first click in meta/interactions/z2ui5_cl_smpc_app_101.mjs. // NOTE: The step-1 SegmentedButton gets item keys (Mobile/Desktop/Other) and a two-way selectedKey binding so the chosen product type` &&
-            ` reaches the model directly; the original reads evt.getParameters().item.getText() in setProductTypeFromSegmented. selectionChange is still wired. The PricingStep activate/complete handlers (which`.
-    text1 = text1 && ` only toggle the unused navApiEnabled flag) are wired for fidelity but do nothing. // NOTE: Navigation is via follow_up_action( cs_event-control_by_id ). Corrected 2026-08-23: it used to say 1:1 while` &&
-            ` using ``to`` for all three legs. Only the Wizard-complete leg is ``to`` in the original; the Edit and Cancel/Submit legs are backToPage, a REVERSE transition that unwinds the NavContainer stack` &&
-            ` rather than pushing onto it, and they now use it. The original's afterNavigate deferral - it attaches a listener and calls goToStep only inside it - stays dropped: Wizard complete -> NavContainer` &&
-            ` 'to' the review page; each Edit link -> 'to' the content page then Wizard 'goToStep' the target step (whitelisted). Cancel and Submit open a MessageBox (warning/confirm) with YES/NO; on YES the` &&
-            ` wizard resets via 'to' the content page + 'discardProgress' ProductTypeStep, matching _handleMessageBoxOpen. **Bounded 2026-08-27, CLOSED 2026-08-28.** For five days "they now use it" was true of the` &&
-            ` port and false of what a reader got when they ran it. ``backToPage`` was not in the frontend's ``CONTROL_METHODS`` until abap2UI5 ``329e0c84`` (#2670), so it took the unlisted-method path, which`.
-    text1 = text1 && ` infers argument types and hands the RAW ABAP literal over. ``sap.m.NavContainer.backToPage`` does not rescue that: ``_backTo`` normalises only a Control, then ``_findClosestPreviousPageInfo``` &&
-            ` compares ``info.id === sRequestedPreviousPageId`` strictly against a ``_pageStack`` whose entries were all pushed as ``page.getId()`` and therefore carry the runtime view prefix the backend never` &&
-            ` sees. Measured 2026-08-27 on this port against the live Node backend (#2670): after the complete leg the stack read ["mainView--wizardContentPage", "mainView--wizardReviewPage"], the Edit link fired` &&
-            ` ``backToPage("wizardContentPage")``, and UI5 answered "Cannot navigate backToPage('wizardContentPage') because target page was not found among the previous pages." with the review page still on` &&
-            ` screen. A SILENT no-op - no wrong target, no exception - which is why nothing here caught it. The four Edit links and the Cancel/Submit reset therefore left the review page up; only the` &&
-            ` Wizard-complete ``to`` leg, and the ``goToStep``/``discardProgress`` that follow the dead back-navigation, did anything. The fix is the ``pageId`` argument kind, which resolves the control and hands`.
-    text1 = text1 && ` over ``control.getId()``; it reached the reproducible builds when ``A2UI5_PIN`` moved on 2026-08-28, so all six legs are live here now. **The PORT was never changed by any of this** - it was correct` &&
-            ` on both sides of the fix and simply could not work before it. Note also which way this cuts: the 2026-08-23 correction ABOVE, which switched Edit and Cancel/Submit from ``to`` to ``backToPage`` for` &&
-            ` fidelity with the original, is what made them stop working - ``to`` was listed and normalised its argument, so the pre-2026-08-23 port navigated (with the wrong transition direction). Fidelity was` &&
-            ` bought with function for five days, and this is the record of that. The e2e interaction module asserts the NavContainer's CURRENT page after an Edit link since 2026-08-28, which is the only thing` &&
-            ` that separates a working back-navigation from a dead one - a ``goToStep`` assertion passes on both. // NOTE: the cancel leg is closed: **e2e-verified 2026-08-01** (scripts/e2e-smoke.mjs interaction,` &&
-            ` transpiled backend + real browser): the first wizard step renders and the footer Cancel really round-trips - message_box_display opens the MessageBox 'Are you sure you want to cancel your report?'`.
-    text1 = text1 && ` with its question text (restated 2026-08-23: the module asserts the dialog text only; it never locates a YES or NO button and never exercises onclose, so that leg is not covered). Still needs an` &&
-            ` in-system check: step validation gating the Next button, the complete/edit navigation, the goToStep scroll and the submit/cancel reset itself. **e2e-verified 2026-08-04** (nightly e2e interaction,` &&
-            ` meta/interactions/z2ui5_cl_smpc_app_101.mjs). **Extended 2026-08-28:** the module now completes the wizard, asserts the review page, presses the first Edit link and asserts the NavContainer is back` &&
-            ` on the wizard content page with the wizard on ProductTypeStep - the backToPage leg the pin bump made live. // NOTE: Two step body Texts had been TRUNCATED and are restored 2026-08-23:` &&
-            ` ProductInfoStep's ran 475 of the original's 955 characters and OptionalInfoStep's 385 of 575, each a clean prefix that stopped mid-paragraph. OptionalInfoStep had also silently corrected the` &&
-            ` original's own typo "Donec ppellentesque" to "pellentesque". Both now carry the full text; the original's trailing TAB is written as the single space XML attribute-value normalisation turns it into.`.
-    text1 = text1 && ` No gate compares long text bodies, which is why this survived.`.
+            ` that carries it: the console error is gone and the failing-validation branch forces the wizard back to ProductInfoStep the way the original does. // NOTE: The two Inputs carry valueLiveUpdate='true',`.
+    text1 = text1 && ` an attribute the original view does not declare, and without it the port validates a STALE value. Reported from a system 2026-09-22: deleting characters left the field blue - no error - although the` &&
+            ` name was below six characters. sap.m.Input.oninput writes the typed text into the ``value`` PROPERTY, and so through the two-way binding into the model, only ``if (this.getValueLiveUpdate())``; the` &&
+            ` liveChange event itself always fires and carries the text in its own parameter. So the wire round-tripped on every keystroke while the model - which is what this port's handler reads - still held the` &&
+            ` value of the last ``change``, i.e. the last blur or Enter. Deleting is where it shows worst: the model keeps the longer committed name, name_ok stays true and the ValueState never follows the` &&
+            ` deletion. The original has no such gap because it reads the CONTROL (this.byId('ProductName').getValue()), not a model field. Event arguments could not close it either: each liveChange would carry` &&
+            ` only its own field's text, while additionalInfoValidation judges BOTH on every firing - valueLiveUpdate is what makes the model track both. Same fix and same reason as the sibling ports 535 and 560,`.
+    text1 = text1 && ` which carried it from the start. // NOTE: The two liveChange wires round-trip per keystroke, which the original does NOT: additionalInfoValidation is a plain controller function there, so typing in` &&
+            ` the demo kit sample is instant and raises nothing. The round-trip is unavoidable while the check lives in ABAP; the OVERLAY was not. The wires carry s_ctrl-check_queue_last (so no keystroke is` &&
+            ` dropped) and, since the pin bump to ad0a2dd2, s_ctrl-check_no_busy (abap2UI5 #2759) - the round-trip and the busy STATE are unchanged, only the full-screen busy overlay stays down. Without the second` &&
+            ` flag the FIRST trip raises the indicator after the usual delay, but every keystroke landing on a trip already in flight raises it with NO delay, so from the second character on the overlay sat over` &&
+            ` the very field being typed into - which is also what forced the waitForIdle before the first click in meta/interactions/z2ui5_cl_smpc_app_101.mjs. // NOTE: The step-1 SegmentedButton gets item keys` &&
+            ` (Mobile/Desktop/Other) and a two-way selectedKey binding so the chosen product type reaches the model directly; the original reads evt.getParameters().item.getText() in setProductTypeFromSegmented.`.
+    text1 = text1 && ` selectionChange is still wired. The PricingStep activate/complete handlers (which only toggle the unused navApiEnabled flag) are wired for fidelity but do nothing. // NOTE: Navigation is via` &&
+            ` follow_up_action( cs_event-control_by_id ). Corrected 2026-08-23: it used to say 1:1 while using ``to`` for all three legs. Only the Wizard-complete leg is ``to`` in the original; the Edit and` &&
+            ` Cancel/Submit legs are backToPage, a REVERSE transition that unwinds the NavContainer stack rather than pushing onto it, and they now use it. The original's afterNavigate deferral - it attaches a` &&
+            ` listener and calls goToStep only inside it - stays dropped: Wizard complete -> NavContainer 'to' the review page; each Edit link -> 'to' the content page then Wizard 'goToStep' the target step` &&
+            ` (whitelisted). Cancel and Submit open a MessageBox (warning/confirm) with YES/NO; on YES the wizard resets via 'to' the content page + 'discardProgress' ProductTypeStep, matching` &&
+            ` _handleMessageBoxOpen. **Bounded 2026-08-27, CLOSED 2026-08-28.** For five days "they now use it" was true of the port and false of what a reader got when they ran it. ``backToPage`` was not in the`.
+    text1 = text1 && ` frontend's ``CONTROL_METHODS`` until abap2UI5 ``329e0c84`` (#2670), so it took the unlisted-method path, which infers argument types and hands the RAW ABAP literal over.` &&
+            ` ``sap.m.NavContainer.backToPage`` does not rescue that: ``_backTo`` normalises only a Control, then ``_findClosestPreviousPageInfo`` compares ``info.id === sRequestedPreviousPageId`` strictly against` &&
+            ` a ``_pageStack`` whose entries were all pushed as ``page.getId()`` and therefore carry the runtime view prefix the backend never sees. Measured 2026-08-27 on this port against the live Node backend` &&
+            ` (#2670): after the complete leg the stack read ["mainView--wizardContentPage", "mainView--wizardReviewPage"], the Edit link fired ``backToPage("wizardContentPage")``, and UI5 answered "Cannot` &&
+            ` navigate backToPage('wizardContentPage') because target page was not found among the previous pages." with the review page still on screen. A SILENT no-op - no wrong target, no exception - which is` &&
+            ` why nothing here caught it. The four Edit links and the Cancel/Submit reset therefore left the review page up; only the Wizard-complete ``to`` leg, and the ``goToStep``/``discardProgress`` that`.
+    text1 = text1 && ` follow the dead back-navigation, did anything. The fix is the ``pageId`` argument kind, which resolves the control and hands over ``control.getId()``; it reached the reproducible builds when` &&
+            ` ``A2UI5_PIN`` moved on 2026-08-28, so all six legs are live here now. **The PORT was never changed by any of this** - it was correct on both sides of the fix and simply could not work before it. Note` &&
+            ` also which way this cuts: the 2026-08-23 correction ABOVE, which switched Edit and Cancel/Submit from ``to`` to ``backToPage`` for fidelity with the original, is what made them stop working - ``to``` &&
+            ` was listed and normalised its argument, so the pre-2026-08-23 port navigated (with the wrong transition direction). Fidelity was bought with function for five days, and this is the record of that.` &&
+            ` The e2e interaction module asserts the NavContainer's CURRENT page after an Edit link since 2026-08-28, which is the only thing that separates a working back-navigation from a dead one - a` &&
+            ` ``goToStep`` assertion passes on both. // NOTE: the cancel leg is closed: **e2e-verified 2026-08-01** (scripts/e2e-smoke.mjs interaction, transpiled backend + real browser): the first wizard step`.
+    text1 = text1 && ` renders and the footer Cancel really round-trips - message_box_display opens the MessageBox 'Are you sure you want to cancel your report?' with its question text (restated 2026-08-23: the module` &&
+            ` asserts the dialog text only; it never locates a YES or NO button and never exercises onclose, so that leg is not covered). Still needs an in-system check: step validation gating the Next button, the` &&
+            ` complete/edit navigation, the goToStep scroll and the submit/cancel reset itself. **e2e-verified 2026-08-04** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_101.mjs). **Extended` &&
+            ` 2026-08-28:** the module now completes the wizard, asserts the review page, presses the first Edit link and asserts the NavContainer is back on the wizard content page with the wizard on` &&
+            ` ProductTypeStep - the backToPage leg the pin bump made live. // NOTE: Two step body Texts had been TRUNCATED and are restored 2026-08-23: ProductInfoStep's ran 475 of the original's 955 characters` &&
+            ` and OptionalInfoStep's 385 of 575, each a clean prefix that stopped mid-paragraph. OptionalInfoStep had also silently corrected the original's own typo "Donec ppellentesque" to "pellentesque". Both`.
+    text1 = text1 && ` now carry the full text; the original's trailing TAB is written as the single space XML attribute-value normalisation turns it into. No gate compares long text bodies, which is why this survived.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Wizard`                          name = `Wizard`                                        class = `z2ui5_cl_smpc_app_101` path = `src/01/01/z2ui5_cl_smpc_app_101.clas.abap`
         score = 5
@@ -8047,21 +8053,28 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = text1 ) ).
 
     text1 = `POST-1.71: sap.m.Wizard renderMode is @since 1.84 and navigationChange @since 1.101 - both newer than the 1.71 floor. renderMode="Page" is what makes this a one-step-at-a-time wizard and` &&
-            ` navigationChange is what drives the footer, so both are kept and the port is filed under src/02. // NOTE: Wizard.currentStep is an ASSOCIATION: the XML parser reads its value as a control id and` &&
-            ` never as a binding, so the port cannot bind it. The Next / Previous / Review buttons and the four Edit links therefore drive the wizard through the framework's whitelisted control_by_id goToStep(` &&
-            ` step, true ) call - the same goToStep the controller uses, and the same idiom app 101 already uses for its Edit links. // NOTE: handleButtonsVisibility switches the five footer buttons on the` &&
-            ` selected step index. The port keeps that index as one bound field, updated by navigationChange (which carries the step's TITLE, unique across the five steps) and by every goToStep, and each button` &&
-            ` carries the switch's own condition as an expression binding - so the visibility follows the wizard without a handler. // NOTE: additionalInfoValidation reads the two Inputs imperatively, sets the two`.
-    text1 = text1 && ` value states, validates or invalidates the step and enables the Next button. All five are bound fields here and the two liveChange wires recompute them in ABAP - same rule (a name of at least six` &&
-            ` characters, a numeric weight), same effect, one round-trip per keystroke as in the original. // NOTE: _handleMessageBoxOpen asks YES/NO and, on YES, discards the wizard progress, closes the dialog` &&
-            ` and resets the model to the initial oData. The port raises the same MessageBox with the same two actions and does all three on the YES branch (discardProgress through control_by_id, model_init,` &&
-            ` popup_destroy). // NOTE: handleOpenDialog loads the fragment and opens it; the port builds the same fragment in a chain and shows it with popup_display, which is why structural-diff reports nothing` &&
-            ` missing for the Dialog itself. optionalStepActivation's toast is kept 1:1. setProductTypeFromSegmented also calls validateStep on the first step, which is already validated="true" in the view, so the` &&
-            ` port's selectionChange only keeps the two-way bound key. // NOTE: The review step's Texts bind the same model fields as the original - productType, productName, productWeight, productManufacturer,`.
-    text1 = text1 && ` productDescription, manufacturingDate, availabilityType, size, measurement, productPrice, discountGroup and productVAT - through client->_bind, which the static comparison cannot resolve to a path;` &&
-            ` the one LITERAL Text in the same step (the Lorem ipsum under '3. Optional Information', literal in the sample too) is what structural-diff is left holding, so it reports every one of those bindings` &&
-            ` against it. // NOTE: The wizard navigation, the five footer buttons, the step-2 validation and the cancel/submit message boxes are unverified in a running system. **e2e-verified 2026-08-25** (nightly` &&
-            ` e2e interaction, meta/interactions/z2ui5_cl_smpc_app_533.mjs).`.
+            ` navigationChange is what drives the footer, so both are kept and the port is filed under src/02. // NOTE: The two Inputs carry valueLiveUpdate='true', an attribute the original view does not declare,` &&
+            ` and without it the port validates a STALE value. Reported from a system 2026-09-22: deleting characters left the field blue - no error - although the name was below six characters.` &&
+            ` sap.m.Input.oninput writes the typed text into the ``value`` PROPERTY, and so through the two-way binding into the model, only ``if (this.getValueLiveUpdate())``; the liveChange event itself always` &&
+            ` fires and carries the text in its own parameter. So the wire round-tripped on every keystroke while the model - which is what this port's handler reads - still held the value of the last ``change``,` &&
+            ` i.e. the last blur or Enter. Deleting is where it shows worst: the model keeps the longer committed name, name_ok stays true and the ValueState never follows the deletion. The original has no such`.
+    text1 = text1 && ` gap because it reads the CONTROL (this.byId('ProductName').getValue()), not a model field. Event arguments could not close it either: each liveChange would carry only its own field's text, while` &&
+            ` additionalInfoValidation judges BOTH on every firing - valueLiveUpdate is what makes the model track both. Same fix and same reason as the sibling ports 535 and 560, which carried it from the start.` &&
+            ` // NOTE: Wizard.currentStep is an ASSOCIATION: the XML parser reads its value as a control id and never as a binding, so the port cannot bind it. The Next / Previous / Review buttons and the four` &&
+            ` Edit links therefore drive the wizard through the framework's whitelisted control_by_id goToStep( step, true ) call - the same goToStep the controller uses, and the same idiom app 101 already uses` &&
+            ` for its Edit links. // NOTE: handleButtonsVisibility switches the five footer buttons on the selected step index. The port keeps that index as one bound field, updated by navigationChange (which` &&
+            ` carries the step's TITLE, unique across the five steps) and by every goToStep, and each button carries the switch's own condition as an expression binding - so the visibility follows the wizard`.
+    text1 = text1 && ` without a handler. // NOTE: additionalInfoValidation reads the two Inputs imperatively, sets the two value states, validates or invalidates the step and enables the Next button. All five are bound` &&
+            ` fields here and the two liveChange wires recompute them in ABAP - same rule (a name of at least six characters, a numeric weight), same effect, one round-trip per keystroke as in the original. //` &&
+            ` NOTE: _handleMessageBoxOpen asks YES/NO and, on YES, discards the wizard progress, closes the dialog and resets the model to the initial oData. The port raises the same MessageBox with the same two` &&
+            ` actions and does all three on the YES branch (discardProgress through control_by_id, model_init, popup_destroy). // NOTE: handleOpenDialog loads the fragment and opens it; the port builds the same` &&
+            ` fragment in a chain and shows it with popup_display, which is why structural-diff reports nothing missing for the Dialog itself. optionalStepActivation's toast is kept 1:1.` &&
+            ` setProductTypeFromSegmented also calls validateStep on the first step, which is already validated="true" in the view, so the port's selectionChange only keeps the two-way bound key. // NOTE: The`.
+    text1 = text1 && ` review step's Texts bind the same model fields as the original - productType, productName, productWeight, productManufacturer, productDescription, manufacturingDate, availabilityType, size,` &&
+            ` measurement, productPrice, discountGroup and productVAT - through client->_bind, which the static comparison cannot resolve to a path; the one LITERAL Text in the same step (the Lorem ipsum under '3.` &&
+            ` Optional Information', literal in the sample too) is what structural-diff is left holding, so it reports every one of those bindings against it. // NOTE: The wizard navigation, the five footer` &&
+            ` buttons, the step-2 validation and the cancel/submit message boxes are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_533.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Wizard`                          name = `WizardSingleStep`                              class = `z2ui5_cl_smpc_app_533` path = `src/02/01/z2ui5_cl_smpc_app_533.clas.abap`
         score = 5

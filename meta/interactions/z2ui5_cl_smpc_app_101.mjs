@@ -34,6 +34,45 @@ export default async (page, expect) => {
      there. Anchored and case-insensitive: it fits either spelling. */
   await page.getByRole('button', { name: /^no$/i }).first().click();
 
+  /* The step-2 validation follows what is TYPED, not what was last committed.
+     Reported from a system 2026-09-22: deleting characters left the field blue
+     while the name was below six characters. sap.m.Input.oninput writes the
+     typed text into the `value` property - and so through the two-way binding
+     into the model this port's handler reads - only `if
+     (this.getValueLiveUpdate())`, while liveChange fires either way. Without
+     the attribute the wire round-tripped per keystroke against the value of
+     the last `change` (blur or Enter), and DELETING is where that shows worst:
+     the model keeps the longer committed name and the ValueState never
+     follows. So this leg never blurs - a blur would commit the value and hide
+     exactly the defect - and asserts the state after a deletion. */
+  await waitForIdle(page);
+  await page.getByRole('button', { name: 'Next Step', exact: true }).first().click();
+  const nameInput = page.locator("[id$='ProductName'] input").first();
+  await expect(nameInput, 'the step-2 Name input').toBeVisibleEnabled();
+  await nameInput.click();
+  await nameInput.pressSequentially('Notebook');          // 8 chars -> valid
+  await waitForIdle(page);
+  await nameInput.press('Backspace');                     // 7
+  await nameInput.press('Backspace');                     // 6 - still valid
+  await nameInput.press('Backspace');                     // 5 - now INVALID
+  await waitForIdle(page);
+  const state = await page.evaluate(() => {
+    const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
+    const inp = reg.find((c) => !c.bIsDestroyed && c.getId().endsWith('ProductName'));
+    return inp ? { state: inp.getValueState(), typed: inp.getValue() } : null;
+  });
+  if (!state) throw new Error('the ProductName input was not in the control registry');
+  if (state.typed.length >= 6) {
+    throw new Error(`the deletions did not reach the control: it holds "${state.typed}"`);
+  }
+  if (state.state !== 'Error') {
+    throw new Error(
+      `deleting to "${state.typed}" (${state.typed.length} chars) left valueState=${state.state}, `
+      + 'expected Error - the port is validating the last COMMITTED value, not the typed one '
+      + '(valueLiveUpdate missing on the Input)',
+    );
+  }
+
   // complete the wizard: the `to` leg, which always worked
   await waitForIdle(page);
   await page.evaluate(() => {
