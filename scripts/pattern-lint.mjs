@@ -213,6 +213,12 @@ const RULES = [
     find: grepLines(/^"!/),
   },
   {
+    id: 'runtime-global-shadow',
+    level: 'error',
+    doc: 'a local named `abap` shadows open-abap\'s runtime global for the WHOLE method, so every earlier `abap.` in it hits that binding\'s temporal dead zone: the transpiled method answers HTTP 500 with "Cannot access \'abap\' before initialization" on its first call. Legal ABAP - abaplint, the three syntax builds and every other gate here are green on it - and only a run of the app shows it. The generated overview app carried `DATA(abap) = link-abap_url` from 2026-09-15 to 2026-09-22 and answered 500 on its first event that whole time; it surfaces only when a pull request happens to touch app_000, which is rare. Name it for what it holds (abap_src) instead',
+    find: grepLines(/^\s*(?!["*])[^"]*\bDATA\s*(?:\(\s*abap\s*\)|:?\s*abap\s+TYPE\b)/),
+  },
+  {
     id: 'client-handle-capture',
     level: 'error',
     doc: 'client handle strings (_event, _bind, _event_client, ...) are written inline at each control, never captured in a variable - even when repeated, even in expression bindings (human decision 2026-07-17, apps 005/053/007)',
