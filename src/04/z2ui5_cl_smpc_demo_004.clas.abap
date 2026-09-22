@@ -37,17 +37,27 @@
 "!  - the formatter module is business logic and moves to the backend: the
 "!    price format, the status text and its ValueState, the cart total.
 "!  - search and category filtering run in ABAP, where the data is.
-"!  - the Welcome page keeps its three panels (promoted, recently viewed,
-"!    favorites) but not the original's BlockLayout-and-Grid arrangement of
-"!    them: one list per panel instead of a hand-built cell per product.
-"!    Its carousel is dropped with the four teaser images it shows. The
-"!    Emphasized cart-3 button the original puts on every tile stays, as an
-"!    ACTIVE ObjectStatus in the row's secondStatus - an ObjectListItem takes
-"!    no button, and without it the welcome page had no way to fill the cart
-"!    at all. ObjectStatus rather than the ACTIVE ObjectAttribute this was
-"!    until 2026-09-14: an ObjectAttribute carries no icon, so the original's
-"!    cart-3 was missing from every row - and the favorites panel had no
-"!    add-to-cart at all, where the original has it on all three sections.
+"!  - the Welcome page is the original's own arrangement (rebuilt 2026-09-22,
+"!    after a side-by-side comparison showed it was the one page that did not
+"!    look like the original): the carousel, then three panels whose rows are
+"!    an aggregation binding on a BlockLayoutRow content with the cell as its
+"!    template - Grid, ObjectIdentifier, ObjectStatus, the picture and the
+"!    Emphasized cart-3 Button, one tile per featured product. Until then it
+"!    was one flat List per panel, with the add-to-cart as an ACTIVE
+"!    ObjectStatus because an ObjectListItem takes no button. What is still
+"!    not rebuilt there, and why:
+"!     - the carousel LOOPS but does not advance by itself, and opens on its
+"!       first page: the eight-second timer and the random start page are
+"!       browser timers in the original's controller with no bound state
+"!       behind them. Its four teaser images come from the demo kit's
+"!       deployed copy of the app (c_img), as the product pictures do.
+"!     - the promoted panel shows the FIRST two of the five Promoted rows
+"!       where `_selectPromotedItems( )` draws two at random. Same count; a
+"!       backend cannot repeat a client-side random draw.
+"!     - the two style.css rules the page's classes name (welcomePrice,
+"!       welcomeCarouselText) ride along in a core:HTML style block, because
+"!       a port has no manifest to link a stylesheet from and no Component to
+"!       set the `.sapUiDemoCart` scope the original writes them under.
 "!  - the wizard validates in ABAP rather than through the Wizard's own
 "!    validated/setNextStep API, and reports with a MessageBox - which is
 "!    what the original's own validation does for the credit-card step.
@@ -219,6 +229,13 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     CONSTANTS c_base        TYPE string
       VALUE `https://sdk.openui5.org/test-resources/sap/m/demokit/cart/webapp/localService/mockdata/`.
 
+    " the welcome carousel's four teaser images are files of the APP, not of
+    " the mock: the original resolves `sap/ui/demo/cart/img/...` with
+    " `sap.ui.require.toUrl( )` against its own webapp root. Same answer as
+    " c_base, one folder up
+    CONSTANTS c_img         TYPE string
+      VALUE `https://sdk.openui5.org/test-resources/sap/m/demokit/cart/webapp/img/`.
+
     DATA client        TYPE REF TO z2ui5_if_client.
     " the product on show: the key ADD_TO_CART needs, never bound - so
     " PROTECTED, where the round-trip still carries it
@@ -333,7 +350,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->a( n = `xmlns`        v = `sap.m`
             )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
             )->a( n = `xmlns:f`      v = `sap.f`
+            )->a( n = `xmlns:l`      v = `sap.ui.layout`
             )->a( n = `xmlns:form`   v = `sap.ui.layout.form`
+            )->a( n = `xmlns:core`   v = `sap.ui.core`
             )->a( n = `xmlns:z2ui5`  v = `z2ui5.cc` ).
 
     " the read half of the original's LocalStorageModel: an invisible control
@@ -460,7 +479,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `number`           v = `{PRICE_TEXT}`
                 )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
                 )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open product details for {NAME}`
+                )->a( n = `tooltip`          v = `Open details for {NAME}`
                 )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
 
                 )->ele( `attributes`
@@ -525,7 +544,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `number`           v = `{PRICE_TEXT}`
                 )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
                 )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open product details for {NAME}`
+                )->a( n = `tooltip`          v = `Open details for {NAME}`
                 )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
 
                 )->ele( `attributes`
@@ -543,6 +562,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_welcome.
 
+    " the i18n bundle's two-line carousel texts (`\r\n` in the properties file).
+    " A literal line break survives the attribute: the builder writes it as the
+    " character reference `&#xA;`, which XML attribute-value normalization -
+    " it turns a raw LF into a plain space - then leaves alone
+    DATA(line_break) = cl_abap_char_utilities=>newline.
+
     DATA(page) = parent->ele( `Page`
         )->a( n = `id`    v = `page-welcome`
         )->a( n = `title` v = `Shopping Cart` ).
@@ -559,6 +584,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
             )->end(
             )->ele( `contentRight`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://customer`
+                    )->a( n = `tooltip` v = `Login`
+                    )->a( n = `press`   v = client->_event( `AVATAR` )
                 )->tag( `ToggleButton`
                     )->a( n = `icon`    v = `sap-icon://cart`
                     " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
@@ -572,182 +601,338 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     DATA(content) = page->ele( `content` ).
 
+    " the two rules of the app's own style.css that this page's classes name.
+    " The original scopes them under `.sapUiDemoCart`, the root class its
+    " Component sets on the app container - a port has no Component, so they
+    " are unscoped here. \{ \} escaped: the XMLView parser reads an unescaped
+    " brace as a binding
+    content->tag( n = `HTML` ns = `core`
+        )->a( n = `content` v = `<style>.welcomePrice\{width:100%;padding:0;border-bottom-width:0\}` &&
+                                `.welcomeCarouselText\{color:white;display:block;position:fixed;bottom:0;padding:1rem;` &&
+                                `font-size:1.5rem;width:100%;text-shadow:0 0 0.125rem black\}</style>` ).
+
+    " the welcome carousel. Its four teaser images are files of the demo app
+    " itself - `sap/ui/demo/cart/img/...` resolved by sap.ui.require.toUrl
+    " against the app's own webapp root - so they come from the demo kit's
+    " deployed copy of that folder (c_img), the same rule c_base follows for
+    " the product pictures
+    content->ele( n = `BlockLayout` ns = `l`
+        )->a( n = `background` v = `Light`
+
+        )->ele( n = `BlockLayoutRow` ns = `l`
+            )->ele( n = `BlockLayoutCell` ns = `l`
+                )->a( n = `class` v = `sapUiNoContentPadding`
+
+                " the original advances the carousel every eight seconds from
+                " its controller (`onCarouselPageChanged` re-arms a setTimeout)
+                " and opens it on a page picked at random in `onInit`. Both are
+                " browser timers with no bound state behind them, so the port
+                " keeps `loop` and starts on the first page. The original also
+                " hides the whole carousel on a phone (`device>/system/phone`);
+                " there is no device model here
+                )->ele( `Carousel`
+                    )->a( n = `id`                v = `welcomeCarousel`
+                    )->a( n = `showPageIndicator` v = `false`
+                    )->a( n = `loop`              v = `true`
+                    )->a( n = `tooltip`           v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
+                                                     `You can browse and search a catalog of products, add the chosen products to your ` &&
+                                                     `shopping cart and, once happy with your selection order the cart contents.`
+
+                    )->ele( `pages`
+                        )->ele( `VBox`
+                            )->a( n = `renderType` v = `Bare`
+
+                            )->tag( `Image`
+                                )->a( n = `src`    v = |{ c_img }Shipping_273087.jpg|
+                                )->a( n = `width`  v = `100%`
+                                )->a( n = `height` v = `100%`
+                            )->tag( `Text`
+                                )->a( n = `text`  v = |Enjoy free shipping{ line_break }for orders over 50 Euro|
+                                )->a( n = `class` v = `welcomeCarouselText`
+
+                        )->end(
+                        )->ele( `VBox`
+                            )->a( n = `renderType` v = `Bare`
+
+                            )->tag( `Image`
+                                )->a( n = `src`    v = |{ c_img }InviteFriend_276352.jpg|
+                                )->a( n = `width`  v = `100%`
+                                )->a( n = `height` v = `100%`
+                            )->tag( `Text`
+                                )->a( n = `text`  v = |Refer a Friend{ line_break } Get 20 Euro credit!|
+                                )->a( n = `class` v = `welcomeCarouselText`
+
+                        )->end(
+                        )->ele( `VBox`
+                            )->a( n = `renderType` v = `Bare`
+
+                            )->tag( `Image`
+                                )->a( n = `src`    v = |{ c_img }Tablet_275777.jpg|
+                                )->a( n = `width`  v = `100%`
+                                )->a( n = `height` v = `100%`
+                            )->tag( `Text`
+                                )->a( n = `text`  v = |Deal of the Day{ line_break }10% on all tablets!|
+                                )->a( n = `class` v = `welcomeCarouselText`
+
+                        )->end(
+                        )->ele( `VBox`
+                            )->a( n = `renderType` v = `Bare`
+
+                            )->tag( `Image`
+                                )->a( n = `src`    v = |{ c_img }CreditCard_277268.jpg|
+                                )->a( n = `width`  v = `100%`
+                                )->a( n = `height` v = `100%`
+                            )->tag( `Text`
+                                )->a( n = `text`  v = |Pay fast and safely{ line_break }with Credit Card|
+                                )->a( n = `class` v = `welcomeCarouselText` ).
+
+    " Promoted Items. The panel's rows are an aggregation binding on the
+    " BlockLayoutRow's `content`, with the cell as its template - the original's
+    " own shape, one tile per featured product
     DATA(promoted) = content->ele( `Panel`
         )->a( n = `id`               v = `panelPromoted`
-        )->a( n = `headerText`       v = `Promoted Items`
-        )->a( n = `backgroundDesign` v = `Transparent` ).
-    DATA(promoted_content) = promoted->ele( `content` ).
+        )->a( n = `accessibleRole`   v = `Region`
+        )->a( n = `backgroundDesign` v = `Transparent`
+        )->a( n = `class`            v = `sapUiNoContentPadding` ).
 
-    promoted_content->ele( `List`
-        )->a( n = `id`         v = `promotedList`
-        )->a( n = `mode`       v = `SingleSelectMaster`
-        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
-        " takes the isIncludedIntoSelection( ) branch and never fires the item's
-        " press, whatever its type says. So the navigation hangs off the LIST's
-        " selectionChange, exactly as the original's does - its item press is
-        " the phone wire, where the mode is None
-        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
-                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
-        )->a( n = `noDataText` v = `No promoted products`
-        )->a( n = `items`      v = client->_bind( t_promoted )
+    promoted->ele( `headerToolbar`
+        )->ele( `Toolbar`
+            )->tag( `Title`
+                )->a( n = `text`       v = `Promoted Items`
+                )->a( n = `level`      v = `H3`
+                )->a( n = `titleStyle` v = `H2`
+                )->a( n = `class`      v = `sapUiMediumMarginTopBottom` ).
 
-        )->ele( `items`
-            )->ele( `ObjectListItem`
-                )->a( n = `type`             v = `Active`
-                )->a( n = `icon`             v = `{PICTUREURL}`
-                )->a( n = `title`            v = `{NAME}`
-                )->a( n = `number`           v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
-                )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open product details for {NAME}`
-                )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+    promoted->ele( `content`
+        )->ele( n = `BlockLayout` ns = `l`
+            )->a( n = `background` v = `Dashboard`
 
-                )->ele( `attributes`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `text` v = `{SUPPLIERNAME}`
+            )->ele( n = `BlockLayoutRow` ns = `l`
+                )->a( n = `id`      v = `promotedRow`
+                )->a( n = `content` v = client->_bind( t_promoted )
 
-                )->end(
-                )->ele( `firstStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}`
+                )->ele( n = `content` ns = `l`
+                    )->ele( n = `BlockLayoutCell` ns = `l`
+                        )->ele( n = `Grid` ns = `l`
+                            )->a( n = `defaultSpan` v = `XL12 L12 M12 S12`
+                            )->a( n = `vSpacing`    v = `0`
+                            )->a( n = `hSpacing`    v = `0`
 
-                " Add to cart, from the list itself. The original puts an
-                " Emphasized cart-3 Button on every welcome tile, and this
-                " rebuild replaced its carousel with three lists (see the
-                " class header) - which dropped the only way to fill the cart
-                " without opening a product first. An ObjectListItem takes no
-                " button, so the action is an ACTIVE ObjectStatus in the free
-                " secondStatus slot - active/press are @since 1.54, and unlike
-                " the ACTIVE ObjectAttribute this used to be it carries the
-                " original's cart-3 ICON
+                            )->ele( `FlexBox`
+                                )->a( n = `height`     v = `3.5rem`
+                                )->a( n = `renderType` v = `Bare`
 
-                )->end(
-                )->ele( `secondStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `icon`    v = `sap-icon://cart-3`
-                        )->a( n = `text`    v = `Add to Cart`
-                        )->a( n = `active`  b = abap_true
-                        )->a( n = `tooltip` v = `Add to Shopping Cart`
-                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
+                                )->ele( n = `VerticalLayout` ns = `l`
+                                    )->tag( `ObjectIdentifier`
+                                        )->a( n = `title`       v = `{NAME}`
+                                        )->a( n = `titleActive` v = `true`
+                                        )->a( n = `titlePress`  v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                        )->a( n = `tooltip`     v = `Open details for {NAME}`
+                                        )->a( n = `class`       v = `sapUiTinyMarginBottom`
+                                    )->tag( `ObjectStatus`
+                                        )->a( n = `text`  v = `{STATUS_TEXT}`
+                                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                                )->end(
+                            )->end(
+                            )->ele( `FlexBox`
+                                )->a( n = `renderType`     v = `Bare`
+                                )->a( n = `justifyContent` v = `Center`
+
+                                )->tag( `Image`
+                                    )->a( n = `src`          v = `{PICTUREURL}`
+                                    )->a( n = `densityAware` v = `false`
+                                    )->a( n = `width`        v = `50%`
+                                    )->a( n = `height`       v = `50%`
+                                    )->a( n = `press`        v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                    )->a( n = `tooltip`      v = `Open details for {NAME}`
+                                    )->a( n = `alt`          v = `This image shows {NAME}`
+
+                            )->end(
+                            )->ele( `Button`
+                                )->a( n = `tooltip` v = `Add to Shopping Cart`
+                                )->a( n = `type`    v = `Emphasized`
+                                )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
+                                )->a( n = `icon`    v = `sap-icon://cart-3`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL4 L4 M4 S4`
+
+                                )->end(
+                            )->end(
+                            )->ele( `ObjectListItem`
+                                )->a( n = `class`      v = `welcomePrice`
+                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                )->a( n = `numberUnit` v = `{CURRENCYCODE}`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL8 L8 M8 S8` ).
 
     DATA(viewed) = content->ele( `Panel`
         )->a( n = `id`               v = `panelViewed`
-        )->a( n = `headerText`       v = `Recently Viewed Items`
-        )->a( n = `backgroundDesign` v = `Transparent` ).
-    DATA(viewed_content) = viewed->ele( `content` ).
+        )->a( n = `accessibleRole`   v = `Region`
+        )->a( n = `backgroundDesign` v = `Transparent`
+        )->a( n = `class`            v = `sapUiNoContentPadding` ).
 
-    viewed_content->ele( `List`
-        )->a( n = `id`         v = `viewedList`
-        )->a( n = `mode`       v = `SingleSelectMaster`
-        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
-        " takes the isIncludedIntoSelection( ) branch and never fires the item's
-        " press, whatever its type says. So the navigation hangs off the LIST's
-        " selectionChange, exactly as the original's does - its item press is
-        " the phone wire, where the mode is None
-        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
-                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
-        )->a( n = `noDataText` v = `Nothing viewed yet`
-        )->a( n = `items`      v = client->_bind( t_viewed )
+    viewed->ele( `headerToolbar`
+        )->ele( `Toolbar`
+            )->tag( `Title`
+                )->a( n = `text`       v = `Recently Viewed Items`
+                )->a( n = `level`      v = `H3`
+                )->a( n = `titleStyle` v = `H2`
+                )->a( n = `class`      v = `sapUiMediumMarginTopBottom` ).
 
-        )->ele( `items`
-            )->ele( `ObjectListItem`
-                )->a( n = `type`             v = `Active`
-                )->a( n = `icon`             v = `{PICTUREURL}`
-                )->a( n = `title`            v = `{NAME}`
-                )->a( n = `number`           v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
-                )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open product details for {NAME}`
-                )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+    viewed->ele( `content`
+        )->ele( n = `BlockLayout` ns = `l`
+            )->a( n = `background` v = `Dashboard`
 
-                )->ele( `attributes`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `text` v = `{SUPPLIERNAME}`
+            )->ele( n = `BlockLayoutRow` ns = `l`
+                )->a( n = `id`      v = `viewedRow`
+                )->a( n = `content` v = client->_bind( t_viewed )
 
-                )->end(
-                )->ele( `firstStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}`
+                )->ele( n = `content` ns = `l`
+                    )->ele( n = `BlockLayoutCell` ns = `l`
+                        )->a( n = `class` v = `sapUiContentPadding`
 
-                " Add to cart, from the list itself. The original puts an
-                " Emphasized cart-3 Button on every welcome tile, and this
-                " rebuild replaced its carousel with three lists (see the
-                " class header) - which dropped the only way to fill the cart
-                " without opening a product first. An ObjectListItem takes no
-                " button, so the action is an ACTIVE ObjectStatus in the free
-                " secondStatus slot - active/press are @since 1.54, and unlike
-                " the ACTIVE ObjectAttribute this used to be it carries the
-                " original's cart-3 ICON
+                        )->ele( n = `Grid` ns = `l`
+                            )->a( n = `defaultSpan` v = `XL12 L12 M12 S12`
+                            )->a( n = `vSpacing`    v = `0`
+                            )->a( n = `hSpacing`    v = `0`
 
-                )->end(
-                )->ele( `secondStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `icon`    v = `sap-icon://cart-3`
-                        )->a( n = `text`    v = `Add to Cart`
-                        )->a( n = `active`  b = abap_true
-                        )->a( n = `tooltip` v = `Add to Shopping Cart`
-                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
+                            )->ele( `FlexBox`
+                                )->a( n = `height`     v = `3.5rem`
+                                )->a( n = `renderType` v = `Bare`
+
+                                )->ele( n = `VerticalLayout` ns = `l`
+                                    )->tag( `ObjectIdentifier`
+                                        )->a( n = `title`       v = `{NAME}`
+                                        )->a( n = `tooltip`     v = `Open details for {NAME}`
+                                        )->a( n = `titleActive` v = `true`
+                                        )->a( n = `titlePress`  v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                        )->a( n = `class`       v = `sapUiTinyMarginBottom`
+                                    )->tag( `ObjectStatus`
+                                        )->a( n = `text`  v = `{STATUS_TEXT}`
+                                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                                )->end(
+                            )->end(
+                            )->ele( `FlexBox`
+                                )->a( n = `renderType`     v = `Bare`
+                                )->a( n = `justifyContent` v = `Center`
+
+                                )->tag( `Image`
+                                    )->a( n = `src`     v = `{PICTUREURL}`
+                                    )->a( n = `width`   v = `100%`
+                                    )->a( n = `height`  v = `100%`
+                                    )->a( n = `press`   v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                    )->a( n = `tooltip` v = `Open details for {NAME}`
+                                    )->a( n = `alt`     v = `This image shows {NAME}`
+
+                            )->end(
+                            )->ele( `Button`
+                                )->a( n = `tooltip` v = `Add to Shopping Cart`
+                                )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
+                                )->a( n = `icon`    v = `sap-icon://cart-3`
+                                )->a( n = `type`    v = `Emphasized`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL4 L4 M4 S4`
+
+                                )->end(
+                            )->end(
+                            )->ele( `ObjectListItem`
+                                )->a( n = `class`      v = `welcomePrice`
+                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                )->a( n = `numberUnit` v = `{CURRENCYCODE}`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL8 L8 M8 S8` ).
 
     DATA(favorite) = content->ele( `Panel`
         )->a( n = `id`               v = `panelFavorite`
-        )->a( n = `headerText`       v = `Favorites`
-        )->a( n = `backgroundDesign` v = `Transparent` ).
-    DATA(favorite_content) = favorite->ele( `content` ).
+        )->a( n = `accessibleRole`   v = `Region`
+        )->a( n = `backgroundDesign` v = `Transparent`
+        )->a( n = `class`            v = `sapUiNoContentPadding` ).
 
-    favorite_content->ele( `List`
-        )->a( n = `id`         v = `favoriteList`
-        )->a( n = `mode`       v = `SingleSelectMaster`
-        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
-        " takes the isIncludedIntoSelection( ) branch and never fires the item's
-        " press, whatever its type says. So the navigation hangs off the LIST's
-        " selectionChange, exactly as the original's does - its item press is
-        " the phone wire, where the mode is None
-        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
-                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
-        )->a( n = `noDataText` v = `No favorites yet`
-        )->a( n = `items`      v = client->_bind( t_favorite )
+    favorite->ele( `headerToolbar`
+        )->ele( `Toolbar`
+            )->tag( `Title`
+                )->a( n = `text`       v = `Favorites`
+                )->a( n = `level`      v = `H3`
+                )->a( n = `titleStyle` v = `H2`
+                )->a( n = `class`      v = `sapUiMediumMarginTopBottom` ).
 
-        )->ele( `items`
-            )->ele( `ObjectListItem`
-                )->a( n = `type`             v = `Active`
-                )->a( n = `icon`             v = `{PICTUREURL}`
-                )->a( n = `title`            v = `{NAME}`
-                )->a( n = `number`           v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
-                )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open product details for {NAME}`
-                )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+    favorite->ele( `content`
+        )->ele( n = `BlockLayout` ns = `l`
+            )->a( n = `background` v = `Dashboard`
 
-                )->ele( `attributes`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `text` v = `{SUPPLIERNAME}`
+            )->ele( n = `BlockLayoutRow` ns = `l`
+                )->a( n = `id`      v = `favoriteRow`
+                )->a( n = `content` v = client->_bind( t_favorite )
 
-                )->end(
-                )->ele( `firstStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `text`  v = `{STATUS_TEXT}`
-                        )->a( n = `state` v = `{STATUS_STATE}`
+                )->ele( n = `content` ns = `l`
+                    )->ele( n = `BlockLayoutCell` ns = `l`
+                        )->a( n = `class` v = `sapUiContentPadding`
 
-                " Add to cart, from the list itself. The original puts an
-                " Emphasized cart-3 Button on every welcome tile, and this
-                " rebuild replaced its carousel with three lists (see the
-                " class header) - which dropped the only way to fill the cart
-                " without opening a product first. An ObjectListItem takes no
-                " button, so the action is an ACTIVE ObjectStatus in the free
-                " secondStatus slot - active/press are @since 1.54, and unlike
-                " the ACTIVE ObjectAttribute this used to be it carries the
-                " original's cart-3 ICON
+                        )->ele( n = `Grid` ns = `l`
+                            )->a( n = `defaultSpan` v = `XL12 L12 M12 S12`
+                            )->a( n = `vSpacing`    v = `0`
+                            )->a( n = `hSpacing`    v = `0`
 
-                )->end(
-                )->ele( `secondStatus`
-                    )->tag( `ObjectStatus`
-                        )->a( n = `icon`    v = `sap-icon://cart-3`
-                        )->a( n = `text`    v = `Add to Cart`
-                        )->a( n = `active`  b = abap_true
-                        )->a( n = `tooltip` v = `Add to Shopping Cart`
-                        )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` ) ).
+                            )->ele( `FlexBox`
+                                )->a( n = `height`     v = `3.5rem`
+                                )->a( n = `renderType` v = `Bare`
+
+                                )->ele( n = `VerticalLayout` ns = `l`
+                                    )->tag( `ObjectIdentifier`
+                                        )->a( n = `title`       v = `{NAME}`
+                                        )->a( n = `tooltip`     v = `Open details for {NAME}`
+                                        )->a( n = `titleActive` v = `true`
+                                        )->a( n = `titlePress`  v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                        )->a( n = `class`       v = `sapUiTinyMarginBottom`
+                                    )->tag( `ObjectStatus`
+                                        )->a( n = `text`  v = `{STATUS_TEXT}`
+                                        )->a( n = `state` v = `{STATUS_STATE}`
+
+                                )->end(
+                            )->end(
+                            )->ele( `FlexBox`
+                                )->a( n = `renderType`     v = `Bare`
+                                )->a( n = `justifyContent` v = `Center`
+
+                                )->tag( `Image`
+                                    )->a( n = `src`     v = `{PICTUREURL}`
+                                    )->a( n = `width`   v = `100%`
+                                    )->a( n = `height`  v = `100%`
+                                    )->a( n = `press`   v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                                    )->a( n = `tooltip` v = `Open details for {NAME}`
+                                    )->a( n = `alt`     v = `This image shows {NAME}`
+
+                            )->end(
+                            )->ele( `Button`
+                                )->a( n = `tooltip` v = `Add to Shopping Cart`
+                                )->a( n = `type`    v = `Emphasized`
+                                )->a( n = `press`   v = client->_event( val = `ADD_TO_CART` arg = `${PRODUCTID}` )
+                                )->a( n = `icon`    v = `sap-icon://cart-3`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL4 L4 M4 S4`
+
+                                )->end(
+                            )->end(
+                            )->ele( `ObjectListItem`
+                                )->a( n = `class`      v = `welcomePrice`
+                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                )->a( n = `numberUnit` v = `{CURRENCYCODE}`
+
+                                )->ele( `layoutData`
+                                    )->tag( n = `GridData` ns = `l`
+                                        )->a( n = `span` v = `XL8 L8 M8 S8` ).
 
   ENDMETHOD.
 
@@ -773,6 +958,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
             )->end(
             )->ele( `contentRight`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://customer`
+                    )->a( n = `tooltip` v = `Login`
+                    )->a( n = `press`   v = client->_event( `AVATAR` )
                 )->tag( `ToggleButton`
                     )->a( n = `icon`    v = `sap-icon://cart`
                     " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
@@ -1304,6 +1493,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         IF cart_open = abap_true.
           nav_to( nav = `nav-end` page = `page-cart` ).
         ENDIF.
+
+      WHEN `AVATAR`.
+        " the original's BaseController.onAvatarPress: a MessageToast and
+        " nothing else - there is no login behind it
+        client->message_toast_display( `You are now successfully logged in` ).
 
       WHEN `SAVE_LATER`.
         DATA(saved_id) = client->get_event_arg( ).
@@ -2250,7 +2444,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDIF.
       CASE featured-type.
         WHEN `Promoted`.
-          INSERT row_of( <featured_product> ) INTO TABLE t_promoted.
+          " Welcome.controller._selectPromotedItems( ): the promoted panel
+          " shows TWO of the five Promoted rows, drawn at random on every
+          " start. A backend cannot repeat a client-side random draw (the
+          " corpus rule - apps 520/000), so the port keeps the first two in
+          " mock order: same count, deterministic, and an e2e leg can name
+          " the product it clicks
+          IF lines( t_promoted ) < 2.
+            INSERT row_of( <featured_product> ) INTO TABLE t_promoted.
+          ENDIF.
         WHEN `Viewed`.
           INSERT row_of( <featured_product> ) INTO TABLE t_viewed.
         WHEN OTHERS.
