@@ -17,6 +17,10 @@
     },
     {
       "type": "NOTE",
+      "what": "The two Inputs carry valueLiveUpdate='true', an attribute the original view does not declare, and without it the port validates a STALE value. Reported from a system 2026-09-22: deleting characters left the field blue - no error - although the name was below six characters. sap.m.Input.oninput writes the typed text into the `value` PROPERTY, and so through the two-way binding into the model, only `if (this.getValueLiveUpdate())`; the liveChange event itself always fires and carries the text in its own parameter. So the wire round-tripped on every keystroke while the model - which is what this port's handler reads - still held the value of the last `change`, i.e. the last blur or Enter. Deleting is where it shows worst: the model keeps the longer committed name, name_ok stays true and the ValueState never follows the deletion. The original has no such gap because it reads the CONTROL (this.byId('ProductName').getValue()), not a model field. Event arguments could not close it either: each liveChange would carry only its own field's text, while additionalInfoValidation judges BOTH on every firing - valueLiveUpdate is what makes the model track both. Same fix and same reason as the sibling ports 535 and 560, which carried it from the start."
+    },
+    {
+      "type": "NOTE",
       "what": "Wizard.currentStep is an ASSOCIATION: the XML parser reads its value as a control id and never as a binding, so the port cannot bind it. The Next / Previous / Review buttons and the four Edit links therefore drive the wizard through the framework's whitelisted control_by_id goToStep( step, true ) call - the same goToStep the controller uses, and the same idiom app 101 already uses for its Edit links."
     },
     {

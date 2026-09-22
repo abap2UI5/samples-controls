@@ -63,4 +63,85 @@ export default async (page, expect) => {
     return Boolean(cur && cur.getId().endsWith('wizardContentPage')
       && wiz && String(wiz.getCurrentStep()).endsWith('ProductTypeStep'));
   }, 'the Edit link never came back to the wizard content page — backToPage is a no-op again');
+
+  /* The step-2 validation follows what is TYPED, not what was last committed.
+     Reported from a system 2026-09-22: deleting characters left the field blue
+     while the name was below six characters.
+
+     LAST, deliberately: this leg drives the wizard onto step 2 and leaves a
+     value in it, and the Edit/backToPage leg above asserts wizard state. Run
+     in the middle, it broke that leg - measured, not feared.
+
+     What discriminates is the FIRST transition, not the deletion. Step 2's
+     `activate` wire validates on entry against an EMPTY name, so valueState is
+     already Error before a key is pressed; asserting Error after deleting is
+     therefore true whatever the port does - the first version of this leg
+     asserted exactly that and passed against a backend WITHOUT the fix. Typing
+     eight valid characters is the step that can only reach the backend if the
+     model follows the typing, i.e. under valueLiveUpdate: sap.m.Input.oninput
+     writes the `value` property only `if (this.getValueLiveUpdate())`, while
+     liveChange fires either way. So: type to valid and require None, then
+     delete to invalid and require Error. Never blurs - a blur would commit the
+     value and hide the defect. */
+  await waitForIdle(page);
+  /* The wizard's own nextStep( ), not its button: the label is
+     `WIZARD_STEP + (progress + 1)` - "Step 2" here, not "Next Step" - so a
+     name locator is a guess about progress AND locale, which is what made an
+     earlier version fail with a 30s click timeout. */
+  await page.evaluate(() => {
+    const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
+    reg.find((c) => !c.bIsDestroyed && c.getId().endsWith('CreateProductWizard')).nextStep();
+  });
+  await waitForIdle(page);   // step 2's activate wire round-trips
+
+  const readName = () => page.evaluate(() => {
+    const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
+    const inp = reg.find((c) => !c.bIsDestroyed && c.getId().endsWith('ProductName'));
+    /* getDOMValue( ) and the RAW property apart: they agree only under
+       valueLiveUpdate, and their gap IS the defect. getProperty('value'), not
+       getValue( ) - sap.m.Input overrides getValue to
+       `this.getDomRef("inner") && this._$input ? this.getDOMValue() : this.getProperty("value")`,
+       so on a rendered input it answers the DOM and the two readings would be
+       the same number twice. (It is also why the ORIGINAL sample has no gap:
+       additionalInfoValidation calls byId('ProductName').getValue( ), which is
+       that live DOM value, while this port reads a model field.) */
+    return inp
+      ? { state: inp.getValueState(), typed: inp.getDOMValue(), prop: inp.getProperty('value') }
+      : null;
+  });
+
+  const nameInput = page.locator("[id$='ProductName'] input").first();
+  await expect(nameInput, 'the step-2 Name input').toBeVisibleEnabled();
+  await nameInput.click();
+  await nameInput.pressSequentially('Notebook');          // 8 chars -> valid
+  await waitForIdle(page);
+  const valid = await readName();
+  if (!valid) throw new Error('the ProductName input was not in the control registry');
+  if (valid.typed !== 'Notebook') {
+    throw new Error(`the typing never reached the field: the DOM holds "${valid.typed}"`);
+  }
+  if (valid.state !== 'None') {
+    throw new Error(
+      `typing "${valid.typed}" (8 chars, valid) left valueState=${valid.state}, expected None. `
+      + `The value property holds "${valid.prop}" - if that is EMPTY or shorter, the typed text `
+      + 'never reached the bound model, so the port validated something else '
+      + '(valueLiveUpdate missing on the Input)',
+    );
+  }
+
+  await nameInput.press('Backspace');                     // 7
+  await nameInput.press('Backspace');                     // 6 - still valid
+  await nameInput.press('Backspace');                     // 5 - now INVALID
+  await waitForIdle(page);
+  const invalid = await readName();
+  if (invalid.typed.length >= 6) {
+    throw new Error(`the deletions never reached the field: the DOM holds "${invalid.typed}"`);
+  }
+  if (invalid.state !== 'Error') {
+    throw new Error(
+      `deleting to "${invalid.typed}" (${invalid.typed.length} chars) left valueState=`
+      + `${invalid.state}, expected Error. The value property holds "${invalid.prop}" - if that `
+      + 'is the LONGER name, the port validated the last committed value, not what is typed',
+    );
+  }
 };
