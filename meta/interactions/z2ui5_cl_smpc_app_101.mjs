@@ -46,7 +46,16 @@ export default async (page, expect) => {
      follows. So this leg never blurs - a blur would commit the value and hide
      exactly the defect - and asserts the state after a deletion. */
   await waitForIdle(page);
-  await page.getByRole('button', { name: 'Next Step', exact: true }).first().click();
+  /* The wizard's own nextStep( ), not its button: the button's label is
+     `WIZARD_STEP + (progress + 1)` - "Step 2" here, not "Next Step" - so a
+     name locator is a guess about progress AND locale. That guess is what
+     made the first version of this leg fail with a 30s click timeout. Same
+     idiom the complete leg below already uses. */
+  await page.evaluate(() => {
+    const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
+    reg.find((c) => !c.bIsDestroyed && c.getId().endsWith('CreateProductWizard')).nextStep();
+  });
+  await waitForIdle(page);   // step 2's activate wire round-trips
   const nameInput = page.locator("[id$='ProductName'] input").first();
   await expect(nameInput, 'the step-2 Name input').toBeVisibleEnabled();
   await nameInput.click();
@@ -56,19 +65,25 @@ export default async (page, expect) => {
   await nameInput.press('Backspace');                     // 6 - still valid
   await nameInput.press('Backspace');                     // 5 - now INVALID
   await waitForIdle(page);
+  /* Read the DOM value and the `value` PROPERTY separately. They are the same
+     thing only under valueLiveUpdate, and their gap IS the defect: oninput
+     always writes the DOM, the property (and through it the bound model the
+     handler reads) only under the attribute. Reporting both makes a failure
+     here say which of the two went wrong instead of guessing. */
   const state = await page.evaluate(() => {
     const reg = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
     const inp = reg.find((c) => !c.bIsDestroyed && c.getId().endsWith('ProductName'));
-    return inp ? { state: inp.getValueState(), typed: inp.getValue() } : null;
+    return inp ? { state: inp.getValueState(), typed: inp.getDOMValue(), prop: inp.getValue() } : null;
   });
   if (!state) throw new Error('the ProductName input was not in the control registry');
   if (state.typed.length >= 6) {
-    throw new Error(`the deletions did not reach the control: it holds "${state.typed}"`);
+    throw new Error(`the deletions never reached the field: the DOM holds "${state.typed}"`);
   }
   if (state.state !== 'Error') {
     throw new Error(
       `deleting to "${state.typed}" (${state.typed.length} chars) left valueState=${state.state}, `
-      + 'expected Error - the port is validating the last COMMITTED value, not the typed one '
+      + `expected Error. The value property holds "${state.prop}" - if that is the LONGER, `
+      + 'committed name, the port validated the last blur instead of what is typed '
       + '(valueLiveUpdate missing on the Input)',
     );
   }
