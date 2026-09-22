@@ -10,8 +10,8 @@ import { waitForUi5, waitForIdle, ui5All } from '../../scripts/lib-e2e.mjs';
 // every press here waits for the frontend to go idle first.
 //
 // It waited on `window.z2ui5.isBusy` until 2026-09-08, which is not where that
-// flag lives: `window.z2ui5` is the frontend's PUBLIC global bag (AppState's
-// getGlobal/setGlobal) and isBusy is an internal field of AppState.state. The
+// flag lives: `window.z2ui5` was the frontend's PUBLIC global bag (gone
+// entirely since abap2UI5 2026-09-22) and isBusy is a field of AppState.state. The
 // read was undefined, `!undefined` is true, and the guard returned at once -
 // the quoted line above was right and the code beside it read the wrong
 // object. waitForIdle in lib-e2e.mjs is the real thing.

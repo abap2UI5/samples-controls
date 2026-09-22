@@ -25,7 +25,7 @@ const state = (page) => page.evaluate(`(() => { ${UI5_ALL}
   return {
     page: cur ? cur.getId() : null,
     text: cur ? cur.$().text() : null,
-    draft: (window.z2ui5 && window.z2ui5.oResponse && window.z2ui5.oResponse.ID) || null,
+    draft: ((sap.ui.require('z2ui5/core/AppState') || {}).state?.oResponse?.ID) || null,
   }; })()`);
 
 async function boot(page, url) {

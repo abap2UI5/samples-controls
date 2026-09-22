@@ -12,7 +12,7 @@ const state = (page) => page.evaluate(`(() => { ${UI5_ALL}
     len: b ? b.getLength() : null,
     filters: b ? (b.aFilters || []).length : null,
     selected: ff ? [].concat(...ff.getLists().map((l) => l.getItems().filter((i) => i.getSelected()).map((i) => i.getText()))) : [],
-    draft: (window.z2ui5 && window.z2ui5.oResponse && window.z2ui5.oResponse.ID) || null,
+    draft: ((sap.ui.require('z2ui5/core/AppState') || {}).state?.oResponse?.ID) || null,
   }; })()`);
 
 async function boot(page, url) {
