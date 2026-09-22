@@ -168,3 +168,18 @@ of every CI build.
   bar and a wrong number instead of a stack trace — but the number is what to
   fix. Any new "n of m" figure in a generator gets the same treatment: derive
   numerator and denominator from the **same** filter.
+
+- **Never emit a local named `abap` into generated ABAP.** The transpiler
+  turns `DATA(abap) = …` into `let abap = …`, which shadows open-abap's
+  runtime global `abap` for the **whole method** — so every earlier `abap.` in
+  that method hits the binding's temporal dead zone and the transpiled method
+  answers HTTP 500 with `Cannot access 'abap' before initialization` on its
+  first call. It is legal ABAP: abaplint, the three syntax builds, the chain
+  linter and every other gate here stay green, and only booting the app shows
+  it. `overview-emit.mjs` emitted `DATA(abap) = link-abap_url` next to its
+  `api`/`js`/`ui5` siblings, and the overview app answered 500 on its first
+  event from 2026-09-15 to 2026-09-22 — unnoticed because `e2e_pr` boots
+  `app_000` only when a pull request happens to touch it, which is rare, and
+  `e2e-nightly` was red for other reasons. Name the variable for what it holds
+  (`abap_src`). `pattern-lint`'s **`runtime-global-shadow`** rule fails on the
+  declaration now, in the generated output as well as in a hand-written port.
