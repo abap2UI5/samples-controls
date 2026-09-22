@@ -637,6 +637,12 @@ these entries.
   which converts into the packed field on assignment (the app-174 style);
   integers stay bare. abaplint catches it, but only after the file is written —
   a data generator must emit it right (batch b20).
+- **`DELETE itab FROM n.` is `ambiguous_statement`** — `DELETE itab FROM n1
+  [TO n2]` (index range) and `DELETE dbtab FROM wa` (database) are the same
+  words, and abaplint refuses to guess. Say what you mean: a `TO` bound, a
+  `DELETE … INDEX`, or — usually better — do not build the rows you are about
+  to delete (`demo_004` narrows five promoted products to two with a
+  `IF lines( t ) < 2.` guard at the INSERT).
 - **`DELETE itab WHERE` takes no functional expression** — `DELETE t WHERE
   to_upper( name ) NS q.` is a parser error, the `WHERE` of an internal-table
   statement accepts only comparisons of components against values. Loop

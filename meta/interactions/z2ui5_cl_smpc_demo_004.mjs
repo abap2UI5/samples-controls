@@ -11,6 +11,10 @@
 //   - the two cart ToggleButtons both derive `pressed` from the layout, so the
 //     one on the page the user is NOT on agrees with the column that is open;
 //   - adding to the cart round-trips through the backend and the total follows.
+// Plus, from the 2026-09-22 side-by-side against the original: the welcome page
+// is the original's BlockLayout-and-Grid arrangement, not three flat lists, and
+// its promoted panel shows TWO of the five Promoted rows the way
+// `_selectPromotedItems( )` does.
 import { revealInOverflow, waitForIdle, waitForUi5 } from '../../scripts/lib-e2e.mjs';
 
 /** a list of the app, by its own id suffix — every page here has several */
@@ -78,8 +82,8 @@ export default async (page, expect) => {
 
   /* add it to the cart: a round-trip, a toast, the row in the cart and a total.
    * The FOOTER button of the product page, by id: a NavContainer keeps the pages
-   * it is not showing in the DOM, and the welcome page's three lists carry an
-   * "Add to Cart" row action each - 13 of them, all reported visible, so a text
+   * it is not showing in the DOM, and the welcome page carries an add-to-cart
+   * button on every tile - ten of them, all reported visible, so a loose
    * locator adds a promoted product instead of the one on screen. */
   await page.locator('[id$="--page-product"] .sapMPageFooter button').first().click();
   await waitForIdle(page);
@@ -105,9 +109,22 @@ export default async (page, expect) => {
     return fcl.getLayout() === 'ThreeColumnsMidExpanded' && toggles.length === 2 && toggles.every((t) => t.getPressed() === true);
   }, 'opening the cart column did not press BOTH cart buttons - is `pressed` a flag of its own again?');
 
-  // a second product, from the welcome page's promoted list: the cart sorts by
-  // Name, so it lands in front of the laptop rather than after it
-  await page.locator('[id$="--promotedList"]').getByText('Add to Cart', { exact: true }).first().click();
+  /* the welcome page is the original's arrangement: the carousel, and one
+   * BlockLayout CELL per featured product rather than a flat list row. The
+   * promoted panel carries TWO of the five Promoted rows, as
+   * `Welcome.controller._selectPromotedItems( )` does. */
+  await waitForUi5(page, () => {
+    const cells = ui5All().filter((c) => c.getMetadata().getName() === 'sap.ui.layout.BlockLayoutCell'
+      && /--promotedRow-/.test(c.getId()));
+    const carousel = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.Carousel');
+    return cells.length === 2 && !!carousel && carousel.getPages().length === 4;
+  }, 'the welcome page is not the original arrangement - two promoted tiles and a four-page carousel');
+
+  /* a second product, from the welcome page's promoted panel: the cart sorts by
+   * Name, so it lands in front of the laptop rather than after it. The tile's
+   * add-to-cart is the original's icon-only Emphasized Button, so it is located
+   * by its tooltip rather than by a row text. */
+  await page.locator('[id$="--promotedRow"] button[title="Add to Shopping Cart"]').first().click();
   await waitForIdle(page);
   await waitForUi5(page, () => {
     const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--entryList$/.test(c.getId()));

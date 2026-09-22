@@ -7,7 +7,62 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-09-14 (latest) — the Shopping Cart was never actually stored, and the test for it was right
+## 2026-09-22 (latest) — the Shopping Cart's welcome page did not look like the original, and nothing here could have said so
+
+A side-by-side screenshot of `demo_004` against the running original put the two
+welcome pages next to each other, and they were different pages: the original
+shows a carousel and two product TILES (picture, name, status, an Emphasized
+cart-3 button, the price), the port showed five flat list rows. Every gate was
+green, and correctly so — a demo app has no sidecar, so `structural_diff` never
+compares it against the archived original at all (AGENTS §3). The class header
+DECLARED the arrangement as a deviation, which is the honest half; the other
+half is that a declared deviation is still a difference somebody has to look at
+a picture to find.
+
+**What the comparison found, beyond the declared one.** Two things were not in
+the header and not in any gate:
+
+- `Welcome.controller._selectPromotedItems( )` narrows the five Promoted rows
+  to **two**, drawn at random, on every start. The port bound all five.
+- the avatar Button (`sap-icon://customer` → a MessageToast) in the
+  `contentRight` of the Welcome AND Product headers was missing entirely.
+
+Plus one literal the 2026-09-14 sweep had missed: the tooltip reads
+`openProductDetails=Open details for` in the bundle, and the port wrote
+"Open product details for".
+
+**The rebuild.** `page_welcome( )` is the original's shape now — the four-page
+Carousel, and per panel a `l:BlockLayout` / `l:BlockLayoutRow` whose `content`
+is an aggregation binding with the `l:BlockLayoutCell` as its template, holding
+the `l:Grid` with `ObjectIdentifier` + `ObjectStatus`, the picture, the
+Emphasized `cart-3` Button and the price `ObjectListItem`, each with its
+`l:GridData` span. Nothing about it needed a framework feature the corpus did
+not already have: a bound `content` aggregation is an ordinary aggregation
+binding, every control and member is ≤ 1.71, and the app's two `style.css`
+rules ride along in a `core:HTML` style block (the apps 026/028/139 idiom).
+So the arrangement was never a capability question — it was a choice, and the
+class header now says which parts of it still are (the carousel's eight-second
+timer and random start page, the two promoted rows taken first rather than at
+random).
+
+**What the linter said, and what it meant.** The first `check:apps` run reported
+seven `relative-binding-without-context` errors — every `{NAME}` / `{PRICE_TEXT}`
+in the new template "resolves against nothing". They were real reports of a
+different defect: the view root declared no `xmlns:l` and no `xmlns:core`, so
+`l:BlockLayoutRow` resolved to no control at all, the walk had no aggregation to
+open a row context with, and the contextless-binding rule fired on the
+consequence. The seven `undeclared-namespace` errors in the same run were the
+cause. Declaring the two namespaces cleared all fourteen. **A missing `xmlns` on
+a multi-page view does not report as one finding; it reports as every binding
+underneath it.**
+
+**And an abaplint one.** `DELETE t_promoted FROM 3.` — the obvious way to keep
+the first two rows — is `ambiguous_statement [E]`: `DELETE itab FROM n` and
+`DELETE dbtab FROM wa` are the same words. The narrowing is a
+`IF lines( t_promoted ) < 2.` guard at the INSERT instead, which says what it
+means anyway.
+
+## 2026-09-14 — the Shopping Cart was never actually stored, and the test for it was right
 
 #209 ("No app class in this repository parses JSON any more", not journalled)
 took the removed framework reader out of `cart_restore( )` — `value` is bound
