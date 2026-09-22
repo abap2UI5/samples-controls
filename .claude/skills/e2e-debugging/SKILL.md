@@ -267,10 +267,17 @@ verdicts below turned out to be harness effects.
   name-ascending already put one there: the wait returned instantly and the
   module raced its next round-trip against the one still in flight. Wait on the
   state that CHANGES.
-- **Type with a delay when the wire round-trips.** A per-keystroke round-trip
-  is lossy, not queued (events fired mid-flight are dropped) — a no-delay
-  `pressSequentially` asserts a value the wire never promised. Full rule (app
-  280) in the `port-a-sample` guide's porting gotchas.
+- **A per-keystroke wire carries both `s_ctrl` flags — then type with NO
+  delay.** `check_queue_last` makes the wire keep the last mid-flight event
+  instead of dropping it, and `check_no_busy` keeps the busy overlay down, so
+  a no-delay `pressSequentially` asserts a value the wire does promise. If a
+  module still needs a delay, suspect a MISSING flag on the wire before you
+  slow the test down. A wire without `check_no_busy` also breaks
+  actionability: the overlay covers the page, and Playwright then waits out
+  its full timeout on a button that is visible and unclickable (`locator.click:
+  Timeout 30000ms exceeded` — app 101, which is why its module still
+  `waitForIdle`s before the first press). Full rule (apps 280, 101) in the
+  `port-a-sample` guide's porting gotchas.
 - **A predicate that THROWS is not a predicate that is false**, and the
   difference is the whole diagnosis. `waitForFunction` rejects either way, so a
   wrapper that reports its own message for any rejection accuses the port of a

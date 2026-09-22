@@ -201,9 +201,10 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                     )->a( n = `valueStateText` v = `Enter 6 symbols or more`
                                     )->a( n = `valueState`     v = client->_bind( productnamestate )
                                     )->a( n = `id`             v = `ProductName`
-                                    )->a( n = `liveChange`     v = client->_event( val = `ADDITIONAL_INFO` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                    )->a( n = `liveChange`     v = client->_event( val = `ADDITIONAL_INFO` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                     )->a( n = `placeholder`    v = `Enter name with length greater than 6`
                                     )->a( n = `value`          v = client->_bind( productname )
+                                    )->a( n = `valueLiveUpdate` v = `true`
                                 )->tag( `Label`
                                     )->a( n = `text`     v = `Weight`
                                     )->a( n = `required` v = `true`
@@ -211,10 +212,11 @@ CLASS z2ui5_cl_smpc_app_533 IMPLEMENTATION.
                                     )->a( n = `valueStateText` v = `Enter digits`
                                     )->a( n = `valueState`     v = client->_bind( productweightstate )
                                     )->a( n = `id`             v = `ProductWeight`
-                                    )->a( n = `liveChange`     v = client->_event( val = `ADDITIONAL_INFO` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                    )->a( n = `liveChange`     v = client->_event( val = `ADDITIONAL_INFO` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                                     )->a( n = `type`           v = `Number`
                                     )->a( n = `placeholder`    v = `Enter digits`
                                     )->a( n = `value`          v = client->_bind( productweight )
+                                    )->a( n = `valueLiveUpdate` v = `true`
                                 )->tag( `Label`
                                     )->a( n = `text` v = `Manufacturer`
 

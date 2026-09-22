@@ -18,7 +18,7 @@ TRAINING.md; for what abap2UI5 can express see CAPABILITIES.md._
 | Ports | **622** sidecars in `meta/` (src/01 OpenUI5 <= 1.71: 401 · src/02 OpenUI5 > 1.71: 221) |
 | Per library | sap.f: 36 · sap.m: 393 · sap.tnt: 17 · sap.ui: 131 · sap.uxap: 45 |
 | Status ladder | 208 `generated` · 355 `reviewed` · 59 `checked` (live-verified) |
-| Deviations | 10 DROPPED_171 · 162 IMPROVISED · 1925 NOTE · 300 POST_171 |
+| Deviations | 10 DROPPED_171 · 162 IMPROVISED · 1928 NOTE · 300 POST_171 |
 | Open LIVE_TESTs | **0 ports** carry at least one `LIVE_TEST` deviation — the automated close path is the e2e interaction harness (AGENTS §6 `e2e_smoke`) |
 | Declared gate skips | 2 structural-diff · 6 render-smoke · 0 data-fidelity · 3 property-gate (each re-verified per run — a stale skip FAILS) |
 | Out-of-scope ported samples | `z2ui5_cl_smpc_app_121 (sap.m.sample.UploadSet — deprecated)` · `z2ui5_cl_smpc_app_136 (sap.f.sample.SidePanelSingle — control @since 1.107)` · `z2ui5_cl_smpc_app_141 (sap.ui.core.sample.InvisibleMessage — control @since 1.78)` · `z2ui5_cl_smpc_app_165 (sap.f.sample.ProductSwitchNavigation — control @since 1.72)` · `z2ui5_cl_smpc_app_203 (sap.m.sample.OverflowToolbarTokenizer — control @since 1.139)` — all decided KEEP permanently 2026-07-30 (per-app rationale in ui5/scope-exceptions.json, revertible); the source-backed scope gate stays hard for NEW undecided entries |
@@ -122,17 +122,26 @@ same cut AGENTS §10 already makes between the rule and the war story._
   specific enough that a re-check knows what to re-check. Neither promotes a
   port; both make a live session shorter.
 
-- [x] **The per-keystroke wires carry `check_queue_last` (2026-09-19).** 26
-  wires in 14 ports - every `liveChange`, `liveSearch` and `suggest` wired to
-  `_event( )` - are registered with `s_ctrl = VALUE #( check_queue_last =
-  abap_true )` (abap2UI5 PR #2739, in the pin since #211): the LAST event
-  fired during a round-trip is kept and dispatched after the response, one
-  round-trip at a time, order kept, so the backend ends on the typed value
-  (app 280 used to measure `abc` → `a`). The lossy NOTEs of 280, 407, 420
-  and 473 record the change, and the interaction modules of 280 and 420 type
-  with no delay. Its partner `check_no_busy` (abap2UI5 0709bd8, keeps the
-  busy overlay down for the wire) is NOT in the pin yet; the pair is what
-  samples 059 shows, so the overlay half waits for the next bump.
+- [x] **The per-keystroke wires carry `check_queue_last` AND `check_no_busy`
+  (queue half 2026-09-19, overlay half 2026-09-21).** 26 wires in 14 ports -
+  every `liveChange`, `liveSearch` and `suggest` wired to `_event( )` - are
+  registered with `s_ctrl = VALUE #( check_queue_last = abap_true
+  check_no_busy = abap_true )`. `check_queue_last` (abap2UI5 PR #2739, in the
+  pin since #211) keeps the LAST event fired during a round-trip and
+  dispatches it after the response, one round-trip at a time, order kept, so
+  the backend ends on the typed value (app 280 used to measure `abc` → `a`).
+  `check_no_busy` (abap2UI5 PR #2759) closes the half a user actually sees:
+  the first trip raises the busy indicator after the usual delay, but every
+  keystroke landing on a trip already in flight raises it with NO delay, so
+  from the second character on a full-screen overlay sat over the very field
+  being typed into - where the demo kit original, a plain client-side
+  handler, shows nothing at all. Reported from app 101 (Wizard step
+  validation) and swept across all 26 wires with the `A2UI5_PIN` bump to
+  `ad0a2dd2`, which is what made the flag available. The NOTEs of 101, 280,
+  407, 420 and 473 record it; the interaction modules of 280 and 420 type
+  with no delay. demo_004's `Storage`/`finished` wire is deliberately NOT in
+  the sweep: it uses `check_queue_last` to survive the busy guard during the
+  initial render, and there the app really is loading.
 
 - [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
   close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,

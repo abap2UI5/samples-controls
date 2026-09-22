@@ -714,7 +714,7 @@ comes to say a port is blocked when it is not (and the reverse):
 
 | Pin | Where | Answers |
 |---|---|---|
-| `A2UI5_PIN` is a **commit** on main and reads `7b72d241` | root file; `node-setup`, the web/Pages build and `bump-a2ui5.yaml` read it | **What a port DOES.** The transpiled backend, the e2e smoke and every reproducible build run this framework, so it decides whether a frontend action, an event-arg projection or a `control_by_id` method exists at all. A sidecar sentence about a wire working or not working is a statement about THIS pin, and `check_pins` policy 6 holds those sentences to it. The weekly bump moves this cell with the pin (`node scripts/check-pins.mjs --fix`, called from `bump-a2ui5.yaml`) - it rewrites only present-tense claims in the top-level prose, never a sidecar and never a sentence in the past tense. |
+| `A2UI5_PIN` is a **commit** on main and reads `daa9dc68` | root file; `node-setup`, the web/Pages build and `bump-a2ui5.yaml` read it | **What a port DOES.** The transpiled backend, the e2e smoke and every reproducible build run this framework, so it decides whether a frontend action, an event-arg projection or a `control_by_id` method exists at all. A sidecar sentence about a wire working or not working is a statement about THIS pin, and `check_pins` policy 6 holds those sentences to it. The weekly bump moves this cell with the pin (`node scripts/check-pins.mjs --fix`, called from `bump-a2ui5.yaml`) - it rewrites only present-tense claims in the top-level prose, never a sidecar and never a sentence in the past tense. |
 | the **`main` branch** | `"branch"` on the abap2UI5 dependency in `abaplint.jsonc` and `abap_cloud.jsonc` | **Whether the corpus COMPILES against the current framework.** Until 2026-08-31 this was a release tag ("does it compile for a reader") — but that coupled every merge using new framework API to a framework RELEASE, and releases are monthly snapshots that never gate a merge (maintainer decision, the hash_* wave). What a port needs beyond the latest release stays in its sidecar prose ("needs abap2UI5 newer than x.y.z"); `check-pins.mjs` policy 2 enforces the explicit `"branch": "main"`. |
 | the **`702` branch** | `"branch"` on the abap2UI5 dependency in `.github/abaplint/abap_702.jsonc` | **Whether the corpus DOWNPORTS.** The framework's own `auto_downport` rebuilds that branch from main, so it is the one moving target in the build set — an allowlisted, reasoned exception in `check-pins.mjs` (policy 2) because `"branch"` feeds `git clone --branch`, which takes a branch or a tag and never a commit. The 702 build is therefore not byte-reproducible, and a 702-only failure that nothing here changed is the first thing to suspect on a branch-head move. |
 
@@ -1354,8 +1354,9 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   accepts the default — there, the checkout could not leave the payment step at
   all. Seed the default in `model_init( )`, the way the original's own model
   does (`SelectedPayment: "Credit Card"`).
-- **A per-keystroke round-trip is serialized — register the wire with
-  `check_queue_last`.** abap2UI5 runs one round-trip at a time, and an
+- **A per-keystroke round-trip is serialized and raises the busy overlay —
+  register the wire with BOTH `check_queue_last` and `check_no_busy`.**
+  abap2UI5 runs one round-trip at a time, and an
   ordinary wire DROPS an event fired while one is in flight, so a
   `liveChange`/`liveSearch`/`suggest` wire that round-trips showed the value
   of the last *completed* trip (measured on app 280 — typing `abc` with no
@@ -1366,9 +1367,23 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   the response, order kept, so the backend ends on the typed value.
   Intermediate values can still be skipped under fast typing — prefer a
   two-way binding or an expression binding whenever the sample's point allows
-  it; when the round-trip is required, set the flag, and an e2e interaction
-  may then type with no delay and assert the final value. The overlay half
-  of the pair, `check_no_busy`, is not in the pin yet.
+  it; when the round-trip is required, set the flags, and an e2e interaction
+  may then type with no delay and assert the final value.
+  **`check_queue_last` alone is half a wire.** It stops keystrokes being
+  lost; it does nothing about the full-screen busy overlay, and that is the
+  half a user actually sees. The FIRST trip raises the indicator after the
+  usual delay, but every keystroke landing on a trip already in flight raises
+  it with NO delay — deliberate, because a dropped *click* needs feedback at
+  once, and exactly wrong while typing. So from the second character on the
+  overlay sits over the very field being typed into, where the demo kit
+  original (a plain client-side handler) shows nothing at all. Since the pin
+  bump to `ad0a2dd2` every such wire also carries `check_no_busy` (abap2UI5
+  PR #2759): the round-trip and the busy STATE are unchanged, only the
+  overlay stays down. Reported from app 101, swept across all 26 wires.
+  Note the flag is for wires driven by TYPING only — a one-shot wire that
+  uses `check_queue_last` to survive the busy guard during the initial render
+  (demo_004's `Storage`/`finished`) keeps its overlay, because there the app
+  really is loading.
 - **ABAP Doc (`"!`) is HTML** — no raw `<tag>` (e.g. `<mvc:View>`); see §8.
 - **Literal braces in attribute values are read as a BINDING by the XMLView
   parser** — CSS/JS braces inside a `core:HTML` `content` (or any literal

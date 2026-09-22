@@ -81,7 +81,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                     )->a( n = `displayMode` v = `Large`
                     )->a( n = `mode`        v = `HSL`
                     )->a( n = `change`      v = client->_event( val = `CHANGE_LC` arg = `${$parameters>/colorString}` )
-                    )->a( n = `liveChange`  v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/colorString}` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                    )->a( n = `liveChange`  v = client->_event( val = `LIVE_CHANGE` arg = `${$parameters>/colorString}` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
 
             )->end(
 

@@ -55,7 +55,7 @@ CLASS z2ui5_cl_smpc_app_144 IMPLEMENTATION.
 
         )->tag( `Slider`
             )->a( n = `value`      v = client->_bind( slider_value )
-            )->a( n = `liveChange` v = client->_event( val = `SLIDER` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+            )->a( n = `liveChange` v = client->_event( val = `SLIDER` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
 
         )->ele( `Panel`
             )->a( n = `id`               v = `panelForGridList`

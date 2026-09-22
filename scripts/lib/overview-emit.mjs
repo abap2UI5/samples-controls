@@ -518,7 +518,13 @@ CLASS ${CLASS} IMPLEMENTATION.
         DATA(api)  = link-api_url.
         DATA(js)   = link-js_url.
         DATA(ui5)  = link-ui5_url.
-        DATA(abap) = link-abap_url.
+        " NOT DATA(abap): the transpiler emits \`let abap\` for it, which shadows
+        " open-abap's runtime global \`abap\` for the WHOLE method - so every
+        " earlier \`abap.\` in on_event( ) hits that binding's temporal dead zone
+        " and the first roundtrip answers HTTP 500 with \"Cannot access 'abap'
+        " before initialization\". Legal ABAP, green in abaplint and in every
+        " gate here, and it took down the overview app for a week.
+        DATA(abap_src) = link-abap_url.
 
         DATA(links) = z2ui5_cl_ui5_view_builder=>factory( ).
         DATA(box) = links->ele( n = \`FragmentDefinition\` ns = \`core\`
@@ -576,8 +582,8 @@ CLASS ${CLASS} IMPLEMENTATION.
             )->a( n = \`icon\`    v = \`sap-icon://syntax\`
             )->a( n = \`type\`    v = \`Transparent\`
             )->a( n = \`width\`   v = \`100%\`
-            )->a( n = \`tooltip\` t = abap
-            )->a( n = \`press\`   v = link_press( abap ) ).
+            )->a( n = \`tooltip\` t = abap_src
+            )->a( n = \`press\`   v = link_press( abap_src ) ).
 
         " say why the reference links are missing rather than leaving a gap
         IF api IS INITIAL.

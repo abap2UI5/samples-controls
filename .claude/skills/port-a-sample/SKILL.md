@@ -685,16 +685,31 @@ these entries.
   needs a subtree filled from a loop or a node filled twice, the split is
   available; it is simply not the default here.
 
-- **A per-keystroke round-trip is LOSSY, not queued.** abap2UI5 serializes
-  round-trips: an event fired while one is in flight is **dropped**, so a
-  `liveChange`/`liveSearch` wire that round-trips shows the value of the last
-  *completed* trip, skipping intermediate ones under fast typing (measured on
-  app 280 — typing `abc` with no delay left the bound field at `a` while the
-  TextArea held `abc`; it converges as soon as typing pauses). Prefer a two-way
-  binding or an expression binding whenever the sample's point allows it; when
-  the round-trip is required, say so in the sidecar and make any e2e
-  interaction **type with a delay** — a no-delay `pressSequentially` asserts a
-  value the wire never promised.
+- **A per-keystroke round-trip needs BOTH `s_ctrl` flags.** abap2UI5
+  serializes round-trips, and an ordinary wire is lossy *and* flashes the busy
+  overlay. Register every `liveChange`/`liveSearch`/`suggest` wire that
+  round-trips as `client->_event( val = … s_ctrl = VALUE #(
+  check_queue_last = abap_true check_no_busy = abap_true ) )`:
+  - `check_queue_last` keeps the LAST event fired while a trip is in flight
+    and dispatches it after the response, so the backend ends on the typed
+    value. Without it the wire shows the value of the last *completed* trip
+    (measured on app 280 — typing `abc` with no delay left the bound field at
+    `a` while the TextArea held `abc`).
+  - `check_no_busy` keeps the full-screen busy overlay down. Without it the
+    FIRST trip raises the indicator after the usual delay, but every keystroke
+    landing on a trip already in flight raises it with NO delay — deliberate,
+    because a dropped *click* needs feedback at once, and exactly wrong while
+    typing. From the second character on the overlay sits over the very field
+    being typed into, where the demo kit original (a plain client-side
+    handler) shows nothing at all. Reported from app 101.
+  Intermediate values can still be skipped under fast typing, so prefer a
+  two-way binding or an expression binding whenever the sample's point allows
+  it; when the round-trip is required, set both flags and say so in the
+  sidecar. With the flags an e2e interaction may type with **no** delay and
+  assert the final value. The flags are for wires driven by TYPING — a
+  one-shot wire using `check_queue_last` to survive the busy guard during the
+  initial render (demo_004's `Storage`/`finished`) keeps its overlay, because
+  there the app really is loading.
 - **Event args need the `$`-prefixed form** (`${COL}`, `$event.oSource.sId`), not
   a bare `{COL}` — see "Data binding & events" in this guide.
 - **A UI5 *association* cannot be data-bound** — only properties and

@@ -101,7 +101,7 @@ CLASS z2ui5_cl_smpc_app_218 IMPLEMENTATION.
                     )->a( n = `search`            v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} search event is fired` ) ( `$event.oSource.sId` ) ) )
                     )->a( n = `liveChange`        v = client->follow_up_action( val = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} liveChange event value is: {1}` ) ( `$event.oSource.sId` ) ( `${$parameters>/newValue}` ) ) )
-                    )->a( n = `suggest`           v = client->_event( val = `SUGGEST` arg = `${$parameters>/suggestValue}` s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                    )->a( n = `suggest`           v = client->_event( val = `SUGGEST` arg = `${$parameters>/suggestValue}` s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
                     )->a( n = `enableSuggestions` v = `true`
                     )->a( n = `suggestionItems`   v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
