@@ -191,10 +191,40 @@ export async function waitForUi5(page, fn, msg, arg) {
   });
 }
 
+/* The frontend state of the running z2ui5.Component, as a page-side EXPRESSION
+ * (splice it into a page.evaluate / waitForFunction string; null when no
+ * component has booted yet).
+ *
+ * Where it lives has moved twice. Until 2026-09-22 it was mirrored on
+ * `window.z2ui5`; abap2UI5#2777 removed that global and left one module-level
+ * `state` on z2ui5/core/AppState; abap2UI5#2780 (2026-09-23) moved it onto a
+ * per-component context, `component.ctx.state`, so two components on a page
+ * no longer share it - and `AppState.state` is simply undefined now. A reader
+ * that still asked AppState got nothing back and did not fail: every
+ * bookmark-restore leg reported "no draft id on the response", and
+ * waitForIdle took the "older frontend" exit and stopped waiting at all.
+ *
+ * The component is found through UI5's own registry (Component.registry,
+ * since 1.67); the AppState fallback keeps a pin between #2777 and #2780
+ * working. The harness boots one component per page. */
+export const FRONTEND_STATE = `((() => {
+  const C = sap.ui.require('sap/ui/core/Component');
+  const own = C && C.registry ? C.registry.filter((c) => c.ctx && c.ctx.state)[0] : null;
+  if (own) return own.ctx.state;
+  const legacy = sap.ui.require('z2ui5/core/AppState');
+  return (legacy && legacy.state) || null;
+})())`;
+
+// the draft id of the last response - what a bookmark-restore URL
+// (`?app_start=<class>#/z2ui5-xapp-state=<draft>`) is built from
+export async function draftId(page) {
+  return page.evaluate(`(${FRONTEND_STATE} || {}).oResponse?.ID || null`);
+}
+
 /* The app is not answering a roundtrip of its own.
  *
  * THE FRONTEND DROPS AN EVENT FIRED WHILE ONE IS IN FLIGHT, and silently:
- * View1.eB( ) returns early on `AppState.state.isBusy`, showing the busy
+ * View1.eB( ) returns early on the frontend state's `isBusy`, showing the busy
  * indicator and nothing else. No error, no console line, no request. From here
  * that looks exactly like a wire that was never attached - the press fires,
  * the listener is there, and the backend simply never hears about it.
@@ -220,9 +250,9 @@ export async function waitForIdle(page, { quiet = 400, timeout = 30000 } = {}) {
      through the gap and the press is dropped anyway (measured: isBusy was
      still true one frame after such a check returned). */
   const expr = `(() => {
-    const s = sap.ui.require("z2ui5/core/AppState");
-    if (!s || !s.state) return true;             // an older frontend: nothing to wait for
-    window.__a2ui5IdleSince = s.state.isBusy === true ? 0 : (window.__a2ui5IdleSince || Date.now());
+    const s = ${FRONTEND_STATE};
+    if (!s) return true;                         // no component booted: nothing to wait for
+    window.__a2ui5IdleSince = s.isBusy === true ? 0 : (window.__a2ui5IdleSince || Date.now());
     return window.__a2ui5IdleSince > 0 && Date.now() - window.__a2ui5IdleSince >= ${quiet};
   })()`;
   await page.waitForFunction(expr, undefined, { timeout }).catch(() => {

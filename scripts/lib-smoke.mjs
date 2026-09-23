@@ -19,3 +19,20 @@ export const BENIGN = [
 ];
 
 export const benign = (s) => BENIGN.some((re) => re.test(s));
+
+/* The GET page's CSP, relaxed for a SOURCE-ONLY UI5.
+ *
+ * The smoke serves UI5 from the @openui5 npm packages, which carry sources and
+ * no library-preload bundles, so the ui5loader fetches modules synchronously
+ * and evals them. abap2UI5#2778 (2026-09-22) took 'unsafe-eval' out of the
+ * default CSP - rightly: UI5 from the CDN runs without it - and from then on
+ * every app died at boot on `Failed to execute 'sap/ui/core/Core.js': Refused
+ * to evaluate a string as JavaScript`, which is the harness, not a port.
+ *
+ * So the harness adds 'unsafe-eval' to script-src, and only here - the same
+ * relaxation abap2UI5's own node/tests/e2e/fixtures.js applies to its offline
+ * run. A page that already carries it (a pin before #2778) is returned as is. */
+export function allowEvalForSourceUi5(html) {
+  return html.replace(/(script-src\s)([^;"]*)/, (m, head, rest) =>
+    (/'unsafe-eval'/.test(rest) ? m : `${head}'unsafe-eval' ${rest}`));
+}

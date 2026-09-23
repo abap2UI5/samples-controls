@@ -15,7 +15,7 @@
 //     binding it. Reopening the popover and reading the SideNavigation back is
 //     the only thing that can tell the two apart.
 //   - the quick-create popup, which the original builds imperatively.
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, FRONTEND_STATE } from '../../scripts/lib-e2e.mjs';
 
 const UI5_ALL = 'const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all());';
 
@@ -25,7 +25,7 @@ const state = (page) => page.evaluate(`(() => { ${UI5_ALL}
   return {
     page: cur ? cur.getId() : null,
     text: cur ? cur.$().text() : null,
-    draft: ((sap.ui.require('z2ui5/core/AppState') || {}).state?.oResponse?.ID) || null,
+    draft: (${FRONTEND_STATE} || {}).oResponse?.ID || null,
   }; })()`);
 
 async function boot(page, url) {
@@ -33,7 +33,7 @@ async function boot(page, url) {
   // navigation and does NOT reload, so the restore would never be requested
   await page.goto('about:blank');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3, { timeout: 90000 });
+  await page.waitForFunction(() => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3, undefined, { timeout: 90000 });
   await waitForUi5(page, () => {
     const nav = ui5All().find((c) => c.getId().endsWith('pageContainer') && c.getCurrentPage);
     return !!(nav && nav.getCurrentPage());

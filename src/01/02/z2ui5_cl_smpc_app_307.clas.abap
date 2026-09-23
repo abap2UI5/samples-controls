@@ -146,15 +146,18 @@ CLASS z2ui5_cl_smpc_app_307 IMPLEMENTATION.
     " Read by hand: abap2UI5 releases no JSON parser, and the vendored ajson
     " copy is framework-internal (the linter's non-released-api rule reports
     " it, correctly). For ONE property of a flat projection that is the whole
-    " job - walk every `"startdate":"` and take what stands up to the next quote.
+    " job - walk every `"startDate":"` and take what stands up to the next quote.
+    " The key is matched in its exact case: the framework writes the UI5
+    " property name as it is, and the transpiled runtime's find( ) ignores
+    " `case = abap_false` (it matched nothing, so the toast came back empty).
     " The same reader as Z2UI5_CL_SMP_APP_197 in abap2UI5/samples, and the
     " same limit: it reads what the FRAMEWORK wrote, which is flat, and it
     " would need to resolve escapes for a payload composed from free text.
-    DATA(marker) = |"startdate":"|.
+    DATA(marker) = |"startDate":"|.
     DATA(rest)   = json.
 
     DO.
-      DATA(offset) = find( val = rest sub = marker case = abap_false ).
+      DATA(offset) = find( val = rest sub = marker ).
       IF offset < 0.
         EXIT.
       ENDIF.

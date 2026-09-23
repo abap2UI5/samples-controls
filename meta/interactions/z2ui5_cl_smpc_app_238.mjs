@@ -7,6 +7,7 @@ export default async (page, expect) => {
   // assert on the rendered text instead of playwright visibility
   await page.waitForFunction(
     () => document.querySelector('.sapMPopover')?.innerText.includes('Sales Revenue'),
+    undefined,
     { timeout: 10000 },
   );
 };
