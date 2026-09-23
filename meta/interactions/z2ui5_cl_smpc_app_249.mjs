@@ -10,7 +10,7 @@
 // draft is restored through the app-state hash, which is the framework's
 // "come back to this app" path (check_on_navigated -> view_display), and the
 // hidden badge has to stay hidden: current 2 is below the restored minimum 5.
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, draftId } from '../../scripts/lib-e2e.mjs';
 
 const badgeOf = (page) => page.evaluate(
   () => document.querySelector('.sapMBadgeIndicator')?.getAttribute('data-badge') ?? null,
@@ -28,6 +28,7 @@ export default async (page, expect) => {
   // the badge value lives in the data-badge attribute (CSS content)
   await page.waitForFunction(
     () => document.querySelector('.sapMBadgeIndicator')?.getAttribute('data-badge') === '1',
+    undefined,
     { timeout: 10000 },
   );
   const input = page.locator('.sapMStepInput input').first();
@@ -36,13 +37,14 @@ export default async (page, expect) => {
   await page.keyboard.press('Enter');
   await page.waitForFunction(
     () => document.querySelector('.sapMBadgeIndicator')?.getAttribute('data-badge') === '2',
+    undefined,
     { timeout: 10000 },
   );
 
   // MIN_CHANGE accepts 5 and pushes it to the Button: the badge value 2 now
   // sits below the minimum, so Button.badgeValueFormatter hides the indicator
   await enter(page, 'MinInput', '5');
-  await page.waitForFunction(() => !document.querySelector('.sapMBadgeIndicator'), { timeout: 10000 })
+  await page.waitForFunction(() => !document.querySelector('.sapMBadgeIndicator'), undefined, { timeout: 10000 })
     .catch(() => { throw new Error('MIN_CHANGE did not reach setBadgeMinValue - the badge stayed visible below the minimum'); });
   await enter(page, 'MaxInput', '50');
   await waitForUi5(page, () => {
@@ -52,7 +54,7 @@ export default async (page, expect) => {
 
   // come back to the app: the saved draft is restored through the app-state
   // hash, so the backend takes the check_on_navigated path and rebuilds the view
-  const draft = await page.evaluate(() => sap.ui.require('z2ui5/core/AppState').state.oResponse.ID);
+  const draft = await draftId(page);
   await page.goto('about:blank');
   await page.goto(`http://localhost:3000/?app_start=z2ui5_cl_smpc_app_249#/z2ui5-xapp-state=${draft}`,
     { waitUntil: 'domcontentloaded', timeout: 30000 });

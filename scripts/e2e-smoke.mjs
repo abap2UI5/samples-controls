@@ -156,7 +156,7 @@ function resolveLocal(pathname) {
 }
 
 // benign-noise contract shared with the MCP server — see lib-smoke.mjs
-import { benign } from './lib-smoke.mjs';
+import { benign, allowEvalForSourceUi5 } from './lib-smoke.mjs';
 
 function startBackend() {
   return new Promise((resolve, reject) => {
@@ -272,6 +272,15 @@ async function checkPort(browser, cls) {
       return;
     }
   });
+  // the GET page itself: its CSP gets the 'unsafe-eval' the source-only UI5
+  // below needs (lib-smoke.mjs says why). Documents only - a roundtrip passes.
+  await page.route((url) => url.origin === 'http://localhost:3000', async (route) => {
+    if (route.request().resourceType() !== 'document') return route.fallback();
+    let response;
+    try { response = await route.fetch({ timeout: 120000 }); } catch { return route.abort().catch(() => {}); }
+    if (!(response.headers()['content-type'] || '').includes('text/html')) return route.fulfill({ response });
+    return route.fulfill({ response, body: allowEvalForSourceUi5(await response.text()) });
+  });
   await page.route('**://sdk.openui5.org/**', (route) => {
     const hit = resolveLocal(new URL(route.request().url()).pathname);
     return hit ? route.fulfill({ status: 200, contentType: hit.type, body: hit.body }) : route.fulfill({ status: 404, body: '' });
@@ -281,6 +290,9 @@ async function checkPort(browser, cls) {
     // UI5 booted from source AND the initial roundtrip rendered real controls
     await page.waitForFunction(
       () => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3,
+      // the options are the THIRD argument - the second is the page function's
+      // arg, and an options object passed there left Playwright's 30 s default
+      undefined,
       { timeout: 60000 },
     );
     // let the render settle so a late runtime error still surfaces

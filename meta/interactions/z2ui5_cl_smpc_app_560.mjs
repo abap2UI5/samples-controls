@@ -1,6 +1,6 @@
 // the wizard inside the DynamicPage, its branching, its validation - and the
 // branch surviving a view rebuild
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, draftId } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await waitForUi5(page, () => ui5All().some((c) => c.getMetadata().getName() === 'sap.f.DynamicPage'),
@@ -71,7 +71,7 @@ export default async (page, expect) => {
   // factory_first_start -> db_load(draft), check_on_navigated( ) is set while
   // check_on_init( ) stays false, and view_display( ) runs a SECOND time. That
   // is the only way a port calling no other app rebuilds its view.
-  const draft = await page.evaluate(() => sap.ui.require('z2ui5/core/AppState').state.oResponse.ID);
+  const draft = await draftId(page);
   const origin = new URL(page.url()).origin;
   await page.goto('about:blank');
   await page.goto(`${origin}/?app_start=z2ui5_cl_smpc_app_560#/z2ui5-xapp-state=${draft}`,

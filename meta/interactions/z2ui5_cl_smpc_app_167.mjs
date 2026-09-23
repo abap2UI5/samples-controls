@@ -1,7 +1,7 @@
 // ToolPage audit fix: itemPress toast with the real item text + the
 // user-name popover (both 2026-07-30) — and that the page the roundtrip-free
 // itemSelect navigated to SURVIVES a view rebuild
-import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, FRONTEND_STATE } from '../../scripts/lib-e2e.mjs';
 
 const UI5_ALL = 'const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all());';
 
@@ -12,7 +12,7 @@ const state = (page) => page.evaluate(`(() => { ${UI5_ALL}
   return {
     key: sn ? sn.getSelectedKey() : null,
     page: cur ? cur.getId() : null,
-    draft: ((sap.ui.require('z2ui5/core/AppState') || {}).state?.oResponse?.ID) || null,
+    draft: (${FRONTEND_STATE} || {}).oResponse?.ID || null,
   }; })()`);
 
 async function boot(page, url) {
@@ -20,7 +20,7 @@ async function boot(page, url) {
   // navigation and does NOT reload, so the restore would never be requested
   await page.goto('about:blank');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3, { timeout: 90000 });
+  await page.waitForFunction(() => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3, undefined, { timeout: 90000 });
   await waitForUi5(page, () => {
     const nav = ui5All().find((c) => c.getId().endsWith('pageContainer') && c.getCurrentPage);
     return !!(nav && nav.getCurrentPage());

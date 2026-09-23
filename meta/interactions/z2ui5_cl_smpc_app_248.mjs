@@ -9,6 +9,7 @@ export default async (page, expect) => {
   await page.getByRole('button', { name: 'Collapse all', exact: true }).first().click();
   await page.waitForFunction(
     () => ![...document.querySelectorAll('td, .sapUiTableCell')].some((c) => c.textContent.trim() === 'Accessories' && c.offsetParent !== null),
+    undefined,
     { timeout: 10000 },
   );
 };

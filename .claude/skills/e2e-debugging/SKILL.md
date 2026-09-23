@@ -29,6 +29,33 @@ verdicts below turned out to be harness effects.
   names `e2e-build.mjs` kills your own shell (exit 144, no output). Grep the
   build log for `e2e-build: done`; kill by a PID noted in a SEPARATE, earlier
   command.
+- **Every port failing at boot with `Refused to evaluate a string as
+  JavaScript` is the CSP, not the corpus.** The harness serves UI5 from the
+  `@openui5` npm packages: sources, no library-preload bundles, so the
+  ui5loader fetches modules synchronously and evals them. abap2UI5#2778
+  (2026-09-22) took `'unsafe-eval'` out of the GET page's default CSP, and
+  from that commit on every app died on `Failed to execute
+  'sap/ui/core/Core.js'`. `e2e-smoke.mjs` adds it back to the served
+  document's `script-src` through `allowEvalForSourceUi5( )` in
+  `scripts/lib-smoke.mjs` - the harness only, exactly as abap2UI5's own
+  `node/tests/e2e/fixtures.js` does for its offline run. A real system loads
+  UI5 from the CDN with preload bundles and needs no eval.
+- **Read the frontend state through `FRONTEND_STATE`, never through
+  `z2ui5/core/AppState`.** The state moved twice in two days: off
+  `window.z2ui5` (abap2UI5#2777) and then off the module onto a per-component
+  context, `component.ctx.state` (abap2UI5#2780). The old reads did not throw -
+  `AppState.state` is just `undefined` - so 11 bookmark-restore legs said
+  "no draft id on the response" and, worse, `waitForIdle` took its "older
+  frontend" exit and silently stopped waiting: 012, 101, 558, 575, 578, 579,
+  584 and demo_001/004 then failed on dropped events that read like dead
+  wires. `FRONTEND_STATE` and `draftId( )` in `scripts/lib-e2e.mjs` find the
+  component through `Component.registry` and fall back to the older shape.
+- **`page.waitForFunction(fn, { timeout })` has no timeout.** The second
+  argument is the page function's ARG; the options are the THIRD. Written the
+  short way, the object travels into the page and Playwright's 30 s default
+  applies - the smoke's own 60 s boot wait was 30 s for months, which is what
+  a heavy view's boot (samples' 10 000-row table) runs into. Pass
+  `undefined` (or `null`) in between.
 - **A green run that names no ports is a hollow gate — read the count.**
   `e2e-smoke` prints `e2e-smoke: <n> port(s)` before the first check and
   `<n> app(s), <f> failing` after the last, and between 2026-08-28 and

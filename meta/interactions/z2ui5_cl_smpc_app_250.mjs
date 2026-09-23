@@ -7,6 +7,7 @@ export default async (page, expect) => {
   await btn.click();
   await page.waitForFunction(
     () => !!document.querySelector("[class*='ColorPalette']"),
+    undefined,
     { timeout: 10000 },
   );
 };
