@@ -14,7 +14,7 @@ CLASS z2ui5_cl_smpc_app_263 DEFINITION PUBLIC.
       END OF ty_s_employee.
 
     DATA reset_check TYPE abap_bool.
-    DATA t_employees TYPE STANDARD TABLE OF ty_s_employee WITH EMPTY KEY.
+    DATA t_employees TYPE STANDARD TABLE OF ty_s_employee WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -32,12 +32,12 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -46,7 +46,26 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA blocks TYPE REF TO z2ui5_cl_ui5_view_builder.
+    FIELD-SYMBOLS <temp2> LIKE LINE OF t_employees.
+    DATA temp6 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp5> LIKE LINE OF t_employees.
+    DATA temp7 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp6> LIKE LINE OF t_employees.
+    DATA temp8 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp7> LIKE LINE OF t_employees.
+    DATA temp9 LIKE sy-tabix.
+      DATA row_no LIKE sy-index.
+      FIELD-SYMBOLS <temp3> LIKE LINE OF t_employees.
+      DATA temp4 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp4> LIKE LINE OF t_employees.
+      DATA temp5 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp1> LIKE LINE OF t_employees.
+      DATA temp3 LIKE sy-tabix.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " Navigation: _navTo(page) is the client-side NavContainer.to() - wired
     " roundtrip-free via follow_up_action( control_by_id ). The navigate event
@@ -56,7 +75,50 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     " (app 188/217 precedent); the empN> named models the ModelMapping
     " elements feed are folded onto ONE table, addressed per row by the cell
     " binding, so the model keeps the /Employee array shape (app 230).
-    DATA(blocks) = view->ele( n = `View` ns = `mvc`
+    
+    CLEAR temp1.
+    INSERT `navigationContainer` INTO TABLE temp1.
+    INSERT `to` INTO TABLE temp1.
+    INSERT `page2` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `navigationContainer` INTO TABLE temp2.
+    INSERT `to` INTO TABLE temp2.
+    INSERT `page1` INTO TABLE temp2.
+    
+    
+    
+    temp6 = sy-tabix.
+    READ TABLE t_employees INDEX 1 ASSIGNING <temp2>.
+    sy-tabix = temp6.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp7 = sy-tabix.
+    READ TABLE t_employees INDEX 1 ASSIGNING <temp5>.
+    sy-tabix = temp7.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp8 = sy-tabix.
+    READ TABLE t_employees INDEX 2 ASSIGNING <temp6>.
+    sy-tabix = temp8.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE t_employees INDEX 2 ASSIGNING <temp7>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    blocks = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`       v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -85,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
                     )->ele( n = `List` ns = `m`
                         )->tag( n = `StandardListItem` ns = `m`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                            t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page2` ) ) )
+                                                                            t_arg = temp1 )
                             )->a( n = `title` v = `To ObjectPage`
                             )->a( n = `type`  v = `Navigation`
 
@@ -104,7 +166,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
                 )->a( n = `title`           v = `Page 2`
                 )->a( n = `showNavButton`   v = `true`
                 )->a( n = `navButtonPress`  v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                          t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page1` ) ) )
+                                                                          t_arg = temp2 )
 
                 )->ele( `ObjectPageLayout`
                     )->a( n = `id`                       v = `ObjectPageLayout`
@@ -637,9 +699,9 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
                                                             )->ele( n = `content` ns = `l`
                                                                 )->ele( n = `VerticalLayout` ns = `l`
                                                                     )->tag( n = `Label` ns = `m`
-                                                                        )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-name tab = t_employees tab_index = 1 )
+                                                                        )->a( n = `text` v = client->_bind( val = <temp2>-name tab = t_employees tab_index = 1 )
                                                                     )->tag( n = `Label` ns = `m`
-                                                                        )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-job tab = t_employees tab_index = 1 )
+                                                                        )->a( n = `text` v = client->_bind( val = <temp5>-job tab = t_employees tab_index = 1 )
 
                                                                     )->ele( n = `layoutData` ns = `l`
                                                                         )->tag( n = `GridData` ns = `l`
@@ -665,9 +727,9 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
 
                                                             )->ele( n = `VerticalLayout` ns = `l`
                                                                 )->tag( n = `Label` ns = `m`
-                                                                    )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-name tab = t_employees tab_index = 2 )
+                                                                    )->a( n = `text` v = client->_bind( val = <temp6>-name tab = t_employees tab_index = 2 )
                                                                 )->tag( n = `Label` ns = `m`
-                                                                    )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-job tab = t_employees tab_index = 2 )
+                                                                    )->a( n = `text` v = client->_bind( val = <temp7>-job tab = t_employees tab_index = 2 )
 
                                                                 )->ele( n = `layoutData` ns = `l`
                                                                     )->tag( n = `GridData` ns = `l`
@@ -701,16 +763,41 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     " six Panels over emp1>..emp6>, which
     " are the six rows of one table
     DO 6 TIMES.
-      DATA(row_no) = sy-index.
+      
+      row_no = sy-index.
 
+      
+      
+      temp4 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp3>.
+      sy-tabix = temp4.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      
+      
+      temp5 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp4>.
+      sy-tabix = temp5.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      
+      
+      temp3 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp1>.
+      sy-tabix = temp3.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
       blocks->ele( n = `Panel` ns = `m`
           )->ele( n = `VBox` ns = `m`
               )->tag( n = `Image` ns = `m`
-                  )->a( n = `src` v = client->_bind( val = t_employees[ row_no ]-picture tab = t_employees tab_index = row_no )
+                  )->a( n = `src` v = client->_bind( val = <temp3>-picture tab = t_employees tab_index = row_no )
               )->tag( n = `Label` ns = `m`
-                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-name tab = t_employees tab_index = row_no )
+                  )->a( n = `text` v = client->_bind( val = <temp4>-name tab = t_employees tab_index = row_no )
               )->tag( n = `Label` ns = `m`
-                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-job tab = t_employees tab_index = row_no )
+                  )->a( n = `text` v = client->_bind( val = <temp1>-job tab = t_employees tab_index = row_no )
 
           )->end(
       )->end( ).
@@ -722,6 +809,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp5 TYPE string_table.
 
     " onNavigate: when page2 becomes the destination and the checkbox is
     " ticked, the controller calls setSelectedSection(null) so the page
@@ -732,39 +820,55 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     IF client->get_event( ) = `NAVIGATE`
         AND reset_check = abap_true
         AND client->get_event_arg( ) CS `page2`.
+      
+      CLEAR temp5.
+      INSERT `ObjectPageLayout` INTO TABLE temp5.
+      INSERT `setSelectedSection` INTO TABLE temp5.
+      INSERT `` INTO TABLE temp5.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `ObjectPageLayout` ) ( `setSelectedSection` ) ( `` ) ) ).
+                                t_arg = temp5 ).
     ENDIF.
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp7 LIKE t_employees.
+    DATA temp8 LIKE LINE OF temp7.
 
     " SharedJSONData/HRData.json /Employee rows 0-5, the records the block
     " ModelMapping elements map onto the internal models emp1>..emp6> - one
     " table, so the model keeps the array shape the original addresses and the
     " view addresses it per row (client->_bind( tab / tab_index ))
     reset_check = abap_true.
-    t_employees = VALUE #(
-      ( name    = `Michael Adams`
-        job     = `Scrum Master`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `John Miller`
-        job     = `Product Owner`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Richard Wilson`
-        job     = `Ux Designer`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Julie Armstrong`
-        job     = `Quality Engineer`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Denise Smith`
-        job     = `Team Member`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Richard Adams`
-        job     = `Team Member`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` ) ).
+    
+    CLEAR temp7.
+    
+    temp8-name = `Michael Adams`.
+    temp8-job = `Scrum Master`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `John Miller`.
+    temp8-job = `Product Owner`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `Richard Wilson`.
+    temp8-job = `Ux Designer`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `Julie Armstrong`.
+    temp8-job = `Quality Engineer`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `Denise Smith`.
+    temp8-job = `Team Member`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `Richard Adams`.
+    temp8-job = `Team Member`.
+    temp8-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp8 INTO TABLE temp7.
+    t_employees = temp7.
 
   ENDMETHOD.
 

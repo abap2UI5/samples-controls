@@ -78,8 +78,8 @@ CLASS z2ui5_cl_smpc_demo_003 DEFINITION PUBLIC.
         name           TYPE string,
         role           TYPE string,
         pic            TYPE string,
-        t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY,
-        t_headers      TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY,
+        t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY,
+        t_headers      TYPE STANDARD TABLE OF ty_s_header WITH DEFAULT KEY,
       END OF ty_s_person.
     TYPES:
       BEGIN OF ty_s_legend,
@@ -87,11 +87,14 @@ CLASS z2ui5_cl_smpc_demo_003 DEFINITION PUBLIC.
         type TYPE string,
       END OF ty_s_legend.
 
-    DATA t_team     TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
+    TYPES temp1_090b636631 TYPE STANDARD TABLE OF ty_s_person WITH DEFAULT KEY.
+DATA t_team     TYPE temp1_090b636631.
     " the appointments of the member the SinglePlanningCalendar shows - the
     " original binds the calendar to /team/<index> (bindElement)
-    DATA t_selected TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    DATA t_legend   TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
+    TYPES temp2_090b636631 TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
+DATA t_selected TYPE temp2_090b636631.
+    TYPES temp3_090b636631 TYPE STANDARD TABLE OF ty_s_legend WITH DEFAULT KEY.
+DATA t_legend   TYPE temp3_090b636631.
     DATA page_title TYPE string.
     " the controller's _oStartDate, _sSelectedView and _sSelectedMember
     DATA start_date TYPE string.
@@ -137,12 +140,12 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     me->client = client.
 
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -155,7 +158,10 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     " from a standalone one: with the split shape the variable has to hold
     " the mvc:View, or the next statement adds a SECOND ROOT beside it
     " (view-chain-layout, "the one combination that is broken")
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `xmlns`        v = `sap.m`
             )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
@@ -170,7 +176,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     view_legend( view ).
 
-    DATA(page) = view->ele( n = `DynamicPage` ns = `f`
+    
+    page = view->ele( n = `DynamicPage` ns = `f`
         )->a( n = `id`                          v = `dynamicPage`
         )->a( n = `class`                       v = `sapUiContentPadding`
         )->a( n = `preserveHeaderStateOnScroll` b = abap_true ).
@@ -188,7 +195,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                     )->a( n = `text` v = client->_bind( page_title ) ).
 
     " the VerticalLayout the controller adds the displayed calendar to
-    DATA(content) = page->ele( n = `content` ns = `f`
+    
+    content = page->ele( n = `content` ns = `f`
         )->ele( n = `VerticalLayout` ns = `layout`
             )->a( n = `id`    v = `mainContent`
             )->a( n = `width` v = `100%` ).
@@ -236,7 +244,20 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     " The two keeping wires queue (check_queue_last): the calendar reports its
     " aligned start date while it is still being built, and a view switch
     " fires startDateChange and viewChange back to back
-    DATA(pc) = parent->ele( `VBox`
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp3 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA pc TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA toolbar TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA toolbar_select TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp2 TYPE string_table.
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
+    temp1-check_no_busy = abap_true.
+    
+    CLEAR temp3.
+    temp3-check_queue_last = abap_true.
+    
+    pc = parent->ele( `VBox`
         )->ele( `PlanningCalendar`
             )->a( n = `id`                        v = `PlanningCalendar`
             )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
@@ -250,15 +271,16 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                                                                       arg = `${$parameters>/rows}[0].getId().split('-').pop()` )
             )->a( n = `startDateChange`           v = client->_event( val    = `START_DATE`
                                                                       arg    = `$event.getSource().getStartDate().toISOString()`
-                                                                      s_ctrl = VALUE #( check_queue_last = abap_true
-                                                                                        check_no_busy    = abap_true ) )
+                                                                      s_ctrl = temp1 )
             )->a( n = `viewChange`                v = client->_event( val    = `VIEW_CHANGE`
                                                                       arg    = `${$source>/viewKey}`
-                                                                      s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
+                                                                      s_ctrl = temp3 ) ).
 
-    DATA(toolbar) = pc->ele( `toolbarContent` ).
+    
+    toolbar = pc->ele( `toolbarContent` ).
 
-    DATA(toolbar_select) = toolbar->tag( `Label`
+    
+    toolbar_select = toolbar->tag( `Label`
         )->a( n = `labelFor` v = `PlanningCalendarTeamSelector`
         )->a( n = `text`     v = `Calendar for: `
 
@@ -269,6 +291,11 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                                                         arg = `${$parameters>/selectedItem}.getKey()` ) ).
     view_select_items( toolbar_select ).
 
+    
+    CLEAR temp2.
+    INSERT `legendPopover` INTO TABLE temp2.
+    INSERT `toggleBy` INTO TABLE temp2.
+    INSERT `PlanningCalendarLegendButton` INTO TABLE temp2.
     toolbar->tag( `Button`
         )->a( n = `id`      v = `PlanningCalendarCreateAppointmentButton`
         )->a( n = `text`    v = `Create`
@@ -280,9 +307,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             " openLegend: isOpen( ) ? close( ) : openBy( the button ) - in the
             " browser, no round-trip
             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                              t_arg = VALUE #( ( `legendPopover` )
-                                                                               ( `toggleBy` )
-                                                                               ( `PlanningCalendarLegendButton` ) ) )
+                                                              t_arg = temp2 )
             )->a( n = `tooltip` v = `Open Planning Calendar legend` ).
 
     pc->ele( `views`
@@ -367,29 +392,62 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     " view it should open on. Both ids are read off the event's source, which
     " is the fully qualified calendar: it resolves before the view is
     " registered anywhere
-    DATA(view_index) = SWITCH string( view_key WHEN `Week` THEN `1` WHEN `OneMonth` THEN `2` ELSE `0` ).
+    DATA temp4 TYPE string.
+    DATA view_index LIKE temp4.
+    DATA temp5 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp7 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp1 TYPE string_table.
+    DATA temp2 LIKE LINE OF temp1.
+    DATA spc TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA actions TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA actions_select TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp6 TYPE string_table.
+    CASE view_key.
+      WHEN `Week`.
+        temp4 = `1`.
+      WHEN `OneMonth`.
+        temp4 = `2`.
+      WHEN OTHERS.
+        temp4 = `0`.
+    ENDCASE.
+    
+    view_index = temp4.
 
-    DATA(spc) = parent->ele( `VBox`
+    
+    CLEAR temp5.
+    temp5-check_queue_last = abap_true.
+    temp5-check_no_busy = abap_true.
+    
+    CLEAR temp7.
+    temp7-check_queue_last = abap_true.
+    
+    CLEAR temp1.
+    INSERT `$event.getSource().getId()` INTO TABLE temp1.
+    INSERT `setSelectedView` INTO TABLE temp1.
+    
+    temp2 = |$event.getSource().getViews()[{ view_index }].getId()|.
+    INSERT temp2 INTO TABLE temp1.
+    
+    spc = parent->ele( `VBox`
         )->ele( `SinglePlanningCalendar`
             )->a( n = `id`              v = `SinglePlanningCalendar`
             )->a( n = `startDate`       v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
             )->a( n = `startDateChange` v = client->_event( val    = `START_DATE`
                                                             arg    = `$event.getSource().getStartDate().toISOString()`
-                                                            s_ctrl = VALUE #( check_queue_last = abap_true
-                                                                              check_no_busy    = abap_true ) )
+                                                            s_ctrl = temp5 )
             )->a( n = `viewChange`      v = client->_event( val    = `VIEW_CHANGE`
                                                             arg    = `$event.getSource().getSelectedView().split('spcView').pop()`
-                                                            s_ctrl = VALUE #( check_queue_last = abap_true ) )
+                                                            s_ctrl = temp7 )
             )->a( n = `appointments`    v = client->_bind( t_selected )
             )->a( n = `modelContextChange`
                   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                t_arg = VALUE #( ( `$event.getSource().getId()` )
-                                                                 ( `setSelectedView` )
-                                                                 ( |$event.getSource().getViews()[{ view_index }].getId()| ) ) ) ).
+                                                t_arg = temp1 ) ).
 
-    DATA(actions) = spc->ele( `actions` ).
+    
+    actions = spc->ele( `actions` ).
 
-    DATA(actions_select) = actions->tag( `Label`
+    
+    actions_select = actions->tag( `Label`
         )->a( n = `labelFor` v = `SinglePlanningCalendarTeamSelector`
         )->a( n = `text`     v = `Calendar for: `
 
@@ -400,6 +458,11 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                                                         arg = `${$parameters>/selectedItem}.getKey()` ) ).
     view_select_items( actions_select ).
 
+    
+    CLEAR temp6.
+    INSERT `legendPopover` INTO TABLE temp6.
+    INSERT `toggleBy` INTO TABLE temp6.
+    INSERT `SinglePlanningCalendarLegendButton` INTO TABLE temp6.
     actions->tag( `Button`
         )->a( n = `id`      v = `SinglePlanningCalendarCreateAppointmentButton`
         )->a( n = `text`    v = `Create`
@@ -411,9 +474,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             " openLegend: isOpen( ) ? close( ) : openBy( the button ) - in the
             " browser, no round-trip
             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                              t_arg = VALUE #( ( `legendPopover` )
-                                                                               ( `toggleBy` )
-                                                                               ( `SinglePlanningCalendarLegendButton` ) ) )
+                                                              t_arg = temp6 )
             )->a( n = `tooltip` v = `Open Single Planning Calendar legend` ).
 
     spc->ele( `views`
@@ -445,15 +506,19 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
 
   METHOD view_select_items.
+    DATA person LIKE LINE OF t_team.
+      DATA index TYPE i.
 
     " the Select of both fragments: "Team", plus what _populateSelect( ) adds
     " once the fragment has loaded - one item per person, its index the key
     selector->tag( n = `Item` ns = `core`
         )->a( n = `key`  v = `Team`
         )->a( n = `text` v = `Team` ).
-    LOOP AT t_team INTO DATA(person).
+    
+    LOOP AT t_team INTO person.
       " read before the chain runs - the builder's own table work moves sy-tabix
-      DATA(index) = sy-tabix - 1.
+      
+      index = sy-tabix - 1.
       selector->tag( n = `Item` ns = `core`
           )->a( n = `key`  v = |{ index }|
           )->a( n = `text` v = person-name ).
@@ -463,6 +528,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA date TYPE string.
+        DATA key TYPE string.
 
     CASE client->get_event( ).
 
@@ -473,7 +540,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
       WHEN `START_DATE`.
         " startDateChangeHandler: only kept, nothing is redrawn
-        DATA(date) = client->get_event_arg( ).
+        
+        date = client->get_event_arg( ).
         IF date IS NOT INITIAL.
           start_date = date.
         ENDIF.
@@ -481,7 +549,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
       WHEN `VIEW_CHANGE`.
         " viewChangeHandler: keep the view, then put the calendar back on the
         " saved date - the rebuilt calendar opens on both
-        DATA(key) = client->get_event_arg( ).
+        
+        key = client->get_event_arg( ).
         IF key IS NOT INITIAL.
           view_key = key.
         ENDIF.
@@ -497,15 +566,25 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
 
   METHOD calendar_load.
+    DATA temp8 LIKE t_selected.
+      DATA temp9 TYPE i.
+      DATA index TYPE i.
+      FIELD-SYMBOLS <person> TYPE z2ui5_cl_smpc_demo_003=>ty_s_person.
 
     " _loadCalendar / _displayCalendar: "Team" (anything not a number) is the
     " PlanningCalendar of everybody, an index the SinglePlanningCalendar of
     " that person
     member = key.
-    t_selected = VALUE #( ).
+    
+    CLEAR temp8.
+    t_selected = temp8.
     IF is_single( ) = abap_true.
-      DATA(index) = CONV i( member ) + 1.
-      READ TABLE t_team INDEX index ASSIGNING FIELD-SYMBOL(<person>).
+      
+      temp9 = member.
+      
+      index = temp9 + 1.
+      
+      READ TABLE t_team INDEX index ASSIGNING <person>.
       IF sy-subrc = 0.
         t_selected = <person>-t_appointments.
       ENDIF.
@@ -518,12 +597,38 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
   METHOD is_single.
 
     " the controller's isNaN( this._sSelectedMember ), negated
-    result = xsdbool( member IS NOT INITIAL AND member CO `0123456789` ).
+    DATA temp1 TYPE xsdboolean.
+    temp1 = boolc( member IS NOT INITIAL AND member CO `0123456789` ).
+    result = temp1.
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp10 LIKE t_team.
+    DATA temp11 LIKE LINE OF temp10.
+    DATA temp8 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_appointments.
+    DATA temp9 LIKE LINE OF temp8.
+    DATA temp16 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_headers.
+    DATA temp17 LIKE LINE OF temp16.
+    DATA temp18 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_appointments.
+    DATA temp19 LIKE LINE OF temp18.
+    DATA temp20 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_headers.
+    DATA temp21 LIKE LINE OF temp20.
+    DATA temp22 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_appointments.
+    DATA temp23 LIKE LINE OF temp22.
+    DATA temp24 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_headers.
+    DATA temp25 LIKE LINE OF temp24.
+    DATA temp26 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_appointments.
+    DATA temp27 LIKE LINE OF temp26.
+    DATA temp28 TYPE z2ui5_cl_smpc_demo_003=>ty_s_person-t_headers.
+    DATA temp29 LIKE LINE OF temp28.
+    DATA temp12 LIKE t_legend.
+    DATA temp13 LIKE LINE OF temp12.
+    DATA temp14 LIKE LINE OF t_team.
+    DATA person LIKE REF TO temp14.
+      DATA temp15 LIKE LINE OF person->t_appointments.
+      DATA appointment LIKE REF TO temp15.
 
     " model/Calendar.json: its title, its start date and view, and onInit's
     " "Team" as the member shown first
@@ -534,106 +639,536 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     " model/Calendar.json - the team, their appointments and the interval
     " headers, verbatim
-    t_team = VALUE #(
-        ( personid = `PersonID_1` name = `John Miller` role = `Scrum master` pic = `images/John_Miller.png`
-          t_appointments = VALUE #(
-              ( start_at = `2019-10-01T09:00` end_at = `2019-10-01T11:30` title = `Team meeting`              info = `Conf. room 1`  pic = ``                        type = `Type01` tentative = abap_true )
-              ( start_at = `2019-10-04T09:00` end_at = `2019-10-04T17:30` title = `Face to face`              info = `Room 13`       pic = `images/Donna_Moore.jpg`  type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-07T09:00` end_at = `2019-10-07T11:30` title = `Team meeting`              info = `Conf. room 1`  pic = ``                        type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-11T09:00` end_at = `2019-10-11T17:30` title = `Face to face`              info = `Room 13`       pic = `images/Donna_Moore.jpg`  type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-10T09:00` end_at = `2019-10-10T17:00` title = `Show and tell`             info = ``              pic = ``                        type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-16T09:00` end_at = `2019-10-16T11:30` title = `Team meeting`              info = `Conf. room 1`  pic = ``                        type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-17T14:00` end_at = `2019-10-17T16:00` title = `Release plan presentation` info = `Conf. room 1`  pic = `sap-icon://legend`       type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-18T09:30` end_at = `2019-10-18T12:00` title = `Training`                  info = `Training hall` pic = `sap-icon://education`    type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-21T09:00` end_at = `2019-10-21T11:30` title = `Team meeting`              info = `Conf. room 1`  pic = ``                        type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-23T10:00` end_at = `2019-10-23T13:00` title = `Company security`          info = `Conf. room 3`  pic = `sap-icon://legend`       type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-24T09:30` end_at = `2019-10-24T13:00` title = `Dentist`                   info = ``              pic = `sap-icon://offsite-work` type = `Type09` tentative = abap_false )
-              ( start_at = `2019-10-29T14:00` end_at = `2019-10-29T15:00` title = `Face to face`              info = `Room 13`       pic = `images/Donna_Moore.jpg`  type = `Type05` tentative = abap_false )
-          )
-          t_headers = VALUE #(
-              ( start_at = `2019-10-08T00:00:00` end_at = `2019-10-10T00:00:00` title = `Team building` type = `Type09` )
-              ( start_at = `2019-10-24T00:00:00` end_at = `2019-10-26T00:00:00` title = `Business trip` type = `Type05` )
-          )
-        )
-        ( personid = `PersonID_2` name = `Donna Moore` role = `Team manager` pic = `images/Donna_Moore.jpg`
-          t_appointments = VALUE #(
-              ( start_at = `2019-10-01T09:00` end_at = `2019-10-01T11:30` title = `Team meeting`              info = `Conf. room 1` pic = ``                        type = `Type01` tentative = abap_true )
-              ( start_at = `2019-10-04T09:00` end_at = `2019-10-04T17:30` title = `Face to face`              info = `Room 13`      pic = `images/John_Miller.png`  type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-07T09:00` end_at = `2019-10-07T11:30` title = `Team meeting`              info = `Conf. room 1` pic = ``                        type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-11T09:00` end_at = `2019-10-11T17:30` title = `Face to face`              info = `Room 13`      pic = `images/John_Miller.png`  type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-14T09:00` end_at = `2019-10-14T17:00` title = `Conference in Berlin`      info = ``             pic = ``                        type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-16T09:00` end_at = `2019-10-16T11:30` title = `Team meeting`              info = `Conf. room 1` pic = ``                        type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-17T14:00` end_at = `2019-10-17T16:00` title = `Release plan presentation` info = `Conf. room 1` pic = `sap-icon://legend`       type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-21T09:30` end_at = `2019-10-21T12:00` title = `Doctor`                    info = `City clinic`  pic = `sap-icon://offsite-work` type = `Type09` tentative = abap_false )
-              ( start_at = `2019-10-21T14:00` end_at = `2019-10-21T17:00` title = `Company results`           info = `Conf. room 2` pic = ``                        type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-23T10:00` end_at = `2019-10-23T13:00` title = `Company security`          info = `Conf. room 3` pic = `sap-icon://legend`       type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-29T14:00` end_at = `2019-10-29T15:00` title = `Face to face`              info = `Room 13`      pic = `images/John_Miller.png`  type = `Type05` tentative = abap_false )
-          )
-          t_headers = VALUE #(
-              ( start_at = `2019-10-08T00:00:00` end_at = `2019-10-10T00:00:00` title = `Team building` type = `Type09` )
-              ( start_at = `2019-10-14T00:00:00` end_at = `2019-10-16T00:00:00` title = `Business trip` type = `Type05` )
-          )
-        )
-        ( personid = `PersonID_3` name = `Elena Petrova` role = `Designer` pic = `images/Elena_Petrova.jpg`
-          t_appointments = VALUE #(
-              ( start_at = `2019-10-03T09:00` end_at = `2019-10-03T17:00` title = `The new design guide`   info = `Conf. room 3`    pic = ``                     type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-07T13:00` end_at = `2019-10-07T14:30` title = `Team meeting`           info = `Conf. Room 2`    pic = ``                     type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-10T11:00` end_at = `2019-10-10T12:30` title = `Meet the developers`    info = `Room 6`          pic = `images/John_Li.jpg`   type = `Type05` tentative = abap_true )
-              ( start_at = `2019-10-11T09:00` end_at = `2019-10-11T17:00` title = `The new design guide`   info = `Conf. room 3`    pic = ``                     type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-14T09:00` end_at = `2019-10-14T11:30` title = `Team meeting`           info = `Conf. room 1`    pic = ``                     type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-15T09:00` end_at = `2019-10-15T17:00` title = `Photoshop training`     info = `Training hall`   pic = `sap-icon://education` type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-18T09:30` end_at = `2019-10-18T12:00` title = `Security training`      info = `Training hall`   pic = `sap-icon://education` type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-22T11:00` end_at = `2019-10-22T12:30` title = `Team meeting`           info = `Conf. Room 2`    pic = ``                     type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-23T10:00` end_at = `2019-10-23T13:00` title = `Styling and typography` info = `Training hall`   pic = `sap-icon://education` type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-24T19:00` end_at = `2019-10-24T22:00` title = `Family dinner`          info = `Nice restaurant` pic = ``                     type = `Type03` tentative = abap_false )
-              ( start_at = `2019-10-28T09:00` end_at = `2019-10-28T11:00` title = `Talk to Mishelle`       info = ``                pic = ``                     type = `Type05` tentative = abap_true )
-              ( start_at = `2019-10-29T09:00` end_at = `2019-10-29T14:00` title = `Team meeting`           info = `Conf. room 2`    pic = ``                     type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-31T09:00` end_at = `2019-10-31T17:00` title = `Styling and typography` info = `Training hall`   pic = `sap-icon://education` type = `Type08` tentative = abap_false )
-          )
-          t_headers = VALUE #(
-              ( start_at = `2019-10-08T00:00:00` end_at = `2019-10-10T00:00:00` title = `Team building` type = `Type09` )
-              ( start_at = `2019-10-10T00:00:00` end_at = `2019-10-12T00:00:00` title = `Business trip` type = `Type05` )
-          )
-        )
-        ( personid = `PersonID_4` name = `John Li` role = `Developer` pic = `images/John_Li.jpg`
-          t_appointments = VALUE #(
-              ( start_at = `2019-10-02T14:00` end_at = `2019-10-02T16:00` title = `Doctor`                          info = `Town hospital` pic = `sap-icon://offsite-work`  type = `Type09` tentative = abap_false )
-              ( start_at = `2019-10-07T13:00` end_at = `2019-10-07T14:30` title = `Team meeting`                    info = `Conf. room 2`  pic = ``                         type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-10T11:00` end_at = `2019-10-10T12:30` title = `Meet the designers`              info = `Room 6`        pic = `images/Elena_Petrova.jpg` type = `Type05` tentative = abap_true )
-              ( start_at = `2019-10-14T09:00` end_at = `2019-10-14T11:30` title = `Team meeting`                    info = `Conf. room 1`  pic = ``                         type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-15T09:00` end_at = `2019-10-15T17:00` title = `Mastering JavaScript`            info = `Conf. room 3`  pic = ``                         type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-16T09:00` end_at = `2019-10-16T17:00` title = `Introduction to app development` info = `Training hall` pic = `sap-icon://education`     type = `Type08` tentative = abap_false )
-              ( start_at = `2019-10-17T15:30` end_at = `2019-10-17T17:00` title = `Security training`               info = `Training hall` pic = `sap-icon://education`     type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-22T11:00` end_at = `2019-10-22T12:30` title = `Team meeting`                    info = `Conf. room 2`  pic = ``                         type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-23T14:00` end_at = `2019-10-23T16:00` title = `Doctor`                          info = `Town hospital` pic = `sap-icon://offsite-work`  type = `Type09` tentative = abap_false )
-              ( start_at = `2019-10-25T18:00` end_at = `2019-10-25T20:00` title = `Play tennis`                     info = `With Jessie`   pic = ``                         type = `Type05` tentative = abap_true )
-              ( start_at = `2019-10-29T09:00` end_at = `2019-10-29T11:00` title = `Developers meeting`              info = ``              pic = ``                         type = `Type01` tentative = abap_false )
-              ( start_at = `2019-10-29T11:00` end_at = `2019-10-29T13:00` title = `Candidate interview`             info = `Room 7`        pic = ``                         type = `Type05` tentative = abap_false )
-              ( start_at = `2019-10-30T09:00` end_at = `2019-10-30T17:00` title = `Mastering JavaScript`            info = `Training hall` pic = `sap-icon://education`     type = `Type08` tentative = abap_false )
-          )
-          t_headers = VALUE #(
-              ( start_at = `2019-10-08T00:00:00` end_at = `2019-10-10T00:00:00` title = `Team building` type = `Type09` )
-              ( start_at = `2019-10-11T00:00:00` end_at = `2019-10-12T00:00:00` title = `Business trip` type = `Type05` )
-              ( start_at = `2019-10-18T00:00:00` end_at = `2019-10-19T00:00:00` title = `Business trip` type = `Type05` )
-              ( start_at = `2019-10-31T00:00:00` end_at = `2019-11-02T00:00:00` title = `Business trip` type = `Type05` )
-          )
-        )
-    ).
+    
+    CLEAR temp10.
+    
+    temp11-personid = `PersonID_1`.
+    temp11-name = `John Miller`.
+    temp11-role = `Scrum master`.
+    temp11-pic = `images/John_Miller.png`.
+    
+    CLEAR temp8.
+    
+    temp9-start_at = `2019-10-01T09:00`.
+    temp9-end_at = `2019-10-01T11:30`.
+    temp9-title = `Team meeting`.
+    temp9-info = `Conf. room 1`.
+    temp9-pic = ``.
+    temp9-type = `Type01`.
+    temp9-tentative = abap_true.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-04T09:00`.
+    temp9-end_at = `2019-10-04T17:30`.
+    temp9-title = `Face to face`.
+    temp9-info = `Room 13`.
+    temp9-pic = `images/Donna_Moore.jpg`.
+    temp9-type = `Type05`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-07T09:00`.
+    temp9-end_at = `2019-10-07T11:30`.
+    temp9-title = `Team meeting`.
+    temp9-info = `Conf. room 1`.
+    temp9-pic = ``.
+    temp9-type = `Type01`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-11T09:00`.
+    temp9-end_at = `2019-10-11T17:30`.
+    temp9-title = `Face to face`.
+    temp9-info = `Room 13`.
+    temp9-pic = `images/Donna_Moore.jpg`.
+    temp9-type = `Type05`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-10T09:00`.
+    temp9-end_at = `2019-10-10T17:00`.
+    temp9-title = `Show and tell`.
+    temp9-info = ``.
+    temp9-pic = ``.
+    temp9-type = `Type08`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-16T09:00`.
+    temp9-end_at = `2019-10-16T11:30`.
+    temp9-title = `Team meeting`.
+    temp9-info = `Conf. room 1`.
+    temp9-pic = ``.
+    temp9-type = `Type01`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-17T14:00`.
+    temp9-end_at = `2019-10-17T16:00`.
+    temp9-title = `Release plan presentation`.
+    temp9-info = `Conf. room 1`.
+    temp9-pic = `sap-icon://legend`.
+    temp9-type = `Type08`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-18T09:30`.
+    temp9-end_at = `2019-10-18T12:00`.
+    temp9-title = `Training`.
+    temp9-info = `Training hall`.
+    temp9-pic = `sap-icon://education`.
+    temp9-type = `Type05`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-21T09:00`.
+    temp9-end_at = `2019-10-21T11:30`.
+    temp9-title = `Team meeting`.
+    temp9-info = `Conf. room 1`.
+    temp9-pic = ``.
+    temp9-type = `Type01`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-23T10:00`.
+    temp9-end_at = `2019-10-23T13:00`.
+    temp9-title = `Company security`.
+    temp9-info = `Conf. room 3`.
+    temp9-pic = `sap-icon://legend`.
+    temp9-type = `Type08`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-24T09:30`.
+    temp9-end_at = `2019-10-24T13:00`.
+    temp9-title = `Dentist`.
+    temp9-info = ``.
+    temp9-pic = `sap-icon://offsite-work`.
+    temp9-type = `Type09`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp9-start_at = `2019-10-29T14:00`.
+    temp9-end_at = `2019-10-29T15:00`.
+    temp9-title = `Face to face`.
+    temp9-info = `Room 13`.
+    temp9-pic = `images/Donna_Moore.jpg`.
+    temp9-type = `Type05`.
+    temp9-tentative = abap_false.
+    INSERT temp9 INTO TABLE temp8.
+    temp11-t_appointments = temp8.
+    
+    CLEAR temp16.
+    
+    temp17-start_at = `2019-10-08T00:00:00`.
+    temp17-end_at = `2019-10-10T00:00:00`.
+    temp17-title = `Team building`.
+    temp17-type = `Type09`.
+    INSERT temp17 INTO TABLE temp16.
+    temp17-start_at = `2019-10-24T00:00:00`.
+    temp17-end_at = `2019-10-26T00:00:00`.
+    temp17-title = `Business trip`.
+    temp17-type = `Type05`.
+    INSERT temp17 INTO TABLE temp16.
+    temp11-t_headers = temp16.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-personid = `PersonID_2`.
+    temp11-name = `Donna Moore`.
+    temp11-role = `Team manager`.
+    temp11-pic = `images/Donna_Moore.jpg`.
+    
+    CLEAR temp18.
+    
+    temp19-start_at = `2019-10-01T09:00`.
+    temp19-end_at = `2019-10-01T11:30`.
+    temp19-title = `Team meeting`.
+    temp19-info = `Conf. room 1`.
+    temp19-pic = ``.
+    temp19-type = `Type01`.
+    temp19-tentative = abap_true.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-04T09:00`.
+    temp19-end_at = `2019-10-04T17:30`.
+    temp19-title = `Face to face`.
+    temp19-info = `Room 13`.
+    temp19-pic = `images/John_Miller.png`.
+    temp19-type = `Type05`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-07T09:00`.
+    temp19-end_at = `2019-10-07T11:30`.
+    temp19-title = `Team meeting`.
+    temp19-info = `Conf. room 1`.
+    temp19-pic = ``.
+    temp19-type = `Type01`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-11T09:00`.
+    temp19-end_at = `2019-10-11T17:30`.
+    temp19-title = `Face to face`.
+    temp19-info = `Room 13`.
+    temp19-pic = `images/John_Miller.png`.
+    temp19-type = `Type05`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-14T09:00`.
+    temp19-end_at = `2019-10-14T17:00`.
+    temp19-title = `Conference in Berlin`.
+    temp19-info = ``.
+    temp19-pic = ``.
+    temp19-type = `Type08`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-16T09:00`.
+    temp19-end_at = `2019-10-16T11:30`.
+    temp19-title = `Team meeting`.
+    temp19-info = `Conf. room 1`.
+    temp19-pic = ``.
+    temp19-type = `Type01`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-17T14:00`.
+    temp19-end_at = `2019-10-17T16:00`.
+    temp19-title = `Release plan presentation`.
+    temp19-info = `Conf. room 1`.
+    temp19-pic = `sap-icon://legend`.
+    temp19-type = `Type08`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-21T09:30`.
+    temp19-end_at = `2019-10-21T12:00`.
+    temp19-title = `Doctor`.
+    temp19-info = `City clinic`.
+    temp19-pic = `sap-icon://offsite-work`.
+    temp19-type = `Type09`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-21T14:00`.
+    temp19-end_at = `2019-10-21T17:00`.
+    temp19-title = `Company results`.
+    temp19-info = `Conf. room 2`.
+    temp19-pic = ``.
+    temp19-type = `Type08`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-23T10:00`.
+    temp19-end_at = `2019-10-23T13:00`.
+    temp19-title = `Company security`.
+    temp19-info = `Conf. room 3`.
+    temp19-pic = `sap-icon://legend`.
+    temp19-type = `Type08`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-start_at = `2019-10-29T14:00`.
+    temp19-end_at = `2019-10-29T15:00`.
+    temp19-title = `Face to face`.
+    temp19-info = `Room 13`.
+    temp19-pic = `images/John_Miller.png`.
+    temp19-type = `Type05`.
+    temp19-tentative = abap_false.
+    INSERT temp19 INTO TABLE temp18.
+    temp11-t_appointments = temp18.
+    
+    CLEAR temp20.
+    
+    temp21-start_at = `2019-10-08T00:00:00`.
+    temp21-end_at = `2019-10-10T00:00:00`.
+    temp21-title = `Team building`.
+    temp21-type = `Type09`.
+    INSERT temp21 INTO TABLE temp20.
+    temp21-start_at = `2019-10-14T00:00:00`.
+    temp21-end_at = `2019-10-16T00:00:00`.
+    temp21-title = `Business trip`.
+    temp21-type = `Type05`.
+    INSERT temp21 INTO TABLE temp20.
+    temp11-t_headers = temp20.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-personid = `PersonID_3`.
+    temp11-name = `Elena Petrova`.
+    temp11-role = `Designer`.
+    temp11-pic = `images/Elena_Petrova.jpg`.
+    
+    CLEAR temp22.
+    
+    temp23-start_at = `2019-10-03T09:00`.
+    temp23-end_at = `2019-10-03T17:00`.
+    temp23-title = `The new design guide`.
+    temp23-info = `Conf. room 3`.
+    temp23-pic = ``.
+    temp23-type = `Type08`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-07T13:00`.
+    temp23-end_at = `2019-10-07T14:30`.
+    temp23-title = `Team meeting`.
+    temp23-info = `Conf. Room 2`.
+    temp23-pic = ``.
+    temp23-type = `Type01`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-10T11:00`.
+    temp23-end_at = `2019-10-10T12:30`.
+    temp23-title = `Meet the developers`.
+    temp23-info = `Room 6`.
+    temp23-pic = `images/John_Li.jpg`.
+    temp23-type = `Type05`.
+    temp23-tentative = abap_true.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-11T09:00`.
+    temp23-end_at = `2019-10-11T17:00`.
+    temp23-title = `The new design guide`.
+    temp23-info = `Conf. room 3`.
+    temp23-pic = ``.
+    temp23-type = `Type08`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-14T09:00`.
+    temp23-end_at = `2019-10-14T11:30`.
+    temp23-title = `Team meeting`.
+    temp23-info = `Conf. room 1`.
+    temp23-pic = ``.
+    temp23-type = `Type01`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-15T09:00`.
+    temp23-end_at = `2019-10-15T17:00`.
+    temp23-title = `Photoshop training`.
+    temp23-info = `Training hall`.
+    temp23-pic = `sap-icon://education`.
+    temp23-type = `Type08`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-18T09:30`.
+    temp23-end_at = `2019-10-18T12:00`.
+    temp23-title = `Security training`.
+    temp23-info = `Training hall`.
+    temp23-pic = `sap-icon://education`.
+    temp23-type = `Type05`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-22T11:00`.
+    temp23-end_at = `2019-10-22T12:30`.
+    temp23-title = `Team meeting`.
+    temp23-info = `Conf. Room 2`.
+    temp23-pic = ``.
+    temp23-type = `Type01`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-23T10:00`.
+    temp23-end_at = `2019-10-23T13:00`.
+    temp23-title = `Styling and typography`.
+    temp23-info = `Training hall`.
+    temp23-pic = `sap-icon://education`.
+    temp23-type = `Type08`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-24T19:00`.
+    temp23-end_at = `2019-10-24T22:00`.
+    temp23-title = `Family dinner`.
+    temp23-info = `Nice restaurant`.
+    temp23-pic = ``.
+    temp23-type = `Type03`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-28T09:00`.
+    temp23-end_at = `2019-10-28T11:00`.
+    temp23-title = `Talk to Mishelle`.
+    temp23-info = ``.
+    temp23-pic = ``.
+    temp23-type = `Type05`.
+    temp23-tentative = abap_true.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-29T09:00`.
+    temp23-end_at = `2019-10-29T14:00`.
+    temp23-title = `Team meeting`.
+    temp23-info = `Conf. room 2`.
+    temp23-pic = ``.
+    temp23-type = `Type01`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp23-start_at = `2019-10-31T09:00`.
+    temp23-end_at = `2019-10-31T17:00`.
+    temp23-title = `Styling and typography`.
+    temp23-info = `Training hall`.
+    temp23-pic = `sap-icon://education`.
+    temp23-type = `Type08`.
+    temp23-tentative = abap_false.
+    INSERT temp23 INTO TABLE temp22.
+    temp11-t_appointments = temp22.
+    
+    CLEAR temp24.
+    
+    temp25-start_at = `2019-10-08T00:00:00`.
+    temp25-end_at = `2019-10-10T00:00:00`.
+    temp25-title = `Team building`.
+    temp25-type = `Type09`.
+    INSERT temp25 INTO TABLE temp24.
+    temp25-start_at = `2019-10-10T00:00:00`.
+    temp25-end_at = `2019-10-12T00:00:00`.
+    temp25-title = `Business trip`.
+    temp25-type = `Type05`.
+    INSERT temp25 INTO TABLE temp24.
+    temp11-t_headers = temp24.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-personid = `PersonID_4`.
+    temp11-name = `John Li`.
+    temp11-role = `Developer`.
+    temp11-pic = `images/John_Li.jpg`.
+    
+    CLEAR temp26.
+    
+    temp27-start_at = `2019-10-02T14:00`.
+    temp27-end_at = `2019-10-02T16:00`.
+    temp27-title = `Doctor`.
+    temp27-info = `Town hospital`.
+    temp27-pic = `sap-icon://offsite-work`.
+    temp27-type = `Type09`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-07T13:00`.
+    temp27-end_at = `2019-10-07T14:30`.
+    temp27-title = `Team meeting`.
+    temp27-info = `Conf. room 2`.
+    temp27-pic = ``.
+    temp27-type = `Type01`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-10T11:00`.
+    temp27-end_at = `2019-10-10T12:30`.
+    temp27-title = `Meet the designers`.
+    temp27-info = `Room 6`.
+    temp27-pic = `images/Elena_Petrova.jpg`.
+    temp27-type = `Type05`.
+    temp27-tentative = abap_true.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-14T09:00`.
+    temp27-end_at = `2019-10-14T11:30`.
+    temp27-title = `Team meeting`.
+    temp27-info = `Conf. room 1`.
+    temp27-pic = ``.
+    temp27-type = `Type01`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-15T09:00`.
+    temp27-end_at = `2019-10-15T17:00`.
+    temp27-title = `Mastering JavaScript`.
+    temp27-info = `Conf. room 3`.
+    temp27-pic = ``.
+    temp27-type = `Type08`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-16T09:00`.
+    temp27-end_at = `2019-10-16T17:00`.
+    temp27-title = `Introduction to app development`.
+    temp27-info = `Training hall`.
+    temp27-pic = `sap-icon://education`.
+    temp27-type = `Type08`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-17T15:30`.
+    temp27-end_at = `2019-10-17T17:00`.
+    temp27-title = `Security training`.
+    temp27-info = `Training hall`.
+    temp27-pic = `sap-icon://education`.
+    temp27-type = `Type05`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-22T11:00`.
+    temp27-end_at = `2019-10-22T12:30`.
+    temp27-title = `Team meeting`.
+    temp27-info = `Conf. room 2`.
+    temp27-pic = ``.
+    temp27-type = `Type01`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-23T14:00`.
+    temp27-end_at = `2019-10-23T16:00`.
+    temp27-title = `Doctor`.
+    temp27-info = `Town hospital`.
+    temp27-pic = `sap-icon://offsite-work`.
+    temp27-type = `Type09`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-25T18:00`.
+    temp27-end_at = `2019-10-25T20:00`.
+    temp27-title = `Play tennis`.
+    temp27-info = `With Jessie`.
+    temp27-pic = ``.
+    temp27-type = `Type05`.
+    temp27-tentative = abap_true.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-29T09:00`.
+    temp27-end_at = `2019-10-29T11:00`.
+    temp27-title = `Developers meeting`.
+    temp27-info = ``.
+    temp27-pic = ``.
+    temp27-type = `Type01`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-29T11:00`.
+    temp27-end_at = `2019-10-29T13:00`.
+    temp27-title = `Candidate interview`.
+    temp27-info = `Room 7`.
+    temp27-pic = ``.
+    temp27-type = `Type05`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-start_at = `2019-10-30T09:00`.
+    temp27-end_at = `2019-10-30T17:00`.
+    temp27-title = `Mastering JavaScript`.
+    temp27-info = `Training hall`.
+    temp27-pic = `sap-icon://education`.
+    temp27-type = `Type08`.
+    temp27-tentative = abap_false.
+    INSERT temp27 INTO TABLE temp26.
+    temp11-t_appointments = temp26.
+    
+    CLEAR temp28.
+    
+    temp29-start_at = `2019-10-08T00:00:00`.
+    temp29-end_at = `2019-10-10T00:00:00`.
+    temp29-title = `Team building`.
+    temp29-type = `Type09`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2019-10-11T00:00:00`.
+    temp29-end_at = `2019-10-12T00:00:00`.
+    temp29-title = `Business trip`.
+    temp29-type = `Type05`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2019-10-18T00:00:00`.
+    temp29-end_at = `2019-10-19T00:00:00`.
+    temp29-title = `Business trip`.
+    temp29-type = `Type05`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2019-10-31T00:00:00`.
+    temp29-end_at = `2019-11-02T00:00:00`.
+    temp29-title = `Business trip`.
+    temp29-type = `Type05`.
+    INSERT temp29 INTO TABLE temp28.
+    temp11-t_headers = temp28.
+    INSERT temp11 INTO TABLE temp10.
+    t_team = temp10.
 
-    t_legend = VALUE #(
-        ( text = `Team meeting`    type = `Type01` )
-        ( text = `Personal`        type = `Type05` )
-        ( text = `Discussions`     type = `Type08` )
-        ( text = `Out of office`   type = `Type09` )
-        ( text = `Private meeting` type = `Type03` ) ).
+    
+    CLEAR temp12.
+    
+    temp13-text = `Team meeting`.
+    temp13-type = `Type01`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-text = `Personal`.
+    temp13-type = `Type05`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-text = `Discussions`.
+    temp13-type = `Type08`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-text = `Out of office`.
+    temp13-type = `Type09`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-text = `Private meeting`.
+    temp13-type = `Type03`.
+    INSERT temp13 INTO TABLE temp12.
+    t_legend = temp12.
 
     " the picture paths are the mock's relative ones; the original's
     " fixImagePath prefixes everything that is not an icon, once
-    LOOP AT t_team REFERENCE INTO DATA(person).
+    
+    
+    LOOP AT t_team REFERENCE INTO person.
       IF person->pic IS NOT INITIAL AND person->pic NP `sap-icon://*`.
         person->pic = |{ c_base }{ person->pic }|.
       ENDIF.
-      LOOP AT person->t_appointments REFERENCE INTO DATA(appointment).
+      
+      
+      LOOP AT person->t_appointments REFERENCE INTO appointment.
         IF appointment->pic IS NOT INITIAL AND appointment->pic NP `sap-icon://*`.
           appointment->pic = |{ c_base }{ appointment->pic }|.
         ENDIF.

@@ -13,7 +13,7 @@ CLASS z2ui5_cl_smpc_app_588 DEFINITION PUBLIC.
         picture TYPE string,
       END OF ty_s_employee.
 
-    DATA t_employees TYPE STANDARD TABLE OF ty_s_employee WITH EMPTY KEY.
+    DATA t_employees TYPE STANDARD TABLE OF ty_s_employee WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client           TYPE REF TO z2ui5_if_client.
@@ -37,12 +37,12 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -51,12 +51,67 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA blocks TYPE REF TO z2ui5_cl_ui5_view_builder.
+    FIELD-SYMBOLS <temp3> LIKE LINE OF t_employees.
+    DATA temp5 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp4> LIKE LINE OF t_employees.
+    DATA temp6 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp5> LIKE LINE OF t_employees.
+    DATA temp8 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp7> LIKE LINE OF t_employees.
+    DATA temp9 LIKE sy-tabix.
+      DATA row_no LIKE sy-index.
+      FIELD-SYMBOLS <temp2> LIKE LINE OF t_employees.
+      DATA temp3 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp1> LIKE LINE OF t_employees.
+      DATA temp2 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp6> LIKE LINE OF t_employees.
+      DATA temp7 LIKE sy-tabix.
+      DATA temp4 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " Blocks: every SharedBlocks BlockBase is inlined with its view content
     " (app 263 carries the identical section tree - same fifteen blocks, same
     " ids, same titles); the six emp1>..emp6> named models fold onto one table
-    DATA(blocks) = view->ele( n = `View` ns = `mvc`
+    
+    CLEAR temp1.
+    temp1-check_prevent_default = edit_mode.
+    
+    
+    
+    temp5 = sy-tabix.
+    READ TABLE t_employees INDEX 1 ASSIGNING <temp3>.
+    sy-tabix = temp5.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp6 = sy-tabix.
+    READ TABLE t_employees INDEX 1 ASSIGNING <temp4>.
+    sy-tabix = temp6.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp8 = sy-tabix.
+    READ TABLE t_employees INDEX 2 ASSIGNING <temp5>.
+    sy-tabix = temp8.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE t_employees INDEX 2 ASSIGNING <temp7>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    blocks = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`       v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -72,7 +127,7 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
             " every Edit press, so the flag always matches the current edit mode -
             " which is exactly what the controller's early 'if (!this.bEditMode)
             " return' does. The event is still sent, so the backend stays in charge.
-            )->a( n = `beforeNavigate`           v = client->_event( val = `BEFORE_NAVIGATE` arg = `${$parameters>/section}.getId()` s_ctrl = VALUE #( check_prevent_default = edit_mode ) )
+            )->a( n = `beforeNavigate`           v = client->_event( val = `BEFORE_NAVIGATE` arg = `${$parameters>/section}.getId()` s_ctrl = temp1 )
             )->a( n = `useIconTabBar`            v = `true`
             )->a( n = `showTitleInHeaderContent` v = `true`
             )->a( n = `upperCaseAnchorBar`       v = `false`
@@ -603,9 +658,9 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
                                                     )->ele( n = `content` ns = `l`
                                                         )->ele( n = `VerticalLayout` ns = `l`
                                                             )->tag( n = `Label` ns = `m`
-                                                                )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-name tab = t_employees tab_index = 1 )
+                                                                )->a( n = `text` v = client->_bind( val = <temp3>-name tab = t_employees tab_index = 1 )
                                                             )->tag( n = `Label` ns = `m`
-                                                                )->a( n = `text` v = client->_bind( val = t_employees[ 1 ]-job tab = t_employees tab_index = 1 )
+                                                                )->a( n = `text` v = client->_bind( val = <temp4>-job tab = t_employees tab_index = 1 )
 
                                                             )->ele( n = `layoutData` ns = `l`
                                                                 )->tag( n = `GridData` ns = `l`
@@ -631,9 +686,9 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
 
                                                     )->ele( n = `VerticalLayout` ns = `l`
                                                         )->tag( n = `Label` ns = `m`
-                                                            )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-name tab = t_employees tab_index = 2 )
+                                                            )->a( n = `text` v = client->_bind( val = <temp5>-name tab = t_employees tab_index = 2 )
                                                         )->tag( n = `Label` ns = `m`
-                                                            )->a( n = `text` v = client->_bind( val = t_employees[ 2 ]-job tab = t_employees tab_index = 2 )
+                                                            )->a( n = `text` v = client->_bind( val = <temp7>-job tab = t_employees tab_index = 2 )
 
                                                         )->ele( n = `layoutData` ns = `l`
                                                             )->tag( n = `GridData` ns = `l`
@@ -668,16 +723,41 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
     " six Panels over emp1>..emp6>, which
     " are the six rows of one table
     DO 6 TIMES.
-      DATA(row_no) = sy-index.
+      
+      row_no = sy-index.
 
+      
+      
+      temp3 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp2>.
+      sy-tabix = temp3.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      
+      
+      temp2 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp1>.
+      sy-tabix = temp2.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      
+      
+      temp7 = sy-tabix.
+      READ TABLE t_employees INDEX row_no ASSIGNING <temp6>.
+      sy-tabix = temp7.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
       blocks->ele( n = `Panel` ns = `m`
           )->ele( n = `VBox` ns = `m`
               )->tag( n = `Image` ns = `m`
-                  )->a( n = `src` v = client->_bind( val = t_employees[ row_no ]-picture tab = t_employees tab_index = row_no )
+                  )->a( n = `src` v = client->_bind( val = <temp2>-picture tab = t_employees tab_index = row_no )
               )->tag( n = `Label` ns = `m`
-                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-name tab = t_employees tab_index = row_no )
+                  )->a( n = `text` v = client->_bind( val = <temp1>-name tab = t_employees tab_index = row_no )
               )->tag( n = `Label` ns = `m`
-                  )->a( n = `text` v = client->_bind( val = t_employees[ row_no ]-job tab = t_employees tab_index = row_no )
+                  )->a( n = `text` v = client->_bind( val = <temp6>-job tab = t_employees tab_index = row_no )
 
           )->end(
       )->end( ).
@@ -691,8 +771,13 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
     " remembered section has to be re-issued after every render, not only from
     " CONFIRM_OK. Found by the linter's control-state-lost-on-rebuild rule
     IF selected_section IS NOT INITIAL.
+      
+      CLEAR temp4.
+      INSERT `ObjectPageLayout` INTO TABLE temp4.
+      INSERT `setSelectedSection` INTO TABLE temp4.
+      INSERT selected_section INTO TABLE temp4.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `ObjectPageLayout` ) ( `setSelectedSection` ) ( selected_section ) ) ).
+                                t_arg = temp4 ).
     ENDIF.
 
   ENDMETHOD.
@@ -703,7 +788,8 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
     " the controller builds this Dialog imperatively (new Dialog({...}).open())
     " and keeps it as a dependent; expressed as a core:FragmentDefinition shown
     " through popup_display (app 300 idiom, declared deviation)
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -734,18 +820,31 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp1 TYPE xsdboolean.
+        DATA temp6 TYPE string.
+        DATA section_id TYPE string.
+        DATA temp7 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `EDIT`.
         " onEdit: flips bEditMode and toasts the new state. The redraw re-bakes
         " check_prevent_default into the beforeNavigate wire (app 241 idiom)
-        edit_mode = xsdbool( edit_mode = abap_false ).
-        client->message_toast_display( |Edit mode { COND string( WHEN edit_mode = abap_true THEN `enabled` ELSE `disabled` ) }| ).
+        
+        temp1 = boolc( edit_mode = abap_false ).
+        edit_mode = temp1.
+        
+        IF edit_mode = abap_true.
+          temp6 = `enabled`.
+        ELSE.
+          temp6 = `disabled`.
+        ENDIF.
+        client->message_toast_display( |Edit mode { temp6 }| ).
         view_display( ).
 
       WHEN `BEFORE_NAVIGATE`.
-        DATA(section_id) = client->get_event_arg( ).
+        
+        section_id = client->get_event_arg( ).
 
         IF edit_mode = abap_false.
           " the wire carried no veto, so the control has already navigated -
@@ -766,8 +865,13 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
         " reached through the whitelisted control_by_id action (app 263 idiom)
         previous_section = selected_section.
         client->popup_destroy( ).
+        
+        CLEAR temp7.
+        INSERT `ObjectPageLayout` INTO TABLE temp7.
+        INSERT `setSelectedSection` INTO TABLE temp7.
+        INSERT selected_section INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `ObjectPageLayout` ) ( `setSelectedSection` ) ( selected_section ) ) ).
+                                  t_arg = temp7 ).
 
       WHEN `CONFIRM_CANCEL`.
         " the navigation stays vetoed and the remembered section reverts
@@ -780,6 +884,8 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp9 LIKE t_employees.
+    DATA temp10 LIKE LINE OF temp9.
 
     " the page opens on the first section, which is what useIconTabBar selects
     selected_section = `goals`.
@@ -789,25 +895,34 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
     " ModelMapping elements map onto the internal models emp1>..emp6> - one
     " table, so the model keeps the array shape the original addresses and the
     " view addresses it per row (client->_bind( tab / tab_index ))
-    t_employees = VALUE #(
-      ( name    = `Michael Adams`
-        job     = `Scrum Master`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `John Miller`
-        job     = `Product Owner`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Richard Wilson`
-        job     = `Ux Designer`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Julie Armstrong`
-        job     = `Quality Engineer`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Denise Smith`
-        job     = `Team Member`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` )
-      ( name    = `Richard Adams`
-        job     = `Team Member`
-        picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png` ) ).
+    
+    CLEAR temp9.
+    
+    temp10-name = `Michael Adams`.
+    temp10-job = `Scrum Master`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-name = `John Miller`.
+    temp10-job = `Product Owner`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-name = `Richard Wilson`.
+    temp10-job = `Ux Designer`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-name = `Julie Armstrong`.
+    temp10-job = `Quality Engineer`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-name = `Denise Smith`.
+    temp10-job = `Team Member`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-name = `Richard Adams`.
+    temp10-job = `Team Member`.
+    temp10-picture = `https://sdk.openui5.org/test-resources/sap/uxap/images/person.png`.
+    INSERT temp10 INTO TABLE temp9.
+    t_employees = temp9.
 
   ENDMETHOD.
 

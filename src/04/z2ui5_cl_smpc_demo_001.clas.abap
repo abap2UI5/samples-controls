@@ -88,8 +88,8 @@ CLASS z2ui5_cl_smpc_demo_001 DEFINITION PUBLIC.
         comment   TYPE string,
       END OF ty_s_comment.
 
-    DATA t_rows            TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_comments        TYPE STANDARD TABLE OF ty_s_comment WITH EMPTY KEY.
+    DATA t_rows            TYPE STANDARD TABLE OF ty_s_row WITH DEFAULT KEY.
+    DATA t_comments        TYPE STANDARD TABLE OF ty_s_comment WITH DEFAULT KEY.
     " the worklistView model of the original
     DATA filter_key        TYPE string VALUE `all`.
     DATA table_title       TYPE string VALUE `ProductsPlural`.
@@ -137,13 +137,13 @@ CLASS z2ui5_cl_smpc_demo_001 DEFINITION PUBLIC.
       END OF ty_s_supplier.
 
     DATA client        TYPE REF TO z2ui5_if_client.
-    DATA t_products    TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_suppliers   TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
+    DATA t_products    TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+    DATA t_suppliers   TYPE STANDARD TABLE OF ty_s_supplier WITH DEFAULT KEY.
     " the productFeedback model: every comment, of every product
-    DATA t_feedback    TYPE STANDARD TABLE OF ty_s_comment WITH EMPTY KEY.
+    DATA t_feedback    TYPE STANDARD TABLE OF ty_s_comment WITH DEFAULT KEY.
     " the table's remembered selection (rememberSelections), rows a quick
     " filter or the search hides included
-    DATA t_selected    TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA t_selected    TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     " the query of the last search event - the Application filter
     DATA search_query  TYPE string.
     DATA product_shown TYPE i.
@@ -214,19 +214,23 @@ ENDCLASS.
 CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
+      DATA temp1 TYPE string_table.
 
     me->client = client.
 
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       list_refresh( ).
       view_display( ).
       " index.html's <title>
+      
+      CLEAR temp1.
+      INSERT `Manage Products` INTO TABLE temp1.
       client->follow_up_action( val   = client->cs_event-set_title
-                                t_arg = VALUE #( ( `Manage Products` ) ) ).
-    ELSEIF client->check_on_navigated( ).
+                                t_arg = temp1 ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -234,13 +238,17 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
 
   METHOD view_display.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA app TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp3 TYPE string_table.
 
     " the router's initialize( ): the live hash rides in s_config-hash on
     " every request, so a reload or a shared link starts on the page its hash
     " names - the App opens on it (initialPage)
     page = route_match( ).
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
+    
+    view = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `displayBlock`   v = `true`
             )->a( n = `xmlns`          v = `sap.m`
@@ -251,7 +259,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->a( n = `xmlns:l`        v = `sap.ui.layout` ).
 
     " App.view.xml - the router's controlId "app", aggregation "pages"
-    DATA(app) = view->ele( `Shell`
+    
+    app = view->ele( `Shell`
         )->ele( `App`
             )->a( n = `id`          v = `app`
             )->a( n = `initialPage` v = page ).
@@ -276,8 +285,11 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " hash changes the app did not write itself - the browser Back/Forward
     " buttons, a hand-edited URL - round-trip as HASH_CHANGED. Registered per
     " render, since the registration dies with an app switch
+    
+    CLEAR temp3.
+    INSERT `HASH_CHANGED` INTO TABLE temp3.
     client->follow_up_action( val   = client->cs_event-hash_attach_changed
-                              t_arg = VALUE #( ( `HASH_CHANGED` ) ) ).
+                              t_arg = temp3 ).
 
   ENDMETHOD.
 
@@ -285,7 +297,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
   METHOD page_worklist.
 
     " Worklist.view.xml
-    DATA(worklist) = parent->ele( n = `SemanticPage` ns = `semantic`
+    DATA worklist TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA table TYPE REF TO z2ui5_cl_ui5_view_builder.
+    worklist = parent->ele( n = `SemanticPage` ns = `semantic`
         )->a( n = `id`                       v = `worklist`
         )->a( n = `headerPinnable`           b = abap_false
         )->a( n = `toggleHeaderOnTitleClick` b = abap_false
@@ -296,7 +310,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->a( n = `text` v = `Manage Products` ).
 
     " onQuickFilter: the tab's key is the Control filter of the list binding
-    DATA(table) = worklist->ele( n = `headerContent` ns = `semantic`
+    
+    table = worklist->ele( n = `headerContent` ns = `semantic`
         )->ele( `IconTabBar`
             )->a( n = `id`          v = `iconTabBar`
             )->a( n = `select`      v = client->_event( `FILTER` )
@@ -446,7 +461,10 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " Object.view.xml - no footer and no back button, as there: the way back
     " is the browser's Back button
-    DATA(object) = parent->ele( n = `SemanticPage` ns = `semantic`
+    DATA object TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA header TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA body TYPE REF TO z2ui5_cl_ui5_view_builder.
+    object = parent->ele( n = `SemanticPage` ns = `semantic`
         )->a( n = `id`                       v = `object`
         )->a( n = `headerPinnable`           b = abap_false
         )->a( n = `toggleHeaderOnTitleClick` b = abap_false ).
@@ -455,7 +473,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         )->tag( `Title`
             )->a( n = `text` v = client->_bind( obj_productname ) ).
 
-    DATA(header) = object->ele( n = `headerContent` ns = `semantic`
+    
+    header = object->ele( n = `headerContent` ns = `semantic`
         )->ele( `FlexBox`
             )->a( n = `alignItems`     v = `Start`
             )->a( n = `justifyContent` v = `SpaceBetween` ).
@@ -490,7 +509,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->a( n = `showValue`    b = abap_true
             )->a( n = `state`        v = client->_bind( obj_units_state ) ).
 
-    DATA(body) = object->ele( n = `content` ns = `semantic`
+    
+    body = object->ele( n = `content` ns = `semantic`
         )->ele( n = `VerticalLayout` ns = `l`
             )->a( n = `width` v = `100%` ).
 
@@ -605,6 +625,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp5 TYPE i.
+        DATA temp1 TYPE string.
+        DATA temp6 TYPE z2ui5_cl_smpc_demo_001=>ty_s_comment.
 
     CASE client->get_event( ).
 
@@ -625,9 +648,15 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         " onPress: navTo( "object", { objectId } ) pushes the hash; the
         " route's patternMatched binds the page
         client->hash_set( |/Products/{ client->get_event_arg( ) }| ).
-        page_to( COND #( WHEN object_bind( CONV i( client->get_event_arg( ) ) ) = abap_true
-                         THEN `object`
-                         ELSE `objectNotFound` ) ).
+        
+        temp5 = client->get_event_arg( ).
+        
+        IF object_bind( temp5 ) = abap_true.
+          temp1 = `object`.
+        ELSE.
+          temp1 = `objectNotFound`.
+        ENDIF.
+        page_to( temp1 ).
 
       WHEN `SHOW_WORKLIST`.
         " NotFound's onLinkPressed: navTo( "worklist" ) - a new history entry
@@ -643,10 +672,13 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
       WHEN `POST`.
         " onPost: the entry lands in the productFeedback model
-        INSERT VALUE #( productid = product_shown
-                        type      = `Comment`
-                        date      = date_medium( )
-                        comment   = client->get_event_arg( ) ) INTO TABLE t_feedback.
+        
+        CLEAR temp6.
+        temp6-productid = product_shown.
+        temp6-type = `Comment`.
+        temp6-date = date_medium( ).
+        temp6-comment = client->get_event_arg( ).
+        INSERT temp6 INTO TABLE t_feedback.
         comments_refresh( ).
 
       WHEN `SHARE_EMAIL`.
@@ -668,10 +700,16 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " onUpdateStockObjects / onUnlistObjects over getSelectedItems( ) - the
     " selected rows ON SHOW, so a selection a filter hides is not acted on
-    DATA(done) = 0.
-    LOOP AT t_rows INTO DATA(row) WHERE selected = abap_true.
+    DATA done TYPE i.
+    DATA row LIKE LINE OF t_rows.
+        FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_demo_001=>ty_s_product.
+    DATA temp7 TYPE string.
+    done = 0.
+    
+    LOOP AT t_rows INTO row WHERE selected = abap_true.
       IF client->get_event( ) = `REORDER`.
-        ASSIGN t_products[ productid = row-productid ] TO FIELD-SYMBOL(<product>).
+        
+        READ TABLE t_products WITH KEY productid = row-productid ASSIGNING <product>.
         IF <product> IS ASSIGNED.
           <product>-unitsinstock = <product>-unitsinstock + 10.
           UNASSIGN <product>.
@@ -692,9 +730,13 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " the table's refresh and its updateFinished: rows, title and counts;
     " the last request's handler toasts once
     list_refresh( ).
-    client->message_toast_display( COND #( WHEN client->get_event( ) = `REORDER`
-                                            THEN `Product stock level updated`
-                                            ELSE `Product removed` ) ).
+    
+    IF client->get_event( ) = `REORDER`.
+      temp7 = `Product stock level updated`.
+    ELSE.
+      temp7 = `Product removed`.
+    ENDIF.
+    client->message_toast_display( temp7 ).
 
   ENDMETHOD.
 
@@ -704,14 +746,31 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " the manifest's routes: "" is the worklist, "Products/{objectId}" the
     " object - crossroads matches the pattern case-insensitively - and
     " anything else the bypassed target notFound
-    DATA(hash) = app_hash( ).
+    DATA hash TYPE string.
+    DATA segments TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    FIELD-SYMBOLS <temp8> LIKE LINE OF segments.
+    DATA temp9 LIKE sy-tabix.
+    DATA id LIKE LINE OF segments.
+    FIELD-SYMBOLS <temp2> LIKE LINE OF segments.
+    DATA temp3 LIKE sy-tabix.
+    DATA temp10 TYPE i.
+    hash = app_hash( ).
     IF hash IS INITIAL.
       result = `worklist`.
       RETURN.
     ENDIF.
 
-    SPLIT hash AT `/` INTO TABLE DATA(segments).
-    IF lines( segments ) <> 2 OR to_upper( segments[ 1 ] ) <> `PRODUCTS`.
+    
+    SPLIT hash AT `/` INTO TABLE segments.
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE segments INDEX 1 ASSIGNING <temp8>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF lines( segments ) <> 2 OR to_upper( <temp8> ) <> `PRODUCTS`.
       result = `notFound`.
       RETURN.
     ENDIF.
@@ -719,9 +778,20 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " _onObjectMatched binds /Products(<id>); _onBindingChange displays the
     " target objectNotFound when that entity does not exist (the conditions
     " short-circuit, so only a number that fits reaches CONV i)
-    DATA(id) = segments[ 2 ].
+    
+    
+    
+    temp3 = sy-tabix.
+    READ TABLE segments INDEX 2 ASSIGNING <temp2>.
+    sy-tabix = temp3.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    id = <temp2>.
     result = `objectNotFound`.
-    IF id CO `0123456789` AND strlen( id ) <= 9 AND object_bind( CONV i( id ) ) = abap_true.
+    
+    temp10 = id.
+    IF id CO `0123456789` AND strlen( id ) <= 9 AND object_bind( temp10 ) = abap_true.
       result = `object`.
     ENDIF.
 
@@ -734,10 +804,22 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " launchpad's shell hash (`<intent>&/`) and behind abap2UI5's own
     " segments (`/z2ui5-xapp-state=<id>`, `/app/<class>/<draft>`), without
     " the slashes around it - `#/Products/1` reads `Products/1`
-    DATA(get) = client->get( ).
-    DATA(hash) = get-s_config-hash.
+    DATA get TYPE z2ui5_if_client=>ty_s_get.
+    DATA hash LIKE get-s_config-hash.
+    DATA shell TYPE i.
+    DATA segments TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    FIELD-SYMBOLS <temp11> LIKE LINE OF segments.
+    DATA temp12 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp13> LIKE LINE OF segments.
+    DATA temp14 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp15> LIKE LINE OF segments.
+      DATA temp16 LIKE sy-tabix.
+    get = client->get( ).
+    
+    hash = get-s_config-hash.
     SHIFT hash LEFT DELETING LEADING `#`.
-    DATA(shell) = find( val = hash sub = `&/` ).
+    
+    shell = find( val = hash sub = `&/` ).
     IF shell >= 0.
       hash = substring( val = hash off = shell + 2 ).
     ELSEIF get-check_launchpad_active = abap_true.
@@ -747,14 +829,39 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    SPLIT hash AT `/` INTO TABLE DATA(segments).
+    
+    SPLIT hash AT `/` INTO TABLE segments.
     DELETE segments WHERE table_line IS INITIAL.
-    IF segments IS NOT INITIAL AND segments[ 1 ] CP `z2ui5-xapp-state=*`.
+    
+    
+    temp12 = sy-tabix.
+    READ TABLE segments INDEX 1 ASSIGNING <temp11>.
+    sy-tabix = temp12.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF segments IS NOT INITIAL AND <temp11> CP `z2ui5-xapp-state=*`.
       DELETE segments INDEX 1.
     ENDIF.
-    IF lines( segments ) >= 2 AND segments[ 1 ] = `app`.
+    
+    
+    temp14 = sy-tabix.
+    READ TABLE segments INDEX 1 ASSIGNING <temp13>.
+    sy-tabix = temp14.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF lines( segments ) >= 2 AND <temp13> = `app`.
       DELETE segments FROM 1 TO 2.
-      IF segments IS NOT INITIAL AND strlen( segments[ 1 ] ) = 32.
+      
+      
+      temp16 = sy-tabix.
+      READ TABLE segments INDEX 1 ASSIGNING <temp15>.
+      sy-tabix = temp16.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      IF segments IS NOT INITIAL AND strlen( <temp15> ) = 32.
         DELETE segments INDEX 1.
       ENDIF.
     ENDIF.
@@ -765,14 +872,20 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
 
   METHOD page_to.
+    DATA temp17 TYPE string_table.
 
     " the target's display( ): the App navigates to the target's page
     IF target = page.
       RETURN.
     ENDIF.
     page = target.
+    
+    CLEAR temp17.
+    INSERT `app` INTO TABLE temp17.
+    INSERT `to` INTO TABLE temp17.
+    INSERT target INTO TABLE temp17.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `app` ) ( `to` ) ( target ) ) ).
+                              t_arg = temp17 ).
 
   ENDMETHOD.
 
@@ -781,7 +894,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " the object view's bindElement( /Products(<id>) ) with the expanded
     " supplier, through the formatters
-    ASSIGN t_products[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_demo_001=>ty_s_product.
+    FIELD-SYMBOLS <supplier> TYPE z2ui5_cl_smpc_demo_001=>ty_s_supplier.
+    READ TABLE t_products WITH KEY productid = productid ASSIGNING <product>.
     IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
@@ -798,7 +913,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     obj_discontinued  = <product>-discontinued.
 
     CLEAR: obj_suppliername, obj_address, obj_postal_city, obj_country.
-    ASSIGN t_suppliers[ supplierid = <product>-supplierid ] TO FIELD-SYMBOL(<supplier>).
+    
+    READ TABLE t_suppliers WITH KEY supplierid = <product>-supplierid ASSIGNING <supplier>.
     IF <supplier> IS ASSIGNED.
       obj_suppliername = <supplier>-companyname.
       obj_address      = <supplier>-address.
@@ -816,7 +932,14 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " _onBindingChange filters the feed list on productID; its sorter orders
     " the date TEXT descending (localeCompare, equal texts in the order they
     " were posted)
-    t_comments = VALUE #( FOR comment IN t_feedback WHERE ( productid = product_shown ) ( comment ) ).
+    DATA temp19 LIKE t_comments.
+    DATA comment LIKE LINE OF t_feedback.
+    CLEAR temp19.
+    
+    LOOP AT t_feedback INTO comment WHERE productid = product_shown.
+      INSERT comment INTO TABLE temp19.
+    ENDLOOP.
+    t_comments = temp19.
     SORT t_comments STABLE BY date DESCENDING AS TEXT.
 
   ENDMETHOD.
@@ -830,15 +953,38 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " rememberSelections: the rows on show carry the live selection, the
     " rows a filter hid keep theirs
-    LOOP AT t_rows INTO DATA(row).
+    DATA row LIKE LINE OF t_rows.
+    DATA temp21 LIKE t_rows.
+    DATA product LIKE LINE OF t_products.
+      DATA temp22 TYPE z2ui5_cl_smpc_demo_001=>ty_s_row.
+      DATA temp4 TYPE z2ui5_cl_smpc_demo_001=>ty_s_row-suppliername.
+      DATA temp5 LIKE sy-subrc.
+      DATA temp1 TYPE xsdboolean.
+    DATA temp23 TYPE string.
+    DATA temp24 TYPE i.
+    DATA n TYPE i.
+    DATA p LIKE LINE OF t_products.
+      DATA temp6 TYPE i.
+    DATA temp25 TYPE i.
+    DATA s TYPE i.
+    DATA q LIKE LINE OF t_products.
+      DATA temp7 TYPE i.
+    DATA temp26 TYPE i.
+    DATA o TYPE i.
+    DATA r LIKE LINE OF t_products.
+      DATA temp8 TYPE i.
+    LOOP AT t_rows INTO row.
       DELETE t_selected WHERE table_line = row-productid.
       IF row-selected = abap_true.
         INSERT row-productid INTO TABLE t_selected.
       ENDIF.
     ENDLOOP.
 
-    t_rows = VALUE #( ).
-    LOOP AT t_products INTO DATA(product).
+    
+    CLEAR temp21.
+    t_rows = temp21.
+    
+    LOOP AT t_products INTO product.
       " the Control filter of the quick filter tab
       CASE filter_key.
         WHEN `inStock`.
@@ -867,15 +1013,29 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
       " LOOP: a failed ASSIGN leaves the previous iteration's binding in place,
       " and IS ASSIGNED would then read TRUE - and print the WRONG supplier
       UNASSIGN <supplier>.
-      ASSIGN t_suppliers[ supplierid = product-supplierid ] TO <supplier>.
-      INSERT VALUE #( productid          = product-productid
-                      productname        = product-productname
-                      suppliername       = COND #( WHEN <supplier> IS ASSIGNED THEN <supplier>-companyname )
-                      unitprice_text     = number_unit( product-unitprice )
-                      unitsonorder_text  = number_unit( product-unitsonorder )
-                      unitsinstock_text  = number_unit( product-unitsinstock )
-                      unitsinstock_state = quantity_state( product-unitsinstock )
-                      selected           = xsdbool( line_exists( t_selected[ table_line = product-productid ] ) ) ) INTO TABLE t_rows.
+      READ TABLE t_suppliers WITH KEY supplierid = product-supplierid ASSIGNING <supplier>.
+      
+      CLEAR temp22.
+      temp22-productid = product-productid.
+      temp22-productname = product-productname.
+      
+      IF <supplier> IS ASSIGNED.
+        temp4 = <supplier>-companyname.
+      ELSE.
+        CLEAR temp4.
+      ENDIF.
+      temp22-suppliername = temp4.
+      temp22-unitprice_text = number_unit( product-unitprice ).
+      temp22-unitsonorder_text = number_unit( product-unitsonorder ).
+      temp22-unitsinstock_text = number_unit( product-unitsinstock ).
+      temp22-unitsinstock_state = quantity_state( product-unitsinstock ).
+      
+      READ TABLE t_selected WITH KEY table_line = product-productid TRANSPORTING NO FIELDS.
+      temp5 = sy-subrc.
+      
+      temp1 = boolc( temp5 = 0 ).
+      temp22-selected = temp1.
+      INSERT temp22 INTO TABLE t_rows.
     ENDLOOP.
 
     " the sorter on ProductName ascending - the mock server's $orderby, which
@@ -884,11 +1044,59 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " onUpdateFinished: the title counts the rows on show, the four $count
     " reads count the whole stock
-    table_title      = COND #( WHEN t_rows IS INITIAL THEN `ProductsPlural` ELSE |Products ({ lines( t_rows ) })| ).
+    
+    IF t_rows IS INITIAL.
+      temp23 = `ProductsPlural`.
+    ELSE.
+      temp23 = |Products ({ lines( t_rows ) })|.
+    ENDIF.
+    table_title      = temp23.
     count_all        = |{ lines( t_products ) }|.
-    count_instock    = |{ REDUCE i( INIT n = 0 FOR p IN t_products NEXT n = COND #( WHEN p-unitsinstock > 10 THEN n + 1 ELSE n ) ) }|.
-    count_shortage   = |{ REDUCE i( INIT s = 0 FOR q IN t_products NEXT s = COND #( WHEN q-unitsinstock BETWEEN 1 AND 10 THEN s + 1 ELSE s ) ) }|.
-    count_outofstock = |{ REDUCE i( INIT o = 0 FOR r IN t_products NEXT o = COND #( WHEN r-unitsinstock <= 0 THEN o + 1 ELSE o ) ) }|.
+    
+    
+    n = 0.
+    
+    LOOP AT t_products INTO p.
+      
+      IF p-unitsinstock > 10.
+        temp6 = n + 1.
+      ELSE.
+        temp6 = n.
+      ENDIF.
+      n = temp6.
+    ENDLOOP.
+    temp24 = n.
+    count_instock    = |{ temp24 }|.
+    
+    
+    s = 0.
+    
+    LOOP AT t_products INTO q.
+      
+      IF q-unitsinstock BETWEEN 1 AND 10.
+        temp7 = s + 1.
+      ELSE.
+        temp7 = s.
+      ENDIF.
+      s = temp7.
+    ENDLOOP.
+    temp25 = s.
+    count_shortage   = |{ temp25 }|.
+    
+    
+    o = 0.
+    
+    LOOP AT t_products INTO r.
+      
+      IF r-unitsinstock <= 0.
+        temp8 = o + 1.
+      ELSE.
+        temp8 = o.
+      ENDIF.
+      o = temp8.
+    ENDLOOP.
+    temp26 = o.
+    count_outofstock = |{ temp26 }|.
 
   ENDMETHOD.
 
@@ -898,11 +1106,21 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " BaseController.onShareEmailPress: URLHelper.triggerEmail( null, subject,
     " body ) - the body ends in location.href after a "\r\n", which the
     " URLHELPER action refuses, so a space stands in for it
-    DATA(config) = client->get( )-s_config.
-    DATA(href) = config-origin && config-pathname && config-search && config-hash.
+    DATA config TYPE z2ui5_if_client=>ty_s_get-s_config.
+    DATA href TYPE string.
+    DATA temp27 TYPE string_table.
+    DATA temp9 LIKE LINE OF temp27.
+    config = client->get( )-s_config.
+    
+    href = config-origin && config-pathname && config-search && config-hash.
+    
+    CLEAR temp27.
+    INSERT `TRIGGER_EMAIL` INTO TABLE temp27.
+    
+    temp9 = |\{"SUBJECT":"{ json_text( subject ) }","BODY":"{ json_text( |{ body } { href }| ) }"\}|.
+    INSERT temp9 INTO TABLE temp27.
     client->follow_up_action( val   = client->cs_event-urlhelper
-                              t_arg = VALUE #( ( `TRIGGER_EMAIL` )
-                                               ( |\{"SUBJECT":"{ json_text( subject ) }","BODY":"{ json_text( |{ body } { href }| ) }"\}| ) ) ).
+                              t_arg = temp27 ).
 
   ENDMETHOD.
 
@@ -921,15 +1139,40 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " DateFormat.getDateTimeInstance( { style: "medium" } ) in English:
     " "MMM d, y, h:mm:ss a"
-    DATA(date) = sy-datlo.
-    DATA(time) = sy-timlo.
-    DATA(hour) = CONV i( time(2) ).
-    DATA(hour12) = hour MOD 12.
+    DATA date LIKE sy-datlo.
+    DATA time LIKE sy-timlo.
+    DATA temp29 TYPE i.
+    DATA hour LIKE temp29.
+    DATA hour12 TYPE i.
+    DATA temp30 TYPE i.
+    DATA month TYPE string.
+    DATA temp31 TYPE i.
+    DATA temp10 TYPE string.
+    date = sy-datlo.
+    
+    time = sy-timlo.
+    
+    temp29 = time(2).
+    
+    hour = temp29.
+    
+    hour12 = hour MOD 12.
     IF hour12 = 0.
       hour12 = 12.
     ENDIF.
-    DATA(month) = substring( val = `JanFebMarAprMayJunJulAugSepOctNovDec` off = ( CONV i( date+4(2) ) - 1 ) * 3 len = 3 ).
-    result = |{ month } { CONV i( date+6(2) ) }, { date(4) }, { hour12 }:{ time+2(2) }:{ time+4(2) } { COND #( WHEN hour < 12 THEN `AM` ELSE `PM` ) }|.
+    
+    temp30 = date+4(2).
+    
+    month = substring( val = `JanFebMarAprMayJunJulAugSepOctNovDec` off = ( temp30 - 1 ) * 3 len = 3 ).
+    
+    temp31 = date+6(2).
+    
+    IF hour < 12.
+      temp10 = `AM`.
+    ELSE.
+      temp10 = `PM`.
+    ENDIF.
+    result = |{ month } { temp31 }, { date(4) }, { hour12 }:{ time+2(2) }:{ time+4(2) } { temp10 }|.
 
   ENDMETHOD.
 
@@ -952,7 +1195,15 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " the original's quantityState formatter: out of stock is an error,
     " ten or fewer a warning, anything above that success
-    result = COND #( WHEN val = 0 THEN `Error` WHEN val <= 10 THEN `Warning` ELSE `Success` ).
+    DATA temp32 TYPE string.
+    IF val = 0.
+      temp32 = `Error`.
+    ELSEIF val <= 10.
+      temp32 = `Warning`.
+    ELSE.
+      temp32 = `Success`.
+    ENDIF.
+    result = temp32.
 
   ENDMETHOD.
 
@@ -960,31 +1211,180 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
   METHOD model_init.
 
     " localService/mockdata/Products.json - the full row set, verbatim
-    t_products = VALUE #(
-        ( productid = 1  productname = `Chai`                           supplierid = 1 unitsinstock = 39  unitsonorder = 10 unitprice = 8   discontinued = abap_false )
-        ( productid = 2  productname = `Chang`                          supplierid = 1 unitsinstock = 81  unitsonorder = 7  unitprice = 6   discontinued = abap_true )
-        ( productid = 3  productname = `Aniseed Syrup`                  supplierid = 3 unitsinstock = 100 unitsonorder = 6  unitprice = 3   discontinued = abap_false )
-        ( productid = 4  productname = `Schwarzwälder Kirschtorte`      supplierid = 3 unitsinstock = 2   unitsonorder = 3  unitprice = 19  discontinued = abap_false )
-        ( productid = 5  productname = `Chef Anton's Cajun Seasoning`   supplierid = 3 unitsinstock = 11  unitsonorder = 9  unitprice = 108 discontinued = abap_false )
-        ( productid = 6  productname = `Chef Anton's Gumbo Mix`         supplierid = 4 unitsinstock = 21  unitsonorder = 12 unitprice = 18  discontinued = abap_false )
-        ( productid = 7  productname = `Grandma's Boysenberry Spread`   supplierid = 5 unitsinstock = 25  unitsonorder = 25 unitprice = 18  discontinued = abap_false )
-        ( productid = 8  productname = `Uncle Bob's Organic Dried Pears` supplierid = 6 unitsinstock = 29 unitsonorder = 7  unitprice = 35  discontinued = abap_false )
-        ( productid = 9  productname = `Northwoods Cranberry Sauce`     supplierid = 6 unitsinstock = 4   unitsonorder = 32 unitprice = 35  discontinued = abap_false )
-        ( productid = 10 productname = `Mishi Kobe Niku`                supplierid = 5 unitsinstock = 40  unitsonorder = 5  unitprice = 130 discontinued = abap_false )
-        ( productid = 11 productname = `Ikura`                          supplierid = 4 unitsinstock = 4   unitsonorder = 10 unitprice = 13  discontinued = abap_false )
-        ( productid = 13 productname = `Carnarvon Tigers`               supplierid = 3 unitsinstock = 36  unitsonorder = 40 unitprice = 56  discontinued = abap_false )
-        ( productid = 14 productname = `Teatime Chocolate Biscuits`     supplierid = 2 unitsinstock = 21  unitsonorder = 40 unitprice = 7   discontinued = abap_false )
-        ( productid = 15 productname = `Alice Mutton`                   supplierid = 2 unitsinstock = 90  unitsonorder = 20 unitprice = 75  discontinued = abap_true ) ).
+    DATA temp33 LIKE t_products.
+    DATA temp34 LIKE LINE OF temp33.
+    DATA temp35 LIKE t_suppliers.
+    DATA temp36 LIKE LINE OF temp35.
+    CLEAR temp33.
+    
+    temp34-productid = 1.
+    temp34-productname = `Chai`.
+    temp34-supplierid = 1.
+    temp34-unitsinstock = 39.
+    temp34-unitsonorder = 10.
+    temp34-unitprice = 8.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 2.
+    temp34-productname = `Chang`.
+    temp34-supplierid = 1.
+    temp34-unitsinstock = 81.
+    temp34-unitsonorder = 7.
+    temp34-unitprice = 6.
+    temp34-discontinued = abap_true.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 3.
+    temp34-productname = `Aniseed Syrup`.
+    temp34-supplierid = 3.
+    temp34-unitsinstock = 100.
+    temp34-unitsonorder = 6.
+    temp34-unitprice = 3.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 4.
+    temp34-productname = `Schwarzwälder Kirschtorte`.
+    temp34-supplierid = 3.
+    temp34-unitsinstock = 2.
+    temp34-unitsonorder = 3.
+    temp34-unitprice = 19.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 5.
+    temp34-productname = `Chef Anton's Cajun Seasoning`.
+    temp34-supplierid = 3.
+    temp34-unitsinstock = 11.
+    temp34-unitsonorder = 9.
+    temp34-unitprice = 108.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 6.
+    temp34-productname = `Chef Anton's Gumbo Mix`.
+    temp34-supplierid = 4.
+    temp34-unitsinstock = 21.
+    temp34-unitsonorder = 12.
+    temp34-unitprice = 18.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 7.
+    temp34-productname = `Grandma's Boysenberry Spread`.
+    temp34-supplierid = 5.
+    temp34-unitsinstock = 25.
+    temp34-unitsonorder = 25.
+    temp34-unitprice = 18.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 8.
+    temp34-productname = `Uncle Bob's Organic Dried Pears`.
+    temp34-supplierid = 6.
+    temp34-unitsinstock = 29.
+    temp34-unitsonorder = 7.
+    temp34-unitprice = 35.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 9.
+    temp34-productname = `Northwoods Cranberry Sauce`.
+    temp34-supplierid = 6.
+    temp34-unitsinstock = 4.
+    temp34-unitsonorder = 32.
+    temp34-unitprice = 35.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 10.
+    temp34-productname = `Mishi Kobe Niku`.
+    temp34-supplierid = 5.
+    temp34-unitsinstock = 40.
+    temp34-unitsonorder = 5.
+    temp34-unitprice = 130.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 11.
+    temp34-productname = `Ikura`.
+    temp34-supplierid = 4.
+    temp34-unitsinstock = 4.
+    temp34-unitsonorder = 10.
+    temp34-unitprice = 13.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 13.
+    temp34-productname = `Carnarvon Tigers`.
+    temp34-supplierid = 3.
+    temp34-unitsinstock = 36.
+    temp34-unitsonorder = 40.
+    temp34-unitprice = 56.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 14.
+    temp34-productname = `Teatime Chocolate Biscuits`.
+    temp34-supplierid = 2.
+    temp34-unitsinstock = 21.
+    temp34-unitsonorder = 40.
+    temp34-unitprice = 7.
+    temp34-discontinued = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-productid = 15.
+    temp34-productname = `Alice Mutton`.
+    temp34-supplierid = 2.
+    temp34-unitsinstock = 90.
+    temp34-unitsonorder = 20.
+    temp34-unitprice = 75.
+    temp34-discontinued = abap_true.
+    INSERT temp34 INTO TABLE temp33.
+    t_products = temp33.
 
     " localService/mockdata/Suppliers.json - the rows the expand joins in
-    t_suppliers = VALUE #(
-        ( supplierid = 1 companyname = `New Orleans Cajun Delights`        address = `P.O. Box 78934`            postalcode = `70117`   city = `New Orleans`   country = `USA` )
-        ( supplierid = 2 companyname = `Exotic Liquids`                    address = `49 Gilbert St.`             postalcode = `EC1 4SD` city = `London`        country = `UK` )
-        ( supplierid = 3 companyname = `Grandma Kelly's Homestead`         address = `707 Oxford Rd.`             postalcode = `48104`   city = `Ann Arbor`     country = `USA` )
-        ( supplierid = 4 companyname = `Forêts d'érables`                  address = `148 rue Chasseur`           postalcode = `J2S 7S8` city = `Ste-Hyacinthe` country = `Canada` )
-        ( supplierid = 5 companyname = `Plutzer Lebensmittelgroßmärkte AG` address = `Bogenallee 51`            postalcode = `60439`   city = `Frankfurt`     country = `Germany` )
-        ( supplierid = 6 companyname = `Lyngbysild`                        address = `Lyngbysild Fiskebakken 10`  postalcode = `2800`    city = `Lyngby`        country = `Denmark` )
-        ( supplierid = 7 companyname = `Formaggi Fortini s.r.l.`           address = `Viale Dante, 75`            postalcode = `48100`   city = `Ravenna`       country = `Italy` ) ).
+    
+    CLEAR temp35.
+    
+    temp36-supplierid = 1.
+    temp36-companyname = `New Orleans Cajun Delights`.
+    temp36-address = `P.O. Box 78934`.
+    temp36-postalcode = `70117`.
+    temp36-city = `New Orleans`.
+    temp36-country = `USA`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 2.
+    temp36-companyname = `Exotic Liquids`.
+    temp36-address = `49 Gilbert St.`.
+    temp36-postalcode = `EC1 4SD`.
+    temp36-city = `London`.
+    temp36-country = `UK`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 3.
+    temp36-companyname = `Grandma Kelly's Homestead`.
+    temp36-address = `707 Oxford Rd.`.
+    temp36-postalcode = `48104`.
+    temp36-city = `Ann Arbor`.
+    temp36-country = `USA`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 4.
+    temp36-companyname = `Forêts d'érables`.
+    temp36-address = `148 rue Chasseur`.
+    temp36-postalcode = `J2S 7S8`.
+    temp36-city = `Ste-Hyacinthe`.
+    temp36-country = `Canada`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 5.
+    temp36-companyname = `Plutzer Lebensmittelgroßmärkte AG`.
+    temp36-address = `Bogenallee 51`.
+    temp36-postalcode = `60439`.
+    temp36-city = `Frankfurt`.
+    temp36-country = `Germany`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 6.
+    temp36-companyname = `Lyngbysild`.
+    temp36-address = `Lyngbysild Fiskebakken 10`.
+    temp36-postalcode = `2800`.
+    temp36-city = `Lyngby`.
+    temp36-country = `Denmark`.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-supplierid = 7.
+    temp36-companyname = `Formaggi Fortini s.r.l.`.
+    temp36-address = `Viale Dante, 75`.
+    temp36-postalcode = `48100`.
+    temp36-city = `Ravenna`.
+    temp36-country = `Italy`.
+    INSERT temp36 INTO TABLE temp35.
+    t_suppliers = temp35.
 
   ENDMETHOD.
 

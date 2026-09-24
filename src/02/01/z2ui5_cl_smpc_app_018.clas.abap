@@ -41,12 +41,12 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -55,8 +55,45 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    INSERT `${$parameters>/value}` INTO TABLE temp1.
+    INSERT `${$parameters>/valid}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `$event.oSource.sId` INTO TABLE temp2.
+    INSERT `${$parameters>/value}` INTO TABLE temp2.
+    INSERT `${$parameters>/valid}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `$event.oSource.sId` INTO TABLE temp3.
+    INSERT `${$parameters>/value}` INTO TABLE temp3.
+    INSERT `${$parameters>/valid}` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `$event.oSource.sId` INTO TABLE temp4.
+    INSERT `${$parameters>/value}` INTO TABLE temp4.
+    INSERT `${$parameters>/valid}` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `$event.oSource.sId` INTO TABLE temp5.
+    INSERT `${$parameters>/value}` INTO TABLE temp5.
+    INSERT `${$parameters>/valid}` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `$event.oSource.sId` INTO TABLE temp6.
+    INSERT `${$parameters>/value}` INTO TABLE temp6.
+    INSERT `${$parameters>/valid}` INTO TABLE temp6.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
         )->a( n = `xmlns:l`      v = `sap.ui.layout`
@@ -79,7 +116,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `placeholder` v = `Enter Date`
                 )->a( n = `valueState`  v = client->_bind( vs_dtp1 )
                 )->a( n = `change`      v = client->_event( val   = `CHANGE`
-                                                            t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                            t_arg = temp1 )
                 )->a( n = `class`       v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `With initialFocusedDateValue UI5Date.getInstance(2017, 5, 13, 11, 12, 13)`
@@ -91,7 +128,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `initialFocusedDateValue` v = |\{ path: '{ client->_bind_path( init_focus_dtp6 ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `valueState`              v = client->_bind( vs_dtp6 )
                 )->a( n = `change`                  v = client->_event( val   = `CHANGE`
-                                                                        t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                        t_arg = temp2 )
                 )->a( n = `class`                   v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with given Value, Formatter, and with shortcuts for current date and current time`
@@ -105,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                          v = |\{ 'path': '{ client->_bind_path( value_dtp2 ) }', 'type': 'sap.ui.model.type.DateTime', 'formatOptions': \{ 'style': 'long', 'source': \{ 'pattern': 'yyyy-MM-dd HH:mm:ss' \} \} \}|
                 )->a( n = `valueState`            v = client->_bind( vs_dtp2 )
                 )->a( n = `change`                v = client->_event( val   = `CHANGE`
-                                                                      t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                      t_arg = temp3 )
                 )->a( n = `class`                 v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with given Value and Formatter`
@@ -116,7 +153,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                          v = |\{ 'path': '{ client->_bind_path( value_dtp3 ) }', 'type': 'sap.ui.model.type.DateTime', 'formatOptions': \{ 'pattern': 'M/d/yy h:mm a', 'source': \{ 'pattern': 'yyyy-MM-dd HH:mm:ss' \} \} \}|
                 )->a( n = `valueState` v = client->_bind( vs_dtp3 )
                 )->a( n = `change`     v = client->_event( val   = `CHANGE`
-                                                           t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                           t_arg = temp4 )
                 )->a( n = `class`      v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with Islamic date and secondary Gregorian date in calendar`
@@ -129,7 +166,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `secondaryCalendarType` v = `Gregorian`
                 )->a( n = `valueState`            v = client->_bind( vs_dtp4 )
                 )->a( n = `change`                v = client->_event( val   = `CHANGE`
-                                                                      t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                      t_arg = temp5 )
                 )->a( n = `class`                 v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with steps for minutes and seconds sliders`
@@ -141,7 +178,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `secondsStep` v = `5`
                 )->a( n = `valueState`  v = client->_bind( vs_dtp7 )
                 )->a( n = `change`      v = client->_event( val   = `CHANGE`
-                                                            t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                            t_arg = temp6 )
                 )->a( n = `class`       v = `sapUiSmallMarginBottom`
             " the original handleChange writes the change event result into this text
             )->tag( `Text`
@@ -217,15 +254,28 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
   METHOD on_event.
 
     DATA valid TYPE abap_bool.
+      DATA source_id TYPE string.
+      DATA new_value TYPE string.
+      DATA temp3 TYPE string.
+      DATA state LIKE temp3.
 
     IF client->get_event( ) = `CHANGE`.
-      DATA(source_id) = client->get_event_arg( ).
-      DATA(new_value) = client->get_event_arg( 2 ).
+      
+      source_id = client->get_event_arg( ).
+      
+      new_value = client->get_event_arg( 2 ).
       valid = client->get_event_arg( 3 ).
       event_count = event_count + 1.
       text_result = |Change - Event { event_count }: DateTimePicker { source_id }:{ new_value }|.
 
-      DATA(state) = COND string( WHEN valid = abap_true THEN `None` ELSE `Error` ).
+      
+      IF valid = abap_true.
+        temp3 = `None`.
+      ELSE.
+        temp3 = `Error`.
+      ENDIF.
+      
+      state = temp3.
       IF source_id CP `*DTP1`.
         vs_dtp1 = state.
       ELSEIF source_id CP `*DTP6`.
@@ -247,7 +297,8 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
   METHOD model_init.
 
     " the original's UI5Date instances become date strings - parsed by the source patterns / V4 constraints in the view bindings
-    DATA(now) = |{ sy-datum DATE = ISO } { sy-uzeit TIME = ISO }|.
+    DATA now TYPE string.
+    now = |{ sy-datum DATE = ISO } { sy-uzeit TIME = ISO }|.
 
     value_dtp2 = `2016-02-18 10:32:30`.
     value_dtp3 = now.

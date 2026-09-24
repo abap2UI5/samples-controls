@@ -18,7 +18,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 DEFINITION PUBLIC.
         label TYPE i,
         value TYPE string,
       END OF ty_s_attributes3.
-    TYPES ty_t_attributes3 TYPE STANDARD TABLE OF ty_s_attributes3 WITH EMPTY KEY.
+    TYPES ty_t_attributes3 TYPE STANDARD TABLE OF ty_s_attributes3 WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_nodes2,
         id         TYPE string,
@@ -37,8 +37,8 @@ CLASS z2ui5_cl_smpc_sapui5_008 DEFINITION PUBLIC.
         from TYPE string,
         to   TYPE string,
       END OF ty_s_lines4.
-    TYPES ty_t_nodes2 TYPE STANDARD TABLE OF ty_s_nodes2 WITH EMPTY KEY.
-    TYPES ty_t_lines4 TYPE STANDARD TABLE OF ty_s_lines4 WITH EMPTY KEY.
+    TYPES ty_t_nodes2 TYPE STANDARD TABLE OF ty_s_nodes2 WITH DEFAULT KEY.
+    TYPES ty_t_lines4 TYPE STANDARD TABLE OF ty_s_lines4 WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_json1,
         nodes TYPE ty_t_nodes2,
@@ -62,68 +62,111 @@ ENDCLASS.
 CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
+      DATA temp1 TYPE z2ui5_cl_smpc_sapui5_008=>ty_t_nodes2.
+      DATA temp2 LIKE LINE OF temp1.
+      DATA temp5 TYPE z2ui5_cl_smpc_sapui5_008=>ty_t_attributes3.
+      DATA temp6 LIKE LINE OF temp5.
+      DATA temp7 TYPE z2ui5_cl_smpc_sapui5_008=>ty_t_attributes3.
+      DATA temp8 LIKE LINE OF temp7.
+      DATA temp9 TYPE z2ui5_cl_smpc_sapui5_008=>ty_t_attributes3.
+      DATA temp10 LIKE LINE OF temp9.
+      DATA temp3 TYPE z2ui5_cl_smpc_sapui5_008=>ty_t_lines4.
+      DATA temp4 LIKE LINE OF temp3.
 
     me->client = client.
-    IF client->check_on_init( ).
-      mt_data = VALUE #( nodes             = VALUE #( ( id = `Dinter`
-                                            title          = `Sophie Dinter`
-                                            src            = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_IngallsB.jpg`
-                                            attributes     = VALUE #( ( label = 35 value = `` ) )
-                                            team           = 13
-                                            location       = `Walldorf`
-                                            position       = `lobal Solutions Manager`
-                                            email          = `sophie.dinter@example.com`
-                                            phone          = `+000 423 230 000`
-                                          )
-                                          ( id         = `Ninsei`
-                                            title      = `Yamasaki Ninsei`
-                                            src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_GordonR.jpg`
-                                            attributes = VALUE #( ( label = 9 value = `` ) )
-                                            supervisor = `Dinter`
-                                            team       = 9
-                                            location   = `Walldorf`
-                                            position   = `Lead Markets Manage`
-                                            email      = `yamasaki.ninsei@example.com`
-                                            phone      = `+000 423 230 002`
-                                         )
-                                         ( id         = `Mills`
-                                           title      = `Henry Mills`
-                                           src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_MillerM.jpg`
-                                           attributes = VALUE #( ( label = 4 value = `` ) )
-                                           supervisor = `Ninsei`
-                                           team       = 4
-                                           location   = `Praha`
-                                           position   = `Sales Manager`
-                                           email      = `henry.mills@example.com`
-                                           phone      = `+000 423 232 003`
-                                        )
-                                        ( id         = `Polak`
-                                          title      = `Adam Polak`
-                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_PlatteR.jpg`
-                                          supervisor = `Mills`
-                                          location   = `Praha`
-                                          position   = `Marketing Specialist`
-                                          email      = `adam.polak@example.com`
-                                          phone      = `+000 423 232 004`
-                                       )
-                                       ( id          = `Sykorova`
-                                          title      = `Vlasta Sykorova`
-                                          src        = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_SpringS.jpg`
-                                          supervisor = `Mills`
-                                          location   = `Praha`
-                                          position   = `Human Assurance Officer`
-                                          email      = `vlasta.sykorova@example.com`
-                                          phone      = `+000 423 232 005`
-                                       )
-                                     )
-                                     lines = VALUE #( ( from = `Dinter` to = `Ninsei` )
-                                                      ( from = `Ninsei` to = `Mills` )
-                                                      ( from = `Mills`  to = `Polak` )
-                                                      ( from = `Mills`  to = `Sykorova` )
-                                    ) ).
+    IF client->check_on_init( ) IS NOT INITIAL.
+      CLEAR mt_data.
+      
+      CLEAR temp1.
+      
+      temp2-id = `Dinter`.
+      temp2-title = `Sophie Dinter`.
+      temp2-src = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_IngallsB.jpg`.
+      
+      CLEAR temp5.
+      
+      temp6-label = 35.
+      temp6-value = ``.
+      INSERT temp6 INTO TABLE temp5.
+      temp2-attributes = temp5.
+      temp2-team = 13.
+      temp2-location = `Walldorf`.
+      temp2-position = `lobal Solutions Manager`.
+      temp2-email = `sophie.dinter@example.com`.
+      temp2-phone = `+000 423 230 000`.
+      INSERT temp2 INTO TABLE temp1.
+      temp2-id = `Ninsei`.
+      temp2-title = `Yamasaki Ninsei`.
+      temp2-src = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_GordonR.jpg`.
+      
+      CLEAR temp7.
+      
+      temp8-label = 9.
+      temp8-value = ``.
+      INSERT temp8 INTO TABLE temp7.
+      temp2-attributes = temp7.
+      temp2-supervisor = `Dinter`.
+      temp2-team = 9.
+      temp2-location = `Walldorf`.
+      temp2-position = `Lead Markets Manage`.
+      temp2-email = `yamasaki.ninsei@example.com`.
+      temp2-phone = `+000 423 230 002`.
+      INSERT temp2 INTO TABLE temp1.
+      temp2-id = `Mills`.
+      temp2-title = `Henry Mills`.
+      temp2-src = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_MillerM.jpg`.
+      
+      CLEAR temp9.
+      
+      temp10-label = 4.
+      temp10-value = ``.
+      INSERT temp10 INTO TABLE temp9.
+      temp2-attributes = temp9.
+      temp2-supervisor = `Ninsei`.
+      temp2-team = 4.
+      temp2-location = `Praha`.
+      temp2-position = `Sales Manager`.
+      temp2-email = `henry.mills@example.com`.
+      temp2-phone = `+000 423 232 003`.
+      INSERT temp2 INTO TABLE temp1.
+      temp2-id = `Polak`.
+      temp2-title = `Adam Polak`.
+      temp2-src = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/male_PlatteR.jpg`.
+      temp2-supervisor = `Mills`.
+      temp2-location = `Praha`.
+      temp2-position = `Marketing Specialist`.
+      temp2-email = `adam.polak@example.com`.
+      temp2-phone = `+000 423 232 004`.
+      INSERT temp2 INTO TABLE temp1.
+      temp2-id = `Sykorova`.
+      temp2-title = `Vlasta Sykorova`.
+      temp2-src = `https://ui5.sap.com/test-resources/sap/suite/ui/commons/demokit/images/people/female_SpringS.jpg`.
+      temp2-supervisor = `Mills`.
+      temp2-location = `Praha`.
+      temp2-position = `Human Assurance Officer`.
+      temp2-email = `vlasta.sykorova@example.com`.
+      temp2-phone = `+000 423 232 005`.
+      INSERT temp2 INTO TABLE temp1.
+      mt_data-nodes = temp1.
+      
+      CLEAR temp3.
+      
+      temp4-from = `Dinter`.
+      temp4-to = `Ninsei`.
+      INSERT temp4 INTO TABLE temp3.
+      temp4-from = `Ninsei`.
+      temp4-to = `Mills`.
+      INSERT temp4 INTO TABLE temp3.
+      temp4-from = `Mills`.
+      temp4-to = `Polak`.
+      INSERT temp4 INTO TABLE temp3.
+      temp4-from = `Mills`.
+      temp4-to = `Sykorova`.
+      INSERT temp4 INTO TABLE temp3.
+      mt_data-lines = temp3.
 
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -134,8 +177,14 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$source>/id}` INTO TABLE temp1.
+    INSERT `${ID}` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `displayBlock`       v = `true`
         )->a( n = `height`             v = `100%`
@@ -196,8 +245,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                                 )->a( n = `title`    v = `Detail`
                                 )->a( n = `icon`     v = `sap-icon://employee`
                                 )->a( n = `press`    v = client->_event( val   = `DETAIL_POPOVER`
-                                                                         t_arg = VALUE #( ( `${$source>/id}` )
-                                                                                          ( `${ID}` ) ) )
+                                                                         t_arg = temp1 )
 
                         )->end(
 
@@ -224,18 +272,42 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA t_arg TYPE string_table.
+        DATA s_node TYPE z2ui5_cl_smpc_sapui5_008=>ty_s_nodes2.
+        FIELD-SYMBOLS <temp5> LIKE LINE OF t_arg.
+        DATA temp6 LIKE sy-tabix.
+          FIELD-SYMBOLS <temp3> LIKE LINE OF t_arg.
+          DATA temp4 LIKE sy-tabix.
 
     CASE client->get_event( ).
       WHEN `LINE_PRESS`.
         client->message_toast_display( `LINE_PRESSED` ).
 
       WHEN `DETAIL_POPOVER`.
-        DATA(t_arg) = client->get( )-t_event_arg.
+        
+        t_arg = client->get( )-t_event_arg.
 
-        READ TABLE mt_data-nodes INTO DATA(s_node) WITH KEY id = t_arg[ 2 ].
+        
+        
+        
+        temp6 = sy-tabix.
+        READ TABLE t_arg INDEX 2 ASSIGNING <temp5>.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        READ TABLE mt_data-nodes INTO s_node WITH KEY id = <temp5>.
 
         IF sy-subrc = 0.
-          detail_popover( id   = t_arg[ 1 ]
+          
+          
+          temp4 = sy-tabix.
+          READ TABLE t_arg INDEX 1 ASSIGNING <temp3>.
+          sy-tabix = temp4.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          detail_popover( id   = <temp3>
                           node = s_node ).
         ENDIF.
     ENDCASE.
@@ -245,9 +317,13 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
 
   METHOD detail_popover.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA group TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp5 TYPE string.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(group) = view->ele( n = `FragmentDefinition` ns = `core`
+    
+    group = view->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
 
@@ -285,12 +361,14 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                 )->end( ).
 
     IF node-team IS NOT INITIAL.
+      
+      temp5 = node-team.
       group->ele( `QuickViewGroup`
           )->a( n = `heading` v = `Team`
 
           )->tag( `QuickViewGroupElement`
               )->a( n = `label` v = `Size`
-              )->a( n = `value` t = CONV string( node-team ) ).
+              )->a( n = `value` t = temp5 ).
     ENDIF.
 
     client->popover_display( xml = view->stringify( ) by_id = id ).

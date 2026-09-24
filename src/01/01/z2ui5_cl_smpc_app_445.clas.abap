@@ -23,7 +23,7 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -34,9 +34,12 @@ CLASS z2ui5_cl_smpc_app_445 IMPLEMENTATION.
 
     " onHyphenationChange sets wrappingType Hyphenated/Normal on all five Texts -
     " one expression binding over the two-way bound Switch state does the same
-    DATA(wrapping_type) = |\{= ${ client->_bind( hyphenate ) } ? 'Hyphenated' : 'Normal' \}|.
+    DATA wrapping_type TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    wrapping_type = |\{= ${ client->_bind( hyphenate ) } ? 'Hyphenated' : 'Normal' \}|.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`        v = `sap.m`
