@@ -223,7 +223,7 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
     DO 11 TIMES.
       colorset->tag( n = `Item` ns = `core`
-          )->a( n = `key`  v = |ColorSet{ sy-index }|
+          )->a( n = `key`  t = |ColorSet{ sy-index }|
           )->a( n = `text` v = COND #( WHEN sy-index = 11 THEN `ColorSet11 (transparent in SAP Horizon theme)` ELSE |ColorSet{ sy-index }| ) ).
     ENDDO.
 
@@ -242,8 +242,8 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
     LOOP AT t_shades INTO DATA(shade).
       colorshade->tag( n = `Item` ns = `core`
-          )->a( n = `key`  v = shade-key
-          )->a( n = `text` v = shade-text ).
+          )->a( n = `key`  t = shade-key
+          )->a( n = `text` t = shade-text ).
     ENDLOOP.
 
   ENDMETHOD.

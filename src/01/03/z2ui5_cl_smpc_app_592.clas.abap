@@ -103,14 +103,14 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
           )->a( n = `title`          v = `my section`
           )->ele( `subSections`
               )->ele( `ObjectPageSubSection`
-                  )->a( n = `title`          v = |Section { section_no }|
+                  )->a( n = `title`          t = |Section { section_no }|
                   )->a( n = `mode`           v = `Expanded`
-                  )->a( n = `id`             v = |Section{ section_no }|
+                  )->a( n = `id`             t = |Section{ section_no }|
                   )->a( n = `titleUppercase` v = `false`
                   )->ele( `blocks`
                       )->ele( `ObjectPageLazyLoader`
                           )->a( n = `stashed` v = `true`
-                          )->a( n = `id`      v = |Section{ section_no }stashed|
+                          )->a( n = `id`      t = |Section{ section_no }stashed|
 
                           )->ele( n = `VBox` ns = `m`
                               )->a( n = `class` v = `sapUiSmallMargin`

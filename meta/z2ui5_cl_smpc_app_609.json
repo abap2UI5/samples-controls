@@ -63,6 +63,10 @@
     {
       "type": "NOTE",
       "what": "The row created at runtime seeds the enum-typed field explicitly. An ABAP field is never absent, so an unset one reaches the client as \"\" - not a member of the enum - and validateProperty throws, taking the binding update and the view down. The original pushes a JS object without the key at all, which falls back to the property default."
+    },
+    {
+      "type": "NOTE",
+      "what": "Seven labelFor targets of the original name ids no control in their fragment carries, so each association resolved to nothing (corrected 2026-09-24, reported by the linter's association-unknown-id), the same seven as app 549. Details popover: moreInfo -> moreInfoText and appType -> appTypeText, the ids the Texts already have; startDate / endDate -> startDateText / endDateText, ids the port adds to the two Texts, which have none in the original. Modify dialog: inputInfo -> moreInfo (the Input's id), startDate / endDate -> DTPStartDate / DTPEndDate, the DateTimePickers shown while the appointment is not all-day."
     }
   ]
 }

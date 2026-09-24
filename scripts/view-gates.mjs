@@ -37,6 +37,15 @@ import { cmpVersion, MIN_UI5 } from './lib-universe.mjs';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
 const STRICT = process.argv.includes('--strict');
+/* The linter's own Downstream job (abap2UI5/linter, downstream.yml) runs this
+ * script with its UNRELEASED main substituted for the pinned linter, and says
+ * so with VIEW_GATES_LINTER=next. Two things differ in that mode, and only
+ * there: the ratchet reads NEXT_LINTER_BUDGET for the types it lists, and a
+ * property_gate skip that no longer fires is a note, not a failure - the
+ * pinned linter still needs it, and removing it is the job of the bump that
+ * moves the pin. This repository's own CI never sets the variable, so the
+ * pinned linter is judged exactly as before. */
+const NEXT_LINTER = process.env.VIEW_GATES_LINTER === 'next';
 const RENDER = !process.argv.includes('--no-render');
 const ONLY = process.argv.includes('--only')
   ? process.argv[process.argv.indexOf('--only') + 1]
@@ -274,6 +283,31 @@ const ADVISORY_BUDGET = {
   'unresolved-attribute-value': 4,
 };
 
+/* The advisory counts of the linter's unreleased main over this corpus,
+ * measured 2026-09-24 (linter 1248a22 on samples-controls main). They are
+ * what the rules added since the pinned 0.6.1 report - most of them new
+ * types this table has never had to budget - and they are recorded so the
+ * linter's Downstream job fails on a linter change that MOVES them, not on
+ * the backlog it already knows. Not read per finding the way the budgets
+ * above are: that reading is owed when the pin moves to the release that
+ * carries these rules, and then these numbers replace the ones above. */
+const NEXT_LINTER_BUDGET = {
+  'editable-control-without-binding': 343,
+  'event-on-disabled-control': 7,
+  'external-link-without-target': 8,
+  'handler-without-event': 106,
+  'insecure-asset-url': 15,
+  'live-event-roundtrip': 0,
+  'missing-accessibility': 93,
+  'undefined-css-class': 34,
+  'unknown-event-parameter': 5,
+  'unresolved-attribute-value': 17,
+  'unused-namespace-declaration': 101,
+};
+const budgetOf = (type) => (NEXT_LINTER && type in NEXT_LINTER_BUDGET
+  ? NEXT_LINTER_BUDGET[type]
+  : ADVISORY_BUDGET[type] ?? 0);
+
 const metas = fs.readdirSync(META)
   .filter((f) => f.endsWith('.json'))
   .sort()
@@ -430,7 +464,9 @@ for (const r of results) {
   }
   if (gateSkip) {
     for (const t of gateSkip.types) {
-      if (!skipUsed.has(t)) {
+      if (!skipUsed.has(t) && NEXT_LINTER) {
+        lines.push(`note: ${cls} declares property_gate for "${t}", which the unreleased linter no longer reports - remove it with the bump that moves the pin`);
+      } else if (!skipUsed.has(t)) {
         violations.push({
           type: 'stale-skip',
           message: `declares property_gate for "${t}" but no such finding fires — remove it`,
@@ -481,13 +517,14 @@ console.log(lines.join('\n'));
  * full runs - a --only subset would read as "the debt shrank". */
 let ratchetExceeded = 0;
 if (!ONLY) {
-  const types = new Set([...advisoryTally.keys(), ...Object.keys(ADVISORY_BUDGET)]);
+  const types = new Set([...advisoryTally.keys(), ...Object.keys(ADVISORY_BUDGET),
+    ...(NEXT_LINTER ? Object.keys(NEXT_LINTER_BUDGET) : [])]);
   for (const type of [...types].sort()) {
     const n = advisoryTally.get(type) || 0;
-    const budget = ADVISORY_BUDGET[type] ?? 0;
+    const budget = budgetOf(type);
     if (n > budget) {
       ratchetExceeded++;
-      console.log(`FAIL advisory ratchet: ${type} ${n} > budget ${budget} — new advisory debt; fix it or raise the budget deliberately (scripts/view-gates.mjs ADVISORY_BUDGET)`);
+      console.log(`FAIL advisory ratchet: ${type} ${n} > budget ${budget} — new advisory debt; fix it or raise the budget deliberately (scripts/view-gates.mjs ${NEXT_LINTER && type in NEXT_LINTER_BUDGET ? 'NEXT_LINTER_BUDGET' : 'ADVISORY_BUDGET'})`);
     } else if (n < budget) {
       console.log(`note: advisory budget for ${type} can ratchet down to ${n} (currently ${budget})`);
     }

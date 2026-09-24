@@ -310,19 +310,21 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
 
                 )->tag( `Label`
                     )->a( n = `text`     v = `Additional information`
-                    )->a( n = `labelFor` v = `moreInfo`
+                    )->a( n = `labelFor` v = `moreInfoText`
                 )->tag( `Text`
                     )->a( n = `id`   v = `moreInfoText`
                     )->a( n = `text` v = client->_bind( sel_text )
                 )->tag( `Label`
                     )->a( n = `text`     v = `From`
-                    )->a( n = `labelFor` v = `startDate`
+                    )->a( n = `labelFor` v = `startDateText`
                 )->tag( `Text`
+                    )->a( n = `id`   v = `startDateText`
                     )->a( n = `text` v = client->_bind( sel_start )
                 )->tag( `Label`
                     )->a( n = `text`     v = `To`
-                    )->a( n = `labelFor` v = `endDate`
+                    )->a( n = `labelFor` v = `endDateText`
                 )->tag( `Text`
+                    )->a( n = `id`   v = `endDateText`
                     )->a( n = `text` v = client->_bind( sel_end )
                 )->tag( `CheckBox`
                     )->a( n = `id`       v = `allDayText`
@@ -331,7 +333,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                     )->a( n = `enabled`  v = `false`
                 )->tag( `Label`
                     )->a( n = `text`     v = `Type`
-                    )->a( n = `labelFor` v = `appType`
+                    )->a( n = `labelFor` v = `appTypeText`
                 " _typeFormatter maps the type key to its legend text - resolved
                 " in ABAP over the same supported-items table
                 )->tag( `Text`
@@ -390,14 +392,14 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                         )->a( n = `value`     v = client->_bind( sel_title )
                     )->tag( `Label`
                         )->a( n = `text`     v = `Additional information`
-                        )->a( n = `labelFor` v = `inputInfo`
+                        )->a( n = `labelFor` v = `moreInfo`
                     )->tag( `Input`
                         )->a( n = `id`        v = `moreInfo`
                         )->a( n = `maxLength` v = `255`
                         )->a( n = `value`     v = client->_bind( sel_text )
                     )->tag( `Label`
                         )->a( n = `text`     v = `From`
-                        )->a( n = `labelFor` v = `startDate`
+                        )->a( n = `labelFor` v = `DTPStartDate`
                     " all four pickers carry an explicit ISO valueFormat. The original
                     " never binds value at all - it sets dateValue imperatively - so the
                     " port's string binding needs the format pinned: with none, a
@@ -422,7 +424,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
                         )->a( n = `value`       v = client->_bind( sel_start )
                     )->tag( `Label`
                         )->a( n = `text`     v = `To`
-                        )->a( n = `labelFor` v = `endDate`
+                        )->a( n = `labelFor` v = `DTPEndDate`
                     )->tag( `DateTimePicker`
                         )->a( n = `id`          v = `DTPEndDate`
                         )->a( n = `required`    v = `true`

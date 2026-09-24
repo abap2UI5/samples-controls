@@ -209,13 +209,13 @@ CLASS z2ui5_cl_smpc_app_599 IMPLEMENTATION.
     LOOP AT t_sections INTO DATA(section).
       DATA(subsections) = sections->ele( `ObjectPageSection`
           )->a( n = `titleUppercase` v = `false`
-          )->a( n = `title`          v = section-title
+          )->a( n = `title`          t = section-title
           )->a( n = `showTitle`      v = `true`
           )->ele( `subSections` ).
 
       LOOP AT section-subsections INTO DATA(subsection).
         DATA(blocks) = subsections->ele( `ObjectPageSubSection`
-            )->a( n = `title`          v = subsection-title
+            )->a( n = `title`          t = subsection-title
             )->a( n = `titleUppercase` v = `false`
             )->ele( `blocks` ).
 
@@ -223,7 +223,7 @@ CLASS z2ui5_cl_smpc_app_599 IMPLEMENTATION.
           button_no = button_no + 1.
           " sample:InfoButton inlined
           blocks->tag( n = `Button` ns = `m`
-              )->a( n = `id`    v = |infoButton{ button_no }|
+              )->a( n = `id`    t = |infoButton{ button_no }|
               )->a( n = `width` v = `100%`
               )->a( n = `text`  v = `infoButton`
               )->a( n = `type`  v = `Emphasized` ).

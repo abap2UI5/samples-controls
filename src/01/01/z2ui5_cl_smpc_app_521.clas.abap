@@ -94,7 +94,7 @@ CLASS z2ui5_cl_smpc_app_521 IMPLEMENTATION.
 
             )->tag( `Label`
                 )->a( n = `text`     v = `Selected Key`
-                )->a( n = `labelFor` v = `selectedKey`
+                )->a( n = `labelFor` v = `selectedKeyIndicator`
             )->tag( `Text`
                 )->a( n = `id`   v = `selectedKeyIndicator`
                 )->a( n = `text` v = client->_bind( selected_key ) ).

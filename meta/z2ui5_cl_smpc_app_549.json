@@ -58,6 +58,10 @@
     {
       "type": "NOTE",
       "what": "The details popover is opened on the POPOVER slot, so it is closed with popover_destroy( ) - popup_destroy( ) tears down the separate POPUP slot and left the popover on screen. The EDIT branch closes it before opening the dialog, which the original does explicitly (\"The sap.m.Popover has to be closed before the sap.m.Dialog gets opened\")."
+    },
+    {
+      "type": "NOTE",
+      "what": "Seven labelFor targets of the original name ids no control in their fragment carries, so each association resolved to nothing (corrected 2026-09-24, reported by the linter's association-unknown-id). Details popover: moreInfo -> moreInfoText and appType -> appTypeText, the ids the Texts already have; startDate / endDate -> startDateText / endDateText, ids the port adds to the two Texts, which have none in the original. Modify dialog: inputInfo -> moreInfo (the Input's id), startDate / endDate -> DTPStartDate / DTPEndDate, the DateTimePickers shown while the appointment is not all-day."
     }
   ]
 }

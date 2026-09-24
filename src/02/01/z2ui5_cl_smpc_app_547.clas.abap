@@ -340,7 +340,7 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
                     )->a( n = `change`        v = client->_event( `CREATE_CHANGE` )
                 )->tag( `Label`
                     )->a( n = `text`     v = `More information: `
-                    )->a( n = `labelFor` v = `inputInfo`
+                    )->a( n = `labelFor` v = `moreInfo`
                 )->tag( `Input`
                     )->a( n = `id`    v = `moreInfo`
                     )->a( n = `value` v = client->_bind( d_info ) ).

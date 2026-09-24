@@ -3669,7 +3669,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` own model and its own limit. // NOTE: The KeyValue suggestions, the value help and the selected-key readout are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,`.
     text1 = text1 && ` meta/interactions/z2ui5_cl_smpc_app_521.mjs). // NOTE: The sample's asset paths are host-absolutized. The demo kit serves them relative (test-resources/...), which an abap2UI5 app has no document` &&
             ` root to resolve against, so the port points at https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Added 2026-08-23: this port did the rewrite without declaring it, one of` &&
-            ` 17 found by re-counting the corpus-wide claim that every port doing it had a declaration.`.
+            ` 17 found by re-counting the corpus-wide claim that every port doing it had a declaration. // NOTE: The original's Label names labelFor="selectedKey", an id no control of the view carries - the Text` &&
+            ` it labels is id="selectedKeyIndicator", so UI5 resolved the association to nothing and the label was attached to no control. The port points labelFor at selectedKeyIndicator (corrected 2026-09-24,` &&
+            ` reported by the linter's association-unknown-id).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputKeyValue`                                 class = `z2ui5_cl_smpc_app_521` path = `src/01/01/z2ui5_cl_smpc_app_521.clas.abap`
         score = 5
@@ -5584,7 +5586,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` handler string failed to parse and every argument was lost. The selection is read from the model instead: PlanningCalendarRow (and CalendarAppointment) declare a bindable ``selected``, so the flags` &&
             ` travel with the rows and ABAP does the work. Here that also covers the "do the selected appointments differ in type" test, which the original computes with .some( ). // NOTE: The details popover is` &&
             ` opened on the POPOVER slot, so it is closed with popover_destroy( ) - popup_destroy( ) tears down the separate POPUP slot and left the popover on screen. The EDIT branch closes it before opening the` &&
-            ` dialog, which the original does explicitly ("The sap.m.Popover has to be closed before the sap.m.Dialog gets opened").`.
+            ` dialog, which the original does explicitly ("The sap.m.Popover has to be closed before the sap.m.Dialog gets opened"). // NOTE: The create dialog's last Label names labelFor="inputInfo" in the` &&
+            ` original, but the Input it labels is id="moreInfo" - the association resolved to nothing. The port points it at moreInfo (corrected 2026-09-24, reported by the linter's association-unknown-id).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.PlanningCalendar`                name = `PlanningCalendarModifyAppointments`            class = `z2ui5_cl_smpc_app_547` path = `src/02/01/z2ui5_cl_smpc_app_547.clas.abap`
         score = 5
@@ -6439,7 +6442,11 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_549.mjs). // NOTE: The three feature flags seed abap_true, as the original's setData does - drag-and-drop,` &&
             ` resize and drag-create are the behaviours this sample exists to show, and the three ToggleButtons start pressed. They had been seeded false, and the e2e module asserted that wrong value, so the` &&
             ` module had to be corrected with the port. // NOTE: The details popover is opened on the POPOVER slot, so it is closed with popover_destroy( ) - popup_destroy( ) tears down the separate POPUP slot and`.
-    text1 = text1 && ` left the popover on screen. The EDIT branch closes it before opening the dialog, which the original does explicitly ("The sap.m.Popover has to be closed before the sap.m.Dialog gets opened").`.
+    text1 = text1 && ` left the popover on screen. The EDIT branch closes it before opening the dialog, which the original does explicitly ("The sap.m.Popover has to be closed before the sap.m.Dialog gets opened"). //` &&
+            ` NOTE: Seven labelFor targets of the original name ids no control in their fragment carries, so each association resolved to nothing (corrected 2026-09-24, reported by the linter's` &&
+            ` association-unknown-id). Details popover: moreInfo -> moreInfoText and appType -> appTypeText, the ids the Texts already have; startDate / endDate -> startDateText / endDateText, ids the port adds to` &&
+            ` the two Texts, which have none in the original. Modify dialog: inputInfo -> moreInfo (the Input's id), startDate / endDate -> DTPStartDate / DTPEndDate, the DateTimePickers shown while the` &&
+            ` appointment is not all-day.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.SinglePlanningCalendar`          name = `SinglePlanningCalendar`                        class = `z2ui5_cl_smpc_app_549` path = `src/02/01/z2ui5_cl_smpc_app_549.clas.abap`
         score = 5
@@ -6485,7 +6492,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` details popover is opened on the POPOVER slot, so it is closed with popover_destroy( ) and addressed with cs_view-popover. popup_destroy( )/cs_view-popup target a different slot that this app never` &&
             ` opens, so the close and the in-popover navigation were silent no-ops. // NOTE: The row created at runtime seeds the enum-typed field explicitly. An ABAP field is never absent, so an unset one reaches` &&
             ` the client as "" - not a member of the enum - and validateProperty throws, taking the binding update and the view down. The original pushes a JS object without the key at all, which falls back to the` &&
-            ` property default.`.
+            ` property default. // NOTE: Seven labelFor targets of the original name ids no control in their fragment carries, so each association resolved to nothing (corrected 2026-09-24, reported by the`.
+    text1 = text1 && ` linter's association-unknown-id), the same seven as app 549. Details popover: moreInfo -> moreInfoText and appType -> appTypeText, the ids the Texts already have; startDate / endDate -> startDateText` &&
+            ` / endDateText, ids the port adds to the two Texts, which have none in the original. Modify dialog: inputInfo -> moreInfo (the Input's id), startDate / endDate -> DTPStartDate / DTPEndDate, the` &&
+            ` DateTimePickers shown while the appointment is not all-day.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.SinglePlanningCalendar`          name = `SinglePlanningCalendarCreateApp`               class = `z2ui5_cl_smpc_app_609` path = `src/02/01/z2ui5_cl_smpc_app_609.clas.abap`
         score = 5
