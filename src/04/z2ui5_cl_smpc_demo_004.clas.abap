@@ -1,21 +1,33 @@
-" @keywords shopping cart app flexiblecolumnlayout navcontainer toolbar searchfield objectlistitem objectattribute objectstatus standardlistitem bar
+" @keywords shopping cart app flexiblecolumnlayout navcontainer viewsettingsfilteritem viewsettingsitem viewsettingscustomitem verticallayout rangeslider messageitem link
 " @summary The classic business process of finding and ordering products. - the UI5 demo app "Shopping Cart", rebuilt as one self-contained abap2UI5 class.
 " @origin demo app Shopping Cart (sap.m/cart) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
 "! <p class="shorttext">demo app - Shopping Cart</p>
 "!
 "! The UI5 demo app Shopping Cart - the demo kit's showcase application -
-"! rebuilt as ONE abap2UI5 class: the category list with its search, the
-"! product list per category, the product page, the cart with its
-"! save-for-later, and the checkout wizard with payment branch, addresses,
-"! delivery type and the order summary. The three columns of the original's
-"! FlexibleColumnLayout are the three columns here, each holding a
-"! NavContainer, so a page switch inside a column costs no round-trip.
+"! rebuilt as ONE abap2UI5 class, page for page and control for control:
+"! the category list with its live search, the product list per category
+"! with its filter dialog, the welcome page, the product page, the product
+"! comparison, the cart with its edit mode and save-for-later, the checkout
+"! wizard with payment branch, addresses, delivery type and its summary,
+"! and the order confirmation - with every MessageBox and MessageToast the
+"! original shows. The original's FlexibleColumnLayout and its router are
+"! kept: every route of its manifest.json is a call of route_to( ) here,
+"! which puts the same pages into the same three columns, and the column
+"! layouts its controllers set are set at the same moments.
 "!
-"! Where it differs from the original, and why:
+"! Where it differs from the original, and why - only what an app without a
+"! browser-side model layer or a URL cannot do the same way:
 "!
 "!  - the OData V2 service and its mock server become ABAP data: the 123
 "!    products, the 16 categories and the 13 featured products of the demo
-"!    kit mock, verbatim.
+"!    kit mock, verbatim. The search keeps the mock server's semantics (a
+"!    case-sensitive substringof on the name), the category filter the
+"!    original's Filter objects (OR inside a group, AND across groups).
+"!  - there is no URL, so a route is a method call rather than a hash. The
+"!    Back buttons (shown on small screens only, as there) walk the history
+"!    of the routes taken instead of the browser's, and the NotFound target
+"!    - reachable only through an unknown id typed into the URL - has
+"!    nothing that could reach it and is not rebuilt.
 "!  - the cart and the saved-for-later list stay in the BROWSER's local
 "!    storage, exactly as the original's LocalStorageModel keeps them, under
 "!    the same key (SHOPPING_CART). abap2UI5 ships both halves: the
@@ -32,63 +44,39 @@
 "!    order would be decided. Only a round-trip that CHANGED the cart writes
 "!    (cart_refresh); startup and the restore mirror the tables into the
 "!    bound structure without writing (cart_mirror), and the read wire
-"!    carries check_queue_last - the two halves of the restart that did not
-"!    survive until 2026-09-14.
+"!    carries check_queue_last. The comparison model's own local storage
+"!    key (PRODUCT_COMPARISON) is not kept: every route that shows a
+"!    comparison carries its two products, so the stored copy is never read.
 "!  - the formatter module is business logic and moves to the backend: the
-"!    price format, the status text and its ValueState, the cart total.
-"!  - search and category filtering run in ABAP, where the data is.
-"!  - the Welcome page is the original's own arrangement (rebuilt 2026-09-22,
-"!    after a side-by-side comparison showed it was the one page that did not
-"!    look like the original): the carousel, then three panels whose rows are
-"!    an aggregation binding on a BlockLayoutRow content with the cell as its
-"!    template - Grid, ObjectIdentifier, ObjectStatus, the picture and the
-"!    Emphasized cart-3 Button, one tile per featured product. Until then it
-"!    was one flat List per panel, with the add-to-cart as an ACTIVE
-"!    ObjectStatus because an ObjectListItem takes no button. What is still
-"!    not rebuilt there, and why:
-"!     - the carousel LOOPS but does not advance by itself, and opens on its
-"!       first page: the eight-second timer and the random start page are
-"!       browser timers in the original's controller with no bound state
-"!       behind them. Its four teaser images come from the demo kit's
-"!       deployed copy of the app (c_img), as the product pictures do.
-"!     - the promoted panel shows the FIRST two of the five Promoted rows
-"!       where `_selectPromotedItems( )` draws two at random. Same count; a
-"!       backend cannot repeat a client-side random draw.
-"!     - the two style.css rules the page's classes name (welcomePrice,
-"!       welcomeCarouselText) ride along in a core:HTML style block, because
-"!       a port has no manifest to link a stylesheet from and no Component to
-"!       set the `.sapUiDemoCart` scope the original writes them under.
+"!    price format, the status text and its ValueState, the cart total. The
+"!    welcome tiles keep the original's CurrencyType binding, which formats
+"!    in the browser's locale - a type, not a formatter.
 "!  - the wizard's input checks run in ABAP. The original types every
 "!    required input with a StringType (minLength, a `search` regex) or its
-"!    EmailType, so a changed field turns red with the type's message, and
-"!    each step's change handler calls validateStep/invalidateStep. Here the
-"!    same constraints are ABAP (input_error), decided on the same change
-"!    events, and each step's `validated` is bound - so the Next button
-"!    shows exactly when it does there. The regexes are the original's with
-"!    \s spelled as a space and \w as [a-zA-Z0-9_], the one spelling ABAP
-"!    POSIX and JavaScript read alike inside a bracket expression.
-"!  - what the original ties to its message model is not rebuilt: the
-"!    footer's MessagePopover button listing the invalid fields. The fields
-"!    carry their error text themselves, and the Order Summary button
-"!    reports with the same MessageBox the original shows then.
-"!  - changing the payment type or the delivery-address checkbox discards
-"!    the progress behind it without the original's Yes/No warning.
-"!  - adding a discontinued product shows an Error box: the original's
-"!    MessageBox.show spells its title option `titles`, so it opens with no
-"!    title at all, which `message_box_display` has no way to ask for.
-"!  - the i18n resource bundle becomes literals, the device model's
-"!    smallScreenMode branches are gone (the FCL does that itself now), and
-"!    the LightBox on the product picture is dropped.
-"!  - the cart's Edit mode is not rebuilt: the original toggles the two lists
-"!    into Delete mode with an Edit/Save Changes button and confirms every
-"!    removal with a dialog. Here Save for Later and Remove are row links, so
-"!    the same two actions are reachable without a mode.
-"!  - the review page is one page with the summary on it, not the original's
-"!    per-section forms each with an edit button back into its wizard step.
-"!  - the product comparison view is not rebuilt: it is a desktop-only extra
-"!    reachable from one ObjectAttribute, and it needs a two-product
-"!    side-by-side layout that says nothing new about the framework. Named
-"!    here rather than left to be noticed.
+"!    EmailType, so a changed field turns red with the type's message, the
+"!    message lands in the message model its footer's MessagePopover lists,
+"!    and each step's change handler calls validateStep/invalidateStep. Here
+"!    the same constraints are ABAP (input_error), decided on the same
+"!    change events; the value states, the message list behind the same
+"!    footer button and each step's bound `validated` follow from them. The
+"!    regexes are the original's with \s spelled as a space and \w as
+"!    [a-zA-Z0-9_], the one spelling ABAP POSIX and JavaScript read alike
+"!    inside a bracket expression.
+"!  - the original's _setDiscardableProperty compares a step with
+"!    Wizard.getProgressStep( ), which no backend can read. The activate
+"!    events of the steps behind the payment step and behind the invoice
+"!    step set a flag instead (payment_passed, invoice_passed), and the
+"!    Yes/No warnings ask on those.
+"!  - the carousel's eight-second advance is a z2ui5.cc.Timer wired to the
+"!    carousel's next( ) and restarted on every page change, without a
+"!    round-trip; its random start page and the two promoted items are drawn
+"!    in ABAP with cl_abap_random_int - once per app start, as there.
+"!  - the i18n resource bundle becomes literals. The busy indicator the
+"!    original shows until its OData metadata has loaded has nothing to wait
+"!    for here, and the content density is abap2UI5's shell's to pick.
+"!  - the style.css rules ride along in a core:HTML style block, because a
+"!    port has no manifest to link a stylesheet from - scoped under the same
+"!    `.sapUiDemoCart` class the App and the FlexibleColumnLayout carry.
 "!
 "! Original: src/sap.m/test/sap/m/demokit/cart in OpenUI5, archived under
 "! ui5/demoapps/sap.m/cart.
@@ -98,40 +86,60 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    TYPES ty_amount TYPE p LENGTH 13 DECIMALS 2.
     TYPES:
       BEGIN OF ty_s_category,
         category         TYPE string,
         categoryname     TYPE string,
         numberofproducts TYPE i,
       END OF ty_s_category.
+    " one product as a list row or a welcome tile shows it
     TYPES:
       BEGIN OF ty_s_row,
         productid    TYPE string,
+        category     TYPE string,
         name         TYPE string,
         suppliername TYPE string,
+        price        TYPE ty_amount,
         price_text   TYPE string,
         currencycode TYPE string,
         pictureurl   TYPE string,
+        status       TYPE string,
         status_text  TYPE string,
         status_state TYPE string,
+        selected     TYPE abap_bool,
       END OF ty_s_row.
+    TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    " one product as the product page and a comparison panel show it
+    TYPES:
+      BEGIN OF ty_s_detail,
+        productid        TYPE string,
+        category         TYPE string,
+        name             TYPE string,
+        suppliername     TYPE string,
+        shortdescription TYPE string,
+        price_text       TYPE string,
+        pictureurl       TYPE string,
+        status_text      TYPE string,
+        status_state     TYPE string,
+        weight_text      TYPE string,
+        measures_text    TYPE string,
+      END OF ty_s_detail.
+    " one cart entry - the fields the cart lists, the checkout and the
+    " summary show, and what the browser's local storage keeps
     TYPES:
       BEGIN OF ty_s_entry,
         productid    TYPE string,
+        category     TYPE string,
         name         TYPE string,
         pictureurl   TYPE string,
         price_text   TYPE string,
         currencycode TYPE string,
         quantity     TYPE i,
+        status_text  TYPE string,
+        status_state TYPE string,
       END OF ty_s_entry.
     TYPES ty_t_entry TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
-
-    DATA t_categories   TYPE STANDARD TABLE OF ty_s_category WITH EMPTY KEY.
-    DATA t_search       TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_category     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_promoted     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_viewed       TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_favorite     TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
     TYPES:
       BEGIN OF ty_s_store,
         cart  TYPE ty_t_entry,
@@ -144,58 +152,18 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         key    TYPE string,
         value  TYPE ty_s_store,
       END OF ty_s_storage.
-
-    DATA t_cart         TYPE ty_t_entry.
-    DATA t_saved        TYPE ty_t_entry.
-    " what the original's LocalStorageModel is: the cart under its own key in
-    " the browser's local storage. The whole structure is what STORE_DATA
-    " writes, and `value` is what the z2ui5.cc.Storage control reads back
-    DATA s_storage      TYPE ty_s_storage.
-    DATA layout         TYPE string.
-    DATA search_term    TYPE string.
-    DATA search_visible TYPE abap_bool.
-    DATA category_name  TYPE string.
-    DATA cart_total     TYPE string.
-    DATA cart_open      TYPE abap_bool.
-    DATA prod_name      TYPE string.
-    DATA prod_supplier  TYPE string.
-    DATA prod_desc      TYPE string.
-    DATA prod_price     TYPE string.
-    DATA prod_currency  TYPE string.
-    DATA prod_picture   TYPE string.
-    DATA prod_status    TYPE string.
-    " enum-typed: an empty value is rejected outright (validateProperty), so
-    " the product page carries the UI5 default until a product is opened
-    DATA prod_state     TYPE string VALUE `None`.
-    DATA prod_weight    TYPE string.
-    DATA prod_measures  TYPE string.
-    " the checkout wizard's own fields - one flat set, as the original's
-    " one JSON model holds them
-    DATA pay_type       TYPE string.
-    " the payment type as the summary shows it. pay_type carries the wizard
-    " STEP the branch jumps to, which is this port's mechanism and not a text
-    " the user should read
-    DATA pay_name       TYPE string.
-    DATA cc_name        TYPE string.
-    DATA cc_number      TYPE string.
-    DATA cc_code        TYPE string.
-    DATA cc_expire      TYPE string.
-    DATA cod_firstname  TYPE string.
-    DATA cod_lastname   TYPE string.
-    DATA cod_phone      TYPE string.
-    DATA cod_email      TYPE string.
-    DATA inv_address    TYPE string.
-    DATA inv_city       TYPE string.
-    DATA inv_zip        TYPE string.
-    DATA inv_country    TYPE string.
-    DATA inv_note       TYPE string.
-    DATA del_different  TYPE abap_bool.
-    DATA del_address    TYPE string.
-    DATA del_city       TYPE string.
-    DATA del_zip        TYPE string.
-    DATA del_country    TYPE string.
-    DATA del_note       TYPE string.
-    DATA del_type       TYPE string.
+    TYPES:
+      BEGIN OF ty_s_supplier,
+        suppliername TYPE string,
+        selected     TYPE abap_bool,
+      END OF ty_s_supplier.
+    " one entry of the checkout's message model, as its MessagePopover lists it
+    TYPES:
+      BEGIN OF ty_s_message,
+        type           TYPE string,
+        message        TYPE string,
+        additionaltext TYPE string,
+      END OF ty_s_message.
     " one component per checked input, named like the field it checks: the
     " value state the original's StringType constraints put on a field when
     " it is changed, and the type's message. Enum-typed, so `None` and never
@@ -219,14 +187,96 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         del_zip       TYPE string,
         del_country   TYPE string,
       END OF ty_s_checks.
-    DATA s_state        TYPE ty_s_checks.
-    DATA s_state_text   TYPE ty_s_checks.
+
+    " the app view model of the original (appView>): the FCL layout and the
+    " smallScreenMode its stateChange handler keeps - true until the first
+    " stateChange says otherwise, as there
+    DATA layout            TYPE string.
+    DATA small_screen      TYPE abap_bool VALUE abap_true.
+
+    " Home
+    DATA search_term       TYPE string.
+    DATA search_visible    TYPE abap_bool.
+    DATA t_search          TYPE ty_t_row.
+    DATA t_categories      TYPE STANDARD TABLE OF ty_s_category WITH EMPTY KEY.
+
+    " Category, and its filter dialog
+    DATA category_name     TYPE string.
+    DATA t_category        TYPE ty_t_row.
+    DATA t_suppliers       TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
+    DATA flt_available     TYPE abap_bool.
+    DATA flt_out_of_stock  TYPE abap_bool.
+    DATA flt_discontinued  TYPE abap_bool.
+    DATA flt_low           TYPE i.
+    DATA flt_high          TYPE i VALUE 5000.
+    DATA flt_price_count   TYPE i.
+    DATA info_visible      TYPE abap_bool.
+    DATA info_text         TYPE string.
+
+    " Welcome
+    DATA t_promoted        TYPE ty_t_row.
+    DATA t_viewed          TYPE ty_t_row.
+    DATA t_favorite        TYPE ty_t_row.
+
+    " Product - enum-typed status_state: the UI5 default until a product is
+    " opened, an empty value is rejected outright
+    DATA s_prod            TYPE ty_s_detail.
+
+    " Comparison
+    DATA s_cmp1            TYPE ty_s_detail.
+    DATA s_cmp2            TYPE ty_s_detail.
+    DATA cmp1_visible      TYPE abap_bool.
+    DATA cmp2_visible      TYPE abap_bool.
+    DATA cmp_placeholder   TYPE abap_bool.
+
+    " Cart - the original's cfg> model is in_delete; the title follows it
+    DATA t_cart            TYPE ty_t_entry.
+    DATA t_saved           TYPE ty_t_entry.
+    " what the original's LocalStorageModel is: the cart under its own key in
+    " the browser's local storage. The whole structure is what STORE_DATA
+    " writes, and `value` is what the z2ui5.cc.Storage control reads back
+    DATA s_storage         TYPE ty_s_storage.
+    DATA cart_total        TYPE string.
+    DATA in_delete         TYPE abap_bool.
+    " formatter.hasItems for the Edit button (either list) and for Proceed
+    " (the cart)
+    DATA cart_any          TYPE abap_bool.
+    DATA cart_filled       TYPE abap_bool.
+    DATA cart_title        TYPE string VALUE `Shopping Cart`.
+
+    " Checkout - the original's one JSON model, one flat set of fields
+    DATA pay_type          TYPE string.
+    DATA cc_name           TYPE string.
+    DATA cc_number         TYPE string.
+    DATA cc_code           TYPE string.
+    DATA cc_expire         TYPE string.
+    DATA cod_firstname     TYPE string.
+    DATA cod_lastname      TYPE string.
+    DATA cod_phone         TYPE string.
+    DATA cod_email         TYPE string.
+    DATA inv_address       TYPE string.
+    DATA inv_city          TYPE string.
+    DATA inv_zip           TYPE string.
+    DATA inv_country       TYPE string.
+    DATA inv_note          TYPE string.
+    DATA del_different     TYPE abap_bool.
+    DATA del_address       TYPE string.
+    DATA del_city          TYPE string.
+    DATA del_zip           TYPE string.
+    DATA del_country       TYPE string.
+    DATA del_note          TYPE string.
+    DATA del_type          TYPE string.
+    DATA s_state           TYPE ty_s_checks.
+    DATA s_state_text      TYPE ty_s_checks.
     " the four steps with inputs, validated="false" in the original until
     " their check passes - bound to each step's `validated`
-    DATA cc_valid       TYPE abap_bool.
-    DATA cod_valid      TYPE abap_bool.
-    DATA inv_valid      TYPE abap_bool.
-    DATA del_valid      TYPE abap_bool.
+    DATA cc_valid          TYPE abap_bool.
+    DATA cod_valid         TYPE abap_bool.
+    DATA inv_valid         TYPE abap_bool.
+    DATA del_valid         TYPE abap_bool.
+    " the message model: one entry per input that failed its type
+    DATA t_messages        TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
+    DATA msg_count         TYPE i.
 
   PROTECTED SECTION.
     TYPES:
@@ -247,12 +297,21 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         dimensionheight  TYPE string,
         dimensionunit    TYPE string,
       END OF ty_s_product.
-    TYPES ty_amount TYPE p LENGTH 13 DECIMALS 2.
     TYPES:
       BEGIN OF ty_s_featured,
         productid TYPE string,
         type      TYPE string,
       END OF ty_s_featured.
+    " a route of the original's manifest.json with its arguments - what the
+    " URL hash holds there
+    TYPES:
+      BEGIN OF ty_s_route,
+        name     TYPE string,
+        category TYPE string,
+        product  TYPE string,
+        item1    TYPE string,
+        item2    TYPE string,
+      END OF ty_s_route.
 
     " What the original's pictureUrl formatter resolves a mock path against.
     "
@@ -282,17 +341,47 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     CONSTANTS c_img         TYPE string
       VALUE `https://sdk.openui5.org/test-resources/sap/m/demokit/cart/webapp/img/`.
 
-    DATA client        TYPE REF TO z2ui5_if_client.
-    " the product on show: the key ADD_TO_CART needs, never bound - so
-    " PROTECTED, where the round-trip still carries it
-    DATA prod_id       TYPE string.
+    DATA client          TYPE REF TO z2ui5_if_client.
+    DATA t_all           TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_featured      TYPE STANDARD TABLE OF ty_s_featured WITH EMPTY KEY.
+    " the route on show and the ones before it - what the browser history
+    " holds there, walked by the Back buttons
+    DATA s_route         TYPE ty_s_route.
+    DATA t_history       TYPE STANDARD TABLE OF ty_s_route WITH EMPTY KEY.
+    " the page each NavContainer shows, re-issued after a rebuilt view
+    DATA page_begin      TYPE string VALUE `page-home`.
+    DATA page_mid        TYPE string VALUE `page-welcome`.
+    DATA page_end        TYPE string VALUE `page-cart`.
+    DATA page_wizard     TYPE string VALUE `wizardContentPage`.
+    " the carousel page drawn at start (onInit's random setActivePage)
+    DATA carousel_page   TYPE string.
+    " the comparison model of the original: the category and the two items
+    DATA cmp_category    TYPE string.
+    DATA cmp_item1       TYPE string.
+    DATA cmp_item2       TYPE string.
+    " the slider values of the last confirmed filter - the original's
+    " _iLowFilterPreviousValue / _iHighFilterPreviousValue
+    DATA flt_low_prev    TYPE i.
+    DATA flt_high_prev   TYPE i VALUE 5000.
+    " the filter the list binding carries since the last confirm - it stays
+    " when another category is opened, as a binding's filters do
+    DATA flt_status      TYPE string_table.
+    DATA flt_supplier    TYPE string_table.
+    DATA flt_price       TYPE abap_bool.
     " the out-of-stock product waiting for the OK of its confirmation box
-    DATA add_pending   TYPE string.
-    DATA t_all        TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_featured    TYPE STANDARD TABLE OF ty_s_featured WITH EMPTY KEY.
-    DATA page_begin    TYPE string VALUE `page-home`.
-    DATA page_mid      TYPE string VALUE `page-welcome`.
-    DATA page_end      TYPE string VALUE `page-cart`.
+    DATA add_pending     TYPE string.
+    " the cart entry waiting for the DELETE of its confirmation box
+    DATA delete_pending  TYPE string.
+    DATA delete_list     TYPE string.
+    " the wizard's progress is past the payment step / the invoice step -
+    " set by the activate events of every step behind it, cleared when that
+    " progress is discarded. What getProgressStep( ) tells the original
+    DATA payment_passed  TYPE abap_bool.
+    DATA invoice_passed  TYPE abap_bool.
+    " the values before the change a warning asks about: NO puts them back,
+    " as the original's _oHistory
+    DATA pay_type_prev   TYPE string.
+    DATA del_prev        TYPE abap_bool.
 
     METHODS view_display.
     METHODS page_home
@@ -307,32 +396,114 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     METHODS page_product
       IMPORTING
         parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS page_comparison
+      IMPORTING
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
     METHODS page_cart
       IMPORTING
         parent TYPE REF TO z2ui5_cl_ui5_view_builder.
     METHODS page_checkout
       IMPORTING
         parent TYPE REF TO z2ui5_cl_ui5_view_builder.
-    METHODS page_review
+    METHODS page_summary
       IMPORTING
         parent TYPE REF TO z2ui5_cl_ui5_view_builder.
     METHODS page_order_completed
       IMPORTING
         parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS dialogs
+      IMPORTING
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
     METHODS on_event.
+    METHODS on_event_shop
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+    METHODS on_event_cart
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+    METHODS on_event_checkout
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+    METHODS route_to
+      IMPORTING
+        name     TYPE string
+        category TYPE string OPTIONAL
+        product  TYPE string OPTIONAL
+        item1    TYPE string OPTIONAL
+        item2    TYPE string OPTIONAL.
+    METHODS route_apply.
+    METHODS set_layout
+      IMPORTING
+        columns TYPE string.
     METHODS nav_to
       IMPORTING
         nav  TYPE string
         page TYPE string.
+    METHODS category_load
+      IMPORTING
+        category  TYPE string
+        productid TYPE string OPTIONAL.
+    METHODS filter_confirm.
+    METHODS filter_match
+      IMPORTING
+        product       TYPE ty_s_product
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+    METHODS category_rows
+      IMPORTING
+        category  TYPE string
+        productid TYPE string OPTIONAL.
     METHODS product_show
       IMPORTING
         productid TYPE string.
+    METHODS product_route
+      IMPORTING
+        productid TYPE string
+        name      TYPE string DEFAULT `product`.
+    METHODS category_of
+      IMPORTING
+        productid     TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS detail_of
+      IMPORTING
+        productid     TYPE string
+      RETURNING
+        VALUE(result) TYPE ty_s_detail.
+    METHODS comparison_show.
     METHODS cart_add
       IMPORTING
         productid TYPE string.
     METHODS cart_add_request
       IMPORTING
         productid TYPE string.
+    METHODS cart_delete.
+    METHODS cart_edit_toggle.
+    METHODS cart_show_product
+      IMPORTING
+        productid TYPE string.
+    METHODS search_refresh.
+    METHODS cart_refresh.
+    METHODS storage_json
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS entries_json
+      IMPORTING
+        entries       TYPE ty_t_entry
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS json_escape
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS cart_mirror.
+    METHODS cart_restore.
+    METHODS entry_of
+      IMPORTING
+        productid     TYPE string
+      RETURNING
+        VALUE(result) TYPE ty_s_entry.
     METHODS input_check
       IMPORTING
         field TYPE string.
@@ -355,29 +526,30 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
       RETURNING
         VALUE(result) TYPE abap_bool.
     METHODS steps_check.
-    METHODS search_refresh.
-    METHODS cart_refresh.
-    METHODS storage_json
-      RETURNING
-        VALUE(result) TYPE string.
-    METHODS entries_json
+    METHODS messages_refresh.
+    METHODS messages_clear.
+    METHODS pay_type_apply.
+    METHODS delivery_apply.
+    METHODS wizard_branch.
+    METHODS wizard_reset.
+    METHODS wizard_to_step
       IMPORTING
-        entries       TYPE ty_t_entry
-      RETURNING
-        VALUE(result) TYPE string.
-    METHODS json_escape
-      IMPORTING
-        val           TYPE string
-      RETURNING
-        VALUE(result) TYPE string.
-    METHODS cart_mirror.
-    METHODS cart_restore.
-    METHODS order_submit.
+        step TYPE string.
     METHODS row_of
       IMPORTING
         product       TYPE ty_s_product
       RETURNING
         VALUE(result) TYPE ty_s_row.
+    METHODS status_text
+      IMPORTING
+        status        TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS status_state
+      IMPORTING
+        status        TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
     METHODS price_text
       IMPORTING
         val           TYPE string
@@ -430,7 +602,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the read half of the original's LocalStorageModel: an invisible control
     " that reads the key and fires `finished` when what it finds differs from
-    " the bound value. The write half is the STORE_DATA action in cart_store( )
+    " the bound value. The write half is the STORE_DATA action in cart_refresh( )
     view->tag( n = `Storage` ns = `z2ui5`
         )->a( n = `type`     v = client->_bind( s_storage-type )
         )->a( n = `prefix`   v = client->_bind( s_storage-prefix )
@@ -451,57 +623,180 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                                  " response has landed
                                                  s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
 
+    " Welcome.controller's carousel loop: every eight seconds the carousel's
+    " next( ), and a page change restarts the wait (onCarouselPageChanged,
+    " wired on the carousel below). Both are control calls wired into the
+    " view, so the loop runs in the browser with no round-trip, as there
+    view->tag( n = `Timer` ns = `z2ui5`
+        )->a( n = `id`          v = `carouselTimer`
+        )->a( n = `delayMS`     v = `8000`
+        )->a( n = `checkRepeat` b = abap_true
+        )->a( n = `finished`    v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                              t_arg = VALUE #( ( `welcomeCarousel` ) ( `next` ) ) ) ).
+
+    dialogs( view ).
+
+    " App.view.xml: the App and its FlexibleColumnLayout, both with the
+    " sapUiDemoCart class the style.css rules are scoped under. stateChange
+    " is BaseController.onStateChange - it keeps smallScreenMode and turns a
+    " OneColumn layout back into two columns once there is room. The FCL
+    " fires it while the initial view renders, which is why the wire queues
+    " (check_queue_last), like the storage read above
     DATA(fcl) = view->ele( `App`
-        )->a( n = `id` v = `app`
+        )->a( n = `id`    v = `app`
+        )->a( n = `class` v = `sapUiDemoCart`
 
         )->ele( n = `FlexibleColumnLayout` ns = `f`
             )->a( n = `id`               v = `layout`
             )->a( n = `layout`           v = client->_bind( layout )
-            )->a( n = `backgroundDesign` v = `Translucent` ).
+            )->a( n = `backgroundDesign` v = `Translucent`
+            )->a( n = `class`            v = `sapUiDemoCart`
+            )->a( n = `stateChange`      v = client->_event( val    = `STATE_CHANGE`
+                                                             t_arg  = VALUE #( ( `${$parameters>/maxColumnsCount}` )
+                                                                               ( `${$parameters>/layout}` ) )
+                                                             s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
 
+    " the router's targets, column by column (manifest.json): home, category,
+    " checkout and ordercompleted go to the begin column, welcome, product
+    " and comparison to the mid column, the cart to the end column
     DATA(nav_begin) = fcl->ele( n = `beginColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-begin` ).
     page_home( nav_begin ).
     page_category( nav_begin ).
+    page_checkout( nav_begin ).
+    page_order_completed( nav_begin ).
 
     DATA(nav_mid) = fcl->ele( n = `midColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-mid` ).
     page_welcome( nav_mid ).
     page_product( nav_mid ).
+    page_comparison( nav_mid ).
 
     DATA(nav_end) = fcl->ele( n = `endColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-end` ).
     page_cart( nav_end ).
-    page_checkout( nav_end ).
-    page_review( nav_end ).
-    page_order_completed( nav_end ).
 
     client->view_display( view->stringify( ) ).
 
     " a rebuilt NavContainer starts on its first page while the page a column
-    " should show survives as class state - re-issue all three
-    nav_to( nav = `nav-begin` page = page_begin ).
-    nav_to( nav = `nav-mid`   page = page_mid ).
-    nav_to( nav = `nav-end`   page = page_end ).
+    " should show survives as class state - re-issue all of them
+    nav_to( nav = `nav-begin`          page = page_begin ).
+    nav_to( nav = `nav-mid`            page = page_mid ).
+    nav_to( nav = `nav-end`            page = page_end ).
+    nav_to( nav = `wizardNavContainer` page = page_wizard ).
 
     " the same for the wizard's branches: nextStep is an association no
     " binding can carry, and XMLView.create has just rebuilt the steps, so the
     " payment branch and the delivery-address branch are re-issued here or
     " they are gone after any redisplay (sample z2ui5_cl_smp_app_202, and the
     " linter's control-state-lost-on-rebuild)
-    IF pay_type IS NOT INITIAL.
+    wizard_branch( ).
+
+    " Welcome.controller.onInit: the carousel opens on a page drawn at random
+    " (model_init draws it, so a rebuilt view opens on the same one)
+    IF carousel_page IS NOT INITIAL.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `paymentTypeStep` ) ( `setNextStep` ) ( pay_type ) ) ).
+                                t_arg = VALUE #( ( `welcomeCarousel` ) ( `setActivePage` ) ( carousel_page ) ) ).
     ENDIF.
-    client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `invoiceAddressStep` )
-                                               ( `setNextStep` )
-                                               ( COND #( WHEN del_different = abap_true
-                                                         THEN `deliveryAddressStep`
-                                                         ELSE `deliveryTypeStep` ) ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD dialogs.
+
+    " the two popups the original creates in its controllers - the category
+    " filter (CategoryFilterDialog.fragment.xml) and the checkout's
+    " MessagePopover - held in the view's dependents and opened by id from a
+    " view-wired control call, so opening either costs no round-trip
+    DATA(dependents) = parent->ele( n = `dependents` ns = `mvc` ).
+
+    " every selection of the dialog is two-way bound: the ViewSettingsItems'
+    " `selected`, the RangeSlider's two values and the custom item's
+    " filterCount. The dialog restores its items itself on cancel, so what
+    " arrives with confirm, cancel and reset is what it shows
+    dependents->ele( `ViewSettingsDialog`
+        )->a( n = `id`           v = `categoryFilterDialog`
+        )->a( n = `confirm`      v = client->_event( `FILTER_CONFIRM` )
+        )->a( n = `cancel`       v = client->_event( `FILTER_CANCEL` )
+        )->a( n = `resetFilters` v = client->_event( `FILTER_RESET` )
+
+        )->ele( `filterItems`
+            )->ele( `ViewSettingsFilterItem`
+                )->a( n = `text` v = `Availability`
+                )->a( n = `key`  v = `availabilityKey`
+
+                )->ele( `items`
+                    )->tag( `ViewSettingsItem`
+                        )->a( n = `text`     v = `Available`
+                        )->a( n = `key`      v = `Available`
+                        )->a( n = `selected` v = client->_bind( flt_available )
+                    )->tag( `ViewSettingsItem`
+                        )->a( n = `text`     v = `Out of Stock`
+                        )->a( n = `key`      v = `OutOfStock`
+                        )->a( n = `selected` v = client->_bind( flt_out_of_stock )
+                    )->tag( `ViewSettingsItem`
+                        )->a( n = `text`     v = `Discontinued`
+                        )->a( n = `key`      v = `Discontinued`
+                        )->a( n = `selected` v = client->_bind( flt_discontinued )
+
+                )->end(
+            )->end(
+            )->ele( `ViewSettingsCustomItem`
+                )->a( n = `text`        v = `Price`
+                )->a( n = `key`         v = `Price`
+                )->a( n = `filterCount` v = client->_bind( flt_price_count )
+
+                )->ele( `customControl`
+                    )->ele( n = `VerticalLayout` ns = `l`
+                        )->a( n = `width` v = `100%`
+                        )->a( n = `class` v = `sapUiContentPadding`
+
+                        )->tag( `RangeSlider`
+                            )->a( n = `id`     v = `rangeSlider`
+                            )->a( n = `width`  v = `100%`
+                            )->a( n = `value`  v = client->_bind( flt_low )
+                            )->a( n = `value2` v = client->_bind( flt_high )
+                            )->a( n = `class`  v = `sapUiSmallMarginTop`
+                            )->a( n = `max`    v = `5000`
+                            )->a( n = `step`   v = `10`
+                            )->a( n = `change` v = client->_event( val   = `FILTER_CHANGE`
+                                                                   t_arg = VALUE #( ( `${$parameters>/range}[0]` )
+                                                                                    ( `${$parameters>/range}[1]` ) ) )
+
+                    )->end(
+                )->end(
+            )->end(
+            )->ele( `ViewSettingsFilterItem`
+                )->a( n = `text`  v = `Supplier`
+                )->a( n = `key`   v = `supplierKey`
+                )->a( n = `items` v = client->_bind( t_suppliers )
+
+                )->ele( `items`
+                    )->tag( `ViewSettingsItem`
+                        )->a( n = `text`     v = `{SUPPLIERNAME}`
+                        )->a( n = `key`      v = `{SUPPLIERNAME}`
+                        )->a( n = `selected` v = `{SELECTED}` ).
+
+    " Checkout.controller.onShowMessagePopoverPress: the message model's
+    " entries, each with the original's "Show more information" link
+    dependents->ele( `MessagePopover`
+        )->a( n = `id`    v = `messagePopover`
+        )->a( n = `items` v = client->_bind( t_messages )
+
+        )->ele( `items`
+            )->ele( `MessageItem`
+                )->a( n = `type`     v = `{TYPE}`
+                )->a( n = `title`    v = `{MESSAGE}`
+                )->a( n = `subtitle` v = `{ADDITIONALTEXT}`
+
+                )->ele( `link`
+                    )->tag( `Link`
+                        )->a( n = `text`   v = `Show more information`
+                        )->a( n = `href`   v = `http://sap.com`
+                        )->a( n = `target` v = `_blank` ).
 
   ENDMETHOD.
 
@@ -513,47 +808,73 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`            v = `Product Catalog`
         )->a( n = `backgroundDesign` v = `Solid` ).
 
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`       v = `Region`
+            )->a( n = `rootLabel`      v = `Product Catalog Search and Navigation`
+            )->a( n = `subHeaderRole`  v = `Search`
+            )->a( n = `subHeaderLabel` v = `Products`
+            )->a( n = `contentRole`    v = `Navigation`
+            )->a( n = `contentLabel`   v = `List Of Categories`
+            )->a( n = `headerRole`     v = `Region`
+            )->a( n = `headerLabel`    v = `Home Header` ).
+
+    page->ele( `headerContent`
+        )->tag( `Button`
+            )->a( n = `icon`    v = `sap-icon://home`
+            )->a( n = `press`   v = client->_event( `HOME` )
+            )->a( n = `visible` v = client->_bind( small_screen ) ).
+
+    " the search runs on every keystroke (liveChange), as the original's
+    " does. The text travels as the event's argument and the field's value is
+    " NOT bound: a bound value would come back with every response and
+    " overwrite what was typed while the round-trip was on its way. The queue
+    " keeps the last keystroke when they come faster than the round-trips
     page->ele( `subHeader`
         )->ele( `Toolbar`
+            )->a( n = `id` v = `searchBar33343`
+
             )->tag( `SearchField`
                 )->a( n = `id`          v = `searchField`
-                )->a( n = `placeholder` v = `Search for products`
-                )->a( n = `tooltip`     v = `Search for products`
-                )->a( n = `value`       v = client->_bind( search_term )
-                )->a( n = `search`      v = client->_event( `SEARCH` )
+                )->a( n = `liveChange`  v = client->_event( val    = `SEARCH`
+                                                            arg    = `${$parameters>/newValue}`
+                                                            s_ctrl = VALUE #( check_queue_last = abap_true
+                                                                              check_no_busy    = abap_true ) )
+                )->a( n = `placeholder` v = `Search`
+                )->a( n = `tooltip`     v = `Search`
                 )->a( n = `width`       v = `100%` ).
 
     DATA(content) = page->ele( `content` ).
 
-    " the search results - one ObjectListItem list per panel, written out at
-    " each site rather than through a parameterized helper: a helper whose id
-    " and items are parameters cannot be reconstructed, and an unreconstructable
-    " view is one the render gate skips (port-a-sample, "one builder chain per
-    " view")
+    content->tag( `PullToRefresh`
+        )->a( n = `id`      v = `pullToRefresh`
+        )->a( n = `visible` v = `{device>/support/touch}`
+        )->a( n = `refresh` v = client->_event( `SEARCH_REFRESH` ) ).
+
+    " the search results. On a desktop the list is SingleSelectMaster and a
+    " click SELECTS the row - ListItemBase.ontap takes the
+    " isIncludedIntoSelection( ) branch and never fires the item's press - so
+    " the navigation hangs off the list's selectionChange; on a phone the
+    " list has no mode and the item's press carries it, as there
     content->ele( `List`
-        )->a( n = `id`         v = `productList`
-        )->a( n = `visible`    v = client->_bind( search_visible )
-        )->a( n = `mode`       v = `SingleSelectMaster`
-        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
-        " takes the isIncludedIntoSelection( ) branch and never fires the item's
-        " press, whatever its type says. So the navigation hangs off the LIST's
-        " selectionChange, exactly as the original's does - its item press is
-        " the phone wire, where the mode is None
-        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
-                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
-        )->a( n = `noDataText` v = `No products found`
-        )->a( n = `items`      v = client->_bind( t_search )
+        )->a( n = `id`                 v = `productList`
+        )->a( n = `visible`            v = client->_bind( search_visible )
+        )->a( n = `mode`               v = `{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}`
+        )->a( n = `selectionChange`    v = client->_event( val = `PRODUCT_SELECT`
+                                                           arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
+        )->a( n = `noDataText`         v = `No products found`
+        )->a( n = `busyIndicatorDelay` v = `0`
+        )->a( n = `items`              v = client->_bind( t_search )
 
         )->ele( `items`
             )->ele( `ObjectListItem`
-                )->a( n = `type`             v = `Active`
+                )->a( n = `type`             v = `{= ${device>/system/phone} ? 'Active' : 'Inactive'}`
                 )->a( n = `icon`             v = `{PICTUREURL}`
                 )->a( n = `title`            v = `{NAME}`
                 )->a( n = `number`           v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
-                )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open details for {NAME}`
+                )->a( n = `numberUnit`       v = `EUR`
                 )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
+                )->a( n = `iconDensityAware` b = abap_false
 
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
@@ -566,21 +887,22 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                         )->a( n = `state` v = `{STATUS_STATE}` ).
 
     content->ele( `List`
-        )->a( n = `id`         v = `categoryList`
-        )->a( n = `headerText` v = `Categories`
+        )->a( n = `id`                 v = `categoryList`
+        )->a( n = `headerText`         v = `Categories`
         " _search( ) shows ONE of the two lists: the categories give way to the
         " search results and come back when the field is cleared
-        )->a( n = `visible`    v = |\{= !${ client->_bind( search_visible ) } \}|
-        )->a( n = `mode`       v = `None`
-        )->a( n = `items`      v = client->_bind( t_categories )
+        )->a( n = `visible`            v = |\{= !${ client->_bind( search_visible ) } \}|
+        )->a( n = `mode`               v = `None`
+        )->a( n = `busyIndicatorDelay` v = `0`
+        )->a( n = `items`              v = client->_bind( t_categories )
 
         )->ele( `items`
             )->tag( `StandardListItem`
                 )->a( n = `title`   v = `{CATEGORYNAME}`
                 )->a( n = `type`    v = `Active`
                 )->a( n = `counter` v = `{NUMBEROFPRODUCTS}`
-                )->a( n = `tooltip` v = `Open category {CATEGORYNAME}`
-                )->a( n = `press`   v = client->_event( val = `CATEGORY` arg = `${CATEGORY}` ) ).
+                )->a( n = `press`   v = client->_event( val = `CATEGORY` arg = `${CATEGORY}` )
+                )->a( n = `tooltip` v = `Open category {CATEGORYNAME}` ).
 
   ENDMETHOD.
 
@@ -592,37 +914,650 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`            v = client->_bind( category_name )
         )->a( n = `backgroundDesign` v = `Solid`
         )->a( n = `showNavButton`    b = abap_true
-        )->a( n = `navButtonPress`   v = client->_event( `BACK_HOME` ) ).
+        )->a( n = `navButtonPress`   v = client->_event( `BACK_CATEGORIES` ) ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Category`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = |{ client->_bind( category_name ) } Items of Category|
+            )->a( n = `footerRole`   v = `Region`
+            )->a( n = `footerLabel`  v = `Filter`
+            )->a( n = `headerRole`   v = `Region`
+            )->a( n = `headerLabel`  v = `Category Header` ).
+
+    page->ele( `headerContent`
+        )->tag( `Button`
+            )->a( n = `id`    v = `masterListFilterButton`
+            )->a( n = `icon`  v = `sap-icon://filter`
+            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                            t_arg = VALUE #( ( `categoryFilterDialog` ) ( `open` ) ) ) ).
+
+    " the product list of the category. `selected` is bound, so the product
+    " a product route opens is the selected row, as fnDataReceived selects it
+    page->ele( `content`
+        )->ele( `List`
+            )->a( n = `id`                 v = `categoryProductList`
+            )->a( n = `mode`               v = `{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}`
+            )->a( n = `selectionChange`    v = client->_event( val = `CATEGORY_PRODUCT`
+                                                               arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
+            )->a( n = `noDataText`         v = `No products found`
+            )->a( n = `busyIndicatorDelay` v = `0`
+            )->a( n = `items`              v = client->_bind( t_category )
+
+            )->ele( `infoToolbar`
+                )->ele( `Toolbar`
+                    )->a( n = `id`      v = `categoryInfoToolbar`
+                    )->a( n = `visible` v = client->_bind( info_visible )
+
+                    )->ele( `content`
+                        )->tag( `Title`
+                            )->a( n = `id`   v = `categoryInfoToolbarTitle`
+                            )->a( n = `text` v = client->_bind( info_text )
+
+                    )->end(
+                )->end(
+            )->end(
+            )->ele( `items`
+                )->ele( `ObjectListItem`
+                    )->a( n = `type`             v = `{= ${device>/system/phone} ? 'Active' : 'Inactive'}`
+                    )->a( n = `icon`             v = `{PICTUREURL}`
+                    )->a( n = `title`            v = `{NAME}`
+                    )->a( n = `number`           v = `{PRICE_TEXT}`
+                    )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
+                    )->a( n = `press`            v = client->_event( val = `CATEGORY_PRODUCT` arg = `${PRODUCTID}` )
+                    )->a( n = `iconDensityAware` b = abap_false
+                    )->a( n = `tooltip`          v = `Open details for {NAME}`
+                    )->a( n = `selected`         v = `{SELECTED}`
+
+                    )->ele( `attributes`
+                        )->tag( `ObjectAttribute`
+                            )->a( n = `visible` b = abap_true
+                            )->a( n = `text`    v = `{SUPPLIERNAME}`
+                        )->tag( `ObjectAttribute`
+                            )->a( n = `visible` v = `{device>/system/desktop}`
+                            )->a( n = `active`  b = abap_true
+                            )->a( n = `text`    v = `Compare`
+                            )->a( n = `press`   v = client->_event( val = `COMPARE` arg = `${PRODUCTID}` )
+
+                    )->end(
+                    )->ele( `firstStatus`
+                        )->tag( `ObjectStatus`
+                            )->a( n = `text`  v = `{STATUS_TEXT}`
+                            )->a( n = `state` v = `{STATUS_STATE}` ).
+
+  ENDMETHOD.
+
+
+  METHOD page_product.
+
+    DATA(page) = parent->ele( `Page`
+        )->a( n = `id`               v = `page-product`
+        )->a( n = `backgroundDesign` v = `Solid` ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Product Details`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Product Description`
+            )->a( n = `headerRole`   v = `Region`
+            )->a( n = `headerLabel`  v = `Product Header`
+            )->a( n = `footerRole`   v = `Region`
+            )->a( n = `footerLabel`  v = `Product Footer` ).
+
+    page->ele( `customHeader`
+        )->ele( `Bar`
+            )->ele( `contentLeft`
+                )->tag( `Button`
+                    )->a( n = `type`    v = `Back`
+                    )->a( n = `visible` v = client->_bind( small_screen )
+                    )->a( n = `press`   v = client->_event( `BACK` )
+
+            )->end(
+            )->ele( `contentMiddle`
+                )->tag( `Title`
+                    )->a( n = `level` v = `H2`
+                    )->a( n = `text`  v = client->_bind( s_prod-name )
+
+            )->end(
+            )->ele( `contentRight`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://customer`
+                    )->a( n = `press`   v = client->_event( `AVATAR` )
+                    )->a( n = `tooltip` v = `Login`
+                )->tag( `ToggleButton`
+                    )->a( n = `icon`    v = `sap-icon://cart`
+                    " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
+                    " Derived from the bound layout rather than from a flag of its
+                    " own, so the button on the OTHER page follows too - and an
+                    " expression binding cannot be written back, which a two-way
+                    " bound `pressed` would be, inverting TOGGLE_CART twice
+                    )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
+                    )->a( n = `tooltip` v = `Show Shopping Cart`
+                    )->a( n = `press`   v = client->_event( val = `TOGGLE_CART` arg = `product` ) ).
+
+    page->ele( `footer`
+        )->ele( `Toolbar`
+            )->tag( `ToolbarSpacer`
+            )->tag( `Button`
+                )->a( n = `text`  v = `Add to Cart`
+                )->a( n = `type`  v = `Emphasized`
+                )->a( n = `press` v = client->_event( `ADD_TO_CART` ) ).
 
     DATA(content) = page->ele( `content` ).
 
-    content->ele( `List`
-        )->a( n = `id`         v = `categoryProductList`
-        )->a( n = `mode`       v = `SingleSelectMaster`
-        " a click in SingleSelectMaster mode SELECTS the row: ListItemBase.ontap
-        " takes the isIncludedIntoSelection( ) branch and never fires the item's
-        " press, whatever its type says. So the navigation hangs off the LIST's
-        " selectionChange, exactly as the original's does - its item press is
-        " the phone wire, where the mode is None
-        )->a( n = `selectionChange` v = client->_event( val = `PRODUCT`
-                                                       arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
-        )->a( n = `noDataText` v = `No products in this category`
-        )->a( n = `items`      v = client->_bind( t_category )
+    content->ele( `ObjectHeader`
+        )->a( n = `title`      v = client->_bind( s_prod-name )
+        )->a( n = `titleLevel` v = `H3`
+        )->a( n = `number`     v = client->_bind( s_prod-price_text )
+        )->a( n = `numberUnit` v = `EUR`
 
+        )->ele( `attributes`
+            )->tag( `ObjectAttribute`
+                )->a( n = `title` v = `Supplier`
+                )->a( n = `text`  v = client->_bind( s_prod-suppliername )
+            )->tag( `ObjectAttribute`
+                )->a( n = `title` v = `Description`
+                )->a( n = `text`  v = client->_bind( s_prod-shortdescription )
+            )->tag( `ObjectAttribute`
+                )->a( n = `title` v = `Weight`
+                )->a( n = `text`  v = client->_bind( s_prod-weight_text )
+            )->tag( `ObjectAttribute`
+                )->a( n = `title` v = `Measures`
+                )->a( n = `text`  v = client->_bind( s_prod-measures_text )
+
+        )->end(
+        )->ele( `statuses`
+            )->tag( `ObjectStatus`
+                )->a( n = `text`  v = client->_bind( s_prod-status_text )
+                )->a( n = `state` v = client->_bind( s_prod-status_state ) ).
+
+    " the picture opens full size in the LightBox of its detailBox - the
+    " Image does that itself on press, no round-trip
+    content->ele( `VBox`
+        )->a( n = `alignItems` v = `Center`
+        )->a( n = `renderType` v = `Div`
+
+        )->ele( `Image`
+            )->a( n = `id`           v = `productImage`
+            )->a( n = `src`          v = client->_bind( s_prod-pictureurl )
+            )->a( n = `decorative`   b = abap_true
+            )->a( n = `densityAware` b = abap_false
+            )->a( n = `class`        v = `sapUiSmallMargin`
+            )->a( n = `width`        v = `100%`
+            )->a( n = `height`       v = `100%`
+
+            )->ele( `detailBox`
+                )->ele( `LightBox`
+                    )->a( n = `id` v = `lightBox`
+
+                    )->ele( `imageContent`
+                        )->tag( `LightBoxItem`
+                            )->a( n = `imageSrc` v = client->_bind( s_prod-pictureurl )
+                            )->a( n = `title`    v = client->_bind( s_prod-name ) ).
+
+  ENDMETHOD.
+
+
+  METHOD page_comparison.
+
+    DATA(page) = parent->ele( `Page`
+        )->a( n = `id`               v = `page-comparison`
+        )->a( n = `backgroundDesign` v = `Solid` ).
+
+    page->ele( `customHeader`
+        )->ele( `Bar`
+            )->ele( `contentMiddle`
+                )->tag( `Title`
+                    )->a( n = `level` v = `H2`
+                    )->a( n = `text`  v = `Product Comparison`
+
+            )->end(
+            )->ele( `contentRight`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://customer`
+                    )->a( n = `press`   v = client->_event( `AVATAR` )
+                    )->a( n = `tooltip` v = `Login`
+                )->tag( `ToggleButton`
+                    )->a( n = `icon`    v = `sap-icon://cart`
+                    )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
+                    )->a( n = `tooltip` v = `Show Shopping Cart`
+                    )->a( n = `press`   v = client->_event( val = `TOGGLE_CART` arg = `comparison` ) ).
+
+    " the two ComparisonItem fragments, written out once each: the panel of
+    " a product the route does not carry is hidden, and the placeholder with
+    " the how-to shows instead (_onRoutePatternMatched's updatePanel)
+    DATA(box) = page->ele( `content`
+        )->ele( `ScrollContainer`
+            )->a( n = `height`     v = `100%`
+            )->a( n = `width`      v = `100%`
+            )->a( n = `horizontal` b = abap_false
+            )->a( n = `vertical`   b = abap_true
+            )->a( n = `focusable`  b = abap_false
+
+            )->ele( `HBox`
+                )->a( n = `class` v = `comparebox`
+                )->a( n = `id`    v = `comparisonContainer` ).
+
+    box->ele( `Panel`
+        )->a( n = `height`  v = `100%`
+        )->a( n = `visible` v = client->_bind( cmp1_visible )
+
+        )->ele( `headerToolbar`
+            )->ele( `Toolbar`
+                )->tag( `Text`
+                    )->a( n = `text` v = |{ client->_bind( s_cmp1-name ) } - { client->_bind( s_cmp1-productid ) }|
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://sys-cancel`
+                    )->a( n = `press`   v = client->_event( val = `CMP_REMOVE` arg = `1` )
+                    )->a( n = `tooltip` v = `Remove Product from Comparison`
+
+            )->end(
+        )->end(
+        )->ele( `HBox`
+            )->a( n = `class` v = `comparebox`
+
+            )->ele( `VBox`
+                )->ele( `Image`
+                    )->a( n = `src`          v = client->_bind( s_cmp1-pictureurl )
+                    )->a( n = `alt`          v = `Enlarge picture of product`
+                    )->a( n = `densityAware` b = abap_false
+                    )->a( n = `class`        v = `sapUiSmallMarginTop`
+                    )->a( n = `width`        v = `100%`
+                    )->a( n = `height`       v = `100%`
+
+                    )->ele( `detailBox`
+                        )->ele( `LightBox`
+                            )->ele( `imageContent`
+                                )->tag( `LightBoxItem`
+                                    )->a( n = `imageSrc` v = client->_bind( s_cmp1-pictureurl )
+                                    )->a( n = `title`    v = client->_bind( s_cmp1-name )
+
+                            )->end(
+                        )->end(
+                    )->end(
+                )->end(
+            )->end(
+            )->ele( `VBox`
+                )->a( n = `alignItems` v = `End`
+
+                )->tag( `ObjectListItem`
+                    )->a( n = `class`      v = `productPrice welcomePrice`
+                    )->a( n = `number`     v = client->_bind( s_cmp1-price_text )
+                    )->a( n = `numberUnit` v = `EUR`
+                )->tag( `ObjectStatus`
+                    )->a( n = `class` v = `sapUiSmallMarginBottom`
+                    )->a( n = `text`  v = client->_bind( s_cmp1-status_text )
+                    )->a( n = `state` v = client->_bind( s_cmp1-status_state )
+                )->tag( `Button`
+                    )->a( n = `text`  v = `Add to Cart`
+                    )->a( n = `type`  v = `Emphasized`
+                    )->a( n = `press` v = client->_event( val = `CMP_ADD_TO_CART` arg = `1` )
+
+            )->end(
+        )->end(
+        )->ele( n = `Form` ns = `form`
+            )->a( n = `editable` b = abap_false
+
+            )->ele( n = `layout` ns = `form`
+                )->tag( n = `ResponsiveGridLayout` ns = `form`
+                    )->a( n = `labelSpanXL`             v = `12`
+                    )->a( n = `labelSpanL`              v = `12`
+                    )->a( n = `labelSpanM`              v = `12`
+                    )->a( n = `labelSpanS`              v = `12`
+                    )->a( n = `adjustLabelSpan`         b = abap_false
+                    )->a( n = `emptySpanXL`             v = `4`
+                    )->a( n = `emptySpanL`              v = `4`
+                    )->a( n = `emptySpanM`              v = `4`
+                    )->a( n = `emptySpanS`              v = `0`
+                    )->a( n = `singleContainerFullSize` b = abap_false
+
+            )->end(
+            )->ele( n = `formContainers` ns = `form`
+                )->ele( n = `FormContainer` ns = `form`
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Supplier`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp1-suppliername )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Description`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp1-shortdescription )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Weight`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp1-weight_text )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Measures`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp1-measures_text ) ).
+
+    box->ele( `Panel`
+        )->a( n = `height`  v = `100%`
+        )->a( n = `visible` v = client->_bind( cmp2_visible )
+
+        )->ele( `headerToolbar`
+            )->ele( `Toolbar`
+                )->tag( `Text`
+                    )->a( n = `text` v = |{ client->_bind( s_cmp2-name ) } - { client->_bind( s_cmp2-productid ) }|
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://sys-cancel`
+                    )->a( n = `press`   v = client->_event( val = `CMP_REMOVE` arg = `2` )
+                    )->a( n = `tooltip` v = `Remove Product from Comparison`
+
+            )->end(
+        )->end(
+        )->ele( `HBox`
+            )->a( n = `class` v = `comparebox`
+
+            )->ele( `VBox`
+                )->ele( `Image`
+                    )->a( n = `src`          v = client->_bind( s_cmp2-pictureurl )
+                    )->a( n = `alt`          v = `Enlarge picture of product`
+                    )->a( n = `densityAware` b = abap_false
+                    )->a( n = `class`        v = `sapUiSmallMarginTop`
+                    )->a( n = `width`        v = `100%`
+                    )->a( n = `height`       v = `100%`
+
+                    )->ele( `detailBox`
+                        )->ele( `LightBox`
+                            )->ele( `imageContent`
+                                )->tag( `LightBoxItem`
+                                    )->a( n = `imageSrc` v = client->_bind( s_cmp2-pictureurl )
+                                    )->a( n = `title`    v = client->_bind( s_cmp2-name )
+
+                            )->end(
+                        )->end(
+                    )->end(
+                )->end(
+            )->end(
+            )->ele( `VBox`
+                )->a( n = `alignItems` v = `End`
+
+                )->tag( `ObjectListItem`
+                    )->a( n = `class`      v = `productPrice welcomePrice`
+                    )->a( n = `number`     v = client->_bind( s_cmp2-price_text )
+                    )->a( n = `numberUnit` v = `EUR`
+                )->tag( `ObjectStatus`
+                    )->a( n = `class` v = `sapUiSmallMarginBottom`
+                    )->a( n = `text`  v = client->_bind( s_cmp2-status_text )
+                    )->a( n = `state` v = client->_bind( s_cmp2-status_state )
+                )->tag( `Button`
+                    )->a( n = `text`  v = `Add to Cart`
+                    )->a( n = `type`  v = `Emphasized`
+                    )->a( n = `press` v = client->_event( val = `CMP_ADD_TO_CART` arg = `2` )
+
+            )->end(
+        )->end(
+        )->ele( n = `Form` ns = `form`
+            )->a( n = `editable` b = abap_false
+
+            )->ele( n = `layout` ns = `form`
+                )->tag( n = `ResponsiveGridLayout` ns = `form`
+                    )->a( n = `labelSpanXL`             v = `12`
+                    )->a( n = `labelSpanL`              v = `12`
+                    )->a( n = `labelSpanM`              v = `12`
+                    )->a( n = `labelSpanS`              v = `12`
+                    )->a( n = `adjustLabelSpan`         b = abap_false
+                    )->a( n = `emptySpanXL`             v = `4`
+                    )->a( n = `emptySpanL`              v = `4`
+                    )->a( n = `emptySpanM`              v = `4`
+                    )->a( n = `emptySpanS`              v = `0`
+                    )->a( n = `singleContainerFullSize` b = abap_false
+
+            )->end(
+            )->ele( n = `formContainers` ns = `form`
+                )->ele( n = `FormContainer` ns = `form`
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Supplier`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp2-suppliername )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Description`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp2-shortdescription )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Weight`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp2-weight_text )
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Measures`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = client->_bind( s_cmp2-measures_text ) ).
+
+    box->ele( `Panel`
+        )->a( n = `id`      v = `placeholder`
+        )->a( n = `visible` v = client->_bind( cmp_placeholder )
+
+        )->ele( `headerToolbar`
+            )->ele( `Toolbar`
+                )->tag( `Text`
+                    )->a( n = `text` v = `How to Compare Products`
+
+            )->end(
+        )->end(
+        )->ele( n = `Form` ns = `form`
+            )->a( n = `editable` b = abap_false
+
+            )->ele( n = `layout` ns = `form`
+                )->tag( n = `ResponsiveGridLayout` ns = `form`
+                    )->a( n = `labelSpanXL`             v = `12`
+                    )->a( n = `labelSpanL`              v = `12`
+                    )->a( n = `labelSpanM`              v = `12`
+                    )->a( n = `labelSpanS`              v = `12`
+                    )->a( n = `adjustLabelSpan`         b = abap_false
+                    )->a( n = `emptySpanXL`             v = `4`
+                    )->a( n = `emptySpanL`              v = `4`
+                    )->a( n = `emptySpanM`              v = `4`
+                    )->a( n = `emptySpanS`              v = `0`
+                    )->a( n = `singleContainerFullSize` b = abap_false
+
+            )->end(
+            )->ele( n = `formContainers` ns = `form`
+                )->ele( n = `FormContainer` ns = `form`
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Add`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `Choose 'Compare' for each product you want to add to the comparison.`
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Compare`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `As soon as you have selected two products, you can compare the specifications.`
+
+                        )->end(
+                    )->end(
+                    )->ele( n = `FormElement` ns = `form`
+                        )->a( n = `label` v = `Remove`
+
+                        )->ele( n = `fields` ns = `form`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `Choose 'x' for a product to remove it from the selection.` ).
+
+  ENDMETHOD.
+
+
+  METHOD page_cart.
+
+    DATA(page) = parent->ele( `Page`
+        )->a( n = `id`               v = `page-cart`
+        )->a( n = `title`            v = client->_bind( cart_title )
+        )->a( n = `backgroundDesign` v = `Solid`
+        )->a( n = `showNavButton`    v = client->_bind( small_screen )
+        )->a( n = `navButtonPress`   v = client->_event( `BACK` )
+        )->a( n = `showFooter`       b = abap_true ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Shopping Cart`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Items in Shopping Cart`
+            )->a( n = `footerRole`   v = `Region`
+            )->a( n = `footerLabel`  v = `Shopping Cart Footer`
+            )->a( n = `headerRole`   v = `Region`
+            )->a( n = `headerLabel`  v = `Shopping Cart Header` ).
+
+    " the cfg> model of Cart.controller: inDelete switches the two lists into
+    " Delete mode, hides Edit and Proceed and shows Save Changes
+    page->ele( `headerContent`
+        )->tag( `Button`
+            )->a( n = `id`      v = `editButton`
+            )->a( n = `icon`    v = `sap-icon://edit`
+            )->a( n = `enabled` v = client->_bind( cart_any )
+            )->a( n = `visible` v = |\{= !${ client->_bind( in_delete ) } \}|
+            )->a( n = `press`   v = client->_event( `EDIT_TOGGLE` )
+            )->a( n = `tooltip` v = `Edit your cart` ).
+
+    page->ele( `footer`
+        )->ele( `Toolbar`
+            )->tag( `Text`
+                )->a( n = `id`    v = `totalPriceText`
+                )->a( n = `text`  v = client->_bind( cart_total )
+                )->a( n = `class` v = `sapUiTinyMarginBegin`
+            )->tag( `ToolbarSpacer`
+            )->tag( `Button`
+                )->a( n = `id`      v = `proceedButton`
+                )->a( n = `type`    v = `Accept`
+                )->a( n = `text`    v = `Proceed`
+                )->a( n = `enabled` v = client->_bind( cart_filled )
+                )->a( n = `visible` v = |\{= !${ client->_bind( in_delete ) } \}|
+                )->a( n = `press`   v = client->_event( `PROCEED` )
+            )->tag( `Button`
+                )->a( n = `id`      v = `doneButton`
+                )->a( n = `text`    v = `Save Changes`
+                )->a( n = `enabled` b = abap_true
+                )->a( n = `visible` v = client->_bind( in_delete )
+                )->a( n = `press`   v = client->_event( `EDIT_TOGGLE` ) ).
+
+    DATA(content) = page->ele( `content` ).
+
+    " a row of either list opens its product: on a desktop through the
+    " SingleSelectMaster selection (onEntryListSelect), on a phone through the
+    " item press (onEntryListPress) - which also closes the cart
+    content->ele( `List`
+        )->a( n = `delete`          v = client->_event( val   = `CART_DELETE`
+                                                        t_arg = VALUE #( ( `entryList` )
+                                                                         ( `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` ) ) )
+        )->a( n = `id`              v = `entryList`
+        )->a( n = `items`           v = client->_bind( t_cart )
+        )->a( n = `mode`            v = |\{= ${ client->_bind( in_delete ) } ? 'Delete' : $\{device>/system/phone\} ? 'None' : 'SingleSelectMaster' \}|
+        )->a( n = `noDataText`      v = `Your cart is empty`
+        )->a( n = `selectionChange` v = client->_event( val = `CART_SELECT`
+                                                        arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
+
+        )->ele( `headerToolbar`
+            )->ele( `Toolbar`
+                )->tag( `Title`
+                    )->a( n = `level`      v = `H6`
+                    )->a( n = `text`       v = `Items in Shopping Cart`
+                    )->a( n = `titleStyle` v = `H6`
+
+            )->end(
+        )->end(
         )->ele( `items`
             )->ele( `ObjectListItem`
-                )->a( n = `type`             v = `Active`
+                )->a( n = `intro`            v = `{QUANTITY} x`
+                )->a( n = `type`             v = |\{= ${ client->_bind( in_delete ) } ? 'Inactive' : $\{device>/system/phone\} ? 'Active' : 'Inactive' \}|
                 )->a( n = `icon`             v = `{PICTUREURL}`
                 )->a( n = `title`            v = `{NAME}`
                 )->a( n = `number`           v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit`       v = `{CURRENCYCODE}`
+                )->a( n = `numberUnit`       v = `EUR`
+                )->a( n = `press`            v = client->_event( val = `CART_PRESS` arg = `${PRODUCTID}` )
                 )->a( n = `iconDensityAware` b = abap_false
-                )->a( n = `tooltip`          v = `Open details for {NAME}`
-                )->a( n = `press`            v = client->_event( val = `PRODUCT` arg = `${PRODUCTID}` )
 
                 )->ele( `attributes`
                     )->tag( `ObjectAttribute`
-                        )->a( n = `text` v = `{SUPPLIERNAME}`
+                        )->a( n = `active` b = abap_true
+                        )->a( n = `press`  v = client->_event( val = `SAVE_LATER` arg = `${PRODUCTID}` )
+                        )->a( n = `text`   v = `Save for Later`
+
+                )->end(
+                )->ele( `firstStatus`
+                    )->tag( `ObjectStatus`
+                        )->a( n = `text`  v = `{STATUS_TEXT}`
+                        )->a( n = `state` v = `{STATUS_STATE}` ).
+
+    content->ele( `List`
+        )->a( n = `delete`          v = client->_event( val   = `CART_DELETE`
+                                                        t_arg = VALUE #( ( `saveForLaterList` )
+                                                                         ( `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` ) ) )
+        )->a( n = `id`              v = `saveForLaterList`
+        )->a( n = `items`           v = client->_bind( t_saved )
+        )->a( n = `mode`            v = |\{= ${ client->_bind( in_delete ) } ? 'Delete' : $\{device>/system/phone\} ? 'None' : 'SingleSelectMaster' \}|
+        )->a( n = `noDataText`      v = `No items saved for later`
+        )->a( n = `selectionChange` v = client->_event( val = `CART_SELECT`
+                                                        arg = `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` )
+
+        )->ele( `headerToolbar`
+            )->ele( `Toolbar`
+                )->tag( `Title`
+                    )->a( n = `level`      v = `H6`
+                    )->a( n = `text`       v = `Items saved for later`
+                    )->a( n = `titleStyle` v = `H6`
+
+            )->end(
+        )->end(
+        )->ele( `items`
+            )->ele( `ObjectListItem`
+                )->a( n = `intro`            v = `{QUANTITY} x`
+                )->a( n = `type`             v = |\{= ${ client->_bind( in_delete ) } ? 'Inactive' : $\{device>/system/phone\} ? 'Active' : 'Inactive' \}|
+                )->a( n = `icon`             v = `{PICTUREURL}`
+                )->a( n = `title`            v = `{NAME}`
+                )->a( n = `number`           v = `{PRICE_TEXT}`
+                )->a( n = `numberUnit`       v = `EUR`
+                )->a( n = `press`            v = client->_event( val = `CART_PRESS` arg = `${PRODUCTID}` )
+                )->a( n = `iconDensityAware` b = abap_false
+
+                )->ele( `attributes`
+                    )->tag( `ObjectAttribute`
+                        )->a( n = `active` b = abap_true
+                        )->a( n = `press`  v = client->_event( val = `ADD_BACK` arg = `${PRODUCTID}` )
+                        )->a( n = `text`   v = `Add to Shopping Cart`
 
                 )->end(
                 )->ele( `firstStatus`
@@ -641,12 +1576,30 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " it turns a raw LF into a plain space - then leaves alone
     DATA(line_break) = cl_abap_char_utilities=>newline.
 
+    " core:require as the original's view declares it: the tiles' prices are
+    " a CurrencyType binding
     DATA(page) = parent->ele( `Page`
-        )->a( n = `id`    v = `page-welcome`
-        )->a( n = `title` v = `Shopping Cart` ).
+        )->a( n = `id`           v = `page-welcome`
+        )->a( n = `core:require` v = `{CurrencyType: 'sap/ui/model/type/Currency'}` ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Welcome Page`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Selected Products`
+            )->a( n = `headerRole`   v = `Region`
+            )->a( n = `headerLabel`  v = `Welcome Header` ).
 
     page->ele( `customHeader`
         )->ele( `Bar`
+            )->ele( `contentLeft`
+                )->tag( `Button`
+                    )->a( n = `icon`    v = `sap-icon://menu2`
+                    )->a( n = `press`   v = client->_event( `SHOW_CATEGORIES` )
+                    )->a( n = `visible` v = client->_bind( small_screen )
+
+            )->end(
             )->ele( `contentMiddle`
                 )->tag( `Title`
                     )->a( n = `level`   v = `H2`
@@ -670,19 +1623,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                     " bound `pressed` would be, inverting TOGGLE_CART twice
                     )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
                     )->a( n = `tooltip` v = `Show Shopping Cart`
-                    )->a( n = `press`   v = client->_event( `TOGGLE_CART` ) ).
+                    )->a( n = `press`   v = client->_event( val = `TOGGLE_CART` arg = `welcome` ) ).
 
     DATA(content) = page->ele( `content` ).
 
-    " the two rules of the app's own style.css that this page's classes name.
-    " The original scopes them under `.sapUiDemoCart`, the root class its
-    " Component sets on the app container - a port has no Component, so they
-    " are unscoped here. \{ \} escaped: the XMLView parser reads an unescaped
-    " brace as a binding
+    " the app's style.css, rule for rule, under the same `.sapUiDemoCart`
+    " scope - the class the App and the FlexibleColumnLayout carry here as
+    " there. \{ \} escaped: the XMLView parser reads an unescaped brace as a
+    " binding
     content->tag( n = `HTML` ns = `core`
-        )->a( n = `content` v = `<style>.welcomePrice\{width:100%;padding:0;border-bottom-width:0\}` &&
-                                `.welcomeCarouselText\{color:white;display:block;position:fixed;bottom:0;padding:1rem;` &&
-                                `font-size:1.5rem;width:100%;text-shadow:0 0 0.125rem black\}</style>` ).
+        )->a( n = `content` v = `<style>.sapUiDemoCart .welcomePrice\{width:100%;padding:0;border-bottom-width:0\}` &&
+                                `.sapUiDemoCart .welcomeCarouselText\{color:white;display:block;position:fixed;bottom:0;` &&
+                                `padding:1rem;font-size:1.5rem;width:100%;text-shadow:0 0 0.125rem black\}` &&
+                                `.productPrice\{background-color:transparent\}` &&
+                                `.comparebox > div\{width:48%;margin-left:1%;margin-right:1%\}</style>` ).
 
     " the welcome carousel. Its four teaser images are files of the demo app
     " itself - `sap/ui/demo/cart/img/...` resolved by sap.ui.require.toUrl
@@ -696,23 +1650,22 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->ele( n = `BlockLayoutCell` ns = `l`
                 )->a( n = `class` v = `sapUiNoContentPadding`
 
-                " the original advances the carousel every eight seconds from
-                " its controller (`onCarouselPageChanged` re-arms a setTimeout)
-                " and opens it on a page picked at random in `onInit`. Both are
-                " browser timers with no bound state behind them, so the port
-                " keeps `loop` and starts on the first page. The original also
-                " hides the whole carousel on a phone (`device>/system/phone`);
-                " there is no device model here
+                " a page change restarts the eight-second wait of the timer in
+                " view_display (onCarouselPageChanged), in the browser
                 )->ele( `Carousel`
                     )->a( n = `id`                v = `welcomeCarousel`
                     )->a( n = `showPageIndicator` v = `false`
                     )->a( n = `loop`              v = `true`
+                    )->a( n = `pageChanged`       v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                                t_arg = VALUE #( ( `carouselTimer` ) ( `delayedCall` ) ) )
+                    )->a( n = `visible`           v = `{=!${device>/system/phone}}`
                     )->a( n = `tooltip`           v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
                                                      `You can browse and search a catalog of products, add the chosen products to your ` &&
                                                      `shopping cart and, once happy with your selection order the cart contents.`
 
                     )->ele( `pages`
                         )->ele( `VBox`
+                            )->a( n = `id`         v = `carouselShipping`
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
@@ -725,6 +1678,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `VBox`
+                            )->a( n = `id`         v = `carouselInviteFriend`
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
@@ -737,6 +1691,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `VBox`
+                            )->a( n = `id`         v = `carouselTablet`
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
@@ -749,6 +1704,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `VBox`
+                            )->a( n = `id`         v = `carouselCreditCard`
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
@@ -836,7 +1792,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->end(
                             )->ele( `ObjectListItem`
                                 )->a( n = `class`      v = `welcomePrice`
-                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                " the original's CurrencyType binding, formatted in the
+                                " browser's locale - not the price formatter the lists use
+                                )->a( n = `number`     v = `{ parts: [ { path: 'PRICE' }, { path: 'CURRENCYCODE' } ], type: 'CurrencyType', formatOptions: { showMeasure: false } }`
                                 )->a( n = `numberUnit` v = `{CURRENCYCODE}`
 
                                 )->ele( `layoutData`
@@ -918,7 +1876,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->end(
                             )->ele( `ObjectListItem`
                                 )->a( n = `class`      v = `welcomePrice`
-                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                " the original's CurrencyType binding, formatted in the
+                                " browser's locale - not the price formatter the lists use
+                                )->a( n = `number`     v = `{ parts: [ { path: 'PRICE' }, { path: 'CURRENCYCODE' } ], type: 'CurrencyType', formatOptions: { showMeasure: false } }`
                                 )->a( n = `numberUnit` v = `{CURRENCYCODE}`
 
                                 )->ele( `layoutData`
@@ -1000,7 +1960,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->end(
                             )->ele( `ObjectListItem`
                                 )->a( n = `class`      v = `welcomePrice`
-                                )->a( n = `number`     v = `{PRICE_TEXT}`
+                                " the original's CurrencyType binding, formatted in the
+                                " browser's locale - not the price formatter the lists use
+                                )->a( n = `number`     v = `{ parts: [ { path: 'PRICE' }, { path: 'CURRENCYCODE' } ], type: 'CurrencyType', formatOptions: { showMeasure: false } }`
                                 )->a( n = `numberUnit` v = `{CURRENCYCODE}`
 
                                 )->ele( `layoutData`
@@ -1010,230 +1972,131 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD page_product.
-
-    DATA(page) = parent->ele( `Page`
-        )->a( n = `id`               v = `page-product`
-        )->a( n = `backgroundDesign` v = `Solid` ).
-
-    page->ele( `customHeader`
-        )->ele( `Bar`
-            )->ele( `contentLeft`
-                )->tag( `Button`
-                    )->a( n = `type`  v = `Back`
-                    )->a( n = `press` v = client->_event( `BACK_WELCOME` )
-
-            )->end(
-            )->ele( `contentMiddle`
-                )->tag( `Title`
-                    )->a( n = `level` v = `H2`
-                    )->a( n = `text`  v = client->_bind( prod_name )
-
-            )->end(
-            )->ele( `contentRight`
-                )->tag( `Button`
-                    )->a( n = `icon`    v = `sap-icon://customer`
-                    )->a( n = `tooltip` v = `Login`
-                    )->a( n = `press`   v = client->_event( `AVATAR` )
-                )->tag( `ToggleButton`
-                    )->a( n = `icon`    v = `sap-icon://cart`
-                    " what the original binds: `{= ${layout}.startsWith('ThreeColumns') }`.
-                    " Derived from the bound layout rather than from a flag of its
-                    " own, so the button on the OTHER page follows too - and an
-                    " expression binding cannot be written back, which a two-way
-                    " bound `pressed` would be, inverting TOGGLE_CART twice
-                    )->a( n = `pressed` v = |\{= ${ client->_bind( layout ) }.startsWith('ThreeColumns') \}|
-                    )->a( n = `tooltip` v = `Show Shopping Cart`
-                    )->a( n = `press`   v = client->_event( `TOGGLE_CART` ) ).
-
-    page->ele( `footer`
-        )->ele( `Toolbar`
-            )->tag( `ToolbarSpacer`
-            )->tag( `Button`
-                )->a( n = `text`  v = `Add to Cart`
-                )->a( n = `type`  v = `Emphasized`
-                )->a( n = `press` v = client->_event( `ADD_TO_CART` ) ).
-
-    DATA(content) = page->ele( `content` ).
-
-    content->ele( `ObjectHeader`
-        )->a( n = `title`      v = client->_bind( prod_name )
-        )->a( n = `titleLevel` v = `H3`
-        )->a( n = `number`     v = client->_bind( prod_price )
-        )->a( n = `numberUnit` v = client->_bind( prod_currency )
-
-        )->ele( `attributes`
-            )->tag( `ObjectAttribute`
-                )->a( n = `title` v = `Supplier`
-                )->a( n = `text`  v = client->_bind( prod_supplier )
-            )->tag( `ObjectAttribute`
-                )->a( n = `title` v = `Description`
-                )->a( n = `text`  v = client->_bind( prod_desc )
-            )->tag( `ObjectAttribute`
-                )->a( n = `title` v = `Weight`
-                )->a( n = `text`  v = client->_bind( prod_weight )
-            )->tag( `ObjectAttribute`
-                )->a( n = `title` v = `Measures`
-                )->a( n = `text`  v = client->_bind( prod_measures )
-
-        )->end(
-        )->ele( `statuses`
-            )->tag( `ObjectStatus`
-                )->a( n = `text`  v = client->_bind( prod_status )
-                )->a( n = `state` v = client->_bind( prod_state ) ).
-
-    content->ele( `VBox`
-        )->a( n = `alignItems` v = `Center`
-        )->a( n = `renderType` v = `Div`
-
-        )->tag( `Image`
-            )->a( n = `id`            v = `productImage`
-            )->a( n = `src`           v = client->_bind( prod_picture )
-            )->a( n = `decorative`    b = abap_true
-            )->a( n = `densityAware`  b = abap_false
-            )->a( n = `class`         v = `sapUiSmallMargin`
-            )->a( n = `width`         v = `100%`
-            )->a( n = `height`        v = `100%` ).
-
-  ENDMETHOD.
-
-
-  METHOD page_cart.
-
-    DATA(page) = parent->ele( `Page`
-        )->a( n = `id`             v = `page-cart`
-        )->a( n = `title`          v = `Shopping Cart`
-        )->a( n = `showNavButton`  b = abap_true
-        )->a( n = `navButtonPress` v = client->_event( `TOGGLE_CART` ) ).
-
-    DATA(content) = page->ele( `content` ).
-
-    content->ele( `List`
-        )->a( n = `id`         v = `entryList`
-        )->a( n = `headerText` v = `Items in Shopping Cart`
-        )->a( n = `noDataText` v = `Your cart is empty`
-        )->a( n = `items`      v = client->_bind( t_cart )
-
-        )->ele( `items`
-            )->ele( `ObjectListItem`
-                )->a( n = `title`      v = `{NAME}`
-                )->a( n = `icon`       v = `{PICTUREURL}`
-                )->a( n = `number`     v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit` v = `{CURRENCYCODE}`
-
-                )->ele( `attributes`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `title` v = `Quantity`
-                        )->a( n = `text`  v = `{QUANTITY}`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `active` b = abap_true
-                        )->a( n = `text`   v = `Save for Later`
-                        )->a( n = `press`  v = client->_event( val = `SAVE_LATER` arg = `${PRODUCTID}` )
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `active` b = abap_true
-                        )->a( n = `text`   v = `Remove`
-                        )->a( n = `press`  v = client->_event( val = `CART_REMOVE` arg = `${PRODUCTID}` ) ).
-
-    content->ele( `List`
-        )->a( n = `id`         v = `savedList`
-        )->a( n = `headerText` v = `Items saved for later`
-        )->a( n = `noDataText` v = `No items saved for later`
-        )->a( n = `items`      v = client->_bind( t_saved )
-
-        )->ele( `items`
-            )->ele( `ObjectListItem`
-                )->a( n = `title`      v = `{NAME}`
-                )->a( n = `icon`       v = `{PICTUREURL}`
-                )->a( n = `number`     v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit` v = `{CURRENCYCODE}`
-
-                )->ele( `attributes`
-                    )->tag( `ObjectAttribute`
-                        )->a( n = `active` b = abap_true
-                        )->a( n = `text`   v = `Move to Cart`
-                        )->a( n = `press`  v = client->_event( val = `MOVE_TO_CART` arg = `${PRODUCTID}` ) ).
-
-    page->ele( `footer`
-        )->ele( `OverflowToolbar`
-            )->tag( `Title`
-                )->a( n = `text` v = client->_bind( cart_total )
-            )->tag( `ToolbarSpacer`
-            )->tag( `Button`
-                )->a( n = `id`    v = `proceedButton`
-                )->a( n = `text`  v = `Proceed`
-                )->a( n = `type`  v = `Accept`
-                )->a( n = `press` v = client->_event( `PROCEED` ) ).
-
-  ENDMETHOD.
-
-
   METHOD page_checkout.
 
-    DATA(page) = parent->ele( `Page`
-        )->a( n = `id`             v = `page-checkout`
-        )->a( n = `title`          v = `Checkout`
-        )->a( n = `showNavButton`  b = abap_true
-        )->a( n = `navButtonPress` v = client->_event( `BACK_CART` ) ).
+    " Checkout.view.xml is one NavContainer with two pages - the wizard and
+    " its summary - and sits in the begin column, which the checkout route
+    " shows alone (OneColumn)
+    DATA(checkout) = parent->ele( `NavContainer`
+        )->a( n = `id` v = `wizardNavContainer`
+
+        )->ele( `pages` ).
+
+    DATA(page) = checkout->ele( `Page`
+        )->a( n = `id`    v = `wizardContentPage`
+        )->a( n = `title` v = `Checkout` ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Checkout`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Checkout Wizard`
+            )->a( n = `footerRole`   v = `Region`
+            )->a( n = `footerLabel`  v = `Checkout Footer` ).
+
+    page->ele( `headerContent`
+        )->tag( `Button`
+            )->a( n = `id`    v = `wizardReturnToShopButton`
+            )->a( n = `type`  v = `Emphasized`
+            )->a( n = `text`  v = `Return to Shop`
+            )->a( n = `press` v = client->_event( `RETURN_TO_SHOP` ) ).
+
+    " the footer bar shows while the message model holds a message; its
+    " button opens the MessagePopover of dialogs( ) at itself, in the browser
+    page->ele( `footer`
+        )->ele( `Bar`
+            )->a( n = `id`      v = `wizardFooterBar`
+            )->a( n = `visible` v = |\{= ${ client->_bind( msg_count ) } === 0 ? false : true \}|
+
+            )->ele( `contentLeft`
+                )->tag( `Button`
+                    )->a( n = `id`    v = `showPopoverButton`
+                    )->a( n = `icon`  v = `sap-icon://message-popup`
+                    )->a( n = `text`  v = client->_bind( msg_count )
+                    )->a( n = `type`  v = `Emphasized`
+                    )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                    t_arg = VALUE #( ( `messagePopover` )
+                                                                                     ( `openBy` )
+                                                                                     ( `showPopoverButton` ) ) ) ).
 
     " enableBranching + subsequentSteps is what lets the payment type pick the
     " step after it; the branch itself is set from the backend with
     " setNextStep, and re-issued on every render (see view_display)
     DATA(wizard) = page->ele( `content`
         )->ele( `Wizard`
-            )->a( n = `id`               v = `checkoutWizard`
+            )->a( n = `id`               v = `shoppingCartWizard`
+            )->a( n = `complete`         v = client->_event( `WIZARD_COMPLETE` )
             )->a( n = `enableBranching`  b = abap_true
-            )->a( n = `finishButtonText` v = `Order Summary`
-            )->a( n = `complete`         v = client->_event( `WIZARD_COMPLETE` ) ).
+            )->a( n = `finishButtonText` v = `Order Summary` ).
 
     DATA(contents) = wizard->ele( `WizardStep`
-        )->a( n = `id`        v = `contentsStep`
-        )->a( n = `title`     v = `Items`
-        )->a( n = `icon`      v = `sap-icon://cart`
-        )->a( n = `validated` b = abap_true
-        )->a( n = `nextStep`  v = `paymentTypeStep` ).
+        )->a( n = `id`       v = `contentsStep`
+        )->a( n = `nextStep` v = `paymentTypeStep`
+        )->a( n = `title`    v = `Items`
+        )->a( n = `icon`     v = `sap-icon://cart` ).
 
     contents->ele( `List`
+        )->a( n = `id`         v = `checkoutEntryList`
         )->a( n = `noDataText` v = `Your cart is empty`
         )->a( n = `items`      v = client->_bind( t_cart )
 
         )->ele( `items`
-            )->tag( `ObjectListItem`
-                )->a( n = `title`      v = `{NAME}`
-                )->a( n = `icon`       v = `{PICTUREURL}`
-                )->a( n = `number`     v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit` v = `{CURRENCYCODE}` ).
+            )->ele( `ObjectListItem`
+                )->a( n = `intro`            v = `{QUANTITY} x`
+                )->a( n = `icon`             v = `{PICTUREURL}`
+                )->a( n = `title`            v = `{NAME}`
+                )->a( n = `number`           v = `{PRICE_TEXT}`
+                )->a( n = `numberUnit`       v = `EUR`
+                )->a( n = `iconDensityAware` b = abap_false
 
-    contents->tag( `Text`
-        )->a( n = `text`  v = client->_bind( cart_total )
-        )->a( n = `class` v = `sapUiSmallMarginTop` ).
+                )->ele( `firstStatus`
+                    )->tag( `ObjectStatus`
+                        )->a( n = `text`  v = `{STATUS_TEXT}`
+                        )->a( n = `state` v = `{STATUS_STATE}` ).
+
+    contents->ele( `Bar`
+        )->ele( `contentRight`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cart_total ) ).
 
     DATA(payment) = wizard->ele( `WizardStep`
         )->a( n = `id`              v = `paymentTypeStep`
         )->a( n = `title`           v = `Payment Type`
-        )->a( n = `icon`            v = `sap-icon://money-bills`
-        )->a( n = `validated`       b = abap_true
-        )->a( n = `subsequentSteps` v = `creditCardStep, bankAccountStep, cashOnDeliveryStep` ).
+        )->a( n = `subsequentSteps` v = `creditCardStep, bankAccountStep, cashOnDeliveryStep`
+        )->a( n = `icon`            v = `sap-icon://money-bills` ).
 
     payment->tag( `Text`
-        )->a( n = `text` v = `We accept all major credit cards with no additional charging. ` &&
-                             `Bank transfer and cash on delivery are only possible for inland deliveries. ` &&
-                             `For those, we will charge additional 2.99 EUR. ` &&
-                             `Orders payed with bank transfer, will be shipped direcly after the payment is received.` ).
+        )->a( n = `class` v = `sapUiSmallMarginBottom`
+        )->a( n = `text`  v = `We accept all major credit cards with no additional charging. ` &&
+                              `Bank transfer and cash on delivery are only possible for inland deliveries. ` &&
+                              `For those, we will charge additional 2.99 EUR. ` &&
+                              `Orders payed with bank transfer, will be shipped direcly after the payment is received.` ).
 
-    payment->ele( `SegmentedButton`
-        )->a( n = `selectedKey`     v = client->_bind( pay_type )
-        )->a( n = `selectionChange` v = client->_event( val = `PAY_TYPE` arg = `${$parameters>/item}.getKey()` )
+    payment->ele( `HBox`
+        )->a( n = `renderType`     v = `Bare`
+        )->a( n = `alignItems`     v = `Center`
+        )->a( n = `justifyContent` v = `Center`
+        )->a( n = `width`          v = `100%`
 
-        )->ele( `items`
-            )->tag( `SegmentedButtonItem`
-                )->a( n = `key`  v = `creditCardStep`
-                )->a( n = `text` v = `Credit Card`
-            )->tag( `SegmentedButtonItem`
-                )->a( n = `key`  v = `bankAccountStep`
-                )->a( n = `text` v = `Bank Transfer`
-            )->tag( `SegmentedButtonItem`
-                )->a( n = `key`  v = `cashOnDeliveryStep`
-                )->a( n = `text` v = `Cash on Delivery` ).
+        )->ele( `SegmentedButton`
+            )->a( n = `selectionChange` v = client->_event( `PAY_TYPE` )
+            )->a( n = `id`              v = `paymentMethodSelection`
+            )->a( n = `selectedKey`     v = client->_bind( pay_type )
+
+            )->ele( `items`
+                )->tag( `SegmentedButtonItem`
+                    )->a( n = `id`   v = `payViaCC`
+                    )->a( n = `key`  v = `Credit Card`
+                    )->a( n = `text` v = `Credit Card`
+                )->tag( `SegmentedButtonItem`
+                    )->a( n = `id`   v = `payViaBank`
+                    )->a( n = `key`  v = `Bank Transfer`
+                    )->a( n = `text` v = `Bank Transfer`
+                )->tag( `SegmentedButtonItem`
+                    )->a( n = `id`   v = `payViaCOD`
+                    )->a( n = `key`  v = `Cash on Delivery`
+                    )->a( n = `text` v = `Cash on Delivery` ).
 
     " the four forms below are the original's: required labels, its
     " placeholders, the MaskInputs and the MM/YYYY DatePicker of the card.
@@ -1248,8 +2111,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`     v = `Credit Card Details`
         )->a( n = `icon`      v = `sap-icon://credit-card`
         )->a( n = `validated` v = client->_bind( cc_valid )
-        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
-        )->a( n = `nextStep`  v = `invoiceAddressStep` ).
+        )->a( n = `activate`  v = client->_event( val = `CHECK_STEP` arg = `creditCardStep` )
+        )->a( n = `nextStep`  v = `invoiceStep` ).
 
     credit->ele( n = `SimpleForm` ns = `form`
         )->a( n = `editable`    b = abap_true
@@ -1332,24 +2195,28 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`     v = `Bank Account Details`
         )->a( n = `icon`      v = `sap-icon://official-service`
         )->a( n = `validated` b = abap_true
-        )->a( n = `nextStep`  v = `invoiceAddressStep` ).
+        )->a( n = `activate`  v = client->_event( `PAYMENT_PASSED` )
+        )->a( n = `nextStep`  v = `invoiceStep` ).
 
-    bank->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `editable` b = abap_false
-        )->a( n = `layout`   v = `ResponsiveGridLayout`
+    bank->ele( `Panel`
+        )->ele( n = `Grid` ns = `l`
+            )->a( n = `defaultSpan` v = `L6 M6 S10`
+            )->a( n = `hSpacing`    v = `2`
 
-        )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Beneficiary Name`
-            )->tag( `Text`
+                )->a( n = `text`   v = `Beneficiary Name`
+                )->a( n = `design` v = `Bold`
+            )->tag( `Label`
                 )->a( n = `text` v = `Singapore Hardware e-Commerce LTD`
             )->tag( `Label`
-                )->a( n = `text` v = `Bank`
-            )->tag( `Text`
+                )->a( n = `text`   v = `Bank`
+                )->a( n = `design` v = `Bold`
+            )->tag( `Label`
                 )->a( n = `text` v = `CITY BANK, SINGAPORE BRANCH`
             )->tag( `Label`
-                )->a( n = `text` v = `Account Number`
-            )->tag( `Text`
+                )->a( n = `text`   v = `Account Number`
+                )->a( n = `design` v = `Bold`
+            )->tag( `Label`
                 )->a( n = `text` v = `06110702027218` ).
 
     DATA(cod) = wizard->ele( `WizardStep`
@@ -1357,8 +2224,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`     v = `Details for Cash on Delivery`
         )->a( n = `icon`      v = `sap-icon://money-bills`
         )->a( n = `validated` v = client->_bind( cod_valid )
-        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
-        )->a( n = `nextStep`  v = `invoiceAddressStep` ).
+        )->a( n = `activate`  v = client->_event( val = `CHECK_STEP` arg = `cashOnDeliveryStep` )
+        )->a( n = `nextStep`  v = `invoiceStep` ).
 
     cod->ele( n = `SimpleForm` ns = `form`
         )->a( n = `editable`    b = abap_true
@@ -1415,11 +2282,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_EMAIL` ) ).
 
     DATA(invoice) = wizard->ele( `WizardStep`
-        )->a( n = `id`              v = `invoiceAddressStep`
+        )->a( n = `id`              v = `invoiceStep`
         )->a( n = `title`           v = `Invoice Address`
         )->a( n = `icon`            v = `sap-icon://sales-quote`
         )->a( n = `validated`       v = client->_bind( inv_valid )
-        )->a( n = `activate`        v = client->_event( `CHECK_STEP` )
+        )->a( n = `activate`        v = client->_event( val = `CHECK_STEP` arg = `invoiceStep` )
         )->a( n = `subsequentSteps` v = `deliveryAddressStep, deliveryTypeStep` ).
 
     invoice->ele( n = `SimpleForm` ns = `form`
@@ -1436,7 +2303,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->tag( `CheckBox`
                 )->a( n = `id`       v = `differentDeliveryAddress`
                 )->a( n = `selected` v = client->_bind( del_different )
-                )->a( n = `select`   v = client->_event( val = `DELIVERY_DIFFERENT` arg = `${$parameters>/selected}` )
+                )->a( n = `select`   v = client->_event( `DELIVERY_DIFFERENT` )
             )->tag( `Label`
                 )->a( n = `text`     v = `Address`
                 )->a( n = `labelFor` v = `invoiceAddressAddress`
@@ -1494,7 +2361,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         )->a( n = `title`     v = `Shipping Address`
         )->a( n = `icon`      v = `sap-icon://sales-quote`
         )->a( n = `validated` v = client->_bind( del_valid )
-        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
+        )->a( n = `activate`  v = client->_event( val = `CHECK_STEP` arg = `deliveryAddressStep` )
         )->a( n = `nextStep`  v = `deliveryTypeStep` ).
 
     delivery->ele( n = `SimpleForm` ns = `form`
@@ -1558,87 +2425,429 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `placeholder` v = `Additional comments (max 500 characters)`
                 )->a( n = `value`       v = client->_bind( del_note ) ).
 
+    " the original's deliveryTypeStep has no activate; the one here only
+    " tells the backend the wizard is past the invoice step (invoice_passed)
     DATA(delivery_type) = wizard->ele( `WizardStep`
-        )->a( n = `id`        v = `deliveryTypeStep`
-        )->a( n = `title`     v = `Delivery Type`
-        )->a( n = `icon`      v = `sap-icon://insurance-car`
-        )->a( n = `validated` b = abap_true ).
+        )->a( n = `id`       v = `deliveryTypeStep`
+        )->a( n = `title`    v = `Delivery Type`
+        )->a( n = `icon`     v = `sap-icon://insurance-car`
+        )->a( n = `activate` v = client->_event( `INVOICE_PASSED` ) ).
 
     delivery_type->tag( `Text`
-        )->a( n = `text` v = `Standard delivery time is 5 workdays. During high-season sales, please allow one additional day. ` &&
-                             `Express delivery is delivered within 36 hours. For express delivery on workdays, we charge a ` &&
-                             `service fee of 5.49 EUR, for a express delivery on holidays, the service fee is 8,00 EUR. ` &&
-                             `Express delivery is only available for inland deliveries. For deliveries abroud, please check ` &&
-                             `the specific conditions.` ).
+        )->a( n = `class` v = `sapUiSmallMarginBottom`
+        )->a( n = `text`  v = `Standard delivery time is 5 workdays. During high-season sales, please allow one additional day. ` &&
+                              `Express delivery is delivered within 36 hours. For express delivery on workdays, we charge a ` &&
+                              `service fee of 5.49 EUR, for a express delivery on holidays, the service fee is 8,00 EUR. ` &&
+                              `Express delivery is only available for inland deliveries. For deliveries abroud, please check ` &&
+                              `the specific conditions.` ).
 
-    delivery_type->ele( `SegmentedButton`
-        )->a( n = `selectedKey` v = client->_bind( del_type )
+    delivery_type->ele( `HBox`
+        )->a( n = `renderType`     v = `Bare`
+        )->a( n = `alignItems`     v = `Center`
+        )->a( n = `justifyContent` v = `Center`
+        )->a( n = `width`          v = `100%`
 
-        )->ele( `items`
-            )->tag( `SegmentedButtonItem`
-                )->a( n = `key`  v = `Standard Delivery`
-                )->a( n = `text` v = `Standard`
-            )->tag( `SegmentedButtonItem`
-                )->a( n = `key`  v = `Express Delivery`
-                )->a( n = `text` v = `Express` ).
+        )->ele( `SegmentedButton`
+            )->a( n = `id`          v = `deliveryType`
+            )->a( n = `selectedKey` v = client->_bind( del_type )
+
+            )->ele( `items`
+                )->tag( `SegmentedButtonItem`
+                    )->a( n = `key`  v = `Standard Delivery`
+                    )->a( n = `text` v = `Standard`
+                )->tag( `SegmentedButtonItem`
+                    )->a( n = `id`   v = `expressDelivery`
+                    )->a( n = `key`  v = `Express Delivery`
+                    )->a( n = `text` v = `Express` ).
+
+    page_summary( checkout ).
 
   ENDMETHOD.
 
 
-  METHOD page_review.
+  METHOD page_summary.
 
+    " the summary page: one section per wizard step, each with the edit
+    " button back into its step (_navBackToStep), and Submit / Cancel
     DATA(page) = parent->ele( `Page`
-        )->a( n = `id`             v = `page-review`
-        )->a( n = `title`          v = `Order Summary`
-        )->a( n = `showNavButton`  b = abap_true
-        )->a( n = `navButtonPress` v = client->_event( `BACK_CHECKOUT` ) ).
+        )->a( n = `id`               v = `summaryPage`
+        )->a( n = `backgroundDesign` v = `Solid`
+        )->a( n = `showHeader`       b = abap_false ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Checkout`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Checkout Summary`
+            )->a( n = `footerRole`   v = `Banner`
+            )->a( n = `footerLabel`  v = `Checkout Footer` ).
 
     DATA(content) = page->ele( `content` ).
 
-    content->ele( `List`
-        )->a( n = `headerText` v = `Items`
-        )->a( n = `items`      v = client->_bind( t_cart )
+    DATA(items) = content->ele( `Panel` ).
 
-        )->ele( `items`
-            )->tag( `ObjectListItem`
-                )->a( n = `title`      v = `{NAME}`
-                )->a( n = `number`     v = `{PRICE_TEXT}`
-                )->a( n = `numberUnit` v = `{CURRENCYCODE}` ).
+    items->ele( `headerToolbar`
+        )->ele( `Toolbar`
+            )->a( n = `id` v = `toolbarProductList`
+
+            )->tag( `Title`
+                )->a( n = `id`         v = `checkoutItems`
+                )->a( n = `text`       v = `Items`
+                )->a( n = `level`      v = `H2`
+                )->a( n = `titleStyle` v = `H4`
+            )->tag( `ToolbarSpacer`
+            )->tag( `Button`
+                )->a( n = `id`      v = `backtoList`
+                )->a( n = `icon`    v = `sap-icon://edit`
+                )->a( n = `tooltip` v = `Back to Wizard`
+                )->a( n = `type`    v = `Emphasized`
+                )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `contentsStep` ) ).
+
+    items->ele( `content`
+        )->ele( `List`
+            )->a( n = `id`         v = `summaryEntryList`
+            )->a( n = `noDataText` v = `Your cart is empty`
+            )->a( n = `items`      v = client->_bind( t_cart )
+
+            )->ele( `items`
+                )->ele( `ObjectListItem`
+                    )->a( n = `intro`            v = `{QUANTITY} x`
+                    )->a( n = `icon`             v = `{PICTUREURL}`
+                    )->a( n = `title`            v = `{NAME}`
+                    )->a( n = `number`           v = `{PRICE_TEXT}`
+                    )->a( n = `numberUnit`       v = `EUR`
+                    )->a( n = `iconDensityAware` b = abap_false
+
+                    )->ele( `firstStatus`
+                        )->tag( `ObjectStatus`
+                            )->a( n = `text`  v = `{STATUS_TEXT}`
+                            )->a( n = `state` v = `{STATUS_STATE}` ).
 
     content->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `title`    v = `Payment`
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `totalPriceTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarTotalPrice`
+
+                )->tag( `ToolbarSpacer`
+                )->tag( `Title`
+                    )->a( n = `id`         v = `totalPriceTitle`
+                    )->a( n = `level`      v = `H3`
+                    )->a( n = `titleStyle` v = `H4`
+                    )->a( n = `text`       v = client->_bind( cart_total ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `toolbarPaymentTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarPayment`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `toolbarPaymentTitle`
+                    )->a( n = `text`       v = `Payment Type`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToPaymentType`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `paymentTypeStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Label`
+                )->a( n = `text` v = `Selected Payment Type`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( pay_type ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `visible`        v = |\{= ${ client->_bind( pay_type ) }==='Credit Card' ? true : false\}|
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `creditCardPaymentTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarCreditCard`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `creditCardPaymentTitle`
+                    )->a( n = `text`       v = `Credit Card Payment`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToCreditCard`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `creditCardStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Label`
+                )->a( n = `text` v = `Cardholder's Name`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cc_name )
+            )->tag( `Label`
+                )->a( n = `text` v = `Card Number`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cc_number )
+            )->tag( `Label`
+                )->a( n = `text` v = `Security Code`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cc_code )
+            )->tag( `Label`
+                )->a( n = `text` v = `Expiration Date (MM/YYYY)`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cc_expire ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `visible`  v = |\{= ${ client->_bind( pay_type ) }==='Bank Transfer' ? true : false\}|
+        )->a( n = `title`    v = `Bank Transfer`
         )->a( n = `editable` b = abap_false
         )->a( n = `layout`   v = `ResponsiveGridLayout`
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Selected Payment Type`
+                )->a( n = `text`   v = `Beneficiary Name`
+                )->a( n = `design` v = `Bold`
             )->tag( `Text`
-                " the payment NAME, not the step id pay_type carries for the
-                " branch: the original's summary reads {/SelectedPayment}, which
-                " is what its SegmentedButton keys are
-                )->a( n = `text` v = client->_bind( pay_name )
+                )->a( n = `text` v = `Singapore Hardware e-Commerce LTD`
             )->tag( `Label`
-                )->a( n = `text` v = `Invoice Address`
+                )->a( n = `text`   v = `Bank`
+                )->a( n = `design` v = `Bold`
+            )->tag( `Text`
+                )->a( n = `text` v = `CITY BANK, SINGAPORE BRANCH`
+            )->tag( `Label`
+                )->a( n = `text`   v = `Account Number`
+                )->a( n = `design` v = `Bold`
+            )->tag( `Text`
+                )->a( n = `text` v = `06110702027218` ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `visible`        v = |\{= ${ client->_bind( pay_type ) }==='Cash on Delivery' ? true : false\}|
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `cashOnDeliveryTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarCOD`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `cashOnDeliveryTitle`
+                    )->a( n = `text`       v = `Cash on Delivery`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToCashOnDelivery`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `cashOnDeliveryStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Label`
+                )->a( n = `text` v = `First Name`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cod_firstname )
+            )->tag( `Label`
+                )->a( n = `text` v = `Last Name`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cod_lastname )
+            )->tag( `Label`
+                )->a( n = `text` v = `Phone Number`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cod_phone )
+            )->tag( `Label`
+                )->a( n = `text` v = `E-mail Address`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( cod_email ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `title`          v = ``
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `invoiceAddressTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarInvoice`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `invoiceAddressTitle`
+                    )->a( n = `text`       v = `Invoice Address`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToInvoiceAddress`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `invoiceStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Label`
+                )->a( n = `text` v = `Address`
             )->tag( `Text`
                 )->a( n = `text` v = client->_bind( inv_address )
             )->tag( `Label`
+                )->a( n = `text` v = `City`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( inv_city )
+            )->tag( `Label`
+                )->a( n = `text` v = `Zip Code`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( inv_zip )
+            )->tag( `Label`
+                )->a( n = `text` v = `Country`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( inv_country )
+            )->tag( `Label`
+                )->a( n = `text` v = `Note`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( inv_note ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `title`          v = ``
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `ariaLabelledBy` v = `deliveryTypeTitle`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbarShippping`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `deliveryTypeTitle`
+                    )->a( n = `text`       v = `Delivery Type`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToDeliveryType`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `deliveryTypeStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Label`
                 )->a( n = `text` v = `Selected Delivery Type`
             )->tag( `Text`
-                )->a( n = `text` v = client->_bind( del_type )
+                )->a( n = `id`   v = `selectedDeliveryMethod`
+                )->a( n = `text` v = client->_bind( del_type ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `visible`        v = |\{= ${ client->_bind( del_different ) }\}|
+        )->a( n = `ariaLabelledBy` v = `shippingAddressTitle1`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbar5ShippingAddress`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `shippingAddressTitle1`
+                    )->a( n = `text`       v = `Shipping Address`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToDeliveryAddress`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `deliveryAddressStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Total`
+                )->a( n = `text` v = `Address`
             )->tag( `Text`
-                )->a( n = `text` v = client->_bind( cart_total ) ).
+                )->a( n = `text` v = client->_bind( del_address )
+            )->tag( `Label`
+                )->a( n = `text` v = `City`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( del_city )
+            )->tag( `Label`
+                )->a( n = `text` v = `Zip Code`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( del_zip )
+            )->tag( `Label`
+                )->a( n = `text` v = `Country`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( del_country )
+            )->tag( `Label`
+                )->a( n = `text` v = `Note`
+            )->tag( `Text`
+                )->a( n = `text` v = client->_bind( del_note ) ).
+
+    content->ele( n = `SimpleForm` ns = `form`
+        )->a( n = `editable`       b = abap_false
+        )->a( n = `layout`         v = `ResponsiveGridLayout`
+        )->a( n = `visible`        v = |\{= !${ client->_bind( del_different ) }\}|
+        )->a( n = `ariaLabelledBy` v = `shippingAddressTitle2`
+
+        )->ele( n = `toolbar` ns = `form`
+            )->ele( `Toolbar`
+                )->a( n = `id` v = `toolbar5SameAsInvoice`
+
+                )->tag( `Title`
+                    )->a( n = `id`         v = `shippingAddressTitle2`
+                    )->a( n = `text`       v = `Shipping Address`
+                    )->a( n = `level`      v = `H2`
+                    )->a( n = `titleStyle` v = `H4`
+                )->tag( `ToolbarSpacer`
+                )->tag( `Button`
+                    )->a( n = `id`      v = `backToDifferentDeliveryAddress`
+                    )->a( n = `icon`    v = `sap-icon://edit`
+                    )->a( n = `tooltip` v = `Back to Wizard`
+                    )->a( n = `type`    v = `Emphasized`
+                    )->a( n = `press`   v = client->_event( val = `EDIT_STEP` arg = `invoiceStep` )
+
+            )->end(
+        )->end(
+        )->ele( n = `content` ns = `form`
+            )->tag( `Text`
+                )->a( n = `text` v = `Same as invoice address` ).
 
     page->ele( `footer`
         )->ele( `Bar`
+            )->a( n = `id` v = `summaryFooterBar`
+
             )->ele( `contentRight`
                 )->tag( `Button`
-                    )->a( n = `id`    v = `submitOrderButton`
-                    )->a( n = `text`  v = `Submit Order`
+                    )->a( n = `id`    v = `submitOrder`
                     )->a( n = `type`  v = `Accept`
-                    )->a( n = `press` v = client->_event( `SUBMIT_ORDER` ) ).
+                    )->a( n = `text`  v = `Submit`
+                    )->a( n = `press` v = client->_event( `WIZARD_SUBMIT` )
+                )->tag( `Button`
+                    )->a( n = `id`    v = `cancelOrder`
+                    )->a( n = `type`  v = `Reject`
+                    )->a( n = `text`  v = `Cancel`
+                    )->a( n = `press` v = client->_event( `WIZARD_CANCEL` ) ).
 
   ENDMETHOD.
 
@@ -1646,10 +2855,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD page_order_completed.
 
     DATA(page) = parent->ele( `Page`
-        )->a( n = `id`               v = `page-ordercompleted`
+        )->a( n = `id`               v = `orderCompletedPage`
         )->a( n = `title`            v = `Order Completed`
         )->a( n = `backgroundDesign` v = `Solid`
         )->a( n = `class`            v = `sapUiContentPadding` ).
+
+    page->ele( `landmarkInfo`
+        )->tag( `PageAccessibleLandmarkInfo`
+            )->a( n = `rootRole`     v = `Region`
+            )->a( n = `rootLabel`    v = `Order Completed`
+            )->a( n = `contentRole`  v = `Main`
+            )->a( n = `contentLabel` v = `Order Completed Message`
+            )->a( n = `headerRole`   v = `Region`
+            )->a( n = `headerLabel`  v = `Order Completed Title`
+            )->a( n = `footerRole`   v = `Region`
+            )->a( n = `footerLabel`  v = `Order Completed Footer` ).
 
     page->ele( `content`
         )->tag( `FormattedText`
@@ -1664,14 +2884,27 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->ele( `contentRight`
                 )->tag( `Button`
                     )->a( n = `id`    v = `returnToShopButton`
-                    )->a( n = `text`  v = `Return to Shop`
                     )->a( n = `type`  v = `Emphasized`
+                    )->a( n = `text`  v = `Return to Shop`
                     )->a( n = `press` v = client->_event( `RETURN_TO_SHOP` ) ).
 
   ENDMETHOD.
 
 
   METHOD on_event.
+
+    " three dispatchers, one per area of the original's controllers - each
+    " answers whether the event was its own
+    IF on_event_shop( ) = abap_false AND on_event_cart( ) = abap_false.
+      on_event_checkout( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD on_event_shop.
+
+    result = abap_true.
 
     CASE client->get_event( ).
 
@@ -1681,39 +2914,111 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " IS the model there
         cart_restore( ).
 
+      WHEN `STATE_CHANGE`.
+        " BaseController.onStateChange: one column means a small screen; with
+        " room for more, a OneColumn layout goes back to two columns
+        small_screen = xsdbool( client->get_event_arg( ) = `1` ).
+        IF small_screen = abap_false AND client->get_event_arg( 2 ) = `OneColumn`.
+          set_layout( `Two` ).
+        ENDIF.
+
+      WHEN `AVATAR`.
+        " BaseController.onAvatarPress: a MessageToast and nothing else -
+        " there is no login behind it
+        client->message_toast_display( `You are now successfully logged in` ).
+
       WHEN `SEARCH`.
+        search_term = client->get_event_arg( ).
         search_refresh( ).
 
+      WHEN `SEARCH_REFRESH`.
+        " Home.onRefresh: the search once more, then the pull-down closes
+        search_refresh( ).
+        client->follow_up_action( val   = client->cs_event-control_by_id
+                                  t_arg = VALUE #( ( `pullToRefresh` ) ( `hide` ) ) ).
+
+      WHEN `HOME`.
+        route_to( `home` ).
+
+      WHEN `SHOW_CATEGORIES` OR `BACK_CATEGORIES`.
+        " Welcome.onShowCategories and Category.onBack
+        route_to( `categories` ).
+
+      WHEN `BACK`.
+        " BaseController.onBack: the route before this one, or home
+        IF t_history IS INITIAL.
+          route_to( `home` ).
+        ELSE.
+          s_route = t_history[ lines( t_history ) ].
+          DELETE t_history INDEX lines( t_history ).
+          route_apply( ).
+        ENDIF.
+
       WHEN `CATEGORY`.
-        DATA(category) = client->get_event_arg( ).
-        category_name = VALUE #( t_categories[ category = category ]-categoryname OPTIONAL ).
-        t_category = VALUE #( ).
-        LOOP AT t_all INTO DATA(product) WHERE category = category.
-          INSERT row_of( product ) INTO TABLE t_category.
-        ENDLOOP.
-        SORT t_category BY name AS TEXT.
-        nav_to( nav = `nav-begin` page = `page-category` ).
+        route_to( name = `category` category = client->get_event_arg( ) ).
 
-      WHEN `PRODUCT`.
-        product_show( client->get_event_arg( ) ).
+      WHEN `PRODUCT` OR `PRODUCT_SELECT`.
+        " a search result (Home._showProduct) or a welcome tile
+        " (Welcome.onSelectProduct): the product's route, which shows its
+        " category in the begin column and the product in the mid column
+        product_route( client->get_event_arg( ) ).
 
-      WHEN `BACK_HOME`.
-        nav_to( nav = `nav-begin` page = `page-home` ).
+      WHEN `CATEGORY_PRODUCT`.
+        " Category.onProductDetails: two columns - or three, if the cart was
+        " open, which the productCart route then opens again
+        DATA(cart_visible) = xsdbool( layout CP `Three*` ).
+        set_layout( `Two` ).
+        product_route( productid = client->get_event_arg( )
+                       name      = COND #( WHEN cart_visible = abap_true THEN `productCart` ELSE `product` ) ).
 
-      WHEN `BACK_WELCOME`.
-        nav_to( nav = `nav-mid` page = `page-welcome` ).
+      WHEN `COMPARE`.
+        " Category.compareProducts: the first product compared stays item 1,
+        " the one chosen now becomes item 2
+        DATA(compare_id) = client->get_event_arg( ).
+        route_to( name     = `comparison`
+                  category = category_of( compare_id )
+                  item1    = COND #( WHEN cmp_item1 IS NOT INITIAL THEN cmp_item1 ELSE compare_id )
+                  item2    = COND #( WHEN cmp_item1 IS NOT INITIAL AND cmp_item1 <> compare_id
+                                     THEN compare_id
+                                     ELSE cmp_item2 ) ).
+
+      WHEN `CMP_REMOVE`.
+        " Comparison.onRemoveComparison: the other product stays, as item 1
+        route_to( name     = `comparison`
+                  category = cmp_category
+                  item1    = COND #( WHEN client->get_event_arg( ) = `1` THEN cmp_item2 ELSE cmp_item1 ) ).
+
+      WHEN `TOGGLE_CART`.
+        " onToggleCart of Welcome, Product and Comparison. The ToggleButton's
+        " new state is the opposite of the layout its `pressed` is derived from
+        DATA(pressed) = xsdbool( layout NP `ThreeColumns*` ).
+        set_layout( COND #( WHEN pressed = abap_true THEN `Three` ELSE `Two` ) ).
+        CASE client->get_event_arg( ).
+          WHEN `welcome`.
+            route_to( COND #( WHEN pressed = abap_true THEN `cart` ELSE `home` ) ).
+          WHEN `product`.
+            route_to( name     = COND #( WHEN pressed = abap_true THEN `productCart` ELSE `product` )
+                      category = s_prod-category
+                      product  = s_prod-productid ).
+          WHEN OTHERS.
+            route_to( name     = COND #( WHEN pressed = abap_true THEN `comparisonCart` ELSE `comparison` )
+                      category = cmp_category
+                      item1    = cmp_item1
+                      item2    = cmp_item2 ).
+        ENDCASE.
 
       WHEN `ADD_TO_CART`.
-        " two call shapes on one wire, as in the original: the product page's
-        " footer button adds the product it SHOWS and sends nothing, a row
-        " action on the welcome page sends the row's id. That is the same
-        " split the original has between BaseController onAddToCart and
-        " Welcome.controller onAddToCart
+        " the product page's footer button adds the product it shows and sends
+        " nothing, a welcome tile sends its row's id - the split the original
+        " has between BaseController.onAddToCart and Welcome.onAddToCart
         DATA(add_id) = client->get_event_arg( ).
         IF add_id IS INITIAL.
-          add_id = prod_id.
+          add_id = s_prod-productid.
         ENDIF.
         cart_add_request( add_id ).
+
+      WHEN `CMP_ADD_TO_CART`.
+        cart_add_request( COND #( WHEN client->get_event_arg( ) = `1` THEN s_cmp1-productid ELSE s_cmp2-productid ) ).
 
       WHEN `OUT_OF_STOCK_CLOSED`.
         " the onClose of the original's confirmation box: only OK orders
@@ -1722,68 +3027,171 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         ENDIF.
         CLEAR add_pending.
 
-      WHEN `TOGGLE_CART`.
-        cart_open = xsdbool( cart_open = abap_false ).
-        layout = COND #( WHEN cart_open = abap_true THEN `ThreeColumnsMidExpanded` ELSE `TwoColumnsMidExpanded` ).
-        IF cart_open = abap_true.
-          nav_to( nav = `nav-end` page = `page-cart` ).
-        ENDIF.
+      WHEN `FILTER_CONFIRM`.
+        " Category.handleConfirm: the slider values become the previous ones,
+        " then _applyFilter
+        flt_low_prev  = flt_low.
+        flt_high_prev = flt_high.
+        filter_confirm( ).
 
-      WHEN `AVATAR`.
-        " the original's BaseController.onAvatarPress: a MessageToast and
-        " nothing else - there is no login behind it
-        client->message_toast_display( `You are now successfully logged in` ).
+      WHEN `FILTER_CANCEL`.
+        " handleCancel: the slider goes back to the last confirmed values
+        flt_low         = flt_low_prev.
+        flt_high        = flt_high_prev.
+        flt_price_count = COND #( WHEN flt_low_prev > 0 OR flt_high_prev <> 5000 THEN 1 ELSE 0 ).
+
+      WHEN `FILTER_CHANGE`.
+        " handleChange: the Price item counts as a filter once the range is
+        " narrower than the slider
+        flt_price_count = COND #( WHEN CONV i( client->get_event_arg( ) ) <> 0
+                                    OR CONV i( client->get_event_arg( 2 ) ) <> 5000
+                                  THEN 1
+                                  ELSE 0 ).
+
+      WHEN `FILTER_RESET`.
+        " handleResetFilters - the dialog clears its own items
+        flt_low         = 0.
+        flt_high        = 5000.
+        flt_price_count = 0.
+
+      WHEN OTHERS.
+        result = abap_false.
+
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD on_event_cart.
+
+    result = abap_true.
+
+    CASE client->get_event( ).
+
+      WHEN `EDIT_TOGGLE`.
+        cart_edit_toggle( ).
 
       WHEN `SAVE_LATER`.
+        " Cart._changeList: into the saved list - unless it is there already -
+        " and out of the cart
         DATA(saved_id) = client->get_event_arg( ).
-        ASSIGN t_cart[ productid = saved_id ] TO FIELD-SYMBOL(<entry>).
-        IF <entry> IS ASSIGNED.
-          INSERT <entry> INTO TABLE t_saved.
-          DELETE t_cart WHERE productid = saved_id.
-          cart_refresh( ).
+        IF NOT line_exists( t_saved[ productid = saved_id ] ).
+          INSERT VALUE #( t_cart[ productid = saved_id ] OPTIONAL ) INTO TABLE t_saved.
         ENDIF.
-
-      WHEN `MOVE_TO_CART`.
-        DATA(moved_id) = client->get_event_arg( ).
-        DELETE t_saved WHERE productid = moved_id.
-        cart_add( moved_id ).
-
-      WHEN `CART_REMOVE`.
-        DELETE t_cart WHERE productid = client->get_event_arg( ).
+        DELETE t_cart WHERE productid = saved_id.
         cart_refresh( ).
 
-      WHEN `PROCEED`.
-        IF t_cart IS INITIAL.
-          client->message_box_display( text = `Your cart is empty` type = `error` ).
-        ELSE.
-          layout = `EndColumnFullScreen`.
-          nav_to( nav = `nav-end` page = `page-checkout` ).
+      WHEN `ADD_BACK`.
+        " onAddBackToBasket: the same move the other way, quantity and all
+        DATA(back_id) = client->get_event_arg( ).
+        IF NOT line_exists( t_cart[ productid = back_id ] ).
+          INSERT VALUE #( t_saved[ productid = back_id ] OPTIONAL ) INTO TABLE t_cart.
         ENDIF.
+        DELETE t_saved WHERE productid = back_id.
+        cart_refresh( ).
+
+      WHEN `CART_DELETE`.
+        " _deleteProduct: every removal is confirmed first
+        delete_list    = client->get_event_arg( ).
+        delete_pending = client->get_event_arg( 2 ).
+        client->message_box_display( text    = `Do you want to remove this entry from your cart?`
+                                     type    = `show`
+                                     title   = `Confirmation`
+                                     actions = VALUE #( ( `DELETE` ) ( `CANCEL` ) )
+                                     onclose = `CART_DELETE_CLOSED` ).
+
+      WHEN `CART_DELETE_CLOSED`.
+        IF client->get_event_arg( ) = `DELETE`.
+          cart_delete( ).
+        ENDIF.
+        CLEAR: delete_pending, delete_list.
+
+      WHEN `CART_SELECT`.
+        cart_show_product( client->get_event_arg( ) ).
+
+      WHEN `CART_PRESS`.
+        " _showProduct on a phone: the cart closes
+        set_layout( `Two` ).
+        product_route( client->get_event_arg( ) ).
+
+      WHEN `PROCEED`.
+        route_to( `checkout` ).
+
+      WHEN OTHERS.
+        result = abap_false.
+
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD on_event_checkout.
+
+    result = abap_true.
+
+    CASE client->get_event( ).
+
+      WHEN `RETURN_TO_SHOP`.
+        " onReturnToShopButtonPress of Checkout and OrderCompleted
+        set_layout( `Two` ).
+        route_to( `home` ).
 
       WHEN `PAY_TYPE`.
-        " the branch of a branching Wizard is an association: it is set from
-        " here and re-issued on every render (sample z2ui5_cl_smp_app_202)
-        pay_type = client->get_event_arg( ).
-        pay_name = SWITCH #( pay_type
-                             WHEN `creditCardStep`      THEN `Credit Card`
-                             WHEN `bankAccountStep`     THEN `Bank Transfer`
-                             WHEN `cashOnDeliveryStep`  THEN `Cash on Delivery`
-                             ELSE pay_type ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `checkoutWizard` ) ( `discardProgress` ) ( `paymentTypeStep` ) ) ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `paymentTypeStep` ) ( `setNextStep` ) ( pay_type ) ) ).
+        " setPaymentMethod -> _setDiscardableProperty: once the wizard is past
+        " the payment step, a new payment type throws that progress away, so
+        " the user is asked first. Before that it simply becomes the branch
+        IF payment_passed = abap_true.
+          client->message_box_display( text    = `Are you sure you want to change the payment type? This will discard your progress.`
+                                       type    = `warning`
+                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       onclose = `PAY_TYPE_DECIDE` ).
+        ELSE.
+          pay_type_apply( ).
+        ENDIF.
+
+      WHEN `PAY_TYPE_DECIDE`.
+        IF client->get_event_arg( ) = `YES`.
+          client->follow_up_action( val   = client->cs_event-control_by_id
+                                    t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `paymentTypeStep` ) ) ).
+          payment_passed = abap_false.
+          invoice_passed = abap_false.
+          pay_type_apply( ).
+        ELSE.
+          " NO keeps the progress, and the SegmentedButton shows the old
+          " payment type again through its bound selectedKey
+          pay_type = pay_type_prev.
+        ENDIF.
+
+      WHEN `PAYMENT_PASSED`.
+        " the bank transfer step has no inputs to check - it only moves the
+        " progress past the payment step
+        payment_passed = abap_true.
 
       WHEN `DELIVERY_DIFFERENT`.
-        del_different = client->get_event_arg( ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `checkoutWizard` ) ( `discardProgress` ) ( `invoiceAddressStep` ) ) ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `invoiceAddressStep` )
-                                                   ( `setNextStep` )
-                                                   ( COND #( WHEN del_different = abap_true
-                                                             THEN `deliveryAddressStep`
-                                                             ELSE `deliveryTypeStep` ) ) ) ).
+        " setDifferentDeliveryAddress - the same question once the wizard is
+        " past the invoice step
+        IF invoice_passed = abap_true.
+          client->message_box_display( text    = `Are you sure you want to change the shipping address? This will discard your progress`
+                                       type    = `warning`
+                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       onclose = `DELIVERY_DECIDE` ).
+        ELSE.
+          delivery_apply( ).
+        ENDIF.
+
+      WHEN `DELIVERY_DECIDE`.
+        IF client->get_event_arg( ) = `YES`.
+          client->follow_up_action( val   = client->cs_event-control_by_id
+                                    t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `invoiceStep` ) ) ).
+          invoice_passed = abap_false.
+          delivery_apply( ).
+        ELSE.
+          del_different = del_prev.
+        ENDIF.
+
+      WHEN `INVOICE_PASSED`.
+        payment_passed = abap_true.
+        invoice_passed = abap_true.
 
       WHEN `CHECK_INPUT`.
         " the change handlers of the original (checkCreditCardStep & co.):
@@ -1793,41 +3201,139 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         steps_check( ).
 
       WHEN `CHECK_STEP`.
-        " onCheckStepActivation: the step just opened is decided without
-        " marking a field, as _checkInputFields only asks the types
+        " onCheckStepActivation: the messages go (_clearMessages), then the
+        " step just opened is decided without marking a field, as
+        " _checkInputFields only asks the types. Every step that sends it lies
+        " behind the payment step, the delivery address behind the invoice
+        payment_passed = abap_true.
+        IF client->get_event_arg( ) = `deliveryAddressStep`.
+          invoice_passed = abap_true.
+        ENDIF.
+        messages_clear( ).
         steps_check( ).
 
       WHEN `WIZARD_COMPLETE`.
-        " checkCompleted: the original refuses the summary while its message
-        " model holds an error. A field can be broken again after its step
-        " was passed, so the steps on the chosen path are decided once more
-        steps_check( ).
-        IF ( pay_type = `creditCardStep` AND cc_valid = abap_false )
-            OR ( pay_type = `cashOnDeliveryStep` AND cod_valid = abap_false )
-            OR inv_valid = abap_false
-            OR ( del_different = abap_true AND del_valid = abap_false ).
+        " checkCompleted: no summary while the message model holds a message
+        IF t_messages IS NOT INITIAL.
           client->message_box_display( text = `One or more fields contain invalid information` type = `error` ).
         ELSE.
-          nav_to( nav = `nav-end` page = `page-review` ).
+          nav_to( nav = `wizardNavContainer` page = `summaryPage` ).
         ENDIF.
 
-      WHEN `BACK_CHECKOUT`.
-        nav_to( nav = `nav-end` page = `page-checkout` ).
+      WHEN `EDIT_STEP`.
+        wizard_to_step( client->get_event_arg( ) ).
 
-      WHEN `BACK_CART`.
-        layout = `ThreeColumnsMidExpanded`.
-        nav_to( nav = `nav-end` page = `page-cart` ).
+      WHEN `WIZARD_SUBMIT`.
+        client->message_box_display( text    = `Are you sure you want to submit your order?`
+                                     type    = `confirm`
+                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     onclose = `WIZARD_SUBMIT_CLOSED` ).
 
-      WHEN `SUBMIT_ORDER`.
-        order_submit( ).
+      WHEN `WIZARD_CANCEL`.
+        client->message_box_display( text    = `Are you sure you want to cancel your order?`
+                                     type    = `warning`
+                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     onclose = `WIZARD_CANCEL_CLOSED` ).
 
-      WHEN `RETURN_TO_SHOP`.
-        cart_open = abap_false.
-        layout    = `TwoColumnsMidExpanded`.
-        nav_to( nav = `nav-end` page = `page-cart` ).
-        nav_to( nav = `nav-mid` page = `page-welcome` ).
+      WHEN `WIZARD_SUBMIT_CLOSED` OR `WIZARD_CANCEL_CLOSED`.
+        " _handleSubmitOrCancel: YES resets the wizard, empties the cart - the
+        " saved-for-later list stays - and goes on to the order confirmation or
+        " home. The original posts nothing either
+        IF client->get_event_arg( ) = `YES`.
+          wizard_reset( ).
+          t_cart = VALUE #( ).
+          cart_refresh( ).
+          route_to( COND #( WHEN client->get_event( ) = `WIZARD_SUBMIT_CLOSED` THEN `ordercompleted` ELSE `home` ) ).
+        ENDIF.
+
+      WHEN OTHERS.
+        result = abap_false.
 
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD route_to.
+
+    " router.navTo( ): what was on show goes onto the history the Back
+    " buttons walk, then the new route is displayed
+    IF s_route-name IS NOT INITIAL.
+      INSERT s_route INTO TABLE t_history.
+    ENDIF.
+    s_route = VALUE #( name     = name
+                       category = category
+                       product  = product
+                       item1    = item1
+                       item2    = item2 ).
+    route_apply( ).
+
+  ENDMETHOD.
+
+
+  METHOD route_apply.
+
+    " the targets of each route of manifest.json, column by column, and what
+    " the controllers' route-matched handlers load for them
+    CASE s_route-name.
+      WHEN `category`.
+        category_load( s_route-category ).
+        nav_to( nav = `nav-begin` page = `page-category` ).
+        nav_to( nav = `nav-mid`   page = `page-welcome` ).
+      WHEN `product` OR `productCart`.
+        category_load( category = s_route-category productid = s_route-product ).
+        nav_to( nav = `nav-begin` page = `page-category` ).
+        product_show( s_route-product ).
+      WHEN `comparison` OR `comparisonCart`.
+        " Category._loadSuppliers clears the comparison model, and
+        " Comparison._onRoutePatternMatched fills it again from the route
+        category_load( s_route-category ).
+        cmp_category = s_route-category.
+        cmp_item1    = s_route-item1.
+        cmp_item2    = s_route-item2.
+        nav_to( nav = `nav-begin` page = `page-category` ).
+        comparison_show( ).
+      WHEN `checkout`.
+        nav_to( nav = `nav-begin` page = `wizardNavContainer` ).
+      WHEN `ordercompleted`.
+        nav_to( nav = `nav-begin` page = `orderCompletedPage` ).
+      WHEN OTHERS.
+        " home, categories and cart
+        nav_to( nav = `nav-begin` page = `page-home` ).
+        nav_to( nav = `nav-mid`   page = `page-welcome` ).
+    ENDCASE.
+
+    " the layouts the route-matched handlers set
+    CASE s_route-name.
+      WHEN `home`.
+        " Welcome._onRouteMatched
+        set_layout( `Two` ).
+      WHEN `categories`.
+        " Home._onRouteMatched
+        IF small_screen = abap_true.
+          set_layout( `One` ).
+        ENDIF.
+      WHEN `category`.
+        " Category._loadCategories
+        set_layout( COND #( WHEN small_screen = abap_true THEN `One` ELSE `Two` ) ).
+      WHEN `checkout`.
+        " the checkout route's handler in Checkout.onInit
+        set_layout( `One` ).
+      WHEN `cart` OR `productCart` OR `comparisonCart`.
+        " Cart._routePatternMatched: three columns, and no row selected
+        nav_to( nav = `nav-end` page = `page-cart` ).
+        set_layout( `Three` ).
+        client->follow_up_action( val   = client->cs_event-control_by_id
+                                  t_arg = VALUE #( ( `entryList` ) ( `removeSelections` ) ) ).
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD set_layout.
+
+    " BaseController._setLayout
+    layout = |{ columns }Column{ COND #( WHEN columns = `One` THEN `` ELSE `sMidExpanded` ) }|.
 
   ENDMETHOD.
 
@@ -1842,8 +3348,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         page_begin = page.
       WHEN `nav-mid`.
         page_mid = page.
-      WHEN OTHERS.
+      WHEN `nav-end`.
         page_end = page.
+      WHEN OTHERS.
+        page_wizard = page.
     ENDCASE.
 
     client->follow_up_action( val   = client->cs_event-control_by_id
@@ -1852,51 +3360,105 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD product_show.
+  METHOD category_load.
 
-    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
-    IF <product> IS NOT ASSIGNED.
-      RETURN.
+    " Category._loadCategories and _loadSuppliers: the category and its
+    " products, the product of a product route selected (fnDataReceived), and
+    " the comparison model cleared (_clearComparison)
+    category_name = VALUE #( t_categories[ category = category ]-categoryname OPTIONAL ).
+    category_rows( category = category productid = productid ).
+    CLEAR: cmp_category, cmp_item1, cmp_item2.
+
+  ENDMETHOD.
+
+
+  METHOD category_rows.
+
+    " the list binding of the category's Products, sorted by Name - with the
+    " filter of the dialog still on it
+    t_category = VALUE #( ).
+    LOOP AT t_all INTO DATA(product) WHERE category = category.
+      IF filter_match( product ) = abap_true.
+        DATA(row) = row_of( product ).
+        row-selected = xsdbool( product-productid = productid ).
+        INSERT row INTO TABLE t_category.
+      ENDIF.
+    ENDLOOP.
+    SORT t_category BY name AS TEXT.
+
+  ENDMETHOD.
+
+
+  METHOD filter_match.
+
+    " _applyFilter's Filter objects: OR inside a group, AND across groups,
+    " the price BT the slider's range
+    result = abap_true.
+    IF flt_status IS NOT INITIAL AND NOT line_exists( flt_status[ table_line = product-status ] ).
+      result = abap_false.
+    ELSEIF flt_supplier IS NOT INITIAL AND NOT line_exists( flt_supplier[ table_line = product-suppliername ] ).
+      result = abap_false.
+    ELSEIF flt_price = abap_true.
+      DATA(price) = CONV ty_amount( product-price ).
+      IF price < flt_low_prev OR price > flt_high_prev.
+        result = abap_false.
+      ENDIF.
     ENDIF.
 
-    prod_id       = <product>-productid.
-    prod_name     = <product>-name.
-    prod_supplier = <product>-suppliername.
-    prod_desc     = <product>-shortdescription.
-    prod_price    = price_text( <product>-price ).
-    prod_currency = <product>-currencycode.
-    prod_picture  = picture_url( <product>-pictureurl ).
-    prod_status   = SWITCH #( <product>-status
-                              WHEN `A` THEN `Available`
-                              WHEN `O` THEN `Out of stock`
-                              WHEN `D` THEN `Discontinued`
-                              ELSE <product>-status ).
-    prod_state    = SWITCH #( <product>-status
-                              WHEN `A` THEN `Success`
-                              WHEN `O` THEN `Warning`
-                              WHEN `D` THEN `Error`
-                              ELSE `None` ).
-    prod_weight   = |{ <product>-weight } { <product>-weightunit }|.
-    prod_measures = |{ <product>-dimensionwidth } { <product>-dimensionunit }, | &&
-                    |{ <product>-dimensiondepth } { <product>-dimensionunit }, | &&
-                    |{ <product>-dimensionheight } { <product>-dimensionunit }|.
+  ENDMETHOD.
 
-    nav_to( nav = `nav-mid` page = `page-product` ).
-    IF layout IS INITIAL OR layout = `OneColumn`.
-      layout = `TwoColumnsMidExpanded`.
+
+  METHOD filter_confirm.
+
+    " _applyFilter: the selected items become the list's filter, and the info
+    " toolbar names the groups that filter - the compound keys in the
+    " dialog's order, the price range last
+    DATA keys TYPE string_table.
+
+    flt_status = VALUE #( ).
+    IF flt_available = abap_true.
+      INSERT `A` INTO TABLE flt_status.
     ENDIF.
+    IF flt_out_of_stock = abap_true.
+      INSERT `O` INTO TABLE flt_status.
+    ENDIF.
+    IF flt_discontinued = abap_true.
+      INSERT `D` INTO TABLE flt_status.
+    ENDIF.
+    flt_supplier = VALUE #( ).
+    LOOP AT t_suppliers INTO DATA(supplier) WHERE selected = abap_true.
+      INSERT supplier-suppliername INTO TABLE flt_supplier.
+    ENDLOOP.
+    flt_price = xsdbool( flt_low <> 0 OR flt_high <> 5000 ).
+
+    category_rows( category  = s_route-category
+                   productid = VALUE #( t_category[ selected = abap_true ]-productid OPTIONAL ) ).
+
+    IF flt_status IS NOT INITIAL.
+      INSERT `Availability` INTO TABLE keys.
+    ENDIF.
+    IF flt_supplier IS NOT INITIAL.
+      INSERT `Supplier` INTO TABLE keys.
+    ENDIF.
+    IF flt_price = abap_true.
+      INSERT |Price ({ flt_low_prev } - { flt_high_prev } EUR)| INTO TABLE keys.
+    ENDIF.
+    info_visible = xsdbool( keys IS NOT INITIAL ).
+    info_text    = COND #( WHEN keys IS NOT INITIAL THEN |Filtered by { concat_lines_of( table = keys sep = `, ` ) }| ).
 
   ENDMETHOD.
 
 
   METHOD search_refresh.
 
-    " the home list IS the search result; the original hides it while the search
-    " is empty and shows the categories instead
+    " Home._search: the result list IS the search and shows instead of the
+    " categories while the field holds a text. The original filters with
+    " Contains on Name, which the mock server answers with a case-sensitive
+    " substringof - so does find( ) here
     t_search = VALUE #( ).
     IF search_term IS NOT INITIAL.
-      LOOP AT t_all INTO DATA(found) WHERE name IS NOT INITIAL.
-        IF to_upper( found-name ) CS to_upper( search_term ).
+      LOOP AT t_all INTO DATA(found).
+        IF find( val = found-name sub = search_term ) >= 0.
           INSERT row_of( found ) INTO TABLE t_search.
         ENDIF.
       ENDLOOP.
@@ -1908,27 +3470,67 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cart_add.
+  METHOD product_route.
+
+    route_to( name = name category = category_of( productid ) product = productid ).
+
+  ENDMETHOD.
+
+
+  METHOD category_of.
+
+    result = VALUE #( t_all[ productid = productid ]-category OPTIONAL ).
+
+  ENDMETHOD.
+
+
+  METHOD product_show.
+
+    " the product view's element binding
+    s_prod = detail_of( productid ).
+    nav_to( nav = `nav-mid` page = `page-product` ).
+
+  ENDMETHOD.
+
+
+  METHOD detail_of.
 
     ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
     IF <product> IS NOT ASSIGNED.
+      " enum-typed: an empty state is rejected outright
+      result-status_state = `None`.
       RETURN.
     ENDIF.
 
-    ASSIGN t_cart[ productid = productid ] TO FIELD-SYMBOL(<entry>).
-    IF <entry> IS ASSIGNED.
-      <entry>-quantity = <entry>-quantity + 1.
-    ELSE.
-      INSERT VALUE #( productid    = <product>-productid
-                      name         = <product>-name
-                      pictureurl   = picture_url( <product>-pictureurl )
-                      price_text   = price_text( <product>-price )
-                      currencycode = <product>-currencycode
-                      quantity     = 1 ) INTO TABLE t_cart.
-    ENDIF.
+    result = VALUE #( productid        = <product>-productid
+                      category         = <product>-category
+                      name             = <product>-name
+                      suppliername     = <product>-suppliername
+                      shortdescription = <product>-shortdescription
+                      price_text       = price_text( <product>-price )
+                      pictureurl       = picture_url( <product>-pictureurl )
+                      status_text      = status_text( <product>-status )
+                      status_state     = status_state( <product>-status )
+                      weight_text      = |{ <product>-weight } { <product>-weightunit }|
+                      " Product.view.xml and ComparisonItem.fragment.xml bind
+                      " `{DimensionWidth} {Unit}, ...` - and the entity has no Unit,
+                      " so the original shows the three numbers with an empty unit
+                      measures_text    = |{ <product>-dimensionwidth } , { <product>-dimensiondepth } , | &&
+                                         |{ <product>-dimensionheight } | ).
 
-    cart_refresh( ).
-    client->message_toast_display( |{ <product>-name } has been added to your shopping cart.| ).
+  ENDMETHOD.
+
+
+  METHOD comparison_show.
+
+    " Comparison._onRoutePatternMatched: a panel per product of the route,
+    " the placeholder while one of the two is missing
+    s_cmp1       = detail_of( cmp_item1 ).
+    s_cmp2       = detail_of( cmp_item2 ).
+    cmp1_visible = xsdbool( cmp_item1 IS NOT INITIAL ).
+    cmp2_visible = xsdbool( cmp_item2 IS NOT INITIAL ).
+    cmp_placeholder = xsdbool( cmp_item1 IS INITIAL OR cmp_item2 IS INITIAL ).
+    nav_to( nav = `nav-mid` page = `page-comparison` ).
 
   ENDMETHOD.
 
@@ -1945,9 +3547,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     CASE <product>-status.
       WHEN `D`.
-        client->message_box_display( text    = `This product has been discontinued and cannot be ordered anymore`
-                                     type    = `error`
-                                     actions = VALUE #( ( `CLOSE` ) ) ).
+        " MessageBox.show with icon ERROR and CLOSE - its title option is
+        " spelled `titles` there, so the box opens without a title. The
+        " global call takes the option object 1:1, where message_box_display
+        " would add the type's own title
+        client->follow_up_action( val   = client->cs_event-control_global
+                                  t_arg = VALUE #( ( `MESSAGE_BOX` )
+                                                   ( `show` )
+                                                   ( `This product has been discontinued and cannot be ordered anymore` )
+                                                   ( `{"icon":"ERROR","actions":["CLOSE"]}` ) ) ).
       WHEN `O`.
         add_pending = productid.
         client->message_box_display( text    = `This product is currently out of stock, but you can order it. ` &&
@@ -1959,6 +3567,247 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN OTHERS.
         cart_add( productid ).
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD cart_add.
+
+    " cart._updateCartItem: a new entry with quantity 1, or one more of it
+    DATA(entry) = entry_of( productid ).
+    IF entry-productid IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    ASSIGN t_cart[ productid = productid ] TO FIELD-SYMBOL(<entry>).
+    IF <entry> IS ASSIGNED.
+      <entry>-quantity = <entry>-quantity + 1.
+    ELSE.
+      entry-quantity = 1.
+      INSERT entry INTO TABLE t_cart.
+    ENDIF.
+
+    cart_refresh( ).
+    client->message_toast_display( |Product "{ entry-name }" added to your shopping cart| ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_delete.
+
+    " the DELETE of _deleteProduct's confirmation: out of the list it was
+    " deleted from, and a toast naming it
+    DATA(name) = COND string( WHEN delete_list = `entryList`
+                              THEN VALUE #( t_cart[ productid = delete_pending ]-name OPTIONAL )
+                              ELSE VALUE #( t_saved[ productid = delete_pending ]-name OPTIONAL ) ).
+    IF delete_list = `entryList`.
+      DELETE t_cart WHERE productid = delete_pending.
+    ELSE.
+      DELETE t_saved WHERE productid = delete_pending.
+    ENDIF.
+    cart_refresh( ).
+    client->message_toast_display( |Product "{ name }" removed from cart| ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_edit_toggle.
+
+    " Cart._toggleCfgModel: Delete mode for both lists and the page title
+    " that says so
+    in_delete  = xsdbool( in_delete = abap_false ).
+    cart_title = COND #( WHEN in_delete = abap_true THEN `Edit Cart` ELSE `Shopping Cart` ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_show_product.
+
+    " Cart._showProduct on a desktop: the product, with the cart still open
+    " if it is
+    product_route( productid = productid name = COND #( WHEN layout CP `Three*` THEN `productCart` ELSE `product` ) ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_mirror.
+
+    " the totalPrice formatter of the original, computed where the prices are
+    DATA total TYPE ty_amount.
+
+    FIELD-SYMBOLS <product> TYPE ty_s_product.
+
+    LOOP AT t_cart INTO DATA(entry).
+      " UNASSIGN first: inside a loop a field symbol stays assigned from the
+      " previous round, so IS ASSIGNED alone would read the PREVIOUS row
+      UNASSIGN <product>.
+      ASSIGN t_all[ productid = entry-productid ] TO <product>.
+      IF <product> IS ASSIGNED.
+        total = total + CONV ty_amount( <product>-price ) * entry-quantity.
+      ENDIF.
+    ENDLOOP.
+
+    cart_total = |Total: { price_text( |{ total }| ) } EUR|.
+
+    " formatter.hasItems - for Edit either list, for Proceed the cart
+    cart_any    = xsdbool( t_cart IS NOT INITIAL OR t_saved IS NOT INITIAL ).
+    cart_filled = xsdbool( t_cart IS NOT INITIAL ).
+
+    " entryList and saveForLaterList both sort by Name in the original, and the
+    " checkout's two cart lists bind the same table
+    SORT t_cart BY name AS TEXT.
+    SORT t_saved BY name AS TEXT.
+
+    " the mirror is what keeps the reading control quiet - it compares by
+    " value and fires only on a difference
+    s_storage-value = VALUE #( cart = t_cart saved = t_saved ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_refresh.
+
+    " the mirror plus the WRITE half: the same two tables into the browser's
+    " local storage, under the key the original uses. Only a round-trip that
+    " CHANGED the cart writes. Startup and the restore itself mirror without
+    " writing (cart_mirror): the app knows nothing about the browser's cart
+    " when model_init runs, and a write there put an empty cart over the
+    " stored one before the reading control had reported it - which is
+    " exactly the cart that went missing on every app restart
+    cart_mirror( ).
+
+    " STORE_DATA takes ONE argument and the frontend destructures it as
+    " \{ TYPE, PREFIX, KEY, VALUE \}: an argument that parses as JSON is embedded
+    " as real JSON, anything else stays a string. `${ _bind( s_storage ) }` -
+    " what sample z2ui5_cl_smp_app_327 passes - is a BINDING, which only a
+    " VIEW-WIRED action has UI5 resolve; from a handler the action is queued
+    " and the argument arrives as the literal text `${/S_STORAGE}`. Until
+    " abap2UI5 8574816 (2026-09-14, in the pin since #211) that text was
+    " destructured as the payload, all four parts undefined, and an empty
+    " VALUE is the frontend's signal to REMOVE the key - so this wrote nothing,
+    " ever, and said nothing either. The frontend reads a string payload as a
+    " MODEL PATH now and resolves it itself, so the binding form works from a
+    " handler too; the payload stays composed here because a JSON argument is
+    " the form that works on every pin this class has run on
+    client->follow_up_action( val   = client->cs_event-store_data
+                              t_arg = VALUE #( ( storage_json( ) ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD storage_json.
+
+    " the STORE_DATA payload, as JSON: the same two tables the Storage control
+    " holds in its bound `value`, so what is written is what the control reads
+    " back and compares against, and it stays quiet on the next render
+    result = |\{"TYPE":"{ s_storage-type }","PREFIX":"{ s_storage-prefix }",| &&
+             |"KEY":"{ s_storage-key }","VALUE":\{| &&
+             |"CART":{ entries_json( t_cart ) },"SAVED":{ entries_json( t_saved ) }\}\}|.
+
+  ENDMETHOD.
+
+
+  METHOD entries_json.
+
+    " a JSON array of the fields the bound value carries back
+    DATA(rows) = ``.
+
+    LOOP AT entries INTO DATA(entry).
+      IF rows IS NOT INITIAL.
+        rows = |{ rows },|.
+      ENDIF.
+      rows = |{ rows }\{"PRODUCTID":"{ json_escape( entry-productid ) }",| &&
+             |"CATEGORY":"{ json_escape( entry-category ) }",| &&
+             |"NAME":"{ json_escape( entry-name ) }",| &&
+             |"PICTUREURL":"{ json_escape( entry-pictureurl ) }",| &&
+             |"PRICE_TEXT":"{ json_escape( entry-price_text ) }",| &&
+             |"CURRENCYCODE":"{ json_escape( entry-currencycode ) }",| &&
+             |"QUANTITY":{ entry-quantity },| &&
+             |"STATUS_TEXT":"{ json_escape( entry-status_text ) }",| &&
+             |"STATUS_STATE":"{ json_escape( entry-status_state ) }"\}|.
+    ENDLOOP.
+
+    result = |[{ rows }]|.
+
+  ENDMETHOD.
+
+
+  METHOD json_escape.
+
+    " the characters a JSON string cannot carry raw: the two delimiters and
+    " the three line/tab controls a text field can hold (same shape as
+    " samples-stack app 489). The backslash first, or it would escape the
+    " escapes added after it
+    result = replace( val = val    sub = `\`  with = `\\` occ = 0 ).
+    result = replace( val = result sub = |\n| with = `\n`  occ = 0 ).
+    result = replace( val = result sub = |\r| with = `\r`  occ = 0 ).
+    result = replace( val = result sub = |\t| with = `\t`  occ = 0 ).
+    result = replace( val = result sub = `"`  with = `\"`  occ = 0 ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_restore.
+
+    " NOTHING IS PARSED HERE. `value` is bound two-way
+    " (client->_bind( s_storage-value ) on the Storage control), so the
+    " value the control read out of the browser is written into the model by
+    " UI5, travels back with THIS very event, and the framework has put it
+    " into s_storage-value before on_event( ) runs - whole_value_apply in
+    " z2ui5_cl_ui5_srv_model converts a whole object with
+    " to_abap( iv_corresponding = abap_true ), which IS the
+    " corresponding-only mapping an app would otherwise reach a JSON reader
+    " for. The stored payload is nested (two arrays of rows), and nested is
+    " exactly the case a hand-written `find` walk does not answer: binding
+    " the value is the answer instead.
+    DATA(stored) = s_storage-value.
+    t_cart  = stored-cart.
+    t_saved = stored-saved.
+
+    " the rows keep their product and quantity; what the lists show of a
+    " product is taken from the catalogue again, which also fills the fields
+    " a cart stored by an older version of this class does not carry
+    LOOP AT t_cart ASSIGNING FIELD-SYMBOL(<entry>).
+      DATA(fresh) = entry_of( <entry>-productid ).
+      IF fresh-productid IS NOT INITIAL.
+        fresh-quantity = <entry>-quantity.
+        <entry> = fresh.
+      ENDIF.
+    ENDLOOP.
+    LOOP AT t_saved ASSIGNING <entry>.
+      fresh = entry_of( <entry>-productid ).
+      IF fresh-productid IS NOT INITIAL.
+        fresh-quantity = <entry>-quantity.
+        <entry> = fresh.
+      ENDIF.
+    ENDLOOP.
+
+    " mirror, no write, when what was read IS what is stored - the mirror is
+    " what stops the reading control from reporting it again on the next
+    " render. A refreshed row is written back, so the key holds the same
+    cart_mirror( ).
+    IF s_storage-value <> stored.
+      cart_refresh( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD entry_of.
+
+    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    IF <product> IS NOT ASSIGNED.
+      RETURN.
+    ENDIF.
+
+    result = VALUE #( productid    = <product>-productid
+                      category     = <product>-category
+                      name         = <product>-name
+                      pictureurl   = picture_url( <product>-pictureurl )
+                      price_text   = price_text( <product>-price )
+                      currencycode = <product>-currencycode
+                      status_text  = status_text( <product>-status )
+                      status_state = status_state( <product>-status ) ).
 
   ENDMETHOD.
 
@@ -1982,6 +3831,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     <text>  = input_error( field ).
     <state> = COND #( WHEN <text> IS INITIAL THEN `None` ELSE `Error` ).
+    messages_refresh( ).
 
   ENDMETHOD.
 
@@ -2088,174 +3938,6 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cart_mirror.
-
-    " the totalPrice formatter of the original, computed where the prices are
-    DATA total TYPE ty_amount.
-
-    FIELD-SYMBOLS <product> TYPE ty_s_product.
-
-    LOOP AT t_cart INTO DATA(entry).
-      " UNASSIGN first: inside a loop a field symbol stays assigned from the
-      " previous round, so IS ASSIGNED alone would read the PREVIOUS row
-      UNASSIGN <product>.
-      ASSIGN t_all[ productid = entry-productid ] TO <product>.
-      IF <product> IS ASSIGNED.
-        total = total + CONV ty_amount( <product>-price ) * entry-quantity.
-      ENDIF.
-    ENDLOOP.
-
-    cart_total = |Total: { price_text( |{ total }| ) } EUR|.
-
-    " entryList and saveForLaterList both sort by Name in the original, and the
-    " checkout's two cart lists bind the same table
-    SORT t_cart BY name AS TEXT.
-    SORT t_saved BY name AS TEXT.
-
-    " the mirror is what keeps the reading control quiet - it compares by
-    " value and fires only on a difference
-    s_storage-value = VALUE #( cart = t_cart saved = t_saved ).
-
-  ENDMETHOD.
-
-
-  METHOD cart_refresh.
-
-    " the mirror plus the WRITE half: the same two tables into the browser's
-    " local storage, under the key the original uses. Only a round-trip that
-    " CHANGED the cart writes. Startup and the restore itself mirror without
-    " writing (cart_mirror): the app knows nothing about the browser's cart
-    " when model_init runs, and a write there put an empty cart over the
-    " stored one before the reading control had reported it - which is
-    " exactly the cart that went missing on every app restart
-    cart_mirror( ).
-
-    " STORE_DATA takes ONE argument and the frontend destructures it as
-    " \{ TYPE, PREFIX, KEY, VALUE \}: an argument that parses as JSON is embedded
-    " as real JSON, anything else stays a string. `${ _bind( s_storage ) }` -
-    " what sample z2ui5_cl_smp_app_327 passes - is a BINDING, which only a
-    " VIEW-WIRED action has UI5 resolve; from a handler the action is queued
-    " and the argument arrives as the literal text `${/S_STORAGE}`. Until
-    " abap2UI5 8574816 (2026-09-14, in the pin since #211) that text was
-    " destructured as the payload, all four parts undefined, and an empty
-    " VALUE is the frontend's signal to REMOVE the key - so this wrote nothing,
-    " ever, and said nothing either. The frontend reads a string payload as a
-    " MODEL PATH now and resolves it itself, so the binding form works from a
-    " handler too; the payload stays composed here because a JSON argument is
-    " the form that works on every pin this class has run on
-    client->follow_up_action( val   = client->cs_event-store_data
-                              t_arg = VALUE #( ( storage_json( ) ) ) ).
-
-  ENDMETHOD.
-
-
-  METHOD storage_json.
-
-    " the STORE_DATA payload, as JSON: the same two tables the Storage control
-    " holds in its bound `value`, so what is written is what the control reads
-    " back and compares against, and it stays quiet on the next render
-    result = |\{"TYPE":"{ s_storage-type }","PREFIX":"{ s_storage-prefix }",| &&
-             |"KEY":"{ s_storage-key }","VALUE":\{| &&
-             |"CART":{ entries_json( t_cart ) },"SAVED":{ entries_json( t_saved ) }\}\}|.
-
-  ENDMETHOD.
-
-
-  METHOD entries_json.
-
-    " a JSON array of the six fields the bound value carries back
-    DATA(rows) = ``.
-
-    LOOP AT entries INTO DATA(entry).
-      IF rows IS NOT INITIAL.
-        rows = |{ rows },|.
-      ENDIF.
-      rows = |{ rows }\{"PRODUCTID":"{ json_escape( entry-productid ) }",| &&
-             |"NAME":"{ json_escape( entry-name ) }",| &&
-             |"PICTUREURL":"{ json_escape( entry-pictureurl ) }",| &&
-             |"PRICE_TEXT":"{ json_escape( entry-price_text ) }",| &&
-             |"CURRENCYCODE":"{ json_escape( entry-currencycode ) }",| &&
-             |"QUANTITY":{ entry-quantity }\}|.
-    ENDLOOP.
-
-    result = |[{ rows }]|.
-
-  ENDMETHOD.
-
-
-  METHOD json_escape.
-
-    " the characters a JSON string cannot carry raw: the two delimiters and
-    " the three line/tab controls a text field can hold (same shape as
-    " samples-stack app 489). The backslash first, or it would escape the
-    " escapes added after it
-    result = replace( val = val    sub = `\`  with = `\\` occ = 0 ).
-    result = replace( val = result sub = |\n| with = `\n`  occ = 0 ).
-    result = replace( val = result sub = |\r| with = `\r`  occ = 0 ).
-    result = replace( val = result sub = |\t| with = `\t`  occ = 0 ).
-    result = replace( val = result sub = `"`  with = `\"`  occ = 0 ).
-
-  ENDMETHOD.
-
-
-  METHOD cart_restore.
-
-    " NOTHING IS PARSED HERE. `value` is bound two-way
-    " (client->_bind( s_storage-value ) on the Storage control), so the
-    " value the control read out of the browser is written into the model by
-    " UI5, travels back with THIS very event, and the framework has put it
-    " into s_storage-value before on_event( ) runs - whole_value_apply in
-    " z2ui5_cl_ui5_srv_model converts a whole object with
-    " to_abap( iv_corresponding = abap_true ), which IS the
-    " corresponding-only mapping an app would otherwise reach a JSON reader
-    " for. The stored payload is nested (two arrays of six-field rows), and
-    " nested is exactly the case a hand-written `find` walk does not answer:
-    " binding the value is the answer instead.
-    t_cart  = s_storage-value-cart.
-    t_saved = s_storage-value-saved.
-
-    " mirror, no write: what was just read IS what is stored, and the mirror
-    " is what stops the reading control from reporting it again on the next
-    " render
-    cart_mirror( ).
-
-  ENDMETHOD.
-
-
-  METHOD order_submit.
-
-    " the original posts nothing either - it clears the cart and shows the
-    " completed page
-    t_cart     = VALUE #( ).
-    cart_total = ``.
-    cart_refresh( ).
-    nav_to( nav = `nav-end` page = `page-ordercompleted` ).
-
-  ENDMETHOD.
-
-
-  METHOD row_of.
-
-    result = VALUE #( productid    = product-productid
-                      name         = product-name
-                      suppliername = product-suppliername
-                      price_text   = price_text( product-price )
-                      currencycode = product-currencycode
-                      pictureurl   = picture_url( product-pictureurl )
-                      status_text  = SWITCH #( product-status
-                                               WHEN `A` THEN `Available`
-                                               WHEN `O` THEN `Out of stock`
-                                               WHEN `D` THEN `Discontinued`
-                                               ELSE product-status )
-                      status_state = SWITCH #( product-status
-                                               WHEN `A` THEN `Success`
-                                               WHEN `O` THEN `Warning`
-                                               WHEN `D` THEN `Error`
-                                               ELSE `None` ) ).
-
-  ENDMETHOD.
-
-
   METHOD picture_url.
 
     " the original's pictureUrl formatter: `sap.ui.require.toUrl( )` against
@@ -2290,6 +3972,195 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ENDWHILE.
 
     result = |{ whole }{ grouped },{ fraction }|.
+
+  ENDMETHOD.
+
+
+  METHOD messages_refresh.
+
+    " the message model: one Error per input whose type failed, with the
+    " label of its field as the additional text - what the original's
+    " handleValidation puts there, and what the footer button counts
+    FIELD-SYMBOLS <state> TYPE string.
+    FIELD-SYMBOLS <text>  TYPE string.
+    FIELD-SYMBOLS <label> TYPE string.
+
+    DATA(labels) = VALUE ty_s_checks( cc_name       = `Cardholder's Name`
+                                      cc_number     = `Card Number`
+                                      cc_code       = `Security Code`
+                                      cc_expire     = `Expiration Date (MM/YYYY)`
+                                      cod_firstname = `First Name`
+                                      cod_lastname  = `Last Name`
+                                      cod_phone     = `Phone Number`
+                                      cod_email     = `E-mail Address`
+                                      inv_address   = `Address`
+                                      inv_city      = `City`
+                                      inv_zip       = `Zip Code`
+                                      inv_country   = `Country`
+                                      del_address   = `Address`
+                                      del_city      = `City`
+                                      del_zip       = `Zip Code`
+                                      del_country   = `Country` ).
+
+    t_messages = VALUE #( ).
+    DO.
+      ASSIGN COMPONENT sy-index OF STRUCTURE s_state TO <state>.
+      IF sy-subrc <> 0.
+        EXIT.
+      ENDIF.
+      ASSIGN COMPONENT sy-index OF STRUCTURE s_state_text TO <text>.
+      IF sy-subrc <> 0.
+        EXIT.
+      ENDIF.
+      ASSIGN COMPONENT sy-index OF STRUCTURE labels TO <label>.
+      IF sy-subrc <> 0.
+        EXIT.
+      ENDIF.
+      IF <state> = `Error`.
+        INSERT VALUE #( type = `Error` message = <text> additionaltext = <label> ) INTO TABLE t_messages.
+      ENDIF.
+    ENDDO.
+    msg_count = lines( t_messages ).
+
+  ENDMETHOD.
+
+
+  METHOD messages_clear.
+
+    " Messaging.removeAllMessages( ): the messages go, and with them the
+    " value states they put on the fields - a ValueState is an enum, so
+    " `None`, never empty
+    FIELD-SYMBOLS <state> TYPE string.
+
+    DO.
+      ASSIGN COMPONENT sy-index OF STRUCTURE s_state TO <state>.
+      IF sy-subrc <> 0.
+        EXIT.
+      ENDIF.
+      <state> = `None`.
+    ENDDO.
+    s_state_text = VALUE #( ).
+    messages_refresh( ).
+
+  ENDMETHOD.
+
+
+  METHOD pay_type_apply.
+
+    " the payment type becomes the branch and the new history value
+    " (_oHistory.prevPaymentSelect)
+    pay_type_prev = pay_type.
+    wizard_branch( ).
+
+  ENDMETHOD.
+
+
+  METHOD delivery_apply.
+
+    " the checkbox becomes the branch and the new history value
+    " (_oHistory.prevDiffDeliverySelect)
+    del_prev = del_different.
+    wizard_branch( ).
+
+  ENDMETHOD.
+
+
+  METHOD wizard_branch.
+
+    " goToPaymentStep and invoiceAddressComplete: the step after the payment
+    " step and after the invoice step. A branch is an association, set from
+    " here and re-issued on every render (sample z2ui5_cl_smp_app_202) -
+    " sent as soon as the choice is made, because WizardStep._complete fires
+    " complete and moves on in the same tick
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `paymentTypeStep` )
+                                               ( `setNextStep` )
+                                               ( SWITCH #( pay_type
+                                                           WHEN `Bank Transfer`    THEN `bankAccountStep`
+                                                           WHEN `Cash on Delivery` THEN `cashOnDeliveryStep`
+                                                           ELSE `creditCardStep` ) ) ) ).
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `invoiceStep` )
+                                               ( `setNextStep` )
+                                               ( COND #( WHEN del_different = abap_true
+                                                         THEN `deliveryAddressStep`
+                                                         ELSE `deliveryTypeStep` ) ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD wizard_to_step.
+
+    " _navToWizardStep: back to the wizard page, then to the step
+    nav_to( nav = `wizardNavContainer` page = `wizardContentPage` ).
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `shoppingCartWizard` ) ( `goToStep` ) ( step ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD wizard_reset.
+
+    " _handleSubmitOrCancel's reset: all progress discarded, back on the
+    " first step, and the checkout model on its defaults again
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `contentsStep` ) ) ).
+    wizard_to_step( `contentsStep` ).
+
+    pay_type      = `Credit Card`.
+    pay_type_prev = pay_type.
+    del_type      = `Standard Delivery`.
+    del_different = abap_false.
+    del_prev      = abap_false.
+    CLEAR: cod_firstname, cod_lastname, cod_phone, cod_email,
+           inv_address, inv_city, inv_zip, inv_country, inv_note,
+           del_address, del_city, del_zip, del_country, del_note,
+           cc_name, cc_number, cc_code, cc_expire,
+           payment_passed, invoice_passed.
+    messages_clear( ).
+    steps_check( ).
+    wizard_branch( ).
+
+  ENDMETHOD.
+
+
+  METHOD row_of.
+
+    result = VALUE #( productid    = product-productid
+                      category     = product-category
+                      name         = product-name
+                      suppliername = product-suppliername
+                      price        = CONV ty_amount( product-price )
+                      price_text   = price_text( product-price )
+                      currencycode = product-currencycode
+                      pictureurl   = picture_url( product-pictureurl )
+                      status       = product-status
+                      status_text  = status_text( product-status )
+                      status_state = status_state( product-status ) ).
+
+  ENDMETHOD.
+
+
+  METHOD status_text.
+
+    " formatter.statusText - the i18n texts statusA/O/D
+    result = SWITCH #( status
+                       WHEN `A` THEN `Available`
+                       WHEN `O` THEN `Out of Stock`
+                       WHEN `D` THEN `Discontinued`
+                       ELSE status ).
+
+  ENDMETHOD.
+
+
+  METHOD status_state.
+
+    " formatter.statusState
+    result = SWITCH #( status
+                       WHEN `A` THEN `Success`
+                       WHEN `O` THEN `Warning`
+                       WHEN `D` THEN `Error`
+                       ELSE `None` ).
 
   ENDMETHOD.
 
@@ -2832,8 +4703,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
           weight = `2.5` weightunit = `KG` dimensionwidth = `38` dimensiondepth = `21` dimensionheight = `3.5` dimensionunit = `cm` )
     ).
 
+    " Welcome.controller: the three panels read FeaturedProducts by Type, and
+    " _selectPromotedItems keeps TWO of the five Promoted rows, drawn at
+    " random - drawn here, once per start, as the original draws them once
+    DATA(promoted) = VALUE ty_t_row( ).
     LOOP AT t_featured INTO DATA(featured).
-      " UNASSIGN first - see cart_refresh
+      " UNASSIGN first - see cart_mirror
       UNASSIGN <featured_product>.
       ASSIGN t_all[ productid = featured-productid ] TO <featured_product>.
       IF <featured_product> IS NOT ASSIGNED.
@@ -2841,15 +4716,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDIF.
       CASE featured-type.
         WHEN `Promoted`.
-          " Welcome.controller._selectPromotedItems( ): the promoted panel
-          " shows TWO of the five Promoted rows, drawn at random on every
-          " start. A backend cannot repeat a client-side random draw (the
-          " corpus rule - apps 520/000), so the port keeps the first two in
-          " mock order: same count, deterministic, and an e2e leg can name
-          " the product it clicks
-          IF lines( t_promoted ) < 2.
-            INSERT row_of( <featured_product> ) INTO TABLE t_promoted.
-          ENDIF.
+          INSERT row_of( <featured_product> ) INTO TABLE promoted.
         WHEN `Viewed`.
           INSERT row_of( <featured_product> ) INTO TABLE t_viewed.
         WHEN OTHERS.
@@ -2857,40 +4724,53 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDCASE.
     ENDLOOP.
 
+    DATA(random) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 1 max = lines( promoted ) ).
+    DATA(second) = random->get_next( ).
+    DATA(first) = second.
+    WHILE first = second.
+      first = random->get_next( ).
+    ENDWHILE.
+    t_promoted = VALUE #( ( promoted[ first ] ) ( promoted[ second ] ) ).
+
+    " Welcome.onInit: the carousel opens on one of its four pages, at random
+    carousel_page = SWITCH #( cl_abap_random_int=>create( seed = cl_abap_random=>seed( )
+                                                          min  = 1
+                                                          max  = 4 )->get_next( )
+                              WHEN 1 THEN `carouselShipping`
+                              WHEN 2 THEN `carouselInviteFriend`
+                              WHEN 3 THEN `carouselTablet`
+                              ELSE `carouselCreditCard` ).
+
     " the categoryList's own sorter
     SORT t_categories BY categoryname AS TEXT.
 
-    layout = `TwoColumnsMidExpanded`.
+    " Category._loadSuppliers: every supplier of the catalogue once, sorted -
+    " the Supplier items of the filter dialog
+    LOOP AT t_all INTO DATA(product).
+      IF NOT line_exists( t_suppliers[ suppliername = product-suppliername ] ).
+        INSERT VALUE #( suppliername = product-suppliername ) INTO TABLE t_suppliers.
+      ENDIF.
+    ENDLOOP.
+    SORT t_suppliers BY suppliername.
+
+    " App.controller's appView model, and the route of an empty hash
+    layout       = `TwoColumnsMidExpanded`.
+    s_route-name = `home`.
+
+    " enum-typed: the UI5 default until a product is shown
+    s_prod-status_state = `None`.
+    s_cmp1-status_state = `None`.
+    s_cmp2-status_state = `None`.
 
     " what the original's checkout model starts on: SelectedPayment "Credit Card"
     " and SelectedDeliveryMethod "Standard Delivery". Not a cosmetic default - the
-    " payment step's branch is an association, and with pay_type initial nothing
-    " ever set it, so a user who ACCEPTED the default could not leave the step at
-    " all. The original does not have the problem because its own goToPaymentStep
-    " defaults to the credit-card step; here view_display( ) re-issues the branch
-    " on every render as long as pay_type is filled
-    pay_type = `creditCardStep`.
-    pay_name = `Credit Card`.
-    del_type = `Standard Delivery`.
-
-    " a ValueState is an enum: an empty one is rejected outright, so every
-    " checked input starts on the UI5 default
-    s_state = VALUE #( cc_name       = `None`
-                       cc_number     = `None`
-                       cc_code       = `None`
-                       cc_expire     = `None`
-                       cod_firstname = `None`
-                       cod_lastname  = `None`
-                       cod_phone     = `None`
-                       cod_email     = `None`
-                       inv_address   = `None`
-                       inv_city      = `None`
-                       inv_zip       = `None`
-                       inv_country   = `None`
-                       del_address   = `None`
-                       del_city      = `None`
-                       del_zip       = `None`
-                       del_country   = `None` ).
+    " payment step's branch is an association, and view_display( ) sets it from
+    " pay_type on every render, so a user who ACCEPTS the default can leave the
+    " step, as the original's goToPaymentStep lets them
+    pay_type      = `Credit Card`.
+    pay_type_prev = pay_type.
+    del_type      = `Standard Delivery`.
+    messages_clear( ).
 
     " the original's LocalStorageModel("SHOPPING_CART", ...) - same storage,
     " same key
