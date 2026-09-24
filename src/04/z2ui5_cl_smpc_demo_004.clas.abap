@@ -58,9 +58,24 @@
 "!       welcomeCarouselText) ride along in a core:HTML style block, because
 "!       a port has no manifest to link a stylesheet from and no Component to
 "!       set the `.sapUiDemoCart` scope the original writes them under.
-"!  - the wizard validates in ABAP rather than through the Wizard's own
-"!    validated/setNextStep API, and reports with a MessageBox - which is
-"!    what the original's own validation does for the credit-card step.
+"!  - the wizard's input checks run in ABAP. The original types every
+"!    required input with a StringType (minLength, a `search` regex) or its
+"!    EmailType, so a changed field turns red with the type's message, and
+"!    each step's change handler calls validateStep/invalidateStep. Here the
+"!    same constraints are ABAP (input_error), decided on the same change
+"!    events, and each step's `validated` is bound - so the Next button
+"!    shows exactly when it does there. The regexes are the original's with
+"!    \s spelled as a space and \w as [a-zA-Z0-9_], the one spelling ABAP
+"!    POSIX and JavaScript read alike inside a bracket expression.
+"!  - what the original ties to its message model is not rebuilt: the
+"!    footer's MessagePopover button listing the invalid fields. The fields
+"!    carry their error text themselves, and the Order Summary button
+"!    reports with the same MessageBox the original shows then.
+"!  - changing the payment type or the delivery-address checkbox discards
+"!    the progress behind it without the original's Yes/No warning.
+"!  - adding a discontinued product shows an Error box: the original's
+"!    MessageBox.show spells its title option `titles`, so it opens with no
+"!    title at all, which `message_box_display` has no way to ask for.
 "!  - the i18n resource bundle becomes literals, the device model's
 "!    smallScreenMode branches are gone (the FCL does that itself now), and
 "!    the LightBox on the product picture is dropped.
@@ -181,6 +196,37 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA del_country    TYPE string.
     DATA del_note       TYPE string.
     DATA del_type       TYPE string.
+    " one component per checked input, named like the field it checks: the
+    " value state the original's StringType constraints put on a field when
+    " it is changed, and the type's message. Enum-typed, so `None` and never
+    " empty (model_init)
+    TYPES:
+      BEGIN OF ty_s_checks,
+        cc_name       TYPE string,
+        cc_number     TYPE string,
+        cc_code       TYPE string,
+        cc_expire     TYPE string,
+        cod_firstname TYPE string,
+        cod_lastname  TYPE string,
+        cod_phone     TYPE string,
+        cod_email     TYPE string,
+        inv_address   TYPE string,
+        inv_city      TYPE string,
+        inv_zip       TYPE string,
+        inv_country   TYPE string,
+        del_address   TYPE string,
+        del_city      TYPE string,
+        del_zip       TYPE string,
+        del_country   TYPE string,
+      END OF ty_s_checks.
+    DATA s_state        TYPE ty_s_checks.
+    DATA s_state_text   TYPE ty_s_checks.
+    " the four steps with inputs, validated="false" in the original until
+    " their check passes - bound to each step's `validated`
+    DATA cc_valid       TYPE abap_bool.
+    DATA cod_valid      TYPE abap_bool.
+    DATA inv_valid      TYPE abap_bool.
+    DATA del_valid      TYPE abap_bool.
 
   PROTECTED SECTION.
     TYPES:
@@ -240,7 +286,9 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     " the product on show: the key ADD_TO_CART needs, never bound - so
     " PROTECTED, where the round-trip still carries it
     DATA prod_id       TYPE string.
-    DATA t_all         TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    " the out-of-stock product waiting for the OK of its confirmation box
+    DATA add_pending   TYPE string.
+    DATA t_all        TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA t_featured    TYPE STANDARD TABLE OF ty_s_featured WITH EMPTY KEY.
     DATA page_begin    TYPE string VALUE `page-home`.
     DATA page_mid      TYPE string VALUE `page-welcome`.
@@ -282,6 +330,31 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     METHODS cart_add
       IMPORTING
         productid TYPE string.
+    METHODS cart_add_request
+      IMPORTING
+        productid TYPE string.
+    METHODS input_check
+      IMPORTING
+        field TYPE string.
+    METHODS input_error
+      IMPORTING
+        field         TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS string_error
+      IMPORTING
+        val           TYPE string
+        min           TYPE i
+        max           TYPE i OPTIONAL
+        regex         TYPE string OPTIONAL
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS step_valid
+      IMPORTING
+        fields        TYPE string_table
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+    METHODS steps_check.
     METHODS search_refresh.
     METHODS cart_refresh.
     METHODS storage_json
@@ -1107,13 +1180,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " setNextStep, and re-issued on every render (see view_display)
     DATA(wizard) = page->ele( `content`
         )->ele( `Wizard`
-            )->a( n = `id`              v = `checkoutWizard`
-            )->a( n = `enableBranching` b = abap_true
-            )->a( n = `complete`        v = client->_event( `WIZARD_COMPLETE` ) ).
+            )->a( n = `id`               v = `checkoutWizard`
+            )->a( n = `enableBranching`  b = abap_true
+            )->a( n = `finishButtonText` v = `Order Summary`
+            )->a( n = `complete`         v = client->_event( `WIZARD_COMPLETE` ) ).
 
     DATA(contents) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `contentsStep`
         )->a( n = `title`     v = `Items`
+        )->a( n = `icon`      v = `sap-icon://cart`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `paymentTypeStep` ).
 
@@ -1135,6 +1210,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     DATA(payment) = wizard->ele( `WizardStep`
         )->a( n = `id`              v = `paymentTypeStep`
         )->a( n = `title`           v = `Payment Type`
+        )->a( n = `icon`            v = `sap-icon://money-bills`
         )->a( n = `validated`       b = abap_true
         )->a( n = `subsequentSteps` v = `creditCardStep, bankAccountStep, cashOnDeliveryStep` ).
 
@@ -1159,45 +1235,102 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `key`  v = `cashOnDeliveryStep`
                 )->a( n = `text` v = `Cash on Delivery` ).
 
+    " the four forms below are the original's: required labels, its
+    " placeholders, the MaskInputs and the MM/YYYY DatePicker of the card.
+    " Every checked input carries the value state input_check( ) decides and
+    " sends CHECK_INPUT on `change` - the event the original's
+    " checkCreditCardStep & co. hang on - and every step with inputs sends
+    " CHECK_STEP on `activate` (onCheckStepActivation). The original gives
+    " each label XL4 L4 M4 S12 and each field XL8 L8 M8 S12 as GridData; the
+    " form's label spans say the same once per form
     DATA(credit) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `creditCardStep`
         )->a( n = `title`     v = `Credit Card Details`
-        )->a( n = `validated` b = abap_true
+        )->a( n = `icon`      v = `sap-icon://credit-card`
+        )->a( n = `validated` v = client->_bind( cc_valid )
+        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
     credit->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `editable` b = abap_true
-        )->a( n = `layout`   v = `ResponsiveGridLayout`
+        )->a( n = `editable`    b = abap_true
+        )->a( n = `layout`      v = `ResponsiveGridLayout`
+        )->a( n = `labelSpanXL` v = `4`
+        )->a( n = `labelSpanL`  v = `4`
+        )->a( n = `labelSpanM`  v = `4`
+        )->a( n = `labelSpanS`  v = `12`
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Cardholder's Name`
+                )->a( n = `text`     v = `Cardholder's Name`
+                )->a( n = `labelFor` v = `creditCardHolderName`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`          v = `creditCardHolderName`
-                )->a( n = `value`       v = client->_bind( cc_name )
-                )->a( n = `placeholder` v = `Enter the name on the card`
+                )->a( n = `id`             v = `creditCardHolderName`
+                )->a( n = `placeholder`    v = `Enter card holder name`
+                )->a( n = `value`          v = client->_bind( cc_name )
+                )->a( n = `valueState`     v = client->_bind( s_state-cc_name )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cc_name )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `CC_NAME` )
             )->tag( `Label`
-                )->a( n = `text` v = `Card Number`
-            )->tag( `Input`
-                )->a( n = `id`          v = `creditCardNumber`
-                )->a( n = `value`       v = client->_bind( cc_number )
-                )->a( n = `placeholder` v = `16 digits`
+                )->a( n = `text`     v = `Card Number`
+                )->a( n = `labelFor` v = `creditCardNumber`
+                )->a( n = `required` b = abap_true
+            )->ele( `MaskInput`
+                )->a( n = `id`                v = `creditCardNumber`
+                )->a( n = `placeholder`       v = `Enter card number`
+                )->a( n = `mask`              v = `CCCC-CCCC-CCCC-CCCC`
+                )->a( n = `placeholderSymbol` v = `_`
+                )->a( n = `value`             v = client->_bind( cc_number )
+                )->a( n = `valueState`        v = client->_bind( s_state-cc_number )
+                )->a( n = `valueStateText`    v = client->_bind( s_state_text-cc_number )
+                )->a( n = `change`            v = client->_event( val = `CHECK_INPUT` arg = `CC_NUMBER` )
+
+                )->ele( `rules`
+                    )->tag( `MaskInputRule`
+                        )->a( n = `maskFormatSymbol` v = `C`
+                        )->a( n = `regex`            v = `[0-9]`
+
+                )->end(
+            )->end(
             )->tag( `Label`
-                )->a( n = `text` v = `Security Code`
-            )->tag( `Input`
-                )->a( n = `id`          v = `creditCardSecurityCode`
-                )->a( n = `value`       v = client->_bind( cc_code )
-                )->a( n = `placeholder` v = `3 digits`
+                )->a( n = `text`     v = `Security Code`
+                )->a( n = `labelFor` v = `creditCardSecurityNumber`
+                )->a( n = `required` b = abap_true
+            )->ele( `MaskInput`
+                )->a( n = `id`                v = `creditCardSecurityNumber`
+                )->a( n = `placeholder`       v = `Enter the 3-digits security number`
+                )->a( n = `mask`              v = `CCC`
+                )->a( n = `placeholderSymbol` v = `_`
+                )->a( n = `value`             v = client->_bind( cc_code )
+                )->a( n = `valueState`        v = client->_bind( s_state-cc_code )
+                )->a( n = `valueStateText`    v = client->_bind( s_state_text-cc_code )
+                )->a( n = `change`            v = client->_event( val = `CHECK_INPUT` arg = `CC_CODE` )
+
+                )->ele( `rules`
+                    )->tag( `MaskInputRule`
+                        )->a( n = `maskFormatSymbol` v = `C`
+                        )->a( n = `regex`            v = `[0-9]`
+
+                )->end(
+            )->end(
+            " no `required` on this label in the original either: the asterisk
+            " comes from the DatePicker's own `required`
             )->tag( `Label`
                 )->a( n = `text` v = `Expiration Date (MM/YYYY)`
-            )->tag( `Input`
-                )->a( n = `id`          v = `creditCardExpirationDate`
-                )->a( n = `value`       v = client->_bind( cc_expire )
-                )->a( n = `placeholder` v = `MM/YY` ).
+            )->tag( `DatePicker`
+                )->a( n = `id`             v = `creditCardExpirationDate`
+                )->a( n = `value`          v = client->_bind( cc_expire )
+                )->a( n = `valueFormat`    v = `MM/YYYY`
+                )->a( n = `displayFormat`  v = `MM/YYYY`
+                )->a( n = `required`       b = abap_true
+                )->a( n = `valueState`     v = client->_bind( s_state-cc_expire )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cc_expire )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `CC_EXPIRE` ) ).
 
     DATA(bank) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `bankAccountStep`
         )->a( n = `title`     v = `Bank Account Details`
+        )->a( n = `icon`      v = `sap-icon://official-service`
         )->a( n = `validated` b = abap_true
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
@@ -1222,44 +1355,80 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     DATA(cod) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `cashOnDeliveryStep`
         )->a( n = `title`     v = `Details for Cash on Delivery`
-        )->a( n = `validated` b = abap_true
+        )->a( n = `icon`      v = `sap-icon://money-bills`
+        )->a( n = `validated` v = client->_bind( cod_valid )
+        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
         )->a( n = `nextStep`  v = `invoiceAddressStep` ).
 
     cod->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `editable` b = abap_true
-        )->a( n = `layout`   v = `ResponsiveGridLayout`
+        )->a( n = `editable`    b = abap_true
+        )->a( n = `layout`      v = `ResponsiveGridLayout`
+        )->a( n = `labelSpanXL` v = `4`
+        )->a( n = `labelSpanL`  v = `4`
+        )->a( n = `labelSpanM`  v = `4`
+        )->a( n = `labelSpanS`  v = `12`
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `First Name`
+                )->a( n = `text`     v = `First Name`
+                )->a( n = `labelFor` v = `cashOnDeliveryName`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `cashOnDeliveryName`
-                )->a( n = `value` v = client->_bind( cod_firstname )
+                )->a( n = `id`             v = `cashOnDeliveryName`
+                )->a( n = `placeholder`    v = `Enter your first name`
+                )->a( n = `value`          v = client->_bind( cod_firstname )
+                )->a( n = `valueState`     v = client->_bind( s_state-cod_firstname )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cod_firstname )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_FIRSTNAME` )
             )->tag( `Label`
-                )->a( n = `text` v = `Last Name`
+                )->a( n = `text`     v = `Last Name`
+                )->a( n = `labelFor` v = `cashOnDeliveryLastName`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `cashOnDeliveryLastName`
-                )->a( n = `value` v = client->_bind( cod_lastname )
+                )->a( n = `id`             v = `cashOnDeliveryLastName`
+                )->a( n = `placeholder`    v = `Enter your last name`
+                )->a( n = `value`          v = client->_bind( cod_lastname )
+                )->a( n = `valueState`     v = client->_bind( s_state-cod_lastname )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cod_lastname )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_LASTNAME` )
             )->tag( `Label`
-                )->a( n = `text` v = `Phone Number`
+                )->a( n = `text`     v = `Phone Number`
+                )->a( n = `labelFor` v = `cashOnDeliveryPhoneNumber`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `cashOnDeliveryPhoneNumber`
-                )->a( n = `value` v = client->_bind( cod_phone )
+                )->a( n = `id`             v = `cashOnDeliveryPhoneNumber`
+                )->a( n = `placeholder`    v = `Enter your phone number`
+                )->a( n = `value`          v = client->_bind( cod_phone )
+                )->a( n = `valueState`     v = client->_bind( s_state-cod_phone )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cod_phone )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_PHONE` )
             )->tag( `Label`
-                )->a( n = `text` v = `E-mail Address`
+                )->a( n = `text`     v = `E-mail Address`
+                )->a( n = `labelFor` v = `cashOnDeliveryEmail`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `cashOnDeliveryEmail`
-                )->a( n = `value` v = client->_bind( cod_email ) ).
+                )->a( n = `id`             v = `cashOnDeliveryEmail`
+                )->a( n = `placeholder`    v = `Enter your email address`
+                )->a( n = `value`          v = client->_bind( cod_email )
+                )->a( n = `valueState`     v = client->_bind( s_state-cod_email )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-cod_email )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_EMAIL` ) ).
 
     DATA(invoice) = wizard->ele( `WizardStep`
         )->a( n = `id`              v = `invoiceAddressStep`
         )->a( n = `title`           v = `Invoice Address`
-        )->a( n = `validated`       b = abap_true
+        )->a( n = `icon`            v = `sap-icon://sales-quote`
+        )->a( n = `validated`       v = client->_bind( inv_valid )
+        )->a( n = `activate`        v = client->_event( `CHECK_STEP` )
         )->a( n = `subsequentSteps` v = `deliveryAddressStep, deliveryTypeStep` ).
 
     invoice->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `editable` b = abap_true
-        )->a( n = `layout`   v = `ResponsiveGridLayout`
+        )->a( n = `editable`    b = abap_true
+        )->a( n = `layout`      v = `ResponsiveGridLayout`
+        )->a( n = `labelSpanXL` v = `4`
+        )->a( n = `labelSpanL`  v = `4`
+        )->a( n = `labelSpanM`  v = `4`
+        )->a( n = `labelSpanS`  v = `12`
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
@@ -1269,71 +1438,130 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `selected` v = client->_bind( del_different )
                 )->a( n = `select`   v = client->_event( val = `DELIVERY_DIFFERENT` arg = `${$parameters>/selected}` )
             )->tag( `Label`
-                )->a( n = `text` v = `Address`
+                )->a( n = `text`     v = `Address`
+                )->a( n = `labelFor` v = `invoiceAddressAddress`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `invoiceAddressAddress`
-                )->a( n = `value` v = client->_bind( inv_address )
+                )->a( n = `id`             v = `invoiceAddressAddress`
+                )->a( n = `placeholder`    v = `Enter your street name and house number`
+                )->a( n = `value`          v = client->_bind( inv_address )
+                )->a( n = `valueState`     v = client->_bind( s_state-inv_address )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-inv_address )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `INV_ADDRESS` )
             )->tag( `Label`
-                )->a( n = `text` v = `City`
+                )->a( n = `text`     v = `City`
+                )->a( n = `labelFor` v = `invoiceAddressCity`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `invoiceAddressCity`
-                )->a( n = `value` v = client->_bind( inv_city )
+                )->a( n = `id`             v = `invoiceAddressCity`
+                )->a( n = `placeholder`    v = `Enter your city`
+                )->a( n = `value`          v = client->_bind( inv_city )
+                )->a( n = `valueState`     v = client->_bind( s_state-inv_city )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-inv_city )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `INV_CITY` )
             )->tag( `Label`
-                )->a( n = `text` v = `Zip Code`
+                )->a( n = `text`     v = `Zip Code`
+                )->a( n = `labelFor` v = `invoiceAddressZip`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `invoiceAddressZip`
-                )->a( n = `value` v = client->_bind( inv_zip )
+                )->a( n = `id`             v = `invoiceAddressZip`
+                )->a( n = `placeholder`    v = `Enter your zip code`
+                )->a( n = `value`          v = client->_bind( inv_zip )
+                )->a( n = `valueState`     v = client->_bind( s_state-inv_zip )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-inv_zip )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `INV_ZIP` )
             )->tag( `Label`
-                )->a( n = `text` v = `Country`
+                )->a( n = `text`     v = `Country`
+                )->a( n = `labelFor` v = `invoiceAddressCountry`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `invoiceAddressCountry`
-                )->a( n = `value` v = client->_bind( inv_country )
+                )->a( n = `id`             v = `invoiceAddressCountry`
+                )->a( n = `placeholder`    v = `Enter your country`
+                )->a( n = `value`          v = client->_bind( inv_country )
+                )->a( n = `valueState`     v = client->_bind( s_state-inv_country )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-inv_country )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `INV_COUNTRY` )
             )->tag( `Label`
                 )->a( n = `text` v = `Note`
             )->tag( `TextArea`
-                )->a( n = `id`    v = `invoiceAddressNote`
-                )->a( n = `value` v = client->_bind( inv_note ) ).
+                )->a( n = `id`          v = `invoiceAddressNote`
+                )->a( n = `rows`        v = `8`
+                )->a( n = `placeholder` v = `Additional comments (max 500 characters)`
+                )->a( n = `value`       v = client->_bind( inv_note ) ).
 
     DATA(delivery) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `deliveryAddressStep`
         )->a( n = `title`     v = `Shipping Address`
-        )->a( n = `validated` b = abap_true
+        )->a( n = `icon`      v = `sap-icon://sales-quote`
+        )->a( n = `validated` v = client->_bind( del_valid )
+        )->a( n = `activate`  v = client->_event( `CHECK_STEP` )
         )->a( n = `nextStep`  v = `deliveryTypeStep` ).
 
     delivery->ele( n = `SimpleForm` ns = `form`
-        )->a( n = `editable` b = abap_true
-        )->a( n = `layout`   v = `ResponsiveGridLayout`
+        )->a( n = `editable`    b = abap_true
+        )->a( n = `layout`      v = `ResponsiveGridLayout`
+        )->a( n = `labelSpanXL` v = `4`
+        )->a( n = `labelSpanL`  v = `4`
+        )->a( n = `labelSpanM`  v = `4`
+        )->a( n = `labelSpanS`  v = `12`
 
         )->ele( n = `content` ns = `form`
             )->tag( `Label`
-                )->a( n = `text` v = `Address`
+                )->a( n = `text`     v = `Address`
+                )->a( n = `labelFor` v = `deliveryAddressAddress`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `deliveryAddressAddress`
-                )->a( n = `value` v = client->_bind( del_address )
+                )->a( n = `id`             v = `deliveryAddressAddress`
+                )->a( n = `placeholder`    v = `Enter your street name and house number`
+                )->a( n = `value`          v = client->_bind( del_address )
+                )->a( n = `valueState`     v = client->_bind( s_state-del_address )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-del_address )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `DEL_ADDRESS` )
             )->tag( `Label`
-                )->a( n = `text` v = `City`
+                )->a( n = `text`     v = `City`
+                )->a( n = `labelFor` v = `deliveryAddressCity`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `deliveryAddressCity`
-                )->a( n = `value` v = client->_bind( del_city )
+                )->a( n = `id`             v = `deliveryAddressCity`
+                )->a( n = `placeholder`    v = `Enter your city`
+                )->a( n = `value`          v = client->_bind( del_city )
+                )->a( n = `valueState`     v = client->_bind( s_state-del_city )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-del_city )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `DEL_CITY` )
             )->tag( `Label`
-                )->a( n = `text` v = `Zip Code`
+                )->a( n = `text`     v = `Zip Code`
+                )->a( n = `labelFor` v = `deliveryAddressZip`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `deliveryAddressZip`
-                )->a( n = `value` v = client->_bind( del_zip )
+                )->a( n = `id`             v = `deliveryAddressZip`
+                )->a( n = `placeholder`    v = `Enter your zip code`
+                )->a( n = `value`          v = client->_bind( del_zip )
+                )->a( n = `valueState`     v = client->_bind( s_state-del_zip )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-del_zip )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `DEL_ZIP` )
             )->tag( `Label`
-                )->a( n = `text` v = `Country`
+                )->a( n = `text`     v = `Country`
+                )->a( n = `labelFor` v = `deliveryAddressCountry`
+                )->a( n = `required` b = abap_true
             )->tag( `Input`
-                )->a( n = `id`    v = `deliveryAddressCountry`
-                )->a( n = `value` v = client->_bind( del_country )
+                )->a( n = `id`             v = `deliveryAddressCountry`
+                )->a( n = `placeholder`    v = `Enter your country`
+                )->a( n = `value`          v = client->_bind( del_country )
+                )->a( n = `valueState`     v = client->_bind( s_state-del_country )
+                )->a( n = `valueStateText` v = client->_bind( s_state_text-del_country )
+                )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `DEL_COUNTRY` )
             )->tag( `Label`
                 )->a( n = `text` v = `Note`
             )->tag( `TextArea`
-                )->a( n = `id`    v = `deliveryAddressNote`
-                )->a( n = `value` v = client->_bind( del_note ) ).
+                )->a( n = `id`          v = `deliveryAddressNote`
+                )->a( n = `rows`        v = `8`
+                )->a( n = `placeholder` v = `Additional comments (max 500 characters)`
+                )->a( n = `value`       v = client->_bind( del_note ) ).
 
     DATA(delivery_type) = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `deliveryTypeStep`
         )->a( n = `title`     v = `Delivery Type`
+        )->a( n = `icon`      v = `sap-icon://insurance-car`
         )->a( n = `validated` b = abap_true ).
 
     delivery_type->tag( `Text`
@@ -1485,7 +1713,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         IF add_id IS INITIAL.
           add_id = prod_id.
         ENDIF.
-        cart_add( add_id ).
+        cart_add_request( add_id ).
+
+      WHEN `OUT_OF_STOCK_CLOSED`.
+        " the onClose of the original's confirmation box: only OK orders
+        IF client->get_event_arg( ) = `OK`.
+          cart_add( add_pending ).
+        ENDIF.
+        CLEAR add_pending.
 
       WHEN `TOGGLE_CART`.
         cart_open = xsdbool( cart_open = abap_false ).
@@ -1550,21 +1785,28 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                                              THEN `deliveryAddressStep`
                                                              ELSE `deliveryTypeStep` ) ) ) ).
 
+      WHEN `CHECK_INPUT`.
+        " the change handlers of the original (checkCreditCardStep & co.):
+        " the changed field shows what its type says about it - the original's
+        " handleValidation - and the steps are decided again
+        input_check( client->get_event_arg( ) ).
+        steps_check( ).
+
+      WHEN `CHECK_STEP`.
+        " onCheckStepActivation: the step just opened is decided without
+        " marking a field, as _checkInputFields only asks the types
+        steps_check( ).
+
       WHEN `WIZARD_COMPLETE`.
-        " the original validates the credit card step in its controller and
-        " reports with a MessageBox; the whole check runs in ABAP here
-        DATA(missing) = ``.
-        IF pay_type = `creditCardStep` AND ( cc_name IS INITIAL OR cc_number IS INITIAL ).
-          missing = `Enter the card holder name and the card number.`.
-        ELSEIF pay_type = `cashOnDeliveryStep` AND ( cod_firstname IS INITIAL OR cod_email IS INITIAL ).
-          missing = `Enter your name and your email address.`.
-        ELSEIF inv_address IS INITIAL OR inv_city IS INITIAL.
-          missing = `Enter the invoice address.`.
-        ELSEIF del_different = abap_true AND del_address IS INITIAL.
-          missing = `Enter the delivery address.`.
-        ENDIF.
-        IF missing IS NOT INITIAL.
-          client->message_box_display( text = missing type = `error` ).
+        " checkCompleted: the original refuses the summary while its message
+        " model holds an error. A field can be broken again after its step
+        " was passed, so the steps on the chosen path are decided once more
+        steps_check( ).
+        IF ( pay_type = `creditCardStep` AND cc_valid = abap_false )
+            OR ( pay_type = `cashOnDeliveryStep` AND cod_valid = abap_false )
+            OR inv_valid = abap_false
+            OR ( del_different = abap_true AND del_valid = abap_false ).
+          client->message_box_display( text = `One or more fields contain invalid information` type = `error` ).
         ELSE.
           nav_to( nav = `nav-end` page = `page-review` ).
         ENDIF.
@@ -1687,6 +1929,161 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     cart_refresh( ).
     client->message_toast_display( |{ <product>-name } has been added to your shopping cart.| ).
+
+  ENDMETHOD.
+
+
+  METHOD cart_add_request.
+
+    " cart.addToCart of the original: the product's status decides before
+    " anything is added - a discontinued product cannot be ordered, an
+    " out-of-stock one only after the user confirms it
+    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    IF <product> IS NOT ASSIGNED.
+      RETURN.
+    ENDIF.
+
+    CASE <product>-status.
+      WHEN `D`.
+        client->message_box_display( text    = `This product has been discontinued and cannot be ordered anymore`
+                                     type    = `error`
+                                     actions = VALUE #( ( `CLOSE` ) ) ).
+      WHEN `O`.
+        add_pending = productid.
+        client->message_box_display( text    = `This product is currently out of stock, but you can order it. ` &&
+                                               `It will be shipped as soon as it's available again`
+                                     type    = `confirm`
+                                     title   = `Confirmation`
+                                     actions = VALUE #( ( `OK` ) ( `CANCEL` ) )
+                                     onclose = `OUT_OF_STOCK_CLOSED` ).
+      WHEN OTHERS.
+        cart_add( productid ).
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD input_check.
+
+    " what the original's binding type does to a field on `change`: its
+    " message as the value state text, or no state at all. The component is
+    " the event argument, so an unknown name changes nothing
+    FIELD-SYMBOLS <state> TYPE string.
+    FIELD-SYMBOLS <text>  TYPE string.
+
+    ASSIGN COMPONENT field OF STRUCTURE s_state TO <state>.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT field OF STRUCTURE s_state_text TO <text>.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    <text>  = input_error( field ).
+    <state> = COND #( WHEN <text> IS INITIAL THEN `None` ELSE `Error` ).
+
+  ENDMETHOD.
+
+
+  METHOD input_error.
+
+    " the constraints of the original's value bindings, one input each -
+    " `type: 'StringType', constraints: { minLength, search }` and, for the
+    " e-mail, its own EmailType. matches( ) anchors the whole value, which is
+    " what the original's ^...$ do
+    CASE field.
+      WHEN `CC_NAME`.
+        result = string_error( val = cc_name min = 3 regex = `[a-zA-Z]+ ?[a-zA-Z]+` ).
+      WHEN `CC_NUMBER`.
+        result = string_error( val = cc_number min = 16 regex = `[0-9-]+` ).
+      WHEN `CC_CODE`.
+        result = string_error( val = cc_code min = 3 regex = `[0-9]+` ).
+      WHEN `CC_EXPIRE`.
+        result = string_error( val = cc_expire min = 7 max = 7 ).
+      WHEN `COD_FIRSTNAME`.
+        result = string_error( val = cod_firstname min = 2 ).
+      WHEN `COD_LASTNAME`.
+        result = string_error( val = cod_lastname min = 2 ).
+      WHEN `COD_PHONE`.
+        result = string_error( val = cod_phone min = 0 regex = `[(0-9+]+[) ]?[0-9/ ]+` ).
+      WHEN `COD_EMAIL`.
+        " model/EmailType.js - the demo kit's own regex, and its own message
+        IF string_error( val   = cod_email
+                         min   = 0
+                         regex = `[a-zA-Z0-9_]+[a-zA-Z0-9_+.-]*@[a-zA-Z0-9_]+([-.][a-zA-Z0-9_]+)*\.[a-zA-Z]{2,}` )
+           IS NOT INITIAL.
+          result = |"{ cod_email }" is not a valid email address|.
+        ENDIF.
+      WHEN `INV_ADDRESS`.
+        result = string_error( val = inv_address min = 4 regex = `[a-zA-Z-]+\.? ?[0-9a-zA-Z ]*` ).
+      WHEN `INV_CITY`.
+        result = string_error( val = inv_city min = 3 regex = `[a-zA-Z ]+` ).
+      WHEN `INV_ZIP`.
+        result = string_error( val = inv_zip min = 3 regex = `[0-9]+` ).
+      WHEN `INV_COUNTRY`.
+        result = string_error( val = inv_country min = 2 regex = `[a-zA-Z]+` ).
+      WHEN `DEL_ADDRESS`.
+        result = string_error( val = del_address min = 4 regex = `[a-zA-Z-]+\.? ?[0-9a-zA-Z ]*` ).
+      WHEN `DEL_CITY`.
+        result = string_error( val = del_city min = 3 regex = `[a-zA-Z ]+` ).
+      WHEN `DEL_ZIP`.
+        result = string_error( val = del_zip min = 3 regex = `[0-9]+` ).
+      WHEN `DEL_COUNTRY`.
+        result = string_error( val = del_country min = 2 regex = `[a-zA-Z]+` ).
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD string_error.
+
+    " sap.ui.model.type.String.validateValue: every violated constraint adds
+    " the message of the UI5 message bundle, and SimpleType.combineMessages
+    " ends each with a period once there is more than one
+    DATA messages TYPE string_table.
+
+    IF strlen( val ) < min.
+      INSERT |Enter a value with at least { min } characters| INTO TABLE messages.
+    ENDIF.
+    IF max > 0 AND strlen( val ) > max.
+      INSERT |Enter a value with no more than { max } characters| INTO TABLE messages.
+    ENDIF.
+    IF regex IS NOT INITIAL AND NOT matches( val = val regex = regex ) ##REGEX_POSIX.
+      INSERT `Enter a valid value` INTO TABLE messages.
+    ENDIF.
+
+    IF lines( messages ) = 1.
+      result = messages[ 1 ].
+    ELSEIF lines( messages ) > 1.
+      result = concat_lines_of( table = messages sep = `. ` ) && `.`.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD step_valid.
+
+    " _checkInputFields: a step passes when no input of it fails its type
+    result = abap_true.
+    LOOP AT fields INTO DATA(field).
+      IF input_error( field ) IS NOT INITIAL.
+        result = abap_false.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD steps_check.
+
+    " _checkStep for all four steps at once: each flag is bound to its step's
+    " `validated`, which is what shows or hides the step's Next button
+    cc_valid  = step_valid( VALUE #( ( `CC_NAME` ) ( `CC_NUMBER` ) ( `CC_CODE` ) ( `CC_EXPIRE` ) ) ).
+    cod_valid = step_valid( VALUE #( ( `COD_FIRSTNAME` ) ( `COD_LASTNAME` ) ( `COD_PHONE` ) ( `COD_EMAIL` ) ) ).
+    inv_valid = step_valid( VALUE #( ( `INV_ADDRESS` ) ( `INV_CITY` ) ( `INV_ZIP` ) ( `INV_COUNTRY` ) ) ).
+    del_valid = step_valid( VALUE #( ( `DEL_ADDRESS` ) ( `DEL_CITY` ) ( `DEL_ZIP` ) ( `DEL_COUNTRY` ) ) ).
 
   ENDMETHOD.
 
@@ -2475,6 +2872,25 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     pay_type = `creditCardStep`.
     pay_name = `Credit Card`.
     del_type = `Standard Delivery`.
+
+    " a ValueState is an enum: an empty one is rejected outright, so every
+    " checked input starts on the UI5 default
+    s_state = VALUE #( cc_name       = `None`
+                       cc_number     = `None`
+                       cc_code       = `None`
+                       cc_expire     = `None`
+                       cod_firstname = `None`
+                       cod_lastname  = `None`
+                       cod_phone     = `None`
+                       cod_email     = `None`
+                       inv_address   = `None`
+                       inv_city      = `None`
+                       inv_zip       = `None`
+                       inv_country   = `None`
+                       del_address   = `None`
+                       del_city      = `None`
+                       del_zip       = `None`
+                       del_country   = `None` ).
 
     " the original's LocalStorageModel("SHOPPING_CART", ...) - same storage,
     " same key

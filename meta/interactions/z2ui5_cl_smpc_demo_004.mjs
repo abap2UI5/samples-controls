@@ -14,8 +14,11 @@
 // Plus, from the 2026-09-22 side-by-side against the original: the welcome page
 // is the original's BlockLayout-and-Grid arrangement, not three flat lists, and
 // its promoted panel shows TWO of the five Promoted rows the way
-// `_selectPromotedItems( )` does.
-import { revealInOverflow, waitForIdle, waitForUi5 } from '../../scripts/lib-e2e.mjs';
+// `_selectPromotedItems( )` does. And from the 2026-09-24 comparison: an
+// out-of-stock product asks before it is added, and the checkout's card step
+// has the original's required inputs - MaskInputs, a MM/YYYY DatePicker, and
+// a Next button that only shows once every field passes its check.
+import { UI5_ALL_SRC, revealInOverflow, waitForIdle, waitForUi5 } from '../../scripts/lib-e2e.mjs';
 
 /** a list of the app, by its own id suffix — every page here has several */
 const list = (page, suffix, pick) => page.evaluate(({ s, src }) => {
@@ -132,6 +135,30 @@ export default async (page, expect) => {
     return names.length === 2 && names[0].localeCompare(names[1], 'en') <= 0;
   }, 'the cart is not sorted by Name - the original sorts both cart lists');
 
+  /* an OUT-OF-STOCK product asks first, as the original's cart.addToCart
+   * does: a confirmation box with OK and Cancel, and only OK orders. "Play
+   * Movie" in the viewed panel is status O in the mock. Cancel here, so the
+   * cart keeps the two rows the steps below count on. The tile's button is
+   * found through the control tree - it is icon-only and carries no row text */
+  const outOfStockAdd = await page.evaluate(`${UI5_ALL_SRC} (() => {
+    const cell = ui5All().find((c) => c.getMetadata().getName() === 'sap.ui.layout.BlockLayoutCell'
+      && /--viewedRow-/.test(c.getId()) && c.getDomRef() && c.getDomRef().textContent.includes('Play Movie'));
+    const b = cell && cell.findAggregatedObjects(true, (o) => o.isA('sap.m.Button') && o.getTooltip() === 'Add to Shopping Cart')[0];
+    return b ? b.getId() : null;
+  })()`);
+  if (!outOfStockAdd) throw new Error('the viewed panel has no Play Movie tile with an add-to-cart button');
+  await page.locator(`[id="${outOfStockAdd}"]`).click();
+  await waitForIdle(page);
+  const box = page.locator('.sapMMessageBox');
+  await expect(box, 'the out-of-stock confirmation').toContainText('This product is currently out of stock, but you can order it');
+  await expect(box, 'the out-of-stock confirmation title').toContainText('Confirmation');
+  await box.getByRole('button', { name: 'Cancel' }).click();
+  await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--entryList$/.test(c.getId()));
+    return l.getItems().length === 2 && !l.getItems().some((i) => i.getTitle() === 'Play Movie');
+  }, 'Cancel on the out-of-stock box still put the product into the cart');
+
   // Save for Later moves the row between the two cart lists, and back
   await page.locator('[id$="--entryList"]').getByText('Save for Later', { exact: true }).first().click();
   await waitForIdle(page);
@@ -190,4 +217,55 @@ export default async (page, expect) => {
   await page.locator('[id$="--paymentTypeStep"]').getByText('Bank Transfer', { exact: true }).first().click();
   await waitForIdle(page);
   await branch('bankAccountStep', 'picking Bank Transfer did not move the wizard branch to the bank-account step');
+  /* the card step is REQUIRED input, as in the original: validated="false"
+   * until every field passes its type, so its Next button stays hidden, and a
+   * changed field that fails turns red with the type's message. Its inputs
+   * are the original's - two MaskInputs and a MM/YYYY DatePicker. */
+  await page.locator('[id$="--paymentTypeStep"]').getByText('Credit Card', { exact: true }).first().click();
+  await waitForIdle(page);
+  await branch('creditCardStep', 'picking Credit Card again did not move the branch back to the card step');
+  const progress = await page.evaluate(`${UI5_ALL_SRC} ui5All().find((c) => c.getMetadata().getName() === 'sap.m.Wizard').getProgress()`);
+  if (progress < 2) {
+    await page.locator('[id$="--contentsStep-nextButton"]').click();
+    await waitForIdle(page);
+  }
+  await page.locator('[id$="--paymentTypeStep-nextButton"]').click();
+  await waitForIdle(page);
+  const cardStep = (valid, msg) => waitForUi5(page, (want) => {
+    const s = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.WizardStep' && /--creditCardStep$/.test(c.getId()));
+    return s && s.getValidated() === want;
+  }, msg, valid);
+  await cardStep(false, 'the credit card step opened validated - its four inputs are required');
+  await waitForUi5(page, () => {
+    const masks = ui5All().filter((c) => c.getMetadata().getName() === 'sap.m.MaskInput').map((m) => m.getMask());
+    const dp = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.DatePicker' && /--creditCardExpirationDate$/.test(c.getId()));
+    return masks.includes('CCCC-CCCC-CCCC-CCCC') && masks.includes('CCC')
+      && dp && dp.getValueFormat() === 'MM/YYYY' && dp.getDisplayFormat() === 'MM/YYYY' && dp.getRequired() === true;
+  }, 'the card step does not carry the original inputs - two MaskInputs and a required MM/YYYY DatePicker');
+
+  const cardInput = (suffix) => page.locator(`[id$="--${suffix}-inner"]`);
+  await cardInput('creditCardHolderName').fill('A1');
+  await cardInput('creditCardHolderName').press('Enter');
+  await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const i = ui5All().find((c) => /--creditCardHolderName$/.test(c.getId()));
+    return i.getValueState() === 'Error'
+      && i.getValueStateText() === 'Enter a value with at least 3 characters. Enter a valid value.';
+  }, 'a too short, non-letter card holder did not turn red with the StringType messages');
+
+  await cardInput('creditCardHolderName').fill('Jane Doe');
+  await cardInput('creditCardHolderName').press('Enter');
+  await cardInput('creditCardNumber').click();
+  await cardInput('creditCardNumber').pressSequentially('4111111111111111');
+  await cardInput('creditCardNumber').press('Enter');
+  await cardInput('creditCardSecurityNumber').click();
+  await cardInput('creditCardSecurityNumber').pressSequentially('123');
+  await cardInput('creditCardSecurityNumber').press('Enter');
+  await cardInput('creditCardExpirationDate').fill('12/2027');
+  await cardInput('creditCardExpirationDate').press('Enter');
+  await waitForIdle(page);
+  await cardStep(true, 'four valid card fields did not validate the step - its Next button stays hidden');
+  await waitForUi5(page, () => ui5All()
+    .filter((c) => /--creditCard(HolderName|Number|SecurityNumber|ExpirationDate)$/.test(c.getId()))
+    .every((c) => c.getValueState() === 'None'), 'a valid card field kept its error state');
 };
