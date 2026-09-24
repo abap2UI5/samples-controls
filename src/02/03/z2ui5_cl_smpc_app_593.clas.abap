@@ -100,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
           )->a( n = `title`          v = `my section`
           )->ele( `subSections`
               )->ele( `ObjectPageSubSection`
-                  )->a( n = `title`          v = |Section { section_no }|
+                  )->a( n = `title`          t = |Section { section_no }|
                   )->a( n = `mode`           v = `Expanded`
                   )->a( n = `titleUppercase` v = `false`
                   )->ele( `blocks`

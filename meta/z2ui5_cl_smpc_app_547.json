@@ -54,6 +54,10 @@
     {
       "type": "NOTE",
       "what": "The details popover is opened on the POPOVER slot, so it is closed with popover_destroy( ) - popup_destroy( ) tears down the separate POPUP slot and left the popover on screen. The EDIT branch closes it before opening the dialog, which the original does explicitly (\"The sap.m.Popover has to be closed before the sap.m.Dialog gets opened\")."
+    },
+    {
+      "type": "NOTE",
+      "what": "The create dialog's last Label names labelFor=\"inputInfo\" in the original, but the Input it labels is id=\"moreInfo\" - the association resolved to nothing. The port points it at moreInfo (corrected 2026-09-24, reported by the linter's association-unknown-id)."
     }
   ]
 }

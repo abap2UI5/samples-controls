@@ -26,6 +26,10 @@
     {
       "type": "NOTE",
       "what": "The sample's asset paths are host-absolutized. The demo kit serves them relative (test-resources/...), which an abap2UI5 app has no document root to resolve against, so the port points at https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Added 2026-08-23: this port did the rewrite without declaring it, one of 17 found by re-counting the corpus-wide claim that every port doing it had a declaration."
+    },
+    {
+      "type": "NOTE",
+      "what": "The original's Label names labelFor=\"selectedKey\", an id no control of the view carries - the Text it labels is id=\"selectedKeyIndicator\", so UI5 resolved the association to nothing and the label was attached to no control. The port points labelFor at selectedKeyIndicator (corrected 2026-09-24, reported by the linter's association-unknown-id)."
     }
   ]
 }
