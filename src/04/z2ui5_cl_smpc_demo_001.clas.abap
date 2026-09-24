@@ -1,51 +1,65 @@
-" @keywords manage products app navcontainer title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield
+" @keywords manage products app title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield column
 " @summary Created with the 'Worklist App' tutorial. - the UI5 demo app "Manage Products", rebuilt as one self-contained abap2UI5 class.
 " @origin demo app Manage Products (sap.m/tutorial/worklist) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
 "! <p class="shorttext">demo app - Manage Products</p>
 "!
 "! The UI5 demo app Manage Products (the "Worklist App" tutorial, step 07) -
 "! a whole application rather than a control sample, rebuilt as ONE abap2UI5
-"! class: the worklist page with its quick filters, search, multi-selection
-"! and the two mass actions, and the object page with supplier form and
-"! comments. Both pages live in one NavContainer and are switched on the
-"! client; the URL follows over hash_set, so the browser Back button and a
-"! deep link work the way the original's router makes them work.
+"! class, page for page and control for control: the worklist with its quick
+"! filters and their counts, the case-sensitive search, the multi-selection
+"! and the two mass actions with their MessageBox and MessageToasts, the
+"! object page with the supplier form and the comments feed, the share
+"! menu's e-mail on both pages, and the two not-found pages. The original's
+"! App and its router are kept: the four targets of its manifest.json are
+"! the four pages of one App here, and the URL hash decides which one shows
+"! - "" is the worklist, "Products/{objectId}" the object page (or the
+"! object-not-found page for an id the stock does not hold), anything else
+"! the router's bypassed not-found page. Opening a product and the "Show
+"! Manage Products" button push a hash as navTo( ) does, so the browser Back
+"! button, a reload and a deep link work the way the original's router makes
+"! them work.
 "!
-"! Where it differs from the original, and why:
+"! Texts are the original's i18n.properties, resolved in English. Two of its
+"! keys are missing from its own bundle (the view binds
+"! i18n>TableNameColumnTitle, the bundle carries tableNameColumnTitle; the
+"! controller asks for TableSelectProduct, the bundle carries
+"! TableNoProductsSelected), so the demo kit shows the raw key in the name
+"! column header and in the no-selection MessageBox - and so does this class.
 "!
-"!  - the OData V2 service and its mock server become ABAP data. The
-"!    original expands Supplier into every product row; here the supplier
-"!    name is joined into the row in model_init, which is what the expand
-"!    produces.
-"!  - filtering, searching and counting run in ABAP rather than on the list
-"!    binding. abap2UI5 is a thin frontend: the backend holds the full stock
-"!    and sends the rows the tab and the search leave.
+"! Where it differs from the original, and why - only what an app without a
+"! browser-side model layer cannot do the same way:
+"!
+"!  - the OData V2 service and its mock server become ABAP data: the 14
+"!    products and 7 suppliers of the mock, verbatim, with the supplier joined
+"!    into the row as the original's expand does. Filtering, searching,
+"!    sorting and the four $count reads run in ABAP with the mock server's
+"!    semantics: a case-sensitive substringof on ProductName, the
+"!    code-point order of $orderby. The table remembers the selection of rows
+"!    a filter hides, as its rememberSelections does, while the mass actions
+"!    act on the rows on show, as getSelectedItems( ) does.
 "!  - the formatter module (numberUnit, quantityState) is business logic and
 "!    moves to the backend with it - the view binds the finished text and the
 "!    finished ValueState.
-"!  - selection is a bound row field instead of getSelectedItems( ), so the
-"!    two mass actions read what the user picked without asking the browser.
-"!  - the i18n resource bundle becomes literals. An abap2UI5 app translates
-"!    with ABAP text elements or a message class, not with a properties file
-"!    that never reaches the system.
-"!  - the busy handling (busyIndicatorDelay, the view model's busy flags) has
-"!    nothing to do here: the view is rendered from data the server already
-"!    holds.
-"!  - the IllustratedMessage of the not-found pages is @since 1.98 and this
-"!    package holds the 1.71 floor; no route can reach a missing product
-"!    here, so the pages are gone rather than downgraded.
-"!  - the share menu opens a mailto: URL from the client. The original
-"!    composes it with sap.m.URLHelper, which is the same thing one layer
-"!    down. Not verified in a running system.
-"!  - a posted comment is stamped with the server date and time in ISO form,
-"!    where the original formats the browser clock with a medium DateFormat.
-"!  - the object page gets an in-app back button in its footer. The original
-"!    has none - its Object view offers no way back and relies on the browser
-"!    Back button alone, while its onNavBack handler sits unused in the
-"!    controller. The button is that handler, wired.
-"!  - the name column header reads ProductName. The original binds
-"!    i18n>TableNameColumnTitle, a key its bundle does not have (it carries
-"!    tableNameColumnTitle), so the demo kit renders the raw key there.
+"!  - a posted comment is stamped by the server clock in the user's time zone
+"!    (sy-datlo/sy-timlo) in the en medium DateTimeFormat ("Sep 24, 2026,
+"!    9:05:30 AM") where the original formats the browser clock; the CLDR
+"!    pattern puts a narrow no-break space before AM/PM, this a plain one.
+"!  - the not-found pages show an IllustratedMessage, @since 1.98, and a Page
+"!    titleAlignment, @since 1.72, where this package holds the 1.71 floor.
+"!    The 1.71 equivalent is built instead: the same Page, HBox and button,
+"!    with an icon, the illustration type's default title ("Sorry, we can't
+"!    find this page") and the description in a centered VBox; the page
+"!    title is centered on the 1.71 themes and follows the theme on newer
+"!    ones.
+"!  - the share menu's e-mail goes through abap2UI5's URLHELPER action,
+"!    which is sap.m.URLHelper.triggerEmail itself, with the original's
+"!    subject and body and the page's location.href. That action refuses a
+"!    CR/LF in a parameter, so the "\r\n" of the body text is a space here;
+"!    the worklist's href is read when the e-mail is sent, not when the
+"!    worklist was first created.
+"!  - the busy handling (busyIndicatorDelay, the app and object view models'
+"!    busy flags) and the ErrorHandler's service-error MessageBox have
+"!    nothing to wait for or to fail: the data is already on the server.
 "!
 "! Original: src/sap.m/test/sap/m/demokit/tutorial/worklist/07 in OpenUI5,
 "! archived under ui5/demoapps/sap.m/tutorial/worklist.
@@ -74,30 +88,32 @@ CLASS z2ui5_cl_smpc_demo_001 DEFINITION PUBLIC.
         comment   TYPE string,
       END OF ty_s_comment.
 
-    DATA t_rows             TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
-    DATA t_comments         TYPE STANDARD TABLE OF ty_s_comment WITH EMPTY KEY.
-    DATA filter_key         TYPE string VALUE `all`.
-    DATA search_term        TYPE string.
-    DATA table_title        TYPE string.
-    DATA table_no_data      TYPE string.
-    DATA count_all          TYPE string.
-    DATA count_instock      TYPE string.
-    DATA count_shortage     TYPE string.
-    DATA count_outofstock   TYPE string.
-    DATA obj_productname    TYPE string.
-    DATA obj_productid      TYPE string.
-    DATA obj_unitprice      TYPE string.
-    DATA obj_unitsinstock   TYPE string.
-    DATA obj_units_percent  TYPE i.
+    DATA t_rows            TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    DATA t_comments        TYPE STANDARD TABLE OF ty_s_comment WITH EMPTY KEY.
+    " the worklistView model of the original
+    DATA filter_key        TYPE string VALUE `all`.
+    DATA table_title       TYPE string VALUE `ProductsPlural`.
+    DATA table_no_data     TYPE string VALUE `No ProductsPlural are currently available`.
+    DATA count_all         TYPE string VALUE `0`.
+    DATA count_instock     TYPE string VALUE `0`.
+    DATA count_shortage    TYPE string VALUE `0`.
+    DATA count_outofstock  TYPE string VALUE `0`.
+    " the bound product of the object page
+    DATA obj_productname   TYPE string.
+    DATA obj_productid     TYPE string.
+    DATA obj_unitprice     TYPE string.
+    DATA obj_unitsinstock  TYPE string.
+    DATA obj_units_display TYPE string.
+    DATA obj_units_percent TYPE i.
     " ObjectNumber.state is enum-typed: an empty value is rejected outright
     " (validateProperty), so the worklist start carries the UI5 default until
     " a product is opened
-    DATA obj_units_state    TYPE string VALUE `None`.
-    DATA obj_discontinued   TYPE abap_bool.
-    DATA obj_suppliername   TYPE string.
-    DATA obj_address        TYPE string.
-    DATA obj_postal_city    TYPE string.
-    DATA obj_country        TYPE string.
+    DATA obj_units_state   TYPE string VALUE `None`.
+    DATA obj_discontinued  TYPE abap_bool.
+    DATA obj_suppliername  TYPE string.
+    DATA obj_address       TYPE string.
+    DATA obj_postal_city   TYPE string.
+    DATA obj_country       TYPE string.
 
   PROTECTED SECTION.
     TYPES:
@@ -123,17 +139,62 @@ CLASS z2ui5_cl_smpc_demo_001 DEFINITION PUBLIC.
     DATA client        TYPE REF TO z2ui5_if_client.
     DATA t_products    TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
     DATA t_suppliers   TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
+    " the productFeedback model: every comment, of every product
     DATA t_feedback    TYPE STANDARD TABLE OF ty_s_comment WITH EMPTY KEY.
+    " the table's remembered selection (rememberSelections), rows a quick
+    " filter or the search hides included
+    DATA t_selected    TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    " the query of the last search event - the Application filter
+    DATA search_query  TYPE string.
     DATA product_shown TYPE i.
+    " the router target on show - the id of its page in the App
+    DATA page          TYPE string VALUE `worklist`.
 
     METHODS view_display.
-    METHODS on_event.
-    METHODS hash_apply.
-    METHODS object_show
+    METHODS page_worklist
       IMPORTING
-        productid TYPE i.
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS page_object
+      IMPORTING
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS page_not_found
+      IMPORTING
+        parent       TYPE REF TO z2ui5_cl_ui5_view_builder
+        id           TYPE string
+        illustration TYPE string
+        title        TYPE string
+        description  TYPE string
+        link         TYPE string.
+    METHODS on_event.
+    METHODS on_mass_action.
+    METHODS route_match
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS app_hash
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS page_to
+      IMPORTING
+        target TYPE string.
+    METHODS object_bind
+      IMPORTING
+        productid     TYPE i
+      RETURNING
+        VALUE(result) TYPE abap_bool.
     METHODS comments_refresh.
     METHODS list_refresh.
+    METHODS share_email
+      IMPORTING
+        subject TYPE string
+        body    TYPE string.
+    METHODS json_text
+      IMPORTING
+        val           TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+    METHODS date_medium
+      RETURNING
+        VALUE(result) TYPE string.
     METHODS number_unit
       IMPORTING
         val           TYPE i
@@ -160,6 +221,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
       model_init( ).
       list_refresh( ).
       view_display( ).
+      " index.html's <title>
+      client->follow_up_action( val   = client->cs_event-set_title
+                                t_arg = VALUE #( ( `Manage Products` ) ) ).
     ELSEIF client->check_on_navigated( ).
       view_display( ).
     ELSEIF client->check_on_event( ).
@@ -171,27 +235,58 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
   METHOD view_display.
 
-    " a reload or a shared link: the live hash rides in s_config-hash on
-    " every request, so a render whose hash already names a product starts on
-    " the object page - the routeMatched of a cold start
-    hash_apply( ).
+    " the router's initialize( ): the live hash rides in s_config-hash on
+    " every request, so a reload or a shared link starts on the page its hash
+    " names - the App opens on it (initialPage)
+    page = route_match( ).
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `displayBlock`   v = `true`
             )->a( n = `xmlns`          v = `sap.m`
             )->a( n = `xmlns:mvc`      v = `sap.ui.core.mvc`
+            )->a( n = `xmlns:core`     v = `sap.ui.core`
             )->a( n = `xmlns:semantic` v = `sap.f.semantic`
             )->a( n = `xmlns:form`     v = `sap.ui.layout.form`
             )->a( n = `xmlns:l`        v = `sap.ui.layout` ).
 
-    DATA(nav) = view->ele( `Shell`
-        )->ele( `NavContainer`
-            )->a( n = `id` v = `nav` ).
+    " App.view.xml - the router's controlId "app", aggregation "pages"
+    DATA(app) = view->ele( `Shell`
+        )->ele( `App`
+            )->a( n = `id`          v = `app`
+            )->a( n = `initialPage` v = page ).
 
-    " ---------------------------------------------------------- worklist
-    DATA(worklist) = nav->ele( n = `SemanticPage` ns = `semantic`
-        )->a( n = `id`                       v = `page-worklist`
+    page_worklist( app ).
+    page_object( app ).
+    page_not_found( parent       = app
+                    id           = `objectNotFound`
+                    illustration = `objectNotFoundIllustration`
+                    title        = `Products`
+                    description  = `This Product is not available`
+                    link         = `linkObject` ).
+    page_not_found( parent       = app
+                    id           = `notFound`
+                    illustration = `notFoundIllustration`
+                    title        = `Not Found`
+                    description  = `The requested resource was not found`
+                    link         = `link` ).
+
+    client->view_display( view->stringify( ) ).
+
+    " hash changes the app did not write itself - the browser Back/Forward
+    " buttons, a hand-edited URL - round-trip as HASH_CHANGED. Registered per
+    " render, since the registration dies with an app switch
+    client->follow_up_action( val   = client->cs_event-hash_attach_changed
+                              t_arg = VALUE #( ( `HASH_CHANGED` ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD page_worklist.
+
+    " Worklist.view.xml
+    DATA(worklist) = parent->ele( n = `SemanticPage` ns = `semantic`
+        )->a( n = `id`                       v = `worklist`
         )->a( n = `headerPinnable`           b = abap_false
         )->a( n = `toggleHeaderOnTitleClick` b = abap_false
         )->a( n = `showFooter`               b = abap_true ).
@@ -200,12 +295,13 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         )->tag( `Title`
             )->a( n = `text` v = `Manage Products` ).
 
+    " onQuickFilter: the tab's key is the Control filter of the list binding
     DATA(table) = worklist->ele( n = `headerContent` ns = `semantic`
         )->ele( `IconTabBar`
             )->a( n = `id`          v = `iconTabBar`
+            )->a( n = `select`      v = client->_event( `FILTER` )
             )->a( n = `expandable`  b = abap_false
             )->a( n = `selectedKey` v = client->_bind( filter_key )
-            )->a( n = `select`      v = client->_event( `FILTER` )
 
             )->ele( `items`
                 )->tag( `IconTabFilter`
@@ -244,6 +340,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
                     )->a( n = `mode`                v = `MultiSelect`
                     )->a( n = `items`               v = client->_bind( t_rows ) ).
 
+    " onSearch: the query travels as the event's argument - the field is not
+    " bound, as in the original, where nothing binds its value
     table->ele( `headerToolbar`
         )->ele( `Toolbar`
             )->tag( `Title`
@@ -253,17 +351,18 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->tag( `SearchField`
                 )->a( n = `id`      v = `searchField`
                 )->a( n = `tooltip` v = `Enter a Product name or a part of it.`
-                )->a( n = `value`   v = client->_bind( search_term )
-                )->a( n = `search`  v = client->_event( `SEARCH` )
+                )->a( n = `search`  v = client->_event( val = `SEARCH` arg = `${$parameters>/query}` )
                 )->a( n = `width`   v = `auto` ).
 
+    " the name column binds i18n>TableNameColumnTitle, a key the bundle does
+    " not carry - the demo kit shows the key itself
     table->ele( `columns`
         )->ele( `Column`
             )->a( n = `id` v = `nameColumn`
 
             )->tag( `Text`
                 )->a( n = `id`   v = `nameColumnTitle`
-                )->a( n = `text` v = `ProductName`
+                )->a( n = `text` v = `TableNameColumnTitle`
 
         )->end(
         )->ele( `Column`
@@ -302,6 +401,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `text` v = `Units in Stock` ).
 
+    " onPress: navTo( "object", { objectId: ProductID } )
     table->ele( `items`
         )->ele( `ColumnListItem`
             )->a( n = `type`     v = `Navigation`
@@ -317,11 +417,11 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
                     )->a( n = `unit`   v = `EUR`
                     )->a( n = `number` v = `{UNITPRICE_TEXT}`
                 )->tag( `ObjectNumber`
-                    )->a( n = `unit`   v = `PC`
                     )->a( n = `number` v = `{UNITSONORDER_TEXT}`
-                )->tag( `ObjectNumber`
                     )->a( n = `unit`   v = `PC`
+                )->tag( `ObjectNumber`
                     )->a( n = `number` v = `{UNITSINSTOCK_TEXT}`
+                    )->a( n = `unit`   v = `PC`
                     )->a( n = `state`  v = `{UNITSINSTOCK_STATE}` ).
 
     worklist->ele( n = `sendEmailAction` ns = `semantic`
@@ -339,12 +439,17 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
             )->a( n = `text`  v = `Remove`
             )->a( n = `press` v = client->_event( `UNLIST` ) ).
 
-    " ------------------------------------------------------------ object
-    DATA(object) = nav->ele( n = `SemanticPage` ns = `semantic`
-        )->a( n = `id`                       v = `page-object`
+  ENDMETHOD.
+
+
+  METHOD page_object.
+
+    " Object.view.xml - no footer and no back button, as there: the way back
+    " is the browser's Back button
+    DATA(object) = parent->ele( n = `SemanticPage` ns = `semantic`
+        )->a( n = `id`                       v = `object`
         )->a( n = `headerPinnable`           b = abap_false
-        )->a( n = `toggleHeaderOnTitleClick` b = abap_false
-        )->a( n = `showFooter`               b = abap_true ).
+        )->a( n = `toggleHeaderOnTitleClick` b = abap_false ).
 
     object->ele( n = `titleHeading` ns = `semantic`
         )->tag( `Title`
@@ -381,7 +486,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
         )->tag( `ProgressIndicator`
             )->a( n = `width`        v = `300px`
             )->a( n = `percentValue` v = client->_bind( obj_units_percent )
-            )->a( n = `displayValue` v = client->_bind( obj_unitsinstock )
+            )->a( n = `displayValue` v = client->_bind( obj_units_display )
             )->a( n = `showValue`    b = abap_true
             )->a( n = `state`        v = client->_bind( obj_units_state ) ).
 
@@ -423,6 +528,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
                     )->tag( `Text`
                         )->a( n = `text` v = client->_bind( obj_country ) ).
 
+    " onPost: the FeedInput empties itself and hands over its value
     body->ele( `Panel`
         )->a( n = `backgroundDesign` v = `Transparent`
         )->a( n = `headerText`       v = `Comments`
@@ -446,32 +552,54 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     object->ele( n = `sendEmailAction` ns = `semantic`
         )->tag( n = `SendEmailAction` ns = `semantic`
             )->a( n = `id`    v = `shareEmailObject`
-            )->a( n = `press` v = client->_event( `SHARE_EMAIL` ) ).
+            )->a( n = `press` v = client->_event( `SHARE_EMAIL_OBJECT` ) ).
 
-    " the in-app back button of the object page: the UI5 onNavBack pattern -
-    " one consumed step back in the browser history, and on a cold deep link,
-    " where no step exists, a replace to the worklist
-    object->ele( n = `footerCustomActions` ns = `semantic`
-        )->tag( `Button`
-            )->a( n = `text`  v = `Show Manage Products`
-            )->a( n = `icon`  v = `sap-icon://nav-back`
-            )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-hash_back
-                                                            t_arg = VALUE #( ( `/` ) ) ) ).
+  ENDMETHOD.
 
-    client->view_display( view->stringify( ) ).
 
-    " hash changes the app did not write itself - the browser Back/Forward
-    " buttons, a hand-edited URL - round-trip as HASH_CHANGED. Registered per
-    " render, since the registration dies with an app switch
-    client->follow_up_action( val   = client->cs_event-hash_attach_changed
-                              t_arg = VALUE #( ( `HASH_CHANGED` ) ) ).
+  METHOD page_not_found.
 
-    " a rebuilt NavContainer is back on its first page while the product on
-    " show survives as class state - re-issue the page it should carry
-    IF product_shown IS NOT INITIAL.
-      client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `nav` ) ( `to` ) ( `page-object` ) ) ).
-    ENDIF.
+    " NotFound.view.xml and ObjectNotFound.view.xml. The IllustratedMessage
+    " (@since 1.98) becomes its 1.71 equivalent: an icon for the
+    " illustration, the PageNotFound type's default title, the description
+    " and the additional content, centered in a VBox that takes the
+    " IllustratedMessage's place and its FlexItemData
+    parent->ele( `Page`
+        )->a( n = `id`    v = id
+        )->a( n = `title` v = title
+
+        )->ele( `HBox`
+            )->a( n = `height`     v = `100%`
+            )->a( n = `alignItems` v = `Center`
+
+            )->ele( `VBox`
+                )->a( n = `id`             v = illustration
+                )->a( n = `alignItems`     v = `Center`
+                )->a( n = `justifyContent` v = `Center`
+
+                )->ele( `layoutData`
+                    )->tag( `FlexItemData`
+                        )->a( n = `growFactor` v = `1`
+
+                )->end(
+                )->tag( n = `Icon` ns = `core`
+                    )->a( n = `src`   v = `sap-icon://document`
+                    )->a( n = `size`  v = `6rem`
+                    )->a( n = `class` v = `sapUiMediumMarginBottom`
+                )->tag( `Title`
+                    )->a( n = `text`       v = `Sorry, we can’t find this page`
+                    )->a( n = `titleStyle` v = `H2`
+                    )->a( n = `textAlign`  v = `Center`
+                    )->a( n = `wrapping`   b = abap_true
+                )->tag( `Text`
+                    )->a( n = `text`      v = description
+                    )->a( n = `textAlign` v = `Center`
+                    )->a( n = `class`     v = `sapUiSmallMarginTop`
+                )->tag( `Button`
+                    )->a( n = `id`    v = link
+                    )->a( n = `text`  v = `Show Manage Products`
+                    )->a( n = `press` v = client->_event( `SHOW_WORKLIST` )
+                    )->a( n = `class` v = `sapUiSmallMarginTop` ).
 
   ENDMETHOD.
 
@@ -480,104 +608,196 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     CASE client->get_event( ).
 
-      WHEN `FILTER` OR `SEARCH`.
-        " the list binding's filter( ), done where the data is
+      WHEN `FILTER`.
+        " onQuickFilter: the list binding's filter( ), done where the data is
+        list_refresh( ).
+
+      WHEN `SEARCH`.
+        " onSearch/_applySearch: a Contains filter on ProductName, or none for
+        " an empty query; a real search swaps the no-data text for good
+        search_query = client->get_event_arg( ).
+        IF search_query IS NOT INITIAL.
+          table_no_data = `No matching ProductsPlural found`.
+        ENDIF.
         list_refresh( ).
 
       WHEN `SHOW`.
-        " the router's navTo( "object", { objectId: ... } )
-        object_show( CONV i( client->get_event_arg( ) ) ).
+        " onPress: navTo( "object", { objectId } ) pushes the hash; the
+        " route's patternMatched binds the page
+        client->hash_set( |/Products/{ client->get_event_arg( ) }| ).
+        page_to( COND #( WHEN object_bind( CONV i( client->get_event_arg( ) ) ) = abap_true
+                         THEN `object`
+                         ELSE `objectNotFound` ) ).
+
+      WHEN `SHOW_WORKLIST`.
+        " NotFound's onLinkPressed: navTo( "worklist" ) - a new history entry
+        client->hash_set( `/` ).
+        page_to( `worklist` ).
 
       WHEN `HASH_CHANGED`.
-        " the router's routeMatched: show the page the hash now names
-        hash_apply( ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `nav` )
-                                                   ( `to` )
-                                                   ( COND #( WHEN product_shown IS NOT INITIAL
-                                                             THEN `page-object`
-                                                             ELSE `page-worklist` ) ) ) ).
+        " the router's hashChanged: show the target the hash now names
+        page_to( route_match( ) ).
 
-      WHEN `REORDER`.
-        DATA(reordered) = 0.
-        LOOP AT t_products REFERENCE INTO DATA(product).
-          IF NOT line_exists( t_rows[ productid = product->productid selected = abap_true ] ).
-            CONTINUE.
-          ENDIF.
-          product->unitsinstock = product->unitsinstock + 10.
-          reordered = reordered + 1.
-        ENDLOOP.
-        IF reordered = 0.
-          client->message_box_display( text = `No product selected` type = `error` ).
-        ELSE.
-          list_refresh( ).
-          client->message_toast_display( `Product stock level updated` ).
-        ENDIF.
-
-      WHEN `UNLIST`.
-        DATA(unlisted) = 0.
-        LOOP AT t_rows INTO DATA(row) WHERE selected = abap_true.
-          DELETE t_products WHERE productid = row-productid.
-          unlisted = unlisted + 1.
-        ENDLOOP.
-        IF unlisted = 0.
-          client->message_box_display( text = `No product selected` type = `error` ).
-        ELSE.
-          list_refresh( ).
-          client->message_toast_display( `Product removed` ).
-        ENDIF.
+      WHEN `REORDER` OR `UNLIST`.
+        on_mass_action( ).
 
       WHEN `POST`.
+        " onPost: the entry lands in the productFeedback model
         INSERT VALUE #( productid = product_shown
                         type      = `Comment`
-                        date      = |{ sy-datum DATE = ISO } { sy-uzeit TIME = ISO }|
+                        date      = date_medium( )
                         comment   = client->get_event_arg( ) ) INTO TABLE t_feedback.
         comments_refresh( ).
 
       WHEN `SHARE_EMAIL`.
-        " what sap.m.URLHelper.triggerEmail does one layer down
-        client->follow_up_action( val   = client->cs_event-open_new_tab
-                                  t_arg = VALUE #( ( `mailto:?subject=Manage%20Products` ) ) ).
+        " onShareEmailPress with the worklistView model's two texts
+        share_email( subject = `Email subject PLEASE REPLACE ACCORDING TO YOUR USE CASE`
+                     body    = `Email body PLEASE REPLACE ACCORDING TO YOUR USE CASE` ).
+
+      WHEN `SHARE_EMAIL_OBJECT`.
+        " onShareEmailPress with the objectView model's two texts
+        share_email( subject = |Email subject including object identifier PLEASE REPLACE ACCORDING TO YOUR USE CASE { product_shown }|
+                     body    = |Email body PLEASE REPLACE ACCORDING TO YOUR USE CASE { obj_productname } (id: { product_shown })| ).
 
     ENDCASE.
 
   ENDMETHOD.
 
 
-  METHOD hash_apply.
+  METHOD on_mass_action.
 
-    " '/Products/<id>' is the object page, everything else the worklist -
-    " the two routes of the original's manifest
-    DATA(hash) = client->get( )-s_config-hash.
-    IF hash CS `/Products/`.
-      DATA(id) = substring_after( val = hash sub = `/Products/` ).
-      IF id CO `0123456789` AND id IS NOT INITIAL.
-        object_show( CONV i( id ) ).
-        RETURN.
+    " onUpdateStockObjects / onUnlistObjects over getSelectedItems( ) - the
+    " selected rows ON SHOW, so a selection a filter hides is not acted on
+    DATA(done) = 0.
+    LOOP AT t_rows INTO DATA(row) WHERE selected = abap_true.
+      IF client->get_event( ) = `REORDER`.
+        ASSIGN t_products[ productid = row-productid ] TO FIELD-SYMBOL(<product>).
+        IF <product> IS ASSIGNED.
+          <product>-unitsinstock = <product>-unitsinstock + 10.
+          UNASSIGN <product>.
+        ENDIF.
+      ELSE.
+        DELETE t_products WHERE productid = row-productid.
       ENDIF.
+      done = done + 1.
+    ENDLOOP.
+
+    IF done = 0.
+      " _showErrorMessage( getText( "TableSelectProduct" ) ) - a key the
+      " bundle does not carry, so MessageBox.error shows the key
+      client->message_box_display( text = `TableSelectProduct` type = `error` ).
+      RETURN.
     ENDIF.
 
-    product_shown = 0.
+    " the table's refresh and its updateFinished: rows, title and counts;
+    " the last request's handler toasts once
+    list_refresh( ).
+    client->message_toast_display( COND #( WHEN client->get_event( ) = `REORDER`
+                                            THEN `Product stock level updated`
+                                            ELSE `Product removed` ) ).
 
   ENDMETHOD.
 
 
-  METHOD object_show.
+  METHOD route_match.
 
+    " the manifest's routes: "" is the worklist, "Products/{objectId}" the
+    " object - crossroads matches the pattern case-insensitively - and
+    " anything else the bypassed target notFound
+    DATA(hash) = app_hash( ).
+    IF hash IS INITIAL.
+      result = `worklist`.
+      RETURN.
+    ENDIF.
+
+    SPLIT hash AT `/` INTO TABLE DATA(segments).
+    IF lines( segments ) <> 2 OR to_upper( segments[ 1 ] ) <> `PRODUCTS`.
+      result = `notFound`.
+      RETURN.
+    ENDIF.
+
+    " _onObjectMatched binds /Products(<id>); _onBindingChange displays the
+    " target objectNotFound when that entity does not exist (the conditions
+    " short-circuit, so only a number that fits reaches CONV i)
+    DATA(id) = segments[ 2 ].
+    result = `objectNotFound`.
+    IF id CO `0123456789` AND strlen( id ) <= 9 AND object_bind( CONV i( id ) ) = abap_true.
+      result = `object`.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD app_hash.
+
+    " the part of the URL hash the app's own routes live in: behind a
+    " launchpad's shell hash (`<intent>&/`) and behind abap2UI5's own
+    " segments (`/z2ui5-xapp-state=<id>`, `/app/<class>/<draft>`), without
+    " the slashes around it - `#/Products/1` reads `Products/1`
+    DATA(get) = client->get( ).
+    DATA(hash) = get-s_config-hash.
+    SHIFT hash LEFT DELETING LEADING `#`.
+    DATA(shell) = find( val = hash sub = `&/` ).
+    IF shell >= 0.
+      hash = substring( val = hash off = shell + 2 ).
+    ELSEIF get-check_launchpad_active = abap_true.
+      hash = ``.
+    ENDIF.
+    IF hash IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SPLIT hash AT `/` INTO TABLE DATA(segments).
+    DELETE segments WHERE table_line IS INITIAL.
+    IF segments IS NOT INITIAL AND segments[ 1 ] CP `z2ui5-xapp-state=*`.
+      DELETE segments INDEX 1.
+    ENDIF.
+    IF lines( segments ) >= 2 AND segments[ 1 ] = `app`.
+      DELETE segments FROM 1 TO 2.
+      IF segments IS NOT INITIAL AND strlen( segments[ 1 ] ) = 32.
+        DELETE segments INDEX 1.
+      ENDIF.
+    ENDIF.
+
+    result = concat_lines_of( table = segments sep = `/` ).
+
+  ENDMETHOD.
+
+
+  METHOD page_to.
+
+    " the target's display( ): the App navigates to the target's page
+    IF target = page.
+      RETURN.
+    ENDIF.
+    page = target.
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `app` ) ( `to` ) ( target ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD object_bind.
+
+    " the object view's bindElement( /Products(<id>) ) with the expanded
+    " supplier, through the formatters
     ASSIGN t_products[ productid = productid ] TO FIELD-SYMBOL(<product>).
     IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
+    result = abap_true.
 
     product_shown     = productid.
     obj_productname   = <product>-productname.
     obj_productid     = number_unit( <product>-productid ).
     obj_unitprice     = |{ number_unit( <product>-unitprice ) } EUR|.
     obj_unitsinstock  = number_unit( <product>-unitsinstock ).
+    obj_units_display = |{ <product>-unitsinstock }|.
     obj_units_percent = <product>-unitsinstock.
     obj_units_state   = quantity_state( <product>-unitsinstock ).
     obj_discontinued  = <product>-discontinued.
 
+    CLEAR: obj_suppliername, obj_address, obj_postal_city, obj_country.
     ASSIGN t_suppliers[ supplierid = <product>-supplierid ] TO FIELD-SYMBOL(<supplier>).
     IF <supplier> IS ASSIGNED.
       obj_suppliername = <supplier>-companyname.
@@ -588,23 +808,16 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     comments_refresh( ).
 
-    " the router's navTo pushes a history entry, so the browser Back button
-    " has a step to take - and the URL is the deep link of the original
-    client->hash_set( |/Products/{ productid }| ).
-    client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `nav` ) ( `to` ) ( `page-object` ) ) ).
-
   ENDMETHOD.
 
 
   METHOD comments_refresh.
 
-    " the original filters the feed list on productID and sorts it by date,
-    " newest first
-    t_comments = VALUE #( ).
-    LOOP AT t_feedback INTO DATA(comment) WHERE productid = product_shown.
-      INSERT comment INTO t_comments INDEX 1.
-    ENDLOOP.
+    " _onBindingChange filters the feed list on productID; its sorter orders
+    " the date TEXT descending (localeCompare, equal texts in the order they
+    " were posted)
+    t_comments = VALUE #( FOR comment IN t_feedback WHERE ( productid = product_shown ) ( comment ) ).
+    SORT t_comments STABLE BY date DESCENDING AS TEXT.
 
   ENDMETHOD.
 
@@ -615,11 +828,18 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " before each one - see there
     FIELD-SYMBOLS <supplier> LIKE LINE OF t_suppliers.
 
-    DATA(shown) = 0.
-    DATA(selection) = t_rows.
-    t_rows = VALUE #( ).
+    " rememberSelections: the rows on show carry the live selection, the
+    " rows a filter hid keep theirs
+    LOOP AT t_rows INTO DATA(row).
+      DELETE t_selected WHERE table_line = row-productid.
+      IF row-selected = abap_true.
+        INSERT row-productid INTO TABLE t_selected.
+      ENDIF.
+    ENDLOOP.
 
+    t_rows = VALUE #( ).
     LOOP AT t_products INTO DATA(product).
+      " the Control filter of the quick filter tab
       CASE filter_key.
         WHEN `inStock`.
           IF product-unitsinstock <= 10.
@@ -635,7 +855,9 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
           ENDIF.
       ENDCASE.
 
-      IF search_term IS NOT INITIAL AND to_upper( product-productname ) NS to_upper( search_term ).
+      " the Application filter of the search: the mock server's substringof,
+      " case-sensitive
+      IF search_query IS NOT INITIAL AND find( val = product-productname sub = search_query ) < 0.
         CONTINUE.
       ENDIF.
 
@@ -653,32 +875,74 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
                       unitsonorder_text  = number_unit( product-unitsonorder )
                       unitsinstock_text  = number_unit( product-unitsinstock )
                       unitsinstock_state = quantity_state( product-unitsinstock )
-                      selected           = xsdbool( line_exists( selection[ productid = product-productid selected = abap_true ] ) ) ) INTO TABLE t_rows.
-      shown = shown + 1.
+                      selected           = xsdbool( line_exists( t_selected[ table_line = product-productid ] ) ) ) INTO TABLE t_rows.
     ENDLOOP.
 
-    " the original's list binding sorts by ProductName ascending
-    SORT t_rows BY productname AS TEXT.
+    " the sorter on ProductName ascending - the mock server's $orderby, which
+    " compares code points
+    SORT t_rows BY productname.
 
-    " the four $count reads of the original, over the full stock
+    " onUpdateFinished: the title counts the rows on show, the four $count
+    " reads count the whole stock
+    table_title      = COND #( WHEN t_rows IS INITIAL THEN `ProductsPlural` ELSE |Products ({ lines( t_rows ) })| ).
     count_all        = |{ lines( t_products ) }|.
     count_instock    = |{ REDUCE i( INIT n = 0 FOR p IN t_products NEXT n = COND #( WHEN p-unitsinstock > 10 THEN n + 1 ELSE n ) ) }|.
     count_shortage   = |{ REDUCE i( INIT s = 0 FOR q IN t_products NEXT s = COND #( WHEN q-unitsinstock BETWEEN 1 AND 10 THEN s + 1 ELSE s ) ) }|.
     count_outofstock = |{ REDUCE i( INIT o = 0 FOR r IN t_products NEXT o = COND #( WHEN r-unitsinstock <= 0 THEN o + 1 ELSE o ) ) }|.
 
-    table_title   = COND #( WHEN shown = 0 THEN `ProductsPlural` ELSE |Products ({ shown })| ).
-    table_no_data = COND #( WHEN search_term IS INITIAL
-                            THEN `No ProductsPlural are currently available`
-                            ELSE `No matching ProductsPlural found` ).
+  ENDMETHOD.
+
+
+  METHOD share_email.
+
+    " BaseController.onShareEmailPress: URLHelper.triggerEmail( null, subject,
+    " body ) - the body ends in location.href after a "\r\n", which the
+    " URLHELPER action refuses, so a space stands in for it
+    DATA(config) = client->get( )-s_config.
+    DATA(href) = config-origin && config-pathname && config-search && config-hash.
+    client->follow_up_action( val   = client->cs_event-urlhelper
+                              t_arg = VALUE #( ( `TRIGGER_EMAIL` )
+                                               ( |\{"SUBJECT":"{ json_text( subject ) }","BODY":"{ json_text( |{ body } { href }| ) }"\}| ) ) ).
+
+  ENDMETHOD.
+
+
+  METHOD json_text.
+
+    " a string as the inside of a JSON string literal
+    result = val.
+    REPLACE ALL OCCURRENCES OF `\` IN result WITH `\\`.
+    REPLACE ALL OCCURRENCES OF `"` IN result WITH `\"`.
+
+  ENDMETHOD.
+
+
+  METHOD date_medium.
+
+    " DateFormat.getDateTimeInstance( { style: "medium" } ) in English:
+    " "MMM d, y, h:mm:ss a"
+    DATA(date) = sy-datlo.
+    DATA(time) = sy-timlo.
+    DATA(hour) = CONV i( time(2) ).
+    DATA(hour12) = hour MOD 12.
+    IF hour12 = 0.
+      hour12 = 12.
+    ENDIF.
+    DATA(month) = substring( val = `JanFebMarAprMayJunJulAugSepOctNovDec` off = ( CONV i( date+4(2) ) - 1 ) * 3 len = 3 ).
+    result = |{ month } { CONV i( date+6(2) ) }, { date(4) }, { hour12 }:{ time+2(2) }:{ time+4(2) } { COND #( WHEN hour < 12 THEN `AM` ELSE `PM` ) }|.
 
   ENDMETHOD.
 
 
   METHOD number_unit.
 
-    " the original's numberUnit formatter - parseFloat(value).toFixed(2).
-    " The mock carries whole numbers only, so the two decimals are always
-    " the two zeros; it runs in ABAP because a formatter is business logic
+    " the original's numberUnit formatter - "" for a falsy value, otherwise
+    " parseFloat(value).toFixed(2). The mock carries whole numbers only, so
+    " the two decimals are always the two zeros
+    IF val = 0.
+      result = ``.
+      RETURN.
+    ENDIF.
     result = |{ val }.00|.
 
   ENDMETHOD.
