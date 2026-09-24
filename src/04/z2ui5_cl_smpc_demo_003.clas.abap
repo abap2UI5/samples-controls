@@ -1,46 +1,51 @@
-" @keywords team calendar app dynamicpagetitle title verticallayout planningcalendar select item button planningcalendarview planningcalendarrow
+" @keywords team calendar app dynamicpagetitle title verticallayout responsivepopover planningcalendarlegend calendarlegenditem planningcalendar select button
 " @summary Calendar demo app for team and team members. - the UI5 demo app "Team Calendar", rebuilt as one self-contained abap2UI5 class.
 " @origin demo app Team Calendar (sap.m/teamCalendar) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
 "! <p class="shorttext">demo app - Team Calendar</p>
 "!
-"! The UI5 demo app Team Calendar, rebuilt as ONE abap2UI5 class: a
-"! DynamicPage carrying the team's PlanningCalendar - four people, their
-"! appointments and their interval headers - and the SinglePlanningCalendar of
-"! one team member, with the calendar legend in a popover and the Select that
-"! switches between them.
+"! The UI5 demo app Team Calendar, rebuilt as ONE abap2UI5 class and 1:1 with
+"! its one view, its three fragments and its controller: a DynamicPage whose
+"! VerticalLayout shows either the team's PlanningCalendar - four people,
+"! their appointments and their interval headers - or the
+"! SinglePlanningCalendar of one team member, switched by the "Calendar for:"
+"! Select of either calendar or by a click on a row of the team calendar.
+"! The date and the view the user has reached travel across every switch
+"! (startDateChangeHandler / viewChangeHandler), "Create" shows the
+"! original's toast and the legend button toggles the calendar legend in its
+"! ResponsivePopover.
 "!
-"! Where it differs from the original, and why:
+"! Where it differs from the original, and why - only what a backend-driven
+"! app cannot do the same way:
 "!
-"!  - the two calendars are two controls in ONE view, shown and hidden by a
-"!    bound `visible`, where the original loads a fragment per calendar and
-"!    swaps it into a VerticalLayout. That is also why this class has no
-"!    startDateChange / viewChange handler: the original needs them to carry
-"!    the date and the view across a swap that destroys nothing but re-adds
-"!    everything, and here both calendars stay alive and keep their own.
-"!  - the fixImagePath formatter moves to the backend: model_init holds the
-"!    picture paths as the mock writes them and prefixes them once with the
-"!    demo kit's own URL, which is what the original computes at runtime from
-"!    sap.ui.require.toUrl( ).
-"!  - the utcToLocalDateTime formatter stays on the FRONTEND, and it is the
-"!    one formatter that has to: startDate, endDate and the calendar's own
-"!    startDate are object-typed properties that demand a real JS Date, which
-"!    no wire can carry. abap2UI5 ships exactly that converter as
-"!    Formatter.DateCreateObject in its curated module.
-"!  - the Select is filled in the view rather than by the controller's
-"!    _populateSelect( ), and it carries the person's NAME as its key, because
-"!    that is what the rowSelectionChange event hands back about the row that
-"!    was clicked.
-"!  - the single calendar opens on its DAY view, where the original's
-"!    _displayCalendar( ) selects the month the model names. selectedView is an
-"!    association: it cannot be bound, has no whitelisted setter, and a
-"!    declared id is resolved before the views exist. Same limit as app 549.
-"!  - an appointment of the SINGLE calendar shows its info line and its
-"!    picture. The original's SinglePlanningCalendar fragment binds `text` and
-"!    `icon` there, two paths its model does not have (the rows carry `info`
-"!    and `pic`, which its PlanningCalendar fragment binds correctly), so the
-"!    demo kit shows neither - the same row data as the team calendar, drawn.
-"!  - the i18n bundle becomes literals (the original ships de and en plus two
-"!    terminologies; an abap2UI5 app translates with ABAP text elements).
+"!  - a switch between the two calendars REBUILDS the view with the calendar
+"!    the controller's _displayCalendar( ) would add to the VerticalLayout,
+"!    where the original keeps both fragments loaded and swaps them. What the
+"!    swap carries is state of this class instead (start_date, view_key,
+"!    member), so the rebuilt calendar opens where the swapped one would.
+"!    For the same reason viewChangeHandler's setStartDate( ) of the saved
+"!    date is a rebuild too: a Date object cannot travel as a control-call
+"!    argument, and the rebuilt calendar starts on the saved date.
+"!  - the dates stay ISO strings in ABAP and become JS Dates at the binding
+"!    (Formatter.DateCreateObject, the original's utcToLocalDateTime): an
+"!    object-typed property cannot be filled from JSON. The date a calendar
+"!    reports on startDateChange comes back as its toISOString( ) - the same
+"!    instant, spelled in UTC.
+"!  - the SinglePlanningCalendar's selectedView is an ASSOCIATION: it cannot
+"!    be bound, and set in the XML it is resolved before the views exist
+"!    ("There is no such view"). _displayCalendar's setSelectedView( ) is
+"!    therefore wired to the calendar's own modelContextChange, which fires
+"!    once the calendar - views included - is built and has its model, and
+"!    hands over the view's runtime id: the one spelling setSelectedView( )
+"!    accepts, and one only the browser knows.
+"!  - the fixImagePath formatter moves to the backend: model_init prefixes
+"!    every picture that is not an icon once with the demo kit's own URL,
+"!    which is what the original computes from sap.ui.require.toUrl( ).
+"!  - the legend's ResponsivePopover carries an id (legendPopover): it lives
+"!    in the view's dependents, as the original adds it there, and the
+"!    buttons toggle it by that id without a round-trip (isOpen ? close :
+"!    openBy, as openLegend does).
+"!  - the legend buttons do not set ariaHasPopup="Dialog": Button has it from
+"!    UI5 1.84 on, above the 1.71 floor of src/04.
 "!
 "! Original: src/sap.m/test/sap/m/demokit/teamCalendar in OpenUI5, archived
 "! under ui5/demoapps/sap.m/teamCalendar.
@@ -77,25 +82,21 @@ CLASS z2ui5_cl_smpc_demo_003 DEFINITION PUBLIC.
         t_headers      TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY,
       END OF ty_s_person.
     TYPES:
-      BEGIN OF ty_s_member,
-        key  TYPE string,
-        text TYPE string,
-      END OF ty_s_member.
-    TYPES:
       BEGIN OF ty_s_legend,
         text TYPE string,
         type TYPE string,
       END OF ty_s_legend.
 
-    DATA t_team       TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
-    DATA t_selected   TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
-    DATA t_members    TYPE STANDARD TABLE OF ty_s_member WITH EMPTY KEY.
-    DATA t_legend     TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
-    DATA page_title   TYPE string VALUE `Team Calendar`.
-    DATA start_date   TYPE string.
-    DATA view_key     TYPE string VALUE `OneMonth`.
-    DATA member       TYPE string VALUE `Team`.
-    DATA check_team   TYPE abap_bool VALUE abap_true.
+    DATA t_team     TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
+    " the appointments of the member the SinglePlanningCalendar shows - the
+    " original binds the calendar to /team/<index> (bindElement)
+    DATA t_selected TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    DATA t_legend   TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
+    DATA page_title TYPE string.
+    " the controller's _oStartDate, _sSelectedView and _sSelectedMember
+    DATA start_date TYPE string.
+    DATA view_key   TYPE string.
+    DATA member     TYPE string.
 
   PROTECTED SECTION.
     " what the original's fixImagePath prefixes a relative picture with:
@@ -105,11 +106,25 @@ CLASS z2ui5_cl_smpc_demo_003 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS on_event.
-    METHODS legend_display.
-    METHODS member_select
+    METHODS view_legend
       IMPORTING
-        name TYPE string.
+        view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS view_team
+      IMPORTING
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS view_single
+      IMPORTING
+        parent TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS view_select_items
+      IMPORTING
+        selector TYPE REF TO z2ui5_cl_ui5_view_builder.
+    METHODS on_event.
+    METHODS calendar_load
+      IMPORTING
+        key TYPE string.
+    METHODS is_single
+      RETURNING
+        VALUE(result) TYPE abap_bool.
     METHODS model_init.
 
   PRIVATE SECTION.
@@ -136,24 +151,24 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
   METHOD view_display.
 
-    " calendar date properties are typed "object" and demand a real JS Date;
-    " the model keeps the mock's ISO strings and Formatter.DateCreateObject
-    " converts them - the curated module's whole reason to exist.
-    " The chain hangs off the factory( ) rather than starting from a
-    " standalone one: with the split shape the variable has to hold the
-    " mvc:View, or the next statement adds a SECOND ROOT beside it and the
-    " document does not parse (view-chain-layout, "the one combination that
-    " is broken")
+    " Main.view.xml. The chain hangs off the factory( ) rather than starting
+    " from a standalone one: with the split shape the variable has to hold
+    " the mvc:View, or the next statement adds a SECOND ROOT beside it
+    " (view-chain-layout, "the one combination that is broken")
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `xmlns`        v = `sap.m`
             )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
             )->a( n = `xmlns:f`      v = `sap.f`
-            )->a( n = `xmlns:l`      v = `sap.ui.layout`
+            )->a( n = `xmlns:layout` v = `sap.ui.layout`
             )->a( n = `xmlns:u`      v = `sap.ui.unified`
             )->a( n = `xmlns:core`   v = `sap.ui.core`
             )->a( n = `height`       v = `100%`
+            " the calendar dates are object-typed and demand a real JS Date -
+            " Formatter.DateCreateObject is the original's utcToLocalDateTime
             )->a( n = `core:require` v = `{Formatter: 'z2ui5/model/formatter'}` ).
+
+    view_legend( view ).
 
     DATA(page) = view->ele( n = `DynamicPage` ns = `f`
         )->a( n = `id`                          v = `dynamicPage`
@@ -172,81 +187,123 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                 )->tag( `Title`
                     )->a( n = `text` v = client->_bind( page_title ) ).
 
+    " the VerticalLayout the controller adds the displayed calendar to
     DATA(content) = page->ele( n = `content` ns = `f`
-        )->ele( n = `VerticalLayout` ns = `l`
+        )->ele( n = `VerticalLayout` ns = `layout`
             )->a( n = `id`    v = `mainContent`
             )->a( n = `width` v = `100%` ).
 
-    " ------------------------------------------------- the team calendar
-    DATA(pc) = content->ele( `VBox`
-        )->a( n = `visible` v = client->_bind( check_team )
+    IF is_single( ) = abap_true.
+      view_single( content ).
+    ELSE.
+      view_team( content ).
+    ENDIF.
 
+    client->view_display( view->stringify( ) ).
+
+  ENDMETHOD.
+
+
+  METHOD view_legend.
+
+    " Legend.fragment.xml - openLegend( ) loads it once and adds it to the
+    " view's dependents; the two legend buttons toggle it by id
+    view->ele( n = `dependents` ns = `mvc`
+        )->ele( `ResponsivePopover`
+            )->a( n = `id`         v = `legendPopover`
+            )->a( n = `title`      v = `Calendar Legend`
+            )->a( n = `placement`  v = `Bottom`
+            )->a( n = `showHeader` b = abap_false
+
+            )->ele( `PlanningCalendarLegend`
+                )->a( n = `appointmentItems` v = |\{ path: '{ client->_bind_path( t_legend ) }', templateShareable: true \}|
+
+                )->ele( `appointmentItems`
+                    )->tag( n = `CalendarLegendItem` ns = `u`
+                        )->a( n = `text`    v = `{TEXT}`
+                        )->a( n = `type`    v = `{TYPE}`
+                        )->a( n = `tooltip` v = `{TEXT}` ).
+
+  ENDMETHOD.
+
+
+  METHOD view_team.
+
+    " PlanningCalendar.fragment.xml. viewKey is the saved view (the fragment's
+    " "Day" is what _displayCalendar overwrites at once), startDate the saved
+    " date. The three events are the controller's handlers: a row opens that
+    " member's calendar, the date and the view are kept for the next switch.
+    " The two keeping wires queue (check_queue_last): the calendar reports its
+    " aligned start date while it is still being built, and a view switch
+    " fires startDateChange and viewChange back to back
+    DATA(pc) = parent->ele( `VBox`
         )->ele( `PlanningCalendar`
             )->a( n = `id`                        v = `PlanningCalendar`
+            )->a( n = `startDate`                 v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
             )->a( n = `viewKey`                   v = client->_bind( view_key )
             )->a( n = `rows`                      v = client->_bind( t_team )
             )->a( n = `appointmentsVisualization` v = `Filled`
             )->a( n = `showEmptyIntervalHeaders`  b = abap_false
             )->a( n = `showWeekNumbers`           b = abap_true
+            " rowSelectionHandler cuts the row index out of the row's id
             )->a( n = `rowSelectionChange`        v = client->_event( val = `ROW_SELECT`
-                                                                     arg = `${$parameters>/rows}[0].getTitle()` ) ).
+                                                                      arg = `${$parameters>/rows}[0].getId().split('-').pop()` )
+            )->a( n = `startDateChange`           v = client->_event( val    = `START_DATE`
+                                                                      arg    = `$event.getSource().getStartDate().toISOString()`
+                                                                      s_ctrl = VALUE #( check_queue_last = abap_true
+                                                                                        check_no_busy    = abap_true ) )
+            )->a( n = `viewChange`                v = client->_event( val    = `VIEW_CHANGE`
+                                                                      arg    = `${$source>/viewKey}`
+                                                                      s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
 
-    " the calendar's own startDate is object-typed too
-    pc->a( n = `startDate` v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}| ).
+    DATA(toolbar) = pc->ele( `toolbarContent` ).
 
-    DATA(pc_toolbar) = pc->ele( `toolbarContent` ).
-
-    pc_toolbar->tag( `Label`
+    DATA(toolbar_select) = toolbar->tag( `Label`
         )->a( n = `labelFor` v = `PlanningCalendarTeamSelector`
         )->a( n = `text`     v = `Calendar for: `
 
         )->ele( `Select`
             )->a( n = `id`          v = `PlanningCalendarTeamSelector`
             )->a( n = `selectedKey` v = client->_bind( member )
-            )->a( n = `items`       v = client->_bind( t_members )
             )->a( n = `change`      v = client->_event( val = `SELECT_MEMBER`
-                                                        arg = `${$parameters>/selectedItem}.getKey()` )
+                                                        arg = `${$parameters>/selectedItem}.getKey()` ) ).
+    view_select_items( toolbar_select ).
 
-            )->ele( `items`
-                )->tag( n = `Item` ns = `core`
-                    )->a( n = `key`  v = `{KEY}`
-                    )->a( n = `text` v = `{TEXT}` ).
-
-    pc_toolbar->tag( `Button`
+    toolbar->tag( `Button`
         )->a( n = `id`      v = `PlanningCalendarCreateAppointmentButton`
         )->a( n = `text`    v = `Create`
-        )->a( n = `tooltip` v = `Create new appointment`
         )->a( n = `press`   v = client->_event( `CREATE` )
+        )->a( n = `tooltip` v = `Create new appointment`
         )->tag( `Button`
             )->a( n = `id`      v = `PlanningCalendarLegendButton`
             )->a( n = `icon`    v = `sap-icon://legend`
-            )->a( n = `tooltip` v = `Open Planning Calendar legend`
-            " the button's OWN id, not `$event.oSource.sId`: that resolves to
-            " the view-PREFIXED `mainView--PlanningCalendarLegendButton`, and
-            " popover_display( by_id = ) looks the anchor up inside the view,
-            " where the prefixed spelling matches nothing - so the event
-            " arrived, the handler ran, and no popover ever appeared
-            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `PlanningCalendarLegendButton` ) ).
+            " openLegend: isOpen( ) ? close( ) : openBy( the button ) - in the
+            " browser, no round-trip
+            )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                              t_arg = VALUE #( ( `legendPopover` )
+                                                                               ( `toggleBy` )
+                                                                               ( `PlanningCalendarLegendButton` ) ) )
+            )->a( n = `tooltip` v = `Open Planning Calendar legend` ).
 
     pc->ele( `views`
         )->ele( `PlanningCalendarView`
-            )->a( n = `key`               v = `Day`
-            )->a( n = `intervalType`      v = `Hour`
-            )->a( n = `description`       v = `Day`
-            )->a( n = `intervalsS`        v = `3`
-            )->a( n = `intervalsM`        v = `6`
-            )->a( n = `intervalsL`        v = `12`
-            )->a( n = `showSubIntervals`  b = abap_true
+            )->a( n = `key`              v = `Day`
+            )->a( n = `intervalType`     v = `Hour`
+            )->a( n = `description`      v = `Day`
+            )->a( n = `intervalsS`       v = `3`
+            )->a( n = `intervalsM`       v = `6`
+            )->a( n = `intervalsL`       v = `12`
+            )->a( n = `showSubIntervals` b = abap_true
 
         )->end(
         )->ele( `PlanningCalendarView`
-            )->a( n = `key`               v = `Week`
-            )->a( n = `intervalType`      v = `Week`
-            )->a( n = `description`       v = `Week`
-            )->a( n = `intervalsS`        v = `1`
-            )->a( n = `intervalsM`        v = `2`
-            )->a( n = `intervalsL`        v = `7`
-            )->a( n = `showSubIntervals`  b = abap_true
+            )->a( n = `key`              v = `Week`
+            )->a( n = `intervalType`     v = `Week`
+            )->a( n = `description`      v = `Week`
+            )->a( n = `intervalsS`       v = `1`
+            )->a( n = `intervalsM`       v = `2`
+            )->a( n = `intervalsL`       v = `7`
+            )->a( n = `showSubIntervals` b = abap_true
 
         )->end(
         )->ele( `PlanningCalendarView`
@@ -264,6 +321,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             )->a( n = `intervalType` v = `OneMonth`
             )->a( n = `description`  v = `Month` ).
 
+    " the headers carry no `pic`, so the fragment's icon binding of the
+    " interval headers resolves to nothing and is left out
     pc->ele( `rows`
         )->ele( `PlanningCalendarRow`
             )->a( n = `icon`            v = `{PIC}`
@@ -290,72 +349,115 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
                     )->a( n = `title`     v = `{TITLE}`
                     )->a( n = `type`      v = `{TYPE}` ).
 
-    " ------------------------------------ the calendar of one team member
-    DATA(spc) = content->ele( `VBox`
-        )->a( n = `visible` v = |\{= !${ client->_bind( check_team ) } \}|
+  ENDMETHOD.
 
+
+  METHOD view_single.
+
+    " SinglePlanningCalendar.fragment.xml. startDate is the saved date (the
+    " controller's setStartDate). viewChangeHandler reads the key of the
+    " selected view; the views carry ids that end in their key, so the key is
+    " what the wire cuts out of getSelectedView( ).
+    "
+    " _displayCalendar's setSelectedView( getViewByKey( saved view ) ):
+    " selectedView is an association that takes the view's RUNTIME id, and
+    " the XML cannot preset it (UI5 resolves it before the views aggregation
+    " is filled). modelContextChange fires once the calendar is complete and
+    " has its model - so that is where the calendar is handed the id of the
+    " view it should open on. Both ids are read off the event's source, which
+    " is the fully qualified calendar: it resolves before the view is
+    " registered anywhere
+    DATA(view_index) = SWITCH string( view_key WHEN `Week` THEN `1` WHEN `OneMonth` THEN `2` ELSE `0` ).
+
+    DATA(spc) = parent->ele( `VBox`
         )->ele( `SinglePlanningCalendar`
-            )->a( n = `id`           v = `SinglePlanningCalendar`
-            " the month view the original selects from its controller cannot be
-            " preselected here: selectedView is an ASSOCIATION, which neither
-            " binds nor has a whitelisted setter (app 549 carries the same
-            " sentence), and setting the id declaratively logs "There is no such
-            " view" - UI5 resolves it while the views aggregation is still empty.
-            " So this calendar opens on the first view of its list, the Day view
-            )->a( n = `startDate`    v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
-            )->a( n = `appointments` v = client->_bind( t_selected ) ).
+            )->a( n = `id`              v = `SinglePlanningCalendar`
+            )->a( n = `startDate`       v = |\{ path: '{ client->_bind_path( start_date ) }', formatter: 'Formatter.DateCreateObject' \}|
+            )->a( n = `startDateChange` v = client->_event( val    = `START_DATE`
+                                                            arg    = `$event.getSource().getStartDate().toISOString()`
+                                                            s_ctrl = VALUE #( check_queue_last = abap_true
+                                                                              check_no_busy    = abap_true ) )
+            )->a( n = `viewChange`      v = client->_event( val    = `VIEW_CHANGE`
+                                                            arg    = `$event.getSource().getSelectedView().split('spcView').pop()`
+                                                            s_ctrl = VALUE #( check_queue_last = abap_true ) )
+            )->a( n = `appointments`    v = client->_bind( t_selected )
+            )->a( n = `modelContextChange`
+                  v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                t_arg = VALUE #( ( `$event.getSource().getId()` )
+                                                                 ( `setSelectedView` )
+                                                                 ( |$event.getSource().getViews()[{ view_index }].getId()| ) ) ) ).
 
-    DATA(spc_actions) = spc->ele( `actions` ).
+    DATA(actions) = spc->ele( `actions` ).
 
-    spc_actions->tag( `Label`
+    DATA(actions_select) = actions->tag( `Label`
         )->a( n = `labelFor` v = `SinglePlanningCalendarTeamSelector`
         )->a( n = `text`     v = `Calendar for: `
 
         )->ele( `Select`
             )->a( n = `id`          v = `SinglePlanningCalendarTeamSelector`
             )->a( n = `selectedKey` v = client->_bind( member )
-            )->a( n = `items`       v = client->_bind( t_members )
             )->a( n = `change`      v = client->_event( val = `SELECT_MEMBER`
-                                                        arg = `${$parameters>/selectedItem}.getKey()` )
+                                                        arg = `${$parameters>/selectedItem}.getKey()` ) ).
+    view_select_items( actions_select ).
 
-            )->ele( `items`
-                )->tag( n = `Item` ns = `core`
-                    )->a( n = `key`  v = `{KEY}`
-                    )->a( n = `text` v = `{TEXT}` ).
-
-    spc_actions->tag( `Button`
+    actions->tag( `Button`
         )->a( n = `id`      v = `SinglePlanningCalendarCreateAppointmentButton`
         )->a( n = `text`    v = `Create`
-        )->a( n = `tooltip` v = `Create new appointment`
         )->a( n = `press`   v = client->_event( `CREATE` )
+        )->a( n = `tooltip` v = `Create new appointment`
         )->tag( `Button`
             )->a( n = `id`      v = `SinglePlanningCalendarLegendButton`
             )->a( n = `icon`    v = `sap-icon://legend`
-            )->a( n = `tooltip` v = `Open Single Planning Calendar legend`
-            " the button's own id - see the team calendar's legend button
-            )->a( n = `press`   v = client->_event( val = `LEGEND` arg = `SinglePlanningCalendarLegendButton` ) ).
+            " openLegend: isOpen( ) ? close( ) : openBy( the button ) - in the
+            " browser, no round-trip
+            )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                              t_arg = VALUE #( ( `legendPopover` )
+                                                                               ( `toggleBy` )
+                                                                               ( `SinglePlanningCalendarLegendButton` ) ) )
+            )->a( n = `tooltip` v = `Open Single Planning Calendar legend` ).
 
     spc->ele( `views`
         )->tag( `SinglePlanningCalendarDayView`
+            )->a( n = `id`    v = `spcViewDay`
             )->a( n = `key`   v = `Day`
             )->a( n = `title` v = `Day`
         )->tag( `SinglePlanningCalendarWeekView`
+            )->a( n = `id`    v = `spcViewWeek`
             )->a( n = `key`   v = `Week`
             )->a( n = `title` v = `Week`
         )->tag( `SinglePlanningCalendarMonthView`
+            )->a( n = `id`    v = `spcViewOneMonth`
             )->a( n = `key`   v = `OneMonth`
             )->a( n = `title` v = `Month` ).
 
+    " the fragment binds `text` and `icon` of these appointments to
+    " calendar>text and calendar>icon - two paths the rows of the model do
+    " not have (they carry `info` and `pic`), so the demo kit shows neither
+    " here, and neither does this rebuild. No `tentative` either, as there
     spc->ele( `appointments`
         )->tag( n = `CalendarAppointment` ns = `u`
-            )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
-            )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
-            )->a( n = `icon`      v = `{PIC}`
             )->a( n = `title`     v = `{TITLE}`
-            )->a( n = `text`      v = `{INFO}`
-            )->a( n = `type`      v = `{TYPE}` ).
+            )->a( n = `type`      v = `{TYPE}`
+            )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
+            )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }` ).
 
-    client->view_display( view->stringify( ) ).
+  ENDMETHOD.
+
+
+  METHOD view_select_items.
+
+    " the Select of both fragments: "Team", plus what _populateSelect( ) adds
+    " once the fragment has loaded - one item per person, its index the key
+    selector->tag( n = `Item` ns = `core`
+        )->a( n = `key`  v = `Team`
+        )->a( n = `text` v = `Team` ).
+    LOOP AT t_team INTO DATA(person).
+      " read before the chain runs - the builder's own table work moves sy-tabix
+      DATA(index) = sy-tabix - 1.
+      selector->tag( n = `Item` ns = `core`
+          )->a( n = `key`  v = |{ index }|
+          )->a( n = `text` v = person-name ).
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -364,84 +466,71 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     CASE client->get_event( ).
 
-      WHEN `SELECT_MEMBER`.
-        member_select( client->get_event_arg( ) ).
+      WHEN `SELECT_MEMBER` OR `ROW_SELECT`.
+        " selectChangeHandler (the item's key) and rowSelectionHandler (the
+        " index out of the row's id) - both then _loadCalendar( )
+        calendar_load( client->get_event_arg( ) ).
 
-      WHEN `ROW_SELECT`.
-        " the original reads the clicked row's id and cuts the person out of
-        " it; the row's title IS the person, so the wire carries that
-        member_select( client->get_event_arg( ) ).
+      WHEN `START_DATE`.
+        " startDateChangeHandler: only kept, nothing is redrawn
+        DATA(date) = client->get_event_arg( ).
+        IF date IS NOT INITIAL.
+          start_date = date.
+        ENDIF.
+
+      WHEN `VIEW_CHANGE`.
+        " viewChangeHandler: keep the view, then put the calendar back on the
+        " saved date - the rebuilt calendar opens on both
+        DATA(key) = client->get_event_arg( ).
+        IF key IS NOT INITIAL.
+          view_key = key.
+        ENDIF.
+        view_display( ).
 
       WHEN `CREATE`.
+        " appointmentCreate
         client->message_toast_display( `Creating new appointment...` ).
-
-      WHEN `LEGEND`.
-        legend_display( ).
 
     ENDCASE.
 
   ENDMETHOD.
 
 
-  METHOD legend_display.
+  METHOD calendar_load.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
-
-    popup->ele( n = `FragmentDefinition` ns = `core`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:u`    v = `sap.ui.unified`
-
-        )->ele( `ResponsivePopover`
-            )->a( n = `title`      v = `Calendar Legend`
-            )->a( n = `placement`  v = `Bottom`
-            )->a( n = `showHeader` b = abap_false
-
-            )->ele( `PlanningCalendarLegend`
-                )->a( n = `appointmentItems` v = client->_bind( t_legend )
-
-                )->ele( `appointmentItems`
-                    )->tag( n = `CalendarLegendItem` ns = `u`
-                        )->a( n = `text`    v = `{TEXT}`
-                        )->a( n = `type`    v = `{TYPE}`
-                        )->a( n = `tooltip` v = `{TEXT}` ).
-
-    client->popover_display( xml = popup->stringify( ) by_id = client->get_event_arg( ) ).
+    " _loadCalendar / _displayCalendar: "Team" (anything not a number) is the
+    " PlanningCalendar of everybody, an index the SinglePlanningCalendar of
+    " that person
+    member = key.
+    t_selected = VALUE #( ).
+    IF is_single( ) = abap_true.
+      DATA(index) = CONV i( member ) + 1.
+      READ TABLE t_team INDEX index ASSIGNING FIELD-SYMBOL(<person>).
+      IF sy-subrc = 0.
+        t_selected = <person>-t_appointments.
+      ENDIF.
+    ENDIF.
+    view_display( ).
 
   ENDMETHOD.
 
 
-  METHOD member_select.
+  METHOD is_single.
 
-    member = name.
-    check_team = xsdbool( name = `Team` ).
-    IF check_team = abap_true.
-      t_selected = VALUE #( ).
-      RETURN.
-    ENDIF.
-
-    " the SinglePlanningCalendar shows one person, so the appointments of the
-    " selected row become the bound table.
-    "
-    " Written as a READ rather than as the one-liner it was - a nested
-    " `VALUE #( ( LINES OF VALUE #( t[ key ]-inner OPTIONAL ) ) )` is what the
-    " 702 downport cannot resolve: it emitted `READ TABLE ... WITH KEY
-    " undefined` and the transpiled backend refused the class outright
-    " (check_syntax, "undefined" not found). A row this port cannot run on a
-    " 702 system is a port that does not keep this package's promise.
-    t_selected = VALUE #( ).
-    ASSIGN t_team[ name = name ] TO FIELD-SYMBOL(<member>).
-    IF <member> IS ASSIGNED.
-      t_selected = <member>-t_appointments.
-    ENDIF.
+    " the controller's isNaN( this._sSelectedMember ), negated
+    result = xsdbool( member IS NOT INITIAL AND member CO `0123456789` ).
 
   ENDMETHOD.
 
 
   METHOD model_init.
 
-    " model/Calendar.json's own start date
+    " model/Calendar.json: its title, its start date and view, and onInit's
+    " "Team" as the member shown first
+    page_title = `Team Calendar`.
     start_date = `2019-10-01T08:00:00`.
+    view_key   = `OneMonth`.
+    member     = `Team`.
 
     " model/Calendar.json - the team, their appointments and the interval
     " headers, verbatim
@@ -537,13 +626,6 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
         ( text = `Discussions`     type = `Type08` )
         ( text = `Out of office`   type = `Type09` )
         ( text = `Private meeting` type = `Type03` ) ).
-
-    " the Select of the original is filled by _populateSelect( ) after the
-    " fragment loads; here it is a bound table, "Team" plus one row per person
-    t_members = VALUE #( ( key = `Team` text = `Team` ) ).
-    LOOP AT t_team INTO DATA(member_row).
-      INSERT VALUE #( key = member_row-name text = member_row-name ) INTO TABLE t_members.
-    ENDLOOP.
 
     " the picture paths are the mock's relative ones; the original's
     " fixImagePath prefixes everything that is not an icon, once
