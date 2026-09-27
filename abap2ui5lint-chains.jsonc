@@ -79,10 +79,8 @@
     //     view-gates, check:apps and check:overview, where it is not reported;
     //   - client-handle-capture (warning, 1): the overview's header_button( )
     //     press wire, which abap2ui5lint-overview.jsonc decides (see there).
-    // The third, handler-without-event (116 hints), is NOT switched off: all
-    // 116 are linter false positives (a CASE over a non-event value, an
-    // event raised through a follow_up_action argument), fixed upstream in
-    // linter 0.8.1 (measured there: 0), and a hint does not fail this run.
+    // The third, handler-without-event (116 hints), was the rule's own false
+    // positives and is gone; it was never switched off here.
     // The other rules 0.8.0 added that fired on the tree - unescaped-text-in-
     // attribute and unbound-public-attribute in the src/04 demo apps,
     // unconditional-popup-display in one src/03 class - were fixed in the

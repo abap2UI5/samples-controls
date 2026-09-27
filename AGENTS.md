@@ -1138,6 +1138,28 @@ DSAG Leitfaden, then the samples style. Essentials:
   `view = client->cs_view-popup` (`-popover` / `-nested` / `-nested2`), not the
   plain string `` `POPUP` `` (apps 004/013). The `t_arg` is now just
   `id, method, params`.
+- **Never use an obsolete abap2UI5 custom control** — nor the builder helper
+  that emits one (`_z2ui5( )->timer( )`, `->focus( )`, `->info_frontend( )`,
+  …). abap2UI5 marks eight of its `z2ui5.cc` controls `// OBSOLETE:` and
+  names the replacement; use that instead:
+
+  | Obsolete control | Use |
+  |---|---|
+  | `Timer` | `cs_event-start_timer` |
+  | `Focus` | `cs_event-set_focus` |
+  | `Scrolling` | `cs_event-scroll_to` / `scroll_into_view` |
+  | `Title` | `cs_event-set_title` |
+  | `LPTitle` | `cs_event-set_title_launchpad` |
+  | `Favicon` | `cs_event-set_favicon` |
+  | `Info` | `client->get( )-s_device` / `-s_ui5` |
+  | `History` | `client->hash_set( )` / `app_state_set_active( )` |
+
+  The live companions (`Storage`, `MessageManager`, `MultiInputExt`, …) are
+  not on that list. The source is abap2UI5's `app/webapp/cc/*.js` headers and
+  `docs/removal-plan.md` §3. A replacement is not always a drop-in: the Timer
+  ran in the browser, `START_TIMER` is a round-trip that every other
+  round-trip cancels, so each response has to re-arm it (demo_004's
+  carousel, 2026-09-27).
 - Class names **lowercase** in `DEFINITION` and `IMPLEMENTATION`; not `FINAL`;
   `DEFINITION PUBLIC.` (never `CREATE PUBLIC`).
 - Always include `PROTECTED SECTION.` and `PRIVATE SECTION.` (keep `PRIVATE`

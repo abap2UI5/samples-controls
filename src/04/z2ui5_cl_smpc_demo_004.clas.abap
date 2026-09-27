@@ -67,10 +67,18 @@
 "!    events of the steps behind the payment step and behind the invoice
 "!    step set a flag instead (payment_passed, invoice_passed), and the
 "!    Yes/No warnings ask on those.
-"!  - the carousel's eight-second advance is a z2ui5.cc.Timer wired to the
-"!    carousel's next( ) and restarted on every page change, without a
-"!    round-trip; its random start page and the two promoted items are drawn
-"!    in ABAP with cl_abap_random_int - once per app start, as there.
+"!  - the carousel's eight-second advance is the START_TIMER frontend
+"!    event: its CAROUSEL_TICK event answers with the carousel's next( ) as
+"!    a follow-up action and nothing else, so the tick re-renders nothing.
+"!    A page change re-arms the timer from the view with no round-trip, and
+"!    since START_TIMER holds one timer per app, that restarts the wait as
+"!    onCarouselPageChanged does. Every round-trip cancels the pending timer,
+"!    so every response re-arms it while the carousel is on screen - which
+"!    also means any round-trip, not only a page change, restarts the
+"!    eight seconds. The original's setTimeout keeps running on every page;
+"!    this timer does not, because each of its ticks is a round-trip. The
+"!    random start page and the two promoted items are drawn in ABAP with
+"!    cl_abap_random_int - once per app start, as there.
 "!  - the i18n resource bundle becomes literals. The busy indicator the
 "!    original shows until its OData metadata has loaded has nothing to wait
 "!    for here, and the content density is abap2UI5's shell's to pick.
@@ -339,6 +347,9 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     " c_base, one folder up
     CONSTANTS c_img         TYPE string
       VALUE `https://sdk.openui5.org/test-resources/sap/m/demokit/cart/webapp/img/`.
+    " Welcome.controller's _iCarouselLoopTime: the carousel moves on after
+    " eight seconds - the START_TIMER delay, in milliseconds
+    CONSTANTS c_carousel_ms TYPE string VALUE `8000`.
 
     DATA client          TYPE REF TO z2ui5_if_client.
     DATA t_all           TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
@@ -582,6 +593,17 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       on_event( ).
     ENDIF.
 
+    " Welcome.onCarouselPageChanged: the carousel's next( ) after eight
+    " seconds, as a START_TIMER whose CAROUSEL_TICK comes back here. Every
+    " round-trip cancels the pending timer, so every response re-arms it while
+    " the carousel is on screen - the mid column's welcome page, not a phone,
+    " where the original hides the carousel
+    IF page_mid = `page-welcome` AND layout <> `OneColumn`
+        AND client->get( )-s_device-system <> client->cs_device-system-phone.
+      client->follow_up_action( val   = client->cs_event-start_timer
+                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ) ).
+    ENDIF.
+
   ENDMETHOD.
 
 
@@ -623,17 +645,6 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                                  " check_queue_last keeps it and dispatches it once the
                                                  " response has landed
                                                  s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
-
-    " Welcome.controller's carousel loop: every eight seconds the carousel's
-    " next( ), and a page change restarts the wait (onCarouselPageChanged,
-    " wired on the carousel below). Both are control calls wired into the
-    " view, so the loop runs in the browser with no round-trip, as there
-    view->tag( n = `Timer` ns = `z2ui5`
-        )->a( n = `id`          v = `carouselTimer`
-        )->a( n = `delayMS`     v = `8000`
-        )->a( n = `checkRepeat` b = abap_true
-        )->a( n = `finished`    v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                              t_arg = VALUE #( ( `welcomeCarousel` ) ( `next` ) ) ) ).
 
     dialogs( view ).
 
@@ -1651,14 +1662,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->ele( n = `BlockLayoutCell` ns = `l`
                 )->a( n = `class` v = `sapUiNoContentPadding`
 
-                " a page change restarts the eight-second wait of the timer in
-                " view_display (onCarouselPageChanged), in the browser
+                " a page change restarts the eight-second wait
+                " (onCarouselPageChanged): START_TIMER has one slot per app,
+                " so arming it again replaces the pending tick - in the
+                " browser, with no round-trip
                 )->ele( `Carousel`
                     )->a( n = `id`                v = `welcomeCarousel`
                     )->a( n = `showPageIndicator` v = `false`
                     )->a( n = `loop`              v = `true`
-                    )->a( n = `pageChanged`       v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                t_arg = VALUE #( ( `carouselTimer` ) ( `delayedCall` ) ) )
+                    )->a( n = `pageChanged`       v = client->follow_up_action( val   = client->cs_event-start_timer
+                                                                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ) )
                     )->a( n = `visible`           v = `{=!${device>/system/phone}}`
                     )->a( n = `tooltip`           v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
                                                      `You can browse and search a catalog of products, add the chosen products to your ` &&
@@ -2922,6 +2935,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         IF small_screen = abap_false AND client->get_event_arg( 2 ) = `OneColumn`.
           set_layout( `Two` ).
         ENDIF.
+
+      WHEN `CAROUSEL_TICK`.
+        " the START_TIMER of main( ) ran out: the carousel's next( ) and
+        " nothing else - no view_display( ), so the tick re-renders nothing,
+        " and main( ) arms the next one
+        client->follow_up_action( val   = client->cs_event-control_by_id
+                                  t_arg = VALUE #( ( `welcomeCarousel` ) ( `next` ) ) ).
 
       WHEN `AVATAR`.
         " BaseController.onAvatarPress: a MessageToast and nothing else -
