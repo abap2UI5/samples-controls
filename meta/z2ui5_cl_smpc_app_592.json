@@ -11,13 +11,6 @@
   },
   "status": "generated",
   "checked": null,
-  "property_gate": {
-    "skip": true,
-    "types": [
-      "invalid-aggregation-child"
-    ],
-    "reason": "sap.uxap.ObjectPageSubSection declares blocks as sap.ui.core.Control and sap.uxap.ObjectPageLazyLoader extends sap.ui.core.Element, so by the metadata the sample's own view is invalid - and it is not: ObjectPageSubSection.addAggregation opens with `if (oObject instanceof ObjectPageLazyLoader)` and either stashes it or unwraps its content (ObjectPageSubSection.js:1337). The aggregation type is under-declared, exactly as sap.m.table.columnmenu.Menu.items was over-declared in batch b47. Since a stashed ObjectPageLazyLoader in blocks IS this sample, satisfying the rule would mean deleting the subject; the finding is skipped for this one type only, and view-gates fails the port if it stops firing."
-  },
   "deviations": [
     {
       "type": "NOTE",

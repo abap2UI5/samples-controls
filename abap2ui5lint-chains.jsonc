@@ -68,7 +68,27 @@
     "live-event-roundtrip": false,
     "event-without-handler": false,
     "frontend-action-too-new": false,
-    "escape-sequence-in-backtick": false
+    "escape-sequence-in-backtick": false,
+
+    // The 0.8.0 bump (2026-09-27) is the "next bump" the note above
+    // promised, and three types fired here with the property gate off. Two
+    // are switched off:
+    //   - unused-directive (hint, 8): every one a directive for a rule this
+    //     run does not judge - a property-gate rule, or event-without-handler
+    //     above - so it suppresses nothing HERE and exactly its finding in
+    //     view-gates, check:apps and check:overview, where it is not reported;
+    //   - client-handle-capture (warning, 1): the overview's header_button( )
+    //     press wire, which abap2ui5lint-overview.jsonc decides (see there).
+    // The third, handler-without-event (116 hints), is NOT switched off: all
+    // 116 are linter false positives (a CASE over a non-event value, an
+    // event raised through a follow_up_action argument), fixed upstream in
+    // linter 0.8.1 (measured there: 0), and a hint does not fail this run.
+    // The other rules 0.8.0 added that fired on the tree - unescaped-text-in-
+    // attribute and unbound-public-attribute in the src/04 demo apps,
+    // unconditional-popup-display in one src/03 class - were fixed in the
+    // classes rather than listed here.
+    "unused-directive": false,
+    "client-handle-capture": false
 
     // NOT in this list, on purpose: popover-anchor-unknown-id. It fired here
     // on the 0.6 bump (2026-09-12) - once, on the generated overview app,

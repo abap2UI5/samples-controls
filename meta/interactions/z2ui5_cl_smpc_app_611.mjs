@@ -5,7 +5,7 @@
 // the type counts one too many. Ask the Calendar for its `specialDates`
 // aggregation instead — same family as every sap.m.Input building an internal
 // suggestion-popup Table and sap.m.Breadcrumbs building an internal Link.
-// The harness serves UI5 1.151.0, the corpus' own pin.
+// The harness serves UI5 1.152.0, the corpus' own pin.
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {

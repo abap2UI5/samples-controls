@@ -20,7 +20,7 @@ TRAINING.md; for what abap2UI5 can express see CAPABILITIES.md._
 | Status ladder | 208 `generated` · 355 `reviewed` · 59 `checked` (live-verified) |
 | Deviations | 10 DROPPED_171 · 162 IMPROVISED · 1932 NOTE · 300 POST_171 |
 | Open LIVE_TESTs | **0 ports** carry at least one `LIVE_TEST` deviation — the automated close path is the e2e interaction harness (AGENTS §6 `e2e_smoke`) |
-| Declared gate skips | 2 structural-diff · 6 render-smoke · 0 data-fidelity · 3 property-gate (each re-verified per run — a stale skip FAILS) |
+| Declared gate skips | 2 structural-diff · 5 render-smoke · 0 data-fidelity · 1 property-gate (each re-verified per run — a stale skip FAILS) |
 | Out-of-scope ported samples | `z2ui5_cl_smpc_app_121 (sap.m.sample.UploadSet — deprecated)` · `z2ui5_cl_smpc_app_136 (sap.f.sample.SidePanelSingle — control @since 1.107)` · `z2ui5_cl_smpc_app_141 (sap.ui.core.sample.InvisibleMessage — control @since 1.78)` · `z2ui5_cl_smpc_app_165 (sap.f.sample.ProductSwitchNavigation — control @since 1.72)` · `z2ui5_cl_smpc_app_203 (sap.m.sample.OverflowToolbarTokenizer — control @since 1.139)` — all decided KEEP permanently 2026-07-30 (per-app rationale in ui5/scope-exceptions.json, revertible); the source-backed scope gate stays hard for NEW undecided entries |
 | Hold-out set (generator KPI) | **24** reserved samples in `ui5/holdout.json` · **12** spent as measurements (now ordinary ports: 098, 100, 101, 103, 153, 154, 210, 212, 229, 237, 242, 243) · results: 2 probe section(s) in [docs/history.md](docs/history.md): "Hold-out probe #2 (2026-07-26) — fidelity way up, syntax is the new frontier" · "Hold-out regeneration probe #1 (2026-07-19) — baseline set" — the measurement TRAINING.md "Measuring progress" defines, and the one number that still measures the generator with the portable backlog closed |
 
@@ -38,28 +38,21 @@ verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
 
 - [ ] **`render-error` is switched off for one file until the linter release
-  catches up (2026-09-13).** `abap2ui5lint-apps.jsonc` excludes
-  `z2ui5_cl_smpc_demo_004` from `render-error`: the Shopping Cart names the
-  bundled `<z2ui5:Storage>` control, and the pinned linter (0.6.1) mirrors two
-  of the eleven view-declarable companion controls, so view CREATION fails on
-  a control every real installation has. The mirror is complete upstream
-  (abap2UI5/linter#104, `lib/cc-controls.mjs`) and the app was verified against
-  that build with `.github/scripts/substitute-linter.sh` — nothing is left to
-  do here but delete the `rules` block when `package-lock.json` moves to a
-  release that carries the fix. The second waiver this pin used to cost, on
-  the framework's short-lived released JSON reader, is gone with the call:
-  that class was removed on 2026-09-14 before it had shipped in any release,
-  and the storage round-trip parses nothing at all now — the control's
-  `value` is bound two-way, so the framework's own write-back fills
-  `s_storage-value`. The linter's `RELEASED_OBJECTS` on main still lists the
-  class it used to name; that is upstream's to drop, and nothing here waits
-  on it. The other one is in `z2ui5_cl_smpc_demo_003`:
-  `invalid-property-value` on `intervalType="OneMonth"`, the enum KEY the
-  Team Calendar original writes. 0.6.1 judges an enum by its runtime VALUES,
-  which is the one spelling an XML view cannot use — an attribute goes through
-  `parseValue( )` (key → value) before it is validated, so `"One Month"`
-  parses to `undefined` and the property keeps its default. Fixed in the same
-  upstream PR; all three lines come out together.
+  catches up (2026-09-13, re-read 2026-09-27).** `abap2ui5lint-apps.jsonc`
+  excludes `z2ui5_cl_smpc_demo_004` from `render-error`: the Shopping Cart
+  names two bundled companion controls, `<z2ui5:Storage>` and
+  `<z2ui5:Timer>`, and the linter's render harness mirrors only the ones in
+  its `lib/cc-controls.mjs`, so view CREATION fails on a control every real
+  installation has. `@abap2ui5/linter` 0.8.0 (the 2026-09-27 bump) carries
+  abap2UI5/linter#104, which mirrors Storage - but with the exclusion lifted
+  the render failed on the next one, `z2ui5/cc/Timer.js`: Timer is not in the
+  0.8.0 mirror, although abap2UI5 ships it as `app/webapp/cc/Timer.js`. So
+  the exclusion stays until a linter release whose mirror carries Timer, and
+  its reason in the config says so. The other waiver the 0.6.1 pin cost - the
+  `invalid-property-value` directive on `intervalType="OneMonth"` in
+  `z2ui5_cl_smpc_demo_003` - is spent: 0.8.0 judges an enum by its KEY, the
+  directive reported itself as `unused-directive`, and it was removed with
+  the bump (see the journal, 2026-09-27).
 
 - [ ] **The `src/04` demo apps do not appear in the in-system overview app
   (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the
@@ -142,31 +135,6 @@ same cut AGENTS §10 already makes between the rule and the war story._
   with no delay. demo_004's `Storage`/`finished` wire is deliberately NOT in
   the sweep: it uses `check_queue_last` to survive the busy guard during the
   initial render, and there the app really is loading.
-
-- [ ] **UI5 version skew forces app 611's two escape hatches, and no bump can
-  close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,
-  `ui5/properties.json` 1.152.0-SNAPSHOT, and the `@openui5/*` /`@sapui5/*`
-  runtime packages 1.151.0 — so `sap.ui.unified.DateTypeRange.ariaHasPopup`
-  (@since 1.152.0), which is the whole point of `sap.ui.unified.sample.CalendarAriaHasPopup`,
-  does not exist for either half of `view_gates`. That is not a version
-  verdict a `POST_171` deviation can excuse: an unknown member reads as
-  `unknown-property` ("typo?") plus a view that fails to load, which is the
-  shape a real typo has. Hence `property_gate.skip` **and**
-  `render_smoke.skip` on one port.
-  **Neither is closable today, for two different reasons.** `@openui5/*`
-  1.152.0 is **not published** — npm's newest is 1.151.0 — so the render half
-  has no bump to take. And the property half would not move with one anyway:
-  the property gate judges against `@abap2ui5/linter`'s own
-  `data/properties.json`, which ships inside that package and changes only
-  with a linter release regenerated at 1.152. So this needs an upstream
-  OpenUI5 release AND a linter release, in that order.
-  What is done: the runtime packages are pinned EXACTLY (half of them carried
-  `^1.151.0`, which would have moved the render harness the day 1.152 publishes
-  with no diff to read), `check_pins` policy 5 holds the runtime packages and
-  the linter's metadata to one version and NOTES when the universe is ahead of
-  them, and both skip reasons say which release each is waiting on. The skips
-  are re-verified against the real render on every run, so they cannot outlive
-  the gap.
 
 - [~] **Two ports gave up on a capability that already exists — 607 done,
   600 awaiting its live check (found 2026-08-22, reworked 2026-08-23).**

@@ -195,7 +195,6 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA small_screen      TYPE abap_bool VALUE abap_true.
 
     " Home
-    DATA search_term       TYPE string.
     DATA search_visible    TYPE abap_bool.
     DATA t_search          TYPE ty_t_row.
     DATA t_categories      TYPE STANDARD TABLE OF ty_s_category WITH EMPTY KEY.
@@ -355,6 +354,8 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA page_wizard     TYPE string VALUE `wizardContentPage`.
     " the carousel page drawn at start (onInit's random setActivePage)
     DATA carousel_page   TYPE string.
+    " the term of the last search - read by the search, bound by nothing
+    DATA search_term     TYPE string.
     " the comparison model of the original: the category and the two items
     DATA cmp_category    TYPE string.
     DATA cmp_item1       TYPE string.
@@ -1669,11 +1670,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
-                                )->a( n = `src`    v = |{ c_img }Shipping_273087.jpg|
+                                )->a( n = `src`    t = |{ c_img }Shipping_273087.jpg|
                                 )->a( n = `width`  v = `100%`
                                 )->a( n = `height` v = `100%`
                             )->tag( `Text`
-                                )->a( n = `text`  v = |Enjoy free shipping{ line_break }for orders over 50 Euro|
+                                )->a( n = `text`  t = |Enjoy free shipping{ line_break }for orders over 50 Euro|
                                 )->a( n = `class` v = `welcomeCarouselText`
 
                         )->end(
@@ -1682,11 +1683,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
-                                )->a( n = `src`    v = |{ c_img }InviteFriend_276352.jpg|
+                                )->a( n = `src`    t = |{ c_img }InviteFriend_276352.jpg|
                                 )->a( n = `width`  v = `100%`
                                 )->a( n = `height` v = `100%`
                             )->tag( `Text`
-                                )->a( n = `text`  v = |Refer a Friend{ line_break } Get 20 Euro credit!|
+                                )->a( n = `text`  t = |Refer a Friend{ line_break } Get 20 Euro credit!|
                                 )->a( n = `class` v = `welcomeCarouselText`
 
                         )->end(
@@ -1695,11 +1696,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
-                                )->a( n = `src`    v = |{ c_img }Tablet_275777.jpg|
+                                )->a( n = `src`    t = |{ c_img }Tablet_275777.jpg|
                                 )->a( n = `width`  v = `100%`
                                 )->a( n = `height` v = `100%`
                             )->tag( `Text`
-                                )->a( n = `text`  v = |Deal of the Day{ line_break }10% on all tablets!|
+                                )->a( n = `text`  t = |Deal of the Day{ line_break }10% on all tablets!|
                                 )->a( n = `class` v = `welcomeCarouselText`
 
                         )->end(
@@ -1708,11 +1709,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->a( n = `renderType` v = `Bare`
 
                             )->tag( `Image`
-                                )->a( n = `src`    v = |{ c_img }CreditCard_277268.jpg|
+                                )->a( n = `src`    t = |{ c_img }CreditCard_277268.jpg|
                                 )->a( n = `width`  v = `100%`
                                 )->a( n = `height` v = `100%`
                             )->tag( `Text`
-                                )->a( n = `text`  v = |Pay fast and safely{ line_break }with Credit Card|
+                                )->a( n = `text`  t = |Pay fast and safely{ line_break }with Credit Card|
                                 )->a( n = `class` v = `welcomeCarouselText` ).
 
     " Promoted Items. The panel's rows are an aggregation binding on the

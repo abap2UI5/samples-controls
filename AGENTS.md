@@ -423,7 +423,7 @@ is the correct outcome, not a loophole.
 `scripts/scope-of.mjs` reports a SAPUI5-only control as
 `OUT_OF_SCOPE (SAPUI5-only library — no 1:1 port, collect it in src/03 instead)`
 plus its release facts, and reads them from the pinned `@sapui5/*` packages
-(eight of them, at 1.151.0) — so a control's `@since` / `@deprecated` is still
+(eight of them, at 1.152.0) — so a control's `@since` / `@deprecated` is still
 answerable offline and reproducibly, which is what decides whether collecting it
 is worth it at all.
 

@@ -167,7 +167,14 @@ const ADVISORY_BUDGET = {
   // the findings on controls where the attribute is ignored anyway, so 26 of
   // the 55 were never real. The ones above stay — they are the alt/tooltip-less
   // originals, kept 1:1
-  'missing-accessibility': 37,
+  // raised 2026-09-27 to 93 with the 0.8.0 bump (the NEXT_LINTER_BUDGET
+  // count measured 2026-09-24, see there): 82 tooltip-less and 11 alt-less
+  // controls in 36 ports. The linter reconstructs more of each view than
+  // 0.6.1 did, so controls it never reached are judged now; nothing in the
+  // corpus changed. Not read per finding - the ones named above are the
+  // alt/tooltip-less originals kept 1:1, and the rest is owed that reading
+  // before this number moves again
+  'missing-accessibility': 93,
   'event-without-handler': 5, // ratcheted down 2026-08-05: the four calendar ports wired their select handler
   // raised 2026-08-23 (app 600 TreeDnD): a wire that exists ONLY to carry
   // prevent_default_expr. The sample's onDragStart vetoes a drag starting
@@ -192,7 +199,10 @@ const ADVISORY_BUDGET = {
   // QuickSort.change metadata gap app 298 documents above - the event declares
   // key and sortOrder and fires neither, so this port reads the `item` the
   // control really passes, exactly as the sample's own handler does
-  'unknown-event-parameter': 3, // app 268: ColorPickerPopover forwards colorString undeclared — works live
+  // raised 2026-09-27 to 5 with the 0.8.0 bump: all five are app 268 now,
+  // counted per wire (four change + one liveChange), while 298/571 no longer
+  // fire - the same one decision, counted differently
+  'unknown-event-parameter': 5, // app 268: ColorPickerPopover forwards colorString undeclared — works live
   // both entries below are new rules from the 2026-08-12 linter bump (363c6e9),
   // budgeted here because the bump PR is where the debt decision belongs:
   // apps 101/102/144/268/280/407 — a liveChange/live wire that round-trips per
@@ -218,7 +228,10 @@ const ADVISORY_BUDGET = {
   // wizard samples whose per-keystroke liveChange IS the step validation
   // (validateStep/invalidateStep at three characters); a final-value event
   // would gate the Next button one keystroke late
-  'live-event-roundtrip': 10,
+  // ratcheted down 2026-09-27 to 0 with the 0.8.0 bump: the rule no longer
+  // reports a live wire that carries check_queue_last / check_no_busy, which
+  // every one of the ten above does since 2026-09-19 (AGENTS section 10)
+  'live-event-roundtrip': 0,
   // raised 2026-08-28 (app 462 InputValueUpdate): the rule asks for a two-way
   // binding instead of a setText action, and this is the one port where that
   // would break the sample. InputValueUpdate exists to COMPARE
@@ -250,7 +263,10 @@ const ADVISORY_BUDGET = {
   // literal enabled="false" samples that exist to SHOW the disabled control.
   // Measured on the 0.5.1 bump; the count was already 4 on 0.4.1, so this is
   // pre-existing slack the bump surfaced rather than anything the bump moved.
-  'event-on-disabled-control': 4,
+  // raised 2026-09-27 to 7 with the 0.8.0 bump: the same four samples
+  // (apps 005/080/127/236), counted per control now - app 080's four
+  // literal-disabled ToggleButtons were one finding under 0.6.1
+  'event-on-disabled-control': 7,
 
   // raised 2026-08-30 with the 0.6.0 bump: `unresolved-attribute-value` is new
   // in that release. It does not claim the value is wrong - it says the gate
@@ -280,29 +296,66 @@ const ADVISORY_BUDGET = {
   // So the budget records four values that were checked the way the rule
   // would have, not four unchecked ones. A FIFTH finding is new debt and must
   // be read the same way before this number moves again.
-  'unresolved-attribute-value': 4,
+  // raised 2026-09-27 to 17 with the 0.8.0 bump: the same four ports read
+  // above (273, 445 x5, 452 x10, 454), counted per control instead of per
+  // port - no fifth port, so nothing new to read
+  'unresolved-attribute-value': 17,
+
+  // The six below are rules 0.8.0 is the first pinned release to carry,
+  // budgeted at the counts NEXT_LINTER_BUDGET measured on 2026-09-24 and
+  // re-measured unchanged at the bump (2026-09-27). Each was read per TYPE,
+  // with samples, not per finding - 607 findings, and the reading below is
+  // what the samples showed:
+  //
+  // editable-control-without-binding (343 in 106 ports: 171 value, 87
+  //   selected, 73 selectedKey, 12 state) - a demo kit sample shows an input
+  //   control, not a form that goes anywhere; the originals leave these
+  //   unbound and so do the 1:1 ports. Binding them would add model fields
+  //   the sample does not have.
+  'editable-control-without-binding': 343,
+  // external-link-without-target (8: apps 062 x3, 160, 223 x4) - the
+  //   original Links carry no target; kept 1:1.
+  'external-link-without-target': 8,
+  // handler-without-event (106 in 37 ports) - not corpus debt at all: the
+  //   rule's own false positives in 0.8.0 (a SWITCH/CASE over a value that
+  //   is not an event - app 619's `WHEN \`Ok\``, the route names of the
+  //   FCL ports 577-584 - and an event raised through a follow_up_action
+  //   argument, app 012's HASH_CHANGED). Fixed upstream in linter 0.8.1
+  //   (09bd158, measured here through substitute-linter.sh: 0 findings), and
+  //   NEXT_LINTER_BUDGET below already holds it at 0. This entry exists only
+  //   because 0.8.1 was not yet on npm when the pin moved to 0.8.0; the bump
+  //   to 0.8.1 DELETES it rather than ratcheting it.
+  'handler-without-event': 106,
+  // insecure-asset-url (15 in 12 ports) - every one an http://sap.com-style
+  //   href the original sample writes; kept 1:1.
+  'insecure-asset-url': 15,
+  // undefined-css-class (34 in 14 ports) - every class name is the one the
+  //   original writes on the same control. In 12 of the 14 ports no archived
+  //   stylesheet of the sample defines it either (column1, viewPadding,
+  //   DRS1, ... - a hook, styled by nothing in the demo kit); only the
+  //   gridWrapper of apps 169/345 is defined by the sample's own style.css,
+  //   and whether those two ports carry it is the open question this entry
+  //   records - owed a per-finding reading before the number moves.
+  'undefined-css-class': 34,
+  // unused-namespace-declaration (101 in 91 ports) - the original view's
+  //   root declares the same unused prefix (apps 001/015/018 checked
+  //   against ui5/), and the port mirrors the root 1:1.
+  'unused-namespace-declaration': 101,
 };
 
-/* The advisory counts of the linter's unreleased main over this corpus,
- * measured 2026-09-24 (linter 1248a22 on samples-controls main). They are
- * what the rules added since the pinned 0.6.1 report - most of them new
- * types this table has never had to budget - and they are recorded so the
- * linter's Downstream job fails on a linter change that MOVES them, not on
- * the backlog it already knows. Not read per finding the way the budgets
- * above are: that reading is owed when the pin moves to the release that
- * carries these rules, and then these numbers replace the ones above. */
+/* The advisory counts of the linter's unreleased main over this corpus, for
+ * the linter's Downstream job (VIEW_GATES_LINTER=next): a type listed here
+ * overrides its ADVISORY_BUDGET entry in that mode only, so a rule the next
+ * release adds or re-counts can be recorded before the pin moves, and the
+ * Downstream job fails on a change that MOVES it rather than on the backlog
+ * it already knows. The bump that moves the pin reads these per type and
+ * moves them into ADVISORY_BUDGET above.
+ * The eleven counts measured 2026-09-24 (linter 1248a22) were what 0.8.0
+ * shipped, and they moved up with that bump on 2026-09-27. */
 const NEXT_LINTER_BUDGET = {
-  'editable-control-without-binding': 343,
-  'event-on-disabled-control': 7,
-  'external-link-without-target': 8,
-  'handler-without-event': 106,
-  'insecure-asset-url': 15,
-  'live-event-roundtrip': 0,
-  'missing-accessibility': 93,
-  'undefined-css-class': 34,
-  'unknown-event-parameter': 5,
-  'unresolved-attribute-value': 17,
-  'unused-namespace-declaration': 101,
+  // 0.8.1 (09bd158) fixed every one of 0.8.0's handler-without-event hits
+  // on this corpus - see the ADVISORY_BUDGET entry, which goes with that bump
+  'handler-without-event': 0,
 };
 const budgetOf = (type) => (NEXT_LINTER && type in NEXT_LINTER_BUDGET
   ? NEXT_LINTER_BUDGET[type]
