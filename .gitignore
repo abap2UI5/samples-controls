@@ -6,3 +6,7 @@ openui5
 src/zz_dev
 
 .abaplint-mcp-dev.jsonc
+
+# the linter's README badges: every run rewrites them, CI publishes them to
+# the `badges` branch - never committed here
+.github/badges/
