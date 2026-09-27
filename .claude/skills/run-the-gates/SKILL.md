@@ -35,3 +35,11 @@ deviations, declared skips, advisories):
 
 Remember the standing mandate (AGENTS.md §6): **when a distilled lesson is
 greppable, add it as a pattern-lint rule in the same change.**
+
+**A `render-error` exclusion covers the whole view, not the one cause its
+reason names.** View creation stops at the FIRST module it cannot load, so a
+second missing control behind the first is invisible while the exclusion
+stands. Before declaring such a waiver spent at a linter bump, lift it and run
+the config: demo_004's exclusion was written for `z2ui5/cc/Storage.js`, the
+0.8.0 bump mirrored Storage, and the lifted run failed on `Timer.js` instead
+(2026-09-27). The same holds for a `render_smoke.skip` on a port.

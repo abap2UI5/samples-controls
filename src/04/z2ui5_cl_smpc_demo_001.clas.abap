@@ -254,7 +254,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     DATA(app) = view->ele( `Shell`
         )->ele( `App`
             )->a( n = `id`          v = `app`
-            )->a( n = `initialPage` v = page ).
+            )->a( n = `initialPage` t = page ).
 
     page_worklist( app ).
     page_object( app ).

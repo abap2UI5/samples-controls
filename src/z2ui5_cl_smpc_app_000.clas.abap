@@ -10949,23 +10949,25 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         notes = text1 ) ).
 
-    text1 = `POST-1.71: sap.ui.unified.DateTypeRange.ariaHasPopup is @since 1.152.0 - newer than the 1.71 floor AND newer than the corpus's pinned 1.151.0 control metadata, but kept for the 1:1 port because it is` &&
-            ` the entire subject of the sample. The app needs a UI5 release >= 1.152; below it the attribute is an unknown setting. // NOTE: onInit adds the three DateTypeRanges in JavaScript (day 5 Type01, days` &&
-            ` 10-12 Type02, day 20 None - all three with ariaHasPopup Dialog, all on the CURRENT month). specialDates IS a bindable aggregation, so the port binds the same three rows and computes the current` &&
-            ` month's prefix from sy-datum, which is how app 240 keeps its special dates on today's month. startDate and endDate are ABAP DATS strings read through Formatter.DateAbapDateToDateObject, which builds` &&
-            ` a LOCAL-midnight Date - the same fix apps 017/220/240 carry, without which every marked day lands one day early west of Greenwich. // IMPROVISED: onDateSelect anchors the popover on the day CELL: it` &&
-            ` builds a yyyymmdd string, queries the calendar's DOM for [data-sap-day="..."] and calls openBy on that node. A thin frontend has no DOM query, so the popover is anchored on the calendar itself`.
-    text1 = text1 && ` (popover_display by_id). The popover is also declared in the view's dependents upstream and built once; here it is served per selection, which is what lets the backend fill its two texts. Everything` &&
-            ` else survives: the selected day travels as epoch milliseconds, the backend finds the range that contains it among those carrying an ariaHasPopup, and composes the same two lines - the date label (a` &&
-            ` range shows 'start – end') and 'Day type: <type>'. // NOTE: the date label the popover shows is formatted by sap.ui.core.format.DateFormat with style 'long' ('November 5, 2026'). A backend has no` &&
-            ` access to the browser's locale, so the port composes the label from the same two dates in the ABAP model's own yyyymmdd form; the range case keeps the sample's en dash separator. // NOTE: not yet` &&
-            ` verified in a running system: that selecting day 5, one of days 10-12 or day 20 opens the popover with the matching type, and that a plain day opens nothing. **e2e-verified 2026-08-25** (nightly e2e` &&
-            ` interaction, meta/interactions/z2ui5_cl_smpc_app_611.mjs). // NOTE: The epoch milliseconds arriving from getTime( ) are converted through decfloat34, not i. ABAP's i tops out at 2,147,483,647 and a`.
-    text1 = text1 && ` 2026 timestamp is ~1.8e12, so CONV i( ) raises CX_SY_CONVERSION_OVERFLOW and the whole round-trip dumps on a real stack. CI never saw it because the transpiled backend represents i as a JS number. //` &&
-            ` NOTE: The sample's own stylesheet is injected through an added core:HTML style leaf (no counterpart in the original view). This sample's manifest lists ``../style.css`` - the sheet the sap.ui.unified` &&
-            ` samples SHARE one folder up, archived at ui5/sap.ui.unified/style.css - and the port carried the viewPadding class the original carries with no rule behind it, so it rendered flush against the page` &&
-            ` edge where the sample renders padded. Injected are the rules that reach this view: the two viewPadding rules and .sap-phone .sapUiCal{position:relative}, which is written by CalendarRenderer on the` &&
-            ` Calendar's own root rather than by the author. The sheet's remaining rules (.labelMarginLeft, .fullHeight - classes this view does not carry - and .sapUiCancel, which no OpenUI5 renderer writes) stay` &&
+    text1 = `POST-1.71: sap.ui.unified.DateTypeRange.ariaHasPopup is @since 1.152.0 - newer than the 1.71 floor, but kept for the 1:1 port because it is the entire subject of the sample. The app needs a UI5` &&
+            ` release >= 1.152; below it the attribute is an unknown setting. Until the 2026-09-27 bump to @abap2ui5/linter 0.8.0 and the @openui5 runtime 1.152.0 it was also newer than the corpus's pinned control` &&
+            ` metadata, so the port carried a property_gate skip (unknown-property) and a render_smoke skip for it; the bump made both stale and they were removed, so the property gate now judges the attribute as` &&
+            ` the version finding this deviation excuses. // NOTE: onInit adds the three DateTypeRanges in JavaScript (day 5 Type01, days 10-12 Type02, day 20 None - all three with ariaHasPopup Dialog, all on the` &&
+            ` CURRENT month). specialDates IS a bindable aggregation, so the port binds the same three rows and computes the current month's prefix from sy-datum, which is how app 240 keeps its special dates on` &&
+            ` today's month. startDate and endDate are ABAP DATS strings read through Formatter.DateAbapDateToDateObject, which builds a LOCAL-midnight Date - the same fix apps 017/220/240 carry, without which`.
+    text1 = text1 && ` every marked day lands one day early west of Greenwich. // IMPROVISED: onDateSelect anchors the popover on the day CELL: it builds a yyyymmdd string, queries the calendar's DOM for` &&
+            ` [data-sap-day="..."] and calls openBy on that node. A thin frontend has no DOM query, so the popover is anchored on the calendar itself (popover_display by_id). The popover is also declared in the` &&
+            ` view's dependents upstream and built once; here it is served per selection, which is what lets the backend fill its two texts. Everything else survives: the selected day travels as epoch` &&
+            ` milliseconds, the backend finds the range that contains it among those carrying an ariaHasPopup, and composes the same two lines - the date label (a range shows 'start – end') and 'Day type: <type>'.` &&
+            ` // NOTE: the date label the popover shows is formatted by sap.ui.core.format.DateFormat with style 'long' ('November 5, 2026'). A backend has no access to the browser's locale, so the port composes` &&
+            ` the label from the same two dates in the ABAP model's own yyyymmdd form; the range case keeps the sample's en dash separator. // NOTE: not yet verified in a running system: that selecting day 5, one`.
+    text1 = text1 && ` of days 10-12 or day 20 opens the popover with the matching type, and that a plain day opens nothing. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_611.mjs). // NOTE: The epoch milliseconds arriving from getTime( ) are converted through decfloat34, not i. ABAP's i tops out at 2,147,483,647 and a 2026 timestamp` &&
+            ` is ~1.8e12, so CONV i( ) raises CX_SY_CONVERSION_OVERFLOW and the whole round-trip dumps on a real stack. CI never saw it because the transpiled backend represents i as a JS number. // NOTE: The` &&
+            ` sample's own stylesheet is injected through an added core:HTML style leaf (no counterpart in the original view). This sample's manifest lists ``../style.css`` - the sheet the sap.ui.unified samples` &&
+            ` SHARE one folder up, archived at ui5/sap.ui.unified/style.css - and the port carried the viewPadding class the original carries with no rule behind it, so it rendered flush against the page edge` &&
+            ` where the sample renders padded. Injected are the rules that reach this view: the two viewPadding rules and .sap-phone .sapUiCal{position:relative}, which is written by CalendarRenderer on the`.
+    text1 = text1 && ` Calendar's own root rather than by the author. The sheet's remaining rules (.labelMarginLeft, .fullHeight - classes this view does not carry - and .sapUiCancel, which no OpenUI5 renderer writes) stay` &&
             ` out. Same treatment as apps 139/177/220/240/246/305/306/307/308; this port was ported after that sweep and was missed by it. Found by scripts/probes/orphan-style-class-probe.mjs.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.unified`     control = `sap.ui.unified.Calendar`               name = `CalendarAriaHasPopup`                          class = `z2ui5_cl_smpc_app_611` path = `src/02/02/z2ui5_cl_smpc_app_611.clas.abap`
@@ -10975,8 +10977,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since = `1.22.0`
         is_post171 = abap_true
         notes = text1
-        post171 = `sap.ui.unified.DateTypeRange.ariaHasPopup is @since 1.152.0 - newer than the 1.71 floor AND newer than the corpus's pinned 1.151.0 control metadata, but kept for the 1:1 port because it is the entire` &&
-                 ` subject of the sample. The app needs a UI5 release >= 1.152; below it the attribute is an unknown setting.` ) ).
+        post171 = `sap.ui.unified.DateTypeRange.ariaHasPopup is @since 1.152.0 - newer than the 1.71 floor, but kept for the 1:1 port because it is the entire subject of the sample. The app needs a UI5 release >= 1.152;` &&
+                 ` below it the attribute is an unknown setting. Until the 2026-09-27 bump to @abap2ui5/linter 0.8.0 and the @openui5 runtime 1.152.0 it was also newer than the corpus's pinned control metadata, so the` &&
+                 ` port carried a property_gate skip (unknown-property) and a render_smoke skip for it; the bump made both stale and they were removed, so the property gate now judges the attribute as the version` &&
+                 ` finding this deviation excuses.` ) ).
 
     text1 = `NOTE: Calendar with primaryCalendarType Islamic / secondaryCalendarType Gregorian. The picked day IS transportable after all - measured 2026-08-05 with` &&
             ` ``scripts/probes/event-arg-expression-probe.mjs`` against real OpenUI5: an event arg is a full UI5 expression, and indexed access into an array-valued getter plus chained calls resolve there` &&

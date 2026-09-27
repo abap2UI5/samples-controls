@@ -7,7 +7,92 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-09-22 (latest) — the Shopping Cart's welcome page did not look like the original, and nothing here could have said so
+## 2026-09-27 (latest) — the linter moves to 0.8.0 and the UI5 runtime to 1.152.0
+
+A dependency bump, and the first one where every half of check_pins policy 5
+moves together: `@abap2ui5/linter` ^0.6.1 → ^0.8.0 (its metadata snapshot is
+OpenUI5 1.152.0), all nineteen `@openui5/*` / `@sapui5/*` runtime pins
+1.151.0 → 1.152.0 (policy 5 wants them exactly on the linter's snapshot), and
+`@abaplint/cli` ^2.120.59 → ^2.120.60. The linter's render runtime is
+published as `@abap2ui5/linter-render` from 0.8.0 on (`@abap2ui5/render-runtime`
+is deprecated); this repository installs neither - the render gate resolves
+the hoisted `@openui5/*` and `playwright` this `package.json` pins itself -
+so only the optional-peer metadata in `package-lock.json` moved.
+
+**What the bump closed.** App 611 (`CalendarAriaHasPopup`) carried a
+`property_gate` skip and a `render_smoke` skip because
+`DateTypeRange.ariaHasPopup` is @since 1.152.0 and both halves of
+`view_gates` judged against 1.151.0; both went stale on the first run and are
+removed, and the property gate now reads the attribute as the version finding
+its `POST_171` excuses. App 592's `property_gate` skip for
+`invalid-aggregation-child` (a stashed `ObjectPageLazyLoader` in
+`ObjectPageSubSection.blocks`) went stale the same way - 0.8.0 accepts it. The
+`invalid-property-value` directive on demo_003's `intervalType="OneMonth"`
+reported itself as `unused-directive` and was removed.
+
+**What it did not close.** demo_004's `render-error` exclusion in
+`abap2ui5lint-apps.jsonc` was written for `<z2ui5:Storage>`, which 0.8.0's
+companion-control mirror now carries. Lifted, the render failed on the next
+control behind it, `<z2ui5:Timer>`, which the mirror does not carry - so the
+exclusion stays with a new reason (run-the-gates carries the lesson).
+
+**The new rules, per config.**
+
+- `view_gates` (ports): no gating finding. The advisory ratchet failed on ten
+  types, at exactly the counts `NEXT_LINTER_BUDGET` had measured on
+  2026-09-24; they moved into `ADVISORY_BUDGET` with a per-type reading
+  (`scripts/view-gates.mjs`): editable-control-without-binding 343,
+  unused-namespace-declaration 101, handler-without-event 106,
+  missing-accessibility 37 → 93, undefined-css-class 34, insecure-asset-url
+  15, unresolved-attribute-value 4 → 17, external-link-without-target 8,
+  event-on-disabled-control 4 → 7, unknown-event-parameter 3 → 5, and
+  live-event-roundtrip ratcheted 10 → 0. Of the ten raised, eight re-count
+  ports the budget already knew or mirror the original 1:1; handler-without-event is
+  the linter misreading a `SWITCH`/`CASE` over a non-event value and an event
+  raised through a follow_up_action argument; undefined-css-class is owed a
+  per-finding reading.
+- `check:chains` (whole tree, property gate off): `handler-without-event`,
+  `unused-directive` and `client-handle-capture` switched off there, each for
+  the reason written into the config - all three are judged by the configs
+  that run with the property gate on.
+- `check:overview`: `client-handle-capture` switched off, as the config had
+  announced for this bump (the header_button( ) press wire).
+- `check:apps` / `check:collection`: fixed in the classes, not waived -
+  eleven `unescaped-text-in-attribute` in demo_001/003/004 moved from `v =`
+  to the builder's literal-text `t =`, demo_004's `search_term` (used in ABAP,
+  bound by nothing: `unbound-public-attribute`) moved to PROTECTED, and
+  `z2ui5_cl_smpc_sapui5_008` called `on_event( )` unconditionally after the
+  lifecycle `IF` (`unconditional-popup-display`) - it is the
+  `ELSEIF client->check_on_event( )` branch now, like the rest of `src/03`.
+
+The backlog item that tracked app 611's skips moved here, closed:
+
+- [x] **UI5 version skew forces app 611's two escape hatches, and no bump can
+  close them yet (measured 2026-08-28).** `ui5/universe.json` is 1.152.0,
+  `ui5/properties.json` 1.152.0-SNAPSHOT, and the `@openui5/*` /`@sapui5/*`
+  runtime packages 1.151.0 — so `sap.ui.unified.DateTypeRange.ariaHasPopup`
+  (@since 1.152.0), which is the whole point of `sap.ui.unified.sample.CalendarAriaHasPopup`,
+  does not exist for either half of `view_gates`. That is not a version
+  verdict a `POST_171` deviation can excuse: an unknown member reads as
+  `unknown-property` ("typo?") plus a view that fails to load, which is the
+  shape a real typo has. Hence `property_gate.skip` **and**
+  `render_smoke.skip` on one port.
+  **Neither is closable today, for two different reasons.** `@openui5/*`
+  1.152.0 is **not published** — npm's newest is 1.151.0 — so the render half
+  has no bump to take. And the property half would not move with one anyway:
+  the property gate judges against `@abap2ui5/linter`'s own
+  `data/properties.json`, which ships inside that package and changes only
+  with a linter release regenerated at 1.152. So this needs an upstream
+  OpenUI5 release AND a linter release, in that order.
+  What is done: the runtime packages are pinned EXACTLY (half of them carried
+  `^1.151.0`, which would have moved the render harness the day 1.152 publishes
+  with no diff to read), `check_pins` policy 5 holds the runtime packages and
+  the linter's metadata to one version and NOTES when the universe is ahead of
+  them, and both skip reasons say which release each is waiting on. The skips
+  are re-verified against the real render on every run, so they cannot outlive
+  the gap.
+
+## 2026-09-22 — the Shopping Cart's welcome page did not look like the original, and nothing here could have said so
 
 A side-by-side screenshot of `demo_004` against the running original put the two
 welcome pages next to each other, and they were different pages: the original
