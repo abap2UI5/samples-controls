@@ -7,7 +7,19 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-09-27 (latest) — the linter moves to 0.8.0 and the UI5 runtime to 1.152.0
+## 2026-09-27 (latest) — the linter moves to 0.8.1
+
+`@abap2ui5/linter` ^0.8.0 → ^0.8.1. Its metadata snapshot is still OpenUI5
+1.152.0, so the nineteen `@openui5/*` / `@sapui5/*` runtime pins stay where
+check_pins policy 5 wants them. 0.8.1 is the release the entry below waited
+for: `handler-without-event` counts only the WHENs of a CASE over the event
+and recognises `onClose` options and `hash_attach_changed`, so its 106 hits in
+`view_gates` and 116 in `check:chains` are gone. The `ADVISORY_BUDGET` entry
+of 106 is deleted as announced rather than ratcheted, and `NEXT_LINTER_BUDGET`
+is empty again. Every other advisory type landed exactly on its budget, no
+directive reported itself as `unused-directive`, and the badges did not move.
+
+## 2026-09-27 — the linter moves to 0.8.0 and the UI5 runtime to 1.152.0
 
 A dependency bump, and the first one where every half of check_pins policy 5
 moves together: `@abap2ui5/linter` ^0.6.1 → ^0.8.0 (its metadata snapshot is
