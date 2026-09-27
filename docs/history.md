@@ -49,12 +49,18 @@ exclusion stays with a new reason (run-the-gates carries the lesson).
   live-event-roundtrip ratcheted 10 → 0. Of the ten raised, eight re-count
   ports the budget already knew or mirror the original 1:1; handler-without-event is
   the linter misreading a `SWITCH`/`CASE` over a non-event value and an event
-  raised through a follow_up_action argument; undefined-css-class is owed a
+  raised through a follow_up_action argument - fixed in linter 0.8.1
+  (09bd158, measured through `substitute-linter.sh`: 0 hits, the whole run
+  green), which was tagged but not yet on npm, so its budget entry of 106 is
+  marked for DELETION at the 0.8.1 bump and `NEXT_LINTER_BUDGET` holds it at
+  0 for the linter's Downstream job; undefined-css-class is owed a
   per-finding reading.
-- `check:chains` (whole tree, property gate off): `handler-without-event`,
-  `unused-directive` and `client-handle-capture` switched off there, each for
-  the reason written into the config - all three are judged by the configs
-  that run with the property gate on.
+- `check:chains` (whole tree, property gate off): `unused-directive` and
+  `client-handle-capture` switched off there, each for the reason written
+  into the config - both are judged by the configs that run with the
+  property gate on. `handler-without-event` is deliberately NOT switched off:
+  its 116 hits there are all 0.8.0 false positives, and hints do not fail
+  the run.
 - `check:overview`: `client-handle-capture` switched off, as the config had
   announced for this bump (the header_button( ) press wire).
 - `check:apps` / `check:collection`: fixed in the classes, not waived -

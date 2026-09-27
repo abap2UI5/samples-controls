@@ -316,11 +316,15 @@ const ADVISORY_BUDGET = {
   // external-link-without-target (8: apps 062 x3, 160, 223 x4) - the
   //   original Links carry no target; kept 1:1.
   'external-link-without-target': 8,
-  // handler-without-event (106 in 37 ports) - the samples read show the
-  //   rule's own blind spots, not dead branches: a SWITCH/CASE over a value
-  //   that is not an event (app 619's `WHEN \`Ok\``, the route names of the
-  //   FCL ports 577-584), and an event raised through a follow_up_action
-  //   argument (app 012's HASH_CHANGED). A linter issue, not corpus debt.
+  // handler-without-event (106 in 37 ports) - not corpus debt at all: the
+  //   rule's own false positives in 0.8.0 (a SWITCH/CASE over a value that
+  //   is not an event - app 619's `WHEN \`Ok\``, the route names of the
+  //   FCL ports 577-584 - and an event raised through a follow_up_action
+  //   argument, app 012's HASH_CHANGED). Fixed upstream in linter 0.8.1
+  //   (09bd158, measured here through substitute-linter.sh: 0 findings), and
+  //   NEXT_LINTER_BUDGET below already holds it at 0. This entry exists only
+  //   because 0.8.1 was not yet on npm when the pin moved to 0.8.0; the bump
+  //   to 0.8.1 DELETES it rather than ratcheting it.
   'handler-without-event': 106,
   // insecure-asset-url (15 in 12 ports) - every one an http://sap.com-style
   //   href the original sample writes; kept 1:1.
@@ -346,9 +350,13 @@ const ADVISORY_BUDGET = {
  * Downstream job fails on a change that MOVES it rather than on the backlog
  * it already knows. The bump that moves the pin reads these per type and
  * moves them into ADVISORY_BUDGET above.
- * Empty since 2026-09-27: the eleven counts measured 2026-09-24 (linter
- * 1248a22) were what 0.8.0 shipped, and they moved up with that bump. */
-const NEXT_LINTER_BUDGET = {};
+ * The eleven counts measured 2026-09-24 (linter 1248a22) were what 0.8.0
+ * shipped, and they moved up with that bump on 2026-09-27. */
+const NEXT_LINTER_BUDGET = {
+  // 0.8.1 (09bd158) fixed every one of 0.8.0's handler-without-event hits
+  // on this corpus - see the ADVISORY_BUDGET entry, which goes with that bump
+  'handler-without-event': 0,
+};
 const budgetOf = (type) => (NEXT_LINTER && type in NEXT_LINTER_BUDGET
   ? NEXT_LINTER_BUDGET[type]
   : ADVISORY_BUDGET[type] ?? 0);
