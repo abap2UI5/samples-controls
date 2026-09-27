@@ -98,6 +98,68 @@ The backlog item that tracked app 611's skips moved here, closed:
   are re-verified against the real render on every run, so they cannot outlive
   the gap.
 
+**Later the same day: the carousel leaves `z2ui5.cc.Timer`, and the
+exclusion goes.** The wait above was the wrong wait. abap2UI5 marks Timer
+`// OBSOLETE:` (`app/webapp/cc/Timer.js`, replaced by `cs_event-start_timer`;
+`docs/removal-plan.md` §3 lists all eight such controls), and the user rule
+is that an obsolete custom control is never used. So instead of waiting on a
+linter release to mirror it, demo_004 moved off it:
+
+- the Timer ran in the browser - every 8 s the carousel's `next( )`, with no
+  round-trip. START_TIMER is a BACKEND tick: its `CAROUSEL_TICK` event
+  answers with `follow_up_action( control_by_id welcomeCarousel next )` and
+  nothing else - no `view_display( )`, so the tick re-renders nothing;
+- START_TIMER holds ONE timer per app, and View1.eB cancels it on every
+  round-trip. So `main( )` re-arms it after every event while the carousel is
+  on screen (the mid column's welcome page, not `OneColumn`, not a phone,
+  where the original hides it) - which also means any round-trip, not only a
+  page change, restarts the eight seconds;
+- the carousel's `pageChanged` is a VIEW-wired
+  `follow_up_action( cs_event-start_timer )`: no round-trip, and because the
+  slot is shared, re-arming it replaces the pending tick - the original's
+  `onCarouselPageChanged` restart. `eF` dispatches it through the same
+  handler table as a queued action, so nothing else had to allow it.
+
+The tick's round-trip carries no `check_no_busy` - START_TIMER dispatches
+`eB([event, false, true])` and has no slot for it - so the overlay stays
+down only as long as the round-trip is shorter than BusyIndicator's default
+one-second delay, and a click that lands while one is in flight is dropped
+by the busy guard. That is the cost of the replacement, and the e2e module
+names it: `carouselDelay( )` wraps the page's `setTimeout` to freeze the
+carousel for the ordinary steps (a tick on the welcome page could otherwise
+swallow any of their clicks) and to shorten the delay to 1.5 s for a new
+carousel leg, which asserts the tick round-trip, the advance by one page on
+the SAME carousel instance, and that a manual page change restarts the wait.
+Two mutations were run against it and both went red: `view_display( )` in the
+tick handler, and the `pageChanged` wire removed. The module also waits now,
+before its first step, for the category rows and the carousel to exist: the
+harness' boot check counts DOM nodes, and two of eleven runs started while
+the view was still building behind them.
+
+With Timer gone, `abap2ui5lint-apps.jsonc` carries no exclusion at all and
+the render gate reconstructs all five demo apps. A scan of the whole
+repository found no other use of an obsolete control or of a builder helper
+that emits one; AGENTS §8 now names the eight and their replacements.
+
+The backlog item moved here, closed:
+
+- [x] **`render-error` is switched off for one file until the linter release
+  catches up (2026-09-13, re-read 2026-09-27).** `abap2ui5lint-apps.jsonc`
+  excludes `z2ui5_cl_smpc_demo_004` from `render-error`: the Shopping Cart
+  names two bundled companion controls, `<z2ui5:Storage>` and
+  `<z2ui5:Timer>`, and the linter's render harness mirrors only the ones in
+  its `lib/cc-controls.mjs`, so view CREATION fails on a control every real
+  installation has. `@abap2ui5/linter` 0.8.0 (the 2026-09-27 bump) carries
+  abap2UI5/linter#104, which mirrors Storage - but with the exclusion lifted
+  the render failed on the next one, `z2ui5/cc/Timer.js`: Timer is not in the
+  0.8.0 mirror, although abap2UI5 ships it as `app/webapp/cc/Timer.js`. So
+  the exclusion stays until a linter release whose mirror carries Timer, and
+  its reason in the config says so. The other waiver the 0.6.1 pin cost - the
+  `invalid-property-value` directive on `intervalType="OneMonth"` in
+  `z2ui5_cl_smpc_demo_003` - is spent: 0.8.0 judges an enum by its KEY, the
+  directive reported itself as `unused-directive`, and it was removed with
+  the bump (see the journal, 2026-09-27).
+
 ## 2026-09-22 — the Shopping Cart's welcome page did not look like the original, and nothing here could have said so
 
 A side-by-side screenshot of `demo_004` against the running original put the two

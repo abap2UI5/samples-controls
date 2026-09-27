@@ -43,3 +43,12 @@ stands. Before declaring such a waiver spent at a linter bump, lift it and run
 the config: demo_004's exclusion was written for `z2ui5/cc/Storage.js`, the
 0.8.0 bump mirrored Storage, and the lifted run failed on `Timer.js` instead
 (2026-09-27). The same holds for a `render_smoke.skip` on a port.
+
+**Before waiting on the linter's mirror for a `z2ui5.cc` control, check that
+the control is not obsolete.** The render harness mirrors the bundled
+companion controls, and a waiver "until the mirror carries X" is only worth
+keeping for a control the app should be using. Timer was not: abap2UI5 marks
+it `// OBSOLETE:` (`app/webapp/cc/Timer.js`, replaced by `cs_event-start_timer`),
+so the answer was to port demo_004's carousel onto START_TIMER, and the
+exclusion went the same day (2026-09-27). The eight obsolete ones and their
+replacements are listed in AGENTS §8.

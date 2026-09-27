@@ -10,6 +10,8 @@
 //   - adding to the cart round-trips, toasts the original's text and totals;
 //     the cart buttons of every page follow the layout they are derived from;
 //   - the welcome page is the original's BlockLayout of tiles, two promoted;
+//     its carousel moves on by a START_TIMER round-trip that re-renders
+//     nothing, and a page change restarts the wait;
 //   - an out-of-stock product asks first (Confirmation, OK / Cancel);
 //   - Save for Later and "Add to Shopping Cart" move rows between the lists;
 //   - the cart survives a reload (local storage);
@@ -35,8 +37,47 @@ const sorted = (a) => a.length > 1 && a.every((v, i) => i === 0 || a[i - 1].loca
 /** the id of a control found in the page, for a Playwright locator */
 const controlId = (page, src) => page.evaluate(`${UI5_ALL_SRC} (${src})()`);
 
+/* The welcome carousel advances on a START_TIMER of 8000 ms whose
+ * CAROUSEL_TICK is a ROUND-TRIP, and a click that lands while one is in
+ * flight is dropped (View1.eB's busy guard). With a tick every eight seconds
+ * on the welcome page, any step below could lose its click to one - flake,
+ * not a port defect. So the module owns that delay: setTimeout is wrapped in
+ * the page to turn exactly 8000 ms into `ms`, and firing the carousel's
+ * pageChanged re-arms the one START_TIMER slot through the view's own wire,
+ * replacing whatever tick was pending. 1e9 freezes the carousel (the module
+ * default, re-applied after the reload); the carousel leg shortens it. */
+const carouselDelay = (page, ms) => page.evaluate((d) => {
+  if (!window.__e2eCarouselMs) {
+    const real = window.setTimeout;
+    window.setTimeout = function (fn, delay, ...rest) {
+      return real.call(this, fn, delay === 8000 ? window.__e2eCarouselMs : delay, ...rest);
+    };
+  }
+  window.__e2eCarouselMs = d;
+  const c = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .find((e) => /--welcomeCarousel$/.test(e.getId()));
+  if (!c) throw new Error('no welcomeCarousel to re-arm the START_TIMER through');
+  c.firePageChanged({});
+}, ms);
+
+/** the index of the carousel's active page */
+const carouselPage = (page) => page.evaluate(() => {
+  const c = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .find((e) => /--welcomeCarousel$/.test(e.getId()));
+  return c.getPages().findIndex((p) => p.getId() === c.getActivePage());
+});
+
 export default async (page, expect) => {
+  /* the boot check that runs before this module counts rendered DOM nodes,
+   * and the view can still be building behind them: wait for the last
+   * column's carousel and the first list's rows, not just for a quiet wire */
   await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--categoryList$/.test(c.getId()));
+    return !!l && l.getItems().length > 0 && ui5All().some((c) => /--welcomeCarousel$/.test(c.getId()));
+  }, 'the app never finished its first render - no category rows, or no welcome carousel');
+  await waitForIdle(page);
+  await carouselDelay(page, 1e9);
 
   // the home page: the categories, sorted by CategoryName, and no search list
   const cats = await list(page, 'categoryList', (i) => i.getTitle());
@@ -121,6 +162,52 @@ export default async (page, expect) => {
     return cells.length === 2 && !!carousel && carousel.getPages().length === 4;
   }, 'the welcome page is not the original arrangement - two promoted tiles and a four-page carousel');
 
+  /* the carousel's advance (Welcome.onCarouselPageChanged), with the delay
+   * shortened to 1.5 s: a CAROUSEL_TICK round-trip whose answer is the
+   * carousel's next( ) and nothing else - the same carousel instance moves
+   * on by one page, so the tick re-rendered no view. Then a page change
+   * restarts the wait: a manual next( ) re-arms the one START_TIMER slot from
+   * the view, so the following tick comes a full delay after it, not at the
+   * time the replaced one was due */
+  const ticks = [];
+  const onTick = (r) => {
+    if (r.method() === 'POST' && (r.postData() || '').includes('CAROUSEL_TICK')) ticks.push(Date.now());
+  };
+  page.on('request', onTick);
+  await page.evaluate(() => {
+    const c = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+      .find((e) => /--welcomeCarousel$/.test(e.getId()));
+    c.__e2eSameInstance = true;
+  });
+  const before = await carouselPage(page);
+  await carouselDelay(page, 1500);
+  await waitForUi5(page, (from) => {
+    const c = ui5All().find((e) => /--welcomeCarousel$/.test(e.getId()));
+    return c.getPages().findIndex((p) => p.getId() === c.getActivePage()) === (from + 1) % 4;
+  }, 'the carousel did not move on by one page after its START_TIMER ran out', before);
+  if (!ticks.length) throw new Error('the carousel moved on without a CAROUSEL_TICK round-trip');
+  await waitForIdle(page);
+  if (!(await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .some((e) => /--welcomeCarousel$/.test(e.getId()) && e.__e2eSameInstance === true)))) {
+    throw new Error('the CAROUSEL_TICK round-trip rebuilt the view - a tick must answer with the next( ) alone');
+  }
+  // the tick's own response re-armed the timer; wait past most of its delay
+  await page.waitForTimeout(600);
+  const firstTicks = ticks.length;
+  const manual = Date.now();
+  await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .find((e) => /--welcomeCarousel$/.test(e.getId())).next());
+  for (let waited = 0; ticks.length === firstTicks && waited < 15000; waited += 100) await page.waitForTimeout(100);
+  if (ticks.length === firstTicks) throw new Error('no CAROUSEL_TICK followed a manual page change - the pageChanged wire did not re-arm START_TIMER');
+  const gap = ticks[firstTicks] - manual;
+  if (gap < 1000) {
+    throw new Error(`the tick after a manual page change came ${gap} ms after it - the page change did not restart the wait`);
+  }
+  await waitForIdle(page);
+  page.off('request', onTick);
+  await carouselDelay(page, 1e9);
+  await waitForIdle(page);
+
   // a second product from the promoted panel; the cart sorts by Name
   await page.locator('[id$="--promotedRow"] button[title="Add to Shopping Cart"]').first().click();
   await waitForIdle(page);
@@ -177,6 +264,9 @@ export default async (page, expect) => {
     return items.length === 2 && items.some((i) => i.getTitle() === 'Astro Laptop 1516')
       && items.every((i) => i.getTitle() && i.getNumber() && i.getFirstStatus() && i.getFirstStatus().getText());
   }, 'the cart did not survive a reload with its rows and their fields');
+  // a reload is a fresh page: the module's hold on the carousel goes with it
+  await waitForIdle(page);
+  await carouselDelay(page, 1e9);
 
   /* the checkout: the cart opens from the welcome page's cart button, and
    * Proceed shows the wizard alone in the begin column (OneColumn) */

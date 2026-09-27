@@ -37,23 +37,6 @@ looking for what is left had to skip past what is done to find it. They moved
 verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
 
-- [ ] **`render-error` is switched off for one file until the linter release
-  catches up (2026-09-13, re-read 2026-09-27).** `abap2ui5lint-apps.jsonc`
-  excludes `z2ui5_cl_smpc_demo_004` from `render-error`: the Shopping Cart
-  names two bundled companion controls, `<z2ui5:Storage>` and
-  `<z2ui5:Timer>`, and the linter's render harness mirrors only the ones in
-  its `lib/cc-controls.mjs`, so view CREATION fails on a control every real
-  installation has. `@abap2ui5/linter` 0.8.0 (the 2026-09-27 bump) carries
-  abap2UI5/linter#104, which mirrors Storage - but with the exclusion lifted
-  the render failed on the next one, `z2ui5/cc/Timer.js`: Timer is not in the
-  0.8.0 mirror, although abap2UI5 ships it as `app/webapp/cc/Timer.js`. So
-  the exclusion stays until a linter release whose mirror carries Timer, and
-  its reason in the config says so. The other waiver the 0.6.1 pin cost - the
-  `invalid-property-value` directive on `intervalType="OneMonth"` in
-  `z2ui5_cl_smpc_demo_003` - is spent: 0.8.0 judges an enum by its KEY, the
-  directive reported itself as `unused-directive`, and it was removed with
-  the bump (see the journal, 2026-09-27).
-
 - [ ] **The `src/04` demo apps do not appear in the in-system overview app
   (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the
   one way to find and start something after an abapGit pull, and it is built

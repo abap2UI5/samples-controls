@@ -39,35 +39,12 @@
   // "" outright, so the whole view died before rendering a row.
   "render": true,
 
-  "rules": {
-    // ONE file, ONE rule, and a reason that names its own end date.
-    //
-    // z2ui5_cl_smpc_demo_004 (Shopping Cart) names two bundled companion
-    // controls in its view: <z2ui5:Storage> - the read half of the
-    // browser-storage idiom the cart is built on, exactly as abap2UI5/samples
-    // z2ui5_cl_smp_app_327 writes it - and <z2ui5:Timer>, the carousel's
-    // eight-second advance. The render harness boots a metadata MIRROR of the
-    // bundled cc controls (@abap2ui5/linter lib/cc-controls.mjs), and view
-    // CREATION fails on any control the mirror does not carry - a control
-    // that exists in every real installation. The app is right and the
-    // harness is short.
-    //
-    // Storage was the reason until 2026-09-27: abap2UI5/linter#104 added it
-    // (and the other view-declarable controls it knew of), and 0.8.0, the
-    // release carrying that, reached package-lock.json that day. With the
-    // exclusion lifted the render then failed on the NEXT control:
-    // `z2ui5/cc/Timer.js` - Timer is not in the 0.8.0 mirror, although
-    // abap2UI5 ships it as app/webapp/cc/Timer.js and this view names it.
-    // So the entry stays, now waiting on a linter release whose mirror
-    // carries Timer; the run says so when it goes stale.
-    //
-    // Not a `baseline` file, which was tried first and is the wrong tool
-    // twice over: a render error carries no finding key, so the baseline
-    // does not hold it at all - and what it DID hold was the two findings
-    // (an accessibility hint, a non-released-api warning) that are worth
-    // reading. Excluding one file from one rule hides exactly what it says.
-    "render-error": { "severity": "error", "exclude": ["src/04/z2ui5_cl_smpc_demo_004.clas.abap"] }
-  },
+  // No rule is excluded for any file. z2ui5_cl_smpc_demo_004 was held out of
+  // render-error until 2026-09-27: the render harness boots a metadata MIRROR
+  // of the bundled cc controls (@abap2ui5/linter lib/cc-controls.mjs), and
+  // its view named two the mirror lacked - Storage (added by
+  // abap2UI5/linter#104, in 0.8.0) and the obsolete Timer, which the app no
+  // longer uses: the carousel advances on the START_TIMER frontend event.
 
   "failOn": "error"
 }

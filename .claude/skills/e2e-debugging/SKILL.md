@@ -425,3 +425,18 @@ verdicts below turned out to be harness effects.
   'sub'`) are left as they are - they work on both runtimes and rewriting a
   gate-verified port to remove a now-unnecessary workaround buys nothing -
   but do not copy them into anything new.
+- **A recurring `START_TIMER` is a round-trip on its own schedule, and a
+  click that lands on one is DROPPED.** View1.eB's busy guard drops every
+  event fired while a round-trip is in flight, `waitForIdle` cannot know a
+  tick is about to fire, and demo_004's welcome carousel ticks every eight
+  seconds on the page most of its steps run on - so an interaction module
+  over such an app flakes on whichever click a tick happens to overlap. Own
+  the delay instead of racing it: `carouselDelay( )` in
+  `meta/interactions/z2ui5_cl_smpc_demo_004.mjs` wraps the page's
+  `setTimeout` to turn exactly the app's delay (8000 ms) into one the module
+  chooses, and re-arms the one START_TIMER slot through the view's own
+  `pageChanged` wire (`firePageChanged( )`), which replaces the pending tick.
+  1e9 freezes it for the ordinary steps, 1500 ms makes the carousel leg take
+  seconds instead of half a minute, and a reload is a fresh page that needs
+  the hold again. No ABAP test hook: the class stays the snippet a reader
+  copies (2026-09-27).
