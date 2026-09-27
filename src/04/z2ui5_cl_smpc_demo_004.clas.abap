@@ -76,9 +76,13 @@
 "!    so every response re-arms it while the carousel is on screen - which
 "!    also means any round-trip, not only a page change, restarts the
 "!    eight seconds. The original's setTimeout keeps running on every page;
-"!    this timer does not, because each of its ticks is a round-trip. The
-"!    random start page and the two promoted items are drawn in ABAP with
-"!    cl_abap_random_int - once per app start, as there.
+"!    this timer does not, because each of its ticks is a round-trip. Both
+"!    armings pass START_TIMER's optional third argument `X`, so that
+"!    round-trip keeps the busy overlay down - the original's client-side
+"!    advance shows none either. abap2UI5 1.145.0 ignores the argument and
+"!    raises the overlay on a slow tick as before. The random start page
+"!    and the two promoted items are drawn in ABAP with cl_abap_random_int -
+"!    once per app start, as there.
 "!  - the i18n resource bundle becomes literals. The busy indicator the
 "!    original shows until its OData metadata has loaded has nothing to wait
 "!    for here, and the content density is abap2UI5's shell's to pick.
@@ -597,11 +601,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " seconds, as a START_TIMER whose CAROUSEL_TICK comes back here. Every
     " round-trip cancels the pending timer, so every response re-arms it while
     " the carousel is on screen - the mid column's welcome page, not a phone,
-    " where the original hides the carousel
+    " where the original hides the carousel. `X`: nobody waits on the tick, so
+    " it keeps the busy overlay down
     IF page_mid = `page-welcome` AND layout <> `OneColumn`
         AND client->get( )-s_device-system <> client->cs_device-system-phone.
       client->follow_up_action( val   = client->cs_event-start_timer
-                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ) ).
+                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ( `X` ) ) ).
     ENDIF.
 
   ENDMETHOD.
@@ -1665,13 +1670,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 " a page change restarts the eight-second wait
                 " (onCarouselPageChanged): START_TIMER has one slot per app,
                 " so arming it again replaces the pending tick - in the
-                " browser, with no round-trip
+                " browser, with no round-trip. `X` as in main( ): no busy
+                " overlay for the tick
                 )->ele( `Carousel`
                     )->a( n = `id`                v = `welcomeCarousel`
                     )->a( n = `showPageIndicator` v = `false`
                     )->a( n = `loop`              v = `true`
                     )->a( n = `pageChanged`       v = client->follow_up_action( val   = client->cs_event-start_timer
-                                                                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ) )
+                                                                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ( `X` ) ) )
                     )->a( n = `visible`           v = `{=!${device>/system/phone}}`
                     )->a( n = `tooltip`           v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
                                                      `You can browse and search a catalog of products, add the chosen products to your ` &&
