@@ -1,4 +1,4 @@
-" @keywords table sap.m tableselectcopy cellselector overflowtoolbar title toolbarspacer checkbox column text columnlistitem objectidentifier
+" @keywords table sap.m tableselectcopy cellselector copyprovider overflowtoolbar title toolbarspacer checkbox overflowtoolbarbutton column text
 " @summary This example demonstrates how the Table data can be copied to the clipboard via CopyProvider plugin.
 " @origin sap.m.sample.TableSelectCopy - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableSelectCopy (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_523 DEFINITION PUBLIC.
@@ -58,6 +58,8 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
         )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
         )->a( n = `xmlns:plugins` v = `sap.m.plugins`
         )->a( n = `xmlns:app`     v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
+        " the controller's extractData callback is the framework's clipboard module
+        )->a( n = `core:require`  v = `{Clipboard: 'z2ui5/model/clipboard'}`
 
         )->ele( `Table`
             )->a( n = `id`      v = `idProductsTable`
@@ -65,11 +67,16 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
             )->a( n = `mode`    v = `MultiSelect`
             )->a( n = `items`   v = |\{ path: '{ client->_bind_path( t_products ) }', sorter: \{ path: 'NAME' \} \}|
 
-            " only the CellSelector - the CopyProvider is dropped, it refuses to be
-            " created without the extractData JS callback (see sidecar)
             )->ele( `dependents`
                 )->tag( n = `CellSelector` ns = `plugins`
                     )->a( n = `id` v = `cellSelector`
+                " onVisibleChange / onEnabledChange / onSparseChange become bindings
+                )->tag( n = `CopyProvider` ns = `plugins`
+                    )->a( n = `id`          v = `copyProvider`
+                    )->a( n = `extractData` v = `Clipboard.extractData`
+                    )->a( n = `visible`     v = client->_bind( copy_visible )
+                    )->a( n = `enabled`     v = client->_bind( copy_enabled )
+                    )->a( n = `copySparse`  v = client->_bind( copy_sparse )
 
             )->end(
 
@@ -90,6 +97,16 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
                     )->tag( `CheckBox`
                         )->a( n = `text`     v = `Sparse`
                         )->a( n = `selected` v = client->_bind( copy_sparse )
+                    " onInit appends getCopyButton( ) - the same button, declared;
+                    " the copy runs in the click, which the clipboard API requires
+                    )->tag( `OverflowToolbarButton`
+                        )->a( n = `icon`    v = `sap-icon://copy`
+                        )->a( n = `text`    v = `Copy`
+                        )->a( n = `tooltip` v = `Copy`
+                        )->a( n = `visible` v = client->_bind( copy_visible )
+                        )->a( n = `enabled` v = client->_bind( copy_enabled )
+                        )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                          t_arg = VALUE #( ( `copyProvider` ) ( `copySelectionData` ) ( `X` ) ) )
 
                 )->end(
             )->end(
@@ -97,7 +114,7 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
             )->ele( `columns`
                 )->ele( `Column`
                     )->a( n = `width`        v = `16em`
-                    )->a( n = `app:bindings` v = `ProductId,Name`
+                    )->a( n = `app:bindings` v = `PRODUCTID,NAME`
                     )->a( n = `app:template` v = `\{1\}\n\{0\}`
 
                     )->tag( `Text`
@@ -108,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
                 )->ele( `Column`
                     )->a( n = `minScreenWidth` v = `Desktop`
                     )->a( n = `demandPopin`    v = `true`
-                    )->a( n = `app:bindings`   v = `SupplierName`
+                    )->a( n = `app:bindings`   v = `SUPPLIERNAME`
 
                     )->tag( `Text`
                         )->a( n = `text` v = `Supplier`
@@ -119,7 +136,7 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
                     )->a( n = `minScreenWidth` v = `Desktop`
                     )->a( n = `demandPopin`    v = `true`
                     )->a( n = `hAlign`         v = `End`
-                    )->a( n = `app:bindings`   v = `Quantity,UoM`
+                    )->a( n = `app:bindings`   v = `QUANTITY,UOM`
                     )->a( n = `app:template`   v = `\{0\} \{1\}`
 
                     )->tag( `Text`
@@ -130,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_523 IMPLEMENTATION.
                 )->ele( `Column`
                     )->a( n = `width`        v = `10em`
                     )->a( n = `hAlign`       v = `End`
-                    )->a( n = `app:bindings` v = `Price,CurrencyCode`
+                    )->a( n = `app:bindings` v = `PRICE,CURRENCYCODE`
                     )->a( n = `app:template` v = `\{0\} \{1\}`
 
                     )->tag( `Text`

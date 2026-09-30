@@ -7306,23 +7306,31 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         post171 = `four post-1.71 members are kept for the 1:1 port: sap.f.FlexibleColumnLayout.autoFocus (since UI5 1.76), restoreFocusOnBackNavigation (since 1.77) and the columnResize event (since 1.76), all three` &&
                  ` declared by the sample's own FCL view, and the sap.m.Avatar control (since 1.73) that its detail page uses twice.` ) ).
 
-    text1 = `POST-1.71: sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114) - all newer than the 1.71 floor. The CellSelector is kept, so` &&
-            ` the port is filed under src/02. // IMPROVISED: The CopyProvider is DROPPED. Its extractData is a JavaScript callback that reads each column's app:bindings CustomData and formats it with app:template,` &&
-            ` and the control REFUSES to be created without one ('extractData property must be defined for Element sap.m.plugins.CopyProvider') - so it is not a matter of copying in a default format, the plugin` &&
-            ` takes the whole view down. abap2UI5 cannot register such a callback, so the dependents aggregation keeps only the CellSelector and the cell copy is lost (structural-diff reports the CopyProvider` &&
-            ` element and its extractData as missing). The app: CustomData attributes stay on the four columns 1:1, so nothing about the sample's data description is lost. // NOTE: onVisibleChange /` &&
-            ` onEnabledChange / onSparseChange call three setters on the CopyProvider. The three CheckBoxes are two-way bound to three flags here instead, so the three CheckBox.select attributes are dropped; with`.
-    text1 = text1 && ` the plugin gone the flags drive nothing, but the toolbar the sample shows is unchanged. The copy BUTTON the controller takes from the plugin and adds to the toolbar goes with it. // NOTE: The` &&
-            ` CellSelector and the three CheckBoxes are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_523.mjs).`.
+    text1 = `POST-1.71: sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114, the enabled property it inherits from sap.m.plugins.PluginBase` &&
+            ` @since 1.73) - all newer than the 1.71 floor. Both plugins are kept 1:1, so the port is filed under src/02. The view's core:require needs UI5 >= 1.74, which the plugins already exceed. // NOTE: The` &&
+            ` CopyProvider's mandatory extractData callback is the controller's .extractData upstream. abap2UI5 has no app controller, so the port names the framework's clipboard module instead -` &&
+            ` core:require="{Clipboard: 'z2ui5/model/clipboard'}" on the view root and extractData="Clipboard.extractData" on the plugin. That module is the controller's function, generalised: it reads the same` &&
+            ` app:bindings / app:template CustomData from the column and returns the same text/html pair. It ships with abap2UI5 newer than 1.146.0; on an older framework the core:require 404s and the view does` &&
+            ` not load. Until 2026-09-30 the plugin was dropped here, because it throws on creation without the callback. // NOTE: The four app:bindings values name the model's field names (PRODUCTID,NAME /`.
+    text1 = text1 && ` SUPPLIERNAME / QUANTITY,UOM / PRICE,CURRENCYCODE) instead of the original's ProductId,Name / SupplierName / Quantity,UoM / Price,CurrencyCode: extractData reads them relative to the row context, and` &&
+            ` abap2UI5 serialises the ABAP fields in upper case - the same rename every binding path of the port carries. The app:template values stay 1:1. // NOTE: onVisibleChange / onEnabledChange /` &&
+            ` onSparseChange call three setters on the CopyProvider. The three CheckBoxes are two-way bound to three flags here instead, and the CopyProvider's visible / enabled / copySparse bind the same flags,` &&
+            ` so a tick reaches the plugin with no roundtrip; the three CheckBox.select attributes are dropped. // NOTE: onInit appends the CopyProvider's own copy button (getCopyButton( ), an` &&
+            ` OverflowToolbarButton the plugin builds in JS) to the toolbar. The port declares that button at the same place instead - an extra OverflowToolbarButton with the plugin's icon and 'Copy' text - and` &&
+            ` wires its press to copySelectionData(true) on the plugin through a control_by_id frontend action, which runs inside the click, as the clipboard API requires. Its visible and enabled follow the two`.
+    text1 = text1 && ` flags; the plugin's own button is additionally disabled while nothing is selected, which the declared one is not (a copy with nothing selected does nothing). Ctrl+C on a selection is the plugin's own` &&
+            ` and needs nothing. // NOTE: The CellSelector and the three CheckBoxes are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_523.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableSelectCopy`                               class = `z2ui5_cl_smpc_app_523` path = `src/02/01/z2ui5_cl_smpc_app_523.clas.abap`
         score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.16`
         is_post171 = abap_true
         notes = text1
-        post171 = `sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114) - all newer than the 1.71 floor. The CellSelector is kept, so the port is` &&
-                 ` filed under src/02.` ) ).
+        post171 = `sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114, the enabled property it inherits from sap.m.plugins.PluginBase @since` &&
+                 ` 1.73) - all newer than the 1.71 floor. Both plugins are kept 1:1, so the port is filed under src/02. The view's core:require needs UI5 >= 1.74, which the plugins already exceed.` ) ).
 
     text1 = `POST-1.71: sap.m.Table autoPopinMode (since UI5 1.76) kept 1:1 from the original; needs a UI5 release >= 1.76 to render. // POST-1.71: sap.m.plugins.ColumnResizer (since UI5 1.91) kept 1:1 in the` &&
             ` Table dependents aggregation; needs a UI5 release >= 1.91 to render. The Table fixedLayout='Strict' value is also newer than 1.71 (a value-level extension of the 1.22 property, invisible to the` &&
@@ -10721,37 +10729,47 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `POST-1.71: Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds,` &&
             ` sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first` &&
             ` property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since` &&
-            ` at all. rowMode @1.119 is real and is what keeps the class in src/02.) // NOTE: The sample writes its two plugin controls with a DOTTED element name and no namespace prefix` &&
-            ` (<plugins.MultiSelectionPlugin> under the sap.ui.table default xmlns, <m:plugins.PasteProvider>), which UI5 resolves as a sub-package of the element's namespace. The port declares real prefixes for` &&
-            ` those two packages instead (xmlns:tp="sap.ui.table.plugins", xmlns:mp="sap.m.plugins") and writes tp:MultiSelectionPlugin / mp:PasteProvider - the same two controls, a namespace-representation`.
-    text1 = text1 && ` difference only. structural-diff compares the qualified name, so it reports the dotted names as missing and the prefixed ones as extra. // NOTE: onSelectChange disappears: the selection-mode Select's` &&
-            ` selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip - the prefer-a-bindable-property rule. The named ``ui>`` model` &&
-            ` (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept. // IMPROVISED: The copy half of the sample is dropped, and with it the toolbar's copy` &&
-            ` Button: onInit creates a sap.m.plugins.CellSelector and a sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's` &&
-            ` generated copy Button to the toolbar. Building controls at runtime is the capability boundary CAPABILITIES marks as not expressible, and the CopyProvider's extractData/copy callbacks are app-authored`.
-    text1 = text1 && ` JS formatters. The declared PasteProvider Button of the view is kept 1:1. onPaste consequently loses its cell-range branch - the CellSelector that would supply the range is gone - so the port reports` &&
-            ` the pasted data at TABLE level, which is the same handler's other branch, with the original's message text. // NOTE: The sample serves its rows from an in-page OData MockServer (over the sibling` &&
-            ` OData sample's metadata.xml and mock data). An abap2UI5 app has a real ABAP backend, so the mock service is replaced by the model itself: all 115 rows of ProductSet.json are inlined and the Table` &&
-            ` binds them directly - the server-side paging illusion is what that costs, while threshold, enableBusyIndicator and the noData BusyIndicator stay 1:1. ProductSet.json lives in the sibling OData sample` &&
-            ` folder upstream; it is archived into this sample's folder too so the port is verifiable offline. The six column labels are metadata bindings in the original ({/#Product/Name/@sap:label} and friends),` &&
-            ` which only an OData model can resolve, and are replaced by the literal sap:label texts from metadata.xml. The numeric columns stay TYPE string so the mock's exact decimals survive. Two of the six`.
-    text1 = text1 && ` header texts were the OData2 sample's labels, not this one's, until 2026-08-21: Category where this metadata.xml says "Prod. Cat.", and "Supplier Company Name" where it says "Company Name" - while` &&
-            ` this very deviation asserted the texts came from the sample's own metadata. Corrected against the archived file. // NOTE: Unverified in a running system: whether the paste event delivers the pasted` &&
-            ` data array to get_event_arg, and whether the bound selectionMode reaches the plugin without a round-trip. **e2e-verified 2026-08-21** (nightly e2e interaction,` &&
-            ` meta/interactions/z2ui5_cl_smpc_app_360.mjs). // NOTE: The paste event's data parameter is typed string[][], so an array/object event argument reaches the app as serialized JSON - [["Pasted` &&
-            ` Name","Pasted Id"]]. The original builds its message as "..." + aData, and JS coerces the array to Pasted Name,Pasted Id. The port toasted the raw JSON until 2026-08-24, showing brackets and quotes` &&
-            ` the user never sees upstream; the brackets and quotes are now stripped, which reproduces the coercion - the same substitution the sibling port 361 already declares for its index array. The e2e module`.
-    text1 = text1 && ` could not see the difference: it asserts toContainText('Pasted Name'), which passes for both renderings.`.
+            ` at all. rowMode @1.119 is real and is what keeps the class in src/02.) The two plugins onInit adds are post-1.71 as well and are kept too: sap.m.plugins.CellSelector (@since 1.119) and` &&
+            ` sap.m.plugins.CopyProvider (@since 1.110); the core:require that reaches the clipboard module needs UI5 >= 1.74. // NOTE: The sample writes its two plugin controls with a DOTTED element name and no` &&
+            ` namespace prefix (<plugins.MultiSelectionPlugin> under the sap.ui.table default xmlns, <m:plugins.PasteProvider>), which UI5 resolves as a sub-package of the element's namespace. The port declares`.
+    text1 = text1 && ` real prefixes for those two packages instead (xmlns:tp="sap.ui.table.plugins", xmlns:mp="sap.m.plugins") and writes tp:MultiSelectionPlugin / mp:PasteProvider - the same two controls, a` &&
+            ` namespace-representation difference only. structural-diff compares the qualified name, so it reports the dotted names as missing and the prefixed ones as extra. // NOTE: onSelectChange disappears:` &&
+            ` the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip - the prefer-a-bindable-property rule.` &&
+            ` The named ``ui>`` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept. // NOTE: onInit creates a sap.m.plugins.CellSelector and a` &&
+            ` sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's generated copy button to the toolbar. The port declares all` &&
+            ` three in the view instead - CellSelector and CopyProvider in the table's dependents, the button as an OverflowToolbarButton at the end of the toolbar - so structural-diff reports the three controls`.
+    text1 = text1 && ` as extra; they are the controller's, not invented. The isSecureContext guard goes with it: the plugins are always created, and the clipboard is only touched by a copy. The CopyProvider's extractData` &&
+            ` is the framework's clipboard module (core:require="{Clipboard: 'z2ui5/model/clipboard'}", extractData="Clipboard.extractData"; abap2UI5 newer than 1.146.0), which copies what each column's` &&
+            ` app:bindings CustomData names. The original's extractData copies getSortProperty( ), so the four columns with a sortProperty carry the same field as app:bindings, and the two without one (price,` &&
+            ` dimensions) are not copied - upstream they hand getProperty an empty path, which returns the whole row object. The toast onCopy shows is raised from the plugin's copy event as a backend event, COPY.` &&
+            ` The button's press runs copySelectionData(true) on the plugin through a control_by_id frontend action, inside the click, as the clipboard API requires. Until 2026-09-30 the whole copy half was` &&
+            ` dropped here, because the plugin throws on creation without its extractData callback. // IMPROVISED: onPaste's cell-range branch stays dropped: it reads the range from the CellSelector's`.
+    text1 = text1 && ` getSelectionRange( ), which is private UI5 API (@ui5-restricted for the CopyProvider) that no event hands to the backend, and then asks a MessageBox.confirm about it. The port reports the pasted data` &&
+            ` at TABLE level, which is the same handler's other branch, with the original's message text. // NOTE: The sample serves its rows from an in-page OData MockServer (over the sibling OData sample's` &&
+            ` metadata.xml and mock data). An abap2UI5 app has a real ABAP backend, so the mock service is replaced by the model itself: all 115 rows of ProductSet.json are inlined and the Table binds them` &&
+            ` directly - the server-side paging illusion is what that costs, while threshold, enableBusyIndicator and the noData BusyIndicator stay 1:1. ProductSet.json lives in the sibling OData sample folder` &&
+            ` upstream; it is archived into this sample's folder too so the port is verifiable offline. The six column labels are metadata bindings in the original ({/#Product/Name/@sap:label} and friends), which` &&
+            ` only an OData model can resolve, and are replaced by the literal sap:label texts from metadata.xml. The numeric columns stay TYPE string so the mock's exact decimals survive. Two of the six header`.
+    text1 = text1 && ` texts were the OData2 sample's labels, not this one's, until 2026-08-21: Category where this metadata.xml says "Prod. Cat.", and "Supplier Company Name" where it says "Company Name" - while this very` &&
+            ` deviation asserted the texts came from the sample's own metadata. Corrected against the archived file. // NOTE: Unverified in a running system: whether the paste event delivers the pasted data array` &&
+            ` to get_event_arg, and whether the bound selectionMode reaches the plugin without a round-trip. **e2e-verified 2026-08-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_360.mjs). //` &&
+            ` NOTE: The paste event's data parameter is typed string[][], so an array/object event argument reaches the app as serialized JSON - [["Pasted Name","Pasted Id"]]. The original builds its message as` &&
+            ` "..." + aData, and JS coerces the array to Pasted Name,Pasted Id. The port toasted the raw JSON until 2026-08-24, showing brackets and quotes the user never sees upstream; the brackets and quotes are` &&
+            ` now stripped, which reproduces the coercion - the same substitution the sibling port 361 already declares for its index array. The e2e module could not see the difference: it asserts`.
+    text1 = text1 && ` toContainText('Pasted Name'), which passes for both renderings.`.
+    text2 = `Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds,` &&
+            ` sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first` &&
+            ` property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since` &&
+            ` at all. rowMode @1.119 is real and is what keeps the class in src/02.) The two plugins onInit adds are post-1.71 as well and are kept too: sap.m.plugins.CellSelector (@since 1.119) and` &&
+            ` sap.m.plugins.CopyProvider (@since 1.110); the core:require that reaches the clipboard module needs UI5 >= 1.74.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.table`       control = `sap.ui.table.Table`                    name = `SelectCopyPaste`                               class = `z2ui5_cl_smpc_app_360` path = `src/02/02/z2ui5_cl_smpc_app_360.clas.abap`
         score = 5
-        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         is_post171 = abap_true
         notes = text1
-        post171 = `Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds,` &&
-                 ` sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first` &&
-                 ` property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since` &&
-                 ` at all. rowMode @1.119 is real and is what keeps the class in src/02.)` ) ).
+        post171 = text2 ) ).
 
     text1 = `NOTE: Three of the four controller setters become bound properties. The behaviour Select's selectedKey and the Table's selectionBehavior share one field, and the Switch's state and the Table's` &&
             ` enableSelectAll share another - so onBehaviourModeChange and onSwitchChange disappear and their wires with them: the behaviour Select keeps no change attribute and the Switch loses Switch.change` &&

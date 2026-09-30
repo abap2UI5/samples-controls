@@ -5,23 +5,31 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_523.clas.abap",
   "batch": "b42",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
       "type": "POST_171",
-      "what": "sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114) - all newer than the 1.71 floor. The CellSelector is kept, so the port is filed under src/02."
-    },
-    {
-      "type": "IMPROVISED",
-      "what": "The CopyProvider is DROPPED. Its extractData is a JavaScript callback that reads each column's app:bindings CustomData and formats it with app:template, and the control REFUSES to be created without one ('extractData property must be defined for Element sap.m.plugins.CopyProvider') - so it is not a matter of copying in a default format, the plugin takes the whole view down. abap2UI5 cannot register such a callback, so the dependents aggregation keeps only the CellSelector and the cell copy is lost (structural-diff reports the CopyProvider element and its extractData as missing). The app: CustomData attributes stay on the four columns 1:1, so nothing about the sample's data description is lost."
+      "what": "sap.m.plugins.CellSelector is @since 1.119 and sap.m.plugins.CopyProvider is @since 1.110 (its visible property @since 1.114, the enabled property it inherits from sap.m.plugins.PluginBase @since 1.73) - all newer than the 1.71 floor. Both plugins are kept 1:1, so the port is filed under src/02. The view's core:require needs UI5 >= 1.74, which the plugins already exceed."
     },
     {
       "type": "NOTE",
-      "what": "onVisibleChange / onEnabledChange / onSparseChange call three setters on the CopyProvider. The three CheckBoxes are two-way bound to three flags here instead, so the three CheckBox.select attributes are dropped; with the plugin gone the flags drive nothing, but the toolbar the sample shows is unchanged. The copy BUTTON the controller takes from the plugin and adds to the toolbar goes with it."
+      "what": "The CopyProvider's mandatory extractData callback is the controller's .extractData upstream. abap2UI5 has no app controller, so the port names the framework's clipboard module instead - core:require=\"{Clipboard: 'z2ui5/model/clipboard'}\" on the view root and extractData=\"Clipboard.extractData\" on the plugin. That module is the controller's function, generalised: it reads the same app:bindings / app:template CustomData from the column and returns the same text/html pair. It ships with abap2UI5 newer than 1.146.0; on an older framework the core:require 404s and the view does not load. Until 2026-09-30 the plugin was dropped here, because it throws on creation without the callback."
+    },
+    {
+      "type": "NOTE",
+      "what": "The four app:bindings values name the model's field names (PRODUCTID,NAME / SUPPLIERNAME / QUANTITY,UOM / PRICE,CURRENCYCODE) instead of the original's ProductId,Name / SupplierName / Quantity,UoM / Price,CurrencyCode: extractData reads them relative to the row context, and abap2UI5 serialises the ABAP fields in upper case - the same rename every binding path of the port carries. The app:template values stay 1:1."
+    },
+    {
+      "type": "NOTE",
+      "what": "onVisibleChange / onEnabledChange / onSparseChange call three setters on the CopyProvider. The three CheckBoxes are two-way bound to three flags here instead, and the CopyProvider's visible / enabled / copySparse bind the same flags, so a tick reaches the plugin with no roundtrip; the three CheckBox.select attributes are dropped."
+    },
+    {
+      "type": "NOTE",
+      "what": "onInit appends the CopyProvider's own copy button (getCopyButton( ), an OverflowToolbarButton the plugin builds in JS) to the toolbar. The port declares that button at the same place instead - an extra OverflowToolbarButton with the plugin's icon and 'Copy' text - and wires its press to copySelectionData(true) on the plugin through a control_by_id frontend action, which runs inside the click, as the clipboard API requires. Its visible and enabled follow the two flags; the plugin's own button is additionally disabled while nothing is selected, which the declared one is not (a copy with nothing selected does nothing). Ctrl+C on a selection is the plugin's own and needs nothing."
     },
     {
       "type": "NOTE",
@@ -33,6 +41,6 @@
     "types": [
       "escape-sequence-in-backtick"
     ],
-    "reason": "The '\\n' in the app:template CustomData on the ProductId/Name column is a 1:1 copy of the sample and reaches nobody. escape-sequence-in-backtick is scoped to text that REACHES THE USER, and this value is neither rendered nor read: app:template is CustomData for sap.m.plugins.CopyProvider's extractData callback, and the IMPROVISED deviation above records that the CopyProvider is DROPPED (abap2UI5 cannot register a JS callback, and the control refuses to be created without one). The four app: attributes stay on the columns precisely so the sample's data description is not lost - that is the deviation's own words - so the string is documentation of the original, not a template anything expands. Rewriting it as `\\{1\\}` && |\\n| && `\\{0\\}` would be worse on both counts: it drops the 1:1 value the deviation promises, and an XML attribute normalises a literal #xA to a space on parse anyway, so the line break would not survive into the CustomData either. The skip covers that one finding type, and view-gates fails this port if it stops firing - which is what restoring a real CopyProvider would have to do."
+    "reason": "The '\\n' in the app:template CustomData on the ProductId/Name column is a 1:1 copy of the sample. escape-sequence-in-backtick assumes an ABAP author meant a line break, and here nobody did: the original view.xml carries the same two characters backslash-n inside an XML attribute, and the port hands UI5 exactly those bytes, so the clipboard module's formatMessage sees what the demo kit's controller sees. Rewriting it as `\\{1\\}` && |\\n| && `\\{0\\}` would be worse on both counts: it drops the 1:1 value, and an XML attribute normalises a literal #xA to a space on parse anyway, so the line break would not survive into the CustomData either. The skip covers that one finding type, and view-gates fails this port if it stops firing."
   }
 }
