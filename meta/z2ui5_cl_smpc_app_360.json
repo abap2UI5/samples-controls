@@ -5,7 +5,7 @@
   "file": "src/02/02/z2ui5_cl_smpc_app_360.clas.abap",
   "batch": "b20",
   "audit": {
-    "frontend_action": false,
+    "frontend_action": true,
     "event_t_arg": true
   },
   "status": "reviewed",
@@ -13,7 +13,7 @@
   "deviations": [
     {
       "type": "POST_171",
-      "what": "Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds, sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since at all. rowMode @1.119 is real and is what keeps the class in src/02.)"
+      "what": "Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds, sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since at all. rowMode @1.119 is real and is what keeps the class in src/02.) The two plugins onInit adds are post-1.71 as well and are kept too: sap.m.plugins.CellSelector (@since 1.119) and sap.m.plugins.CopyProvider (@since 1.110); the core:require that reaches the clipboard module needs UI5 >= 1.74."
     },
     {
       "type": "NOTE",
@@ -24,8 +24,12 @@
       "what": "onSelectChange disappears: the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip - the prefer-a-bindable-property rule. The named `ui>` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept."
     },
     {
+      "type": "NOTE",
+      "what": "onInit creates a sap.m.plugins.CellSelector and a sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's generated copy button to the toolbar. The port declares all three in the view instead - CellSelector and CopyProvider in the table's dependents, the button as an OverflowToolbarButton at the end of the toolbar - so structural-diff reports the three controls as extra; they are the controller's, not invented. The isSecureContext guard goes with it: the plugins are always created, and the clipboard is only touched by a copy. The CopyProvider's extractData is the framework's clipboard module (core:require=\"{Clipboard: 'z2ui5/model/clipboard'}\", extractData=\"Clipboard.extractData\"; abap2UI5 newer than 1.146.0), which copies what each column's app:bindings CustomData names. The original's extractData copies getSortProperty( ), so the four columns with a sortProperty carry the same field as app:bindings, and the two without one (price, dimensions) are not copied - upstream they hand getProperty an empty path, which returns the whole row object. The toast onCopy shows is raised from the plugin's copy event as a backend event, COPY. The button's press runs copySelectionData(true) on the plugin through a control_by_id frontend action, inside the click, as the clipboard API requires. Until 2026-09-30 the whole copy half was dropped here, because the plugin throws on creation without its extractData callback."
+    },
+    {
       "type": "IMPROVISED",
-      "what": "The copy half of the sample is dropped, and with it the toolbar's copy Button: onInit creates a sap.m.plugins.CellSelector and a sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's generated copy Button to the toolbar. Building controls at runtime is the capability boundary CAPABILITIES marks as not expressible, and the CopyProvider's extractData/copy callbacks are app-authored JS formatters. The declared PasteProvider Button of the view is kept 1:1. onPaste consequently loses its cell-range branch - the CellSelector that would supply the range is gone - so the port reports the pasted data at TABLE level, which is the same handler's other branch, with the original's message text."
+      "what": "onPaste's cell-range branch stays dropped: it reads the range from the CellSelector's getSelectionRange( ), which is private UI5 API (@ui5-restricted for the CopyProvider) that no event hands to the backend, and then asks a MessageBox.confirm about it. The port reports the pasted data at TABLE level, which is the same handler's other branch, with the original's message text."
     },
     {
       "type": "NOTE",

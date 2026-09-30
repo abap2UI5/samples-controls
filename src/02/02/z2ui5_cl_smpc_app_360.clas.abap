@@ -1,4 +1,4 @@
-" @keywords table sap.ui.table selectcopypaste multiselectionplugin fixed busyindicator overflowtoolbar title toolbarspacer select item button
+" @keywords table sap.ui.table selectcopypaste multiselectionplugin cellselector copyprovider fixed busyindicator overflowtoolbar title toolbarspacer select
 " @summary Shows cell selection, copy and paste interaction in the table.
 " @origin sap.ui.table.sample.SelectCopyPaste - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.SelectCopyPaste (status: reviewed - read against the original, not run)
 CLASS z2ui5_cl_smpc_app_360 DEFINITION PUBLIC.
@@ -63,6 +63,8 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
     " the select / copy / paste demo. The selection-mode Select and the
     " MultiSelectionPlugin bind the same field, so onSelectChange disappears;
     " the paste event carries the pasted data to the backend, which reports it.
+    " The CellSelector and CopyProvider onInit adds in JS are declared here, the
+    " CopyProvider's extractData coming from the framework's clipboard module.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`         v = `sap.ui.table`
         )->a( n = `xmlns:trm`     v = `sap.ui.table.rowmodes`
@@ -72,6 +74,8 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
         )->a( n = `xmlns:u`       v = `sap.ui.unified`
         )->a( n = `xmlns:core`    v = `sap.ui.core`
         )->a( n = `xmlns:m`       v = `sap.m`
+        )->a( n = `xmlns:app`     v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
+        )->a( n = `core:require`  v = `{Clipboard: 'z2ui5/model/clipboard'}`
         )->a( n = `height`        v = `100%`
 
         )->ele( n = `Page` ns = `m`
@@ -94,6 +98,11 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                             )->a( n = `limit`              v = `100`
                             )->a( n = `enableNotification` v = `true`
                             )->a( n = `selectionMode`      v = client->_bind( selectionmode )
+                        )->tag( n = `CellSelector` ns = `plugins`
+                        )->tag( n = `CopyProvider` ns = `plugins`
+                            )->a( n = `id`          v = `copyProvider`
+                            )->a( n = `extractData` v = `Clipboard.extractData`
+                            )->a( n = `copy`        v = client->_event( `COPY` )
 
                     )->end(
                     )->ele( `rowMode`
@@ -133,12 +142,24 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
 
                                 )->end(
                             )->end(
+
+                            " onInit appends getCopyButton( ) - the same button, declared;
+                            " the copy runs in the click, which the clipboard API requires
+                            )->tag( n = `OverflowToolbarButton` ns = `m`
+                                )->a( n = `icon`    v = `sap-icon://copy`
+                                )->a( n = `text`    v = `Copy`
+                                )->a( n = `tooltip` v = `Copy`
+                                )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                                  t_arg = VALUE #( ( `copyProvider` ) ( `copySelectionData` ) ( `X` ) ) )
+
                         )->end(
                     )->end(
                     )->ele( `columns`
                         )->ele( `Column`
                             )->a( n = `sortProperty`   v = `NAME`
                             )->a( n = `filterProperty` v = `NAME`
+                            " extractData copies getSortProperty( ) - the same field, declared
+                            )->a( n = `app:bindings`   v = `NAME`
                             )->a( n = `autoResizable`  v = `true`
                             )->a( n = `width`          v = `11rem`
 
@@ -155,6 +176,8 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                         )->ele( `Column`
                             )->a( n = `sortProperty`   v = `PRODUCTID`
                             )->a( n = `filterProperty` v = `PRODUCTID`
+                            " extractData copies getSortProperty( ) - the same field, declared
+                            )->a( n = `app:bindings`   v = `PRODUCTID`
                             )->a( n = `autoResizable`  v = `true`
                             )->a( n = `width`          v = `6rem`
 
@@ -171,6 +194,8 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                         )->ele( `Column`
                             )->a( n = `sortProperty`   v = `CATEGORY`
                             )->a( n = `filterProperty` v = `CATEGORY`
+                            " extractData copies getSortProperty( ) - the same field, declared
+                            )->a( n = `app:bindings`   v = `CATEGORY`
                             )->a( n = `autoResizable`  v = `true`
                             )->a( n = `width`          v = `11rem`
 
@@ -187,6 +212,8 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
                         )->ele( `Column`
                             )->a( n = `sortProperty`   v = `SUPPLIERNAME`
                             )->a( n = `filterProperty` v = `SUPPLIERNAME`
+                            " extractData copies getSortProperty( ) - the same field, declared
+                            )->a( n = `app:bindings`   v = `SUPPLIERNAME`
                             )->a( n = `autoResizable`  v = `true`
                             )->a( n = `width`          v = `12rem`
 
@@ -242,23 +269,31 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
 
   METHOD on_event.
 
-    IF client->get_event( ) = `PASTE`.
-      " onPaste: report what arrived. The original first asks whether to
-      " paste at the selected cell range; the CellSelector that provides that
-      " range is added in the controller and has no counterpart here, so the
-      " table-level branch of the same handler is what remains
-      " the paste parameter is string[][], so it arrives as serialized JSON -
-      " [["Pasted Name","Pasted Id"]]. The original concatenates the ARRAY into
-      " the message, and JS coerces it to Pasted Name,Pasted Id. Toasting the
-      " raw JSON (until 2026-08-24) showed the brackets and quotes the user
-      " never sees upstream; stripping them reproduces the coercion, the same
-      " way the sibling port 361 declares it for its index array.
-      DATA(pasted) = client->get_event_arg( ).
-      REPLACE ALL OCCURRENCES OF `"` IN pasted WITH ``.
-      REPLACE ALL OCCURRENCES OF `[` IN pasted WITH ``.
-      REPLACE ALL OCCURRENCES OF `]` IN pasted WITH ``.
-      client->message_toast_display( |Pasted Data (on Table Level):\n\n{ pasted }| ).
-    ENDIF.
+    CASE client->get_event( ).
+
+      WHEN `COPY`.
+        " onCopy
+        client->message_toast_display( `Selection copied to clipboard` ).
+
+      WHEN `PASTE`.
+        " onPaste: report what arrived. The original first asks whether to
+        " paste at the selected cell range; it reads that range from the
+        " CellSelector's getSelectionRange( ), which is private UI5 API the
+        " backend cannot ask, so the table-level branch of the same handler is
+        " what remains
+        " the paste parameter is string[][], so it arrives as serialized JSON -
+        " [["Pasted Name","Pasted Id"]]. The original concatenates the ARRAY into
+        " the message, and JS coerces it to Pasted Name,Pasted Id. Toasting the
+        " raw JSON (until 2026-08-24) showed the brackets and quotes the user
+        " never sees upstream; stripping them reproduces the coercion, the same
+        " way the sibling port 361 declares it for its index array.
+        DATA(pasted) = client->get_event_arg( ).
+        REPLACE ALL OCCURRENCES OF `"` IN pasted WITH ``.
+        REPLACE ALL OCCURRENCES OF `[` IN pasted WITH ``.
+        REPLACE ALL OCCURRENCES OF `]` IN pasted WITH ``.
+        client->message_toast_display( |Pasted Data (on Table Level):\n\n{ pasted }| ).
+
+    ENDCASE.
 
 
   ENDMETHOD.
