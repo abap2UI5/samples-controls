@@ -2,6 +2,7 @@
 [![namespace](https://img.shields.io/badge/namespace-z2ui5__cl__smpc-blue)](abaplint.jsonc)
 [![dependency](https://img.shields.io/badge/dependency-abap2UI5-blue)](https://github.com/abap2UI5/abap2UI5)
 [![abap2UI5](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fabap2UI5%2Fsamples-controls%2Fbadges%2Fabap2ui5.json)](#coverage)
+[![AI-ready: llms.txt · skills · MCP](https://img.shields.io/badge/AI--ready-llms.txt%20%C2%B7%20skills%20%C2%B7%20MCP-blue)](https://abap2ui5.github.io/docs/get_started/ai.html)
 <br>
 <br>
 [![abap-standard](https://github.com/abap2UI5/samples-controls/actions/workflows/abap-standard.yaml/badge.svg)](https://github.com/abap2UI5/samples-controls/actions/workflows/abap-standard.yaml)
@@ -50,6 +51,14 @@ No ABAP system at hand? Open the
 here, every sample of the other two repositories, filtered by control or by the
 UI5 release your system runs, each one a click from its source and from running
 in the browser playground.
+
+Building with an AI coding agent? The
+[AI page](https://abap2ui5.github.io/docs/get_started/ai.html) of the
+documentation sets up the skills and the
+[MCP server](https://github.com/abap2UI5/mcp-server) — whose sample search
+covers every port here. In Claude Code it is two commands:
+`/plugin marketplace add abap2UI5/abap2UI5`, then
+`/plugin install abap2ui5@abap2ui5`.
 
 #### The learning path
 
