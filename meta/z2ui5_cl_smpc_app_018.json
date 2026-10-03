@@ -52,7 +52,11 @@
     },
     {
       "type": "POST_171",
-      "what": "core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74, and the sap.ui.model.odata.type.DateTimeWithTimezone binding type of DTP10/DTP11 (since UI5 1.99) is kept 1:1 - the app needs a UI5 release >= 1.99 overall."
+      "what": "sap.ui.model.odata.type.DateTimeWithTimezone (since UI5 1.99) as the binding type of DTP10 and DTP11 is kept for the 1:1 port."
+    },
+    {
+      "type": "POST_171",
+      "what": "core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74; with the DateTimeWithTimezone binding type above the app needs a UI5 release >= 1.99 overall."
     }
   ]
 }

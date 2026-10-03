@@ -102,10 +102,18 @@ const withinFloor = (since) => cmpVersion(since, MIN_UI5) <= 0;
  * POST_171 is for - and without this entry the sidecar mechanism does not
  * apply to it at all, so six ports fail with no way to declare them. The
  * match works on the member name (`announce`, `setWithinArea`,
- * `setCustomCurrencies`), which `declares( )` already reads off the finding. */
+ * `setCustomCurrencies`), which `declares( )` already reads off the finding.
+ *
+ * `binding-type-too-new` (linter, from the ui5-check rules) is the floor
+ * question asked of a binding's MODEL TYPE: `type: 'sap.ui.model.odata.type.
+ * DateTimeWithTimezone'` (@since 1.99) runs untyped on an older release, and
+ * as a core:require it 404s. App 018 keeps that type 1:1 and has said so in a
+ * POST_171 since it was ported - without this entry that declaration could
+ * never excuse the finding. The type name rides in `value`, which is what
+ * `declares( )` matches for this type. */
 const VERSION_TYPES = new Set(['control-too-new', 'member-too-new', 'aggregation-too-new',
   'event-parameter-too-new', 'enum-value-too-new', 'icon-too-new',
-  'frontend-action-too-new']);
+  'frontend-action-too-new', 'binding-type-too-new']);
 
 /* Reported, never gating per finding: rules the linter grew after this corpus
  * was built. They are worth seeing on every run - an icon-only button really
@@ -392,9 +400,18 @@ function declares(meta, finding) {
    * "update". App 134 was excused by a NOTE about verbatim Cyrillic homoglyphs
    * that happened to contain the letters — a deviation silently covering a
    * finding it never mentioned is worse than no deviation at all. Spell the
-   * URI in the deviation and it is unambiguous. */
-  const names = [finding.member, finding.control, String(finding.control || '').split('.').pop(),
-    finding.type.startsWith('icon-') ? `sap-icon://${finding.value}` : null]
+   * URI in the deviation and it is unambiguous.
+   *
+   * A `binding-type-too-new` finding is about the TYPE, not the control or
+   * the property it is bound on - so it is matched by the full type name in
+   * `value` ONLY (dotted, or as the core:require module path). Its member is
+   * typically `value` or `text`, and letting a POST_171 that merely contains
+   * the word "value" excuse a too-new model type is the app-134 mistake
+   * again. */
+  const names = (finding.type === 'binding-type-too-new'
+    ? [finding.value, String(finding.value || '').replace(/\./g, '/')]
+    : [finding.member, finding.control, String(finding.control || '').split('.').pop(),
+      finding.type.startsWith('icon-') ? `sap-icon://${finding.value}` : null])
     .filter(Boolean)
     .map((n) => n.toLowerCase());
   if (!names.length) return false;
