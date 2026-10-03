@@ -40,6 +40,26 @@ verdicts below turned out to be harness effects.
   `scripts/lib-smoke.mjs` - the harness only, exactly as abap2UI5's own
   `node/tests/e2e/fixtures.js` does for its offline run. A real system loads
   UI5 from the CDN with preload bundles and needs no eval.
+- **Every port failing with a bare `boot: page.waitForFunction: Timeout
+  60000ms exceeded` is the CSP again - inline script this time.** The same
+  source tree's `sap-ui-core.js` is the DEV bootstrap and `document.write()`s
+  two inline scripts (`sap.ui.requireSync("sap/ui/core/Core");` and the
+  `boot()` call). abap2UI5#2790 (2026-09-25) dropped `'unsafe-inline'` from
+  `script-src` and allows only the page's own script, by its SHA-256, so the
+  two were refused, the Core never booted, and nothing threw - no pageerror,
+  no backend 500, only the 60 s boot wait running out on every app. Every
+  nightly from 2026-09-26 showed it as `cancelled` (four shards hit the job
+  timeout ~20 ports in, at 60 s a port, so no report step ran), and the
+  first e2e-pr to boot a port against a pin from #2790 on (6f283a2, #249)
+  failed on both apps it booted. `allowEvalForSourceUi5( )` now also lists
+  the two scripts by hash, exactly as the framework's offline fixture does,
+  and only when the policy does not already open inline script (a hash next
+  to `'unsafe-inline'` would make the browser ignore it on an older pin). The
+  tell for this class: the backend answers, the page loads, and EVERY app
+  fails identically at exactly the boot timeout - a harness effect, never 623
+  broken ports. Confirm in a headed run or with a `console` listener: the
+  browser logs `Refused to execute inline script because it violates ...
+  script-src`.
 - **Read the frontend state through `FRONTEND_STATE`, never through
   `z2ui5/core/AppState`.** The state moved twice in two days: off
   `window.z2ui5` (abap2UI5#2777) and then off the module onto a per-component
