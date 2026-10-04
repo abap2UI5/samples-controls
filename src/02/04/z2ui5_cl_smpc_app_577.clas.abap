@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_577 DEFINITION PUBLIC.
         tablename   TYPE string,
         sectionname TYPE string,
       END OF ty_s_section.
-    TYPES ty_t_section TYPE STANDARD TABLE OF ty_s_section WITH EMPTY KEY.
+    TYPES ty_t_section TYPE STANDARD TABLE OF ty_s_section WITH DEFAULT KEY.
 
     DATA t_sections TYPE ty_t_section.
     " the FlexibleColumnLayout state the router drives in the original
@@ -42,12 +42,12 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -60,14 +60,25 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " MidColumnFullScreen`): the live hash rides in s_config-hash on every
     " request; applying it is idempotent, so a rebuild whose hash matches the
     " state simply re-derives it
-    DATA(hash) = client->get( )-s_config-hash.
+    DATA hash TYPE z2ui5_if_client=>ty_s_get-s_config-hash.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA fcl TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp3 TYPE string_table.
+    hash = client->get( )-s_config-hash.
     IF hash IS NOT INITIAL AND hash <> `#`.
       hash_apply( hash ).
     ENDIF.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(fcl) = view->ele( n = `View` ns = `mvc`
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/isNavigationArrow}` INTO TABLE temp1.
+    INSERT `${$parameters>/layout}` INTO TABLE temp1.
+    
+    fcl = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:f`    v = `sap.f`
@@ -87,7 +98,7 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
             " the original wires stateChange to onStateChanged: only a layout
             " change by a NAVIGATION ARROW replace-navTo's the URL - the flag
             " and the new layout travel with the event, the backend guards on it
-            )->a( n = `stateChange`                  v = client->_event( val = `STATE_CHANGED` t_arg = VALUE #( ( `${$parameters>/isNavigationArrow}` ) ( `${$parameters>/layout}` ) ) )
+            )->a( n = `stateChange`                  v = client->_event( val = `STATE_CHANGED` t_arg = temp1 )
             )->a( n = `layout`                       v = client->_bind( layout ) ).
 
     " List.view.xml - the ObjectPage whose sections come from the model.
@@ -213,8 +224,11 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " the manifest patterns spell it, and a hash change the app did not
     " write (browser Back/Forward, a manual edit) round-trips as
     " HASH_CHANGED. Re-asserted per render - it dies with an app switch
+    
+    CLEAR temp3.
+    INSERT `HASH_CHANGED` INTO TABLE temp3.
     client->follow_up_action( val   = client->cs_event-hash_attach_changed
-                              t_arg = VALUE #( ( `HASH_CHANGED` ) ) ).
+                              t_arg = temp3 ).
 
     " _onListMatched on the first rendering: a deep link '#/3' selects the
     " indexed section. A rebuilt ObjectPage is back on its first section while
@@ -233,15 +247,22 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " sections are runtime clones, addressed positionally as an aggregation
     " item - <id>/<aggregation>/<index>, resolved on the client where the ids
     " are known
+    DATA temp5 TYPE string_table.
+    DATA temp1 LIKE LINE OF temp5.
+    CLEAR temp5.
+    INSERT `ObjectPageLayout` INTO TABLE temp5.
+    INSERT `setSelectedSection` INTO TABLE temp5.
+    
+    temp1 = |ObjectPageLayout/sections/{ section_ix }|.
+    INSERT temp1 INTO TABLE temp5.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `ObjectPageLayout` )
-                                               ( `setSelectedSection` )
-                                               ( |ObjectPageLayout/sections/{ section_ix }| ) ) ).
+                              t_arg = temp5 ).
 
   ENDMETHOD.
 
 
   METHOD on_event.
+        DATA ix TYPE string.
 
     CASE client->get_event( ).
 
@@ -263,7 +284,8 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
       WHEN `NAVIGATE`.
         " _updateUrlOnNavigate: the anchor-bar selection writes the section
         " index into the URL
-        DATA(ix) = client->get_event_arg( ).
+        
+        ix = client->get_event_arg( ).
         IF ix CO `0123456789` AND ix IS NOT INITIAL AND strlen( ix ) <= 4.
           section_ix = ix.
           route      = `list`.
@@ -308,16 +330,42 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     " the router's routeMatched, read side. The original's patterns:
     " '' (list start), '{section}' (the ':section:' list route, a section
     " INDEX), 'detail/{layout}'
-    DATA(path) = hash.
+    DATA path LIKE hash.
+    DATA t_seg TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp7 TYPE string.
+    DATA temp8 TYPE string.
+    DATA seg1 LIKE temp7.
+    DATA temp9 TYPE string.
+    DATA temp10 TYPE string.
+    DATA seg2 LIKE temp9.
+        DATA temp11 TYPE string.
+    path = hash.
     IF path CS `#`.
       path = substring_after( val = path sub = `#` ).
     ENDIF.
     SHIFT path LEFT DELETING LEADING `/`.
-    SPLIT path AT `/` INTO TABLE DATA(t_seg).
+    
+    SPLIT path AT `/` INTO TABLE t_seg.
     DELETE t_seg WHERE table_line IS INITIAL.
 
-    DATA(seg1) = VALUE string( t_seg[ 1 ] OPTIONAL ).
-    DATA(seg2) = VALUE string( t_seg[ 2 ] OPTIONAL ).
+    
+    CLEAR temp7.
+    
+    READ TABLE t_seg INTO temp8 INDEX 1.
+    IF sy-subrc = 0.
+      temp7 = temp8.
+    ENDIF.
+    
+    seg1 = temp7.
+    
+    CLEAR temp9.
+    
+    READ TABLE t_seg INTO temp10 INDEX 2.
+    IF sy-subrc = 0.
+      temp9 = temp10.
+    ENDIF.
+    
+    seg2 = temp9.
 
     CASE seg1.
       WHEN ``.
@@ -327,7 +375,13 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
 
       WHEN `detail`.
         route  = `detail`.
-        layout = COND #( WHEN seg2 IS NOT INITIAL THEN seg2 ELSE `MidColumnFullScreen` ).
+        
+        IF seg2 IS NOT INITIAL.
+          temp11 = seg2.
+        ELSE.
+          temp11 = `MidColumnFullScreen`.
+        ENDIF.
+        layout = temp11.
 
       WHEN OTHERS.
         " the single-segment ':section:' list route, e.g. '#/3'
@@ -376,19 +430,47 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
   METHOD model_init.
 
     " webapp/data/sections.json - the twelve sections
-    t_sections = VALUE #(
-      ( tablename = `Navigate to section 0`  sectionname = `Section 0` )
-      ( tablename = `Navigate to section 1`  sectionname = `Section 1` )
-      ( tablename = `Navigate to section 2`  sectionname = `Section 2` )
-      ( tablename = `Navigate to section 3`  sectionname = `Section 3` )
-      ( tablename = `Navigate to section 4`  sectionname = `Section 4` )
-      ( tablename = `Navigate to section 5`  sectionname = `Section 5` )
-      ( tablename = `Navigate to section 6`  sectionname = `Section 6` )
-      ( tablename = `Navigate to section 7`  sectionname = `Section 7` )
-      ( tablename = `Navigate to section 8`  sectionname = `Section 8` )
-      ( tablename = `Navigate to section 9`  sectionname = `Section 9` )
-      ( tablename = `Navigate to section 10` sectionname = `Section 10` )
-      ( tablename = `Navigate to section 11` sectionname = `Section 11` ) ).
+    DATA temp12 TYPE z2ui5_cl_smpc_app_577=>ty_t_section.
+    DATA temp13 LIKE LINE OF temp12.
+    CLEAR temp12.
+    
+    temp13-tablename = `Navigate to section 0`.
+    temp13-sectionname = `Section 0`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 1`.
+    temp13-sectionname = `Section 1`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 2`.
+    temp13-sectionname = `Section 2`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 3`.
+    temp13-sectionname = `Section 3`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 4`.
+    temp13-sectionname = `Section 4`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 5`.
+    temp13-sectionname = `Section 5`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 6`.
+    temp13-sectionname = `Section 6`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 7`.
+    temp13-sectionname = `Section 7`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 8`.
+    temp13-sectionname = `Section 8`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 9`.
+    temp13-sectionname = `Section 9`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 10`.
+    temp13-sectionname = `Section 10`.
+    INSERT temp13 INTO TABLE temp12.
+    temp13-tablename = `Navigate to section 11`.
+    temp13-sectionname = `Section 11`.
+    INSERT temp13 INTO TABLE temp12.
+    t_sections = temp12.
 
   ENDMETHOD.
 

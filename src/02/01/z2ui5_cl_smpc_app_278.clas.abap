@@ -21,9 +21,9 @@ CLASS z2ui5_cl_smpc_app_278 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -32,7 +32,8 @@ CLASS z2ui5_cl_smpc_app_278 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -104,6 +105,10 @@ CLASS z2ui5_cl_smpc_app_278 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp1 TYPE string_table.
+        DATA temp2 LIKE LINE OF temp1.
+        DATA temp3 TYPE string_table.
+        DATA temp4 LIKE LINE OF temp3.
 
     CASE client->get_event( ).
 
@@ -150,24 +155,32 @@ CLASS z2ui5_cl_smpc_app_278 IMPLEMENTATION.
         " control call it is - the type is the method, the options are the UI5
         " option object. It ties the box to the layout's lifecycle (original:
         " this.getView()); onClose stays a BACKEND event name
+        
+        CLEAR temp1.
+        INSERT `MESSAGE_BOX` INTO TABLE temp1.
+        INSERT `error` INTO TABLE temp1.
+        INSERT `Product A does not exist.` INTO TABLE temp1.
+        
+        temp2 = `{"actions":["Manage Products","CLOSE"],"emphasizedAction":"Manage Products",` && `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}`.
+        INSERT temp2 INTO TABLE temp1.
         client->follow_up_action(
             val   = client->cs_event-control_global
-            t_arg = VALUE #( ( `MESSAGE_BOX` )
-                             ( `error` )
-                             ( `Product A does not exist.` )
-                             ( `{"actions":["Manage Products","CLOSE"],"emphasizedAction":"Manage Products",` &&
-                               `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}` ) ) ).
+            t_arg = temp1 ).
 
       WHEN `WARNING_TWO_ACTIONS`.
 
         " dependentOn as above
+        
+        CLEAR temp3.
+        INSERT `MESSAGE_BOX` INTO TABLE temp3.
+        INSERT `warning` INTO TABLE temp3.
+        INSERT `The quantity you have reported exceeds the quantity planned.` INTO TABLE temp3.
+        
+        temp4 = `{"actions":["OK","CANCEL"],"emphasizedAction":"OK",` && `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}`.
+        INSERT temp4 INTO TABLE temp3.
         client->follow_up_action(
             val   = client->cs_event-control_global
-            t_arg = VALUE #( ( `MESSAGE_BOX` )
-                             ( `warning` )
-                             ( `The quantity you have reported exceeds the quantity planned.` )
-                             ( `{"actions":["OK","CANCEL"],"emphasizedAction":"OK",` &&
-                               `"onClose":"ACTION_SELECTED","dependentOn":"messageBoxHost"}` ) ) ).
+            t_arg = temp3 ).
 
       WHEN `ACTION_SELECTED`.
 

@@ -28,12 +28,12 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -42,7 +42,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
@@ -73,6 +74,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+        DATA resizable TYPE REF TO z2ui5_cl_ui5_view_builder.
 
     CASE client->get_event( ).
 
@@ -81,7 +84,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
         " popover is built server-side and shown anchored to the pressed button
         " ($event.oSource.sId); bindElement("/ProductCollection/0") is folded to
         " the root-seeded fields (relative {NAME}/{PRODUCTPICURL} resolve there)
-        DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        popover = z2ui5_cl_ui5_view_builder=>factory( ).
         popover->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -112,7 +116,8 @@ CLASS z2ui5_cl_smpc_app_229 IMPLEMENTATION.
 
       WHEN `SHOW_RESIZABLE`.
         " handleResizablePopoverPress: the resizable variant, same anchoring
-        DATA(resizable) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        resizable = z2ui5_cl_ui5_view_builder=>factory( ).
         resizable->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`

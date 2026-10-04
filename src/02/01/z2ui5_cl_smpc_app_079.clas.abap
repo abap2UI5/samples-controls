@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_079 DEFINITION PUBLIC.
         name      TYPE string,
         productid TYPE string,
       END OF ty_s_product.
-    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -28,10 +28,10 @@ CLASS z2ui5_cl_smpc_app_079 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -40,8 +40,15 @@ CLASS z2ui5_cl_smpc_app_079 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `Header toolbar button pressed.` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -71,7 +78,7 @@ CLASS z2ui5_cl_smpc_app_079 IMPLEMENTATION.
                         )->tag( `Button`
                             )->a( n = `icon`  v = `sap-icon://settings`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Header toolbar button pressed.` ) ) )
+                                                                            t_arg = temp1 )
 
                     )->end(
                 )->end(
@@ -91,130 +98,380 @@ CLASS z2ui5_cl_smpc_app_079 IMPLEMENTATION.
   METHOD model_init.
 
     " full mock /ProductCollection (sap/ui/demo/mock/products.json)
-    t_products = VALUE #(
-      ( name = `Notebook Basic 15`                                  productid = `HT-1000` )
-      ( name = `Notebook Basic 17`                                  productid = `HT-1001` )
-      ( name = `Notebook Basic 18`                                  productid = `HT-1002` )
-      ( name = `Notebook Basic 19`                                  productid = `HT-1003` )
-      ( name = `ITelO Vault`                                        productid = `HT-1007` )
-      ( name = `Notebook Professional 15`                           productid = `HT-1010` )
-      ( name = `Notebook Professional 17`                           productid = `HT-1011` )
-      ( name = `ITelO Vault Net`                                    productid = `HT-1020` )
-      ( name = `ITelO Vault SAT`                                    productid = `HT-1021` )
-      ( name = `Comfort Easy`                                       productid = `HT-1022` )
-      ( name = `Comfort Senior`                                     productid = `HT-1023` )
-      ( name = `Ergo Screen E-I`                                    productid = `HT-1030` )
-      ( name = `Ergo Screen E-II`                                   productid = `HT-1031` )
-      ( name = `Ergo Screen E-III`                                  productid = `HT-1032` )
-      ( name = `Flat Basic`                                         productid = `HT-1035` )
-      ( name = `Flat Future`                                        productid = `HT-1036` )
-      ( name = `Flat XL`                                            productid = `HT-1037` )
-      ( name = `Laser Professional Eco`                             productid = `HT-1040` )
-      ( name = `Laser Basic`                                        productid = `HT-1041` )
-      ( name = `Laser Allround`                                     productid = `HT-1042` )
-      ( name = `Ultra Jet Super Color`                              productid = `HT-1050` )
-      ( name = `Ultra Jet Mobile`                                   productid = `HT-1051` )
-      ( name = `Ultra Jet Super Highspeed`                          productid = `HT-1052` )
-      ( name = `Multi Print`                                        productid = `HT-1055` )
-      ( name = `Multi Color`                                        productid = `HT-1056` )
-      ( name = `Cordless Mouse`                                     productid = `HT-1060` )
-      ( name = `Speed Mouse`                                        productid = `HT-1061` )
-      ( name = `Track Mouse`                                        productid = `HT-1062` )
-      ( name = `Ergonomic Keyboard`                                 productid = `HT-1063` )
-      ( name = `Internet Keyboard`                                  productid = `HT-1064` )
-      ( name = `Media Keyboard`                                     productid = `HT-1065` )
-      ( name = `Mousepad`                                           productid = `HT-1066` )
-      ( name = `Ergo Mousepad`                                      productid = `HT-1067` )
-      ( name = `Designer Mousepad`                                  productid = `HT-1068` )
-      ( name = `Universal card reader`                              productid = `HT-1069` )
-      ( name = `Proctra X`                                          productid = `HT-1070` )
-      ( name = `Gladiator MX`                                       productid = `HT-1071` )
-      ( name = `Hurricane GX`                                       productid = `HT-1072` )
-      ( name = `Hurricane GX/LN`                                    productid = `HT-1073` )
-      ( name = `Photo Scan`                                         productid = `HT-1080` )
-      ( name = `Power Scan`                                         productid = `HT-1081` )
-      ( name = `Jet Scan Professional`                              productid = `HT-1082` )
-      ( name = `Jet Scan Professional`                              productid = `HT-1083` )
-      ( name = `Copymaster`                                         productid = `HT-1085` )
-      ( name = `Surround Sound`                                     productid = `HT-1090` )
-      ( name = `Blaster Extreme`                                    productid = `HT-1091` )
-      ( name = `Sound Booster`                                      productid = `HT-1092` )
-      ( name = `Lovely Sound 5.1 Wireless`                          productid = `HT-1095` )
-      ( name = `Lovely Sound 5.1`                                   productid = `HT-1096` )
-      ( name = `Lovely Sound Stereo`                                productid = `HT-1097` )
-      ( name = `Smart Office`                                       productid = `HT-1100` )
-      ( name = `Smart Design`                                       productid = `HT-1101` )
-      ( name = `Smart Network`                                      productid = `HT-1102` )
-      ( name = `Smart Multimedia`                                   productid = `HT-1103` )
-      ( name = `Smart Games`                                        productid = `HT-1104` )
-      ( name = `Smart Internet Antivirus`                           productid = `HT-1105` )
-      ( name = `Smart Firewall`                                     productid = `HT-1106` )
-      ( name = `Smart Money`                                        productid = `HT-1107` )
-      ( name = `PC Lock`                                            productid = `HT-1110` )
-      ( name = `Notebook Lock`                                      productid = `HT-1111` )
-      ( name = `Web cam reality`                                    productid = `HT-1112` )
-      ( name = `Screen clean`                                       productid = `HT-1113` )
-      ( name = `Fabric bag professional`                            productid = `HT-1114` )
-      ( name = `Wireless DSL Router`                                productid = `HT-1115` )
-      ( name = `Wireless DSL Router / Repeater`                     productid = `HT-1116` )
-      ( name = `Wireless DSL Router / Repeater and Print Server`    productid = `HT-1117` )
-      ( name = `USB Stick`                                          productid = `HT-1118` )
-      ( name = `Travel Adapter`                                     productid = `HT-1119` )
-      ( name = `Cordless Bluetooth Keyboard, english international` productid = `HT-1120` )
-      ( name = `Flat XXL`                                           productid = `HT-1137` )
-      ( name = `Pocket Mouse`                                       productid = `HT-1138` )
-      ( name = `PC Power Station`                                   productid = `HT-1210` )
-      ( name = `Astro Laptop 1516`                                  productid = `HT-1251` )
-      ( name = `Astro Phone 6`                                      productid = `HT-1252` )
-      ( name = `Benda Laptop 1408`                                  productid = `HT-1253` )
-      ( name = `Bending Screen 21HD`                                productid = `HT-1254` )
-      ( name = `Broad Screen 22HD`                                  productid = `HT-1255` )
-      ( name = `Cerdik Phone 7`                                     productid = `HT-1256` )
-      ( name = `Cepat Tablet 10.5`                                  productid = `HT-1257` )
-      ( name = `Cepat Tablet 8`                                     productid = `HT-1258` )
-      ( name = `Server Basic`                                       productid = `HT-1500` )
-      ( name = `Server Professional`                                productid = `HT-1501` )
-      ( name = `Server Power Pro`                                   productid = `HT-1502` )
-      ( name = `Family PC Basic`                                    productid = `HT-1600` )
-      ( name = `Family PC Pro`                                      productid = `HT-1601` )
-      ( name = `Gaming Monster`                                     productid = `HT-1602` )
-      ( name = `Gaming Monster Pro`                                 productid = `HT-1603` )
-      ( name = `7" Widescreen Portable DVD Player w MP3`            productid = `HT-2000` )
-      ( name = `10" Portable DVD player`                            productid = `HT-2001` )
-      ( name = `Portable DVD Player with 9" LCD Monitor`            productid = `HT-2002` )
-      ( name = `CD/DVD case: 264 sleeves`                           productid = `HT-2025` )
-      ( name = `Audio/Video Cable Kit - 4m`                         productid = `HT-2026` )
-      ( name = `Removable CD/DVD Laser Labels`                      productid = `HT-2027` )
-      ( name = `Beam Breaker B-1`                                   productid = `HT-6100` )
-      ( name = `Beam Breaker B-2`                                   productid = `HT-6101` )
-      ( name = `Beam Breaker B-3`                                   productid = `HT-6102` )
-      ( name = `Play Movie`                                         productid = `HT-6110` )
-      ( name = `Record Movie`                                       productid = `HT-6111` )
-      ( name = `ITelo MusicStick`                                   productid = `HT-6120` )
-      ( name = `ITelo Jog-Mate`                                     productid = `HT-6121` )
-      ( name = `Power Pro Player 40`                                productid = `HT-6122` )
-      ( name = `Power Pro Player 80`                                productid = `HT-6123` )
-      ( name = `Flat Watch HD32`                                    productid = `HT-6130` )
-      ( name = `Flat Watch HD37`                                    productid = `HT-6131` )
-      ( name = `Flat Watch HD41`                                    productid = `HT-6132` )
-      ( name = `Copperberry`                                        productid = `HT-7000` )
-      ( name = `Silverberry`                                        productid = `HT-7010` )
-      ( name = `Goldberry`                                          productid = `HT-7020` )
-      ( name = `Platinberry`                                        productid = `HT-7030` )
-      ( name = `ITelO FlexTop I4000`                                productid = `HT-8000` )
-      ( name = `ITelO FlexTop I6300c`                               productid = `HT-8001` )
-      ( name = `ITelO FlexTop I9100`                                productid = `HT-8002` )
-      ( name = `ITelO FlexTop I9800`                                productid = `HT-8003` )
-      ( name = `Smartphone Leather Case`                            productid = `HT-9991` )
-      ( name = `Smartphone Alpha`                                   productid = `HT-9992` )
-      ( name = `Mini Tablet`                                        productid = `HT-9993` )
-      ( name = `Camcorder View`                                     productid = `HT-9994` )
-      ( name = `Tablet Pouch`                                       productid = `HT-9995` )
-      ( name = `Tablet Pouch`                                       productid = `HT-9996` )
-      ( name = `e-Book Reader ReadMe`                               productid = `HT-9997` )
-      ( name = `Smartphone Beta`                                    productid = `HT-9998` )
-      ( name = `Maxi Tablet`                                        productid = `HT-9999` )
-      ( name = `Flyer`                                              productid = `PF-1000` ) ).
+    DATA temp3 LIKE t_products.
+    DATA temp4 LIKE LINE OF temp3.
+    CLEAR temp3.
+    
+    temp4-name = `Notebook Basic 15`.
+    temp4-productid = `HT-1000`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Basic 17`.
+    temp4-productid = `HT-1001`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Basic 18`.
+    temp4-productid = `HT-1002`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Basic 19`.
+    temp4-productid = `HT-1003`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO Vault`.
+    temp4-productid = `HT-1007`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Professional 15`.
+    temp4-productid = `HT-1010`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Professional 17`.
+    temp4-productid = `HT-1011`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO Vault Net`.
+    temp4-productid = `HT-1020`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO Vault SAT`.
+    temp4-productid = `HT-1021`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Comfort Easy`.
+    temp4-productid = `HT-1022`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Comfort Senior`.
+    temp4-productid = `HT-1023`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ergo Screen E-I`.
+    temp4-productid = `HT-1030`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ergo Screen E-II`.
+    temp4-productid = `HT-1031`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ergo Screen E-III`.
+    temp4-productid = `HT-1032`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat Basic`.
+    temp4-productid = `HT-1035`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat Future`.
+    temp4-productid = `HT-1036`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat XL`.
+    temp4-productid = `HT-1037`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Laser Professional Eco`.
+    temp4-productid = `HT-1040`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Laser Basic`.
+    temp4-productid = `HT-1041`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Laser Allround`.
+    temp4-productid = `HT-1042`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ultra Jet Super Color`.
+    temp4-productid = `HT-1050`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ultra Jet Mobile`.
+    temp4-productid = `HT-1051`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ultra Jet Super Highspeed`.
+    temp4-productid = `HT-1052`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Multi Print`.
+    temp4-productid = `HT-1055`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Multi Color`.
+    temp4-productid = `HT-1056`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Cordless Mouse`.
+    temp4-productid = `HT-1060`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Speed Mouse`.
+    temp4-productid = `HT-1061`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Track Mouse`.
+    temp4-productid = `HT-1062`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ergonomic Keyboard`.
+    temp4-productid = `HT-1063`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Internet Keyboard`.
+    temp4-productid = `HT-1064`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Media Keyboard`.
+    temp4-productid = `HT-1065`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Mousepad`.
+    temp4-productid = `HT-1066`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Ergo Mousepad`.
+    temp4-productid = `HT-1067`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Designer Mousepad`.
+    temp4-productid = `HT-1068`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Universal card reader`.
+    temp4-productid = `HT-1069`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Proctra X`.
+    temp4-productid = `HT-1070`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Gladiator MX`.
+    temp4-productid = `HT-1071`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Hurricane GX`.
+    temp4-productid = `HT-1072`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Hurricane GX/LN`.
+    temp4-productid = `HT-1073`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Photo Scan`.
+    temp4-productid = `HT-1080`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Power Scan`.
+    temp4-productid = `HT-1081`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Jet Scan Professional`.
+    temp4-productid = `HT-1082`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Jet Scan Professional`.
+    temp4-productid = `HT-1083`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Copymaster`.
+    temp4-productid = `HT-1085`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Surround Sound`.
+    temp4-productid = `HT-1090`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Blaster Extreme`.
+    temp4-productid = `HT-1091`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Sound Booster`.
+    temp4-productid = `HT-1092`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Lovely Sound 5.1 Wireless`.
+    temp4-productid = `HT-1095`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Lovely Sound 5.1`.
+    temp4-productid = `HT-1096`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Lovely Sound Stereo`.
+    temp4-productid = `HT-1097`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Office`.
+    temp4-productid = `HT-1100`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Design`.
+    temp4-productid = `HT-1101`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Network`.
+    temp4-productid = `HT-1102`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Multimedia`.
+    temp4-productid = `HT-1103`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Games`.
+    temp4-productid = `HT-1104`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Internet Antivirus`.
+    temp4-productid = `HT-1105`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Firewall`.
+    temp4-productid = `HT-1106`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smart Money`.
+    temp4-productid = `HT-1107`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `PC Lock`.
+    temp4-productid = `HT-1110`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Notebook Lock`.
+    temp4-productid = `HT-1111`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Web cam reality`.
+    temp4-productid = `HT-1112`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Screen clean`.
+    temp4-productid = `HT-1113`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Fabric bag professional`.
+    temp4-productid = `HT-1114`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Wireless DSL Router`.
+    temp4-productid = `HT-1115`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Wireless DSL Router / Repeater`.
+    temp4-productid = `HT-1116`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Wireless DSL Router / Repeater and Print Server`.
+    temp4-productid = `HT-1117`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `USB Stick`.
+    temp4-productid = `HT-1118`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Travel Adapter`.
+    temp4-productid = `HT-1119`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Cordless Bluetooth Keyboard, english international`.
+    temp4-productid = `HT-1120`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat XXL`.
+    temp4-productid = `HT-1137`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Pocket Mouse`.
+    temp4-productid = `HT-1138`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `PC Power Station`.
+    temp4-productid = `HT-1210`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Astro Laptop 1516`.
+    temp4-productid = `HT-1251`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Astro Phone 6`.
+    temp4-productid = `HT-1252`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Benda Laptop 1408`.
+    temp4-productid = `HT-1253`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Bending Screen 21HD`.
+    temp4-productid = `HT-1254`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Broad Screen 22HD`.
+    temp4-productid = `HT-1255`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Cerdik Phone 7`.
+    temp4-productid = `HT-1256`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Cepat Tablet 10.5`.
+    temp4-productid = `HT-1257`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Cepat Tablet 8`.
+    temp4-productid = `HT-1258`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Server Basic`.
+    temp4-productid = `HT-1500`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Server Professional`.
+    temp4-productid = `HT-1501`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Server Power Pro`.
+    temp4-productid = `HT-1502`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Family PC Basic`.
+    temp4-productid = `HT-1600`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Family PC Pro`.
+    temp4-productid = `HT-1601`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Gaming Monster`.
+    temp4-productid = `HT-1602`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Gaming Monster Pro`.
+    temp4-productid = `HT-1603`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `7" Widescreen Portable DVD Player w MP3`.
+    temp4-productid = `HT-2000`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `10" Portable DVD player`.
+    temp4-productid = `HT-2001`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Portable DVD Player with 9" LCD Monitor`.
+    temp4-productid = `HT-2002`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `CD/DVD case: 264 sleeves`.
+    temp4-productid = `HT-2025`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Audio/Video Cable Kit - 4m`.
+    temp4-productid = `HT-2026`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Removable CD/DVD Laser Labels`.
+    temp4-productid = `HT-2027`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Beam Breaker B-1`.
+    temp4-productid = `HT-6100`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Beam Breaker B-2`.
+    temp4-productid = `HT-6101`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Beam Breaker B-3`.
+    temp4-productid = `HT-6102`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Play Movie`.
+    temp4-productid = `HT-6110`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Record Movie`.
+    temp4-productid = `HT-6111`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelo MusicStick`.
+    temp4-productid = `HT-6120`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelo Jog-Mate`.
+    temp4-productid = `HT-6121`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Power Pro Player 40`.
+    temp4-productid = `HT-6122`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Power Pro Player 80`.
+    temp4-productid = `HT-6123`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat Watch HD32`.
+    temp4-productid = `HT-6130`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat Watch HD37`.
+    temp4-productid = `HT-6131`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flat Watch HD41`.
+    temp4-productid = `HT-6132`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Copperberry`.
+    temp4-productid = `HT-7000`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Silverberry`.
+    temp4-productid = `HT-7010`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Goldberry`.
+    temp4-productid = `HT-7020`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Platinberry`.
+    temp4-productid = `HT-7030`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO FlexTop I4000`.
+    temp4-productid = `HT-8000`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO FlexTop I6300c`.
+    temp4-productid = `HT-8001`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO FlexTop I9100`.
+    temp4-productid = `HT-8002`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `ITelO FlexTop I9800`.
+    temp4-productid = `HT-8003`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smartphone Leather Case`.
+    temp4-productid = `HT-9991`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smartphone Alpha`.
+    temp4-productid = `HT-9992`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Mini Tablet`.
+    temp4-productid = `HT-9993`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Camcorder View`.
+    temp4-productid = `HT-9994`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Tablet Pouch`.
+    temp4-productid = `HT-9995`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Tablet Pouch`.
+    temp4-productid = `HT-9996`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `e-Book Reader ReadMe`.
+    temp4-productid = `HT-9997`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Smartphone Beta`.
+    temp4-productid = `HT-9998`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Maxi Tablet`.
+    temp4-productid = `HT-9999`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-name = `Flyer`.
+    temp4-productid = `PF-1000`.
+    INSERT temp4 INTO TABLE temp3.
+    t_products = temp3.
 
   ENDMETHOD.
 

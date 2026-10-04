@@ -29,10 +29,10 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -41,11 +41,15 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA sections TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA section_no LIKE sy-index.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " twenty-one identical sections, each a stashed ObjectPageLazyLoader around the
     " same Address form - which is the sample: lazy loading WITHOUT custom blocks
-    DATA(sections) = view->ele( n = `View` ns = `mvc`
+    
+    sections = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -96,7 +100,8 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
     " the twenty-one sections differ only in their number - Section 1 ..
     " Section 21 as title, SectionN and SectionNstashed as ids
     DO 21 TIMES.
-      DATA(section_no) = sy-index.
+      
+      section_no = sy-index.
 
       sections->ele( `ObjectPageSection`
           )->a( n = `titleUppercase` v = `false`

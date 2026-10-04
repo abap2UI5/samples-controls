@@ -24,14 +24,14 @@ CLASS z2ui5_cl_smpc_app_566 DEFINITION PUBLIC.
         row_type      TYPE string,
         selected      TYPE abap_bool,
       END OF ty_s_node.
-    TYPES ty_t_node TYPE STANDARD TABLE OF ty_s_node WITH EMPTY KEY.
+    TYPES ty_t_node TYPE STANDARD TABLE OF ty_s_node WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_crumb,
         text  TYPE string,
         level TYPE i,
       END OF ty_s_crumb.
-    TYPES ty_t_crumb TYPE STANDARD TABLE OF ty_s_crumb WITH EMPTY KEY.
+    TYPES ty_t_crumb TYPE STANDARD TABLE OF ty_s_crumb WITH DEFAULT KEY.
 
     DATA t_rows   TYPE ty_t_node.
     DATA t_crumbs TYPE ty_t_crumb.
@@ -63,13 +63,13 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       rows_refresh( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -78,9 +78,13 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(page) = view->ele( n = `View` ns = `mvc`
+    
+    page = view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -100,6 +104,10 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
         )->end(
     )->end( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/listItem}.getBindingContext().getProperty('NAME')` INTO TABLE temp1.
+    INSERT `${$parameters>/selected}` INTO TABLE temp1.
     page->ele( `content`
         )->ele( `Table`
             )->a( n = `id`              v = `idProductsTable`
@@ -109,8 +117,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
             )->a( n = `mode`            v = |\{= ${ client->_bind( cur_level ) } === 3 ? 'MultiSelect' : 'SingleSelectMaster' \}|
             )->a( n = `items`           v = client->_bind( t_rows )
             )->a( n = `selectionChange` v = client->_event( val   = `SELECTION_CHANGE`
-                                                            t_arg = VALUE #( ( `${$parameters>/listItem}.getBindingContext().getProperty('NAME')` )
-                                                                             ( `${$parameters>/selected}` ) ) )
+                                                            t_arg = temp1 )
 
             )->ele( `headerToolbar`
                 )->ele( `OverflowToolbar`
@@ -210,8 +217,16 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
   METHOD rows_refresh.
 
     " _setAggregation rebinds the table to the branch the user drilled into
-    t_rows = VALUE #( ).
-    LOOP AT t_nodes INTO DATA(node).
+    DATA temp3 TYPE z2ui5_cl_smpc_app_566=>ty_t_node.
+    DATA node LIKE LINE OF t_nodes.
+    DATA temp4 TYPE z2ui5_cl_smpc_app_566=>ty_t_crumb.
+    DATA temp5 LIKE LINE OF temp4.
+      DATA temp6 TYPE z2ui5_cl_smpc_app_566=>ty_s_crumb.
+      DATA temp7 TYPE z2ui5_cl_smpc_app_566=>ty_s_crumb.
+    CLEAR temp3.
+    t_rows = temp3.
+    
+    LOOP AT t_nodes INTO node.
       CASE cur_level.
         WHEN 1.
           IF node-level = 1.
@@ -229,12 +244,26 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
     ENDLOOP.
 
     " the breadcrumb carries one link per level already visited
-    t_crumbs = VALUE #( ( text = `Suppliers` level = 1 ) ).
+    
+    CLEAR temp4.
+    
+    temp5-text = `Suppliers`.
+    temp5-level = 1.
+    INSERT temp5 INTO TABLE temp4.
+    t_crumbs = temp4.
     IF cur_level >= 2.
-      APPEND VALUE #( text = cur_supplier level = 2 ) TO t_crumbs.
+      
+      CLEAR temp6.
+      temp6-text = cur_supplier.
+      temp6-level = 2.
+      APPEND temp6 TO t_crumbs.
     ENDIF.
     IF cur_level >= 3.
-      APPEND VALUE #( text = cur_category level = 3 ) TO t_crumbs.
+      
+      CLEAR temp7.
+      temp7-text = cur_category.
+      temp7-level = 3.
+      APPEND temp7 TO t_crumbs.
     ENDIF.
 
   ENDMETHOD.
@@ -243,23 +272,50 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
   METHOD order_refresh.
 
     " the Order model's count / hasCounts (Formatter.listProductsSelected)
-    order_count = REDUCE i( INIT n = 0
-                            FOR node IN t_nodes
-                            NEXT n = COND #( WHEN node-selected = abap_true THEN n + 1 ELSE n ) ).
-    hascounts = xsdbool( order_count > 0 ).
+    DATA temp8 TYPE i.
+    DATA n TYPE i.
+    DATA node LIKE LINE OF t_nodes.
+      DATA temp1 TYPE i.
+    DATA temp2 TYPE xsdboolean.
+    n = 0.
+    
+    LOOP AT t_nodes INTO node.
+      
+      IF node-selected = abap_true.
+        temp1 = n + 1.
+      ELSE.
+        temp1 = n.
+      ENDIF.
+      n = temp1.
+    ENDLOOP.
+    temp8 = n.
+    order_count = temp8.
+    
+    temp2 = boolc( order_count > 0 ).
+    hascounts = temp2.
 
   ENDMETHOD.
 
 
   METHOD on_event.
+        DATA row_name TYPE string.
+        DATA temp9 TYPE abap_bool.
+        DATA is_selected LIKE temp9.
+            FIELD-SYMBOLS <node> TYPE z2ui5_cl_smpc_app_566=>ty_s_node.
+        DATA names TYPE string.
+        DATA sel LIKE LINE OF t_nodes.
 
     CASE client->get_event( ).
 
       WHEN `SELECTION_CHANGE`.
         " handleSelectionChange: on a branch the selection navigates one level
         " deeper, on a leaf it only records the order selection
-        DATA(row_name) = client->get_event_arg( ).
-        DATA(is_selected) = CONV abap_bool( client->get_event_arg( 2 ) ).
+        
+        row_name = client->get_event_arg( ).
+        
+        temp9 = client->get_event_arg( 2 ).
+        
+        is_selected = temp9.
         CASE cur_level.
           WHEN 1.
             cur_supplier = row_name.
@@ -270,8 +326,8 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
           WHEN OTHERS.
             " IS ASSIGNED, not sy-subrc: a SUCCESSFUL dynamic ASSIGN does not reset
             " sy-subrc on every release (abap2UI5 #1937)
-            ASSIGN t_nodes[ level = 3 supplier = cur_supplier category = cur_category name = row_name ]
-                   TO FIELD-SYMBOL(<node>).
+            
+            READ TABLE t_nodes WITH KEY level = 3 supplier = cur_supplier category = cur_category name = row_name ASSIGNING <node>.
             IF <node> IS ASSIGNED.
               <node>-selected = is_selected.
             ENDIF.
@@ -289,8 +345,10 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
 
       WHEN `ORDER`.
         " handleOrderPress toasts the names of the selected products
-        DATA(names) = ``.
-        LOOP AT t_nodes INTO DATA(sel) WHERE selected = abap_true.
+        
+        names = ``.
+        
+        LOOP AT t_nodes INTO sel WHERE selected = abap_true.
           IF names IS NOT INITIAL.
             names = names && `,`.
           ENDIF.
@@ -309,69 +367,289 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
     " 9 categories and the 14 products under them. Price is already rounded to
     " two decimals (Formatter.round2DP) and the dimensions string is already
     " joined (Formatter.dimensions skips the missing ones)
-    t_nodes = VALUE #(
-      ( level = 1 name = `Titanium` price = `1884.49` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 2 supplier = `Titanium` name = `Projector` price = `856.49` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Titanium` category = `Projector` name = `Power Projector 4713` productid = `1239102`
-        dimensions = `51 x 42 x 18 cm` weightmeasure = `1467` weightunit = `g` weight_state = `Warning`
-        price = `856.49` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 2 supplier = `Titanium` name = `Laptop` price = `939.00` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Titanium` category = `Laptop` name = `High End Laptop 2b` productid = `OP-38800002`
-        dimensions = `64 x 34 x 4 cm` weightmeasure = `1190` weightunit = `g` weight_state = `Warning`
-        price = `939.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 2 supplier = `Titanium` name = `Keyboard` price = `89.00` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Titanium` category = `Keyboard` name = `Hardcore Hacker` productid = `977700-11`
-        dimensions = `53 x 24 x 6 cm` weightmeasure = `651` weightunit = `g` weight_state = `Success`
-        price = `89.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 1 name = `Technocom` price = `154.19` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 2 supplier = `Technocom` name = `Graphics Card` price = `81.70` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Technocom` category = `Graphics Card` name = `Gladiator MX` productid = `2212-121-828`
-        dimensions = `34 x 14 x 2 cm` weightmeasure = `321` weightunit = `g` weight_state = `Success`
-        price = `81.70` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 2 supplier = `Technocom` name = `Accessory` price = `72.49` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Technocom` category = `Accessory` name = `Webcam` productid = `22134T`
-        dimensions = `18 x 19 x 21 cm` weightmeasure = `700` weightunit = `g` weight_state = `Success`
-        price = `59.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 3 supplier = `Technocom` category = `Accessory` name = `Monitor Locking Cable` productid = `P1239823`
-        dimensions = `11 x 11 x 3 cm` weightmeasure = `40` weightunit = `g` weight_state = `Success`
-        price = `13.49` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 1 name = `Red Point Stores` price = `472.36` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 2 supplier = `Red Point Stores` name = `Graphics Card` price = `219.00` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Red Point Stores` category = `Graphics Card` name = `Hurricane GX` productid = `K47322.1`
-        dimensions = `34 x 14 x 2 cm` weightmeasure = `588` weightunit = `g` weight_state = `Success`
-        price = `219.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 2 supplier = `Red Point Stores` name = `Accessory` price = `96.18` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Red Point Stores` category = `Accessory` name = `Laptop Case` productid = `214-121-828`
-        dimensions = `53 x 34 x 7 cm` weightmeasure = `1289` weightunit = `g` weight_state = `Warning`
-        price = `78.99` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 3 supplier = `Red Point Stores` category = `Accessory` name = `USB Stick 16 GByte` productid = `XKP-312548`
-        dimensions = `6 x 2 x 0.5 cm` weightmeasure = `11` weightunit = `g` weight_state = `Success`
-        price = `17.19` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 2 supplier = `Red Point Stores` name = `Printer` price = `157.18` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Red Point Stores` category = `Printer` name = `Deskjet Super Highspeed` productid = `KTZ-12012.V2`
-        dimensions = `87 x 45 x 39 cm` weightmeasure = `100` weightunit = `g` weight_state = `Success`
-        price = `117.19` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 3 supplier = `Red Point Stores` category = `Printer` name = `Laser Allround Pro` productid = `89932-922`
-        dimensions = `42 x 29 x 31 cm` weightmeasure = `2134` weightunit = `g` weight_state = `Error`
-        price = `39.99` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 1 name = `Very Best Screens` price = `2217.00` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 2 supplier = `Very Best Screens` name = `Monitor` price = `2217.00` currencycode = `EUR` row_type = `Navigation` )
-      ( level = 3 supplier = `Very Best Screens` category = `Monitor` name = `Flat S` productid = `38094020.1`
-        dimensions = `88 x 13 x 49 cm` weightmeasure = `1401` weightunit = `g` weight_state = `Warning`
-        price = `339.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 3 supplier = `Very Best Screens` category = `Monitor` name = `Flat Medium` productid = `870394932`
-        dimensions = `102 x 13 x 54 cm` weightmeasure = `1800` weightunit = `g` weight_state = `Warning`
-        price = `639.00` currencycode = `EUR` row_type = `Inactive` )
-      ( level = 3 supplier = `Very Best Screens` category = `Monitor` name = `Flat X-large II` productid = `282948303-02`
-        dimensions = `112 x 13 x 60 cm` weightmeasure = `2100` weightunit = `g` weight_state = `Error`
-        price = `1239.00` currencycode = `EUR` row_type = `Inactive` ) ).
+    DATA temp10 TYPE z2ui5_cl_smpc_app_566=>ty_t_node.
+    DATA temp11 LIKE LINE OF temp10.
+    FIELD-SYMBOLS <node> LIKE LINE OF t_nodes.
+    CLEAR temp10.
+    
+    temp11-level = 1.
+    temp11-name = `Titanium`.
+    temp11-price = `1884.49`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Titanium`.
+    temp11-name = `Projector`.
+    temp11-price = `856.49`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Titanium`.
+    temp11-category = `Projector`.
+    temp11-name = `Power Projector 4713`.
+    temp11-productid = `1239102`.
+    temp11-dimensions = `51 x 42 x 18 cm`.
+    temp11-weightmeasure = `1467`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Warning`.
+    temp11-price = `856.49`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Titanium`.
+    temp11-name = `Laptop`.
+    temp11-price = `939.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Titanium`.
+    temp11-category = `Laptop`.
+    temp11-name = `High End Laptop 2b`.
+    temp11-productid = `OP-38800002`.
+    temp11-dimensions = `64 x 34 x 4 cm`.
+    temp11-weightmeasure = `1190`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Warning`.
+    temp11-price = `939.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Titanium`.
+    temp11-name = `Keyboard`.
+    temp11-price = `89.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Titanium`.
+    temp11-category = `Keyboard`.
+    temp11-name = `Hardcore Hacker`.
+    temp11-productid = `977700-11`.
+    temp11-dimensions = `53 x 24 x 6 cm`.
+    temp11-weightmeasure = `651`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `89.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 1.
+    temp11-name = `Technocom`.
+    temp11-price = `154.19`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Technocom`.
+    temp11-name = `Graphics Card`.
+    temp11-price = `81.70`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Technocom`.
+    temp11-category = `Graphics Card`.
+    temp11-name = `Gladiator MX`.
+    temp11-productid = `2212-121-828`.
+    temp11-dimensions = `34 x 14 x 2 cm`.
+    temp11-weightmeasure = `321`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `81.70`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Technocom`.
+    temp11-name = `Accessory`.
+    temp11-price = `72.49`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Technocom`.
+    temp11-category = `Accessory`.
+    temp11-name = `Webcam`.
+    temp11-productid = `22134T`.
+    temp11-dimensions = `18 x 19 x 21 cm`.
+    temp11-weightmeasure = `700`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `59.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Technocom`.
+    temp11-category = `Accessory`.
+    temp11-name = `Monitor Locking Cable`.
+    temp11-productid = `P1239823`.
+    temp11-dimensions = `11 x 11 x 3 cm`.
+    temp11-weightmeasure = `40`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `13.49`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 1.
+    temp11-name = `Red Point Stores`.
+    temp11-price = `472.36`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Red Point Stores`.
+    temp11-name = `Graphics Card`.
+    temp11-price = `219.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Red Point Stores`.
+    temp11-category = `Graphics Card`.
+    temp11-name = `Hurricane GX`.
+    temp11-productid = `K47322.1`.
+    temp11-dimensions = `34 x 14 x 2 cm`.
+    temp11-weightmeasure = `588`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `219.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Red Point Stores`.
+    temp11-name = `Accessory`.
+    temp11-price = `96.18`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Red Point Stores`.
+    temp11-category = `Accessory`.
+    temp11-name = `Laptop Case`.
+    temp11-productid = `214-121-828`.
+    temp11-dimensions = `53 x 34 x 7 cm`.
+    temp11-weightmeasure = `1289`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Warning`.
+    temp11-price = `78.99`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Red Point Stores`.
+    temp11-category = `Accessory`.
+    temp11-name = `USB Stick 16 GByte`.
+    temp11-productid = `XKP-312548`.
+    temp11-dimensions = `6 x 2 x 0.5 cm`.
+    temp11-weightmeasure = `11`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `17.19`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Red Point Stores`.
+    temp11-name = `Printer`.
+    temp11-price = `157.18`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Red Point Stores`.
+    temp11-category = `Printer`.
+    temp11-name = `Deskjet Super Highspeed`.
+    temp11-productid = `KTZ-12012.V2`.
+    temp11-dimensions = `87 x 45 x 39 cm`.
+    temp11-weightmeasure = `100`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Success`.
+    temp11-price = `117.19`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Red Point Stores`.
+    temp11-category = `Printer`.
+    temp11-name = `Laser Allround Pro`.
+    temp11-productid = `89932-922`.
+    temp11-dimensions = `42 x 29 x 31 cm`.
+    temp11-weightmeasure = `2134`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Error`.
+    temp11-price = `39.99`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 1.
+    temp11-name = `Very Best Screens`.
+    temp11-price = `2217.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 2.
+    temp11-supplier = `Very Best Screens`.
+    temp11-name = `Monitor`.
+    temp11-price = `2217.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Navigation`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Very Best Screens`.
+    temp11-category = `Monitor`.
+    temp11-name = `Flat S`.
+    temp11-productid = `38094020.1`.
+    temp11-dimensions = `88 x 13 x 49 cm`.
+    temp11-weightmeasure = `1401`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Warning`.
+    temp11-price = `339.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Very Best Screens`.
+    temp11-category = `Monitor`.
+    temp11-name = `Flat Medium`.
+    temp11-productid = `870394932`.
+    temp11-dimensions = `102 x 13 x 54 cm`.
+    temp11-weightmeasure = `1800`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Warning`.
+    temp11-price = `639.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-level = 3.
+    temp11-supplier = `Very Best Screens`.
+    temp11-category = `Monitor`.
+    temp11-name = `Flat X-large II`.
+    temp11-productid = `282948303-02`.
+    temp11-dimensions = `112 x 13 x 60 cm`.
+    temp11-weightmeasure = `2100`.
+    temp11-weightunit = `g`.
+    temp11-weight_state = `Error`.
+    temp11-price = `1239.00`.
+    temp11-currencycode = `EUR`.
+    temp11-row_type = `Inactive`.
+    INSERT temp11 INTO TABLE temp10.
+    t_nodes = temp10.
 
     " a flat ABAP row serializes EVERY field, so the supplier and category rows -
     " which carry no weight at all - would send an empty string into the
     " ObjectNumber's ValueState and take the whole view down. None is the
     " control's own default and is what the sample's formatter returns for a
     " missing measure (**e2e-caught 2026-08-22**)
-    LOOP AT t_nodes ASSIGNING FIELD-SYMBOL(<node>) WHERE weight_state IS INITIAL.
+    
+    LOOP AT t_nodes ASSIGNING <node> WHERE weight_state IS INITIAL.
       <node>-weight_state = `None`.
     ENDLOOP.
 
