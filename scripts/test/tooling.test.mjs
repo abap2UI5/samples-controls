@@ -1305,3 +1305,42 @@ test('e2e-changed: a corpus-wide change answers `all` rather than a subset', asy
   assert.equal(mixed.all, true);
   assert.match(mixed.reason, /A2UI5_PIN reaches every port/);
 });
+
+/* --------------------------------------------------------- lib-smoke.mjs */
+
+/*
+ * The harness relaxes the GET page's CSP for its SOURCE-ONLY UI5 and for
+ * nothing else. Two framework changes each reddened every port at boot as a
+ * harness effect: #2778 (no 'unsafe-eval') and #2790 (inline script by hash
+ * only, which refused the dev bootstrap's two document.write()n scripts).
+ */
+test('lib-smoke: the CSP gets eval and the dev bootstrap hashes, and keeps an open inline policy open', async () => {
+  const crypto = await import('crypto');
+  const { allowEvalForSourceUi5, DEV_BOOTSTRAP_HASHES } = await import('../lib-smoke.mjs');
+  const sha = (s) => `'sha256-${crypto.createHash('sha256').update(s, 'utf8').digest('base64')}'`;
+
+  // the exact two scripts sap-ui-core.js of the @openui5 sources writes
+  assert.deepEqual(DEV_BOOTSTRAP_HASHES, [
+    sha('sap.ui.requireSync("sap/ui/core/Core");'),
+    sha('sap.ui.getCore().boot && sap.ui.getCore().boot();'),
+  ]);
+
+  // a pin from #2790 on: hash-only inline script -> eval AND both hashes
+  const hashed = `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://sdk.openui5.org 'sha256-PAGE='; style-src 'self' 'unsafe-inline'; object-src 'none'"/>`;
+  const out = allowEvalForSourceUi5(hashed);
+  const scriptSrc = out.match(/script-src([^;]*)/)[1];
+  for (const token of ["'unsafe-eval'", ...DEV_BOOTSTRAP_HASHES, "'sha256-PAGE='", "'wasm-unsafe-eval'"]) {
+    assert.ok(scriptSrc.includes(token), `script-src carries ${token}`);
+  }
+  assert.match(out, /style-src 'self' 'unsafe-inline'; object-src 'none'/, 'the other directives are untouched');
+  assert.equal(allowEvalForSourceUi5(out), out, 'idempotent: nothing is added twice');
+
+  // a pin before #2790: 'unsafe-inline' and no hash. A hash next to it would
+  // make the browser ignore 'unsafe-inline' and refuse the page's own script.
+  const open = `content="script-src 'self' 'unsafe-inline' https://sdk.openui5.org; style-src 'self'"`;
+  assert.equal(allowEvalForSourceUi5(open), `content="script-src 'unsafe-eval' 'self' 'unsafe-inline' https://sdk.openui5.org; style-src 'self'"`);
+
+  // a pin before #2778 that still carries both: returned as is
+  const old = `content="script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self'"`;
+  assert.equal(allowEvalForSourceUi5(old), old);
+});
