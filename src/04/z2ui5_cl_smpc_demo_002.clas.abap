@@ -1184,13 +1184,17 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
   METHOD row_json.
 
+    " typed, not inline: a difference of packed values has no length and
+    " decimals a declaration could take over, so DATA( ) would be P(8,0)
+    DATA margin TYPE ty_ms.
+
     " the deliveryState / deliveryText formatters: an unshipped order has
     " none, a delivery up to five days before the required date is urgent,
     " one after it too late
     DATA(state) = `None`.
     DATA(text) = `None`.
     IF order-shippeddate IS NOT INITIAL.
-      DATA(margin) = order-requireddate - order-shippeddate.
+      margin = order-requireddate - order-shippeddate.
       IF margin > 0 AND margin <= 432000000.
         state = `Warning`.
         text  = `Urgent`.
