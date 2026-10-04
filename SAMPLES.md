@@ -182,7 +182,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | Sample | Class |
 |---|---|
 | **sap.m.DateTimePicker** — Date Time Picker - Value States<br>This example shows different DateTimePicker value states.<br><sub>datetimepicker date time picker sap.m datetimepickervaluestate flexbox vbox label</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_255`](src/01/01/z2ui5_cl_smpc_app_255.clas.abap) |
-| **sap.m.DateTimePicker**<br>With the DateTimePicker a Date can be entered or selected including the time part.<br><sub>datetimepicker date time picker sap.m enables users select panel label text simpleform</sub><br><sub>✓ checked · 10 deviations</sub> | [`Z2UI5_CL_SMPC_APP_018`](src/02/01/z2ui5_cl_smpc_app_018.clas.abap) |
+| **sap.m.DateTimePicker**<br>With the DateTimePicker a Date can be entered or selected including the time part.<br><sub>datetimepicker date time picker sap.m enables users select panel label text simpleform</sub><br><sub>✓ checked · 11 deviations</sub> | [`Z2UI5_CL_SMPC_APP_018`](src/02/01/z2ui5_cl_smpc_app_018.clas.abap) |
 | **sap.m.DateTimePicker** — Date Time Picker - Open by Another Control<br>This example shows Date Time Picker which is opened by another control.<br><sub>datetimepicker date time picker sap.m datetimepickerhidden title vbox label button link</sub><br><sub>✓ checked · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_257`](src/02/01/z2ui5_cl_smpc_app_257.clas.abap) |
 
 #### sap.m.Dialog

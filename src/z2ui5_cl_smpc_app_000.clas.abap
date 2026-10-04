@@ -2513,8 +2513,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` pr/message-model) - no port code needed. // NOTE: model flattening: the original model's valueDTP9 is bound by no control in the view and is dropped; valueDTP11 (null in the original) serializes as` &&
             ` an empty string in the flat ABAP model, which the V4 DateTimeOffset model format parses back to null, so DTP11 renders timezone-only like the original. // POST-1.71: showCurrentDateButton (since UI5`.
     text1 = text1 && ` 1.95) on DTP2 is kept for the 1:1 port. // POST-1.71: showCurrentTimeButton (since UI5 1.98) on DTP2 and DTP11 is kept for the 1:1 port. // POST-1.71: showTimezone (since UI5 1.99) on DTP8 and DTP11` &&
-            ` is kept for the 1:1 port. // POST-1.71: timezone (since UI5 1.99) on DTP8 is kept for the 1:1 port. // POST-1.71: core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74,` &&
-            ` and the sap.ui.model.odata.type.DateTimeWithTimezone binding type of DTP10/DTP11 (since UI5 1.99) is kept 1:1 - the app needs a UI5 release >= 1.99 overall.`.
+            ` is kept for the 1:1 port. // POST-1.71: timezone (since UI5 1.99) on DTP8 is kept for the 1:1 port. // POST-1.71: sap.ui.model.odata.type.DateTimeWithTimezone (since UI5 1.99) as the binding type of` &&
+            ` DTP10 and DTP11 is kept for the 1:1 port. // POST-1.71: core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74; with the DateTimeWithTimezone binding type above the app` &&
+            ` needs a UI5 release >= 1.99 overall.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DateTimePicker`                  name = `DateTimePicker`                                class = `z2ui5_cl_smpc_app_018` path = `src/02/01/z2ui5_cl_smpc_app_018.clas.abap`
         score = 5
@@ -2527,8 +2528,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` reads 'Change - Event 1: DateTimePicker ...DTP1:'. The valueState half rides on the BOOLEAN valid arg and stays with the human check)`
         notes = text1
         post171 = `showCurrentDateButton (since UI5 1.95) on DTP2 is kept for the 1:1 port. // showCurrentTimeButton (since UI5 1.98) on DTP2 and DTP11 is kept for the 1:1 port. // showTimezone (since UI5 1.99) on DTP8` &&
-                 ` and DTP11 is kept for the 1:1 port. // timezone (since UI5 1.99) on DTP8 is kept for the 1:1 port. // core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74, and the` &&
-                 ` sap.ui.model.odata.type.DateTimeWithTimezone binding type of DTP10/DTP11 (since UI5 1.99) is kept 1:1 - the app needs a UI5 release >= 1.99 overall.` ) ).
+                 ` and DTP11 is kept for the 1:1 port. // timezone (since UI5 1.99) on DTP8 is kept for the 1:1 port. // sap.ui.model.odata.type.DateTimeWithTimezone (since UI5 1.99) as the binding type of DTP10 and` &&
+                 ` DTP11 is kept for the 1:1 port. // core:require of the z2ui5/model/formatter module on the view root needs UI5 >= 1.74; with the DateTimeWithTimezone binding type above the app needs a UI5 release >=` &&
+                 ` 1.99 overall.` ) ).
 
     text1 = `POST-1.71: sap.m.Button.ariaHasPopup (@1.84) and sap.m.Link.ariaHasPopup (@1.86) kept 1:1 on the three anchors; also hideInput on the picker (@1.97 per the 016 precedent). The app needs a UI5 release` &&
             ` >= 1.97. // NOTE: The 016 hidden-picker pattern on the sibling control: all three anchors (text Button, icon Button, Link) open the hideInput picker roundtrip-free via follow_up_action control_by_id` &&
