@@ -71,6 +71,14 @@ scripts.**
   numbered gap-free `z2ui5_cl_smpc_app_001..NNN` in this same overview order; a
   renumber is a repo-wide rename (class token, sidecar `class`/`file`, and
   every `app NNN` doc reference) followed by a regenerate.
+  Above the ports table sits a second, small table for the `src/04` **demo
+  apps**, which have no sidecar: `buildDemoApps` in
+  `scripts/lib/overview-model.mjs` reads them through `scripts/lib/demoapps.mjs`
+  (the `ports` block of `ui5/demoapps.json`; an unmapped class throws), and
+  the emitter writes them into `get_demo_apps( )`. Columns are only what is
+  true for a whole app — **App** · **Category** · **Description** ·
+  **abap2UI5** · **Open** (the same start button) — no control, rating or
+  deviation flags, and the search and header filters do not touch it.
 
 ```bash
 node scripts/generate-coverage.mjs          # README + api.md (offline, from ui5/universe.json)

@@ -447,9 +447,9 @@ classes.
 Sidecar-less, and for a structural reason rather than convenience: `meta/` is
 keyed on a demo kit SAMPLE (`sap.m.sample.X`), which is also what
 `structural_diff`, `data_fidelity`, `api.md`, the coverage figures and the
-overview app are keyed on. A demo app has no sample id, no single control and
-no single original view, so there is nothing for any of them to compare
-against or count. `validate-meta`'s port detector matches `src/<cc>/<ll>/`
+overview app's ports table are keyed on. A demo app has no sample id, no
+single control and no single original view, so there is nothing for any of
+them to compare against or count. `validate-meta`'s port detector matches `src/<cc>/<ll>/`
 (two numeric levels), so a flat `src/04` is outside all of it **by
 construction**, like `src/03`.
 
@@ -463,7 +463,10 @@ What a sidecar would have carried lives in two places instead:
   verification rung (`generated` / `reviewed` / `checked`, the port ladder),
   and `skipped`, recording per app WHY it is deliberately not rebuilt — an
   app in neither is simply not done yet. `generate-summary`,
-  `generate-origin`, `generate-samples-md` and `generate-catalogue` read it;
+  `generate-origin`, `generate-samples-md`, `generate-catalogue` and
+  `generate-overview` read it — the overview app lists the demo apps in a
+  small table of its own, above the ports (`buildDemoApps` in
+  `scripts/lib/overview-model.mjs`);
   an unmapped class in `src/04` FAILS them rather than being skipped, and
   SAMPLES.md prints the `skipped` reasons under the demo-app table, so the
   scope of the package is visible where its contents are.

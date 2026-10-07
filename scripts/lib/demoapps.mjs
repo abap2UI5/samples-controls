@@ -4,7 +4,7 @@
  *
  * A PORT rebuilds one demo kit SAMPLE and carries a meta/<class>.json sidecar;
  * the whole port machinery (structural_diff, data_fidelity, coverage, the
- * overview app) is driven by that sidecar. A DEMO APP rebuilds a whole demo kit
+ * overview app's ports table) is driven by that sidecar. A DEMO APP rebuilds a whole demo kit
  * APPLICATION — several views, routing, a model layer — of which there are
  * eight in OpenUI5, so it has no sample id, no single control and nothing for
  * the coverage tables to count. It is therefore sidecar-less by construction,

@@ -1,7 +1,8 @@
 /*
  * overview-model — the overview app's MODEL: one row per ported sample, joined
  * from the meta/ sidecars, the sample-universe snapshot and the port's own
- * ABAP source, with the rating and the flags the view filters on.
+ * ABAP source, with the rating and the flags the view filters on - plus, for
+ * the overview's second table, one row per src/04 demo app (buildDemoApps).
  *
  * The second seam out of generate-overview.mjs (2026-08-28). Everything here
  * answers "what is true about this port"; nothing here knows what ABAP looks
@@ -10,6 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import { cmpVersion, MIN_UI5 } from '../lib-universe.mjs';
+import { DEMO_FOLDER, demoAppOf } from './demoapps.mjs';
 
 // the larger of two dotted UI5 versions; '' (unknown / since forever) is lowest
 const verMax = (a, b) => (!a ? b : !b ? a : cmpVersion(a, b) >= 0 ? a : b);
@@ -155,4 +157,26 @@ apps.sort((a, b) =>
   a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
 return apps;
+}
+
+/**
+ * The src/04 demo apps (AGENTS §3) - one row per class, from the `ports` block
+ * of ui5/demoapps.json. No control, no rating and no deviation flags: those
+ * describe a 1:1 control port and say nothing true about a whole application,
+ * so a row carries only what is true for all of it. An unmapped class fails,
+ * as it does in every other generator that reads the package.
+ *
+ * @param {object} o
+ * @param {string} o.ROOT  repository root
+ * @returns {object[]} the rows, ordered by class
+ */
+export function buildDemoApps({ ROOT }) {
+  const dir = path.join(ROOT, DEMO_FOLDER);
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter((f) => f.endsWith('.clas.abap')).sort().map((f) => {
+    const cls = f.slice(0, -'.clas.abap'.length);
+    const demo = demoAppOf(ROOT, cls);
+    if (!demo) throw new Error(`${DEMO_FOLDER}/${f}: not in the ports block of ui5/demoapps.json - say which demo app it rebuilds`);
+    return { name: demo.name, category: demo.category || '', descr: demo.description || '', cls };
+  });
 }

@@ -7,7 +7,30 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-09-27 (latest) — the linter moves to 0.8.1
+## 2026-10-07 (latest) — the demo apps appear in the in-system overview app
+
+A closed finding, moved out of the STATUS.md backlog:
+
+- [x] **The `src/04` demo apps do not appear in the in-system overview app —
+  found 2026-09-13, closed 2026-10-07.** `z2ui5_cl_smpc_app_000` was built
+  from `meta/` alone, and a demo app has no sidecar by construction (AGENTS
+  §3), so the five rebuilt demo apps could only be started by class name in a
+  system. `scripts/lib/overview-model.mjs` now has `buildDemoApps( )`, which
+  walks `src/04` and resolves each class through `demoAppOf( )` from
+  `scripts/lib/demoapps.mjs` (the `ports` block of `ui5/demoapps.json`) — an
+  unmapped class throws, as it does in every other generator that reads the
+  package. A row carries name, category, description and class, and nothing
+  else: no control, no rating, no deviation flags. `overview-emit.mjs` gives
+  them a table of their own above the ports table (App · Category ·
+  Description · abap2UI5 · Open, `headerText` with the count), its rows from a
+  generated `get_demo_apps( )` and bound as `t_demo`; the Open cell is the
+  ports table's start button (`open_new_tab` on `START_URL`), and the start URL
+  formula moved into one method, `start_url_of( )`, that `derive( )` uses too.
+  The search field and the three header filters stay on the ports table —
+  none of them says anything about a whole application. `check:overview` and
+  `check:chains` judge the new table like the rest of the class: no findings.
+
+## 2026-09-27 — the linter moves to 0.8.1
 
 `@abap2ui5/linter` ^0.8.0 → ^0.8.1. Its metadata snapshot is still OpenUI5
 1.152.0, so the nineteen `@openui5/*` / `@sapui5/*` runtime pins stay where
