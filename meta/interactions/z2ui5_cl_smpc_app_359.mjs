@@ -25,13 +25,18 @@
 // the slot); until this module is re-measured with that call, the toast leg
 // stays with the human live run — but NOT on the grounds stated above. See
 // meta/interactions/README.md "still open".
-import { waitForUi5, ui5All, UI5_ALL_SRC, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, waitForIdle, ui5All, UI5_ALL_SRC, revealInOverflow } from '../../scripts/lib-e2e.mjs';
 
 const actionCount = async (page) => page.evaluate(`(() => { ${UI5_ALL_SRC}
   const t = ui5All().find((c) => c.getMetadata().getName() === 'sap.ui.table.Table');
   return t ? t.getRowActionCount() : null; })()`);
 
 const pickMode = async (page, text) => {
+  // settle first: the previous mode's round-trip re-renders the toolbar, and a
+  // click that lands under its busy overlay waits out Playwright's 30 s
+  // (2026-10-07 nightly: `locator.click: Timeout 30000ms exceeded`, green on
+  // every run before and after)
+  await waitForIdle(page);
   const sel = page.locator('[id$="select"]').first();
   await revealInOverflow(page, sel);
   await sel.click();

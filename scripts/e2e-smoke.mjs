@@ -43,6 +43,7 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import { spawn } from 'child_process';
+import { isDeepStrictEqual } from 'util';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { chromium } from 'playwright';
 import { resolveA2UI5 } from './lib-a2ui5.mjs';
@@ -232,6 +233,22 @@ function makeExpect(errs) {
     async toBeAtMost(n) {
       const v = Number(locator);
       if (!(v <= n)) throw new Error(`${label}: ${v} is above ${n}`);
+    },
+    // value matchers — a value the module READ out of the page (an extractData
+    // result, a copied row) rather than a locator. app 523 needs them: it was
+    // written against Playwright's names and threw `toEqual is not a function`
+    // before proving anything, because these three did not exist here.
+    // SYNCHRONOUS on purpose: a module may call them without `await`, and an
+    // async matcher would then turn a failed assertion into an unhandled
+    // rejection instead of a FAIL.
+    toEqual(v) {
+      if (!isDeepStrictEqual(locator, v)) throw new Error(`${label}: got ${JSON.stringify(locator)}, expected ${JSON.stringify(v)}`);
+    },
+    toBe(v) {
+      if (!Object.is(locator, v)) throw new Error(`${label}: got ${JSON.stringify(locator)}, expected ${JSON.stringify(v)}`);
+    },
+    toBeTruthy() {
+      if (!locator) throw new Error(`${label}: got ${JSON.stringify(locator)}`);
     },
     // negative form — a filter assertion needs it (the row that must be GONE).
     // Polls until the text is absent so an async re-filter is tolerated.

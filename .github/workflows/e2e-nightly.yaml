@@ -12,9 +12,11 @@ on:
   schedule:
     - cron: '30 2 * * *'   # nightly, 02:30 UTC
 
-# `issues: write` is here again, and this time the API will honour it: issues
-# were DISABLED on this repository until 2026-08-27, which is why the original
-# `gh issue create` channel could never land. The step summary is still written
+# `issues: write` is for the tracking issue, and whether the API honours it is
+# a repository SETTING, not this file: issues were DISABLED here until
+# 2026-08-27, enabled until early October (the step filed #254 on 2026-10-05),
+# and disabled again from 2026-10-07 on, when the step logs "the repository
+# has disabled issues" and moves on. The step summary is written
 # unconditionally and needs no permission; the issue is the TRACKED half, and
 # is best-effort on top of it — it must never be the reason the job is red.
 permissions:

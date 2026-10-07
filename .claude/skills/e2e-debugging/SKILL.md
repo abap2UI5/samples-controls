@@ -146,10 +146,15 @@ verdicts below turned out to be harness effects.
 - **A matcher this harness does not have fails as `… is not a function`, and
   the assertion never ran.** `expect(locator, label)` offers exactly
   `toBeVisible`, `toBeVisibleEnabled`, `toContainText`, `notToContainText` and
-  `toHaveCountBelow` — not Playwright's full set. App 582 called `toContain`
+  `toHaveCountBelow` on a locator, `toBeAtLeast`/`toBeAtMost` on a number, and
+  `toEqual` (deep), `toBe` and `toBeTruthy` on a plain value read out of the
+  page — not Playwright's full set. App 582 called `toContain`
   and app 516 `toBeVisible` (which did not exist until 2026-08-22); both threw
   before proving anything, and 516's assertion turned out to be for a control
-  the sample never had. When adding a matcher, re-run every module that used it.
+  the sample never had. App 523 (#246) used the three value matchers before
+  they existed and read as a red port in every nightly until 2026-10-07. The
+  value matchers are SYNCHRONOUS so an un-awaited call still fails the run. When
+  adding a matcher, re-run every module that used it.
 - **A typed binding is not written by `setValue` + `fireChange`.** The model is
   updated by `InputBase.onChange` → `updateModelProperty`, which runs the type
   and its constraints; firing the event directly leaves the CONTROL on the new

@@ -112,9 +112,20 @@ export default async (page, expect) => {
     return l('categoryList').getVisible() === true && l('productList').getVisible() === false;
   }, 'clearing the search did not put the category list back');
 
-  // a category opens its products, sorted by Name, and a product its page
+  // a category opens its products, sorted by Name, and a product its page.
+  // WAIT for the rows instead of reading them once: on the CI runners the
+  // single read after waitForIdle came back EMPTY on four nightlies in a row
+  // (2026-10-04..07, "not sorted by Name: " with nothing after it) while every
+  // local run, full Chromium and headless shell alike, found them - the
+  // clear-search round-trip just before can still be re-rendering, and the
+  // list's rows land a moment after the response
+  await waitForIdle(page);
   await page.getByText('Laptops', { exact: true }).first().click();
   await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--categoryProductList$/.test(c.getId()));
+    return !!l && l.getItems().length > 1;
+  }, 'pressing the Laptops category never filled its product list');
   const products = await list(page, 'categoryProductList', (i) => i.getTitle());
   if (!products.items.length || !sorted(products.items)) {
     throw new Error(`the category's products are not sorted by Name: ${products.items.slice(0, 3).join(', ')}`);
