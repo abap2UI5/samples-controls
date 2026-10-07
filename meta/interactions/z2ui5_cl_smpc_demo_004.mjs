@@ -112,9 +112,20 @@ export default async (page, expect) => {
     return l('categoryList').getVisible() === true && l('productList').getVisible() === false;
   }, 'clearing the search did not put the category list back');
 
-  // a category opens its products, sorted by Name, and a product its page
+  // a category opens its products, sorted by Name, and a product its page.
+  // WAIT for the rows instead of reading them once: on the CI runners the
+  // single read after waitForIdle came back EMPTY on four nightlies in a row
+  // (2026-10-04..07, "not sorted by Name: " with nothing after it) while every
+  // local run, full Chromium and headless shell alike, found them - the
+  // clear-search round-trip just before can still be re-rendering, and the
+  // list's rows land a moment after the response
+  await waitForIdle(page);
   await page.getByText('Laptops', { exact: true }).first().click();
   await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const l = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.List' && /--categoryProductList$/.test(c.getId()));
+    return !!l && l.getItems().length > 1;
+  }, 'pressing the Laptops category never filled its product list');
   const products = await list(page, 'categoryProductList', (i) => i.getTitle());
   if (!products.items.length || !sorted(products.items)) {
     throw new Error(`the category's products are not sorted by Name: ${products.items.slice(0, 3).join(', ')}`);
@@ -327,21 +338,36 @@ export default async (page, expect) => {
       && b && b.getText() === '1';
   }, 'a too short, non-letter card holder did not turn red with the StringType messages and one message');
 
-  // each Enter is a change event and a round-trip; the next field waits for it
+  /* each Enter is a change event and a round-trip, and the field typed next
+   * is two-way bound: an answer that lands while it is being typed resets it.
+   * waitForIdle( ) covers the round-trip (it did not until 2026-10-07 - see
+   * lib-e2e.mjs - and the security code then read "___"); settled( ) checks
+   * each field kept what was typed (mask separators aside), so a lost
+   * keystroke fails naming its field rather than as "the step never
+   * validated" */
+  const settled = (suffix, want) => waitForUi5(page, ({ s, w }) => {
+    const c = ui5All().find((x) => x.getId().endsWith(`--${s}`)
+      && !x.bIsDestroyed && x.getDomRef() && document.body.contains(x.getDomRef()));
+    return !!c && String(c.getValue()).replace(/[-\s]/g, '') === w.replace(/[-\s]/g, '');
+  }, `the card field ${suffix} did not keep "${want}" after its round-trip`, { s: suffix, w: want });
   await cardInput('creditCardHolderName').fill('Jane Doe');
   await cardInput('creditCardHolderName').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardHolderName', 'Jane Doe');
   await cardInput('creditCardNumber').click();
   await cardInput('creditCardNumber').pressSequentially('4111111111111111');
   await cardInput('creditCardNumber').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardNumber', '4111111111111111');
   await cardInput('creditCardSecurityNumber').click();
   await cardInput('creditCardSecurityNumber').pressSequentially('123');
   await cardInput('creditCardSecurityNumber').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardSecurityNumber', '123');
   await cardInput('creditCardExpirationDate').fill('12/2027');
   await cardInput('creditCardExpirationDate').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardExpirationDate', '12/2027');
   await cardStep(true, 'four valid card fields did not validate the step - its Next button stays hidden');
   await waitForUi5(page, () => ui5All()
     .filter((c) => /--creditCard(HolderName|Number|SecurityNumber|ExpirationDate)$/.test(c.getId()))

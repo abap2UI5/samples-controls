@@ -8,7 +8,9 @@
  * live-verified; orange 1.71+ badge when the port keeps members newer than
  * UI5 1.71; hint button opens the deviations popup). Every link opens in
  * a NEW browser tab (target="_blank"; the ↗ start link uses ?app_start=).
- * Reads everything from the meta/ sidecars (the source of truth for sample,
+ * A second, small table lists the src/04 demo apps, which have no sidecar
+ * and are read from ui5/demoapps.json instead.
+ * Reads everything else from the meta/ sidecars (the source of truth for sample,
  * entity, checked and deviations - the three `"` header lines a port carries,
  * @keywords / @summary / @origin, are themselves generated from the sidecar
  * and the DESCRIPT, so the sidecar stays the one source).
@@ -24,7 +26,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { loadUniverseSnapshot, enrichFromProperties } from './lib-universe.mjs';
 import { openui5Membership } from './lib/overview-openui5.mjs';
-import { buildApps } from './lib/overview-model.mjs';
+import { buildApps, buildDemoApps } from './lib/overview-model.mjs';
 import { emitOverview } from './lib/overview-emit.mjs';
 import { formatSource } from './lib/format-chain.mjs';
 
@@ -66,8 +68,10 @@ const { controls: OPENUI5_CONTROLS, inOpenUI5 } = openui5Membership({
 for (const [k, s] of uniMap) uniMap.set(k, enrichFromProperties(OPENUI5_CONTROLS, s));
 
 const apps = buildApps({ ROOT, META, uniMap, inOpenUI5 });
+// the src/04 demo apps have no sidecar (AGENTS §3) - their own table, from ui5/demoapps.json
+const demos = buildDemoApps({ ROOT });
 
-const { abap, xml } = emitOverview({ apps, CLASS });
+const { abap, xml } = emitOverview({ apps, demos, CLASS });
 
 /* The view chains above are emitted from template strings at a fixed indent,
  * which cannot know the base column of the statement they land in. Run the
@@ -75,4 +79,4 @@ const { abap, xml } = emitOverview({ apps, CLASS });
  * code carries the layout rule instead of quietly reintroducing the drift. */
 fs.writeFileSync(OUT_ABAP, formatSource(abap, { skipMethods: ['get_catalog'] }));
 fs.writeFileSync(OUT_XML, xml);
-console.log(`${CLASS}: ${apps.length} apps across ${new Set(apps.map((a) => a.control)).size} controls`);
+console.log(`${CLASS}: ${apps.length} apps across ${new Set(apps.map((a) => a.control)).size} controls, ${demos.length} demo apps`);

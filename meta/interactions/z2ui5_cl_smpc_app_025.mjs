@@ -22,7 +22,12 @@ export default async (page, expect) => {
   const actionBtn = items.first().locator('button[id$="-actionButton"]').first();
   if (!(await actionBtn.count())) throw new Error('the first FeedListItem rendered no actions button for its bound actions');
   await actionBtn.click();
-  const del = page.locator('.sapMActionSheet, .sapMPopover, .sapMDialog').getByRole('button', { name: 'Delete', exact: true }).first();
+  // the overflow opens an ActionSheet of Buttons on older UI5 and an sap.m.Menu
+  // of menuitems on the current one (measured on 1.152, 2026-10-07: the popover
+  // read "Delete Share Edit" and held no <button> at all) - accept either
+  const sheet = page.locator('.sapMActionSheet, .sapMPopover, .sapMDialog');
+  const del = sheet.getByRole('button', { name: 'Delete', exact: true })
+    .or(sheet.getByRole('menuitem', { name: 'Delete', exact: true })).first();
   await expect(del, 'the Delete action from the bound actions').toBeVisibleEnabled();
   await del.click();
   await expect(page.locator('.sapMMessageToast').last(), 'the delete toast').toContainText('Item deleted');

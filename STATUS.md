@@ -37,50 +37,6 @@ looking for what is left had to skip past what is done to find it. They moved
 verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
 
-- [ ] **The `src/04` demo apps do not appear in the in-system overview app
-  (found 2026-09-13, with the package itself).** `z2ui5_cl_smpc_app_000` is the
-  one way to find and start something after an abapGit pull, and it is built
-  from `meta/` — which a demo app has no entry in, by construction (AGENTS §3).
-  So the five rebuilt demo apps are discoverable on GitHub (README,
-  [SAMPLES.md](SAMPLES.md#ui5-demo-apps--src04)) and invisible in a system,
-  where they have to be started by class name.
-  What it needs: `scripts/lib/overview-model.mjs` reads `ui5/demoapps.json`
-  beside the sidecars and emits rows with no control, no rating and no
-  deviation flags, and `overview-emit.mjs` gives them a section of their own —
-  the ports table's columns (Control, Since, deviations, the rating) are about
-  a 1:1 control port and say nothing true about a whole application, so this is
-  a second table rather than five more rows in the first. Deliberately not done
-  in the same change that created the package: the emitter is 1,245 lines and
-  the one class no gate reads for what it BUILDS except
-  `abap2ui5lint-overview.jsonc`.
-
-- [ ] **`check-prose-names.mjs` carries a dead exclusion and does not read
-  `docs/` — and the fix belongs upstream (found 2026-08-28).** Two things,
-  one file:
-  - `const HISTORY = /STATUS-history\.md$/;` names a file that no longer
-    exists. The journal moved to `docs/history.md` on 2026-08-22, so the
-    constant excludes nothing and the thing it was written to exclude is not
-    in `PROSE` either — it is dead twice over.
-  - `PROSE` lists eight root-level markdown files and nothing under `docs/`,
-    so `docs/upstream-requests.md` — which cites class and control names in
-    almost every row — is outside the gate.
-  The correct shape is the one the dead constant already implies: add
-  `docs/upstream-requests.md` to `PROSE` and re-point `HISTORY` at
-  `docs/history.md`, which must STAY excluded. Measured before proposing it:
-  `docs/history.md` names `z2ui5_cl_smpc_app_overview` three times, in entries
-  written before the 2026-08 rename to `z2ui5_cl_smpc_app_000` — a journal
-  recording what a class was called when the entry was written is history and
-  not drift, which is the whole reason that constant exists.
-  **Not changed here, deliberately.** `scripts/check-prose-names.mjs` is a
-  byte-equal COPY whose source is abap2UI5's
-  `.github/shared/check-prose-names.mjs`; `sync-shared.yaml` pulls it every
-  Tuesday, so an edit here is reverted within a week and turns abap2UI5's
-  `check:shared` red in the meantime. Change it there, then let the sync carry
-  it across. A `PROSE` entry that does not exist in a consumer is skipped, so
-  the addition is safe for `samples` and `samples-stack`.
-  Nothing is currently hiding behind the gap: `docs/upstream-requests.md`
-  names four classes and all four exist.
-
 - [ ] **The `checked` rung is thinning, and only a human on a real system can
   thicken it (standing).** 59 of 622 ports (9.5%) are `checked`, against 355
   `reviewed` and 208 `generated`, and the share falls with every batch because

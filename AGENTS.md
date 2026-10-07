@@ -447,9 +447,9 @@ classes.
 Sidecar-less, and for a structural reason rather than convenience: `meta/` is
 keyed on a demo kit SAMPLE (`sap.m.sample.X`), which is also what
 `structural_diff`, `data_fidelity`, `api.md`, the coverage figures and the
-overview app are keyed on. A demo app has no sample id, no single control and
-no single original view, so there is nothing for any of them to compare
-against or count. `validate-meta`'s port detector matches `src/<cc>/<ll>/`
+overview app's ports table are keyed on. A demo app has no sample id, no
+single control and no single original view, so there is nothing for any of
+them to compare against or count. `validate-meta`'s port detector matches `src/<cc>/<ll>/`
 (two numeric levels), so a flat `src/04` is outside all of it **by
 construction**, like `src/03`.
 
@@ -463,7 +463,10 @@ What a sidecar would have carried lives in two places instead:
   verification rung (`generated` / `reviewed` / `checked`, the port ladder),
   and `skipped`, recording per app WHY it is deliberately not rebuilt — an
   app in neither is simply not done yet. `generate-summary`,
-  `generate-origin`, `generate-samples-md` and `generate-catalogue` read it;
+  `generate-origin`, `generate-samples-md`, `generate-catalogue` and
+  `generate-overview` read it — the overview app lists the demo apps in a
+  small table of its own, above the ports (`buildDemoApps` in
+  `scripts/lib/overview-model.mjs`);
   an unmapped class in `src/04` FAILS them rather than being skipped, and
   SAMPLES.md prints the `skipped` reasons under the demo-app table, so the
   scope of the package is visible where its contents are.
@@ -714,7 +717,7 @@ comes to say a port is blocked when it is not (and the reverse):
 
 | Pin | Where | Answers |
 |---|---|---|
-| `A2UI5_PIN` is a **commit** on main and reads `6f283a22` | root file; `node-setup`, the web/Pages build and `bump-a2ui5.yaml` read it | **What a port DOES.** The transpiled backend, the e2e smoke and every reproducible build run this framework, so it decides whether a frontend action, an event-arg projection or a `control_by_id` method exists at all. A sidecar sentence about a wire working or not working is a statement about THIS pin, and `check_pins` policy 6 holds those sentences to it. The weekly bump moves this cell with the pin (`node scripts/check-pins.mjs --fix`, called from `bump-a2ui5.yaml`) - it rewrites only present-tense claims in the top-level prose, never a sidecar and never a sentence in the past tense. |
+| `A2UI5_PIN` is a **commit** on main and reads `2dd43637` | root file; `node-setup`, the web/Pages build and `bump-a2ui5.yaml` read it | **What a port DOES.** The transpiled backend, the e2e smoke and every reproducible build run this framework, so it decides whether a frontend action, an event-arg projection or a `control_by_id` method exists at all. A sidecar sentence about a wire working or not working is a statement about THIS pin, and `check_pins` policy 6 holds those sentences to it. The weekly bump moves this cell with the pin (`node scripts/check-pins.mjs --fix`, called from `bump-a2ui5.yaml`) - it rewrites only present-tense claims in the top-level prose, never a sidecar and never a sentence in the past tense. |
 | the **`main` branch** | `"branch"` on the abap2UI5 dependency in `abaplint.jsonc` and `abap_cloud.jsonc` | **Whether the corpus COMPILES against the current framework.** Until 2026-08-31 this was a release tag ("does it compile for a reader") — but that coupled every merge using new framework API to a framework RELEASE, and releases are monthly snapshots that never gate a merge (maintainer decision, the hash_* wave). What a port needs beyond the latest release stays in its sidecar prose ("needs abap2UI5 newer than x.y.z"); `check-pins.mjs` policy 2 enforces the explicit `"branch": "main"`. |
 | the **`702` branch** | `"branch"` on the abap2UI5 dependency in `.github/abaplint/abap_702.jsonc` | **Whether the corpus DOWNPORTS.** The framework's own `auto_downport` rebuilds that branch from main, so it is the one moving target in the build set — an allowlisted, reasoned exception in `check-pins.mjs` (policy 2) because `"branch"` feeds `git clone --branch`, which takes a branch or a tag and never a commit. The 702 build is therefore not byte-reproducible, and a 702-only failure that nothing here changed is the first thing to suspect on a branch-head move. |
 

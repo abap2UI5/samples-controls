@@ -1,5 +1,5 @@
-" @keywords overview catalogue index all samples search sort filter start ports
-" @summary Every ported demo kit sample in one searchable, sortable table - control, sample, class and rating - linking to the OpenUI5 original and starting the port in the system.
+" @keywords overview catalogue index all samples search sort filter start ports demo apps
+" @summary Every ported demo kit sample in one searchable, sortable table - control, sample, class and rating - linking to the OpenUI5 original and starting the port in the system, plus the rebuilt demo apps in a table of their own.
 "! Generated overview app - lists every abap2UI5 api sample app in a table.
 "! The search field filters the table on the client (binding_call Contains, no
 "! round-trip); its query is two-way bound (search_query), so it survives a
@@ -59,6 +59,11 @@
 "! model. Only bound columns are public state, which keeps the persisted draft
 "! (and the model JSON of every render) small - a transpiled runtime such as
 "! the playground re-parses that draft on every round-trip.
+"! A second, small table above the ports lists the src/04 demo apps - whole
+"! applications, which have no meta sidecar and come from ui5/demoapps.json.
+"! It carries only what is true for a whole app (name, category, description,
+"! class) and the Open column's start button; no control, no rating, no
+"! deviation flags, and neither the search nor the header filters touch it.
 "! The search field above the table filters all rows by a
 "! substring over the text columns (module, control, since, sample,
 "! class) only, and each sortable column header carries ascending/
@@ -101,8 +106,20 @@ CLASS z2ui5_cl_smpc_app_000 DEFINITION PUBLIC.
         filter        TYPE string,
       END OF ty_s_row.
     TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    " a demo app (src/04) - a whole application, so none of the port columns
+    " above apply; a handful of short rows, bound as they are generated
+    TYPES:
+      BEGIN OF ty_s_demo,
+        name      TYPE string,
+        category  TYPE string,
+        descr     TYPE string,
+        class     TYPE string,
+        start_url TYPE string,
+      END OF ty_s_demo.
+    TYPES ty_t_demo TYPE STANDARD TABLE OF ty_s_demo WITH EMPTY KEY.
 
     DATA t_app TYPE ty_t_row.
+    DATA t_demo TYPE ty_t_demo.
     " the search field's text (two-way, so it survives a round-trip and the
     " draft): the filter itself runs on the client, but only a value that is
     " part of the MODEL comes back when the app is restored. view_display
@@ -204,6 +221,16 @@ CLASS z2ui5_cl_smpc_app_000 DEFINITION PUBLIC.
     METHODS get_catalog
       RETURNING
         VALUE(result) TYPE ty_t_app.
+    METHODS get_demo_apps
+      RETURNING
+        VALUE(result) TYPE ty_t_demo.
+    " the URL that starts an app of this system in a new tab - one formula for
+    " the port rows (derive) and the demo-app rows (view_display)
+    METHODS start_url_of
+      IMPORTING
+        class         TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
     " The header every abap2UI5 overview app shares - see the class
     " documentation. Keep it in sync with the copies in abap2UI5/samples and
     " abap2UI5/samples-stack.
@@ -514,6 +541,11 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     ENDLOOP.
 
+    t_demo = get_demo_apps( ).
+    LOOP AT t_demo ASSIGNING FIELD-SYMBOL(<demo>).
+      <demo>-start_url = start_url_of( <demo>-class ).
+    ENDLOOP.
+
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(page) = view->ele( n = `View` ns = `mvc`
@@ -568,6 +600,66 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
         )->end(
     )->end(
+
+        )->ele( `Table`
+            " the src/04 demo apps - a table of their own, see the class documentation
+            )->a( n = `headerText` t = |UI5 demo apps - whole applications, one class each ({ lines( t_demo ) })|
+            )->a( n = `class`      v = `sapUiMediumMarginBottom`
+            )->a( n = `items`      v = client->_bind( t_demo )
+
+            )->ele( `columns`
+                )->ele( `Column`
+                    )->tag( `Text`
+                        )->a( n = `text` v = `App`
+
+                )->end(
+                )->ele( `Column`
+                    )->tag( `Text`
+                        )->a( n = `text` v = `Category`
+
+                )->end(
+                )->ele( `Column`
+                    )->tag( `Text`
+                        )->a( n = `text` v = `Description`
+
+                )->end(
+                )->ele( `Column`
+                    )->tag( `Text`
+                        )->a( n = `text` v = `abap2UI5`
+
+                )->end(
+                )->ele( `Column`
+                    )->a( n = `width` v = `9rem`
+                    )->a( n = `hAlign` v = `Center`
+
+                    )->tag( `Text`
+                        )->a( n = `text` v = `Open`
+
+                )->end(
+            )->end(
+
+            )->ele( `items`
+                )->ele( `ColumnListItem`
+                    )->ele( `cells`
+                        )->tag( `Text`
+                            )->a( n = `text` v = `{NAME}`
+                        )->tag( `Text`
+                            )->a( n = `text` v = `{CATEGORY}`
+                        )->tag( `Text`
+                            )->a( n = `text` v = `{DESCR}`
+                        )->tag( `Text`
+                            )->a( n = `text` v = `{CLASS}`
+                        " the same start button as the ports table's Open column
+                        )->tag( `Button`
+                            )->a( n = `icon`    v = `sap-icon://action`
+                            )->a( n = `type`    v = `Transparent`
+                            )->a( n = `tooltip` v = `Start this abap2UI5 app in a new tab`
+                            )->a( n = `press`   v = client->follow_up_action( val = client->cs_event-open_new_tab t_arg = VALUE #( ( `${START_URL}` ) ) )
+
+                    )->end(
+                )->end(
+            )->end(
+        )->end(
 
         )->ele( `Table`
             )->a( n = `id`      v = `idOverviewTable`
@@ -815,8 +907,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                     |&sap-ui-xx-sample-lib={ app-module }|.
     ENDIF.
     app-abap_url  = |https://github.com/abap2UI5/samples-controls/blob/main/{ app-path }|.
-    app-start_url = |{ client->get( )-s_config-origin }{ client->get( )-s_config-pathname }| &&
-                    |?app_start={ to_upper( app-class ) }|.
+    app-start_url = start_url_of( app-class ).
     app-has_check = xsdbool( app-checked IS NOT INITIAL ).
     app-has_notes = xsdbool( app-notes IS NOT INITIAL ).
     app-has_p171  = xsdbool( app-post171 IS NOT INITIAL ).
@@ -12685,6 +12776,29 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = text1 ) ).
 
     " abap2ui5lint-enable
+
+  ENDMETHOD.
+
+
+  METHOD get_demo_apps.
+
+    " the src/04 demo apps - generated from ui5/demoapps.json, whose ports
+    " block maps each class to the demo kit app it rebuilds (a demo app has
+    " no meta sidecar, AGENTS section 3)
+    result = VALUE #(
+      ( name = `Manage Products` category = `Tutorial` class = `z2ui5_cl_smpc_demo_001` descr = `Created with the 'Worklist App' tutorial.` )
+      ( name = `Browse Orders`   category = `Showcase` class = `z2ui5_cl_smpc_demo_002` descr = `Master-detail app for browsing orders.` )
+      ( name = `Team Calendar`   category = `Showcase` class = `z2ui5_cl_smpc_demo_003` descr = `Calendar demo app for team and team members.` )
+      ( name = `Shopping Cart`   category = `Showcase` class = `z2ui5_cl_smpc_demo_004` descr = `The classic business process of finding and ordering products.` )
+      ( name = `Bulletin Board`  category = `Tutorial` class = `z2ui5_cl_smpc_demo_005` descr = `Worklist app created with the 'Testing' tutorial.` ) ).
+
+  ENDMETHOD.
+
+
+  METHOD start_url_of.
+
+    result = |{ client->get( )-s_config-origin }{ client->get( )-s_config-pathname }| &&
+             |?app_start={ to_upper( class ) }|.
 
   ENDMETHOD.
 
