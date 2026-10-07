@@ -7,9 +7,22 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-07 (latest) — the demo apps appear in the in-system overview app
+## 2026-10-07 (latest) — the demo apps appear in the in-system overview app, and a backlog item turns out to be closed already
 
-A closed finding, moved out of the STATUS.md backlog:
+Two closed findings, moved out of the STATUS.md backlog:
+
+- [x] **`check-prose-names.mjs` carried a dead exclusion and did not read
+  `docs/` — found 2026-08-28, found already fixed 2026-10-07.** The fix
+  landed where the item said it had to, in abap2UI5's
+  `.github/shared/check-prose-names.mjs`, and `sync-shared` carried it here
+  on 2026-09-25 (#239): `PROSE_DIRS = ['docs']` reads every markdown file
+  under `docs/`, and `HISTORY` now matches `history.md` in any folder, so
+  `docs/history.md` stays excluded. Measured 2026-10-07: the script is
+  byte-identical to abap2UI5 main, reads 9 prose files (the eight root files
+  plus `docs/upstream-requests.md`), and passes although `docs/history.md`
+  still names the pre-rename `z2ui5_cl_smpc_app_overview` three times. The
+  item had stayed in the backlog for twelve days after the fix arrived,
+  because the sync that closed it does not touch STATUS.md.
 
 - [x] **The `src/04` demo apps do not appear in the in-system overview app —
   found 2026-09-13, closed 2026-10-07.** `z2ui5_cl_smpc_app_000` was built
