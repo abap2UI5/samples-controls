@@ -93,7 +93,18 @@ export async function dispatchMouse(locator) {
 // in the footer, so "the first Additional Options button" opens the wrong one
 // and the control still never shows. A round-trip re-renders the toolbar and
 // closes the popover, so call this again before each toolbar interaction.
+//
+// A popup that is still CLOSING keeps its content visible for a moment, so the
+// "already visible" check first waits for every popup to settle. demo_003 red
+// on three nightlies (2026-10-04..06): the Create press had closed the
+// overflow, the legend button inside it still read visible while the popover
+// was CLOSING, this returned without opening anything, and the next click
+// found a display:none button ("Element is not visible"). Only reproducible
+// after other apps had warmed the browser - a slower run saw it CLOSED.
 export async function revealInOverflow(page, locator) {
+  await page.waitForFunction(() => !Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .some((c) => c.oPopup && typeof c.oPopup.getOpenState === 'function'
+      && /^(CLOSING|OPENING)$/.test(c.oPopup.getOpenState())), undefined, { timeout: 5000 }).catch(() => {});
   const shown = async () => (await locator.count()) && (await locator.first().isVisible());
   if (await shown()) return;
   const more = page.getByRole('button', { name: 'Additional Options' });
@@ -248,7 +259,14 @@ export async function waitForIdle(page, { quiet = 400, timeout = 30000 } = {}) {
      between a response landing and the next event being queued, and a boot
      that settles a layout fires several in a row - a one-shot check sails
      through the gap and the press is dropped anyway (measured: isBusy was
-     still true one frame after such a check returned). */
+     still true one frame after such a check returned).
+     The quiet is measured from THIS call: the timestamp lives on `window`, and
+     left over from the previous call it made every later call return at its
+     first poll - an Enter whose round-trip had not started yet read as "quiet
+     since long ago", and demo_004 typed its security code into the field the
+     previous field's answer then reset (2026-10-07, "___" with valueState
+     Error, reproducible only after other apps had warmed the browser). */
+  await page.evaluate(() => { window.__a2ui5IdleSince = 0; });
   const expr = `(() => {
     const s = ${FRONTEND_STATE};
     if (!s) return true;                         // no component booted: nothing to wait for

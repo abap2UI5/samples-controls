@@ -338,21 +338,36 @@ export default async (page, expect) => {
       && b && b.getText() === '1';
   }, 'a too short, non-letter card holder did not turn red with the StringType messages and one message');
 
-  // each Enter is a change event and a round-trip; the next field waits for it
+  /* each Enter is a change event and a round-trip, and the field typed next
+   * is two-way bound: an answer that lands while it is being typed resets it.
+   * waitForIdle( ) covers the round-trip (it did not until 2026-10-07 - see
+   * lib-e2e.mjs - and the security code then read "___"); settled( ) checks
+   * each field kept what was typed (mask separators aside), so a lost
+   * keystroke fails naming its field rather than as "the step never
+   * validated" */
+  const settled = (suffix, want) => waitForUi5(page, ({ s, w }) => {
+    const c = ui5All().find((x) => x.getId().endsWith(`--${s}`)
+      && !x.bIsDestroyed && x.getDomRef() && document.body.contains(x.getDomRef()));
+    return !!c && String(c.getValue()).replace(/[-\s]/g, '') === w.replace(/[-\s]/g, '');
+  }, `the card field ${suffix} did not keep "${want}" after its round-trip`, { s: suffix, w: want });
   await cardInput('creditCardHolderName').fill('Jane Doe');
   await cardInput('creditCardHolderName').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardHolderName', 'Jane Doe');
   await cardInput('creditCardNumber').click();
   await cardInput('creditCardNumber').pressSequentially('4111111111111111');
   await cardInput('creditCardNumber').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardNumber', '4111111111111111');
   await cardInput('creditCardSecurityNumber').click();
   await cardInput('creditCardSecurityNumber').pressSequentially('123');
   await cardInput('creditCardSecurityNumber').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardSecurityNumber', '123');
   await cardInput('creditCardExpirationDate').fill('12/2027');
   await cardInput('creditCardExpirationDate').press('Enter');
   await waitForIdle(page);
+  await settled('creditCardExpirationDate', '12/2027');
   await cardStep(true, 'four valid card fields did not validate the step - its Next button stays hidden');
   await waitForUi5(page, () => ui5All()
     .filter((c) => /--creditCard(HolderName|Number|SecurityNumber|ExpirationDate)$/.test(c.getId()))

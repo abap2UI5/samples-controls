@@ -273,6 +273,16 @@ verdicts below turned out to be harness effects.
   pointer extension acts on the mousedown/mouseup PAIR, so its 0-wide tree
   expand icon ignores a lone `click` — `dispatchMouse()` sends the whole
   sequence. Try a real click first; dispatch only what has no box.
+- **A popup that is CLOSING still shows its content.** Pressing a control
+  inside the overflow closes the popover (`_closeOnInteraction`), and for a
+  moment its other controls still read visible - `oPopup.getOpenState()` is
+  `CLOSING`. A visibility check in that window passes, nothing gets opened,
+  and the next click finds a `display:none` element: `locator.click: Element
+  is not visible` (demo_003's legend after its Create press, red on three
+  nightlies; it only reproduced after other apps had warmed the browser).
+  `revealInOverflow( )` now waits for every popup to leave
+  `CLOSING`/`OPENING` before it trusts what it sees; a hand-written visibility
+  check next to a popup needs the same wait.
 - **Several OverflowToolbars can share one page.** App 357 has one on the table
   and one in the footer, so "the first Additional Options button" opens the
   wrong popover and the control still never shows; app 407's menu button hides
@@ -360,6 +370,16 @@ verdicts below turned out to be harness effects.
   `page.waitForResponse(r => r.request().method() === 'POST' && …)` in a
   `Promise.all` with the click. Without it the two raced and the move answered
   "Please select a row!", which reads exactly like a dead wire.
+- **A wait helper that keeps state on `window` must reset it per call.**
+  `waitForIdle( )` measures sustained quiet from a timestamp on `window`, and
+  until 2026-10-07 it never cleared it - so only the FIRST call per page
+  waited at all; every later call found "idle since long ago" at its first
+  poll and returned before the round-trip it was meant to cover had even
+  started. It surfaced as demo_004's security code reading `___` (the
+  previous field's answer reset the two-way bound input it was typed into),
+  red 3/3 after the other demo apps had run and green alone. The call now
+  starts its own clock; a module that needed a fixed delay after a
+  `waitForIdle` may have been papering over this.
 - **The RESPONSE is not the RE-RENDER.** `waitForResponse` tells you the
   backend answered; abap2UI5 rebuilds the view *after* that, so a locator
   resolved on the next line can point at a node about to be replaced. App
