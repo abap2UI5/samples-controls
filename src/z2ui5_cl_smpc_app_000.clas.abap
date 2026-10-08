@@ -1,5 +1,5 @@
 " @keywords overview catalogue index all samples search sort filter start ports demo apps
-" @summary Every ported demo kit sample in one searchable, sortable table - control, sample, class and rating - linking to the OpenUI5 original and starting the port in the system, plus the rebuilt demo apps in a table of their own.
+" @summary Every ported demo kit sample in one searchable, sortable table - control, sample, class and rating - linking to the OpenUI5 original and starting the port in the system, plus the rebuilt demo apps behind a button of their own.
 "! Generated overview app - lists every abap2UI5 api sample app in a table.
 "! The search field filters the table on the client (binding_call Contains, no
 "! round-trip); its query is two-way bound (search_query), so it survives a
@@ -59,11 +59,12 @@
 "! model. Only bound columns are public state, which keeps the persisted draft
 "! (and the model JSON of every render) small - a transpiled runtime such as
 "! the playground re-parses that draft on every round-trip.
-"! A second, small table above the ports lists the src/04 demo apps - whole
+"! A button in the subheader opens the src/04 demo apps in a dialog - whole
 "! applications, which have no meta sidecar and come from ui5/demoapps.json.
-"! It carries only what is true for a whole app (name, category, description,
-"! class) and the Open column's start button; no control, no rating, no
-"! deviation flags, and neither the search nor the header filters touch it.
+"! Its small table carries only what is true for a whole app (name, category,
+"! description, class) and the Open column's start button; no control, no
+"! rating, no deviation flags, and neither the search nor the header filters
+"! touch it.
 "! The search field above the table filters all rows by a
 "! substring over the text columns (module, control, since, sample,
 "! class) only, and each sortable column header carries ascending/
@@ -241,6 +242,8 @@ CLASS z2ui5_cl_smpc_app_000 DEFINITION PUBLIC.
     " A repository that is not on this system stays clickable and says what is
     " missing - a popover on the icon that was pressed, with the GitHub link to
     " install it from.
+    " The src/04 demo apps in a dialog, opened from the subheader button.
+    METHODS demo_display.
     METHODS install_display
       IMPORTING
         anchor TYPE string
@@ -462,6 +465,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
         client->popover_display( xml = info->stringify( ) by_id = client->get_event_arg( 2 ) ).
 
+      WHEN `DEMO_APPS`.
+        demo_display( ).
+
       WHEN `INSTALL`.
         " a header icon whose repository is not on this system - anchor class,
         " GitHub URL and repository name travel as the event arguments
@@ -591,6 +597,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                 )->a( n = `selected` v = client->_bind( hide_deprecated )
                 )->a( n = `tooltip`  v = `Hide samples whose control is deprecated`
             )->tag( `ToolbarSpacer`
+            " the src/04 demo apps sit behind this button, in a dialog of
+            " their own (demo_display) - see the class documentation
+            )->tag( `Button`
+                )->a( n = `text`    t = |Demo apps ({ lines( t_demo ) })|
+                )->a( n = `icon`    v = `sap-icon://product`
+                )->a( n = `tooltip` v = `The UI5 demo apps - whole applications, one class each`
+                )->a( n = `press`   v = client->_event( `DEMO_APPS` )
             )->tag( `Label`
                 )->a( n = `text` v = `Shell`
             " Shell on/off = sap.m.Shell letterboxing (two-way, drives appWidthLimited)
@@ -600,66 +613,6 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
         )->end(
     )->end(
-
-        )->ele( `Table`
-            " the src/04 demo apps - a table of their own, see the class documentation
-            )->a( n = `headerText` t = |UI5 demo apps - whole applications, one class each ({ lines( t_demo ) })|
-            )->a( n = `class`      v = `sapUiMediumMarginBottom`
-            )->a( n = `items`      v = client->_bind( t_demo )
-
-            )->ele( `columns`
-                )->ele( `Column`
-                    )->tag( `Text`
-                        )->a( n = `text` v = `App`
-
-                )->end(
-                )->ele( `Column`
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Category`
-
-                )->end(
-                )->ele( `Column`
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Description`
-
-                )->end(
-                )->ele( `Column`
-                    )->tag( `Text`
-                        )->a( n = `text` v = `abap2UI5`
-
-                )->end(
-                )->ele( `Column`
-                    )->a( n = `width` v = `9rem`
-                    )->a( n = `hAlign` v = `Center`
-
-                    )->tag( `Text`
-                        )->a( n = `text` v = `Open`
-
-                )->end(
-            )->end(
-
-            )->ele( `items`
-                )->ele( `ColumnListItem`
-                    )->ele( `cells`
-                        )->tag( `Text`
-                            )->a( n = `text` v = `{NAME}`
-                        )->tag( `Text`
-                            )->a( n = `text` v = `{CATEGORY}`
-                        )->tag( `Text`
-                            )->a( n = `text` v = `{DESCR}`
-                        )->tag( `Text`
-                            )->a( n = `text` v = `{CLASS}`
-                        " the same start button as the ports table's Open column
-                        )->tag( `Button`
-                            )->a( n = `icon`    v = `sap-icon://action`
-                            )->a( n = `type`    v = `Transparent`
-                            )->a( n = `tooltip` v = `Start this abap2UI5 app in a new tab`
-                            )->a( n = `press`   v = client->follow_up_action( val = client->cs_event-open_new_tab t_arg = VALUE #( ( `${START_URL}` ) ) )
-
-                    )->end(
-                )->end(
-            )->end(
-        )->end(
 
         )->ele( `Table`
             )->a( n = `id`      v = `idOverviewTable`
@@ -877,6 +830,92 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       client->follow_up_action( val   = client->cs_event-binding_call
                                 t_arg = VALUE #( ( `idOverviewTable` ) ( `items` ) ( `filter` ) ( `FILTER` ) ( `Contains` ) ( search_query ) ) ).
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD demo_display.
+
+    " the src/04 demo apps - whole applications, one class each - in a dialog
+    " opened from the subheader button; see the class documentation. t_demo is
+    " filled by view_display( ), which every display of this app runs first.
+    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+
+    popup->ele( n = `FragmentDefinition` ns = `core`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+
+        )->ele( `Dialog`
+            )->a( n = `title`        t = |UI5 demo apps - whole applications, one class each ({ lines( t_demo ) })|
+            )->a( n = `contentWidth` v = `60rem`
+            )->a( n = `stretch`      v = `{device>/system/phone}`
+
+            )->ele( `content`
+                )->ele( `Table`
+                    )->a( n = `items` v = client->_bind( t_demo )
+
+                    )->ele( `columns`
+                        )->ele( `Column`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `App`
+
+                        )->end(
+                        )->ele( `Column`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `Category`
+
+                        )->end(
+                        )->ele( `Column`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `Description`
+
+                        )->end(
+                        )->ele( `Column`
+                            )->tag( `Text`
+                                )->a( n = `text` v = `abap2UI5`
+
+                        )->end(
+                        )->ele( `Column`
+                            )->a( n = `width` v = `9rem`
+                            )->a( n = `hAlign` v = `Center`
+
+                            )->tag( `Text`
+                                )->a( n = `text` v = `Open`
+
+                        )->end(
+                    )->end(
+
+                    )->ele( `items`
+                        )->ele( `ColumnListItem`
+                            )->ele( `cells`
+                                )->tag( `Text`
+                                    )->a( n = `text` v = `{NAME}`
+                                )->tag( `Text`
+                                    )->a( n = `text` v = `{CATEGORY}`
+                                )->tag( `Text`
+                                    )->a( n = `text` v = `{DESCR}`
+                                )->tag( `Text`
+                                    )->a( n = `text` v = `{CLASS}`
+                                " the same start button as the ports table's Open column
+                                )->tag( `Button`
+                                    )->a( n = `icon`    v = `sap-icon://action`
+                                    )->a( n = `type`    v = `Transparent`
+                                    )->a( n = `tooltip` v = `Start this abap2UI5 app in a new tab`
+                                    )->a( n = `press`   v = client->follow_up_action( val = client->cs_event-open_new_tab t_arg = VALUE #( ( `${START_URL}` ) ) )
+
+                            )->end(
+                        )->end(
+                    )->end(
+                )->end(
+            )->end(
+
+            )->ele( `endButton`
+                )->tag( `Button`
+                    )->a( n = `text`  v = `Close`
+                    " closing is the frontend's business - no round-trip
+                    )->a( n = `press` v = client->follow_up_action( client->cs_event-popup_close ) ).
+
+    client->popup_display( popup->stringify( ) ).
 
   ENDMETHOD.
 
