@@ -969,6 +969,13 @@ ${columnsBlock}
 
     client->view_display( view->stringify( ) ).
 
+    " A JSONModel hands a bound aggregation at most 100 rows, and the catalog
+    " has several hundred. The header checkboxes hide rows via visible, which
+    " still counts them, so without this the table stopped far short of its
+    " title's count. Raised to the row count, so it keeps up as ports are added.
+    client->follow_up_action( val   = client->cs_event-set_size_limit
+                              t_arg = VALUE #( ( |{ lines( t_app ) }| ) ( client->cs_view-main ) ) ).
+
     " Re-apply the client-side table filter for a restored query. The filter is
     " a frontend-only binding operation (the model keeps all rows), so a rebuilt
     " view starts unfiltered - while the SearchField, being two-way bound, does
