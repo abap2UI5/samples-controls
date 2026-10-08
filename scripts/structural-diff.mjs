@@ -7,6 +7,9 @@
  *
  *   node scripts/structural-diff.mjs            advisory report
  *   node scripts/structural-diff.mjs --strict   exit 1 on undeclared diffs
+ *   node scripts/structural-diff.mjs --ids      also list, advisory, every
+ *                                               original control id the port
+ *                                               neither carries nor declares
  *
  * What it compares:
  *  - the multiset of CONTROLS used (UpperCamelCase elements; lowercase
@@ -25,6 +28,15 @@
  *    name-level checks cannot see. Port values that are ABAP expressions
  *    (client->_bind, |...| templates) are not statically comparable and
  *    stay with review/live checks.
+ *  - per control INSTANCE, ENUM literal values (since 2026-10-08): a control
+ *    the original and the port both carry under the same literal `id`
+ *    (unique on each side, same namespace + name) must write the same value
+ *    on every attribute both sides set as a literal, where
+ *    ui5/properties.json types that property as an enum (parent chain
+ *    walked). Reported as `enum value`, declared by a deviation naming
+ *    `<Control>.<attr>` or `<id>.<attr>`. Without an id or the snapshot
+ *    nothing is compared — a measured 0 findings on the day it was added,
+ *    and it would have caught app 578's backgroundDesign.
  * A difference is "declared" when the control/attribute name (or, for binding
  * values, the binding's last path segment) appears AS A WHOLE WORD in one of
  * the port's deviation texts or its CHECKED note — case-insensitive, and not
@@ -38,9 +50,9 @@
  *    to the original view.xml side — those show up as EXTRA in the port
  *  - ports with LOOP/DO-built view parts are flagged "dynamic": counts of a
  *    control created in a loop cannot match statically
- *  - a LITERAL attribute value is never compared, only a binding one: the
- *    value pass bails out where the original attribute carries no simple
- *    `{path}` binding. So a port that spells a static label differently from
+ *  - apart from the enum-by-id pass above, a LITERAL attribute value is
+ *    never compared, only a binding one: the value pass bails out where the
+ *    original attribute carries no simple `{path}` binding. So a port that spells a static label differently from
  *    the sample passes silently — name-level checks see the attribute, not its
  *    text. Deliberate, and measured before it was written down: comparing
  *    literals too would report 171 differences across 87 of 320 ports, and the
@@ -60,6 +72,9 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
 const UI5 = path.join(ROOT, 'ui5');
 const STRICT = process.argv.includes('--strict');
+// advisory: list every original control id the port neither carries nor
+// names in a deviation (never fails, not part of the default report)
+const IDS = process.argv.includes('--ids');
 
 // attribute names that never carry over 1:1. NOTE: `id` is compared like any
 // other attribute (name-level, per control type) since 2026-07-19 — app 047
@@ -101,6 +116,7 @@ function parseXml(xml) {
   const ns = new Map();
   for (const d of clean.matchAll(/\bxmlns(?::([\w.-]+))?\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) ns.set(d[1] || '', d[2] ?? d[3]);
   const spelling = new Map();          // resolved name -> qname as written
+  const instances = [];                // one per control: { key, attrs: Map(attr -> value) }
   // XML permits BOTH quote styles, so the tag body must skip single-quoted runs
   // too — otherwise a `text='7" Widescreen …'` value opens a double-quote run
   // that swallows the tag boundary and merges the following sibling into this
@@ -117,8 +133,11 @@ function parseXml(xml) {
     controls.set(key, (controls.get(key) || 0) + 1);
     const set = attrs.get(simpleName(qname)) || new Set();
     const vmap = values.get(simpleName(qname)) || new Map();
+    const inst = { key, attrs: new Map() };
+    instances.push(inst);
     for (const a of m[2].matchAll(attrRe)) {
       if (a[1].startsWith('xmlns') || IGNORED_ATTRS.has(a[1])) continue;
+      inst.attrs.set(a[1], a[2] !== undefined ? a[2] : a[3]);
       set.add(a[1]);
       const vset = vmap.get(a[1]) || new Set();
       vset.add(a[2] !== undefined ? a[2] : a[3]);
@@ -127,7 +146,7 @@ function parseXml(xml) {
     attrs.set(simpleName(qname), set);
     values.set(simpleName(qname), vmap);
   }
-  return { controls, attrs, values, spelling, ns };
+  return { controls, attrs, values, spelling, ns, instances };
 }
 
 // ---------- port side: parse the builder calls out of the ABAP ----------
@@ -154,6 +173,7 @@ function parseAbap(abap, fallbackNs = new Map()) {
     return ns;
   };
   const spelling = new Map();
+  const instances = [];       // one per control: { key, attrs: Map(attr -> LITERAL value) }
   const marks = [];
   let m;
   while ((m = elemRe.exec(abap)) !== null) {
@@ -171,10 +191,13 @@ function parseAbap(abap, fallbackNs = new Map()) {
     const slice = abap.slice(marks[i].at, i + 1 < marks.length ? marks[i + 1].at : undefined);
     const set = attrs.get(simpleName(qname)) || new Set();
     const vmap = values.get(simpleName(qname)) || new Map();
+    const inst = { key, attrs: new Map() };
+    instances.push(inst);
     const addVal = (attr, val) => {
       const vset = vmap.get(attr) || new Set();
       vset.add(val);
       vmap.set(attr, vset);
+      inst.attrs.set(attr, val);
     };
     // chained form: )->a( n = `key` v = ... )
     for (const a of slice.matchAll(/->\s*a\(\s*n\s*=\s*`([\w.:-]+)`(?:\s+v\s*=\s*`([^`\n]*)`\s*(?=[\r\n)]))?/g)) {
@@ -197,7 +220,7 @@ function parseAbap(abap, fallbackNs = new Map()) {
   for (const block of abap.matchAll(/\b(?:LOOP AT|DO\b|WHILE\b)[\s\S]*?\b(?:ENDLOOP|ENDDO|ENDWHILE)\b/g)) {
     if (/->\s*(?:ele|tag)\(/.test(block[0])) { dynamic = true; break; }
   }
-  return { controls, attrs, values, dynamic, spelling };
+  return { controls, attrs, values, dynamic, spelling, instances };
 }
 
 // ---------- binding-value comparison helpers ----------
@@ -208,6 +231,42 @@ const SIMPLE_BIND = /^\{[\w.$>/]+\}$/;
 const normBind = (t) => t.toLowerCase().replace(/_/g, '');
 // last path segment — flattened ports bind the leaf field: {/products/0/name} ~ {NAME}
 const lastSeg = (t) => normBind(t).replace(/[{}]/g, '').split(/[/>]/).pop();
+
+// ---------- enum-typed properties (ui5/properties.json) ----------
+// The control metadata snapshot (AGENTS §5, written by the linter's
+// generate-metadata.mjs) says which property of which control is enum-typed,
+// walking the parent chain for inherited ones. Absent snapshot -> no enum
+// pass (the fixture corpus runs without one unless a test provides it).
+const PROPS = (() => {
+  try { return JSON.parse(fs.readFileSync(path.join(UI5, 'properties.json'), 'utf8')); } catch { return null; }
+})();
+const enumTypeCache = new Map();
+function enumTypeOf(cls, prop) {
+  const ck = `${cls}#${prop}`;
+  if (enumTypeCache.has(ck)) return enumTypeCache.get(ck);
+  let t = null;
+  for (let c = cls, guard = 0; c && PROPS?.controls?.[c] && guard < 20; c = PROPS.controls[c].parent, guard++) {
+    const type = PROPS.controls[c].properties?.[prop]?.type;
+    if (type) { t = PROPS.enums?.[type] ? type : null; break; }
+  }
+  enumTypeCache.set(ck, t);
+  return t;
+}
+// `<uri>:<local>` (the resolved control key) -> the UI5 class name
+const classOf = (key) => {
+  const i = key.lastIndexOf(':');
+  return i < 0 ? key : `${key.slice(0, i)}.${key.slice(i + 1)}`;
+};
+// controls keyed by a literal `id` that occurs exactly once on its side
+function byId(instances) {
+  const seen = new Map();
+  for (const inst of instances) {
+    const id = inst.attrs.get('id');
+    if (!id || /[{}]/.test(id)) continue;
+    seen.set(id, seen.has(id) ? null : inst);
+  }
+  return seen;
+}
 
 // ---------- per-port original views: everything the manifest lists ----------
 // join key: the sample name (ui5/sap.m/<SampleName>/), derived from meta.sample
@@ -235,6 +294,7 @@ function originalViews(sample) {
 // ---------- run ----------
 let apps = 0, appsWithDiffs = 0, undeclaredTotal = 0, skips = 0, staleSkips = 0;
 const lines = [];
+const idLines = [];
 for (const metaFile of fs.readdirSync(META).sort()) {
   if (!metaFile.endsWith('.json')) continue;
   const meta = JSON.parse(fs.readFileSync(path.join(META, metaFile), 'utf8'));
@@ -257,10 +317,11 @@ for (const metaFile of fs.readdirSync(META).sort()) {
     lines.push(`${meta.class} (${meta.sample}): no original view.xml archived — SKIPPED`);
     continue;
   }
-  const orig = { controls: new Map(), attrs: new Map(), values: new Map(), spelling: new Map(), ns: new Map() };
+  const orig = { controls: new Map(), attrs: new Map(), values: new Map(), spelling: new Map(), ns: new Map(), instances: [] };
   for (const v of views) {
     const p = parseXml(fs.readFileSync(v, 'utf8'));
     for (const [k, uri] of p.ns) if (!orig.ns.has(k)) orig.ns.set(k, uri);
+    orig.instances.push(...p.instances);
     for (const [k, n] of p.controls) orig.controls.set(k, (orig.controls.get(k) || 0) + n);
     for (const [k, q] of p.spelling) if (!orig.spelling.has(k)) orig.spelling.set(k, q);
     for (const [k, s] of p.attrs) {
@@ -330,6 +391,54 @@ for (const metaFile of fs.readdirSync(META).sort()) {
     }
   }
 
+  // enum values, per INSTANCE: a literal on an enum-typed property of a
+  // control the original and the port both carry under the same `id` must be
+  // the same value (since 2026-10-08). This is the per-instance half the
+  // type-level passes above cannot see — app 578's background and app 609's
+  // CheckBox were both a wrong literal on a matching attribute. Only literal
+  // against literal: a port that binds the attribute (the idiomatic
+  // scalar -> two-way binding move) or computes it in ABAP is not compared.
+  if (PROPS) {
+    const oIds = byId(orig.instances);
+    const pIds = byId(port.instances);
+    for (const [id, oi] of oIds) {
+      const pi = pIds.get(id);
+      if (!oi || !pi || oi.key !== pi.key) continue;
+      const cls = classOf(oi.key);
+      for (const [attr, ov] of oi.attrs) {
+        if (/[{}]/.test(ov) || !pi.attrs.has(attr)) continue;
+        const pv = pi.attrs.get(attr);
+        if (/[{}]/.test(pv) || pv === ov || !enumTypeOf(cls, attr)) continue;
+        diffs.push({
+          kind: 'enum value', name: `${simpleName(oi.key)}.${attr}`, altNames: [`${id}.${attr}`],
+          detail: `${simpleName(oi.key)}#${id}.${attr}: original "${ov}" vs port "${pv}"`,
+        });
+      }
+    }
+  }
+
+  // advisory id coverage (--ids): an original control id that occurs
+  // nowhere in the port's source as a whole word and in no deviation text.
+  // An id is how a controller, a test or a CSS rule reaches a control, so a
+  // dropped one is either a deliberate simplification to declare or a
+  // control the port lost. Non-failing until the list has been worked. A
+  // loop-built view (`dynamic`: app 592 writes its 42 section ids as
+  // |Section{ n }|) and a declared structural_diff skip (app 120 unions
+  // sibling variants into the original side) cannot be judged statically
+  // and are left out.
+  if (IDS && !port.dynamic && !declaredSkip) {
+    const portSrc = fs.readFileSync(abapPath, 'utf8');
+    const has = (id) => new RegExp(`(?<![\\w-])${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`).test(portSrc);
+    // an id on a control TYPE the port does not build at all is already the
+    // `control missing` diff above (uxap block inlining, a dropped nested
+    // view) — the id goes with the control and is not listed twice
+    const lost = [...new Set(orig.instances
+      .filter((i) => port.controls.get(i.key))
+      .map((i) => i.attrs.get('id')).filter((id) => id && !/[{}]/.test(id)))]
+      .filter((id) => !has(id) && !declared(id));
+    if (lost.length) idLines.push(`${meta.class} (${meta.sample}): ${lost.length} original id(s) absent from the port and undeclared: ${lost.join(', ')}`);
+  }
+
   if (declaredSkip) {
     if (diffs.length) {
       skips++;
@@ -353,5 +462,9 @@ for (const metaFile of fs.readdirSync(META).sort()) {
 }
 
 console.log(lines.join('\n'));
+if (IDS) {
+  console.log(`\nadvisory — original control ids the port lost (${idLines.length} port(s), never fails):`);
+  console.log(idLines.length ? idLines.join('\n') : '  (none)');
+}
 console.log(`\n${apps} ports checked, ${appsWithDiffs} with structural diffs, ${undeclaredTotal} undeclared differences, ${skips} declared skips (re-verified), ${staleSkips} stale skip(s).`);
 if (STRICT && (undeclaredTotal > 0 || staleSkips > 0)) process.exit(1);

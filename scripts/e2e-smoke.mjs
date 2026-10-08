@@ -38,6 +38,8 @@
  *   node scripts/e2e-smoke.mjs --headed   show the browser (debugging)
  *   node scripts/e2e-smoke.mjs --dump-interactions
  *                       print every loaded interaction (key + source) and exit
+ *   node scripts/e2e-smoke.mjs --list-demo-apps
+ *                       print the src/04 demo-app classes it would boot and exit
  */
 import fs from 'fs';
 import path from 'path';
@@ -96,6 +98,13 @@ const OVERVIEW = 'z2ui5_cl_smpc_app_000';
  * src/04 already FAILS the generators (AGENTS section 3), so this list and the
  * folder cannot drift apart. */
 const DEMO_APPS = Object.keys(loadDemoApps(ROOT).ports).sort();
+// --list-demo-apps: print the demo-app classes this run would boot and exit —
+// needs neither the backend nor a browser; the tooling test holds the list to
+// the registry through it
+if (process.argv.includes('--list-demo-apps')) {
+  for (const cls of DEMO_APPS) console.log(cls);
+  process.exit(0);
+}
 
 // richer per-port checks (optional): ONE MODULE PER PORT under
 // meta/interactions/<class>.mjs, each default-exporting

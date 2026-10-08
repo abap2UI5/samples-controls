@@ -113,6 +113,66 @@ test('structural-diff: a deviation declares a name only as a whole word, not as 
   }
 });
 
+test('structural-diff: an enum literal is compared per instance, aligned by id', () => {
+  const root = makeFixtureRoot();
+  try {
+    // the metadata snapshot says Text.textAlign is enum-typed; nothing else is
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({
+      enums: { 'sap.m.TextAlign': ['Begin', 'End'] },
+      controls: { 'sap.m.Text': { parent: 'sap.ui.core.Control', properties: { textAlign: { type: 'sap.m.TextAlign' }, text: { type: 'string' } } } },
+    }));
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}"', '<Text id="t1" text="{name}" textAlign="End"'));
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    const withText = (id, align) => abap.replace(")->a( n = `text` v = `{NAME}`",
+      `)->a( n = \`id\` v = \`${id}\`\n          )->a( n = \`text\` v = \`{NAME}\`\n          )->a( n = \`textAlign\` v = \`${align}\``);
+    const finding = /! UNDECLARED\s+enum value\s+Text#t1\.textAlign: original "End" vs port "Begin"/;
+    fs.writeFileSync(abapFile, withText('t1', 'Begin'));
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, finding);
+    // the same value passes
+    fs.writeFileSync(abapFile, withText('t1', 'End'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /enum value/);
+    // no shared id, no comparison: instances are aligned by id only
+    fs.writeFileSync(abapFile, withText('t2', 'Begin'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /enum value/);
+    // a deviation naming Control.attribute declares it
+    fs.writeFileSync(abapFile, withText('t1', 'Begin'));
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations.push({ type: 'NOTE', what: 'Text.textAlign is Begin on purpose' });
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /declared\s+enum value\s+Text#t1\.textAlign/);
+    assert.doesNotMatch(r.out, /UNDECLARED\s+enum value/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('structural-diff --ids: lists an original id the port lost, advisory only', () => {
+  const root = makeFixtureRoot();
+  try {
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}"', '<Text id="nameText" text="{name}"'));
+    let r = run(root, 'structural-diff.mjs', '--ids');
+    assert.match(r.out, /z2ui5_cl_smpc_app_001 \(sap\.m\.sample\.FixtureGood\): 1 original id\(s\) absent from the port and undeclared: nameText/);
+    // the advisory never decides the exit code, and the default report omits it
+    assert.equal(r.code, run(root, 'structural-diff.mjs').code);
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /original id\(s\) absent/);
+    // naming the id in a deviation clears it
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations.push({ type: 'NOTE', what: 'the Text drops its id nameText' });
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs', '--ids');
+    assert.doesNotMatch(r.out, /nameText/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('data-fidelity: invented value and unknown asset fail, verbatim data passes', () => {
   const root = makeFixtureRoot();
   try {
@@ -122,6 +182,56 @@ test('data-fidelity: invented value and unknown asset fail, verbatim data passes
     assert.match(r.out, /z2ui5_cl_smpc_app_002: asset `wrong-HT-9999\.jpg` appears nowhere/);
     assert.match(r.out, /z2ui5_cl_smpc_app_002: table row 2 field `city` = "Atlantis"/);
     assert.ok(!r.out.includes('z2ui5_cl_smpc_app_001:'), 'the verbatim port must produce no finding');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a deviation declares a value only as a whole word, not as a substring', () => {
+  const root = makeFixtureRoot();
+  try {
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_002.clas.abap');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    const setDev = (what) => {
+      meta.deviations = [{ type: 'NOTE', what }];
+      fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    };
+    const finding = /z2ui5_cl_smpc_app_002: table row 2 field `city`/;
+    // a longer word that merely CONTAINS the value does not name it
+    setDev('the Atlantisport fork of the sample');
+    assert.match(run(root, 'data-fidelity.mjs').out, finding);
+    setDev('row 2 seeds the city Atlantis on purpose');
+    assert.doesNotMatch(run(root, 'data-fidelity.mjs').out, finding);
+    // the short-value case the substring match got wrong: a one-letter value
+    // hid inside any prose that contained the letter
+    fs.writeFileSync(abapFile, fs.readFileSync(abapFile, 'utf8').replace('`Atlantis`', '`G`'));
+    setDev('weights are kept in Gram, as the original does');
+    assert.match(run(root, 'data-fidelity.mjs').out, finding);
+    setDev('row 2 seeds the city code G (see above)');
+    assert.doesNotMatch(run(root, 'data-fidelity.mjs').out, finding);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a block is paired with the nested array that holds its values, not a same-shaped sibling', () => {
+  const root = makeFixtureRoot();
+  try {
+    // the sample's products sit one level down, in a tree with two groups of
+    // the same shape; the decoy group comes FIRST, so neither the old
+    // "top two levels only" walk nor a source-order tie-break reaches the
+    // right array — the port's block must be paired with Groups/1
+    const row = (Name, City, Image) => ({ Name, City, Image });
+    fs.writeFileSync(path.join(root, 'ui5', 'sap.m', 'FixtureBad', 'data.json'), JSON.stringify({
+      Groups: [
+        { Title: 'Decoy', ProductCollection: [row('Other A', 'Munich', 'img/x1.jpg'), row('Other B', 'Bonn', 'img/x2.jpg')] },
+        { Title: 'Real', ProductCollection: [row('Gladiator MX', 'Hamburg', 'img/product1.jpg'), row('Proctra X', 'Berlin', 'img/product2.jpg')] },
+      ],
+    }, null, 2));
+    const r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 2 field `city` = "Atlantis" but the mock Groups\/1\/ProductCollection row has "Berlin"/);
+    assert.doesNotMatch(r.out, /Groups\/0\//);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -1383,13 +1493,41 @@ test('e2e-changed: a demo app, its interaction module and the registry all boot 
  * those classes (they have no sidecar to match). Asserted against the real
  * repository rather than the fixture, because the registry IS the contract.
  */
-test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', () => {
+test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', async () => {
   const ports = Object.keys(JSON.parse(fs.readFileSync(path.join(REPO, 'ui5/demoapps.json'), 'utf8')).ports);
   assert.ok(ports.length, 'the registry names at least one demo app');
 
-  for (const script of ['e2e-smoke.mjs', 'validate-meta.mjs']) {
-    const src = fs.readFileSync(path.join(REPO, 'scripts', script), 'utf8');
-    assert.match(src, /loadDemoApps/, `${script} must take the demo-app list from lib/demoapps.mjs`);
+  // the reader itself returns exactly the registry's classes
+  const { loadDemoApps } = await import('../lib/demoapps.mjs');
+  assert.deepEqual(Object.keys(loadDemoApps(REPO).ports).sort(), [...ports].sort());
+
+  // and both consumers USE what it returns — asserted by behaviour on a
+  // fixture registry, not by grepping the source for the function name (a
+  // script that imported it and then booted a hard-coded list passed that)
+  const root = makeFixtureRoot();
+  try {
+    for (const s of ['e2e-smoke.mjs', 'validate-meta.mjs', 'lib-a2ui5.mjs', 'lib-smoke.mjs', 'lib-packages.mjs']) {
+      fs.copyFileSync(path.join(REPO, 'scripts', s), path.join(root, 'scripts', s));
+    }
+    fs.symlinkSync(path.join(REPO, 'node_modules'), path.join(root, 'node_modules'), 'dir');
+    fs.writeFileSync(path.join(root, 'ui5', 'demoapps.json'), JSON.stringify({
+      apps: { fixtureApp: { name: 'Fixture App' } },
+      ports: { z2ui5_cl_smpc_demo_777: { app: 'fixtureApp', status: 'generated' } },
+    }));
+    const listed = run(root, 'e2e-smoke.mjs', '--list-demo-apps');
+    assert.equal(listed.code, 0, listed.out);
+    assert.equal(listed.out.trim(), 'z2ui5_cl_smpc_demo_777', 'e2e-smoke boots exactly the registry\'s demo apps');
+
+    const inter = path.join(root, 'meta', 'interactions');
+    fs.mkdirSync(inter, { recursive: true });
+    for (const c of ['z2ui5_cl_smpc_demo_777', 'z2ui5_cl_smpc_demo_999']) {
+      fs.writeFileSync(path.join(inter, `${c}.mjs`), 'export default async (page, expect) => { expect(1).toBe(1); };\n');
+    }
+    const vm = run(root, 'validate-meta.mjs');
+    assert.match(vm.out, /meta\/interactions\/z2ui5_cl_smpc_demo_999\.mjs matches no port sidecar/, 'an unmapped class is an orphan');
+    assert.doesNotMatch(vm.out, /z2ui5_cl_smpc_demo_777\.mjs matches no port sidecar/, 'a mapped demo app is accepted');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
   }
 
   // every demo class in src/04 is mapped there (the generators fail otherwise,

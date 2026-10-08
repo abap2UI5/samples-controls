@@ -1434,7 +1434,8 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   `attr missing Slider.liveChange` findings the moment the verified text
   replaced the one naming the dropped attribute). When you rewrite a
   deviation, keep the naming clause and run `structural-diff --strict` in the
-  same change. The name counts only as a **whole word** (since 2026-10-08):
+  same change. The name counts only as a **whole word** (since 2026-10-08,
+  in `data-fidelity` for a declared VALUE too):
   "ToggleButton" does not declare `Button`, "onSelectionChange" does not
   declare `selectionChange`, and a plural does not name the control - write
   "two Button controls", not "two Buttons". The substring match before it hid
@@ -1459,15 +1460,20 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   The gate is the corpus' primary fidelity check and three of its blind spots
   have each produced a false sidecar sentence:
   1. **There is no `attr extra` kind.** The only kinds emitted are
-     `control missing` / `control extra`, `attr missing` and `binding value`.
+     `control missing` / `control extra`, `attr missing`, `binding value` and
+     `enum value`.
      The attribute pass iterates the *original's* attribute set and reports
      what the port is **missing**; an attribute the port **adds** is never
      looked at (apps 427 and 377 both claimed otherwise).
   2. **Literal attribute values are compared only when the ORIGINAL's value is
-     a simple binding** (`SIMPLE_BIND`, `{path}`). If the original writes a
-     literal, the port's literal is never compared to it — so a swapped
-     `alignItems="Center"`/`"End"` across sibling instances, or a wrong enum
-     value, passes green.
+     a simple binding** (`SIMPLE_BIND`, `{path}`) — with one exception since
+     2026-10-08: an **enum-typed** literal (per `ui5/properties.json`) on a
+     control both sides carry under the same unique `id` is compared per
+     instance (`enum value`; app 578's `backgroundDesign` was that bug). A
+     control without a shared id, and every non-enum literal (texts,
+     booleans, sizes), is still never compared — so a swapped
+     `alignItems="Center"`/`"End"` across id-less sibling instances passes
+     green.
   3. **Attribute presence is a union per control TYPE, not per instance.** Nine
      `FlexBox`es that differ only in their literal values collapse into one
      attribute set, so a value moved from one instance to another is invisible.

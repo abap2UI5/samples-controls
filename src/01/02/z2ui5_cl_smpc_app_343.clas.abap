@@ -72,7 +72,7 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:core` v = `sap.ui.core`
-        )->a( n = `xmlns:f`    v = `sap.ui.layout.form`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
 
         )->tag( n = `HTML` ns = `core`
             )->a( n = `content` v = `<style>.customCellImageBackground\{color:#fff;` &&
@@ -131,7 +131,7 @@ CLASS z2ui5_cl_smpc_app_343 IMPLEMENTATION.
 
     color_select( simple_form ).
 
-    simple_form->ele( n = `SimpleForm` ns = `f`
+    simple_form->ele( n = `SimpleForm` ns = `form`
         )->a( n = `editable`         v = `true`
         )->a( n = `backgroundDesign` v = `Transparent`
         )->a( n = `layout`           v = `ResponsiveGridLayout`

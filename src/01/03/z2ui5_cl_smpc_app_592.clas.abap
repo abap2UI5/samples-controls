@@ -46,7 +46,7 @@ CLASS z2ui5_cl_smpc_app_592 IMPLEMENTATION.
     " twenty-one identical sections, each a stashed ObjectPageLazyLoader around the
     " same Address form - which is the sample: lazy loading WITHOUT custom blocks
     DATA(sections) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:m`    v = `sap.m`

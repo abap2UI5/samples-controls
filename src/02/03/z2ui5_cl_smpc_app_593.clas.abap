@@ -44,7 +44,7 @@ CLASS z2ui5_cl_smpc_app_593 IMPLEMENTATION.
     " the SAME employment:EmploymentBlockJob - which is the sample, a page heavy
     " enough for enableLazyLoading to be worth watching
     DATA(sections) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `height`    v = `100%`
         )->a( n = `xmlns`     v = `sap.uxap`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
         )->a( n = `xmlns:m`   v = `sap.m`

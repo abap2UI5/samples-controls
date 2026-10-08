@@ -45,7 +45,7 @@ CLASS z2ui5_cl_smpc_app_596 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(blocks) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:m`    v = `sap.m`

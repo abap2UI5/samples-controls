@@ -3255,13 +3255,14 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` onLinkPress toasts the constant 'Pressed on Link', so it is wired round-trip-free as follow_up_action( control_global, MESSAGE_TOAST show ) (app 005 idiom). // NOTE: the tiles' state binding is {=` &&
             ` ${state} || 'Loaded' } in the sample - the mock leaves state absent on two of the five tiles and empty on the news tiles. A flat ABAP row would send an empty string into the LoadState enum, so the` &&
             ` fallback is applied at SEED time instead: the absent and empty states are seeded 'Loaded', which is the value the expression produces. The three the mock does set (Loading, Failed, Disabled) are` &&
-            ` carried verbatim - they are what the sample shows. // NOTE: tiles.json carries slideTile1 and slideTile2 as two arrays of the SAME shape and the same length, so the data-fidelity gate cannot tell` &&
-            ` which ABAP block belongs to which and compares both against slideTile1. The seeds are verbatim: t_slide1 is slideTile1 (NewsImage2 / 'August 22, 2016' / the NFL.com headline first) and t_slide2 is`.
-    text1 = text1 && ` slideTile2 (NewsImage1 / 'August 21, 2016' / the Wind Map headline first), each with its own TOOLTIP ('NewsTile n of SlideTile 1' vs '... SlideTile 2'), BACKGROUNDIMAGE, FOOTER, CONTENTTEXT, SUBTITLE` &&
-            ` and STATE. Nothing here is changed from the mock beyond the two folds this sidecar already records - the host absolutization on BACKGROUNDIMAGE and the 'Loaded' seed for an empty STATE. // NOTE: the` &&
-            ` four background images come from the sample's own images folder and point at the sdk.openui5.org host per the offline asset-URL rule; the mock writes them relative as` &&
-            ` 'test-resources/sap/m/demokit/sample/GenericTileLineMode/images/...'. The LinkTileContent hrefs stay the sample's own http://www.sap.com. // NOTE: not yet verified in a running system: the LineMode` &&
-            ` row of tiles, the two auto-advancing SlideTiles, the scope switch and the Remove-action toast. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_606.mjs).`.
+            ` carried verbatim - they are what the sample shows. // NOTE: tiles.json carries slideTile1 and slideTile2 as two arrays of the SAME shape and the same length, so the data-fidelity gate could not tell` &&
+            ` which ABAP block belongs to which and compared both against slideTile1 until 2026-10-08; its matcher now also weighs which array holds the block's values and pairs each block with its own. The seeds`.
+    text1 = text1 && ` are verbatim: t_slide1 is slideTile1 (NewsImage2 / 'August 22, 2016' / the NFL.com headline first) and t_slide2 is slideTile2 (NewsImage1 / 'August 21, 2016' / the Wind Map headline first), each with` &&
+            ` its own TOOLTIP ('NewsTile n of SlideTile 1' vs '... SlideTile 2'), BACKGROUNDIMAGE, FOOTER, CONTENTTEXT, SUBTITLE and STATE. Nothing here is changed from the mock beyond the two folds this sidecar` &&
+            ` already records - the host absolutization on BACKGROUNDIMAGE and the 'Loaded' seed for an empty STATE. // NOTE: the four background images come from the sample's own images folder and point at the` &&
+            ` sdk.openui5.org host per the offline asset-URL rule; the mock writes them relative as 'test-resources/sap/m/demokit/sample/GenericTileLineMode/images/...'. The LinkTileContent hrefs stay the sample's` &&
+            ` own http://www.sap.com. // NOTE: not yet verified in a running system: the LineMode row of tiles, the two auto-advancing SlideTiles, the scope switch and the Remove-action toast. **e2e-verified` &&
+            ` 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_606.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.GenericTile`                     name = `GenericTileLineMode`                           class = `z2ui5_cl_smpc_app_606` path = `src/02/01/z2ui5_cl_smpc_app_606.clas.abap`
         score = 5

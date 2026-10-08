@@ -34,7 +34,7 @@
     },
     {
       "type": "NOTE",
-      "what": "tiles.json carries slideTile1 and slideTile2 as two arrays of the SAME shape and the same length, so the data-fidelity gate cannot tell which ABAP block belongs to which and compares both against slideTile1. The seeds are verbatim: t_slide1 is slideTile1 (NewsImage2 / 'August 22, 2016' / the NFL.com headline first) and t_slide2 is slideTile2 (NewsImage1 / 'August 21, 2016' / the Wind Map headline first), each with its own TOOLTIP ('NewsTile n of SlideTile 1' vs '... SlideTile 2'), BACKGROUNDIMAGE, FOOTER, CONTENTTEXT, SUBTITLE and STATE. Nothing here is changed from the mock beyond the two folds this sidecar already records - the host absolutization on BACKGROUNDIMAGE and the 'Loaded' seed for an empty STATE."
+      "what": "tiles.json carries slideTile1 and slideTile2 as two arrays of the SAME shape and the same length, so the data-fidelity gate could not tell which ABAP block belongs to which and compared both against slideTile1 until 2026-10-08; its matcher now also weighs which array holds the block's values and pairs each block with its own. The seeds are verbatim: t_slide1 is slideTile1 (NewsImage2 / 'August 22, 2016' / the NFL.com headline first) and t_slide2 is slideTile2 (NewsImage1 / 'August 21, 2016' / the Wind Map headline first), each with its own TOOLTIP ('NewsTile n of SlideTile 1' vs '... SlideTile 2'), BACKGROUNDIMAGE, FOOTER, CONTENTTEXT, SUBTITLE and STATE. Nothing here is changed from the mock beyond the two folds this sidecar already records - the host absolutization on BACKGROUNDIMAGE and the 'Loaded' seed for an empty STATE."
     },
     {
       "type": "NOTE",

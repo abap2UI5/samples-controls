@@ -73,8 +73,8 @@ CLASS z2ui5_cl_smpc_app_077 IMPLEMENTATION.
 
                     )->end(
                     )->tag( `NotificationListItem`
-                        )->a( n = `title` v = `New order (#2525)`
-                        )->a( n = `description`     t = desc_long
+                        )->a( n = `title`             v = `New order (#2525)`
+                        )->a( n = `description`       t = desc_long
                         )->a( n = `showCloseButton`   v = `true`
                         )->a( n = `datetime`          v = `1 hour`
                         )->a( n = `unread`            v = `true`
@@ -176,7 +176,7 @@ CLASS z2ui5_cl_smpc_app_077 IMPLEMENTATION.
 
                     )->end(
                     )->tag( `NotificationListItem`
-                        )->a( n = `title` v = `New order (#2525)`
+                        )->a( n = `title`           v = `New order (#2525)`
                         )->a( n = `description`     t = desc_long
                         )->a( n = `showCloseButton` v = `true`
                         )->a( n = `datetime`        v = `1 hour`
@@ -277,8 +277,8 @@ CLASS z2ui5_cl_smpc_app_077 IMPLEMENTATION.
 
                     )->end(
                     )->tag( `NotificationListItem`
-                        )->a( n = `title` v = `New order (#2525)`
-                        )->a( n = `description`     t = desc_long
+                        )->a( n = `title`             v = `New order (#2525)`
+                        )->a( n = `description`       t = desc_long
                         )->a( n = `showCloseButton`   v = `true`
                         )->a( n = `datetime`          v = `1 hour`
                         )->a( n = `unread`            v = `true`
@@ -366,8 +366,8 @@ CLASS z2ui5_cl_smpc_app_077 IMPLEMENTATION.
                                                                                                ( `Item Closed: {0}` )
                                                                                                ( `${$source>/title}` ) ) )
                     )->tag( `NotificationListItem`
-                        )->a( n = `title` v = `New order (#2525)`
-                        )->a( n = `description`     t = desc_long
+                        )->a( n = `title`             v = `New order (#2525)`
+                        )->a( n = `description`       t = desc_long
                         )->a( n = `showCloseButton`   v = `true`
                         )->a( n = `datetime`          v = `1 hour`
                         )->a( n = `unread`            v = `true`
