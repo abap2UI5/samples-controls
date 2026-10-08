@@ -30,9 +30,15 @@ None of the three was a broken port:
   for a bare `.sapMPopover`.
 - **demo_004, card number** - "did not keep 4111111111111111 after its
   round-trip", never reproduced locally (4 of 4 green, and green under 20x CPU
-  throttling). Each card field's Enter is one POST; the module now waits for
-  that POST's answer before the next field instead of trusting a 400 ms quiet
-  spell that cannot see a round-trip which has not started yet.
+  throttling, which slows the page's timers and the input pipeline alike). The
+  first guess - a previous answer resetting the field - was wrong: with the
+  failure message extended to name the value, e2e-pr read
+  `"1111-1111-___4-1111"`. A MaskInput puts its caret on the first placeholder
+  only in a `setTimeout` after focus (`_positionCaret`); the click leaves it
+  where the mouse landed, mid-field, and the `4` went there before the timer
+  moved the caret to 0. The module now waits after the click until the caret
+  sits on the first placeholder, for both MaskInputs. Waiting for each card
+  Enter's POST (the first guess) stays: it is the deterministic wait anyway.
 
 All three verified with an `E2E_ONLY='demo_004|app_084|app_000'` build
 against abap2UI5 main: `e2e-smoke: 3 app(s), 0 failing`. The three lessons

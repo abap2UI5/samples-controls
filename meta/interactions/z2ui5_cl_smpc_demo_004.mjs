@@ -376,14 +376,29 @@ export default async (page, expect) => {
       }, suffix).catch(() => 'unreadable');
       throw new Error(`${e.message}: ${got}`);
     });
+  /* A MaskInput moves the caret only AFTER focus: onfocusin puts the mask
+   * in and schedules _positionCaret( ), which jumps to the first placeholder
+   * in a setTimeout. The click leaves the caret where the mouse landed - the
+   * middle of the field - so a key typed before that timer runs goes there,
+   * and the rest overwrite each other from position 0: the nightly and e2e-pr
+   * of 2026-10-08 read "1111-1111-___4-1111" for 4111111111111111, never
+   * locally. So click, then wait until the caret really sits at the first
+   * placeholder (an empty mask: position 0) before the first key */
+  const focusMask = async (suffix) => {
+    await cardInput(suffix).click();
+    await waitForUi5(page, (s) => {
+      const el = document.activeElement;
+      return !!el && el.id.endsWith(`--${s}-inner`) && el.selectionStart === 0 && el.selectionEnd === 0;
+    }, `the card field ${suffix} never put its caret on the first placeholder after the click`, suffix);
+  };
   await cardInput('creditCardHolderName').fill('Jane Doe');
   await enter('creditCardHolderName');
   await settled('creditCardHolderName', 'Jane Doe');
-  await cardInput('creditCardNumber').click();
+  await focusMask('creditCardNumber');
   await cardInput('creditCardNumber').pressSequentially('4111111111111111');
   await enter('creditCardNumber');
   await settled('creditCardNumber', '4111111111111111');
-  await cardInput('creditCardSecurityNumber').click();
+  await focusMask('creditCardSecurityNumber');
   await cardInput('creditCardSecurityNumber').pressSequentially('123');
   await enter('creditCardSecurityNumber');
   await settled('creditCardSecurityNumber', '123');
