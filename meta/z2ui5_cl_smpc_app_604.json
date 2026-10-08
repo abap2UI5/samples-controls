@@ -22,7 +22,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the five enum options are picked by RadioButtonGroups, whose bindable property is selectedIndex - an integer - while the handlers read getSelectedButton().getText() and pass that string to the setter. The port binds selectedIndex two-way and adds ONE round trip (event OPTIONS, shared by the four groups and the scroll-mode Switch) that turns the five indices into the five enum names the Carousel binds. The alternative, a ternary chain in an expression binding, was written first and dropped: it pushed two attribute lines past the 255-character abapGit limit."
+      "what": "the five enum options are picked by RadioButtonGroups, whose bindable property is selectedIndex - an integer - while the handlers read getSelectedButton().getText() and pass that string to the setter. The port binds selectedIndex two-way and adds ONE round trip (event OPTIONS, shared by the four groups and the scroll-mode Switch) that turns the five indices into the five enum names the Carousel binds. The initial pick moves with it: the original marks the Translucent RadioButton selected, the port seeds background_idx 1 on its group's selectedIndex, so no RadioButton carries selected. The alternative, a ternary chain in an expression binding, was written first and dropped: it pushed two attribute lines past the 255-character abapGit limit."
     },
     {
       "type": "NOTE",

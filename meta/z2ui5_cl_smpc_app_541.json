@@ -33,7 +33,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onBeforeRendering / handleViewChange / changeStandardItemsPerView exist only to swap the legend's standardItems between [Today, Selected, NonWorkingDay] on the OneMonth view and [Today, WorkingDay, NonWorkingDay] everywhere else. viewKey and standardItems are both bindable, so the key is one shared field and the legend carries the switch as an expression binding over it - all three handlers are dropped."
+      "what": "onBeforeRendering / handleViewChange / changeStandardItemsPerView exist only to swap the legend's standardItems between [Today, Selected, NonWorkingDay] on the OneMonth view and [Today, WorkingDay, NonWorkingDay] everywhere else. viewKey and standardItems are both bindable, so the key is one shared field and the legend carries the switch as an expression binding over it - all three handlers are dropped, and the PlanningCalendar's viewChange attribute with them."
     },
     {
       "type": "NOTE",

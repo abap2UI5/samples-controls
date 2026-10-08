@@ -1574,15 +1574,15 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` renders but is not pressable, so the withAction card's navigation silently does nothing. // IMPROVISED: All SEVEN sap.ui.integration.widgets.Card children take their content from cardManifests.json` &&
             ` through manifest="{manifests>/...}". A Card manifest is either a JS OBJECT or a URL to a single manifest file (Card.createManifest), and the sample's seven manifests live inside ONE file under` &&
             ` wrapper keys, so neither form is reachable from a declarative view. Each w:Card is therefore rebuilt as a declarative sap.f.Card carrying the manifest's own card:Header and its content: a sap.m.List` &&
-            ` of StandardListItems for the four List cards (orders, tasks, contacts, withAction), a sap.m.Table with three Columns and a ColumnListItem row for the Table card (employees), a sap.m.List of`.
-    text1 = text1 && ` DisplayListItems for the Object card (contact, whose three Navigation actions become the URLHELPER tel:/mailto: wires the manifest spells out) and a VBox with the text and the Go-to-page Link for the` &&
-            ` AdaptiveCard (summary). Same seven cards in the same seven grid slots with the same content; structural-diff reports w:Card and Card.manifest as missing and every rebuilt control as extra. The two` &&
-            ` CardBadgeCustomData badges on the orders card go with the w:Card - sap.f.Card has no badge counterpart. // IMPROVISED: onBorderReached toasts '<panel header> border reached' and then hands the` &&
-            ` KEYBOARD FOCUS to the neighbouring grid, which it finds by comparing the four grids' bounding rectangles against the arrow key that was pressed. Geometry and focus are client facts a backend cannot` &&
-            ` reach, so the port keeps the toast - composed on the client, one per grid with that grid's own header text - and drops the focus hand-off. The four borderReached wires are therefore live but only` &&
-            ` announce the border. // IMPROVISED: RevealGrid is a sample-local JS helper module that draws a DOM overlay outlining all four grids. It has no declarative equivalent, so the ToggleButton is kept but`.
-    text1 = text1 && ` its press wire is dropped (structural-diff reports ToggleButton.press as attr missing) - same treatment as app 168, which ships the same helper. // NOTE: The four grids, the seven rebuilt cards and` &&
-            ` the four border-reached toasts are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_528.mjs). // NOTE: The URLHELPER` &&
+            ` of StandardListItem rows for the four List cards (orders, tasks, contacts, withAction), a sap.m.Table with three Column controls and a ColumnListItem row for the Table card (employees), a sap.m.List`.
+    text1 = text1 && ` of DisplayListItem rows for the Object card (contact, whose three Navigation actions become the URLHELPER tel:/mailto: wires the manifest spells out) and a VBox with the text and the Go-to-page Link` &&
+            ` for the AdaptiveCard (summary). Same seven cards in the same seven grid slots with the same content; structural-diff reports w:Card and Card.manifest as missing and every rebuilt control as extra.` &&
+            ` The two CardBadgeCustomData badges on the orders card go with the w:Card - sap.f.Card has no badge counterpart. // IMPROVISED: onBorderReached toasts '<panel header> border reached' and then hands` &&
+            ` the KEYBOARD FOCUS to the neighbouring grid, which it finds by comparing the four grids' bounding rectangles against the arrow key that was pressed. Geometry and focus are client facts a backend` &&
+            ` cannot reach, so the port keeps the toast - composed on the client, one per grid with that grid's own header text - and drops the focus hand-off. The four borderReached wires are therefore live but` &&
+            ` only announce the border. // IMPROVISED: RevealGrid is a sample-local JS helper module that draws a DOM overlay outlining all four grids. It has no declarative equivalent, so the ToggleButton is kept`.
+    text1 = text1 && ` but its press wire is dropped (structural-diff reports ToggleButton.press as attr missing) - same treatment as app 168, which ships the same helper. // NOTE: The four grids, the seven rebuilt cards` &&
+            ` and the four border-reached toasts are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_528.mjs). // NOTE: The URLHELPER` &&
             ` TRIGGER_EMAIL action takes an OBJECT literal as its third argument - the frontend reads params.EMAIL/params.SUBJECT - so the argument must open with { to stay raw through get_t_arg. A bare string is` &&
             ` wrapped in a JS string literal and params.EMAIL comes out undefined, opening a blank mailto:. The two TRIGGER_TEL wires on the same card already used the object form; the email one did not. The` &&
             ` manifest's action is mailto:{email} with no subject, so only EMAIL travels. // NOTE: The objectContent/contact manifest header carries "icon": { "text": "DM" }, an initials avatar. The rebuilt` &&
@@ -2121,22 +2121,23 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` single frontend action in this port. The Switches for showPageIndicator and responsive, and the Inputs for the visible page count and minPageWidth, therefore need no handler at all. // NOTE: the five`.
     text1 = text1 && ` enum options are picked by RadioButtonGroups, whose bindable property is selectedIndex - an integer - while the handlers read getSelectedButton().getText() and pass that string to the setter. The` &&
             ` port binds selectedIndex two-way and adds ONE round trip (event OPTIONS, shared by the four groups and the scroll-mode Switch) that turns the five indices into the five enum names the Carousel binds.` &&
-            ` The alternative, a ternary chain in an expression binding, was written first and dropped: it pushed two attribute lines past the 255-character abapGit limit. // NOTE: each of the six bound enum` &&
-            ` values carries the null fallback ({= ${X} || null }, apps 548/555 idiom): a flat ABAP row serializes every field, so before the first OPTIONS round trip an unset enum would arrive as an empty string` &&
-            ` and UI5 would reject the whole view. null maps to the property's default, which is what 'not set' means. model_init also seeds all six from the sample's own initial selections (Translucent` &&
-            ` background, page indicator on, Solid indicator background and border). // NOTE: onResizeCarouselContainer sets the Panel's width to <value>% and its height to Math.floor(650 * value / 100) + 'px' on`.
-    text1 = text1 && ` every liveChange. Both are expression bindings over the two-way bound Slider value here, so the container follows the slider in the browser with no round trip - and the liveChange wire is dropped,` &&
-            ` since a round trip per keystroke would be slower AND lossy (app 582 carries the same fold). // IMPROVISED: _setNumberOfImagesInCarousel destroys the pages aggregation and adds N new sap.m.Image` &&
-            ` controls, each bound to img>/images/<i>. An aggregation cannot be rebuilt control-by-control from a backend, so pages is BOUND to a table and the Number input's change (not liveChange - the final` &&
-            ` value, per the prefer-a-bindable-property rule) rebuilds it from the nine mock images, keeping the sample's own 1..9 guard. The nine Images carry the alt text addPage composes ('Example picture <n>')` &&
-            ` and the same densityAware / decorative flags. // NOTE: the nine image paths come from sap/ui/demo/mock/img.json /images and point at the sdk.openui5.org host per the offline asset-URL rule; the mock` &&
-            ` writes them relative as 'test-resources/sap/ui/documentation/sdk/images/...'. // NOTE: num_images, visible_pages and min_page_width are TYPE p LENGTH 8 DECIMALS 0, not i (widened 2026-08-26). Each is`.
-    text1 = text1 && ` two-way bound to a FREE-ENTRY Input of type Number and ajson's value_to_abap writes the typed text back with a bare ABAP assignment - there is no CONV to guard - so an eleven-digit entry overflowed i` &&
-            ` and killed the round-trip with JSON_PARSING_ERROR - attribute 'NUM_IMAGES' before on_event ran. That made pages_rebuild's own 1..9 guard unreachable for exactly the entries it rejects, and` &&
-            ` visible_pages / min_page_width have no guard at all, so nothing at all stood between the keyboard and the conversion for those two. p keeps the JSON node numeric (ajson classes packed as numeric), so` &&
-            ` the bound int properties visiblePagesCount and minPageWidth see the same wire as before. Same fix and same type as apps 180, 247 and 249. // NOTE: not yet verified in a running system: that each of` &&
-            ` the five radio groups repaints the carousel, that the slider resizes its container and that the image-count input rebuilds the pages. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
-            ` meta/interactions/z2ui5_cl_smpc_app_604.mjs).`.
+            ` The initial pick moves with it: the original marks the Translucent RadioButton selected, the port seeds background_idx 1 on its group's selectedIndex, so no RadioButton carries selected. The` &&
+            ` alternative, a ternary chain in an expression binding, was written first and dropped: it pushed two attribute lines past the 255-character abapGit limit. // NOTE: each of the six bound enum values` &&
+            ` carries the null fallback ({= ${X} || null }, apps 548/555 idiom): a flat ABAP row serializes every field, so before the first OPTIONS round trip an unset enum would arrive as an empty string and UI5` &&
+            ` would reject the whole view. null maps to the property's default, which is what 'not set' means. model_init also seeds all six from the sample's own initial selections (Translucent background, page`.
+    text1 = text1 && ` indicator on, Solid indicator background and border). // NOTE: onResizeCarouselContainer sets the Panel's width to <value>% and its height to Math.floor(650 * value / 100) + 'px' on every liveChange.` &&
+            ` Both are expression bindings over the two-way bound Slider value here, so the container follows the slider in the browser with no round trip - and the liveChange wire is dropped, since a round trip` &&
+            ` per keystroke would be slower AND lossy (app 582 carries the same fold). // IMPROVISED: _setNumberOfImagesInCarousel destroys the pages aggregation and adds N new sap.m.Image controls, each bound to` &&
+            ` img>/images/<i>. An aggregation cannot be rebuilt control-by-control from a backend, so pages is BOUND to a table and the Number input's change (not liveChange - the final value, per the` &&
+            ` prefer-a-bindable-property rule) rebuilds it from the nine mock images, keeping the sample's own 1..9 guard. The nine Images carry the alt text addPage composes ('Example picture <n>') and the same` &&
+            ` densityAware / decorative flags. // NOTE: the nine image paths come from sap/ui/demo/mock/img.json /images and point at the sdk.openui5.org host per the offline asset-URL rule; the mock writes them`.
+    text1 = text1 && ` relative as 'test-resources/sap/ui/documentation/sdk/images/...'. // NOTE: num_images, visible_pages and min_page_width are TYPE p LENGTH 8 DECIMALS 0, not i (widened 2026-08-26). Each is two-way` &&
+            ` bound to a FREE-ENTRY Input of type Number and ajson's value_to_abap writes the typed text back with a bare ABAP assignment - there is no CONV to guard - so an eleven-digit entry overflowed i and` &&
+            ` killed the round-trip with JSON_PARSING_ERROR - attribute 'NUM_IMAGES' before on_event ran. That made pages_rebuild's own 1..9 guard unreachable for exactly the entries it rejects, and visible_pages` &&
+            ` / min_page_width have no guard at all, so nothing at all stood between the keyboard and the conversion for those two. p keeps the JSON node numeric (ajson classes packed as numeric), so the bound int` &&
+            ` properties visiblePagesCount and minPageWidth see the same wire as before. Same fix and same type as apps 180, 247 and 249. // NOTE: not yet verified in a running system: that each of the five radio` &&
+            ` groups repaints the carousel, that the slider resizes its container and that the image-count input rebuilds the pages. **e2e-verified 2026-08-25** (nightly e2e interaction,`.
+    text1 = text1 && ` meta/interactions/z2ui5_cl_smpc_app_604.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Carousel`                        name = `CarouselWithDisplayOptions`                    class = `z2ui5_cl_smpc_app_604` path = `src/02/01/z2ui5_cl_smpc_app_604.clas.abap`
         score = 5
@@ -2986,37 +2987,37 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = text1 ) ).
 
     text1 = `NOTE: the bound lists="{/ProductCollectionStats/Filters}" collection is represented as two static FacetFilterLists (Category, SupplierName) - the original's stats model yields exactly these two lists,` &&
-            ` so this is a faithful equivalent; the facet values inside each list stay bound to a FacetFilterItem template. The stats value objects carry only text + data fields (no key), so the template's key` &&
-            ` binds {TEXT} (the original's key='{key}' resolves undefined against the same mock) and the counter binds the data value as {COUNT}. This is the type="Simple" variant of the FacetFilter (app 022 ports` &&
-            ` the near-identical type="Light" FacetFilterLight); the difference is the FacetFilter type plus the confirm handling below. // NOTE: selection transport - every FacetFilterItem binds selected two-way;` &&
-            ` on the FacetFilter confirm (and on reset) the backend reads/clears the flags and re-filters. This is the documented 1:1 path (CAPABILITIES.md marks controller-read FacetFilter/List multi-select as`.
-    text1 = text1 && ` expressible with app 022 as its evidence port), not a workaround; the model is applied before on_event runs. The original's handleConfirm also shows a MessageToast 'confirm event fired' - reproduced` &&
-            ` 1:1 via client->message_toast_display after applying the filter. The FacetFilterSimple view does not wire the per-list listClose (only the confirm event drives filtering), so no listClose attribute` &&
-            ` is emitted. // NOTE: the original controller appends the sap.m.sample.Table component's table with its first cell swapped for an ObjectIdentifier {Name}/{Category}; that table is rebuilt inline. The` &&
-            ` price column keeps the original sap.ui.model.type.Currency composite binding 1:1 (raw binding-info string over a numeric PRICE field). // NOTE: the sticky options Label and the three sticky CheckBox` &&
-            ` controls are BACK (2026-08-05). The earlier rationale - 'neither an array property binding nor a setSticky whitelist entry is a proven path' - was wrong on the first half: app 009 binds Table.sticky`.
-    text1 = text1 && ` to an ABAP string table and is live-verified. This port now uses that same pattern: sticky is bound to t_sticky, each CheckBox round-trips ${$source>/text} + ${$parameters>/selected} and the backend` &&
-            ` maintains the set (a set operation is backend work; setSticky was whitelisted upstream in the same round for the imperative case, but the bound path is the thin-frontend one). The three controls come` &&
-            ` from the appended sap.m.sample.Table view, which this port rebuilds inline, so they count as extra against the archived FacetFilter original. The neighbouring onPopinLayoutChanged is unchanged and` &&
-            ` still expressed as bound properties (the app-009 pattern), so the ComboBox ``change`` attribute stays dropped: its selectedKey is bound two-way and the Table's popinLayout is an expression binding` &&
-            ` over it, including the Block default. // NOTE: Restored 2026-08-05/06. The sticky options Label and the three sticky CheckBoxes are present and work: Table.sticky is an ARRAY-valued property, and` &&
-            ` binding it to a plain ABAP string table IS the proven path - app 009 does exactly that and is live-verified. Each CheckBox select round-trips ${$source>/text} and ${$parameters>/selected}, the ABAP`.
-    text1 = text1 && ` handler inserts or removes that option and pushes the model back, which is the array maintenance the original's onSelect does with setSticky. The sidecar's earlier claim - that neither an array` &&
-            ` property binding nor a setSticky whitelist entry was a proven path - was FALSE when it was written and is corrected here rather than quietly deleted; the whitelist entry that followed` &&
-            ` (CONTROL_METHODS setSticky) closes a different footgun, an imperative call that silently received a string. // 1.71: the p:ColumnAIAction column plugin (sap.m.plugins, far newer than UI5 1.71) is` &&
-            ` dropped with its dependents aggregation and press toast - the plugin class does not exist on a 1.71 runtime, so keeping it would crash view creation there. // NOTE: the original's nested` &&
-            ` items-binding filter (ORs inside each facet group, AND across the groups, model untouched) is expressed 1:1 as a declarative compound filter: apply_filter builds the groups JSON from the two-way` &&
-            ` bound selected flags and schedules follow_up_action cs_event-binding_call filter on idProductsTable/items (compound groups implemented upstream 2026-07-20, pr/binding-call-compound-filters). The`.
-    text1 = text1 && ` filter is issued from apply_filter( ) AND re-issued from view_display( ) (via the shared filter_issue( ), guarded by the last-issued payload in filter_live), because it lives on the binding and not` &&
-            ` in the model - the app-000/607 idiom. // NOTE: the original derives the ObjectNumber weight state in its frontend Formatter.js (weightState: KG conversion + Success/Warning/Error thresholds). That is` &&
-            ` business logic, so - abap2UI5 being a thin frontend - it is computed in ABAP model_init into a WEIGHT_STATE field and bound state="{WEIGHT_STATE}", not via a frontend formatter (core:require` &&
-            ` dropped). Visually 1:1 with the original. // NOTE: Measured 2026-08-26 with a probe, before the fix: filter to Category=Accessories (34 of 123 products), then restore the very same draft through the` &&
-            ` framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what app_state_get_href( ) hands out). That request carries no frontend id, so the backend takes factory_first_start ->` &&
-            ` db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which is the only way a port that never calls another app reaches view_display( ) a second`.
-    text1 = text1 && ` time. The rebuilt view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" - the client-side filter lives on the LIVE items binding and dies with it, the two-way` &&
-            ` bound selected flags are class state and survive. Re-issuing the identical binding_call against the rebuilt binding put the 34 rows back, and the empty form ([] -> buildFilterGroups ->` &&
-            ` binding.filter([]) in core/actions/ControlCall.js) clears without error, which is why the guard is "has a filter ever been issued" and not a selection scan. Statement order in ABAP is irrelevant:` &&
-            ` View1.controller.js awaits every T_SYSTEM display before it runs a T_CUSTOM follow-up.`.
+            ` so this is a faithful equivalent; structural-diff therefore reports the second FacetFilterList as control extra; the facet values inside each list stay bound to a FacetFilterItem template. The stats` &&
+            ` value objects carry only text + data fields (no key), so the template's key binds {TEXT} (the original's key='{key}' resolves undefined against the same mock) and the counter binds the data value as` &&
+            ` {COUNT}. This is the type="Simple" variant of the FacetFilter (app 022 ports the near-identical type="Light" FacetFilterLight); the difference is the FacetFilter type plus the confirm handling below.` &&
+            ` // NOTE: selection transport - every FacetFilterItem binds selected two-way; on the FacetFilter confirm (and on reset) the backend reads/clears the flags and re-filters. This is the documented 1:1` &&
+            ` path (CAPABILITIES.md marks controller-read FacetFilter/List multi-select as expressible with app 022 as its evidence port), not a workaround; the model is applied before on_event runs. The`.
+    text1 = text1 && ` original's handleConfirm also shows a MessageToast 'confirm event fired' - reproduced 1:1 via client->message_toast_display after applying the filter. The FacetFilterSimple view does not wire the` &&
+            ` per-list listClose (only the confirm event drives filtering), so no listClose attribute is emitted. // NOTE: the original controller appends the sap.m.sample.Table component's table with its first` &&
+            ` cell swapped for an ObjectIdentifier {Name}/{Category}; that table is rebuilt inline. The price column keeps the original sap.ui.model.type.Currency composite binding 1:1 (raw binding-info string` &&
+            ` over a numeric PRICE field). // NOTE: the sticky options Label and the three sticky CheckBox controls are BACK (2026-08-05). The earlier rationale - 'neither an array property binding nor a setSticky` &&
+            ` whitelist entry is a proven path' - was wrong on the first half: app 009 binds Table.sticky to an ABAP string table and is live-verified. This port now uses that same pattern: sticky is bound to` &&
+            ` t_sticky, each CheckBox round-trips ${$source>/text} + ${$parameters>/selected} and the backend maintains the set (a set operation is backend work; setSticky was whitelisted upstream in the same`.
+    text1 = text1 && ` round for the imperative case, but the bound path is the thin-frontend one). The three controls come from the appended sap.m.sample.Table view, which this port rebuilds inline, so they count as extra` &&
+            ` against the archived FacetFilter original. The neighbouring onPopinLayoutChanged is unchanged and still expressed as bound properties (the app-009 pattern), so the ComboBox ``change`` attribute stays` &&
+            ` dropped: its selectedKey is bound two-way and the Table's popinLayout is an expression binding over it, including the Block default. // NOTE: Restored 2026-08-05/06. The sticky options Label and the` &&
+            ` three sticky CheckBoxes are present and work: Table.sticky is an ARRAY-valued property, and binding it to a plain ABAP string table IS the proven path - app 009 does exactly that and is` &&
+            ` live-verified. Each CheckBox select round-trips ${$source>/text} and ${$parameters>/selected}, the ABAP handler inserts or removes that option and pushes the model back, which is the array` &&
+            ` maintenance the original's onSelect does with setSticky. The sidecar's earlier claim - that neither an array property binding nor a setSticky whitelist entry was a proven path - was FALSE when it was`.
+    text1 = text1 && ` written and is corrected here rather than quietly deleted; the whitelist entry that followed (CONTROL_METHODS setSticky) closes a different footgun, an imperative call that silently received a` &&
+            ` string. // 1.71: the p:ColumnAIAction column plugin (sap.m.plugins, far newer than UI5 1.71) is dropped with its dependents aggregation and press toast - the plugin class does not exist on a 1.71` &&
+            ` runtime, so keeping it would crash view creation there. // NOTE: the original's nested items-binding filter (ORs inside each facet group, AND across the groups, model untouched) is expressed 1:1 as a` &&
+            ` declarative compound filter: apply_filter builds the groups JSON from the two-way bound selected flags and schedules follow_up_action cs_event-binding_call filter on idProductsTable/items (compound` &&
+            ` groups implemented upstream 2026-07-20, pr/binding-call-compound-filters). The filter is issued from apply_filter( ) AND re-issued from view_display( ) (via the shared filter_issue( ), guarded by the` &&
+            ` last-issued payload in filter_live), because it lives on the binding and not in the model - the app-000/607 idiom. // NOTE: the original derives the ObjectNumber weight state in its frontend`.
+    text1 = text1 && ` Formatter.js (weightState: KG conversion + Success/Warning/Error thresholds). That is business logic, so - abap2UI5 being a thin frontend - it is computed in ABAP model_init into a WEIGHT_STATE field` &&
+            ` and bound state="{WEIGHT_STATE}", not via a frontend formatter (core:require dropped). Visually 1:1 with the original. // NOTE: Measured 2026-08-26 with a probe, before the fix: filter to` &&
+            ` Category=Accessories (34 of 123 products), then restore the very same draft through the framework's own bookmark URL (?app_start=<class>#/z2ui5-xapp-state=<draft>, what app_state_get_href( ) hands` &&
+            ` out). That request carries no frontend id, so the backend takes factory_first_start -> db_load(draft): check_on_navigated( ) is true while check_on_init( ) stays false, i.e. the ELSEIF branch, which` &&
+            ` is the only way a port that never calls another app reaches view_display( ) a second time. The rebuilt view came back with 123 rows and ZERO aFilters while the FacetFilter still read "Accessories" -` &&
+            ` the client-side filter lives on the LIVE items binding and dies with it, the two-way bound selected flags are class state and survive. Re-issuing the identical binding_call against the rebuilt`.
+    text1 = text1 && ` binding put the 34 rows back, and the empty form ([] -> buildFilterGroups -> binding.filter([]) in core/actions/ControlCall.js) clears without error, which is why the guard is "has a filter ever been` &&
+            ` issued" and not a selection scan. Statement order in ABAP is irrelevant: View1.controller.js awaits every T_SYSTEM display before it runs a T_CUSTOM follow-up.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.FacetFilter`                     name = `FacetFilterSimple`                             class = `z2ui5_cl_smpc_app_235` path = `src/01/01/z2ui5_cl_smpc_app_235.clas.abap`
         score = 5
@@ -3420,8 +3421,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` policy, the property gate does not resolve it) and sap.m.IconTabFilter.items (since 1.77, the nested sub-tabs of iconTabBar8). The app needs a UI5 release >= 1.80.` ) ).
 
     text1 = `POST-1.71: sap.m.IconTabBar.maxNestingLevel is @since 1.79 - the StepInput of this sample exists to change it, so the property is kept 1:1 and the port needs a UI5 runtime >= 1.79. // NOTE: onInit` &&
-            ` adds the 30 IconTabFilters (with their content Texts) in a loop with addItem( ). abap2UI5 has no client-side control factory, so the port binds the items aggregation to a table with the same 30 rows` &&
-            ` and declares one IconTabFilter template - structural-diff reports both as control extra because the original's view carries only the empty IconTabBar (apps 465-467 precedent). // NOTE:` &&
+            ` adds the 30 IconTabFilters (each with its content Text) in a loop with addItem( ). abap2UI5 has no client-side control factory, so the port binds the items aggregation to a table with the same 30` &&
+            ` rows and declares one IconTabFilter template - structural-diff reports both as control extra because the original's view carries only the empty IconTabBar (apps 465-467 precedent). // NOTE:` &&
             ` onMaxNestingLevelChange calls iconTabBar.setMaxNestingLevel(value). The StepInput value and the IconTabBar's maxNestingLevel are the same two-way bound field here, so the StepInput.change attribute` &&
             ` is dropped and the property follows without a round-trip. // NOTE: The shared nesting-level field and the reordering-enabled tab bar are unverified in a running system. **e2e-verified 2026-08-25**` &&
             ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_506.mjs).`.
@@ -3546,14 +3547,14 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` binds the group's selectedIndex two-way and one round trip (event DENSITY) turns the index into the enum all eight bars bind, the same fold apps 604 and 617 use. The ninth bar, iconTabBarInlineIcons,` &&
             ` is NOT in the sample's loop and is therefore left unbound here too. // NOTE: the bound enum carries the null fallback ({= ${X} || null }, apps 548/555 idiom) and is seeded 'Cozy' from the group's own` &&
             ` first button, so no empty string ever reaches sap.m.IconTabDensityMode. // NOTE: onInit fills two of the nine bars in JavaScript: thirty IconTabFilters on idIconTabBar0 ('Tab n' with a 'Content n'` &&
-            ` Text) and twelve on iconTabBarInlineIcons. Both aggregations are bindable, so the port binds a table for each and builds the rows in model_init - which is why the port shows 29 IconTabFilters and 24` &&
-            ` Texts against the view's 27 and 22: the two bound TEMPLATES are counted once each on top of the seven bars written out literally. // IMPROVISED: the twelve inline tabs get their icon from`.
-    text1 = text1 && ` aIcons[Math.floor(Math.random() * 3)] - a fresh draw per tab on every load. A backend cannot draw the browser's numbers, and a random seed would make the port unrepeatable for the gates, so the three` &&
+            ` Text) and twelve on iconTabBarInlineIcons. Both aggregations are bindable, so the port binds a table for each and builds the rows in model_init - which is why the port shows 29 IconTabFilter and 24`.
+    text1 = text1 && ` Text controls against the view's 27 and 22: the two bound TEMPLATES are counted once each on top of the seven bars written out literally. // IMPROVISED: the twelve inline tabs get their icon from` &&
+            ` aIcons[Math.floor(Math.random() * 3)] - a fresh draw per tab on every load. A backend cannot draw the browser's numbers, and a random seed would make the port unrepeatable for the gates, so the three` &&
             ` icons (history, home, employee) CYCLE instead. Every tab still carries one of the three, which is what the sample demonstrates; only the sequence is stable. // NOTE: the other seven bars are written` &&
             ` out literally, with everything the sample sets on them: enableTabReordering on idIconTabBar0, headerMode='Inline' on idIconTabBar6, the four icon-only filters of idIconTabBar4, the four iconColor` &&
             ` values and three icon-carrying IconTabSeparators of idIconTabBar1 (one of which carries icon="" - an empty icon the sample writes and the port keeps), the Horizontal process design of idIconTabBar2` &&
-            ` and the showAll tab of idIconTabBar5. // NOTE: not yet verified in a running system: that the three density buttons resize the eight bars and leave the ninth alone. **e2e-verified 2026-08-25**` &&
-            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_620.mjs).`.
+            ` and the showAll tab of idIconTabBar5. // NOTE: not yet verified in a running system: that the three density buttons resize the eight bars and leave the ninth alone. **e2e-verified 2026-08-25**`.
+    text1 = text1 && ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_620.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IconTabBar`                      name = `IconTabBarTabDensityMode`                      class = `z2ui5_cl_smpc_app_620` path = `src/01/01/z2ui5_cl_smpc_app_620.clas.abap`
         score = 5
@@ -4050,8 +4051,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `IMPROVISED: The items binding names a groupHeaderFactory ('.getGroupHeader') that returns a sap.m.GroupHeaderListItem built in JavaScript. A control-returning factory is a documented boundary of` &&
             ` abap2UI5 (CAPABILITIES), so the port keeps the grouping sorter 1:1 and lets UI5 render its DEFAULT group header - same grouping and the same group key text, but the header control the sample` &&
             ` constructs is not the port's. // NOTE: onToggleContextMenu creates a sap.m.Menu with two MenuItems in JavaScript on press and destroys it again. The port declares the same Menu in the List's` &&
-            ` contextMenu aggregation and rebuilds the view on the toggle, so the subtree is emitted only while the button is pressed (app 436 precedent); structural-diff therefore reports the Menu and both` &&
-            ` MenuItems as control extra. // NOTE: The context-menu toggle and the grouped list are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` contextMenu aggregation and rebuilds the view on the toggle, so the subtree is emitted only while the button is pressed (app 436 precedent); structural-diff therefore reports the Menu and each of its` &&
+            ` two MenuItem controls as control extra. // NOTE: The context-menu toggle and the grouped list are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_492.mjs). // NOTE: The sample's asset paths are host-absolutized. The demo kit serves them relative (test-resources/...), which an abap2UI5 app has no document`.
     text1 = text1 && ` root to resolve against, so the port points at https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Added 2026-08-23: this port did the rewrite without declaring it, one of` &&
             ` 17 found by re-counting the corpus-wide claim that every port doing it had a declaration.`.
@@ -5876,21 +5877,21 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` endDate) are typed "object" and demand a real JS Date. The model keeps ISO strings and Formatter.DateCreateObject from the curated module converts them at the point of use, the same idiom app 108` &&
             ` uses (needs UI5 >= 1.74). // NOTE: determineControlsVisibility shows the Label only in the nonWorking view and the Select only in the months view on a desktop. viewKey is bindable, so the key is one`.
     text1 = text1 && ` shared field and both controls carry the switch as an expression binding - the Label over the key alone, the Select over the key AND the device model's system/desktop flag. handleViewChange, which` &&
-            ` exists only to re-run that method, is dropped with them. // NOTE: handleGroupModeChange calls setGroupAppointmentsMode; the property is bindable, so the Select shares its key with the calendar and` &&
-            ` the change handler is dropped. handleSelectionFinish's setBuiltInViews keeps its wire: the picked keys travel as one comma-separated argument and ABAP fills the bound string table. // NOTE:` &&
-            ` handleIntervalSelect has two branches. In the nonWorking view handleNonWorkingSpecialDates toggles a NonWorking DateTypeRange on the selected date - the specialDates aggregation is bound to a table` &&
-            ` here and the round-trip adds or removes the row, which is the same toggle. Otherwise the handler pushes a 'new appointment' (Type09) into the row it hit, or into every selected row; the row index and` &&
-            ` the selected-row indices travel with the event and ABAP does the same push. The interval's start and end travel as their LOCAL parts - a UTC toISOString( ) would shift the day. // IMPROVISED: onPress`.
-    text1 = text1 && ` on the 'Toggle custom views' ToggleButton removes the four PlanningCalendarViews from the aggregation and adds them back, by constructing PlanningCalendarView instances in the controller. The views` &&
-            ` aggregation is declared in the view here and a backend cannot add or remove aggregation children of a rendered view, so the four views stay declared and the ToggleButton keeps its text but loses its` &&
-            ` press wire. // NOTE: The two row images are the demo kit's own test-resources files (John_Miller.png, Donna_Moore.jpg), re-hosted on sdk.openui5.org. // NOTE: The four views, the non-working day` &&
-            ` toggle, the interval-select appointment push, the built-in views box and the two nonWorkingDays / nonWorkingHours arrays are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e` &&
-            ` interaction, meta/interactions/z2ui5_cl_smpc_app_537.mjs). // NOTE: **e2e-caught 2026-08-22**: the sample's own data carries an upstream typo - UI5Date.getInstance(201, 2, 4, 13, 30), a year of 201` &&
-            ` where every neighbouring row says 2017 (Page.controller.js:110). In JavaScript that is a VALID date (4 March 201 AD); as the ISO string the port stores it became '201-03-04T13:30:00', which new`.
-    text1 = text1 && ` Date() cannot parse at all, so the appointment reached the calendar as an Invalid Date and CalendarUtils._checkJSDateObject took the whole app down. The year is now written '0201', which is the same` &&
-            ` absurd date the original produces and which parses. The typo itself is kept: it is the sample's data. // NOTE: A JS callback is not in the UI5 expression grammar - ExpressionParser has no` &&
-            ` ``function`` keyword and reads { as an object literal, so the whole handler string failed to parse and every argument was lost. The selection is read from the model instead: PlanningCalendarRow (and` &&
-            ` CalendarAppointment) declare a bindable ``selected``, so the flags travel with the rows and ABAP does the work.`.
+            ` exists only to re-run that method, is dropped with them, and the PlanningCalendar's viewChange attribute with it. // NOTE: handleGroupModeChange calls setGroupAppointmentsMode; the property is` &&
+            ` bindable, so the Select shares its key with the calendar and the change handler is dropped. handleSelectionFinish's setBuiltInViews keeps its wire: the picked keys travel as one comma-separated` &&
+            ` argument and ABAP fills the bound string table. // NOTE: handleIntervalSelect has two branches. In the nonWorking view handleNonWorkingSpecialDates toggles a NonWorking DateTypeRange on the selected` &&
+            ` date - the specialDates aggregation is bound to a table here and the round-trip adds or removes the row, which is the same toggle. Otherwise the handler pushes a 'new appointment' (Type09) into the` &&
+            ` row it hit, or into every selected row; the row index and the selected-row indices travel with the event and ABAP does the same push. The interval's start and end travel as their LOCAL parts - a UTC`.
+    text1 = text1 && ` toISOString( ) would shift the day. // IMPROVISED: onPress on the 'Toggle custom views' ToggleButton removes the four PlanningCalendarViews from the aggregation and adds them back, by constructing` &&
+            ` PlanningCalendarView instances in the controller. The views aggregation is declared in the view here and a backend cannot add or remove aggregation children of a rendered view, so the four views stay` &&
+            ` declared and the ToggleButton keeps its text but loses its press wire. // NOTE: The two row images are the demo kit's own test-resources files (John_Miller.png, Donna_Moore.jpg), re-hosted on` &&
+            ` sdk.openui5.org. // NOTE: The four views, the non-working day toggle, the interval-select appointment push, the built-in views box and the two nonWorkingDays / nonWorkingHours arrays are unverified` &&
+            ` in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_537.mjs). // NOTE: **e2e-caught 2026-08-22**: the sample's own data carries an upstream` &&
+            ` typo - UI5Date.getInstance(201, 2, 4, 13, 30), a year of 201 where every neighbouring row says 2017 (Page.controller.js:110). In JavaScript that is a VALID date (4 March 201 AD); as the ISO string`.
+    text1 = text1 && ` the port stores it became '201-03-04T13:30:00', which new Date() cannot parse at all, so the appointment reached the calendar as an Invalid Date and CalendarUtils._checkJSDateObject took the whole` &&
+            ` app down. The year is now written '0201', which is the same absurd date the original produces and which parses. The typo itself is kept: it is the sample's data. // NOTE: A JS callback is not in the` &&
+            ` UI5 expression grammar - ExpressionParser has no ``function`` keyword and reads { as an object literal, so the whole handler string failed to parse and every argument was lost. The selection is read` &&
+            ` from the model instead: PlanningCalendarRow (and CalendarAppointment) declare a bindable ``selected``, so the flags travel with the rows and ABAP does the work.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.PlanningCalendar`                name = `PlanningCalendarViews`                         class = `z2ui5_cl_smpc_app_537` path = `src/02/01/z2ui5_cl_smpc_app_537.clas.abap`
         score = 5
@@ -5933,14 +5934,14 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` dropped; the key values ('-1' .. '6') are the sample's own. firstDayOfWeek is an INT property while a Select key is a string, so the calendar binds an expression that multiplies by 1 - the Number( )` &&
             ` conversion the original does in the handler. // NOTE: onBeforeRendering / handleViewChange / changeStandardItemsPerView exist only to swap the legend's standardItems between [Today, Selected,` &&
             ` NonWorkingDay] on the OneMonth view and [Today, WorkingDay, NonWorkingDay] everywhere else. viewKey and standardItems are both bindable, so the key is one shared field and the legend carries the` &&
-            ` switch as an expression binding over it - all three handlers are dropped. // NOTE: The row images are the demo kit's own test-resources files, re-hosted on sdk.openui5.org. // NOTE: The legend side`.
-    text1 = text1 && ` content, the first-day-of-week Select and the view-dependent standard items are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
-            ` meta/interactions/z2ui5_cl_smpc_app_541.mjs). // NOTE: **e2e-caught 2026-08-22**: one special-date row was still missing its secondarytype seed after the b46 sweep fixed the others - the NonWorking` &&
-            ` range on Sophie Miller (2017-01-16 to 2017-01-18). A flat ABAP row serializes every field, so it sent an empty string into the CalendarDayType enum and UI5 terminated the app. It is seeded 'None'` &&
-            ` like the rest. The lesson is the sweep's own: the fix has to cover EVERY row of the table, not the ones the first failure named. // NOTE: The three root-level aggregations (specialDates on the` &&
-            ` calendar, items and appointmentItems on the legend) are bound ABSOLUTELY via _bind( path = abap_true ). A bare 'T_X' path is relative and resolves against nothing outside a row context, and an` &&
-            ` unbound table is not serialized at all - either alone leaves the aggregation empty. App 553 carries the same two fixes; the row-level aggregations inside PlanningCalendarRow stay relative, which is` &&
-            ` correct there.`.
+            ` switch as an expression binding over it - all three handlers are dropped, and the PlanningCalendar's viewChange attribute with them. // NOTE: The row images are the demo kit's own test-resources`.
+    text1 = text1 && ` files, re-hosted on sdk.openui5.org. // NOTE: The legend side content, the first-day-of-week Select and the view-dependent standard items are unverified in a running system. **e2e-verified` &&
+            ` 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_541.mjs). // NOTE: **e2e-caught 2026-08-22**: one special-date row was still missing its secondarytype seed after the b46` &&
+            ` sweep fixed the others - the NonWorking range on Sophie Miller (2017-01-16 to 2017-01-18). A flat ABAP row serializes every field, so it sent an empty string into the CalendarDayType enum and UI5` &&
+            ` terminated the app. It is seeded 'None' like the rest. The lesson is the sweep's own: the fix has to cover EVERY row of the table, not the ones the first failure named. // NOTE: The three root-level` &&
+            ` aggregations (specialDates on the calendar, items and appointmentItems on the legend) are bound ABSOLUTELY via _bind( path = abap_true ). A bare 'T_X' path is relative and resolves against nothing` &&
+            ` outside a row context, and an unbound table is not serialized at all - either alone leaves the aggregation empty. App 553 carries the same two fixes; the row-level aggregations inside`.
+    text1 = text1 && ` PlanningCalendarRow stay relative, which is correct there.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.PlanningCalendar`                name = `PlanningCalendarWithLegend`                    class = `z2ui5_cl_smpc_app_541` path = `src/02/01/z2ui5_cl_smpc_app_541.clas.abap`
         score = 5
@@ -7080,42 +7081,42 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` its edit JSONModel from deepExtend({}, bindingContext.getProperty(path)). Save copies the tab's fields back onto the product (handleTabContainerSaveItem's deepExtend into the model), Cancel throws` &&
             ` the copy away and re-reads the product (handleTabContainerCancelUpdate). The per-tab modified flag is the TabContainerItem.modified property, bound two-way. // NOTE: the Display and Edit fragments`.
     text1 = text1 && ` are not swapped in and out of the tab (removeAllContent/insertContent); both live in the TabContainerItem's content and take turns through visible="{= !${MODIFIED} }" / visible="{= ${MODIFIED} }" - a` &&
-            ` declarative expression instead of a controller-driven content swap, with the same rendered result. That is why the Edit fragment's f:SimpleForm, its four Labels, three Inputs and TextArea appear` &&
-            ` twice in the port: once inside the tab and once on the add-item page, where the original moves the SAME cached fragment instance between the two. // NOTE: the Edit fragment binds absolute paths` &&
-            ` (/Name, /SupplierName, /Price, /Description) because it is put over its own one-record JSONModel. In the tab it binds the tab row's own fields relative to the item context; on the add-item page it` &&
-            ` binds the four ADD_* fields the backend keeps for the new record. Only the add-item copy carries the fragment's id=myForm - the tab copy is a template inside a bound aggregation, where an id would be` &&
-            ` cloned. // NOTE: the table's selection is read with getSelectedContexts in the original and bound two-way here (ColumnListItem selected="{SELECTED}"), so the backend has it on every round trip;`.
-    text1 = text1 && ` onInit's attachSelectionChange becomes the Table's selectionChange attribute, which keeps idOpenSelected's visible flag in sync exactly as fnTableSelectionChange does. onInit also attaches` &&
+            ` declarative expression instead of a controller-driven content swap, with the same rendered result. That is why the Edit fragment's f:SimpleForm, its four Label, three Input and one TextArea controls` &&
+            ` appear twice in the port: once inside the tab and once on the add-item page, where the original moves the SAME cached fragment instance between the two. // NOTE: the Edit fragment binds absolute` &&
+            ` paths (/Name, /SupplierName, /Price, /Description) because it is put over its own one-record JSONModel. In the tab it binds the tab row's own fields relative to the item context; on the add-item page` &&
+            ` it binds the four ADD_* fields the backend keeps for the new record. Only the add-item copy carries the fragment's id=myForm - the tab copy is a template inside a bound aggregation, where an id would`.
+    text1 = text1 && ` be cloned. // NOTE: the table's selection is read with getSelectedContexts in the original and bound two-way here (ColumnListItem selected="{SELECTED}"), so the backend has it on every round trip;` &&
+            ` onInit's attachSelectionChange becomes the Table's selectionChange attribute, which keeps idOpenSelected's visible flag in sync exactly as fnTableSelectionChange does. onInit also attaches` &&
             ` navButtonPress on the two inner pages; the port wires navButtonPress declaratively on both. // NOTE: _handleTabContainerItemClose calls oEvent.preventDefault( ) and removes the item itself once the` &&
             ` user confirms, and the port reproduces both halves since 2026-09-04: the itemClose wire carries s_ctrl-check_prevent_default, which IS that call, so the control does not close the tab and tab_close(` &&
             ` ) decides. Until then this was an IMPROVISED deviation reading "a thin frontend cannot cancel a UI5 event", which stopped being true when the flag shipped; the port let the control close the tab and` &&
-            ` sent the view again from the model, so an unconfirmed close visibly closed and came back. Same two outcomes as before - the tab row survives a cancel and goes for good on a confirm - reached the` &&
-            ` original's way round now. Found by scripts/probes/improvised-cluster.mjs (the pr/conditional-prevent-default GAP, closed upstream and outlived here as it had in app 306). // IMPROVISED:`.
-    text1 = text1 && ` _handleTabContainerAddNewButtonPress ends with oTabContainer.setSelectedItem(<the new item>) so the fresh tab is the one on screen. TabContainer.selectedItem is an ASSOCIATION to a TabContainerItem` &&
+            ` sent the view again from the model, so an unconfirmed close visibly closed and came back. Same two outcomes as before - the tab row survives a cancel and goes for good on a confirm - reached the`.
+    text1 = text1 && ` original's way round now. Found by scripts/probes/improvised-cluster.mjs (the pr/conditional-prevent-default GAP, closed upstream and outlived here as it had in app 306). // IMPROVISED:` &&
+            ` _handleTabContainerAddNewButtonPress ends with oTabContainer.setSelectedItem(<the new item>) so the fresh tab is the one on screen. TabContainer.selectedItem is an ASSOCIATION to a TabContainerItem` &&
             ` instance, and the item ids of a bound aggregation are generated at runtime, so the port cannot name the item: the new tab is appended and starts modified (in edit mode), but selecting it is left to` &&
             ` the control's own default. // NOTE: the new ProductIds the original generates with Math.random() ('ProductId-' + Math.random(), and a bare Math.random() on the add-item page) become a backend` &&
             ` counter, ProductId-1, ProductId-2, ... - a client-side random draw is not reproducible from a backend and carries no meaning in the sample. // NOTE: _showConfirmation's MessageBox.confirm with the` &&
-            ` custom actions ['Leave Page', CANCEL] / ['Close Tab', CANCEL], the Warning icon and initialFocus CANCEL is ported 1:1 through client->message_box_display( actions, initialfocus, onclose ); the chosen` &&
-            ` action comes back as the onclose event's argument, as in app 101. // NOTE: _resetUnsavedItems is kept: rows the add-new button created and nobody saved carry an UNSAVED flag and are dropped when the`.
-    text1 = text1 && ` user leaves the page (all of them) or closes their tab (just that one), and a tab whose product is gone goes with it. The original's onExit teardown (detaching handlers, nulling members) has no` &&
+            ` custom actions ['Leave Page', CANCEL] / ['Close Tab', CANCEL], the Warning icon and initialFocus CANCEL is ported 1:1 through client->message_box_display( actions, initialfocus, onclose ); the chosen`.
+    text1 = text1 && ` action comes back as the onclose event's argument, as in app 101. // NOTE: _resetUnsavedItems is kept: rows the add-new button created and nobody saved carry an UNSAVED flag and are dropped when the` &&
+            ` user leaves the page (all of them) or closes their tab (just that one), and a tab whose product is gone goes with it. The original's onExit teardown (detaching handlers, nulling members) has no` &&
             ` counterpart - abap2UI5 rebuilds the view per round trip. // NOTE: onInit raises the model size limit to 200 and binds the full mock /ProductCollection; the port seeds all 123 rows verbatim` &&
             ` (ProductId, Name, SupplierName, Description, Price, CurrencyCode - the fields the two views bind). The ObjectHeader keeps the original sap.ui.model.type.Currency composite binding 1:1. // NOTE: the` &&
             ` OverflowToolbarButton that opens the add-item page is icon-only in the original (icon=sap-icon://add, no text and no tooltip). The port gives it tooltip="Add" so it is reachable with a screen reader` &&
-            ` - the one accessibility addition in this port. // NOTE: not yet verified in a running system: the TabContainer built over a bound items aggregation, the visible-driven Display/Edit swap inside a tab,` &&
-            ` and the close-confirmation round trip that relies on the view being sent again. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_558.mjs). // NOTE: onInit`.
-    text1 = text1 && ` calls oModel.setSizeLimit(200) because the collection is 123 rows and the JSONModel caps a bound aggregation at 100. The port issues cs_event-set_size_limit for MAIN; without it the table stopped 23` &&
+            ` - the one accessibility addition in this port. // NOTE: not yet verified in a running system: the TabContainer built over a bound items aggregation, the visible-driven Display/Edit swap inside a tab,`.
+    text1 = text1 && ` and the close-confirmation round trip that relies on the view being sent again. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_558.mjs). // NOTE: onInit` &&
+            ` calls oModel.setSizeLimit(200) because the collection is 123 rows and the JSONModel caps a bound aggregation at 100. The port issues cs_event-set_size_limit for MAIN; without it the table stopped 23` &&
             ` rows short. // NOTE: A NavContainer's position is LIVE CONTROL STATE and does not survive a view rebuild. view_display( ) destroys the MAIN slot and XMLView.create builds a fresh control tree, so` &&
             ` navCon comes back on its FIRST page - the product list, this NavContainer declaring no initialPage - while selected_tab, save_visible and cancel_visible survive as class state. Four of the five` &&
             ` branches that call view_display( ) are reachable only FROM tabContainerPage (TAB_CANCEL, TAB_CLOSE, CLOSE_TAB_CLOSED, TAB_ADD_NEW), so pressing + on the tab bar created the tab, put the footer into` &&
-            ` edit mode and dropped the user on the product list. Fixed 2026-08-27 with the app-000 re-issue idiom: a PROTECTED nav_page parks the target the LIVE navCon was last sent to (PROTECTED, not PUBLIC,` &&
-            ` because it is bookkeeping and only PUBLIC attributes are serialized into the view model; not PRIVATE, because the draft serialization walks the attributes with a dynamic ASSIGN obj->(name) that`.
-    text1 = text1 && ` cannot reach a PRIVATE one), and the end of view_display( ) re-issues it, guarded by ``nav_page IS NOT INITIAL AND nav_page <> ``table````. Re-issuing the LAST-ISSUED target rather than re-deriving` &&
+            ` edit mode and dropped the user on the product list. Fixed 2026-08-27 with the app-000 re-issue idiom: a PROTECTED nav_page parks the target the LIVE navCon was last sent to (PROTECTED, not PUBLIC,`.
+    text1 = text1 && ` because it is bookkeeping and only PUBLIC attributes are serialized into the view model; not PRIVATE, because the draft serialization walks the attributes with a dynamic ASSIGN obj->(name) that` &&
+            ` cannot reach a PRIVATE one), and the end of view_display( ) re-issues it, guarded by ``nav_page IS NOT INITIAL AND nav_page <> ``table````. Re-issuing the LAST-ISSUED target rather than re-deriving` &&
             ` it is what keeps the branches that DO want the table correct: nav_to_table and the tab_close redirect when the last tab goes both park ``table`` and are skipped by the same guard. Unlike the sibling` &&
             ` ports this one needs no bookmark restore to reach the second view_display( ) IN A BROWSER - TAB_ADD_NEW is one press away from the tab page, and the interaction module clicks that + for real. An` &&
             ` earlier note here claimed firing addNewButtonPress drove no round trip at all in the headless harness; that was a HARNESS ARTEFACT and is withdrawn (corrected 2026-08-27). The frontend's eB DROPS any` &&
-            ` event fired while a round trip is still in flight - the listener runs and fireEvent returns cleanly, and nothing goes out on the wire - so a press sent too early reads back as a dead control.` &&
-            ` Measured both ways against the built backend: fired while busy, no POST and the TabContainer keeps its two items; fired a second later on an idle frontend, TAB_ADD_NEW goes out, t_tabs grows to three`.
-    text1 = text1 && ` and navCon stays on tabContainerPage. The TabContainer's own add button IS rendered (class sapMTSAddNewTabBtn, tooltip "Add New Tab", in the control's TabStrip) and takes a plain click with no force.` &&
+            ` event fired while a round trip is still in flight - the listener runs and fireEvent returns cleanly, and nothing goes out on the wire - so a press sent too early reads back as a dead control.`.
+    text1 = text1 && ` Measured both ways against the built backend: fired while busy, no POST and the TabContainer keeps its two items; fired a second later on an idle frontend, TAB_ADD_NEW goes out, t_tabs grows to three` &&
+            ` and navCon stays on tabContainerPage. The TabContainer's own add button IS rendered (class sapMTSAddNewTabBtn, tooltip "Add New Tab", in the control's TabStrip) and takes a plain click with no force.` &&
             ` Not to be confused with the product table's headerToolbar OverflowToolbarButton (sap-icon://add, tooltip "Add"), which is NEW_ITEM_ADD on a different page. The leg asserts all three halves: the third` &&
             ` tab, its key ProductId-1 (the backend counter, so it is TAB_ADD_NEW's own row), and the re-issued tabContainerPage - and with the guarded re-issue removed from view_display( ) only the last of the` &&
             ` three fails.`.
@@ -7262,21 +7263,21 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` entry is reported, never discarded behind the user's back. A converting entry saves and leaves edit mode exactly as before. Same defect class and same string-mirror idiom as app 351's MINSIZE_TEXT.` &&
             ` // NOTE: onEdit / onSave / onCancel rebind the SAME table between a read-only ColumnListItem template (the one the view declares) and an editable one the controller builds in JavaScript. abap2UI5` &&
             ` rebuilds the view on every round trip, so the two templates are the two branches of one IF in view_display, driven by an EDIT_MODE flag - the rendered table carries exactly one of them at a time. The` &&
-            ` four Inputs of the editable template are the control extra against the archived Table.view.xml, which only holds the read-only one; they are also why the linter's static reconstruction shows eight` &&
-            ` cells in a four-column row - it does not evaluate the IF, and only one branch is ever emitted at runtime. // NOTE: the three toolbar buttons swap visibility through setVisible in the original;`.
-    text1 = text1 && ` visible is a bindable property, so Edit binds the negated EDIT_MODE expression and Save/Cancel bind the flag itself - no setter and no extra state. onCancel's deepExtend copy of /ProductCollection is` &&
+            ` four Input controls of the editable template are the control extra against the archived Table.view.xml, which only holds the read-only one; they are also why the linter's static reconstruction shows`.
+    text1 = text1 && ` eight cells in a four-column row - it does not evaluate the IF, and only one branch is ever emitted at runtime. // NOTE: the three toolbar buttons swap visibility through setVisible in the original;` &&
+            ` visible is a bindable property, so Edit binds the negated EDIT_MODE expression and Save/Cancel bind the flag itself - no setter and no extra state. onCancel's deepExtend copy of /ProductCollection is` &&
             ` a plain table copy taken on Edit and put back on Cancel. Corrected 2026-08-26: onSave is no longer a bare ``edit_mode = abap_false`` - it parses the PRICE_TEXT mirror back into the packed PRICE first` &&
             ` and only leaves edit mode when every row converted. // NOTE: the original derives the ObjectNumber weight state in its frontend Formatter.js (weightState: <0 None, <1000 Success, <2000 Warning, else` &&
-            ` Error, over the RAW WeightMeasure). That is business logic, so - abap2UI5 being a thin frontend - it is computed in ABAP model_init into a WEIGHT_STATE field and bound state="{WEIGHT_STATE}". //` &&
-            ` NOTE: onPaste and onOrder both only show a MessageToast, composed on the client, so both stay there as roundtrip-free control_global MESSAGE_TOAST wires - onPaste with the {0} placeholder for the` &&
-            ` pasted data, onOrder with its static text. rebindTable's sKeyboardMode argument is never used by the original (it is accepted and dropped), so it has no counterpart. // NOTE: the full mock`.
-    text1 = text1 && ` /ProductCollection is seeded with the fields the two templates bind (ProductId, Name, Quantity, UoM, WeightMeasure, WeightUnit, Price, CurrencyCode); the price column keeps the original` &&
+            ` Error, over the RAW WeightMeasure). That is business logic, so - abap2UI5 being a thin frontend - it is computed in ABAP model_init into a WEIGHT_STATE field and bound state="{WEIGHT_STATE}". //`.
+    text1 = text1 && ` NOTE: onPaste and onOrder both only show a MessageToast, composed on the client, so both stay there as roundtrip-free control_global MESSAGE_TOAST wires - onPaste with the {0} placeholder for the` &&
+            ` pasted data, onOrder with its static text. rebindTable's sKeyboardMode argument is never used by the original (it is accepted and dropped), so it has no counterpart. // NOTE: the full mock` &&
+            ` /ProductCollection is seeded with the fields the two templates bind (ProductId, Name, Quantity, UoM, WeightMeasure, WeightUnit, Price, CurrencyCode); the price column keeps the original` &&
             ` sap.ui.model.type.Currency composite binding and the quantity column its sap.ui.model.type.String one. Corrected 2026-08-26: the EDITABLE template's price cell no longer binds {PRICE} - it binds the` &&
             ` {PRICE_TEXT} string mirror (see the IMPROVISED deviation); only the READ-ONLY template still binds PRICE, which is what carries the Currency composite binding. // NOTE: not yet verified in a running` &&
-            ` system: the Edit/Save/Cancel template swap and the Cancel rollback. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_570.mjs). Extended 2026-08-26: the` &&
-            ` interaction now also drives the string mirror end to end - a ``1,250.00`` typed into the Price cell must leave the app IN edit mode with a "Not a number" toast and the cell restored from the packed` &&
-            ` price, and a following ``1250.00`` must save and reach PRICE 1250. Both legs FAIL against the pre-fix packed binding (measured), so they cannot pass by accident. **Needs a backend rebuild (``npm run`.
-    text1 = text1 && ` e2e:build``) before the nightly can confirm them.**`.
+            ` system: the Edit/Save/Cancel template swap and the Cancel rollback. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_570.mjs). Extended 2026-08-26: the`.
+    text1 = text1 && ` interaction now also drives the string mirror end to end - a ``1,250.00`` typed into the Price cell must leave the app IN edit mode with a "Not a number" toast and the cell restored from the packed` &&
+            ` price, and a following ``1250.00`` must save and reach PRICE 1250. Both legs FAIL against the pre-fix packed binding (measured), so they cannot pass by accident. **Needs a backend rebuild (``npm run` &&
+            ` e2e:build``) before the nightly can confirm them.**`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableEditable`                                 class = `z2ui5_cl_smpc_app_570` path = `src/01/01/z2ui5_cl_smpc_app_570.clas.abap`
         score = 5
@@ -7288,11 +7289,11 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` QuickAction (all since UI5 1.110) - and the sap.m.Column headerMenu association (since UI5 1.98). App 298 carries the same stack. // IMPROVISED: the sample DEFINES a control class in JavaScript` &&
             ` (CustomMenuAdapter, a sap.m.table.columnmenu.MenuBase subclass that wraps a plain sap.m.Menu and implements IColumnHeaderMenu) and hangs it on three of the five columns. A backend cannot define a` &&
             ` control class - the same wall app 552 hits with its two custom calendar views - so those three menus are expressed with the framework's OWN column menu instead: the Supplier column gets a Menu with` &&
-            ` the Toggle Grouping ActionItem, and the Price and Dimensions columns get a Menu whose QuickAction holds the sample's two sort Buttons / three align Buttons, each with the icon and text the original` &&
-            ` MenuItems carry. Same entries, same actions, no custom class. (A second reason forces the QuickAction shape for those two: the linter's metadata snapshot records Menu.items without multiple, so it`.
-    text1 = text1 && ` treats the aggregation as single - the snapshot follows the UI5 source, which omits the flag and relies on ManagedObject's default of true. QuickAction.content does carry multiple, so it takes the` &&
-            ` two and three buttons.) // NOTE: the Product column keeps the built-in QuickSort 1:1. Its change event declares key and sortOrder and fires NEITHER - onChange does fireChange({item: oItem}) and` &&
-            ` nothing else - so the port reads the item the control really passes and asks it for its sort order, exactly as app 298 does and as the sample's own handler does. That is what the advisory` &&
+            ` the Toggle Grouping ActionItem, and the Price and Dimensions columns get a Menu whose QuickAction holds the sample's two sort Button controls / three align Button controls, each with the icon and` &&
+            ` text the original MenuItems carry. Same entries, same actions, no custom class. (A second reason forces the QuickAction shape for those two: the linter's metadata snapshot records Menu.items without`.
+    text1 = text1 && ` multiple, so it treats the aggregation as single - the snapshot follows the UI5 source, which omits the flag and relies on ManagedObject's default of true. QuickAction.content does carry multiple, so` &&
+            ` it takes the two and three buttons.) // NOTE: the Product column keeps the built-in QuickSort 1:1. Its change event declares key and sortOrder and fires NEITHER - onChange does fireChange({item:` &&
+            ` oItem}) and nothing else - so the port reads the item the control really passes and asks it for its sort order, exactly as app 298 does and as the sample's own handler does. That is what the advisory` &&
             ` unknown-event-parameter finding on this port is. // NOTE: the four setter calls the menus make are all bindable properties, so they become bound fields instead: setSortIndicator on the Product and` &&
             ` Price columns, and setHAlign on the Dimensions column. Sorting itself is done where the data is - the ABAP table is re-ordered (app 298 idiom) instead of sorting the items binding. // NOTE: Toggle` &&
             ` Grouping calls oBinding.sort with a Sorter carrying a group function. The declarative equivalent is the items binding with sorter: { path: 'SUPPLIERNAME', group: true }, so the port switches the`.
@@ -7343,18 +7344,19 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `POST-1.71: six post-1.71 members are kept for the 1:1 port, all of them what this sample demonstrates: sap.m.Table.itemActionCount, Table.itemActionPress, the ListItemBase actions aggregation and the` &&
             ` sap.m.ListItemAction control (all since UI5 1.137), sap.m.table.Title (since 1.147) and Table.multiSelectMode (since 1.93). // NOTE: the sample's onSelectionChange calls` &&
             ` oTable.setMultiSelectionMode(sMode) - a setter sap.m.Table does not have. The property is multiSelectMode (sap.m.MultiSelectMode, since 1.93), and the ComboBox's own keys (Default / ClearAll) are its` &&
-            ` values, so the port binds the ComboBox's selectedKey and the table's multiSelectMode to one field: the ComboBox change needs no handler and the mode actually switches, which in the original it does` &&
-            ` not. // NOTE: the ui> view model (totalCount, selectedCount, extViewSwitchEnabled) becomes four backend fields. _updateTotalCount reads oBinding.getCount() and _updateSelectedCount` &&
-            ` getSelectedItems().length; the backend holds the rows and the selection flags, so it counts them directly, and the Show-totalCount switch sets the count to -1 exactly as onToggleTotalCount does.`.
-    text1 = text1 && ` onToggleExtView's setShowExtendedView and the extended-view Switch share one bound flag, so that handler is not needed either; the totalCount switch keeps its change wire because it drives the` &&
-            ` recount. // NOTE: onSearch filters Name, SupplierName and ProductId with an OR filter on the items binding. The port filters in the backend into a second table (T_ROWS) and keeps the full set in` &&
-            ` T_PRODUCTS, so the search can widen again; Contains on a client model is case-insensitive, which the ABAP comparison matches by upper-casing both sides. // NOTE: onAddRow builds a product from four` &&
-            ` Math.random() draws (id, supplier, three dimensions, price, currency). A client-side random draw is not reproducible from a backend (the corpus rule for now/random values), so the port counts up` &&
-            ` instead: PRD-1, Product 1, the three suppliers in turn and dimensions derived from the counter. The row is appended and toasted exactly as the original does. The sample's own new row carries Price` &&
-            ` and CurrencyCode fields that no column of this table binds, so they have no counterpart. // NOTE: the items binding keeps its sorter on Name 1:1; its events: { change: '.onBindingChange' } hook has`.
-    text1 = text1 && ` no counterpart - it exists to recount after a binding change, which the backend does whenever it changes the rows. // NOTE: the sample writes itemActionPress="onItemActionPress" without the leading` &&
-            ` dot, which is not a controller-method reference in a modern XML view; the port wires the event properly, so the delete action works here. // NOTE: not yet verified in a running system: the row` &&
-            ` actions, the multi-select mode switch, the extended title view and the search round trip. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_574.mjs).`.
+            ` values, so the port binds the ComboBox's selectedKey and the table's multiSelectMode to one field: the ComboBox's selectionChange wire needs no handler and is dropped and the mode actually switches,` &&
+            ` which in the original it does not. // NOTE: the ui> view model (totalCount, selectedCount, extViewSwitchEnabled) becomes four backend fields. _updateTotalCount reads oBinding.getCount() and` &&
+            ` _updateSelectedCount getSelectedItems().length; the backend holds the rows and the selection flags, so it counts them directly, and the Show-totalCount switch sets the count to -1 exactly as`.
+    text1 = text1 && ` onToggleTotalCount does. onToggleExtView's setShowExtendedView and the extended-view Switch share one bound flag, so that handler is not needed either; the totalCount switch keeps its change wire` &&
+            ` because it drives the recount. // NOTE: onSearch filters Name, SupplierName and ProductId with an OR filter on the items binding. The port filters in the backend into a second table (T_ROWS) and` &&
+            ` keeps the full set in T_PRODUCTS, so the search can widen again; Contains on a client model is case-insensitive, which the ABAP comparison matches by upper-casing both sides. // NOTE: onAddRow builds` &&
+            ` a product from four Math.random() draws (id, supplier, three dimensions, price, currency). A client-side random draw is not reproducible from a backend (the corpus rule for now/random values), so the` &&
+            ` port counts up instead: PRD-1, Product 1, the three suppliers in turn and dimensions derived from the counter. The row is appended and toasted exactly as the original does. The sample's own new row` &&
+            ` carries Price and CurrencyCode fields that no column of this table binds, so they have no counterpart. // NOTE: the items binding keeps its sorter on Name 1:1; its events: { change:`.
+    text1 = text1 && ` '.onBindingChange' } hook has no counterpart - it exists to recount after a binding change, which the backend does whenever it changes the rows. // NOTE: the sample writes` &&
+            ` itemActionPress="onItemActionPress" without the leading dot, which is not a controller-method reference in a modern XML view; the port wires the event properly, so the delete action works here. //` &&
+            ` NOTE: not yet verified in a running system: the row actions, the multi-select mode switch, the extended title view and the search round trip. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_574.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableMultiSelectMode`                          class = `z2ui5_cl_smpc_app_574` path = `src/02/01/z2ui5_cl_smpc_app_574.clas.abap`
         score = 5
@@ -7379,17 +7381,18 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     text1 = `NOTE: onInit creates the sap.m.sample.Table COMPONENT, hides its header toolbar and inserts its Table into the empty l:VerticalLayout of this view. abap2UI5 has no component reuse, so the same table` &&
             ` is declared inline in that layout - without the header toolbar the original hides anyway. structural-diff therefore reports the whole table as control extra (Table, 5 Columns, ColumnListItem,` &&
-            ` ObjectIdentifier, 2 ObjectNumbers and the column header Texts): the original's view carries only the empty layout. // NOTE: onChange switches the table's showOverlay on (the 'outdated' state the` &&
-            ` sample is named after), onSearch filters by the selected supplier and takes it off, onReset clears filter, overlay and selection. The overlay is a bound property here and the filter is applied on the` &&
-            ` bound table in ABAP (thin frontend - the press is a round-trip anyway); the ComboBox gets a bound selectedKey the original does not have, because the port needs the value on the server. The original` &&
-            ` wires BOTH change and selectionChange on the ComboBox to the same handler; the port keeps change only, so structural-diff reports attr missing ComboBox.selectionChange - a selection is a change here`.
-    text1 = text1 && ` too. // NOTE: weightState is business logic (a KG conversion plus Success/Warning/Error thresholds), so the port computes it in model_init rather than in a frontend formatter. TableOutdated reuses` &&
-            ` the sap.m.sample.Table COMPONENT, so the rule is that sample's Formatter.js - thresholds 1 KG and 5 KG with G converted - and NOT the 1000/2000 raw thresholds the TableSelectDialog family's own` &&
-            ` Formatter.js uses. The two families look interchangeable and are not: seeding all-Success is correct under the 1000/2000 rule and wrong under this one for 66 of the 123 rows. // NOTE: The three` &&
-            ` toolbar wires (change -> overlay, Filter, Reset) are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_505.mjs). // NOTE: The` &&
-            ` reused table also carries an infoToolbar (an OverflowToolbar with the Label "Wide range of available products") which the original hides nothing of - the controller hides only getHeaderToolbar( ).` &&
-            ` The port's inlined table has no infoToolbar, and its Column/dependents/p:ColumnAIAction with its onAIActionPress toast is dropped too (a sap.m.plugins control, out of scope for the 1.71 target).`.
-    text1 = text1 && ` structural-diff cannot see either: the original TableOutdated view carries only the empty l:VerticalLayout, so every control the port builds reads as ``control extra``.`.
+            ` ObjectIdentifier, two ObjectNumber controls and the column header Text controls): the original's view carries only the empty layout. // NOTE: onChange switches the table's showOverlay on (the` &&
+            ` 'outdated' state the sample is named after), onSearch filters by the selected supplier and takes it off, onReset clears filter, overlay and selection. The overlay is a bound property here and the` &&
+            ` filter is applied on the bound table in ABAP (thin frontend - the press is a round-trip anyway); the ComboBox gets a bound selectedKey the original does not have, because the port needs the value on` &&
+            ` the server. The original wires BOTH change and selectionChange on the ComboBox to the same handler; the port keeps change only, so structural-diff reports attr missing ComboBox.selectionChange - a`.
+    text1 = text1 && ` selection is a change here too. // NOTE: weightState is business logic (a KG conversion plus Success/Warning/Error thresholds), so the port computes it in model_init rather than in a frontend` &&
+            ` formatter. TableOutdated reuses the sap.m.sample.Table COMPONENT, so the rule is that sample's Formatter.js - thresholds 1 KG and 5 KG with G converted - and NOT the 1000/2000 raw thresholds the` &&
+            ` TableSelectDialog family's own Formatter.js uses. The two families look interchangeable and are not: seeding all-Success is correct under the 1000/2000 rule and wrong under this one for 66 of the 123` &&
+            ` rows. // NOTE: The three toolbar wires (change -> overlay, Filter, Reset) are unverified in a running system. **e2e-verified 2026-08-25** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_505.mjs). // NOTE: The reused table also carries an infoToolbar (an OverflowToolbar with the Label "Wide range of available products") which the original hides` &&
+            ` nothing of - the controller hides only getHeaderToolbar( ). The port's inlined table has no infoToolbar, and its Column/dependents/p:ColumnAIAction with its onAIActionPress toast is dropped too (a`.
+    text1 = text1 && ` sap.m.plugins control, out of scope for the 1.71 target). structural-diff cannot see either: the original TableOutdated view carries only the empty l:VerticalLayout, so every control the port builds` &&
+            ` reads as ``control extra``.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableOutdated`                                 class = `z2ui5_cl_smpc_app_505` path = `src/01/01/z2ui5_cl_smpc_app_505.clas.abap`
         score = 4
@@ -10789,21 +10792,22 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` behind it is data, so the port declares the UNION of the items once - Navigation, Delete, Attachment, Search, Edit, Analyze - and switches them with bound visible flags plus a bound rowActionCount` &&
             ` that the backend sets from the picked mode. Every mode renders exactly the items the original's handler would return: Navigation (1 action), Navigation & Delete, Navigation & Custom (the Edit item),` &&
             ` Multiple Actions (all four), No Actions (count 0). The Navigation item keeps the original's per-row visible="{Available}" condition, ANDed with the mode flag in an expression binding. structural-diff`.
-    text1 = text1 && ` sees the rowActionTemplate subtree as added controls, which is what the controller built. // NOTE: onNavIndicatorsToggle sets or destroys a RowSettings template; the port declares the RowSettings` &&
-            ` once and makes its navigated an expression binding over the ToggleButton's two-way bound state AND the row's own NavigatedState - so the toggle needs no handler at all and its press attribute goes` &&
-            ` away. The original marks the SECOND product as navigated (i === 1), which the model reproduces. // NOTE: handleActionPress is client-composed and roundtrip-free: control_global MESSAGE_TOAST with` &&
-            ` 'Item {0} pressed for product with id {1}', filled by ${$parameters>/item}.getText() || ${$parameters>/item}.getType() and ${$parameters>/row}.getBindingContext().getProperty('PRODUCTID') - the same` &&
-            ` two values the original reads off the event, an event arg being a full UI5 expression. The named ``modes>`` model is folded onto the one default model, prefix dropped and leaf names kept. // NOTE:` &&
-            ` The shared 123-row demo ProductCollection (sap/ui/demo/mock/products.json) is inlined with the four columns the sample binds plus the derived Available flag the Navigation item's visible binding`.
-    text1 = text1 && ` needs - the controller derives it the same way (Status === 'Available'). // NOTE: Unverified in a running system: whether the bound rowActionCount plus the per-item visible flags reproduce each` &&
-            ` mode's row actions, and whether the two-argument client-composed toast fills both placeholders. **e2e-verified 2026-08-25** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_359.mjs). //` &&
-            ` NOTE: switchState always calls setRowActionTemplate BEFORE setRowActionCount, and that ordering is load-bearing: setRowActionTemplate ends in invalidateRowsAggregation( ), setRowActionCount only` &&
-            ` setProperty( ). A row's _rowAction is attached exclusively in _getRowClone( ), guarded by hasRowActions( ) which needs getRowActionCount( ) > 0 - so any row created while the count is 0 has NO` &&
-            ` _rowAction, and merely raising the count afterwards never re-creates the clones. The port drives only the count from the model and had no counterpart for that invalidation, which left a dead end` &&
-            ` reachable without anything exotic: pick 'No Actions', leave and come back, and check_on_navigated rebuilds the view with mode_key still 'None' - every row is then created actionless and no later mode`.
-    text1 = text1 && ` switch brings the actions back. invalidateRowsAggregation( ) cannot be wired (the frontend action allowlist denies the whole invalidate* prefix), so since 2026-08-24 a mode change that raises the` &&
-            ` count off 0 re-displays the slot instead, rebuilding the Table with the new count already set. Note the e2e module's 2026-08-21 experiment - setRowActionCount(2) + invalidate( ) direct on the table -` &&
-            ` did NOT rule the port out as that comment claimed: neither call re-creates a row clone, so it reproduced this very gap.`.
+    text1 = text1 && ` sees the rowActionTemplate subtree - the RowAction and its six RowActionItem controls - as added controls, which is what the controller built. // NOTE: onNavIndicatorsToggle sets or destroys a` &&
+            ` RowSettings template; the port declares the RowSettings once and makes its navigated an expression binding over the ToggleButton's two-way bound state AND the row's own NavigatedState - so the toggle` &&
+            ` needs no handler at all and its press attribute goes away. The original marks the SECOND product as navigated (i === 1), which the model reproduces. // NOTE: handleActionPress is client-composed and` &&
+            ` roundtrip-free: control_global MESSAGE_TOAST with 'Item {0} pressed for product with id {1}', filled by ${$parameters>/item}.getText() || ${$parameters>/item}.getType() and` &&
+            ` ${$parameters>/row}.getBindingContext().getProperty('PRODUCTID') - the same two values the original reads off the event, an event arg being a full UI5 expression. The named ``modes>`` model is folded` &&
+            ` onto the one default model, prefix dropped and leaf names kept. // NOTE: The shared 123-row demo ProductCollection (sap/ui/demo/mock/products.json) is inlined with the four columns the sample binds`.
+    text1 = text1 && ` plus the derived Available flag the Navigation item's visible binding needs - the controller derives it the same way (Status === 'Available'). // NOTE: Unverified in a running system: whether the` &&
+            ` bound rowActionCount plus the per-item visible flags reproduce each mode's row actions, and whether the two-argument client-composed toast fills both placeholders. **e2e-verified 2026-08-25**` &&
+            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_359.mjs). // NOTE: switchState always calls setRowActionTemplate BEFORE setRowActionCount, and that ordering is load-bearing:` &&
+            ` setRowActionTemplate ends in invalidateRowsAggregation( ), setRowActionCount only setProperty( ). A row's _rowAction is attached exclusively in _getRowClone( ), guarded by hasRowActions( ) which` &&
+            ` needs getRowActionCount( ) > 0 - so any row created while the count is 0 has NO _rowAction, and merely raising the count afterwards never re-creates the clones. The port drives only the count from` &&
+            ` the model and had no counterpart for that invalidation, which left a dead end reachable without anything exotic: pick 'No Actions', leave and come back, and check_on_navigated rebuilds the view with`.
+    text1 = text1 && ` mode_key still 'None' - every row is then created actionless and no later mode switch brings the actions back. invalidateRowsAggregation( ) cannot be wired (the frontend action allowlist denies the` &&
+            ` whole invalidate* prefix), so since 2026-08-24 a mode change that raises the count off 0 re-displays the slot instead, rebuilding the Table with the new count already set. Note the e2e module's` &&
+            ` 2026-08-21 experiment - setRowActionCount(2) + invalidate( ) direct on the table - did NOT rule the port out as that comment claimed: neither call re-creates a row clone, so it reproduced this very` &&
+            ` gap.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.table`       control = `sap.ui.table.Table`                    name = `RowAction`                                     class = `z2ui5_cl_smpc_app_359` path = `src/02/02/z2ui5_cl_smpc_app_359.clas.abap`
         score = 5
@@ -10875,29 +10879,29 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` namespace prefix (<plugins.MultiSelectionPlugin> under the sap.ui.table default xmlns, <m:plugins.PasteProvider>), which UI5 resolves as a sub-package of the element's namespace. The port declares`.
     text1 = text1 && ` real prefixes for those two packages instead (xmlns:tp="sap.ui.table.plugins", xmlns:mp="sap.m.plugins") and writes tp:MultiSelectionPlugin / mp:PasteProvider - the same two controls, a` &&
             ` namespace-representation difference only. structural-diff compares the qualified name, so it reports the dotted names as missing and the prefixed ones as extra. // NOTE: onSelectChange disappears:` &&
-            ` the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip - the prefer-a-bindable-property rule.` &&
-            ` The named ``ui>`` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept. // NOTE: onInit creates a sap.m.plugins.CellSelector and a` &&
-            ` sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's generated copy button to the toolbar. The port declares all` &&
-            ` three in the view instead - CellSelector and CopyProvider in the table's dependents, the button as an OverflowToolbarButton at the end of the toolbar - so structural-diff reports the three controls`.
-    text1 = text1 && ` as extra; they are the controller's, not invented. The isSecureContext guard goes with it: the plugins are always created, and the clipboard is only touched by a copy. The CopyProvider's extractData` &&
-            ` is the framework's clipboard module (core:require="{Clipboard: 'z2ui5/model/clipboard'}", extractData="Clipboard.extractData"; abap2UI5 newer than 1.146.0), which copies what each column's` &&
-            ` app:bindings CustomData names. The original's extractData copies getSortProperty( ), so the four columns with a sortProperty carry the same field as app:bindings, and the two without one (price,` &&
-            ` dimensions) are not copied - upstream they hand getProperty an empty path, which returns the whole row object. The toast onCopy shows is raised from the plugin's copy event as a backend event, COPY.` &&
-            ` The button's press runs copySelectionData(true) on the plugin through a control_by_id frontend action, inside the click, as the clipboard API requires. Until 2026-09-30 the whole copy half was` &&
-            ` dropped here, because the plugin throws on creation without its extractData callback. // IMPROVISED: onPaste's cell-range branch stays dropped: it reads the range from the CellSelector's`.
-    text1 = text1 && ` getSelectionRange( ), which is private UI5 API (@ui5-restricted for the CopyProvider) that no event hands to the backend, and then asks a MessageBox.confirm about it. The port reports the pasted data` &&
-            ` at TABLE level, which is the same handler's other branch, with the original's message text. // NOTE: The sample serves its rows from an in-page OData MockServer (over the sibling OData sample's` &&
-            ` metadata.xml and mock data). An abap2UI5 app has a real ABAP backend, so the mock service is replaced by the model itself: all 115 rows of ProductSet.json are inlined and the Table binds them` &&
-            ` directly - the server-side paging illusion is what that costs, while threshold, enableBusyIndicator and the noData BusyIndicator stay 1:1. ProductSet.json lives in the sibling OData sample folder` &&
-            ` upstream; it is archived into this sample's folder too so the port is verifiable offline. The six column labels are metadata bindings in the original ({/#Product/Name/@sap:label} and friends), which` &&
-            ` only an OData model can resolve, and are replaced by the literal sap:label texts from metadata.xml. The numeric columns stay TYPE string so the mock's exact decimals survive. Two of the six header`.
-    text1 = text1 && ` texts were the OData2 sample's labels, not this one's, until 2026-08-21: Category where this metadata.xml says "Prod. Cat.", and "Supplier Company Name" where it says "Company Name" - while this very` &&
-            ` deviation asserted the texts came from the sample's own metadata. Corrected against the archived file. // NOTE: Unverified in a running system: whether the paste event delivers the pasted data array` &&
-            ` to get_event_arg, and whether the bound selectionMode reaches the plugin without a round-trip. **e2e-verified 2026-08-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_360.mjs). //` &&
-            ` NOTE: The paste event's data parameter is typed string[][], so an array/object event argument reaches the app as serialized JSON - [["Pasted Name","Pasted Id"]]. The original builds its message as` &&
-            ` "..." + aData, and JS coerces the array to Pasted Name,Pasted Id. The port toasted the raw JSON until 2026-08-24, showing brackets and quotes the user never sees upstream; the brackets and quotes are` &&
-            ` now stripped, which reproduces the coercion - the same substitution the sibling port 361 already declares for its index array. The e2e module could not see the difference: it asserts`.
-    text1 = text1 && ` toContainText('Pasted Name'), which passes for both renderings.`.
+            ` the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip and the Select's change attribute is` &&
+            ` dropped - the prefer-a-bindable-property rule. The named ``ui>`` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept. // NOTE: onInit` &&
+            ` creates a sap.m.plugins.CellSelector and a sap.m.plugins.CopyProvider in JS (guarded by window.isSecureContext), adds both to the table's dependents and appends the CopyProvider's generated copy` &&
+            ` button to the toolbar. The port declares all three in the view instead - CellSelector and CopyProvider in the table's dependents, the button as an OverflowToolbarButton at the end of the toolbar - so`.
+    text1 = text1 && ` structural-diff reports the three controls as extra; they are the controller's, not invented. The isSecureContext guard goes with it: the plugins are always created, and the clipboard is only touched` &&
+            ` by a copy. The CopyProvider's extractData is the framework's clipboard module (core:require="{Clipboard: 'z2ui5/model/clipboard'}", extractData="Clipboard.extractData"; abap2UI5 newer than 1.146.0),` &&
+            ` which copies what each column's app:bindings CustomData names. The original's extractData copies getSortProperty( ), so the four columns with a sortProperty carry the same field as app:bindings, and` &&
+            ` the two without one (price, dimensions) are not copied - upstream they hand getProperty an empty path, which returns the whole row object. The toast onCopy shows is raised from the plugin's copy` &&
+            ` event as a backend event, COPY. The button's press runs copySelectionData(true) on the plugin through a control_by_id frontend action, inside the click, as the clipboard API requires. Until` &&
+            ` 2026-09-30 the whole copy half was dropped here, because the plugin throws on creation without its extractData callback. // IMPROVISED: onPaste's cell-range branch stays dropped: it reads the range`.
+    text1 = text1 && ` from the CellSelector's getSelectionRange( ), which is private UI5 API (@ui5-restricted for the CopyProvider) that no event hands to the backend, and then asks a MessageBox.confirm about it. The port` &&
+            ` reports the pasted data at TABLE level, which is the same handler's other branch, with the original's message text. // NOTE: The sample serves its rows from an in-page OData MockServer (over the` &&
+            ` sibling OData sample's metadata.xml and mock data). An abap2UI5 app has a real ABAP backend, so the mock service is replaced by the model itself: all 115 rows of ProductSet.json are inlined and the` &&
+            ` Table binds them directly - the server-side paging illusion is what that costs, while threshold, enableBusyIndicator and the noData BusyIndicator stay 1:1. ProductSet.json lives in the sibling OData` &&
+            ` sample folder upstream; it is archived into this sample's folder too so the port is verifiable offline. The six column labels are metadata bindings in the original ({/#Product/Name/@sap:label} and` &&
+            ` friends), which only an OData model can resolve, and are replaced by the literal sap:label texts from metadata.xml. The numeric columns stay TYPE string so the mock's exact decimals survive. Two of`.
+    text1 = text1 && ` the six header texts were the OData2 sample's labels, not this one's, until 2026-08-21: Category where this metadata.xml says "Prod. Cat.", and "Supplier Company Name" where it says "Company Name" -` &&
+            ` while this very deviation asserted the texts came from the sample's own metadata. Corrected against the archived file. // NOTE: Unverified in a running system: whether the paste event delivers the` &&
+            ` pasted data array to get_event_arg, and whether the bound selectionMode reaches the plugin without a round-trip. **e2e-verified 2026-08-21** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_360.mjs). // NOTE: The paste event's data parameter is typed string[][], so an array/object event argument reaches the app as serialized JSON - [["Pasted` &&
+            ` Name","Pasted Id"]]. The original builds its message as "..." + aData, and JS coerces the array to Pasted Name,Pasted Id. The port toasted the raw JSON until 2026-08-24, showing brackets and quotes` &&
+            ` the user never sees upstream; the brackets and quotes are now stripped, which reproduces the coercion - the same substitution the sibling port 361 already declares for its index array. The e2e module`.
+    text1 = text1 && ` could not see the difference: it asserts toContainText('Pasted Name'), which passes for both renderings.`.
     text2 = `Three post-1.71 members are kept 1:1 because the sample is built on them: sap.ui.table.Table.rowMode (aggregation, @since 1.119) with the control sap.ui.table.rowmodes.Fixed it holds,` &&
             ` sap.m.plugins.PasteProvider (@since 1.91) in the toolbar Button's dependents, and sap.ui.table.plugins.MultiSelectionPlugin's selectionMode property (@since 1.100). Declared per the fidelity-first` &&
             ` property-171 policy, so the app needs a UI5 release >= 1.119. (The selectionMode @since 1.100 clause this entry used to carry was dropped 2026-08-21: MultiSelectionPlugin.selectionMode has no @since` &&

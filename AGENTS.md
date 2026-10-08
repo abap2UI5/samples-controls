@@ -1434,7 +1434,13 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   `attr missing Slider.liveChange` findings the moment the verified text
   replaced the one naming the dropped attribute). When you rewrite a
   deviation, keep the naming clause and run `structural-diff --strict` in the
-  same change.
+  same change. The name counts only as a **whole word** (since 2026-10-08):
+  "ToggleButton" does not declare `Button`, "onSelectionChange" does not
+  declare `selectionChange`, and a plural does not name the control - write
+  "two Button controls", not "two Buttons". The substring match before it hid
+  19 undeclared differences, and app 609's sidecar claimed an
+  `editable="false"` its port did not carry - the claim itself declared the
+  missing attribute.
 - **A `POST_171` is checked in both directions now.** It always *excused* a
   version finding; since 2026-08-24 `view-gates` also asks whether the claim is
   true, and reports `unfounded-post171` when a deviation says

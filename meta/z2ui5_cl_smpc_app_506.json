@@ -17,7 +17,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onInit adds the 30 IconTabFilters (with their content Texts) in a loop with addItem( ). abap2UI5 has no client-side control factory, so the port binds the items aggregation to a table with the same 30 rows and declares one IconTabFilter template - structural-diff reports both as control extra because the original's view carries only the empty IconTabBar (apps 465-467 precedent)."
+      "what": "onInit adds the 30 IconTabFilters (each with its content Text) in a loop with addItem( ). abap2UI5 has no client-side control factory, so the port binds the items aggregation to a table with the same 30 rows and declares one IconTabFilter template - structural-diff reports both as control extra because the original's view carries only the empty IconTabBar (apps 465-467 precedent)."
     },
     {
       "type": "NOTE",

@@ -18,7 +18,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the sample's onSelectionChange calls oTable.setMultiSelectionMode(sMode) - a setter sap.m.Table does not have. The property is multiSelectMode (sap.m.MultiSelectMode, since 1.93), and the ComboBox's own keys (Default / ClearAll) are its values, so the port binds the ComboBox's selectedKey and the table's multiSelectMode to one field: the ComboBox change needs no handler and the mode actually switches, which in the original it does not."
+      "what": "the sample's onSelectionChange calls oTable.setMultiSelectionMode(sMode) - a setter sap.m.Table does not have. The property is multiSelectMode (sap.m.MultiSelectMode, since 1.93), and the ComboBox's own keys (Default / ClearAll) are its values, so the port binds the ComboBox's selectedKey and the table's multiSelectMode to one field: the ComboBox's selectionChange wire needs no handler and is dropped and the mode actually switches, which in the original it does not."
     },
     {
       "type": "NOTE",

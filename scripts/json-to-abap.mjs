@@ -34,6 +34,13 @@ import { fileURLToPath } from 'url';
 export const abapName = (key) =>
   String(key).replace(/[^A-Za-z0-9_]/g, '').toLowerCase().slice(0, 30);
 
+// ABAP `i` is a 4-byte integer. A JSON integer outside its range would
+// overflow on assignment, so it is inferred as a string - emitted as a
+// backtick literal and declared TYPE p in ABAP, exactly like a decimal.
+const I_MIN = -2147483648;
+const I_MAX = 2147483647;
+const fitsI = (v) => Number.isInteger(v) && v >= I_MIN && v <= I_MAX;
+
 export function inferFields(rows) {
   const keys = [];
   const seen = new Set();
@@ -45,7 +52,8 @@ export function inferFields(rows) {
   // decimals (1650.99) must NOT infer 'i' (which truncates via Math.trunc).
   // Any non-integer number → 'string' so the value is emitted as a backtick
   // literal (no truncation); declare that field TYPE p … DECIMALS n in ABAP,
-  // where a backtick literal converts to packed (app 171/174 pattern).
+  // where a backtick literal converts to packed (app 171/174 pattern). An
+  // integer outside the range of `i` goes the same way (fitsI above).
   const decimalCols = [];
   const fields = keys.map((json) => {
     const values = rows.map((r) => (r ? r[json] : null)).filter((v) => v != null);
@@ -53,15 +61,15 @@ export function inferFields(rows) {
     if (values.length === 0) type = 'string';
     else if (values.every((v) => typeof v === 'boolean')) type = 'abap_bool';
     else if (values.every((v) => typeof v === 'number')) {
-      type = values.every((v) => Number.isInteger(v)) ? 'i' : 'string';
+      type = values.every(fitsI) ? 'i' : 'string';
       if (type === 'string') decimalCols.push(json);
     } else type = 'string';
     return { json, abap: abapName(json), type };
   });
   if (decimalCols.length) {
     process.stderr.write(
-      `json-to-abap: WARNING — decimal column(s) [${decimalCols.join(', ')}] emitted as ` +
-      `string literals to avoid integer truncation; declare each TYPE p LENGTH n DECIMALS m ` +
+      `json-to-abap: WARNING — decimal or out-of-range integer column(s) [${decimalCols.join(', ')}] emitted as ` +
+      `string literals to avoid truncation or overflow of TYPE i; declare each TYPE p LENGTH n DECIMALS m ` +
       `in ABAP (a backtick literal converts to packed).\n`);
   }
   return fields;
@@ -139,7 +147,7 @@ function inferTypeForKey(rows, json) {
   if (values.length === 0) return 'string';
   if (values.every((v) => typeof v === 'boolean')) return 'abap_bool';
   if (values.every((v) => typeof v === 'number')) {
-    return values.every((v) => Number.isInteger(v)) ? 'i' : 'string';
+    return values.every(fitsI) ? 'i' : 'string';
   }
   return 'string';
 }
@@ -150,8 +158,8 @@ function parseFieldsSpec(spec, rows) {
     const [json, name, type] = token.split(':');
     const inferred = type || inferTypeForKey(rows, json);
     if (!type && inferred === 'string'
-      && rows.some((r) => typeof (r && r[json]) === 'number' && !Number.isInteger(r[json]))) {
-      process.stderr.write(`json-to-abap: WARNING — column '${json}' has decimal value(s), emitted as string literals to avoid truncation; declare it TYPE p LENGTH n DECIMALS m.\n`);
+      && rows.some((r) => typeof (r && r[json]) === 'number' && !fitsI(r[json]))) {
+      process.stderr.write(`json-to-abap: WARNING — column '${json}' has decimal or out-of-range integer value(s), emitted as string literals to avoid truncation or overflow of TYPE i; declare it TYPE p LENGTH n DECIMALS m.\n`);
     }
     return { json, abap: name ? abapName(name) : abapName(json), type: inferred };
   });

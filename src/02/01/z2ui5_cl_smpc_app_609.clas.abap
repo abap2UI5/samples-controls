@@ -215,10 +215,10 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
                     )->a( n = `id`   v = `endDateText`
                     )->a( n = `text` v = client->_bind( sel_end )
                 )->tag( `CheckBox`
-                    )->a( n = `id`       v = `allDayText`
+                    )->a( n = `id`       v = `allDayCheckBox`
                     )->a( n = `text`     v = `All-day`
                     )->a( n = `selected` v = client->_bind( allday )
-                    )->a( n = `enabled`  v = `false`
+                    )->a( n = `editable` v = `false`
                 )->tag( `Label`
                     )->a( n = `text`     v = `Type`
                     )->a( n = `labelFor` v = `appTypeText`

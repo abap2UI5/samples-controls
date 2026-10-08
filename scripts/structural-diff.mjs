@@ -26,8 +26,12 @@
  *    (client->_bind, |...| templates) are not statically comparable and
  *    stay with review/live checks.
  * A difference is "declared" when the control/attribute name (or, for binding
- * values, the binding's last path segment) appears in one of the port's
- * deviation texts or its CHECKED note.
+ * values, the binding's last path segment) appears AS A WHOLE WORD in one of
+ * the port's deviation texts or its CHECKED note — case-insensitive, and not
+ * flanked by a letter, digit or underscore. A substring match let `Button`
+ * be declared by "ToggleButton" and `selectionChange` by "onSelectionChange",
+ * and hid 19 undeclared differences until 2026-10-08; a plural ("Buttons")
+ * does not name the control either, so write "Button controls".
  *
  * Known limits (advisory by design):
  *  - controller-created UI (setTokens, controller-built dialogs) is invisible
@@ -277,7 +281,7 @@ for (const metaFile of fs.readdirSync(META).sort()) {
   const port = parseAbap(fs.readFileSync(abapPath, 'utf8'), orig.ns);
 
   const declaredText = ((meta.deviations || []).map((d) => d.what).join(' ') + ' ' + (meta.checked?.note || '')).toLowerCase();
-  const declared = (name) => declaredText.includes(name.toLowerCase());
+  const declared = (name) => new RegExp(`(?<![a-z0-9_])${name.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9_])`).test(declaredText);
 
   const diffs = [];
   const names = new Set([...orig.controls.keys(), ...port.controls.keys()]);

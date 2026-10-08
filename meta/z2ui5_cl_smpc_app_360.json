@@ -21,7 +21,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onSelectChange disappears: the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip - the prefer-a-bindable-property rule. The named `ui>` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept."
+      "what": "onSelectChange disappears: the selection-mode Select's selectedKey and the MultiSelectionPlugin's selectionMode bind the SAME field, so picking a mode drives the plugin with no round-trip and the Select's change attribute is dropped - the prefer-a-bindable-property rule. The named `ui>` model (the three modes and the initial one) is folded onto the one default model, prefix dropped and leaf names kept."
     },
     {
       "type": "NOTE",

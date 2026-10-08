@@ -89,6 +89,30 @@ test('structural-diff: declared vs undeclared diffs on the fixture corpus', () =
   }
 });
 
+test('structural-diff: a deviation declares a name only as a whole word, not as a substring', () => {
+  const root = makeFixtureRoot();
+  try {
+    // "ToggleButton" contains "Button" and "subheaderText" contains
+    // "headerText": under substring matching this text declared both of
+    // app_002's diffs without naming either of them
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations = [{ type: 'NOTE', what: 'a ToggleButton keeps its subheaderText' }];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /! UNDECLARED\s+attr missing\s+List\.headerText/);
+    assert.match(r.out, /! UNDECLARED\s+control extra\s+Button/);
+    // naming them as words declares them, punctuation around the name included
+    meta.deviations = [{ type: 'NOTE', what: 'the extra Button, and List.headerText (dropped)' }];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /declared\s+attr missing\s+List\.headerText/);
+    assert.match(r.out, /declared\s+control extra\s+Button/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('data-fidelity: invented value and unknown asset fail, verbatim data passes', () => {
   const root = makeFixtureRoot();
   try {
@@ -132,6 +156,35 @@ test('generate-coverage: a ported out-of-scope sample without an exception is a 
   }
 });
 
+test('generate-coverage: a scope exception must name the class that ports its sample', () => {
+  const root = makeFixtureRoot();
+  try {
+    const uniPath = path.join(root, 'ui5', 'universe.json');
+    const uni = JSON.parse(fs.readFileSync(uniPath, 'utf8'));
+    const bad = uni.libs[0].samples.find((s) => s.name === 'FixtureBad');
+    bad.deprecated = { since: '1.100', text: 'gone' };
+    fs.writeFileSync(uniPath, JSON.stringify(uni, null, 1) + '\n');
+    const entry = (cls) => ({ exceptions: [{
+      sample: 'sap.m.sample.FixtureBad', class: cls, reason: 'fixture decision',
+      decided: { scope: 'deprecated', since: bad.since ?? null, deprecated: '1.100' },
+    }] });
+    const excPath = path.join(root, 'ui5', 'scope-exceptions.json');
+
+    fs.writeFileSync(excPath, JSON.stringify(entry('z2ui5_cl_smpc_app_002')));
+    const right = run(root, 'generate-coverage.mjs');
+    assert.equal(right.code, 0, `the matching entry is a valid decision\n${right.errout}`);
+
+    // lib-packages.mjs files the port by this field, so a wrong class moves
+    // the wrong port while every sample-keyed check stays green
+    fs.writeFileSync(excPath, JSON.stringify(entry('z2ui5_cl_smpc_app_001')));
+    const wrong = run(root, 'generate-coverage.mjs');
+    assert.equal(wrong.code, 1, 'an entry naming another class must fail');
+    assert.match(wrong.errout, /names class "z2ui5_cl_smpc_app_001", but the sample's port is z2ui5_cl_smpc_app_002/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 /* generate-summary — the fixture carries both sources: FixtureGood is described
  * by the (fixture) demo kit snapshot, FixtureBad only by a `written` entry. */
 
@@ -169,9 +222,11 @@ test('generate-summary: a missing line, an edited line and an undescribed sample
   const root = makeFixtureRoot();
   const app = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
   try {
-    run(root, 'generate-summary.mjs');
+    const write = run(root, 'generate-summary.mjs');
+    assert.equal(write.code, 0, `writing must succeed\n${write.errout}`);
 
     const written = fs.readFileSync(app, 'utf8');
+    assert.match(written, /^" @summary /m, 'the three cases below start from a written line');
     fs.writeFileSync(app, written.replace(/^" @summary .*\n/m, ''));
     const missing = run(root, 'generate-summary.mjs', '--check');
     assert.equal(missing.code, 1, 'a removed line must fail');
@@ -279,6 +334,25 @@ test('json-to-abap: rowsToAbapType emits the two-line TYPES layout with an align
       '      ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.',
     ].join('\n'));
   assert.doesNotMatch(rowsToAbapType(fields), /TYPES: BEGIN OF/, 'the one-line form is the layout the corpus retired');
+});
+
+/*
+ * ABAP `i` is four bytes. An integer column with a value past 2^31-1 (an
+ * epoch in milliseconds, a byte count) inferred as `i` would overflow on the
+ * assignment, so it is emitted as a string literal for a TYPE p field - the
+ * route decimals already take. The boundary values themselves stay `i`.
+ */
+test('json-to-abap: an integer outside the range of TYPE i is not inferred as i', async () => {
+  const { inferFields, rowsToAbapValue } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const rows = [
+    { Small: 2147483647, Low: -2147483648, Big: 1, Neg: 1 },
+    { Small: 1, Low: 1, Big: 2147483648, Neg: -2147483649 },
+  ];
+  const types = Object.fromEntries(inferFields(rows).map((f) => [f.json, f.type]));
+  assert.deepEqual(types, { Small: 'i', Low: 'i', Big: 'string', Neg: 'string' });
+  const value = rowsToAbapValue(rows);
+  assert.match(value, /big = `2147483648`/, 'the out-of-range value travels verbatim, as a literal');
+  assert.match(value, /small = 2147483647/, 'the in-range maximum stays a bare integer');
 });
 
 /* ------------------------------------------- form-family-to-abap.mjs */
@@ -1010,6 +1084,39 @@ test('pattern-lint: an ABAP Doc header on a port is an error, and the clean fixt
     const header = runIn(root, 'pattern-lint.mjs');
     assert.equal(header.code, 1, 'a "! header on a port must fail');
     assert.match(header.out, /header-in-port|abapdoc/);
+
+    // ABAP Doc usually sits INDENTED, above a declaration inside the class;
+    // both rules matched column 0 only until 2026-10-08
+    const plain = fs.readFileSync(at, 'utf8').replace(/^"! .*\n/, '');
+    fs.writeFileSync(at, plain.replace(/^(\s*)PROTECTED SECTION\./m, '$1"! documents the <Page> section\n$1PROTECTED SECTION.'));
+    const indented = runIn(root, 'pattern-lint.mjs');
+    assert.equal(indented.code, 1, 'an indented "! line on a port must fail too');
+    assert.match(indented.out, /header-in-port/);
+    assert.match(indented.out, /abapdoc-html-tag/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * check-archive reads three stylesheet declarations, and the manifest's
+ * `sample.files` is only one of them. An early `continue` for a manifest
+ * without that list skipped the other two as well, so a sample declaring its
+ * CSS only through `resources.css` was never checked at all.
+ */
+test('check-archive: a missing stylesheet fails even when the manifest has no sample.files', () => {
+  const { root } = makeMetaRoot(['check-archive.mjs']);
+  const dir = path.join(root, 'ui5', 'sap.m', 'FixtureGood');
+  try {
+    writeJson(path.join(dir, 'manifest.json'), { 'sap.ui5': { resources: { css: [{ uri: 'style.css' }] } } });
+    const missing = runIn(root, 'check-archive.mjs');
+    assert.equal(missing.code, 1, `the unarchived style.css must fail\n${missing.out}`);
+    assert.match(missing.errout, /declares the stylesheet style\.css, which is not archived/);
+
+    fs.writeFileSync(path.join(dir, 'style.css'), '.x { color: red; }\n');
+    const present = runIn(root, 'check-archive.mjs');
+    assert.equal(present.code, 0, `the archived stylesheet passes\n${present.out}${present.errout}`);
+    assert.match(present.out, /1 manifest-listed file\(s\), 0 error\(s\)/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -1162,7 +1269,10 @@ test('generate-status: the hold-out row counts reserved, spent and recorded prob
 
     // regenerating is a no-op: the block is a function of meta/, holdout.json and the journal
     const before = out;
-    runIn(root, 'generate-status.mjs');
+    // the exit code first: a run that crashes before writing leaves the file
+    // as it was, and the equality below would pass on it
+    r = runIn(root, 'generate-status.mjs');
+    assert.equal(r.code, 0, `${r.out}${r.errout}`);
     assert.equal(fs.readFileSync(path.join(root, 'STATUS.md'), 'utf8'), before, 'idempotent');
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

@@ -17,7 +17,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onToggleContextMenu creates a sap.m.Menu with two MenuItems in JavaScript on press and destroys it again. The port declares the same Menu in the List's contextMenu aggregation and rebuilds the view on the toggle, so the subtree is emitted only while the button is pressed (app 436 precedent); structural-diff therefore reports the Menu and both MenuItems as control extra."
+      "what": "onToggleContextMenu creates a sap.m.Menu with two MenuItems in JavaScript on press and destroys it again. The port declares the same Menu in the List's contextMenu aggregation and rebuilds the view on the toggle, so the subtree is emitted only while the button is pressed (app 436 precedent); structural-diff therefore reports the Menu and each of its two MenuItem controls as control extra."
     },
     {
       "type": "NOTE",

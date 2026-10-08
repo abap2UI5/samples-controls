@@ -22,7 +22,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onInit fills two of the nine bars in JavaScript: thirty IconTabFilters on idIconTabBar0 ('Tab n' with a 'Content n' Text) and twelve on iconTabBarInlineIcons. Both aggregations are bindable, so the port binds a table for each and builds the rows in model_init - which is why the port shows 29 IconTabFilters and 24 Texts against the view's 27 and 22: the two bound TEMPLATES are counted once each on top of the seven bars written out literally."
+      "what": "onInit fills two of the nine bars in JavaScript: thirty IconTabFilters on idIconTabBar0 ('Tab n' with a 'Content n' Text) and twelve on iconTabBarInlineIcons. Both aggregations are bindable, so the port binds a table for each and builds the rows in model_init - which is why the port shows 29 IconTabFilter and 24 Text controls against the view's 27 and 22: the two bound TEMPLATES are counted once each on top of the seven bars written out literally."
     },
     {
       "type": "IMPROVISED",

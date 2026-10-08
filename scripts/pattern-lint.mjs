@@ -203,14 +203,14 @@ const RULES = [
     id: 'abapdoc-html-tag',
     level: 'error',
     doc: 'raw <tag> inside ABAP Doc ("!) — ABAP Doc is parsed as HTML; write it plain — AGENTS §8/§10',
-    find: grepLines(/^"!.*<[a-zA-Z][^ >]*>/),
+    find: grepLines(/^\s*"!.*<[a-zA-Z][^ >]*>/),
   },
   {
     id: 'header-in-port',
     level: 'error',
     doc: 'port classes carry no ABAP Doc header — sample/entity/status/checked/deviations live in meta/<class>.json (AGENTS §5)',
     portsOnly: true,
-    find: grepLines(/^"!/),
+    find: grepLines(/^\s*"!/),
   },
   {
     id: 'runtime-global-shadow',
