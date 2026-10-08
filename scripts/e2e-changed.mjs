@@ -69,6 +69,12 @@ const CORPUS_WIDE = [
   /^scripts\/lib-smoke\.mjs$/,
   /^scripts\/lib-a2ui5\.mjs$/,
   /^scripts\/node-serve\.mjs$/,
+  /* the two scripts/lib/ modules the harness imports: src-tree's skipped
+   * directories decide which classes e2e-build transpiles, and demoapps
+   * decides which demo apps e2e-smoke boots - a change to either moves what
+   * every run builds or boots, exactly like a change to the importer */
+  /^scripts\/lib\/src-tree\.mjs$/,
+  /^scripts\/lib\/demoapps\.mjs$/,
   /^web\/ci\//,
   /^\.github\/workflows\/e2e-/,
 ];

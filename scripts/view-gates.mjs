@@ -359,7 +359,10 @@ const metas = fs.readdirSync(META)
   .filter((f) => f.endsWith('.json'))
   .sort()
   .map((f) => JSON.parse(fs.readFileSync(path.join(META, f), 'utf8')))
-  .filter((m) => !ONLY || m.class.endsWith(`_${ONLY}`))
+  /* both spellings the usage line above promises: the number (`--only 164`)
+   * and the class name (`--only z2ui5_cl_smpc_app_164`) - the second used to
+   * match nothing, because it was compared as a `_<suffix>` */
+  .filter((m) => !ONLY || m.class === ONLY || m.class.endsWith(`_${ONLY}`))
   .filter((m) => fs.existsSync(path.join(ROOT, m.file)));
 
 if (!metas.length) {

@@ -207,7 +207,9 @@ const libBatches = [...new Set(
     // its flavour — so match the library level across every category folder
     .filter((m) => m && new RegExp(`^src/\\d+/${libNr}/`).test(m.file || '') && /^b\d+$/.test(m.batch || ''))
     .map((m) => m.batch),
-)].sort();
+// numerically: the default below takes the LAST entry as the current batch,
+// and a string sort puts b100 before b99
+)].sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
 let batch;
 if (flags.batch) batch = flags.batch;
 else if (flags.newBatch || !libBatches.length) {

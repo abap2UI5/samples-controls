@@ -1295,7 +1295,9 @@ test('e2e-changed: a corpus-wide change answers `all` rather than a subset', asy
 
   for (const f of ['A2UI5_PIN', 'package.json', 'package-lock.json', 'scripts/e2e-build.mjs',
     'scripts/e2e-smoke.mjs', 'scripts/lib-e2e.mjs', 'web/ci/patch_open_abap_xml.mjs',
-    '.github/workflows/e2e-pr.yaml']) {
+    '.github/workflows/e2e-pr.yaml',
+    // imported by the harness: which classes get built, which demo apps boot
+    'scripts/lib/src-tree.mjs', 'scripts/lib/demoapps.mjs']) {
     assert.equal(portsToRun([f]).all, true, `${f} reaches every port`);
   }
 

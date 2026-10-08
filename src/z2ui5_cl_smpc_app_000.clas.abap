@@ -7974,7 +7974,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` field to be named as a field. // IMPROVISED: Three of the original's five handlers are still not reproduced, and the two that are were reworked 2026-08-23. WHAT WORKS NOW: onAfterItemRemoved really` &&
             ` deletes the row (it used to only toast, so a removed file came back on the next render - the wire transports the item's file name, since the sample matches on an id this row type does not carry), and` &&
             ` onSelectionChange drives the version button's enabled state for exactly one selection (it had been hard-coded false, so the button the sample's selection logic exists to demonstrate was permanently`.
-    text1 = text1 && ` dead). The five invented toasts are gone with them; the original raises no MessageToast anywhere. STILL DROPPED: uploadItem( ) on the two toolbar buttons and download( true ); onInit's FileUploader` &&
+    text1 = text1 && ` dead). Two of the five invented toasts are gone with them; the original raises no MessageToast anywhere, and THREE are still there (corrected 2026-10-08 - this sentence used to say all five were` &&
+            ` gone): the Upload selected, Download selected and Upload a new version buttons each answer with a placeholder toast ('Upload selected pressed', 'Download selected pressed', 'Upload a new version` &&
+            ` pressed') in place of the original's uploadItem( ), download( true ) and openFileDialog( ). STILL DROPPED: uploadItem( ) on the two toolbar buttons and download( true ); onInit's FileUploader` &&
             ` customisation (setButtonOnly(false) / setIconOnly(true) / the attachment icon), so the add control renders as the default upload button rather than the bare icon the sample is recognisable by; and` &&
             ` uploadCompleted, which unshifts the newly uploaded file into the list.`.
     result = VALUE #( BASE result
