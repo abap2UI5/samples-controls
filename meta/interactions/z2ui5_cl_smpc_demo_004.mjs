@@ -363,7 +363,19 @@ export default async (page, expect) => {
     const c = ui5All().find((x) => x.getId().endsWith(`--${s}`)
       && !x.bIsDestroyed && x.getDomRef() && document.body.contains(x.getDomRef()));
     return !!c && String(c.getValue()).replace(/[-\s]/g, '') === w.replace(/[-\s]/g, '');
-  }, `the card field ${suffix} did not keep "${want}" after its round-trip`, { s: suffix, w: want });
+  }, `the card field ${suffix} did not keep "${want}" after its round-trip`, { s: suffix, w: want })
+    .catch(async (e) => {
+      // say WHAT the field holds - "did not keep" alone cannot tell a lost
+      // keystroke from a reset by an answer or a field that never had focus
+      const got = await page.evaluate((s) => {
+        const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+          .filter((x) => x.getId().endsWith(`--${s}`));
+        return all.map((c) => `${c.bIsDestroyed ? 'destroyed ' : ''}value "${c.getValue()}"`
+          + ` (DOM "${c.getFocusDomRef() ? c.getFocusDomRef().value : '-'}", state ${c.getValueState()})`).join('; ')
+          + `; focus on ${document.activeElement && document.activeElement.id}`;
+      }, suffix).catch(() => 'unreadable');
+      throw new Error(`${e.message}: ${got}`);
+    });
   await cardInput('creditCardHolderName').fill('Jane Doe');
   await enter('creditCardHolderName');
   await settled('creditCardHolderName', 'Jane Doe');
