@@ -67,10 +67,10 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`       v = `sap.m`
-        )->a( n = `xmlns:mvc`   v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:table` v = `sap.m.table`
-        )->a( n = `xmlns:core`  v = `sap.ui.core`
+        )->a( n = `xmlns`      v = `sap.m`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:mt`   v = `sap.m.table`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
 
         )->ele( `Table`
             )->a( n = `id`                 v = `idProductsTable`
@@ -89,7 +89,7 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
             )->ele( `headerToolbar`
                 )->ele( `OverflowToolbar`
 
-                    )->ele( n = `Title` ns = `table`
+                    )->ele( n = `Title` ns = `mt`
                         )->a( n = `id`               v = `idTableTitle`
                         )->a( n = `totalCount`       v = client->_bind( totalcount )
                         )->a( n = `selectedCount`    v = client->_bind( selectedcount )

@@ -255,7 +255,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
             )->a( n = `placement` v = `Left`
 
             )->ele( `QuickViewPage`
-                )->a( n = `header` v = `Employee`
+                )->a( n = `header`      v = `Employee`
                 )->a( n = `title`       t = node-title
                 )->a( n = `description` t = node-position
 
@@ -275,11 +275,11 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                     )->tag( `QuickViewGroupElement`
                         )->a( n = `label` v = `Mobile`
                         )->a( n = `value` t = node-phone
-                        )->a( n = `type` v = `phone`
+                        )->a( n = `type`  v = `phone`
                     )->tag( `QuickViewGroupElement`
-                        )->a( n = `label` v = `Email`
+                        )->a( n = `label`        v = `Email`
                         )->a( n = `value`        t = node-email
-                        )->a( n = `type` v = `email`
+                        )->a( n = `type`         v = `email`
                         )->a( n = `emailSubject` t = |Contact{ node-id }|
 
                 )->end( ).

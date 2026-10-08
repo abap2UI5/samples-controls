@@ -28,7 +28,8 @@
  *
  * STAGE 2 (2026-07-26) — value-level table fidelity. Every ABAP
  * `VALUE #( … )` block that inlines a mock array (matched by >= 3 shared
- * field names, >= 2 rows) is compared against that array:
+ * field names, or both keys of a two-key array; >= 2 rows) is compared
+ * against that array:
  *
  *   - equal row counts  -> row-by-row, field-by-field STRING comparison
  *     (positional; a field the mock row omits is skipped — the port seeds
@@ -37,27 +38,36 @@
  *     value must exist among that field's mock values (subsets can be
  *     legitimate — the original may bind /Coll/0..n — but INVENTED values
  *     are the 142-class bug this catches);
+ *   - more rows         -> per-field membership in the field's values
+ *     anywhere in the sample's mock documents (see "Longer blocks" below);
  *   - numbers stay uncompared (formatting freedom: 6.99 vs `6.99`), and a
  *     value is cleared by a deviation whose `what` names it (or the field),
  *     same convention as the asset checks.
  *
  * Matching (since 2026-10-08): arrays are collected at ANY depth of a mock
  * (a tree's child rows are their own `items = VALUE #( … )` block in the
- * port), keyed per document, and a block goes to the array with the most
- * shared field names, then the most of its own values, then an equal row
- * count. Before that, child blocks and same-shaped sibling arrays (app 100's
+ * port), keyed per document, and a block goes to the array holding values
+ * of the most of its fields, then the most shared field names, then the
+ * most of its own values, then an equal row count. Before that, child blocks and same-shaped sibling arrays (app 100's
  * four QuickView docs, app 606's two slide tiles) were paired with the wrong
  * array and passed only because a deviation mentioned the values in prose.
  *
- * KNOWN BLIND SPOT — a block with MORE rows than the matched array is not
- * checked at all (neither branch takes it). Measured 2026-10-08: seven blocks
- * in five ports land here (100, 167, 407, 532, 566). App 407 is the shape
- * that keeps the branch unwritten: its group blocks carry the port-seeded
- * UI5 defaults (ariaHasPopup, design) as fields, which the mock's child
- * arrays never have, so field overlap pairs them with /fixedNavigation —
- * a strict membership check would report ~89 invented values in a correct
- * port. Closing it needs a matcher that discounts port-seeded defaults, not
- * a third branch here.
+ * Seeded defaults and short arrays (since 2026-10-08, later the same day):
+ * a field whose every value in the block is ONE UI5 enum member or boolean
+ * (`None`, `Default`, `true` - what a port seeds where the mock row omits the
+ * property) neither counts toward the overlap nor is compared, unless the
+ * candidate array holds that value there; a block is matched on the number of
+ * FIELDS whose values the array actually holds before raw field overlap; and
+ * an array of exactly two keys qualifies when the block holds values of both
+ * (app 100's GenericData elements: label + value). That moved app 407's two
+ * group blocks off /fixedNavigation, the one array that HAS ariaHasPopup and
+ * design, onto the arrays they inline, and brought ~50 blocks under the
+ * check that no array could claim before - all of them clean.
+ *
+ * Longer blocks (same day): a block with MORE rows than its best array -
+ * a flattened tree (566, 167, 600) or a keyed object turned into rows (532's
+ * EmployeeData) - was checked by neither branch. Each seeded string value
+ * must now exist under that field ANYWHERE in the sample's mock documents.
  *
  * Residual value-level review beyond tables (scalar folds): --report prints,
  * per port, the mock string values that never appear in the ABAP source, as
@@ -89,6 +99,19 @@ const MOCKS = fs.existsSync(MOCK)
   })
   : [];
 const REPORT = process.argv.includes('--report');
+/* Every UI5 enum member and the two booleans: the values a port SEEDS into a
+ * field the mock row omits, because ABAP has no absent state and an empty
+ * string is no member of any enum (port-a-sample, "Absent JSON properties").
+ * Read from the control metadata snapshot; absent snapshot -> only the two
+ * booleans. */
+const UI5_DEFAULTISH = (() => {
+  const set = new Set(['true', 'false']);
+  try {
+    const props = JSON.parse(fs.readFileSync(path.join(UI5, 'properties.json'), 'utf8'));
+    for (const vals of Object.values(props.enums || {})) for (const v of vals) set.add(String(v));
+  } catch { /* no snapshot */ }
+  return set;
+})();
 
 const ASSET_RE = /([\w./:\-]+\.(?:jpg|jpeg|png|gif|svg|webp|bmp|ico|mp3|mp4|pdf))\b/gi;
 const BAD_HOSTS = ['sapui5.hana.ondemand.com', '//ui5.sap.com'];
@@ -305,6 +328,27 @@ for (const mf of fs.readdirSync(META).sort()) {
       arrays.push(a);
     }
   }
+  // every string value under every key, at any depth of any of the port's
+  // mock documents - built on first use (only a longer-than-its-array block
+  // needs it)
+  let poolCache = null;
+  const fieldPool = () => {
+    if (poolCache) return poolCache;
+    poolCache = new Map();
+    const walk = (v, depth) => {
+      if (depth > 32 || !v || typeof v !== 'object') return;
+      if (Array.isArray(v)) { v.forEach((x) => walk(x, depth + 1)); return; }
+      for (const [k, x] of Object.entries(v)) {
+        if (typeof x === 'string') {
+          const f = normName(k);
+          if (!poolCache.has(f)) poolCache.set(f, new Set());
+          poolCache.get(f).add(normalize(x));
+        } else walk(x, depth + 1);
+      }
+    };
+    for (const { doc } of corpusDocs) walk(doc, 0);
+    return poolCache;
+  };
   const blocks = parseValueBlocks(abap);
   const declaredLc = declared.toLowerCase();
   /* A VALUE is specific enough to match loosely — "Notebook Basic 15" occurs in
@@ -341,20 +385,39 @@ for (const mf of fs.readdirSync(META).sort()) {
   // shared mocks in `arrays`).
   for (const block of blocks) {
     const fields = new Set(block.flatMap((r) => Object.keys(r)));
+    /* A port-SEEDED default is not data from the mock: a field whose every
+     * non-empty value in the block is ONE UI5 enum member or boolean (407's
+     * ariaHasPopup `None` and design `Default` on every row) says nothing
+     * about which array the block inlines. Such a field neither counts
+     * toward the overlap nor is compared - unless the candidate array
+     * really holds that value in that field, where it is data like any
+     * other. Without this, field overlap paired 407's two group blocks with
+     * /fixedNavigation, the one array that HAS those keys, and the blocks
+     * fell into the unchecked longer-than-the-array case (2026-10-08). */
+    const constantOf = new Map();
+    for (const f of fields) {
+      const vals = new Set(block.map((r) => r[f]).filter((v) => typeof v === 'string' && v !== ''));
+      if (vals.size === 1) {
+        const [v] = vals;
+        if (UI5_DEFAULTISH.has(v)) constantOf.set(f, v);
+      }
+    }
+    const seededDefault = (f, arr) => constantOf.has(f) && !arr.values.get(f)?.has(normalize(constantOf.get(f)));
     let bestArr = null;
     let bestOverlap = null;
     let bestScore = -1;
     arrays.forEach((arr, idx) => {
       const keySet = new Set(arr.rows.flatMap((r) => Object.keys(r)).map(normName));
-      const overlap = [...fields].filter((f) => keySet.has(f));
-      if (overlap.length < 3) return;
+      const overlap = [...fields].filter((f) => keySet.has(f) && !seededDefault(f, arr));
       let hits = 0;
+      const hitFields = new Set();
       for (const row of block) {
         for (const f of overlap) {
-          if (typeof row[f] === 'string' && row[f] !== '' && arr.values.get(f)?.has(normalize(row[f]))) hits++;
+          if (typeof row[f] === 'string' && row[f] !== '' && arr.values.get(f)?.has(normalize(row[f]))) { hits++; hitFields.add(f); }
         }
       }
-      const score = overlap.length * 1e9 + hits * 1e4 + (block.length === arr.rows.length ? 1000 : 0) + (arrays.length - idx);
+      if (overlap.length < 3 && !(overlap.length === 2 && keySet.size === 2 && hitFields.size === 2)) return;
+      const score = hitFields.size * 1e12 + overlap.length * 1e9 + hits * 1e4 + (block.length === arr.rows.length ? 1000 : 0) + (arrays.length - idx);
       if (score > bestScore) { bestScore = score; bestArr = arr; bestOverlap = overlap; }
     });
     if (!bestArr) continue;
@@ -376,6 +439,26 @@ for (const mf of fs.readdirSync(META).sort()) {
           if (typeof mv !== 'string' || av === undefined || av === '') continue;
           if (!sameValue(av, mv) && !isDeclared(av, mv, f)) {
             err(`${meta.class}: table row ${i + 1} field \`${f}\` = ${JSON.stringify(av)} but the mock ${arr.name} row has ${JSON.stringify(mv)} — data must stay verbatim (declare the field/value in a deviation if intentional)`);
+          }
+        }
+      });
+    } else if (block.length > arr.rows.length) {
+      // MORE rows than the best array: a port that flattens a tree or
+      // concatenates sibling arrays into one table (566's supplier/category/
+      // product rows, 167's root items with their children) or turns a
+      // keyed object into rows (532's EmployeeData, four records keyed by
+      // name). No single array is the original, so every seeded string
+      // value must exist in that field ANYWHERE in the sample's mock
+      // documents - an invented value still fails, a value lifted from
+      // another level or another record of the same mock does not
+      const pool = fieldPool();
+      block.forEach((row, i) => {
+        for (const f of overlap) {
+          const av = row[f];
+          const set = pool.get(f);
+          if (av === undefined || av === '' || !set || set.size === 0) continue;
+          if (!set.has(normalize(av)) && !isDeclared(av, f)) {
+            err(`${meta.class}: table row ${i + 1} field \`${f}\` = ${JSON.stringify(av)} appears nowhere in the sample's mocks (block of ${block.length} rows, longer than its best match ${arr.name}) — invented/wrong-neighbour data (declare it in a deviation if intentional)`);
           }
         }
       });

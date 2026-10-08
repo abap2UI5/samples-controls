@@ -151,23 +151,78 @@ test('structural-diff: an enum literal is compared per instance, aligned by id',
   }
 });
 
-test('structural-diff --ids: lists an original id the port lost, advisory only', () => {
+test('structural-diff: a boolean literal is compared per instance too, b = constants included', () => {
   const root = makeFixtureRoot();
   try {
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({
+      enums: {},
+      controls: { 'sap.m.Text': { parent: 'sap.ui.core.Control', properties: { wrapping: { type: 'boolean' }, text: { type: 'string' } } } },
+    }));
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}" wrapping="true"', '<Text id="t1" text="{name}" wrapping="false"'));
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    const withText = (id, wrap) => abap.replace(")->a( n = `text` v = `{NAME}`",
+      `)->a( n = \`id\` v = \`${id}\`\n          )->a( n = \`text\` v = \`{NAME}\`\n          )->a( n = \`wrapping\` ${wrap}`);
+    // the fixture's own deviation names Text.wrapping (its dropped attr) -
+    // take it out, or it would declare the value diff as well
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations = [];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    const finding = /! UNDECLARED\s+boolean value\s+Text#t1\.wrapping: original "false" vs port "true"/;
+    fs.writeFileSync(abapFile, withText('t1', 'v = `true`'));
+    assert.match(run(root, 'structural-diff.mjs').out, finding);
+    // a constant through b = is the same literal
+    fs.writeFileSync(abapFile, withText('t1', 'b = abap_true'));
+    assert.match(run(root, 'structural-diff.mjs').out, finding);
+    // the same value passes, in either spelling and in either case
+    fs.writeFileSync(abapFile, withText('t1', 'b = abap_false'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    fs.writeFileSync(abapFile, withText('t1', 'v = `False`'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    // a variable through b = is state, not a literal: never compared
+    fs.writeFileSync(abapFile, withText('t1', 'b = flag'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    // no shared id, no comparison
+    fs.writeFileSync(abapFile, withText('t2', 'v = `true`'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('structural-diff: an original id the port lost fails --strict, and --ids prints the section', () => {
+  const root = makeFixtureRoot();
+  try {
+    // app_002 carries undeclared diffs of its own; declare them away so the
+    // lost id is the ONLY thing --strict can fail on
+    const meta2File = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const meta2 = JSON.parse(fs.readFileSync(meta2File, 'utf8'));
+    meta2.structural_diff = { skip: true, reason: 'fixture: out of this test' };
+    fs.writeFileSync(meta2File, JSON.stringify(meta2, null, 2));
+    assert.equal(run(root, 'structural-diff.mjs', '--strict').code, 0, 'the baseline is clean');
+    // nothing lost: --ids prints the empty section, the default run omits it
+    assert.match(run(root, 'structural-diff.mjs', '--ids').out, /original control ids the port lost \(0 port\(s\)[^\n]*\n  \(none\)/);
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /original control ids/);
+
     const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
     fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}"', '<Text id="nameText" text="{name}"'));
-    let r = run(root, 'structural-diff.mjs', '--ids');
-    assert.match(r.out, /z2ui5_cl_smpc_app_001 \(sap\.m\.sample\.FixtureGood\): 1 original id\(s\) absent from the port and undeclared: nameText/);
-    // the advisory never decides the exit code, and the default report omits it
-    assert.equal(r.code, run(root, 'structural-diff.mjs').code);
-    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /original id\(s\) absent/);
+    const finding = /z2ui5_cl_smpc_app_001 \(sap\.m\.sample\.FixtureGood\): 1 original id\(s\) absent from the port and undeclared: nameText/;
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, finding, 'a lost id is reported without --ids');
+    assert.equal(r.code, 0, 'the advisory run still exits 0');
+    r = run(root, 'structural-diff.mjs', '--strict');
+    assert.equal(r.code, 1, 'a lost id fails --strict');
+    assert.match(r.out, /1 port\(s\) with lost ids/);
     // naming the id in a deviation clears it
     const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
     const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
     meta.deviations.push({ type: 'NOTE', what: 'the Text drops its id nameText' });
     fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
-    r = run(root, 'structural-diff.mjs', '--ids');
-    assert.doesNotMatch(r.out, /nameText/);
+    r = run(root, 'structural-diff.mjs', '--strict');
+    assert.doesNotMatch(r.out, /absent from the port/);
+    assert.equal(r.code, 0, `a declared id passes\n${r.out}`);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -232,6 +287,50 @@ test('data-fidelity: a block is paired with the nested array that holds its valu
     const r = run(root, 'data-fidelity.mjs');
     assert.match(r.out, /app_002: table row 2 field `city` = "Atlantis" but the mock Groups\/1\/ProductCollection row has "Berlin"/);
     assert.doesNotMatch(r.out, /Groups\/0\//);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a port-seeded UI5 default does not steer the match, and a longer block is checked too', () => {
+  const root = makeFixtureRoot();
+  try {
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_002.clas.abap');
+    const dataFile = path.join(root, 'ui5', 'sap.m', 'FixtureBad', 'data.json');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    // every row seeds design = `Default` (a UI5 enum member - the snapshot
+    // is absent here, so only `true`/`false` and the enums of a written
+    // snapshot count; give it one)
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({ enums: { 'sap.m.ButtonType': ['Default', 'Emphasized'] }, controls: {} }));
+    fs.writeFileSync(abapFile, abap.replace(/image = (`img\/product\d\.jpg`)/g, 'image = $1 design = `Default`'));
+    // the decoy is the one array that HAS a Design key: by field overlap
+    // alone (4 against 3) it wins, and its 3 rows put the 2-row block in
+    // the unchecked "fewer rows" branch's mirror image
+    const row = (Name, City, Image, Design) => (Design ? { Name, City, Image, Design } : { Name, City, Image });
+    fs.writeFileSync(dataFile, JSON.stringify({
+      Decoy: [row('Other A', 'Munich', 'img/x1.jpg', 'Emphasized'), row('Other B', 'Bonn', 'img/x2.jpg', 'Emphasized'), row('Other C', 'Ulm', 'img/x3.jpg', 'Emphasized')],
+      ProductCollection: [row('Gladiator MX', 'Hamburg', 'img/product1.jpg'), row('Proctra X', 'Berlin', 'img/product2.jpg')],
+    }, null, 2));
+    let r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 2 field `city` = "Atlantis" but the mock ProductCollection row has "Berlin"/);
+    assert.doesNotMatch(r.out, /Decoy|field `design`/, 'the seeded default neither picks the decoy nor is compared');
+
+    // a block LONGER than every array (a flattened tree): its values are
+    // looked up anywhere in the mock, so a value from another level passes
+    // and an invented one fails
+    fs.writeFileSync(dataFile, JSON.stringify({
+      Suppliers: [
+        { Name: 'Gladiator MX', City: 'Hamburg', Image: 'img/product1.jpg', Products: [row('Proctra X', 'Berlin', 'img/product2.jpg'), row('Proctra Y', 'Bremen', 'img/product3.jpg')] },
+        { Name: 'Other', City: 'Kiel', Image: 'img/product4.jpg', Products: [] },
+      ],
+    }, null, 2));
+    const third = '\n                      ( name  = `Proctra Y`\n                        city  = `Bremen`\n                        image = `img/product3.jpg` ) ).';
+    fs.writeFileSync(abapFile, abap.replace('`Atlantis`', '`Berlin`').replace(/(image = `img\/product2\.jpg` \)) \)\./, `$1${third}`));
+    r = run(root, 'data-fidelity.mjs');
+    assert.doesNotMatch(r.out, /app_002: table row/, `values from two levels of one mock are verbatim\n${r.out}`);
+    fs.writeFileSync(abapFile, fs.readFileSync(abapFile, 'utf8').replace('`Bremen`', '`Atlantis`'));
+    r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 3 field `city` = "Atlantis" appears nowhere in the sample's mocks \(block of 3 rows, longer than its best match/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -1349,6 +1448,89 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
   }
 });
 
+
+/*
+ * xmlns-prefix (AGENTS §8): the canonical prefix table holds in both
+ * directions, and scripts/lib/ns-prefixes.mjs - the rule's copy of it - is
+ * held to the table in AGENTS.md, so the two can only change together.
+ */
+test('pattern-lint: xmlns-prefix holds the canonical prefix table both ways, and the map matches AGENTS.md', async () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
+  const declare = (prefix, ns) => base.replace(')->a( n = `xmlns`     v = `sap.m`',
+    `)->a( n = \`xmlns\`     v = \`sap.m\`\n        )->a( n = \`xmlns:${prefix}\` v = \`${ns}\``);
+  try {
+    // a listed namespace under another prefix
+    let r = lint(declare('layout', 'sap.ui.layout'));
+    assert.equal(r.code, 1, 'sap.ui.layout as `layout` must fail');
+    assert.match(r.out, /ERROR .*\[xmlns-prefix\] sap\.ui\.layout is declared as `layout`, the canonical prefix is `l`/);
+    // a listed prefix bound to another namespace
+    r = lint(declare('f', 'sap.ui.layout.form'));
+    assert.match(r.out, /\[xmlns-prefix\] sap\.ui\.layout\.form is declared as `f`, the canonical prefix is `form`/);
+    r = lint(declare('table', 'sap.m.semantic'));
+    assert.match(r.out, /\[xmlns-prefix\] `table` is the canonical prefix of sap\.ui\.table, not of sap\.m\.semantic/);
+    // the canonical spelling, and an unlisted namespace under a free prefix, pass
+    // (the realigned block keeps chain-value-column out of it)
+    r = lint(declare('l', 'sap.ui.layout').replace('`xmlns:l` v', '`xmlns:l`   v'));
+    assert.ok(!/xmlns-prefix/.test(r.out), `the canonical prefix passes\n${r.out}`);
+    r = lint(declare('semantic', 'sap.m.semantic'));
+    assert.ok(!/xmlns-prefix/.test(r.out), `an unlisted namespace is free\n${r.out}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+
+  // the rule's map IS the AGENTS §8 table, row for row
+  const { CANONICAL_PREFIX } = await import('../lib/ns-prefixes.mjs');
+  const agents = fs.readFileSync(path.join(REPO, 'AGENTS.md'), 'utf8');
+  const start = agents.indexOf('One canonical prefix per XML namespace');
+  const table = agents.slice(start, agents.indexOf('Majority spelling won each row', start));
+  const rows = {};
+  for (const m of table.matchAll(/\| `([\w.]+)`(?: \(when not the default\))? \| `(\w+)` \|/g)) rows[m[1]] = m[2];
+  assert.deepEqual(rows, { ...CANONICAL_PREFIX }, 'scripts/lib/ns-prefixes.mjs and the AGENTS.md §8 table must list the same rows');
+});
+
+/*
+ * chain-value-column (view-chain-layout rule 5): the column of a control's
+ * attribute block, one blank after its longest name. A comment, a blank
+ * line and a wrapped value's continuation stay inside the block; another
+ * chain call ends it.
+ */
+test('pattern-lint: chain-value-column holds a control\'s v = column, and only within one block', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
+  const textBlock = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')}\n            )->tag( \`Text\` ).`);
+  try {
+    // an unequal column fails
+    let r = lint(base.replace(')->a( n = `xmlns`     v = `sap.m`', ')->a( n = `xmlns` v = `sap.m`'));
+    assert.equal(r.code, 1, 'a ragged v = column must fail');
+    assert.match(r.out, /ERROR .*\[chain-value-column\] value at col 27, the block's column is 31/);
+    // an equal but over-padded column fails too: the column is the minimal one
+    r = lint(base.replace(')->a( n = `xmlns:mvc` v', ')->a( n = `xmlns:mvc`  v').replace(')->a( n = `xmlns`     v', ')->a( n = `xmlns`      v'));
+    assert.equal(r.code, 1, 'an over-padded block must fail');
+    assert.match(r.out, /\[chain-value-column\]/);
+    // b = and t = take part in the column like v =
+    r = lint(textBlock(['                )->a( n = `text`     v = `hello`', '                )->a( n = `wrapping` b = abap_true',
+      '                )->a( n = `tooltip` t = title']));
+    assert.match(r.out, /\[chain-value-column\] value at col 37/);
+    // a comment, a blank line and a continuation stay in the block - aligned, it passes
+    r = lint(textBlock(['                )->a( n = `text`     v = `hello` &&', '                                         `world`',
+      '                " a comment', '', '                )->a( n = `wrapping` b = abap_true']));
+    assert.equal(r.code, 0, `an aligned block with a comment, a blank line and a continuation passes\n${r.out}`);
+    // a value that starts on the next line takes no part in the column
+    r = lint(textBlock(['                )->a( n = `maxLines`', '                         v = `2`', '                )->a( n = `text` v = `hello`']));
+    assert.equal(r.code, 0, `an a( ) with its value on the next line has no column\n${r.out}`);
+    // another control's block is another block: its own column
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).',
+      '                )->a( n = `text` v = `hello`\n            )->tag( `Text`\n                )->a( n = `wrapping` v = `false` ).'));
+    assert.equal(r.code, 0, `two controls, two blocks\n${r.out}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
 
 /*
  * The hold-out row: three facts, all derived. The fixture's holdout.json is

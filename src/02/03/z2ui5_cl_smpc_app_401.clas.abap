@@ -69,11 +69,11 @@ CLASS z2ui5_cl_smpc_app_401 IMPLEMENTATION.
             )->a( n = `showEditHeaderButton`     v = `true`
             )->a( n = `editHeaderButtonPress`    v = client->follow_up_action( val   = client->cs_event-control_global
                                                                                t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `An edit box should appear when you click on the "Edit header" button` ) ) )
-            )->a( n = `headerContentPinned` v = `true`
-            )->a( n = `upperCaseAnchorBar`  v = `false`
+            )->a( n = `headerContentPinned`      v = `true`
+            )->a( n = `upperCaseAnchorBar`       v = `false`
             " the controller's toggleFooter flips showFooter imperatively; a
             " bindable property beats a frontend action, so it is bound two-way
-            )->a( n = `showFooter`          v = client->_bind( show_footer )
+            )->a( n = `showFooter`               v = client->_bind( show_footer )
 
             )->ele( `headerTitle`
                 )->ele( `ObjectPageDynamicHeaderTitle`

@@ -866,7 +866,7 @@ up to 24 hours later:
 
 | Workflow | Job | What it gates |
 |----------|-----|---------------|
-| `pattern-lint.yaml` | `pattern_lint` | the distilled corpus-policy rules — method order, the three layout rules (`error` since 2026-09-12, their 382 findings cleared the day before), `types-layout` (the two-line `TYPES:` / `BEGIN OF` form), `hungarian-prefix` (§8's "prefix only `t_` and `s_`"), `statement-too-long` (a per-statement budget just above the largest live-verified statement, since the kernel limit is unmeasured — `scripts/probes/statement-length-probe.mjs` is the worksheet), plus two advisories: `unrolled-chain-repetition` (the same chain line more than 40 times in one method) and `line-headroom` (a line within 15 characters of abaplint's 255) |
+| `pattern-lint.yaml` | `pattern_lint` | the distilled corpus-policy rules — method order, the three layout rules (`error` since 2026-09-12, their 382 findings cleared the day before), `types-layout` (the two-line `TYPES:` / `BEGIN OF` form), `hungarian-prefix` (§8's "prefix only `t_` and `s_`"), `xmlns-prefix` (§8's canonical prefix table), `chain-value-column` (`view-chain-layout` rule 5, the `v =` column of an attribute block — the linter's `chain-house-layout` checks rules 1-4 only), `statement-too-long` (a per-statement budget just above the largest live-verified statement, since the kernel limit is unmeasured — `scripts/probes/statement-length-probe.mjs` is the worksheet), plus two advisories: `unrolled-chain-repetition` (the same chain line more than 40 times in one method) and `line-headroom` (a line within 15 characters of abaplint's 255) |
 | `check-pins.yaml` | `check_pins` | the whole pin policy: `A2UI5_PIN` well-formed, no stray/duplicate `"branch"` on the abap2UI5 dependency in any abaplint config, `ui5/properties.json` and `ui5/descriptions.json` not older than `ui5/universe.json`, the `@openui5`/`@sapui5` runtime pinned exactly and to the version `@abap2ui5/linter` judges against, and **prose that cites the pin naming the pin's actual value** |
 | `chain-format.yaml` | `chain_format` | the view-chain layout (`npm run fmt:chains` fixes it) |
 | `structural-diff.yaml` | `structural_diff` | port vs. archived original, binding values included |
@@ -1251,10 +1251,17 @@ DSAG Leitfaden, then the samples style. Essentials:
   | `sap.ui.layout.cssgrid` | `grid` | | `sap.ui.table.plugins` | `tp` |
   | `sap.ui.integration.widgets` | `w` | | `sap.m.plugins` | `plugins` |
   | `sap.tnt` | `tnt` | | `sap.uxap` | `uxap` |
+  | `sap.m.table` | `mt` | | | |
 
   Majority spelling won each row on 2026-09-12, with two decisions: `f` is
   reserved for `sap.f`, so `sap.ui.layout.form` — which 59 classes had as `f`
-  against 47 classes' `sap.f` — is `form`. This trades one-to-one fidelity of
+  against 47 classes' `sap.f` — is `form`. `sap.m.table` (one port, 574) took
+  `mt` on 2026-10-08, because its original's `table` is `sap.ui.table`'s
+  prefix here. **pattern-lint's `xmlns-prefix` gates the table in both
+  directions** (a listed namespace under another prefix, a listed prefix bound
+  to another namespace) over all of `src/`; its copy is
+  `scripts/lib/ns-prefixes.mjs`, and a tooling test holds that file to this
+  table — change both together. This trades one-to-one fidelity of
   the *prefix* for corpus-wide readability (a maintainer-visible decision,
   revertible per row); it is safe for the gates because `structural-diff`
   resolves every prefix to its namespace URI before comparing — a prefix is
@@ -1460,18 +1467,22 @@ e2e gotchas in `e2e-debugging`, generator gotchas in `regenerate-artefacts`).
   The gate is the corpus' primary fidelity check and three of its blind spots
   have each produced a false sidecar sentence:
   1. **There is no `attr extra` kind.** The only kinds emitted are
-     `control missing` / `control extra`, `attr missing`, `binding value` and
-     `enum value`.
+     `control missing` / `control extra`, `attr missing`, `binding value`,
+     `enum value` and `boolean value` — plus the lost-id list (an original
+     control id the port neither carries nor declares), which fails
+     `--strict` since 2026-10-08.
      The attribute pass iterates the *original's* attribute set and reports
      what the port is **missing**; an attribute the port **adds** is never
      looked at (apps 427 and 377 both claimed otherwise).
   2. **Literal attribute values are compared only when the ORIGINAL's value is
      a simple binding** (`SIMPLE_BIND`, `{path}`) — with one exception since
-     2026-10-08: an **enum-typed** literal (per `ui5/properties.json`) on a
-     control both sides carry under the same unique `id` is compared per
-     instance (`enum value`; app 578's `backgroundDesign` was that bug). A
-     control without a shared id, and every non-enum literal (texts,
-     booleans, sizes), is still never compared — so a swapped
+     2026-10-08: an **enum- or boolean-typed** literal (per
+     `ui5/properties.json`) on a control both sides carry under the same
+     unique `id` is compared per instance (`enum value` / `boolean value`;
+     app 578's `backgroundDesign` was that bug, and the boolean half's first
+     run found the form family's Edit `Button.enabled`, deliberate but
+     unnamed). A control without a shared id, and every other literal
+     (texts, sizes, URIs), is still never compared — so a swapped
      `alignItems="Center"`/`"End"` across id-less sibling instances passes
      green.
   3. **Attribute presence is a union per control TYPE, not per instance.** Nine

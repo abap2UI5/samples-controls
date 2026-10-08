@@ -391,10 +391,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         " say why the reference links are missing rather than leaving a gap
         IF api IS INITIAL.
           box->tag( `MessageStrip`
-              )->a( n = `text`      v = `This control is in no OpenUI5 checkout, so this sample has no Control API Reference, Sample Link or Sample Source Code.`
-              )->a( n = `type`      v = `Information`
-              )->a( n = `showIcon`  v = `true`
-              )->a( n = `class`     v = `sapUiSmallMarginTop` ).
+              )->a( n = `text`     v = `This control is in no OpenUI5 checkout, so this sample has no Control API Reference, Sample Link or Sample Source Code.`
+              )->a( n = `type`     v = `Information`
+              )->a( n = `showIcon` v = `true`
+              )->a( n = `class`    v = `sapUiSmallMarginTop` ).
         ENDIF.
 
         client->popover_display( xml = links->stringify( ) by_id = client->get_event_arg( 2 ) ).
@@ -615,9 +615,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     )->end(
 
         )->ele( `Table`
-            )->a( n = `id`      v = `idOverviewTable`
-            )->a( n = `sticky`  v = `ColumnHeaders`
-            )->a( n = `items`   v = client->_bind( t_app )
+            )->a( n = `id`     v = `idOverviewTable`
+            )->a( n = `sticky` v = `ColumnHeaders`
+            )->a( n = `items`  v = client->_bind( t_app )
 
             )->ele( `columns`
                 )->ele( `Column`
@@ -729,7 +729,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                     )->end(
                 )->end(
                 )->ele( `Column`
-                    )->a( n = `width` v = `9rem`
+                    )->a( n = `width`  v = `9rem`
                     )->a( n = `hAlign` v = `Center`
 
                     )->tag( `Text`
@@ -876,7 +876,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
                         )->end(
                         )->ele( `Column`
-                            )->a( n = `width` v = `9rem`
+                            )->a( n = `width`  v = `9rem`
                             )->a( n = `hAlign` v = `Center`
 
                             )->tag( `Text`
@@ -9783,10 +9783,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_320.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form_Column_oneGroup`                          class = `z2ui5_cl_smpc_app_320` path = `src/01/02/z2ui5_cl_smpc_app_320.clas.abap`
@@ -9804,10 +9804,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_321.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form_Column_oneGroup234`                       class = `z2ui5_cl_smpc_app_321` path = `src/01/02/z2ui5_cl_smpc_app_321.clas.abap`
@@ -9825,10 +9825,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_322.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form_Column_threeGroups234`                    class = `z2ui5_cl_smpc_app_322` path = `src/01/02/z2ui5_cl_smpc_app_322.clas.abap`
@@ -9846,10 +9846,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_323.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form_Column_threeGroups346`                    class = `z2ui5_cl_smpc_app_323` path = `src/01/02/z2ui5_cl_smpc_app_323.clas.abap`
@@ -9867,10 +9867,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_324.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form_Column_twoGroups234`                      class = `z2ui5_cl_smpc_app_324` path = `src/01/02/z2ui5_cl_smpc_app_324.clas.abap`
@@ -9887,11 +9887,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` bindElement('/SupplierCollection/0'); the record is a FIXED index, so the house idiom seeds those row-0 fields at the default-model root and binds them ABSOLUTELY (client->_bind( suppliername ) etc.)` &&
             ` rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject returns undefined and the control renders EMPTY` &&
             ` (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for the per-row case where the index arrives from` &&
-            ` the event, not for a fixed index. The two composite Texts ({Street} {HouseNumber}, {ZIPCode} {City}) keep their composite form with the absolute paths. // NOTE: the Edit button starts enabled="true"` &&
-            ` instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the mock request completes is the`.
-    text1 = text1 && ` state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore). **e2e-verified 2026-08-16** for the` &&
-            ` POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered at once) also passes. The module` &&
-            ` was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_312.mjs).`.
+            ` the event, not for a fixed index. The two composite Texts ({Street} {HouseNumber}, {ZIPCode} {City}) keep their composite form with the absolute paths. // NOTE: the Edit button (Button.enabled)` &&
+            ` starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the mock` &&
+            ` request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).`.
+    text1 = text1 && ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered` &&
+            ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_312.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.Form`               name = `Form354`                                       class = `z2ui5_cl_smpc_app_312` path = `src/01/02/z2ui5_cl_smpc_app_312.clas.abap`
         score = 4
@@ -10062,10 +10063,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_333.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm_Column_oneGroup`                    class = `z2ui5_cl_smpc_app_333` path = `src/01/02/z2ui5_cl_smpc_app_333.clas.abap`
@@ -10083,10 +10084,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_334.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm_Column_oneGroup234`                 class = `z2ui5_cl_smpc_app_334` path = `src/01/02/z2ui5_cl_smpc_app_334.clas.abap`
@@ -10104,10 +10105,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_335.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm_Column_threeGroups234`              class = `z2ui5_cl_smpc_app_335` path = `src/01/02/z2ui5_cl_smpc_app_335.clas.abap`
@@ -10125,10 +10126,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_336.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm_Column_threeGroups346`              class = `z2ui5_cl_smpc_app_336` path = `src/01/02/z2ui5_cl_smpc_app_336.clas.abap`
@@ -10146,10 +10147,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_337.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm_Column_twoGroups234`                class = `z2ui5_cl_smpc_app_337` path = `src/01/02/z2ui5_cl_smpc_app_337.clas.abap`
@@ -10167,10 +10168,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_325.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm354`                                 class = `z2ui5_cl_smpc_app_325` path = `src/01/02/z2ui5_cl_smpc_app_325.clas.abap`
@@ -10188,10 +10189,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_326.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm354wide`                             class = `z2ui5_cl_smpc_app_326` path = `src/01/02/z2ui5_cl_smpc_app_326.clas.abap`
@@ -10209,10 +10210,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_327.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm354wideDual`                         class = `z2ui5_cl_smpc_app_327` path = `src/01/02/z2ui5_cl_smpc_app_327.clas.abap`
@@ -10230,10 +10231,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_328.mjs). // NOTE: onInit's oSplitContainer.toDetail( this.createId('page') ) is reproduced through a control_by_id follow-up action on the init round-trip. The` &&
             ` original comments it as "to navigate to the page on phone and not show the split screen items": initialDetail names the detail page but does not put a PHONE into detail mode, so without the call a` &&
             ` phone opens on the master list (Item 1 / Item 2) where the sample opens on the form. toDetail is a listed control method taking a controlId, so it travels as-is. It was dropped silently until` &&
@@ -10256,10 +10257,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` ABSOLUTELY (client->_bind( suppliername ) etc.) rather than keeping the fragments' relative {SupplierName} - with no element binding on the view a relative path has no context, JSONModel._getObject` &&
             ` returns undefined and the control renders EMPTY (linter rule relative-binding-without-context). abap2UI5 does have element binding (client->cs_event-bind_element, live in app 094); it is reserved for` &&
             ` the per-row case where the index arrives from the event, not for a fixed index. Composite texts such as {Street} {HouseNumber} keep their composite form with the absolute paths. // NOTE: the Edit` &&
-            ` button starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the` &&
-            ` mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel restore).` &&
-            ` **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both forms rendered`.
-    text1 = text1 && ` at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
+            ` button (Button.enabled) starts enabled="true" instead of the original's enabled="false" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original` &&
+            ` reaches after the mock request completes is the state the port starts in. // NOTE: not yet run in a system: the Edit/Save/Cancel round-trips (form swap through the bound visible flags and the Cancel` &&
+            ` restore). **e2e-verified 2026-08-16** for the POSITIVE half only - that run's module asserted merely that Save/the Inputs/the restored Text appear, which a port whose negated flag was dead (both`.
+    text1 = text1 && ` forms rendered at once) also passes. The module was widened 2026-08-24 to assert what must be GONE in each phase; that half awaits the next nightly (nightly e2e interaction,` &&
             ` meta/interactions/z2ui5_cl_smpc_app_329.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.layout`      control = `sap.ui.layout.form.SimpleForm`         name = `SimpleForm480`                                 class = `z2ui5_cl_smpc_app_329` path = `src/01/02/z2ui5_cl_smpc_app_329.clas.abap`

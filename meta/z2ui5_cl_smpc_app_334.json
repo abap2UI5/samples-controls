@@ -25,7 +25,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the Edit button starts enabled=\"true\" instead of the original's enabled=\"false\" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the mock request completes is the state the port starts in."
+      "what": "the Edit button (Button.enabled) starts enabled=\"true\" instead of the original's enabled=\"false\" plus attachRequestCompleted: the ABAP model is seeded synchronously in model_init, so the state the original reaches after the mock request completes is the state the port starts in."
     },
     {
       "type": "NOTE",

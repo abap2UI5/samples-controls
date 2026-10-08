@@ -93,6 +93,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { walkFiles } from './lib/src-tree.mjs';
 import { statements, methodAt } from './lib/abap-statements.mjs';
+import { CANONICAL_PREFIX } from './lib/ns-prefixes.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
@@ -161,6 +162,13 @@ const lineOf = (content, idx) => content.slice(0, idx).split('\n').length;
 const BT = String.fromCharCode(96);
 const VALUE_ROW = new RegExp('^(\\s*)\\(((?: [a-z_0-9]+ = (?:' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+))+) \\)(.*)$');
 const VALUE_CELL = new RegExp('([a-z_0-9]+) = (' + BT + '[^' + BT + ']*' + BT + '|[^\\s()]+)', 'g');
+
+// chain-value-column: an attribute line whose value sits on the same line,
+// and the head of it up to the closing backtick of the name
+const ATTR_LINE = /^(\s*\)->a\(\s*n\s*=\s*`[^`]*`)(\s+)[vbt]\s*=\s/;
+const STATEMENT_END = /\.\s*("[^`|]*)?$/;
+// the canonical prefix of each listed namespace, and its inverse
+const PREFIX_OWNER = new Map(Object.entries(CANONICAL_PREFIX).map(([ns, p]) => [p, ns]));
 
 const RULES = [
   {
@@ -551,6 +559,76 @@ const RULES = [
       for (const m of content.matchAll(/^\s*(?:CLASS-)?METHODS\s+[\s\S]*?\.[ \t]*$/gm)) {
         for (const p of m[0].matchAll(PARAM)) hit(m.index + p.index, p[1] || p[2]);
       }
+      return out;
+    },
+  },
+  {
+    // AGENTS §8: one canonical prefix per XML namespace, corpus-wide. The
+    // 2026-09-12 sweep canonicalised the corpus and nothing held it there:
+    // a demo app declared sap.ui.layout as `layout` and a port bound `table`
+    // (sap.ui.table's prefix) to sap.m.table until 2026-10-08. Judged on the
+    // declarations - an `ns = ` that names an undeclared prefix is a view
+    // that does not load, which view_gates' render gate already fails.
+    id: 'xmlns-prefix',
+    level: 'error',
+    doc: 'an xmlns declaration departs from the canonical prefix table (AGENTS §8, scripts/lib/ns-prefixes.mjs): a listed namespace is always declared under its own prefix, and a listed prefix never names another namespace. structural-diff resolves prefixes to namespace URIs, so renaming one is safe for the gates',
+    find(content) {
+      const out = [];
+      for (const m of content.matchAll(/n\s*=\s*`xmlns:([\w.-]+)`\s+v\s*=\s*`([^`]*)`/g)) {
+        const [, prefix, ns] = m;
+        const want = CANONICAL_PREFIX[ns];
+        const owner = PREFIX_OWNER.get(prefix);
+        if (want !== undefined && want !== prefix) {
+          out.push({ line: lineOf(content, m.index), text: `${ns} is declared as \`${prefix}\`, the canonical prefix is \`${want}\`` });
+        } else if (owner !== undefined && owner !== ns) {
+          out.push({ line: lineOf(content, m.index), text: `\`${prefix}\` is the canonical prefix of ${owner}, not of ${ns}` });
+        }
+      }
+      return out;
+    },
+  },
+  {
+    // view-chain-layout rule 5: one attribute per line, the `v =` / `b =` /
+    // `t =` column aligned across a control's attribute block. The linter's
+    // chain-house-layout checks rules 1-4 only and says so (its chain-layout
+    // module lists "the alignment of v = inside a line" as deliberately not
+    // judged), so this is corpus policy and lives here. A block is every
+    // a( ) line at one indent between two other chain calls; a comment, a
+    // blank line and the continuation lines of a wrapped value stay inside
+    // it, and an a( ) whose value starts on the next line takes no part in
+    // the column. The column is the minimal one: one blank after the longest
+    // name, which is how 16,900 of the 16,930 blocks were already written
+    // when the rule arrived (2026-10-08).
+    id: 'chain-value-column',
+    level: 'error',
+    doc: 'the v = / b = / t = column of a control\'s attribute block is aligned one blank after its longest name (view-chain-layout rule 5); realign the block, and shift the continuation lines of a wrapped value with it',
+    find(content) {
+      const L = content.split('\n');
+      const out = [];
+      let blk = [];
+      let indent = null;
+      const flush = () => {
+        if (blk.length) {
+          const want = Math.max(...blk.map((x) => x.head.length)) + 1;
+          const off = blk.find((x) => x.head.length + x.gap.length !== want);
+          if (off) out.push({ line: off.i + 1, text: `value at col ${off.head.length + off.gap.length + 1}, the block's column is ${want + 1}` });
+        }
+        blk = [];
+      };
+      L.forEach((l, i) => {
+        if (/^\s*\)->a\(/.test(l)) {
+          const ind = l.length - l.trimStart().length;
+          if (blk.length && ind !== indent) flush();
+          indent = ind;
+          const m = l.match(ATTR_LINE);
+          if (m) blk.push({ i, head: m[1], gap: m[2] });
+          if (STATEMENT_END.test(l)) flush();
+          return;
+        }
+        if (/^\s*\)->/.test(l)) { flush(); return; }
+        if (blk.length && STATEMENT_END.test(l) && !/^\s*"/.test(l)) flush();
+      });
+      flush();
       return out;
     },
   },
