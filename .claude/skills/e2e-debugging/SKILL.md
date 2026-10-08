@@ -485,3 +485,22 @@ verdicts below turned out to be harness effects.
   seconds instead of half a minute, and a reload is a fresh page that needs
   the hold again. No ABAP test hook: the class stays the snippet a reader
   copies (2026-09-27).
+- **A bare `.sapMPopover` can wait on the WRONG popover.** An
+  `OverflowToolbar` whose overflow was opened once (by `revealInOverflow( )` or
+  a click) keeps its own closed `sap.m.Popover` in the DOM, and
+  `page.waitForSelector('.sapMPopover')` checks the FIRST match - hidden, so it
+  times out while the popover under test is open. Address the popover by its
+  content (`.filter({ hasText: … })`) or id. Bit the overview app once its Demo
+  apps button moved into the subheader's overflow (2026-10-08).
+- **Wait for the POST of an Enter that round-trips, not only for quiet.**
+  `waitForIdle( )` cannot tell a round-trip that has not started yet from none
+  at all; on a loaded runner the next field is typed while the previous answer
+  is on its way, its Enter is dropped as busy and the answer resets it.
+  `Promise.all([page.waitForResponse(POST), locator.press('Enter')])`, then
+  `waitForIdle( )` - demo_004's card step (2026-10-08, nightly only).
+- **A frontend action can stop going through the UI5 API a module listens
+  on.** abap2UI5#2855 opens a `URLHELPER` `REDIRECT` with `NEW_WINDOW: true`
+  through `window.open( …, "noopener,noreferrer" )` instead of
+  `URLHelper.redirect( )`, so a listener on URLHelper's `redirect` event heard
+  nothing and app 084's Website leg read as a dead wire. Record the browser
+  call the action ends in as well (084 wraps `window.open`, 2026-10-08).

@@ -327,9 +327,23 @@ export default async (page, expect) => {
   }, 'the card step does not carry the original inputs - two MaskInputs and a required MM/YYYY DatePicker');
 
   const cardInput = (suffix) => page.locator(`[id$="--${suffix}-inner"]`);
+  /* Enter on a card field IS a round-trip (one POST each), so wait for that
+   * POST's answer, not only for a quiet spell: waitForIdle( ) cannot tell a
+   * round-trip that has not STARTED yet from none at all, and on a loaded
+   * runner the next field was typed into while the previous answer was still
+   * on its way - its Enter dropped as busy, the answer resetting the field
+   * ("the card field creditCardNumber did not keep ..." on the nightly of
+   * 2026-10-08, never locally) */
+  const enter = async (suffix) => {
+    await Promise.all([
+      page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes(':3000'), { timeout: 15000 })
+        .catch(() => { throw new Error(`Enter on the card field ${suffix} sent no round-trip`); }),
+      cardInput(suffix).press('Enter'),
+    ]);
+    await waitForIdle(page);
+  };
   await cardInput('creditCardHolderName').fill('A1');
-  await cardInput('creditCardHolderName').press('Enter');
-  await waitForIdle(page);
+  await enter('creditCardHolderName');
   await waitForUi5(page, () => {
     const i = ui5All().find((c) => /--creditCardHolderName$/.test(c.getId()));
     const b = ui5All().find((c) => /--showPopoverButton$/.test(c.getId()));
@@ -351,22 +365,18 @@ export default async (page, expect) => {
     return !!c && String(c.getValue()).replace(/[-\s]/g, '') === w.replace(/[-\s]/g, '');
   }, `the card field ${suffix} did not keep "${want}" after its round-trip`, { s: suffix, w: want });
   await cardInput('creditCardHolderName').fill('Jane Doe');
-  await cardInput('creditCardHolderName').press('Enter');
-  await waitForIdle(page);
+  await enter('creditCardHolderName');
   await settled('creditCardHolderName', 'Jane Doe');
   await cardInput('creditCardNumber').click();
   await cardInput('creditCardNumber').pressSequentially('4111111111111111');
-  await cardInput('creditCardNumber').press('Enter');
-  await waitForIdle(page);
+  await enter('creditCardNumber');
   await settled('creditCardNumber', '4111111111111111');
   await cardInput('creditCardSecurityNumber').click();
   await cardInput('creditCardSecurityNumber').pressSequentially('123');
-  await cardInput('creditCardSecurityNumber').press('Enter');
-  await waitForIdle(page);
+  await enter('creditCardSecurityNumber');
   await settled('creditCardSecurityNumber', '123');
   await cardInput('creditCardExpirationDate').fill('12/2027');
-  await cardInput('creditCardExpirationDate').press('Enter');
-  await waitForIdle(page);
+  await enter('creditCardExpirationDate');
   await settled('creditCardExpirationDate', '12/2027');
   await cardStep(true, 'four valid card fields did not validate the step - its Next button stays hidden');
   await waitForUi5(page, () => ui5All()

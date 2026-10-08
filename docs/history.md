@@ -7,7 +7,38 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-08 (latest) — `ui5/` gets its licence text: the originals are Apache-2.0, the repository is MIT
+## 2026-10-08 (latest) — e2e-nightly green again: three modules that had fallen behind the app and the framework
+
+The nightly of 2026-10-08 (run 37756011169, abap2UI5 main at 57ee33b) was
+red on three apps in shards 1 and 4, every other badge of the README green.
+None of the three was a broken port:
+
+- **084 (URLHelper), Website leg** - abap2UI5#2855 (2026-10-07) opens a
+  `REDIRECT` with `NEW_WINDOW: true` itself, as `window.open( url, "_blank",
+  "noopener,noreferrer" )`, because `URLHelper.redirect( url, true )` leaves
+  `window.opener` set on 1.71 - 1.83. The module listened only on URLHelper's
+  `redirect` event, which that path never fires. It now also wraps
+  `window.open` (opening nothing), takes the first hit after each press, so
+  the older pin (event, then `window.open` with the same URL) answers the
+  same string, and asserts `noopener` on the `window.open` path.
+- **overview** - #258 moved the src/04 demo apps from a table above the
+  ports into a dialog behind a "Demo apps (n)" subheader button; the module
+  still looked for the table on the page. It now opens the dialog, checks the
+  same rows, and closes it again. The generation-notes leg then had to address
+  its popover by content: the button sits in the subheader's overflow at the
+  harness viewport, and the overflow's own closed `sap.m.Popover` came first
+  for a bare `.sapMPopover`.
+- **demo_004, card number** - "did not keep 4111111111111111 after its
+  round-trip", never reproduced locally (4 of 4 green, and green under 20x CPU
+  throttling). Each card field's Enter is one POST; the module now waits for
+  that POST's answer before the next field instead of trusting a 400 ms quiet
+  spell that cannot see a round-trip which has not started yet.
+
+All three verified with an `E2E_ONLY='demo_004|app_084|app_000'` build
+against abap2UI5 main: `e2e-smoke: 3 app(s), 0 failing`. The three lessons
+went to the e2e-debugging guide.
+
+## 2026-10-08 — `ui5/` gets its licence text: the originals are Apache-2.0, the repository is MIT
 
 The question came from outside the corpus — could porting every demo kit
 sample be a licence problem? — and the answer had two halves. Porting is
