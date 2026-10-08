@@ -54,6 +54,20 @@
 //     aborted at the context route below — the harness has no egress, and a
 //     foreign page loading inside the run is precisely what a redirect check
 //     must not do. Proven: the URL reaches URLHelper.redirect( ) unmangled.
+//
+// The two NEW_WINDOW legs (Email, Website) and window.open (2026-10-08):
+// abap2UI5#2855 opens a REDIRECT with NEW_WINDOW: true itself, as
+// window.open( url, "_blank", "noopener,noreferrer" ), because
+// URLHelper.redirect( url, true ) on 1.71 - 1.83 leaves window.opener set on
+// the foreign tab. That path never reaches URLHelper, so its `redirect` event
+// stays silent and the Website leg read as a dead wire on a framework that
+// only got safer. The recorder therefore also wraps window.open, and each leg
+// takes the FIRST hit after its press: an older pin hands the URL to
+// URLHelper.redirect( ), which fires the event and then calls window.open
+// with the same URL, so both pins answer the same string. The wrapper never
+// opens anything - no foreign tab, no stray popup page in the context. On the
+// framework's own window.open path the noopener feature is asserted as well,
+// since it is the reason that path exists.
 
 // URLHelper.formatTel( ) keeps only [0-9+*#], so the spaces of the bound
 // numbers are stripped; normalizeEmail( ) percent-encodes address and subject
@@ -94,9 +108,9 @@ async function catchRedirect(page, label, before) {
   for (;;) {
     const hits = await readHits(page);
     if (hits === null) throw new Error(`the "${label}" hand-off navigated the page away — the app under test is gone`);
-    if (hits.length > before) return hits[hits.length - 1];
+    if (hits.length > before) return hits[before];
     if (Date.now() > deadline) {
-      throw new Error(`the "${label}" press never reached sap.m.URLHelper.redirect( ) — the .eF('URLHELPER', …) wire did not fire`);
+      throw new Error(`the "${label}" press never reached sap.m.URLHelper.redirect( ) nor window.open( ) — the .eF('URLHELPER', …) wire did not fire`);
     }
     await new Promise((r) => setTimeout(r, 200));
   }
@@ -121,14 +135,20 @@ export default async (page, expect) => {
     // parameter object, so getParameters( ) is the value and getParameter(…)
     // would answer undefined
     lib.URLHelper.attachRedirect((oEvent) => {
-      window.__urlHelperHits.push(String(oEvent.getParameters()));
+      window.__urlHelperHits.push({ url: String(oEvent.getParameters()), via: 'redirect' });
     });
+    // a NEW_WINDOW redirect is opened by the framework itself (see the header)
+    window.open = (url, target, features) => {
+      window.__urlHelperHits.push({ url: String(url), via: 'open', features: String(features || '') });
+      return null;
+    };
     return true;
   });
   if (!attached) throw new Error('sap/m/library is not loaded — cannot listen on URLHelper.redirect');
 
   for (let i = 0; i < EXPECTED.length; i++) {
     const [label, want] = EXPECTED[i];
+    const before = (await readHits(page) || []).length;
     if (i === 0) {
       // the one leg this tab can still be given a real gesture
       const item = page.locator('li.sapMDLI').filter({ hasText: label }).first();
@@ -137,7 +157,11 @@ export default async (page, expect) => {
     } else {
       await firePressOf(page, label);
     }
-    const got = await catchRedirect(page, label, i);
+    const hit = await catchRedirect(page, label, before);
+    const got = hit.url;
+    if (hit.via === 'open' && !/noopener/.test(hit.features)) {
+      throw new Error(`the "${label}" wire opened "${got}" in a new window without noopener ("${hit.features}")`);
+    }
     if (got !== want) {
       throw new Error(`the "${label}" wire handed URLHelper "${got}", expected "${want}"`
         + ' — the t_arg object literal did not arrive intact (a scheme with nothing behind it is'
