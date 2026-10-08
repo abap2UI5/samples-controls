@@ -535,6 +535,17 @@ local input store; the `api.md` **Sample** column links to the sample's
 source in the upstream
 [OpenUI5 repository](https://github.com/SAP/openui5), not to this copy (§7).
 
+**`ui5/` is Apache-2.0, not MIT.** The archived files are OpenUI5's, and
+Apache 2.0 requires the licence text to travel with them: `ui5/LICENSE`
+(verbatim from OpenUI5) and the "Licence" section of `ui5/README.md` must
+stay, and so must the README's License section that names the ports as
+derivative works. Archive only what OpenUI5's `REUSE.toml` licenses as
+Apache-2.0 — a file under one of its third-party annotations (any
+`thirdparty/` folder, `sap.ui.mdc`'s ChartJS sample) carries a different
+licence and needs its own line in that section before it is copied in. **SAPUI5 is not
+open source**: nothing from the SAPUI5 demo kit is ever copied into this
+repository — `src/03` stays hand-written and only links to it.
+
 Archive **everything** the sample's `manifest.json` lists under `sap.ui5 >
 config > sample > files` (resolving `../<OtherSample>/` references), or fidelity
 cannot be verified offline — app 022 was missing its controller and table for a

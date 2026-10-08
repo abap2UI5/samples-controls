@@ -251,6 +251,18 @@ samples — do not edit them by hand.
 #### Dependencies
 * [abap2UI5](https://github.com/abap2UI5/abap2UI5)
 
+#### License
+
+The code of this repository is [MIT](LICENSE). The originals it rebuilds are
+not: everything under [`ui5/`](ui5) is copied from
+[OpenUI5](https://github.com/UI5/openui5) — © SAP SE or an SAP affiliate
+company and OpenUI5 contributors, [Apache License 2.0](ui5/LICENSE) — and
+the ports under `src/` are derivative works of those samples, translated to
+ABAP (each port's deviations from its original are listed in its `meta/`
+sidecar). See [ui5/README.md](ui5/README.md#licence) for the details. This
+is a community project and not affiliated with or endorsed by SAP; SAP, UI5,
+SAPUI5 and the SAP logo are trademarks of SAP SE.
+
 #### Issues
 
 For bug reports or feature requests, please open an issue in the [abap2UI5 repository.](https://github.com/abap2UI5/abap2UI5/issues)

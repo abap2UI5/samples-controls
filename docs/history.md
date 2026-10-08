@@ -7,7 +7,38 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-07 (latest) — the demo apps appear in the in-system overview app, and a backlog item turns out to be closed already
+## 2026-10-08 (latest) — `ui5/` gets its licence text: the originals are Apache-2.0, the repository is MIT
+
+The question came from outside the corpus — could porting every demo kit
+sample be a licence problem? — and the answer had two halves. Porting is
+not: OpenUI5 is Apache-2.0, which allows copying, modifying and translating
+the samples, commercially included. But the repository did not meet the
+licence's conditions. Its only `LICENSE` is MIT, `ui5/` held 622 verbatim
+OpenUI5 sample folders with no Apache text beside them, and the one licence
+line anywhere was `ui5/demoapps/README.md`'s, which covers four apps.
+
+**What was checked, and how.** OpenUI5's `REUSE.toml` and `THIRDPARTY.txt`
+(from the `@openui5/sap.m` 1.152.0 npm package — the sandbox reaches the
+registry, not GitHub) license the whole repository under Apache-2.0
+(`path = "**"`, © SAP SE or an SAP affiliate company and OpenUI5
+contributors). Every exception is a `thirdparty/` folder, the ChartJS sample
+of `sap.ui.mdc` or the Card Explorer's schema validator; `ui5/` contains none
+of them (`find ui5 -ipath '*thirdparty*'` is empty, and `ui5/sap.ui.integration/CardExplorer`
+is the sample, not the Card Explorer webapp). So the 36 images and PDFs here
+are Apache-2.0 as well. SAPUI5 is the one real boundary: it is proprietary,
+and `src/03` is hand-written and only links to its demo kit.
+
+**The change.** `ui5/LICENSE` is OpenUI5's `LICENSE.txt` verbatim;
+`ui5/README.md` gets a Licence section (scope, the REUSE check, the ports as
+derivative works whose changes are their sidecars' deviations, and that
+Apache §6 grants no trademark rights to the SAP logos some samples ship);
+the README gets a License section that separates MIT from Apache-2.0 and says
+the project is not affiliated with SAP; AGENTS §4 keeps all three in place
+and forbids copying a file under a REUSE third-party annotation or anything
+from the SAPUI5 demo kit. `check-archive` walks only directories under
+`ui5/<lib>/`, so a file at `ui5/LICENSE` is invisible to it.
+
+## 2026-10-07 — the demo apps appear in the in-system overview app, and a backlog item turns out to be closed already
 
 Two closed findings, moved out of the STATUS.md backlog:
 

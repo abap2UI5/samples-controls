@@ -36,3 +36,25 @@ and are never edited to fit ABAP. `../api.md` links every sample to its
 upstream source in the [OpenUI5 repository](https://github.com/SAP/openui5);
 the overview app `../src/z2ui5_cl_smpc_app_000.clas.abap` starts each port
 in the system.
+
+## Licence
+
+Everything under `ui5/` is third-party material from
+[UI5/openui5](https://github.com/UI5/openui5) — © SAP SE or an SAP affiliate
+company and OpenUI5 contributors, licensed under the **Apache License 2.0**.
+The full licence text is [`LICENSE`](LICENSE) in this folder, copied verbatim
+from OpenUI5 1.152.0. It covers the sample files, the `mock/` snapshots and
+the `demoapps/` sources alike: OpenUI5's `REUSE.toml` licenses the whole
+repository (`path = "**"`) under Apache-2.0, and none of its third-party
+exceptions (`thirdparty/` folders, the ChartJS sample of `sap.ui.mdc`, the
+Card Explorer's JSON schema validator) is among the files archived here —
+checked against `REUSE.toml` and `THIRDPARTY.txt` of `@openui5/sap.m` 1.152.0
+on 2026-10-08. The repository's own MIT licence (`../LICENSE`) does not apply
+to this folder.
+
+The files are unmodified apart from the normalisation `mock/README.md`
+describes. The ABAP classes under `../src/` are derivative works of them —
+each rebuilds the sample named in its `meta/` sidecar in ABAP; the deviations
+listed there are the changes. Apache 2.0 grants no trademark rights (§6): the
+SAP logos some samples ship (`SAP_Logo.png`, `sap-logo.svg`, …) are archived
+only as part of their sample and remain trademarks of SAP SE.
