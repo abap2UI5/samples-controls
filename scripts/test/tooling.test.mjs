@@ -1533,6 +1533,55 @@ test('pattern-lint: chain-value-column holds a control\'s v = column, and only w
 });
 
 /*
+ * chain-value-column --fix: realigns the block, moves a wrapped value's
+ * continuation with it (both directions), leaves a value-on-the-next-line
+ * a( ) alone, is idempotent, and the rule passes on what it wrote.
+ */
+test('pattern-lint --fix: chain-value-column realigns a block and its continuations, idempotently', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const body = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')}\n            )->tag( \`Text\` ).`);
+  const fix = () => runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 'chain-value-column');
+  try {
+    const want = body([
+      '                )->a( n = `text`     v = `hello` &&',
+      '                                         `world`',
+      '                " a comment',
+      '',
+      '                )->a( n = `wrapping` b = abap_true',
+      '                )->a( n = `maxLines`',
+      '                         v = `2`',
+      '                )->a( n = `id`       v = client->_event( val   = `X`',
+      '                                                         t_arg = VALUE #( ( `a` )',
+      '                                                                          ( `b` ) ) )']);
+    // ragged: one value too far left (continuation with it), one too far right
+    const ragged = want
+      .replace(')->a( n = `text`     v = `hello` &&', ')->a( n = `text` v = `hello` &&')
+      .replace('                                         `world`', '                                     `world`')
+      .replace(')->a( n = `id`       v = client', ')->a( n = `id`          v = client')
+      .replace('                                                         t_arg', '                                                            t_arg')
+      .replace('                                                                          ( `b` )', '                                                                             ( `b` )');
+    fs.writeFileSync(at, ragged);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 'chain-value-column');
+    assert.equal(r.code, 1, 'the ragged block fails first');
+    assert.match(r.out, /\[chain-value-column\] value at col 34, the block's column is 38/);
+    r = fix();
+    assert.equal(r.code, 0, `the fixed file passes\n${r.out}`);
+    assert.match(r.out, /--fix: 1 file\(s\) rewritten/);
+    assert.equal(fs.readFileSync(at, 'utf8'), want, 'fix restores the aligned block, continuations moved with their value');
+    r = fix();
+    assert.match(r.out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+    r = runIn(root, 'pattern-lint.mjs');
+    assert.ok(!/chain-value-column/.test(r.out), `the full lint finds no column left\n${r.out}`);
+    // --rule narrows reporting too: an unknown rule is refused, not ignored
+    assert.equal(runIn(root, 'pattern-lint.mjs', '--rule', 'no-such-rule').code, 2);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
  * The hold-out row: three facts, all derived. The fixture's holdout.json is
  * empty, so the row says 0 reserved; reserving the fixture's own sample makes
  * it SPENT (a sidecar names it), and a probe heading in docs/history.md is

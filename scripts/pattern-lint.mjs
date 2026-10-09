@@ -85,7 +85,7 @@
  * BASELINE entry must be removed in the same change (stale entries are
  * reported).
  *
- * Run:  node scripts/pattern-lint.mjs
+ * Run:  node scripts/pattern-lint.mjs [--fix] [--rule <id>]
  */
 
 import fs from 'fs';
@@ -167,6 +167,44 @@ const VALUE_CELL = new RegExp('([a-z_0-9]+) = (' + BT + '[^' + BT + ']*' + BT + 
 // and the head of it up to the closing backtick of the name
 const ATTR_LINE = /^(\s*\)->a\(\s*n\s*=\s*`[^`]*`)(\s+)[vbt]\s*=\s/;
 const STATEMENT_END = /\.\s*("[^`|]*)?$/;
+
+/* The attribute blocks chain-value-column judges and fixes, read once for
+ * both so the fixer cannot disagree with the check. A block is every a( )
+ * line at one indent between two other chain calls (or the statement end);
+ * each entry is an a( ) line whose value starts on that line - `head` up to
+ * the closing backtick of the name, `gap` the blanks before v = / b = / t =,
+ * `cont` the continuation lines of a value wrapped below it (comments and
+ * blank lines stay in the block but belong to no value). `want` is the
+ * block's column: one blank after its longest head. */
+function valueColumnBlocks(L) {
+  const blocks = [];
+  let blk = [];
+  let indent = null;
+  let last = null;
+  const flush = () => {
+    if (blk.length) blocks.push({ entries: blk, want: Math.max(...blk.map((x) => x.head.length)) + 1 });
+    blk = [];
+    last = null;
+  };
+  L.forEach((l, i) => {
+    if (/^\s*\)->a\(/.test(l)) {
+      const ind = l.length - l.trimStart().length;
+      if (blk.length && ind !== indent) flush();
+      indent = ind;
+      const m = l.match(ATTR_LINE);
+      last = m ? { i, head: m[1], gap: m[2], cont: [] } : null;
+      if (last) blk.push(last);
+      if (STATEMENT_END.test(l)) flush();
+      return;
+    }
+    if (/^\s*\)->/.test(l)) { flush(); return; }
+    const comment = /^\s*"/.test(l);
+    if (last && l.trim() && !comment) last.cont.push(i);
+    if (blk.length && STATEMENT_END.test(l) && !comment) flush();
+  });
+  flush();
+  return blocks;
+}
 // the canonical prefix of each listed namespace, and its inverse
 const PREFIX_OWNER = new Map(Object.entries(CANONICAL_PREFIX).map(([ns, p]) => [p, ns]));
 
@@ -601,35 +639,33 @@ const RULES = [
     // when the rule arrived (2026-10-08).
     id: 'chain-value-column',
     level: 'error',
-    doc: 'the v = / b = / t = column of a control\'s attribute block is aligned one blank after its longest name (view-chain-layout rule 5); realign the block, and shift the continuation lines of a wrapped value with it',
+    doc: 'the v = / b = / t = column of a control\'s attribute block is aligned one blank after its longest name (view-chain-layout rule 5); `npm run fmt:chains` realigns it (pattern-lint --fix --rule chain-value-column), moving the continuation lines of a wrapped value with it',
     find(content) {
-      const L = content.split('\n');
       const out = [];
-      let blk = [];
-      let indent = null;
-      const flush = () => {
-        if (blk.length) {
-          const want = Math.max(...blk.map((x) => x.head.length)) + 1;
-          const off = blk.find((x) => x.head.length + x.gap.length !== want);
-          if (off) out.push({ line: off.i + 1, text: `value at col ${off.head.length + off.gap.length + 1}, the block's column is ${want + 1}` });
-        }
-        blk = [];
-      };
-      L.forEach((l, i) => {
-        if (/^\s*\)->a\(/.test(l)) {
-          const ind = l.length - l.trimStart().length;
-          if (blk.length && ind !== indent) flush();
-          indent = ind;
-          const m = l.match(ATTR_LINE);
-          if (m) blk.push({ i, head: m[1], gap: m[2] });
-          if (STATEMENT_END.test(l)) flush();
-          return;
-        }
-        if (/^\s*\)->/.test(l)) { flush(); return; }
-        if (blk.length && STATEMENT_END.test(l) && !/^\s*"/.test(l)) flush();
-      });
-      flush();
+      for (const blk of valueColumnBlocks(content.split('\n'))) {
+        const off = blk.entries.find((x) => x.head.length + x.gap.length !== blk.want);
+        if (off) out.push({ line: off.i + 1, text: `value at col ${off.head.length + off.gap.length + 1}, the block's column is ${blk.want + 1}` });
+      }
       return out;
+    },
+    // whitespace only: the gap before v = / b = / t = becomes the block's
+    // column, and every continuation line of that value moves by the same
+    // amount, so a wrapped t_arg keeps hanging under its first element
+    // (rule 7) and an && continuation keeps its place under the value
+    fix(content) {
+      const L = content.split('\n');
+      for (const blk of valueColumnBlocks(L)) {
+        for (const e of blk.entries) {
+          const delta = blk.want - (e.head.length + e.gap.length);
+          if (!delta) continue;
+          L[e.i] = e.head + ' '.repeat(blk.want - e.head.length) + L[e.i].slice(e.head.length + e.gap.length);
+          for (const c of e.cont) {
+            if (delta > 0) L[c] = ' '.repeat(delta) + L[c];
+            else L[c] = L[c].slice(Math.min(-delta, L[c].length - L[c].trimStart().length));
+          }
+        }
+      }
+      return L.join('\n');
     },
   },
   {
@@ -656,8 +692,24 @@ function grepLines(re) {
   };
 }
 
+/* --fix rewrites what a rule with a fix( ) reports (chain-value-column, the
+ * one so far), then lints the result as usual; --rule <id> narrows the run -
+ * fixing and reporting - to that rule, which is how `npm run fmt:chains`
+ * calls it. A fix must leave the code identical up to whitespace: the run
+ * refuses to write a file where it does not, and fails instead. */
+const argv = process.argv.slice(2);
+const FIX = argv.includes('--fix');
+const ONLY = argv.includes('--rule') ? argv[argv.indexOf('--rule') + 1] : null;
+if (ONLY && !RULES.some((r) => r.id === ONLY)) {
+  console.log(`pattern-lint: unknown rule ${ONLY}`);
+  process.exit(2);
+}
+const ACTIVE = ONLY ? RULES.filter((r) => r.id === ONLY) : RULES;
+const squash = (t) => t.replace(/\s+/g, ' ');
+
 let errors = 0;
 let warns = 0;
+let fixed = 0;
 const seenBaseline = new Set();
 
 // abapGit XML files MUST start with the UTF-8 BOM — abapGit serializes them
@@ -665,7 +717,7 @@ const seenBaseline = new Set();
 // crept in via agent-written files; human fix PR #38, 2026-07-27). The
 // scaffolder and generate-overview both emit the BOM; this gates hand-written
 // ones. Checked bytewise, outside the .clas.abap rule loop.
-for (const f of walkFiles(SRC, '.xml')) {
+for (const f of ONLY ? [] : walkFiles(SRC, '.xml')) {
   const rel = path.relative(ROOT, f).split(path.sep).join('/');
   const b = fs.readFileSync(f);
   if (!(b[0] === 0xEF && b[1] === 0xBB && b[2] === 0xBF)) {
@@ -678,8 +730,24 @@ for (const f of walkFiles(SRC, '.xml')) {
 for (const f of walkFiles(SRC, '.clas.abap')) {
   const rel = path.relative(ROOT, f).split(path.sep).join('/');
   const isPort = /^src\/\d+\/\d+\/[^/]+$/.test(rel);
-  const content = fs.readFileSync(f, 'utf8');
-  for (const rule of RULES) {
+  let content = fs.readFileSync(f, 'utf8');
+  if (FIX) {
+    let next = content;
+    for (const rule of ACTIVE) {
+      if (rule.fix && !(rule.portsOnly && !isPort)) next = rule.fix(next, rel);
+    }
+    if (next !== content) {
+      if (squash(next) !== squash(content)) {
+        console.log(`ERROR ${rel}:1 [fix] a fix changed more than whitespace - file left untouched`);
+        errors++;
+      } else {
+        fs.writeFileSync(f, next);
+        content = next;
+        fixed++;
+      }
+    }
+  }
+  for (const rule of ACTIVE) {
     if (rule.portsOnly && !isPort) continue;
     const hits = rule.find(content, rel);
     if (!hits.length) continue;
@@ -712,7 +780,7 @@ for (const key of BASELINE) {
 // written against methods that do not exist, and nothing said so.
 const PROMPT = path.join(ROOT, 'scripts', 'generation-prompt.txt');
 const RETIRED_VERBS = ['open', 'leaf', 'shut'];
-if (fs.existsSync(PROMPT)) {
+if (!ONLY && fs.existsSync(PROMPT)) {
   const prompt = fs.readFileSync(PROMPT, 'utf8');
   const rel = path.relative(ROOT, PROMPT).split(path.sep).join('/');
   for (const verb of RETIRED_VERBS) {
@@ -733,6 +801,7 @@ if (fs.existsSync(PROMPT)) {
   }
 }
 
+if (FIX) console.log(`\npattern-lint --fix: ${fixed} file(s) rewritten`);
 console.log(`\npattern-lint: ${errors} error(s), ${warns} warning(s), ` +
   `${seenBaseline.size}/${BASELINE.size} baseline entries matched.`);
 process.exit(errors ? 1 : 0);

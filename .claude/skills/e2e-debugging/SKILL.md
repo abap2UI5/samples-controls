@@ -283,6 +283,15 @@ verdicts below turned out to be harness effects.
   `revealInOverflow( )` now waits for every popup to leave
   `CLOSING`/`OPENING` before it trusts what it sees; a hand-written visibility
   check next to a popup needs the same wait.
+- **Once `revealInOverflow( )` has opened a toolbar's overflow, "the first
+  `.sapMPopover`" is that hidden popover, not yours.** The associative popover
+  stays in the DOM after it closes, AHEAD of any popover a later round-trip
+  opens, so `page.waitForSelector('.sapMPopover')` waits for the hidden one and
+  times out while the real popover is open (`isOpen()` true in the registry).
+  Locate a popover by its content -
+  `page.locator('.sapMPopover').filter({ hasText: '<title>' })` - (the
+  overview, 2026-10-09: its Demo apps button moved into the subheader's
+  overflow in #259 and the generation-notes leg went red behind it).
 - **Several OverflowToolbars can share one page.** App 357 has one on the table
   and one in the footer, so "the first Additional Options button" opens the
   wrong popover and the control still never shows; app 407's menu button hides
