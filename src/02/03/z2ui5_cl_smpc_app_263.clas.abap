@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
     " elements feed are folded onto ONE table, addressed per row by the cell
     " binding, so the model keeps the /Employee array shape (app 230).
     DATA(blocks) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:m`    v = `sap.m`
@@ -100,11 +100,11 @@ CLASS z2ui5_cl_smpc_app_263 IMPLEMENTATION.
             )->end(
 
             )->ele( n = `Page` ns = `m`
-                )->a( n = `id`              v = `page2`
-                )->a( n = `title`           v = `Page 2`
-                )->a( n = `showNavButton`   v = `true`
-                )->a( n = `navButtonPress`  v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                          t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page1` ) ) )
+                )->a( n = `id`             v = `page2`
+                )->a( n = `title`          v = `Page 2`
+                )->a( n = `showNavButton`  v = `true`
+                )->a( n = `navButtonPress` v = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                                         t_arg = VALUE #( ( `navigationContainer` ) ( `to` ) ( `page1` ) ) )
 
                 )->ele( `ObjectPageLayout`
                     )->a( n = `id`                       v = `ObjectPageLayout`

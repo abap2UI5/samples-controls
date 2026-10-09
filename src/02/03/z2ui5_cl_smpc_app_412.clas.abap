@@ -74,13 +74,13 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
     " aggregations hold SharedBlocks BlockBase controls, each a lazy-loading
     " wrapper around a static view - inlined 1:1 below.
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`        v = `sap.uxap`
-        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`      v = `sap.m`
-        )->a( n = `xmlns:forms`  v = `sap.ui.layout.form`
-        )->a( n = `xmlns:core`   v = `sap.ui.core`
-        )->a( n = `xmlns:layout` v = `sap.ui.layout`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `xmlns`      v = `sap.uxap`
+        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`    v = `sap.m`
+        )->a( n = `xmlns:form` v = `sap.ui.layout.form`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:l`    v = `sap.ui.layout`
+        )->a( n = `height`     v = `100%`
 
         )->ele( `ObjectPageLayout`
             )->a( n = `id`                       v = `ObjectPageLayout`
@@ -416,7 +416,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " goals:GoalsBlock inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -455,7 +455,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `blocks`
 
                             " personal:BlockPhoneNumber inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
 
@@ -473,7 +473,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockSocial inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable`         v = `false`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
@@ -498,7 +498,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockAdresses inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout`   v = `ColumnLayout`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `width`    v = `100%`
@@ -517,7 +517,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " personal:BlockMailing (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `layout` v = `ColumnLayout`
                                     )->a( n = `width`  v = `100%`
 
@@ -540,7 +540,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " personal:PersonalBlockPart1 (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -557,7 +557,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `moreBlocks`
 
                                 " personal:PersonalBlockPart2 (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `editable` v = `false`
                                     )->a( n = `layout`   v = `ColumnLayout`
 
@@ -589,7 +589,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " employment:BlockJobInfoPart1 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
                                     )->a( n = `editable`         v = `false`
@@ -627,7 +627,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockJobInfoPart2 inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
                                     )->a( n = `editable`         v = `false`
@@ -659,16 +659,16 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockJobInfoPart3 inlined
-                                )->ele( n = `HorizontalLayout` ns = `layout`
+                                )->ele( n = `HorizontalLayout` ns = `l`
                                     )->a( n = `class` v = `sapUiSmallMarginTop`
 
-                                    )->ele( n = `VerticalLayout` ns = `layout`
+                                    )->ele( n = `VerticalLayout` ns = `l`
                                         )->tag( n = `Label` ns = `m`
                                             )->a( n = `text` v = `Manager`
 
-                                        )->ele( n = `HorizontalLayout` ns = `layout`
-                                            )->ele( n = `content` ns = `layout`
-                                                )->ele( n = `VerticalLayout` ns = `layout`
+                                        )->ele( n = `HorizontalLayout` ns = `l`
+                                            )->ele( n = `content` ns = `l`
+                                                )->ele( n = `VerticalLayout` ns = `l`
                                                     )->tag( n = `Text` ns = `m`
                                                         )->a( n = `text` v = `James Smith`
                                                     )->tag( n = `Text` ns = `m`
@@ -691,7 +691,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `blocks`
 
                                 " employment:BlockEmpDetailPart1 (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
                                     )->a( n = `editable`         v = `false`
@@ -720,7 +720,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->ele( `moreBlocks`
 
                                 " employment:BlockEmpDetailPart2 (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
                                     )->a( n = `labelSpanS`       v = `4`
@@ -752,7 +752,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                                 )->end(
 
                                 " employment:BlockEmpDetailPart3 (columnLayout="1") inlined
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `labelSpanL`       v = `4`
                                     )->a( n = `labelSpanM`       v = `4`
                                     )->a( n = `editable`         v = `false`
@@ -798,7 +798,7 @@ CLASS z2ui5_cl_smpc_app_412 IMPLEMENTATION.
                             )->a( n = `showTitle` v = `false`
 
                             )->ele( `blocks`
-                                )->ele( n = `SimpleForm` ns = `forms`
+                                )->ele( n = `SimpleForm` ns = `form`
                                     )->a( n = `class`     v = `sapUxAPObjectPageSubSectionAlignContent`
                                     )->a( n = `layout`    v = `ColumnLayout`
                                     )->a( n = `columnsM`  v = `2`

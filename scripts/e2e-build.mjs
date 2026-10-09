@@ -27,7 +27,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { resolveA2UI5 } from './lib-a2ui5.mjs';
+import { resolveA2UI5, checkoutWarnings, IN_REPO_A2UI5 } from './lib-a2ui5.mjs';
 import { isSkippedDir } from './lib/src-tree.mjs';
 import { patchFollowUpAction } from '../web/ci/patch_follow_up_action.mjs';
 import { patchOpenAbapXml } from '../web/ci/patch_open_abap_xml.mjs';
@@ -53,6 +53,18 @@ const EXCLUDE = new Set([]);
 
 function main() {
   console.log(`e2e-build: abap2UI5 at ${A2}`);
+  /* A shared framework checkout is a working tree somebody else may be using:
+   * another agent's edits, a framework `npm run verify` writing the same
+   * node/downport and node/output this build wipes, or a second e2e-build.
+   * Say so up front - the build itself would succeed and serve whatever it
+   * found. The in-repo clone (`npm run node:setup`, checked out at
+   * A2UI5_PIN) is this repository's own and is the way around all three. */
+  const warnings = checkoutWarnings(A2);
+  for (const w of warnings) console.log(`e2e-build: WARNING ${w}`);
+  if (warnings.length && path.resolve(A2) !== path.resolve(IN_REPO_A2UI5)) {
+    console.log('e2e-build: WARNING build in a clone of your own instead: `npm run node:setup` clones abap2UI5 into .abap2UI5 at A2UI5_PIN '
+      + 'and builds there; with one in place, `A2UI5_HOME=.abap2UI5 npm run e2e:build` (E2E.md, "Never run e2e:build alongside anything else")');
+  }
   const downport = path.join(A2, 'node/downport');
   const output = path.join(A2, 'node/output');
   fs.rmSync(downport, { recursive: true, force: true });

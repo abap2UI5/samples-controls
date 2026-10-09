@@ -120,12 +120,12 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
                                     ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` )
-                            " the "do the types differ" test used to be a fifth arg
-                            " holding a JS callback (.some(function(a){...})), which is
-                            " not in the UI5 expression grammar - it threw and lost the
-                            " whole handler. CalendarAppointment.selected is bindable,
-                            " so ABAP reads the selected rows and compares them itself.
-                            ( `${$parameters>/appointments} ? ${$parameters>/appointments}[0].getType() : ''` ) ) )
+                                    " the "do the types differ" test used to be a fifth arg
+                                    " holding a JS callback (.some(function(a){...})), which is
+                                    " not in the UI5 expression grammar - it threw and lost the
+                                    " whole handler. CalendarAppointment.selected is bindable,
+                                    " so ABAP reads the selected rows and compares them itself.
+                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}[0].getType() : ''` ) ) )
                 )->a( n = `showEmptyIntervalHeaders`  v = `false`
                 " handleAppointmentAddWithContext opens the same dialog pre-set to
                 " the selected interval

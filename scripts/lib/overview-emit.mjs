@@ -200,7 +200,10 @@ const sortableColumn = (label, path) => `                        )->ele( \`Colum
                         )->end(`;
 // a plain (non-sortable) column: header label only, plus optional Column attrs
 const plainColumn = (label, attrs = []) => {
-  const attrLines = attrs.map(([n, v]) => `                            )->a( n = \`${n}\` v = \`${v}\``).join('\n');
+  // the v = column aligned across the block (view-chain-layout rule 5,
+  // pattern-lint chain-value-column)
+  const w = Math.max(0, ...attrs.map(([n]) => n.length));
+  const attrLines = attrs.map(([n, v]) => `                            )->a( n = \`${n}\`${' '.repeat(w - n.length)} v = \`${v}\``).join('\n');
   const head = attrs.length
     ? `                        )->ele( \`Column\`\n${attrLines}\n\n                            )->tag( \`Text\``
     : `                        )->ele( \`Column\`\n                            )->tag( \`Text\``;
@@ -641,10 +644,10 @@ CLASS ${CLASS} IMPLEMENTATION.
         " say why the reference links are missing rather than leaving a gap
         IF api IS INITIAL.
           box->tag( \`MessageStrip\`
-              )->a( n = \`text\`      v = \`This control is in no OpenUI5 checkout, so this sample has no Control API Reference, Sample Link or Sample Source Code.\`
-              )->a( n = \`type\`      v = \`Information\`
-              )->a( n = \`showIcon\`  v = \`true\`
-              )->a( n = \`class\`     v = \`sapUiSmallMarginTop\` ).
+              )->a( n = \`text\`     v = \`This control is in no OpenUI5 checkout, so this sample has no Control API Reference, Sample Link or Sample Source Code.\`
+              )->a( n = \`type\`     v = \`Information\`
+              )->a( n = \`showIcon\` v = \`true\`
+              )->a( n = \`class\`    v = \`sapUiSmallMarginTop\` ).
         ENDIF.
 
         client->popover_display( xml = links->stringify( ) by_id = client->get_event_arg( 2 ) ).
@@ -865,9 +868,9 @@ CLASS ${CLASS} IMPLEMENTATION.
                 )->end(
 
                 )->ele( \`Table\`
-                    )->a( n = \`id\`      v = \`${ID_TABLE}\`
-                    )->a( n = \`sticky\`  v = \`ColumnHeaders\`
-                    )->a( n = \`items\`   v = client->_bind( t_app )
+                    )->a( n = \`id\`     v = \`${ID_TABLE}\`
+                    )->a( n = \`sticky\` v = \`ColumnHeaders\`
+                    )->a( n = \`items\`  v = client->_bind( t_app )
 
                     )->ele( \`columns\`
 ${columnsBlock}

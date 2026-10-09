@@ -308,6 +308,14 @@ for (const [sampleId, exc] of scopeExceptions) {
     scopeErrors++;
     continue;
   }
+  // the entry's `class` is not decoration: lib-packages.mjs keys the folder
+  // verdict on it (a post-1.71 control files the port under src/02), so an
+  // entry naming the wrong class files the wrong port and leaves the real one
+  // in src/01 - while every check keyed on `sample` stays green
+  if (exc.class !== hit.port.cls) {
+    console.error(`ERROR: scope exception "${sampleId}" names class "${exc.class}", but the sample's port is ${hit.port.cls} — lib-packages.mjs files the port by that field; correct it in ui5/scope-exceptions.json`);
+    scopeErrors++;
+  }
   if (!exc.decided) {
     console.error(`ERROR: scope exception "${sampleId}" (${exc.class}) carries no "decided" facts — pin the decision's basis as { "scope", "since", "deprecated" } in ui5/scope-exceptions.json`);
     scopeErrors++;

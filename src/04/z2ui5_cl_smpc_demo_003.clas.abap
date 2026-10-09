@@ -160,7 +160,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
             )->a( n = `xmlns`        v = `sap.m`
             )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
             )->a( n = `xmlns:f`      v = `sap.f`
-            )->a( n = `xmlns:layout` v = `sap.ui.layout`
+            )->a( n = `xmlns:l`      v = `sap.ui.layout`
             )->a( n = `xmlns:u`      v = `sap.ui.unified`
             )->a( n = `xmlns:core`   v = `sap.ui.core`
             )->a( n = `height`       v = `100%`
@@ -189,7 +189,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
     " the VerticalLayout the controller adds the displayed calendar to
     DATA(content) = page->ele( n = `content` ns = `f`
-        )->ele( n = `VerticalLayout` ns = `layout`
+        )->ele( n = `VerticalLayout` ns = `l`
             )->a( n = `id`    v = `mainContent`
             )->a( n = `width` v = `100%` ).
 

@@ -57,7 +57,7 @@ CLASS z2ui5_cl_smpc_app_588 IMPLEMENTATION.
     " (app 263 carries the identical section tree - same fifteen blocks, same
     " ids, same titles); the six emp1>..emp6> named models fold onto one table
     DATA(blocks) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `height`       v = `100%`
+        )->a( n = `height`     v = `100%`
         )->a( n = `xmlns`      v = `sap.uxap`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:m`    v = `sap.m`

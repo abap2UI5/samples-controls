@@ -25,7 +25,7 @@
     },
     {
       "type": "NOTE",
-      "what": "determineControlsVisibility shows the Label only in the nonWorking view and the Select only in the months view on a desktop. viewKey is bindable, so the key is one shared field and both controls carry the switch as an expression binding - the Label over the key alone, the Select over the key AND the device model's system/desktop flag. handleViewChange, which exists only to re-run that method, is dropped with them."
+      "what": "determineControlsVisibility shows the Label only in the nonWorking view and the Select only in the months view on a desktop. viewKey is bindable, so the key is one shared field and both controls carry the switch as an expression binding - the Label over the key alone, the Select over the key AND the device model's system/desktop flag. handleViewChange, which exists only to re-run that method, is dropped with them, and the PlanningCalendar's viewChange attribute with it."
     },
     {
       "type": "NOTE",

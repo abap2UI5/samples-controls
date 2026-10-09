@@ -72,7 +72,7 @@ jobs:
           echo "reason=the change reaches every port (framework pin, harness or build) — the full corpus is e2e-nightly's job, not a subset's" >> "$GITHUB_OUTPUT"
         elif [ -z "$ports" ]; then
           echo "run=false" >> "$GITHUB_OUTPUT"
-          echo "reason=no port, demo app, sidecar or interaction module changed" >> "$GITHUB_OUTPUT"
+          echo "reason=no port, demo app, sidecar, interaction module or overview generator changed" >> "$GITHUB_OUTPUT"
         else
           echo "run=true" >> "$GITHUB_OUTPUT"
           echo "only=$(echo "$ports" | paste -sd, -)" >> "$GITHUB_OUTPUT"

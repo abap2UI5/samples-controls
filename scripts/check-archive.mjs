@@ -101,8 +101,11 @@ for (const [lib, name, dir] of samples) {
     err(`ui5/${lib}/${name}/manifest.json is not parseable — ${e.message}`);
     continue;
   }
+  /* a manifest without `sample.files` still declares stylesheets: the two
+   * other declaration forms below are checked regardless (an early `continue`
+   * here used to skip them for exactly such a manifest) */
   const files = manifest?.['sap.ui5']?.config?.sample?.files;
-  if (!Array.isArray(files)) continue;
+  if (files !== undefined && !Array.isArray(files)) err(`ui5/${lib}/${name}/manifest.json: sap.ui5 > config > sample > files is not an array`);
 
   for (const [rel, candidates] of declaredStyles(dir, path.join(UI5, lib), manifest)) {
     listed++;
@@ -112,7 +115,7 @@ for (const [lib, name, dir] of samples) {
     err(`ui5/${lib}/${name} declares the stylesheet ${rel}, which is not archived — CAPABILITIES is explicit that an unarchived stylesheet is a gap to close, not a reason to drop the CSS`);
   }
 
-  for (const rel of files) {
+  for (const rel of Array.isArray(files) ? files : []) {
     listed++;
     const abs = path.resolve(dir, rel);
     if (fs.existsSync(abs)) continue;

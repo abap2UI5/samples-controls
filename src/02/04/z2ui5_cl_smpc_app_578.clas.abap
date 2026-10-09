@@ -117,7 +117,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
 
         )->ele( n = `FlexibleColumnLayout` ns = `f`
             )->a( n = `id`               v = `fcl`
-            )->a( n = `backgroundDesign` v = `Translucent`
+            )->a( n = `backgroundDesign` v = `Solid`
             " the original wires stateChange to onStateChanged: only a layout
             " change by a NAVIGATION ARROW replace-navTo's the URL - the flag
             " and the new layout travel with the event, the backend guards on it

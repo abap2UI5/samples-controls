@@ -1,4 +1,6 @@
 // KEYBOARD_SHORTCUT: Ctrl+S fires the backend SAVE command (2026-07-30)
+import { waitForPopup } from '../../scripts/lib-e2e.mjs';
+
 export default async (page, expect) => {
   await page.locator('.sapMPanel').first().click();
   await page.keyboard.press('Control+s');
@@ -32,7 +34,8 @@ export default async (page, expect) => {
   const open = page.getByRole('button', { name: /Open Popover/i }).nth(1);
   await expect(open, 'the popoverCommand button').toBeVisibleEnabled();
   await open.click();
-  await page.locator('.sapMPopover').first().waitFor({ state: 'visible', timeout: 10000 });
+  // both popovers are titled "Popover"; the one that counts is the OPEN one
+  await waitForPopup(page, 'Popover');
   // the toast from the FIRST press must be gone before we judge the second
   await page.waitForTimeout(4000);
   await page.keyboard.press('Control+s');

@@ -55,8 +55,10 @@ export default async (page, expect) => {
   // come back to the app: the saved draft is restored through the app-state
   // hash, so the backend takes the check_on_navigated path and rebuilds the view
   const draft = await draftId(page);
+  // the run's own backend, whichever port it listens on (e2e-smoke --port)
+  const origin = new URL(page.url()).origin;
   await page.goto('about:blank');
-  await page.goto(`http://localhost:3000/?app_start=z2ui5_cl_smpc_app_249#/z2ui5-xapp-state=${draft}`,
+  await page.goto(`${origin}/?app_start=z2ui5_cl_smpc_app_249#/z2ui5-xapp-state=${draft}`,
     { waitUntil: 'domcontentloaded', timeout: 30000 });
   await waitForUi5(page, () => {
     const btn = ui5All().find((c) => c.getId().endsWith('BadgedButton'));

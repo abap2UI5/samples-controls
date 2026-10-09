@@ -98,6 +98,7 @@ CLASS z2ui5_cl_smpc_app_065 IMPLEMENTATION.
                     )->a( n = `items` v = client->_bind( t_forms )
 
                     )->ele( n = `SimpleForm` ns = `form`
+                        )->a( n = `id`        v = `SimpleFormChangeColumn_twoGroups234`
                         )->a( n = `editable`  v = `true`
                         )->a( n = `layout`    v = `ColumnLayout`
                         )->a( n = `title`     v = `Personal`

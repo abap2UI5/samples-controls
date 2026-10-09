@@ -80,6 +80,9 @@ that is the actual porting work):
   property (a backtick literal converts to packed), or `TYPE string` when it is
   a display-only value bound into a text template (keeps the exact decimals,
   e.g. dimensions `40.8`). Do **not** leave a decimal column as `TYPE i`.
+  An **integer outside the 4-byte range of `i`** (beyond -2^31 .. 2^31-1 - an
+  epoch in milliseconds, a byte count) takes the same route since 2026-10-08:
+  a backtick literal for a `TYPE p` field, because `i` would overflow.
 
 - **`npm run form-family -- <ui5/sap.ui.layout/Sample> <class> <sample id> <out.clas.abap>`**
   (`scripts/form-family-to-abap.mjs`) — rebuilds one sample of the

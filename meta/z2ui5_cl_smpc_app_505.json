@@ -13,7 +13,7 @@
   "deviations": [
     {
       "type": "NOTE",
-      "what": "onInit creates the sap.m.sample.Table COMPONENT, hides its header toolbar and inserts its Table into the empty l:VerticalLayout of this view. abap2UI5 has no component reuse, so the same table is declared inline in that layout - without the header toolbar the original hides anyway. structural-diff therefore reports the whole table as control extra (Table, 5 Columns, ColumnListItem, ObjectIdentifier, 2 ObjectNumbers and the column header Texts): the original's view carries only the empty layout."
+      "what": "onInit creates the sap.m.sample.Table COMPONENT, hides its header toolbar and inserts its Table into the empty l:VerticalLayout of this view. abap2UI5 has no component reuse, so the same table is declared inline in that layout - without the header toolbar the original hides anyway. structural-diff therefore reports the whole table as control extra (Table, 5 Columns, ColumnListItem, ObjectIdentifier, two ObjectNumber controls and the column header Text controls): the original's view carries only the empty layout."
     },
     {
       "type": "NOTE",

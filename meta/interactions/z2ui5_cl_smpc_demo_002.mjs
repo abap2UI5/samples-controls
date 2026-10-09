@@ -19,7 +19,7 @@
 // The share action and the phone link hand off to mailto:/tel:, which kills
 // input for the whole headless tab (e2e-debugging) - only their wiring is
 // asserted, they are never pressed.
-import { waitForIdle, waitForUi5, dispatchMouse, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForIdle, waitForUi5, dispatchMouse, revealInOverflow, waitForPopup } from '../../scripts/lib-e2e.mjs';
 
 const fclIs = (layout) => ui5All().some((c) => c.getMetadata().getName() === 'sap.f.FlexibleColumnLayout'
   && c.getLayout() === layout);
@@ -97,8 +97,8 @@ export default async (page, expect) => {
   // the ViewSettingsDialog: filter by "Only Shipped Orders" and group by order
   // period, the two halves of one confirm
   await page.locator('[id$="--filterButton"]').first().click();
-  await page.waitForSelector('.sapMDialog', { timeout: 30000 })
-    .catch(() => { throw new Error('the filter button did not open the ViewSettingsDialog'); });
+  await waitForPopup(page, 'View Settings', { timeout: 30000 })
+    .catch((e) => { throw new Error(`the filter button did not open the ViewSettingsDialog: ${e.message}`); });
   // the dialog's own ids, and the item TEXTS where UI5 generates the list item
   // id (`__item11`) rather than taking the ViewSettingsItem's
   await page.locator('[id$="--filterItems-list-item"]').first().click();

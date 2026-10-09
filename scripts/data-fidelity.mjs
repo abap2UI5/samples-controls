@@ -28,7 +28,8 @@
  *
  * STAGE 2 (2026-07-26) — value-level table fidelity. Every ABAP
  * `VALUE #( … )` block that inlines a mock array (matched by >= 3 shared
- * field names, >= 2 rows) is compared against that array:
+ * field names, or both keys of a two-key array; >= 2 rows) is compared
+ * against that array:
  *
  *   - equal row counts  -> row-by-row, field-by-field STRING comparison
  *     (positional; a field the mock row omits is skipped — the port seeds
@@ -37,22 +38,36 @@
  *     value must exist among that field's mock values (subsets can be
  *     legitimate — the original may bind /Coll/0..n — but INVENTED values
  *     are the 142-class bug this catches);
+ *   - more rows         -> per-field membership in the field's values
+ *     anywhere in the sample's mock documents (see "Longer blocks" below);
  *   - numbers stay uncompared (formatting freedom: 6.99 vs `6.99`), and a
  *     value is cleared by a deviation whose `what` names it (or the field),
  *     same convention as the asset checks.
  *
- * KNOWN BLIND SPOT — a block with MORE rows than the matched array is not
- * checked at all (neither branch takes it). Extending the subset check to it
- * looks obvious and is wrong today: the matcher scores by field overlap and
- * only breaks ties on an equal row count, so a block that outgrew its array
- * tends to get paired with a same-shaped SIBLING instead. Measured over the
- * corpus, exactly one port lands here — 407 (sap.tnt.sample.
- * SideNavigationSearch), whose mock holds `navigation` and `fixedNavigation`
- * with three rows each while the port inlines eight and seven; it is matched
- * against `fixedNavigation` and a strict membership check would report ~89
- * invented values in a correct port. The gap is real but closing it needs a
- * matcher that can say WHICH array a block belongs to, not a third branch
- * here.
+ * Matching (since 2026-10-08): arrays are collected at ANY depth of a mock
+ * (a tree's child rows are their own `items = VALUE #( … )` block in the
+ * port), keyed per document, and a block goes to the array holding values
+ * of the most of its fields, then the most shared field names, then the
+ * most of its own values, then an equal row count. Before that, child blocks and same-shaped sibling arrays (app 100's
+ * four QuickView docs, app 606's two slide tiles) were paired with the wrong
+ * array and passed only because a deviation mentioned the values in prose.
+ *
+ * Seeded defaults and short arrays (since 2026-10-08, later the same day):
+ * a field whose every value in the block is ONE UI5 enum member or boolean
+ * (`None`, `Default`, `true` - what a port seeds where the mock row omits the
+ * property) neither counts toward the overlap nor is compared, unless the
+ * candidate array holds that value there; a block is matched on the number of
+ * FIELDS whose values the array actually holds before raw field overlap; and
+ * an array of exactly two keys qualifies when the block holds values of both
+ * (app 100's GenericData elements: label + value). That moved app 407's two
+ * group blocks off /fixedNavigation, the one array that HAS ariaHasPopup and
+ * design, onto the arrays they inline, and brought ~50 blocks under the
+ * check that no array could claim before - all of them clean.
+ *
+ * Longer blocks (same day): a block with MORE rows than its best array -
+ * a flattened tree (566, 167, 600) or a keyed object turned into rows (532's
+ * EmployeeData) - was checked by neither branch. Each seeded string value
+ * must now exist under that field ANYWHERE in the sample's mock documents.
  *
  * Residual value-level review beyond tables (scalar folds): --report prints,
  * per port, the mock string values that never appear in the ABAP source, as
@@ -84,6 +99,19 @@ const MOCKS = fs.existsSync(MOCK)
   })
   : [];
 const REPORT = process.argv.includes('--report');
+/* Every UI5 enum member and the two booleans: the values a port SEEDS into a
+ * field the mock row omits, because ABAP has no absent state and an empty
+ * string is no member of any enum (port-a-sample, "Absent JSON properties").
+ * Read from the control metadata snapshot; absent snapshot -> only the two
+ * booleans. */
+const UI5_DEFAULTISH = (() => {
+  const set = new Set(['true', 'false']);
+  try {
+    const props = JSON.parse(fs.readFileSync(path.join(UI5, 'properties.json'), 'utf8'));
+    for (const vals of Object.values(props.enums || {})) for (const v of vals) set.add(String(v));
+  } catch { /* no snapshot */ }
+  return set;
+})();
 
 const ASSET_RE = /([\w./:\-]+\.(?:jpg|jpeg|png|gif|svg|webp|bmp|ico|mp3|mp4|pdf))\b/gi;
 const BAD_HOSTS = ['sapui5.hana.ondemand.com', '//ui5.sap.com'];
@@ -171,22 +199,22 @@ function parseValueBlocks(abap) {
   return blocks;
 }
 
-// arrays of flat objects in a JSON doc (top level or one level down)
+// arrays of flat objects anywhere in a JSON doc, labelled by their path
+// (`ProductCollection`, `pages/0/groups/1/elements`). Nested arrays count
+// since 2026-10-08: a port inlines a tree's child rows as their own
+// `items = VALUE #( … )` block, and with only the top two levels to choose
+// from such a block was paired with a same-shaped top-level SIBLING array
+// (app 407's "My Accounts"/"My Orders" against /fixedNavigation) and then
+// passed only because a deviation happened to mention the values in prose.
 function mockArrays(doc, name) {
   const out = [];
-  const take = (label, v) => {
-    if (Array.isArray(v) && v.length >= 2 && v.every((r) => r && typeof r === 'object' && !Array.isArray(r))) {
-      out.push({ name: label, rows: v });
-    }
-  };
-  take(name, doc);
-  if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
-    for (const [k, v] of Object.entries(doc)) {
-      take(k, v);
-      if (v && typeof v === 'object' && !Array.isArray(v)) for (const [k2, v2] of Object.entries(v)) take(`${k}/${k2}`, v2);
-    }
-  }
-
+  const isRows = (v) => Array.isArray(v) && v.length >= 2 && v.every((r) => r && typeof r === 'object' && !Array.isArray(r));
+  (function walk(label, v, depth) {
+    if (depth > 32 || !v || typeof v !== 'object') return;
+    if (isRows(v)) out.push({ name: label, rows: v });
+    if (Array.isArray(v)) v.forEach((x, i) => walk(`${label}/${i}`, x, depth + 1));
+    else for (const [k, x] of Object.entries(v)) walk(depth === 0 ? k : `${label}/${k}`, x, depth + 1);
+  })(name, doc, 0);
   return out;
 }
 
@@ -279,12 +307,48 @@ for (const mf of fs.readdirSync(META).sort()) {
   const arrays = [];
   const seenArr = new Set();
   for (const { name: dn, doc } of corpusDocs) {
+    // keyed by document AND path: a sample-local products.json still shadows
+    // the shared mock of the same name (app 010), but four sibling docs with
+    // the same shape (app 100's Company/Employee/Generic*Data.json, all
+    // `pages/…`) no longer collapse into whichever was read first
     for (const a of mockArrays(doc, dn)) {
-      if (seenArr.has(a.name)) continue;
-      seenArr.add(a.name);
+      const key = `${dn}:${a.name}`;
+      if (seenArr.has(key)) continue;
+      seenArr.add(key);
+      // normalized string values per normalized field, for the matcher below
+      a.values = new Map();
+      for (const r of a.rows) {
+        for (const [k, v] of Object.entries(r)) {
+          if (typeof v !== 'string') continue;
+          const f = normName(k);
+          if (!a.values.has(f)) a.values.set(f, new Set());
+          a.values.get(f).add(normalize(v));
+        }
+      }
       arrays.push(a);
     }
   }
+  // every string value under every key, at any depth of any of the port's
+  // mock documents - built on first use (only a longer-than-its-array block
+  // needs it)
+  let poolCache = null;
+  const fieldPool = () => {
+    if (poolCache) return poolCache;
+    poolCache = new Map();
+    const walk = (v, depth) => {
+      if (depth > 32 || !v || typeof v !== 'object') return;
+      if (Array.isArray(v)) { v.forEach((x) => walk(x, depth + 1)); return; }
+      for (const [k, x] of Object.entries(v)) {
+        if (typeof x === 'string') {
+          const f = normName(k);
+          if (!poolCache.has(f)) poolCache.set(f, new Set());
+          poolCache.get(f).add(normalize(x));
+        } else walk(x, depth + 1);
+      }
+    };
+    for (const { doc } of corpusDocs) walk(doc, 0);
+    return poolCache;
+  };
   const blocks = parseValueBlocks(abap);
   const declaredLc = declared.toLowerCase();
   /* A VALUE is specific enough to match loosely — "Notebook Basic 15" occurs in
@@ -297,7 +361,14 @@ for (const mf of fs.readdirSync(META).sort()) {
    * (Same shape as the version-finding escape in view-gates, fixed the same
    * day.) So a field name counts as declared only in a form that IDENTIFIES it
    * as a field: backticked, or written as the ABAP component in upper case. */
-  const isDeclaredValue = (...cands) => cands.some((c) => c && declaredLc.includes(String(c).toLowerCase()));
+  /* A value counts only as a WHOLE WORD (since 2026-10-08, the same rule
+   * structural-diff applies to names): not flanked by a letter, digit or
+   * underscore. A substring match let a short value hide inside any prose —
+   * `G` in "Gram", `1` in "1.71", `EUR` in "EURO" — and excused 5 mismatches
+   * across apps 531 and 407 that no deviation actually named. */
+  const wholeWord = (c) => new RegExp(`(?<![\\p{L}\\p{N}_])${String(c).toLowerCase()
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}_])`, 'u');
+  const isDeclaredValue = (...cands) => cands.some((c) => c && wholeWord(c).test(declaredLc));
   const isDeclaredField = (f) => !!f && (declaredLc.includes('`' + String(f).toLowerCase() + '`')
     || new RegExp(`\\b${String(f).toUpperCase()}\\b`).test(declared));
   const isDeclared = (...cands) => {
@@ -307,18 +378,46 @@ for (const mf of fs.readdirSync(META).sort()) {
   // each ABAP table block is compared against its ONE best-matching mock
   // array — never against every array that shares field names (a sample may
   // carry its own modified products.json NEXT TO the shared mock, app 010).
-  // Score: field overlap first, then exact row-count match, then source
-  // order (sample-local docs come before the shared mocks in `arrays`).
+  // Score: field overlap first, then how many of the block's string values
+  // the array actually holds (in the same field) — which is what tells apart
+  // same-shaped siblings such as the child arrays of a tree — then exact
+  // row-count match, then source order (sample-local docs come before the
+  // shared mocks in `arrays`).
   for (const block of blocks) {
     const fields = new Set(block.flatMap((r) => Object.keys(r)));
+    /* A port-SEEDED default is not data from the mock: a field whose every
+     * non-empty value in the block is ONE UI5 enum member or boolean (407's
+     * ariaHasPopup `None` and design `Default` on every row) says nothing
+     * about which array the block inlines. Such a field neither counts
+     * toward the overlap nor is compared - unless the candidate array
+     * really holds that value in that field, where it is data like any
+     * other. Without this, field overlap paired 407's two group blocks with
+     * /fixedNavigation, the one array that HAS those keys, and the blocks
+     * fell into the unchecked longer-than-the-array case (2026-10-08). */
+    const constantOf = new Map();
+    for (const f of fields) {
+      const vals = new Set(block.map((r) => r[f]).filter((v) => typeof v === 'string' && v !== ''));
+      if (vals.size === 1) {
+        const [v] = vals;
+        if (UI5_DEFAULTISH.has(v)) constantOf.set(f, v);
+      }
+    }
+    const seededDefault = (f, arr) => constantOf.has(f) && !arr.values.get(f)?.has(normalize(constantOf.get(f)));
     let bestArr = null;
     let bestOverlap = null;
     let bestScore = -1;
     arrays.forEach((arr, idx) => {
       const keySet = new Set(arr.rows.flatMap((r) => Object.keys(r)).map(normName));
-      const overlap = [...fields].filter((f) => keySet.has(f));
-      if (overlap.length < 3) return;
-      const score = overlap.length * 1000 + (block.length === arr.rows.length ? 100 : 0) + (arrays.length - idx);
+      const overlap = [...fields].filter((f) => keySet.has(f) && !seededDefault(f, arr));
+      let hits = 0;
+      const hitFields = new Set();
+      for (const row of block) {
+        for (const f of overlap) {
+          if (typeof row[f] === 'string' && row[f] !== '' && arr.values.get(f)?.has(normalize(row[f]))) { hits++; hitFields.add(f); }
+        }
+      }
+      if (overlap.length < 3 && !(overlap.length === 2 && keySet.size === 2 && hitFields.size === 2)) return;
+      const score = hitFields.size * 1e12 + overlap.length * 1e9 + hits * 1e4 + (block.length === arr.rows.length ? 1000 : 0) + (arrays.length - idx);
       if (score > bestScore) { bestScore = score; bestArr = arr; bestOverlap = overlap; }
     });
     if (!bestArr) continue;
@@ -340,6 +439,26 @@ for (const mf of fs.readdirSync(META).sort()) {
           if (typeof mv !== 'string' || av === undefined || av === '') continue;
           if (!sameValue(av, mv) && !isDeclared(av, mv, f)) {
             err(`${meta.class}: table row ${i + 1} field \`${f}\` = ${JSON.stringify(av)} but the mock ${arr.name} row has ${JSON.stringify(mv)} — data must stay verbatim (declare the field/value in a deviation if intentional)`);
+          }
+        }
+      });
+    } else if (block.length > arr.rows.length) {
+      // MORE rows than the best array: a port that flattens a tree or
+      // concatenates sibling arrays into one table (566's supplier/category/
+      // product rows, 167's root items with their children) or turns a
+      // keyed object into rows (532's EmployeeData, four records keyed by
+      // name). No single array is the original, so every seeded string
+      // value must exist in that field ANYWHERE in the sample's mock
+      // documents - an invented value still fails, a value lifted from
+      // another level or another record of the same mock does not
+      const pool = fieldPool();
+      block.forEach((row, i) => {
+        for (const f of overlap) {
+          const av = row[f];
+          const set = pool.get(f);
+          if (av === undefined || av === '' || !set || set.size === 0) continue;
+          if (!set.has(normalize(av)) && !isDeclared(av, f)) {
+            err(`${meta.class}: table row ${i + 1} field \`${f}\` = ${JSON.stringify(av)} appears nowhere in the sample's mocks (block of ${block.length} rows, longer than its best match ${arr.name}) — invented/wrong-neighbour data (declare it in a deviation if intentional)`);
           }
         }
       });

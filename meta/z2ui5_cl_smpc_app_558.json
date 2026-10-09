@@ -22,7 +22,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the Display and Edit fragments are not swapped in and out of the tab (removeAllContent/insertContent); both live in the TabContainerItem's content and take turns through visible=\"{= !${MODIFIED} }\" / visible=\"{= ${MODIFIED} }\" - a declarative expression instead of a controller-driven content swap, with the same rendered result. That is why the Edit fragment's f:SimpleForm, its four Labels, three Inputs and TextArea appear twice in the port: once inside the tab and once on the add-item page, where the original moves the SAME cached fragment instance between the two."
+      "what": "the Display and Edit fragments are not swapped in and out of the tab (removeAllContent/insertContent); both live in the TabContainerItem's content and take turns through visible=\"{= !${MODIFIED} }\" / visible=\"{= ${MODIFIED} }\" - a declarative expression instead of a controller-driven content swap, with the same rendered result. That is why the Edit fragment's f:SimpleForm, its four Label, three Input and one TextArea controls appear twice in the port: once inside the tab and once on the add-item page, where the original moves the SAME cached fragment instance between the two."
     },
     {
       "type": "NOTE",

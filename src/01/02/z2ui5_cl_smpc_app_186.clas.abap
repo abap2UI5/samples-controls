@@ -75,13 +75,13 @@ CLASS z2ui5_cl_smpc_app_186 IMPLEMENTATION.
                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                   ( `show` )
                                                                                   ( `Root container is resized.{0}` && |\n| && `New panes sizes = [{1}]` )
-                                                                               " the WHOLE 'Old panes sizes' line is conditional in the original
-                                                                               " (if (aOldSizes && aOldSizes.length)), not just its value - the first
-                                                                               " resize really does arrive with an empty array, since _sizeArraysDiffer
-                                                                               " compares [] against the new sizes. So the line is built inside the
-                                                                               " expression and the template carries only the placeholder
-                                                                               ( `${$parameters>/oldSizes} && ${$parameters>/oldSizes}.length ? '\nOld panes sizes = [' + ${$parameters>/oldSizes}.join(',') + ']' : ''` )
-                                                                               ( `${$parameters>/newSizes} ? ${$parameters>/newSizes}.join(',') : ''` ) ) )
+                                                                                  " the WHOLE 'Old panes sizes' line is conditional in the original
+                                                                                  " (if (aOldSizes && aOldSizes.length)), not just its value - the first
+                                                                                  " resize really does arrive with an empty array, since _sizeArraysDiffer
+                                                                                  " compares [] against the new sizes. So the line is built inside the
+                                                                                  " expression and the template carries only the placeholder
+                                                                                  ( `${$parameters>/oldSizes} && ${$parameters>/oldSizes}.length ? '\nOld panes sizes = [' + ${$parameters>/oldSizes}.join(',') + ']' : ''` )
+                                                                                  ( `${$parameters>/newSizes} ? ${$parameters>/newSizes}.join(',') : ''` ) ) )
 
                 )->ele( n = `SplitPane` ns = `l`
                     )->a( n = `requiredParentWidth` v = `400`
@@ -118,13 +118,13 @@ CLASS z2ui5_cl_smpc_app_186 IMPLEMENTATION.
                                                                           t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                            ( `show` )
                                                                                            ( `Inner container is resized.{0}` && |\n| && `New panes sizes = [{1}]` )
-                                                                                        " the WHOLE 'Old panes sizes' line is conditional in the original
-                                                                                        " (if (aOldSizes && aOldSizes.length)), not just its value - the first
-                                                                                        " resize really does arrive with an empty array, since _sizeArraysDiffer
-                                                                                        " compares [] against the new sizes. So the line is built inside the
-                                                                                        " expression and the template carries only the placeholder
-                                                                                        ( `${$parameters>/oldSizes} && ${$parameters>/oldSizes}.length ? '\nOld panes sizes = [' + ${$parameters>/oldSizes}.join(',') + ']' : ''` )
-                                                                                        ( `${$parameters>/newSizes} ? ${$parameters>/newSizes}.join(',') : ''` ) ) )
+                                                                                           " the WHOLE 'Old panes sizes' line is conditional in the original
+                                                                                           " (if (aOldSizes && aOldSizes.length)), not just its value - the first
+                                                                                           " resize really does arrive with an empty array, since _sizeArraysDiffer
+                                                                                           " compares [] against the new sizes. So the line is built inside the
+                                                                                           " expression and the template carries only the placeholder
+                                                                                           ( `${$parameters>/oldSizes} && ${$parameters>/oldSizes}.length ? '\nOld panes sizes = [' + ${$parameters>/oldSizes}.join(',') + ']' : ''` )
+                                                                                           ( `${$parameters>/newSizes} ? ${$parameters>/newSizes}.join(',') : ''` ) ) )
 
                     )->ele( n = `SplitPane` ns = `l`
                         )->a( n = `requiredParentWidth` v = `600`

@@ -469,14 +469,14 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
         )->ele( `OverflowToolbar`
 
             )->ele( `SearchField`
-                )->a( n = `id`                 v = `searchField`
-                )->a( n = `showRefreshButton`  b = abap_true
-                )->a( n = `tooltip`            v = `Enter an order name or a part of it.`
-                )->a( n = `width`              v = `100%`
-                )->a( n = `value`              v = client->_bind( search_value )
-                )->a( n = `search`             v = client->_event( val   = `SEARCH`
-                                                                   t_arg = VALUE #( ( `${$parameters>/query}` )
-                                                                                    ( `${$parameters>/refreshButtonPressed} ? 'X' : ''` ) ) )
+                )->a( n = `id`                v = `searchField`
+                )->a( n = `showRefreshButton` b = abap_true
+                )->a( n = `tooltip`           v = `Enter an order name or a part of it.`
+                )->a( n = `width`             v = `100%`
+                )->a( n = `value`             v = client->_bind( search_value )
+                )->a( n = `search`            v = client->_event( val   = `SEARCH`
+                                                                  t_arg = VALUE #( ( `${$parameters>/query}` )
+                                                                                   ( `${$parameters>/refreshButtonPressed} ? 'X' : ''` ) ) )
 
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`

@@ -89,6 +89,145 @@ test('structural-diff: declared vs undeclared diffs on the fixture corpus', () =
   }
 });
 
+test('structural-diff: a deviation declares a name only as a whole word, not as a substring', () => {
+  const root = makeFixtureRoot();
+  try {
+    // "ToggleButton" contains "Button" and "subheaderText" contains
+    // "headerText": under substring matching this text declared both of
+    // app_002's diffs without naming either of them
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations = [{ type: 'NOTE', what: 'a ToggleButton keeps its subheaderText' }];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /! UNDECLARED\s+attr missing\s+List\.headerText/);
+    assert.match(r.out, /! UNDECLARED\s+control extra\s+Button/);
+    // naming them as words declares them, punctuation around the name included
+    meta.deviations = [{ type: 'NOTE', what: 'the extra Button, and List.headerText (dropped)' }];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /declared\s+attr missing\s+List\.headerText/);
+    assert.match(r.out, /declared\s+control extra\s+Button/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('structural-diff: an enum literal is compared per instance, aligned by id', () => {
+  const root = makeFixtureRoot();
+  try {
+    // the metadata snapshot says Text.textAlign is enum-typed; nothing else is
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({
+      enums: { 'sap.m.TextAlign': ['Begin', 'End'] },
+      controls: { 'sap.m.Text': { parent: 'sap.ui.core.Control', properties: { textAlign: { type: 'sap.m.TextAlign' }, text: { type: 'string' } } } },
+    }));
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}"', '<Text id="t1" text="{name}" textAlign="End"'));
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    const withText = (id, align) => abap.replace(")->a( n = `text` v = `{NAME}`",
+      `)->a( n = \`id\` v = \`${id}\`\n          )->a( n = \`text\` v = \`{NAME}\`\n          )->a( n = \`textAlign\` v = \`${align}\``);
+    const finding = /! UNDECLARED\s+enum value\s+Text#t1\.textAlign: original "End" vs port "Begin"/;
+    fs.writeFileSync(abapFile, withText('t1', 'Begin'));
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, finding);
+    // the same value passes
+    fs.writeFileSync(abapFile, withText('t1', 'End'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /enum value/);
+    // no shared id, no comparison: instances are aligned by id only
+    fs.writeFileSync(abapFile, withText('t2', 'Begin'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /enum value/);
+    // a deviation naming Control.attribute declares it
+    fs.writeFileSync(abapFile, withText('t1', 'Begin'));
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations.push({ type: 'NOTE', what: 'Text.textAlign is Begin on purpose' });
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, /declared\s+enum value\s+Text#t1\.textAlign/);
+    assert.doesNotMatch(r.out, /UNDECLARED\s+enum value/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('structural-diff: a boolean literal is compared per instance too, b = constants included', () => {
+  const root = makeFixtureRoot();
+  try {
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({
+      enums: {},
+      controls: { 'sap.m.Text': { parent: 'sap.ui.core.Control', properties: { wrapping: { type: 'boolean' }, text: { type: 'string' } } } },
+    }));
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}" wrapping="true"', '<Text id="t1" text="{name}" wrapping="false"'));
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    const withText = (id, wrap) => abap.replace(")->a( n = `text` v = `{NAME}`",
+      `)->a( n = \`id\` v = \`${id}\`\n          )->a( n = \`text\` v = \`{NAME}\`\n          )->a( n = \`wrapping\` ${wrap}`);
+    // the fixture's own deviation names Text.wrapping (its dropped attr) -
+    // take it out, or it would declare the value diff as well
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations = [];
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    const finding = /! UNDECLARED\s+boolean value\s+Text#t1\.wrapping: original "false" vs port "true"/;
+    fs.writeFileSync(abapFile, withText('t1', 'v = `true`'));
+    assert.match(run(root, 'structural-diff.mjs').out, finding);
+    // a constant through b = is the same literal
+    fs.writeFileSync(abapFile, withText('t1', 'b = abap_true'));
+    assert.match(run(root, 'structural-diff.mjs').out, finding);
+    // the same value passes, in either spelling and in either case
+    fs.writeFileSync(abapFile, withText('t1', 'b = abap_false'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    fs.writeFileSync(abapFile, withText('t1', 'v = `False`'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    // a variable through b = is state, not a literal: never compared
+    fs.writeFileSync(abapFile, withText('t1', 'b = flag'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+    // no shared id, no comparison
+    fs.writeFileSync(abapFile, withText('t2', 'v = `true`'));
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /boolean value/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('structural-diff: an original id the port lost fails --strict, and --ids prints the section', () => {
+  const root = makeFixtureRoot();
+  try {
+    // app_002 carries undeclared diffs of its own; declare them away so the
+    // lost id is the ONLY thing --strict can fail on
+    const meta2File = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const meta2 = JSON.parse(fs.readFileSync(meta2File, 'utf8'));
+    meta2.structural_diff = { skip: true, reason: 'fixture: out of this test' };
+    fs.writeFileSync(meta2File, JSON.stringify(meta2, null, 2));
+    assert.equal(run(root, 'structural-diff.mjs', '--strict').code, 0, 'the baseline is clean');
+    // nothing lost: --ids prints the empty section, the default run omits it
+    assert.match(run(root, 'structural-diff.mjs', '--ids').out, /original control ids the port lost \(0 port\(s\)[^\n]*\n  \(none\)/);
+    assert.doesNotMatch(run(root, 'structural-diff.mjs').out, /original control ids/);
+
+    const view = path.join(root, 'ui5', 'sap.m', 'FixtureGood', 'V.view.xml');
+    fs.writeFileSync(view, fs.readFileSync(view, 'utf8').replace('<Text text="{name}"', '<Text id="nameText" text="{name}"'));
+    const finding = /z2ui5_cl_smpc_app_001 \(sap\.m\.sample\.FixtureGood\): 1 original id\(s\) absent from the port and undeclared: nameText/;
+    let r = run(root, 'structural-diff.mjs');
+    assert.match(r.out, finding, 'a lost id is reported without --ids');
+    assert.equal(r.code, 0, 'the advisory run still exits 0');
+    r = run(root, 'structural-diff.mjs', '--strict');
+    assert.equal(r.code, 1, 'a lost id fails --strict');
+    assert.match(r.out, /1 port\(s\) with lost ids/);
+    // naming the id in a deviation clears it
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_001.json');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    meta.deviations.push({ type: 'NOTE', what: 'the Text drops its id nameText' });
+    fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    r = run(root, 'structural-diff.mjs', '--strict');
+    assert.doesNotMatch(r.out, /absent from the port/);
+    assert.equal(r.code, 0, `a declared id passes\n${r.out}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('data-fidelity: invented value and unknown asset fail, verbatim data passes', () => {
   const root = makeFixtureRoot();
   try {
@@ -98,6 +237,100 @@ test('data-fidelity: invented value and unknown asset fail, verbatim data passes
     assert.match(r.out, /z2ui5_cl_smpc_app_002: asset `wrong-HT-9999\.jpg` appears nowhere/);
     assert.match(r.out, /z2ui5_cl_smpc_app_002: table row 2 field `city` = "Atlantis"/);
     assert.ok(!r.out.includes('z2ui5_cl_smpc_app_001:'), 'the verbatim port must produce no finding');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a deviation declares a value only as a whole word, not as a substring', () => {
+  const root = makeFixtureRoot();
+  try {
+    const metaFile = path.join(root, 'meta', 'z2ui5_cl_smpc_app_002.json');
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_002.clas.abap');
+    const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+    const setDev = (what) => {
+      meta.deviations = [{ type: 'NOTE', what }];
+      fs.writeFileSync(metaFile, JSON.stringify(meta, null, 2));
+    };
+    const finding = /z2ui5_cl_smpc_app_002: table row 2 field `city`/;
+    // a longer word that merely CONTAINS the value does not name it
+    setDev('the Atlantisport fork of the sample');
+    assert.match(run(root, 'data-fidelity.mjs').out, finding);
+    setDev('row 2 seeds the city Atlantis on purpose');
+    assert.doesNotMatch(run(root, 'data-fidelity.mjs').out, finding);
+    // the short-value case the substring match got wrong: a one-letter value
+    // hid inside any prose that contained the letter
+    fs.writeFileSync(abapFile, fs.readFileSync(abapFile, 'utf8').replace('`Atlantis`', '`G`'));
+    setDev('weights are kept in Gram, as the original does');
+    assert.match(run(root, 'data-fidelity.mjs').out, finding);
+    setDev('row 2 seeds the city code G (see above)');
+    assert.doesNotMatch(run(root, 'data-fidelity.mjs').out, finding);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a block is paired with the nested array that holds its values, not a same-shaped sibling', () => {
+  const root = makeFixtureRoot();
+  try {
+    // the sample's products sit one level down, in a tree with two groups of
+    // the same shape; the decoy group comes FIRST, so neither the old
+    // "top two levels only" walk nor a source-order tie-break reaches the
+    // right array — the port's block must be paired with Groups/1
+    const row = (Name, City, Image) => ({ Name, City, Image });
+    fs.writeFileSync(path.join(root, 'ui5', 'sap.m', 'FixtureBad', 'data.json'), JSON.stringify({
+      Groups: [
+        { Title: 'Decoy', ProductCollection: [row('Other A', 'Munich', 'img/x1.jpg'), row('Other B', 'Bonn', 'img/x2.jpg')] },
+        { Title: 'Real', ProductCollection: [row('Gladiator MX', 'Hamburg', 'img/product1.jpg'), row('Proctra X', 'Berlin', 'img/product2.jpg')] },
+      ],
+    }, null, 2));
+    const r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 2 field `city` = "Atlantis" but the mock Groups\/1\/ProductCollection row has "Berlin"/);
+    assert.doesNotMatch(r.out, /Groups\/0\//);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('data-fidelity: a port-seeded UI5 default does not steer the match, and a longer block is checked too', () => {
+  const root = makeFixtureRoot();
+  try {
+    const abapFile = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_002.clas.abap');
+    const dataFile = path.join(root, 'ui5', 'sap.m', 'FixtureBad', 'data.json');
+    const abap = fs.readFileSync(abapFile, 'utf8');
+    // every row seeds design = `Default` (a UI5 enum member - the snapshot
+    // is absent here, so only `true`/`false` and the enums of a written
+    // snapshot count; give it one)
+    fs.writeFileSync(path.join(root, 'ui5', 'properties.json'), JSON.stringify({ enums: { 'sap.m.ButtonType': ['Default', 'Emphasized'] }, controls: {} }));
+    fs.writeFileSync(abapFile, abap.replace(/image = (`img\/product\d\.jpg`)/g, 'image = $1 design = `Default`'));
+    // the decoy is the one array that HAS a Design key: by field overlap
+    // alone (4 against 3) it wins, and its 3 rows put the 2-row block in
+    // the unchecked "fewer rows" branch's mirror image
+    const row = (Name, City, Image, Design) => (Design ? { Name, City, Image, Design } : { Name, City, Image });
+    fs.writeFileSync(dataFile, JSON.stringify({
+      Decoy: [row('Other A', 'Munich', 'img/x1.jpg', 'Emphasized'), row('Other B', 'Bonn', 'img/x2.jpg', 'Emphasized'), row('Other C', 'Ulm', 'img/x3.jpg', 'Emphasized')],
+      ProductCollection: [row('Gladiator MX', 'Hamburg', 'img/product1.jpg'), row('Proctra X', 'Berlin', 'img/product2.jpg')],
+    }, null, 2));
+    let r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 2 field `city` = "Atlantis" but the mock ProductCollection row has "Berlin"/);
+    assert.doesNotMatch(r.out, /Decoy|field `design`/, 'the seeded default neither picks the decoy nor is compared');
+
+    // a block LONGER than every array (a flattened tree): its values are
+    // looked up anywhere in the mock, so a value from another level passes
+    // and an invented one fails
+    fs.writeFileSync(dataFile, JSON.stringify({
+      Suppliers: [
+        { Name: 'Gladiator MX', City: 'Hamburg', Image: 'img/product1.jpg', Products: [row('Proctra X', 'Berlin', 'img/product2.jpg'), row('Proctra Y', 'Bremen', 'img/product3.jpg')] },
+        { Name: 'Other', City: 'Kiel', Image: 'img/product4.jpg', Products: [] },
+      ],
+    }, null, 2));
+    const third = '\n                      ( name  = `Proctra Y`\n                        city  = `Bremen`\n                        image = `img/product3.jpg` ) ).';
+    fs.writeFileSync(abapFile, abap.replace('`Atlantis`', '`Berlin`').replace(/(image = `img\/product2\.jpg` \)) \)\./, `$1${third}`));
+    r = run(root, 'data-fidelity.mjs');
+    assert.doesNotMatch(r.out, /app_002: table row/, `values from two levels of one mock are verbatim\n${r.out}`);
+    fs.writeFileSync(abapFile, fs.readFileSync(abapFile, 'utf8').replace('`Bremen`', '`Atlantis`'));
+    r = run(root, 'data-fidelity.mjs');
+    assert.match(r.out, /app_002: table row 3 field `city` = "Atlantis" appears nowhere in the sample's mocks \(block of 3 rows, longer than its best match/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -127,6 +360,35 @@ test('generate-coverage: a ported out-of-scope sample without an exception is a 
     const r = run(root, 'generate-coverage.mjs');
     assert.equal(r.code, 1, 'the scope gate must exit 1');
     assert.match(r.errout, /ported sample sap\.m\.sample\.FixtureBad is out of scope \(deprecated\)/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('generate-coverage: a scope exception must name the class that ports its sample', () => {
+  const root = makeFixtureRoot();
+  try {
+    const uniPath = path.join(root, 'ui5', 'universe.json');
+    const uni = JSON.parse(fs.readFileSync(uniPath, 'utf8'));
+    const bad = uni.libs[0].samples.find((s) => s.name === 'FixtureBad');
+    bad.deprecated = { since: '1.100', text: 'gone' };
+    fs.writeFileSync(uniPath, JSON.stringify(uni, null, 1) + '\n');
+    const entry = (cls) => ({ exceptions: [{
+      sample: 'sap.m.sample.FixtureBad', class: cls, reason: 'fixture decision',
+      decided: { scope: 'deprecated', since: bad.since ?? null, deprecated: '1.100' },
+    }] });
+    const excPath = path.join(root, 'ui5', 'scope-exceptions.json');
+
+    fs.writeFileSync(excPath, JSON.stringify(entry('z2ui5_cl_smpc_app_002')));
+    const right = run(root, 'generate-coverage.mjs');
+    assert.equal(right.code, 0, `the matching entry is a valid decision\n${right.errout}`);
+
+    // lib-packages.mjs files the port by this field, so a wrong class moves
+    // the wrong port while every sample-keyed check stays green
+    fs.writeFileSync(excPath, JSON.stringify(entry('z2ui5_cl_smpc_app_001')));
+    const wrong = run(root, 'generate-coverage.mjs');
+    assert.equal(wrong.code, 1, 'an entry naming another class must fail');
+    assert.match(wrong.errout, /names class "z2ui5_cl_smpc_app_001", but the sample's port is z2ui5_cl_smpc_app_002/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -169,9 +431,11 @@ test('generate-summary: a missing line, an edited line and an undescribed sample
   const root = makeFixtureRoot();
   const app = path.join(root, 'src', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
   try {
-    run(root, 'generate-summary.mjs');
+    const write = run(root, 'generate-summary.mjs');
+    assert.equal(write.code, 0, `writing must succeed\n${write.errout}`);
 
     const written = fs.readFileSync(app, 'utf8');
+    assert.match(written, /^" @summary /m, 'the three cases below start from a written line');
     fs.writeFileSync(app, written.replace(/^" @summary .*\n/m, ''));
     const missing = run(root, 'generate-summary.mjs', '--check');
     assert.equal(missing.code, 1, 'a removed line must fail');
@@ -279,6 +543,25 @@ test('json-to-abap: rowsToAbapType emits the two-line TYPES layout with an align
       '      ty_t_product TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.',
     ].join('\n'));
   assert.doesNotMatch(rowsToAbapType(fields), /TYPES: BEGIN OF/, 'the one-line form is the layout the corpus retired');
+});
+
+/*
+ * ABAP `i` is four bytes. An integer column with a value past 2^31-1 (an
+ * epoch in milliseconds, a byte count) inferred as `i` would overflow on the
+ * assignment, so it is emitted as a string literal for a TYPE p field - the
+ * route decimals already take. The boundary values themselves stay `i`.
+ */
+test('json-to-abap: an integer outside the range of TYPE i is not inferred as i', async () => {
+  const { inferFields, rowsToAbapValue } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const rows = [
+    { Small: 2147483647, Low: -2147483648, Big: 1, Neg: 1 },
+    { Small: 1, Low: 1, Big: 2147483648, Neg: -2147483649 },
+  ];
+  const types = Object.fromEntries(inferFields(rows).map((f) => [f.json, f.type]));
+  assert.deepEqual(types, { Small: 'i', Low: 'i', Big: 'string', Neg: 'string' });
+  const value = rowsToAbapValue(rows);
+  assert.match(value, /big = `2147483648`/, 'the out-of-range value travels verbatim, as a literal');
+  assert.match(value, /small = 2147483647/, 'the in-range maximum stays a bare integer');
 });
 
 /* ------------------------------------------- form-family-to-abap.mjs */
@@ -1010,6 +1293,39 @@ test('pattern-lint: an ABAP Doc header on a port is an error, and the clean fixt
     const header = runIn(root, 'pattern-lint.mjs');
     assert.equal(header.code, 1, 'a "! header on a port must fail');
     assert.match(header.out, /header-in-port|abapdoc/);
+
+    // ABAP Doc usually sits INDENTED, above a declaration inside the class;
+    // both rules matched column 0 only until 2026-10-08
+    const plain = fs.readFileSync(at, 'utf8').replace(/^"! .*\n/, '');
+    fs.writeFileSync(at, plain.replace(/^(\s*)PROTECTED SECTION\./m, '$1"! documents the <Page> section\n$1PROTECTED SECTION.'));
+    const indented = runIn(root, 'pattern-lint.mjs');
+    assert.equal(indented.code, 1, 'an indented "! line on a port must fail too');
+    assert.match(indented.out, /header-in-port/);
+    assert.match(indented.out, /abapdoc-html-tag/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * check-archive reads three stylesheet declarations, and the manifest's
+ * `sample.files` is only one of them. An early `continue` for a manifest
+ * without that list skipped the other two as well, so a sample declaring its
+ * CSS only through `resources.css` was never checked at all.
+ */
+test('check-archive: a missing stylesheet fails even when the manifest has no sample.files', () => {
+  const { root } = makeMetaRoot(['check-archive.mjs']);
+  const dir = path.join(root, 'ui5', 'sap.m', 'FixtureGood');
+  try {
+    writeJson(path.join(dir, 'manifest.json'), { 'sap.ui5': { resources: { css: [{ uri: 'style.css' }] } } });
+    const missing = runIn(root, 'check-archive.mjs');
+    assert.equal(missing.code, 1, `the unarchived style.css must fail\n${missing.out}`);
+    assert.match(missing.errout, /declares the stylesheet style\.css, which is not archived/);
+
+    fs.writeFileSync(path.join(dir, 'style.css'), '.x { color: red; }\n');
+    const present = runIn(root, 'check-archive.mjs');
+    assert.equal(present.code, 0, `the archived stylesheet passes\n${present.out}${present.errout}`);
+    assert.match(present.out, /1 manifest-listed file\(s\), 0 error\(s\)/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -1134,6 +1450,272 @@ test('pattern-lint: statement budget, chain repetition, TYPES layout, Hungarian 
 
 
 /*
+ * xmlns-prefix (AGENTS §8): the canonical prefix table holds in both
+ * directions, and scripts/lib/ns-prefixes.mjs - the rule's copy of it - is
+ * held to the table in AGENTS.md, so the two can only change together.
+ */
+test('pattern-lint: xmlns-prefix holds the canonical prefix table both ways, and the map matches AGENTS.md', async () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
+  const declare = (prefix, ns) => base.replace(')->a( n = `xmlns`     v = `sap.m`',
+    `)->a( n = \`xmlns\`     v = \`sap.m\`\n        )->a( n = \`xmlns:${prefix}\` v = \`${ns}\``);
+  try {
+    // a listed namespace under another prefix
+    let r = lint(declare('layout', 'sap.ui.layout'));
+    assert.equal(r.code, 1, 'sap.ui.layout as `layout` must fail');
+    assert.match(r.out, /ERROR .*\[xmlns-prefix\] sap\.ui\.layout is declared as `layout`, the canonical prefix is `l`/);
+    // a listed prefix bound to another namespace
+    r = lint(declare('f', 'sap.ui.layout.form'));
+    assert.match(r.out, /\[xmlns-prefix\] sap\.ui\.layout\.form is declared as `f`, the canonical prefix is `form`/);
+    r = lint(declare('table', 'sap.m.semantic'));
+    assert.match(r.out, /\[xmlns-prefix\] `table` is the canonical prefix of sap\.ui\.table, not of sap\.m\.semantic/);
+    // the canonical spelling, and an unlisted namespace under a free prefix, pass
+    // (the realigned block keeps chain-value-column out of it)
+    r = lint(declare('l', 'sap.ui.layout').replace('`xmlns:l` v', '`xmlns:l`   v'));
+    assert.ok(!/xmlns-prefix/.test(r.out), `the canonical prefix passes\n${r.out}`);
+    r = lint(declare('semantic', 'sap.m.semantic'));
+    assert.ok(!/xmlns-prefix/.test(r.out), `an unlisted namespace is free\n${r.out}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+
+  // the rule's map IS the AGENTS §8 table, row for row
+  const { CANONICAL_PREFIX } = await import('../lib/ns-prefixes.mjs');
+  const agents = fs.readFileSync(path.join(REPO, 'AGENTS.md'), 'utf8');
+  const start = agents.indexOf('One canonical prefix per XML namespace');
+  const table = agents.slice(start, agents.indexOf('Majority spelling won each row', start));
+  const rows = {};
+  for (const m of table.matchAll(/\| `([\w.]+)`(?: \(when not the default\))? \| `(\w+)` \|/g)) rows[m[1]] = m[2];
+  assert.deepEqual(rows, { ...CANONICAL_PREFIX }, 'scripts/lib/ns-prefixes.mjs and the AGENTS.md §8 table must list the same rows');
+});
+
+/*
+ * chain-value-column (view-chain-layout rule 5): the column of a control's
+ * attribute block, one blank after its longest name. A comment, a blank
+ * line and a wrapped value's continuation stay inside the block; another
+ * chain call ends it.
+ */
+test('pattern-lint: chain-value-column holds a control\'s v = column, and only within one block', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const lint = (source) => { fs.writeFileSync(at, source); return runIn(root, 'pattern-lint.mjs'); };
+  const textBlock = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')}\n            )->tag( \`Text\` ).`);
+  try {
+    // an unequal column fails
+    let r = lint(base.replace(')->a( n = `xmlns`     v = `sap.m`', ')->a( n = `xmlns` v = `sap.m`'));
+    assert.equal(r.code, 1, 'a ragged v = column must fail');
+    assert.match(r.out, /ERROR .*\[chain-value-column\] value at col 27, the block's column is 31/);
+    // an equal but over-padded column fails too: the column is the minimal one
+    r = lint(base.replace(')->a( n = `xmlns:mvc` v', ')->a( n = `xmlns:mvc`  v').replace(')->a( n = `xmlns`     v', ')->a( n = `xmlns`      v'));
+    assert.equal(r.code, 1, 'an over-padded block must fail');
+    assert.match(r.out, /\[chain-value-column\]/);
+    // b = and t = take part in the column like v =
+    r = lint(textBlock(['                )->a( n = `text`     v = `hello`', '                )->a( n = `wrapping` b = abap_true',
+      '                )->a( n = `tooltip` t = title']));
+    assert.match(r.out, /\[chain-value-column\] value at col 37/);
+    // a comment, a blank line and a continuation stay in the block - aligned, it passes
+    r = lint(textBlock(['                )->a( n = `text`     v = `hello` &&', '                                         `world`',
+      '                " a comment', '', '                )->a( n = `wrapping` b = abap_true']));
+    assert.equal(r.code, 0, `an aligned block with a comment, a blank line and a continuation passes\n${r.out}`);
+    // a value that starts on the next line takes no part in the column
+    r = lint(textBlock(['                )->a( n = `maxLines`', '                         v = `2`', '                )->a( n = `text` v = `hello`']));
+    assert.equal(r.code, 0, `an a( ) with its value on the next line has no column\n${r.out}`);
+    // another control's block is another block: its own column
+    r = lint(base.replace('                )->a( n = `text` v = `hello` ).',
+      '                )->a( n = `text` v = `hello`\n            )->tag( `Text`\n                )->a( n = `wrapping` v = `false` ).'));
+    assert.equal(r.code, 0, `two controls, two blocks\n${r.out}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * chain-value-column --fix: realigns the block, moves a wrapped value's
+ * continuation with it (both directions), leaves a value-on-the-next-line
+ * a( ) alone, is idempotent, and the rule passes on what it wrote.
+ */
+test('pattern-lint --fix: chain-value-column realigns a block and its continuations, idempotently', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const body = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')}\n            )->tag( \`Text\` ).`);
+  const fix = () => runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 'chain-value-column');
+  try {
+    const want = body([
+      '                )->a( n = `text`     v = `hello` &&',
+      '                                         `world`',
+      '                " a comment',
+      '',
+      '                )->a( n = `wrapping` b = abap_true',
+      '                )->a( n = `maxLines`',
+      '                         v = `2`',
+      '                )->a( n = `id`       v = client->_event( val   = `X`',
+      '                                                         t_arg = VALUE #( ( `a` )',
+      '                                                                          ( `b` ) ) )']);
+    // ragged: one value too far left (continuation with it), one too far right
+    const ragged = want
+      .replace(')->a( n = `text`     v = `hello` &&', ')->a( n = `text` v = `hello` &&')
+      .replace('                                         `world`', '                                     `world`')
+      .replace(')->a( n = `id`       v = client', ')->a( n = `id`          v = client')
+      .replace('                                                         t_arg', '                                                            t_arg')
+      .replace('                                                                          ( `b` )', '                                                                             ( `b` )');
+    fs.writeFileSync(at, ragged);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 'chain-value-column');
+    assert.equal(r.code, 1, 'the ragged block fails first');
+    assert.match(r.out, /\[chain-value-column\] value at col 34, the block's column is 38/);
+    r = fix();
+    assert.equal(r.code, 0, `the fixed file passes\n${r.out}`);
+    assert.match(r.out, /--fix: 1 file\(s\) rewritten/);
+    assert.equal(fs.readFileSync(at, 'utf8'), want, 'fix restores the aligned block, continuations moved with their value');
+    r = fix();
+    assert.match(r.out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+    r = runIn(root, 'pattern-lint.mjs');
+    assert.ok(!/chain-value-column/.test(r.out), `the full lint finds no column left\n${r.out}`);
+    // --rule narrows reporting too: an unknown rule is refused, not ignored
+    assert.equal(runIn(root, 'pattern-lint.mjs', '--rule', 'no-such-rule').code, 2);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * t-arg-hang (view-chain-layout rule 7): every row and comment line of a
+ * wrapped t_arg list starts in the column of its first element. The fix moves
+ * a row's own continuation (a row wrapped with &&) with it, leaves a list that
+ * closes on its line and a `VALUE #(` inside a string alone, and is idempotent.
+ */
+test('pattern-lint --fix: t-arg-hang hangs a wrapped t_arg list under its first element, idempotently', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const body = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')} ).`);
+  const fix = () => runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang');
+  try {
+    const want = body([
+      '                )->a( n = `text` v = `t_arg = VALUE #( ( no list ) )`',
+      '                )->a( n = `id`   v = client->_event( val   = `X`',
+      '                                                     t_arg = VALUE #( ( `a` )',
+      '                                                                      " a comment between rows',
+      '                                                                      ( `b` &&',
+      '                                                                        `c` )',
+      '                                                                      ( `d` ) ) )',
+      '                )->a( n = `id2`  v = client->_event( val = `Y` t_arg = VALUE #(',
+      '                                    ( `e` )',
+      '                                    ( `f` ) ) )',
+      '                )->a( n = `id3`  v = client->_event( val = `Z` t_arg = VALUE #( ( `g` ) ( `h` ) ) )']);
+    // the drift the rule exists for: under the # of VALUE #(, three columns
+    // left, the wrapped row's continuation with it - and one row too far right
+    const drifted = want
+      .replace('                                                                      " a comment', '                                                                   " a comment')
+      .replace('                                                                      ( `b` &&', '                                                                   ( `b` &&')
+      .replace('                                                                        `c` )', '                                                                     `c` )')
+      .replace('                                    ( `f` )', '                                        ( `f` )');
+    fs.writeFileSync(at, drifted);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 't-arg-hang');
+    assert.equal(r.code, 1, 'the drifted lists fail first');
+    assert.equal((r.out.match(/\[t-arg-hang\]/g) || []).length, 3, `the comment, the wrapped row and the right-hand row - not the row's own continuation\n${r.out}`);
+    assert.match(r.out, /\[t-arg-hang\] starts at col 68, the first element's \( is at col 71/);
+    r = fix();
+    assert.equal(r.code, 0, `the fixed file passes\n${r.out}`);
+    assert.match(r.out, /--fix: 1 file\(s\) rewritten/);
+    assert.equal(fs.readFileSync(at, 'utf8'), want, 'fix hangs every entry under the first element, the continuation moved with its row');
+    assert.match(fix().out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+    // both fixing rules in one pass, the way fmt:chains calls them
+    r = runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 'chain-value-column,t-arg-hang');
+    assert.equal(r.code, 0, r.out);
+    assert.equal(runIn(root, 'pattern-lint.mjs', '--rule', 'chain-value-column,no-such-rule').code, 2, 'an unknown id in a list is refused');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * The same rule over the REAL corpus: every class with a wrapped t_arg list is
+ * copied into a scratch tree and every list drifted three columns left (the
+ * `#` of VALUE #(, rows, comments and a row's continuation alike). --fix must
+ * give back the committed files byte for byte, and a second run must change
+ * nothing - so the fixer is the exact inverse of the drift on every shape the
+ * corpus actually writes, not only on the fixture's.
+ */
+test('pattern-lint --fix: t-arg-hang round-trips every wrapped t_arg list of the corpus byte-identically', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const OPEN = /\bt_arg\s*=\s*VALUE\s+#\(\s*(\(|$)/;
+  const files = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith('.clas.abap')) files.push(p);
+    }
+  })(path.join(REPO, 'src'));
+  try {
+    fs.rmSync(path.join(root, 'src'), { recursive: true, force: true });
+    let lists = 0;
+    const originals = new Map();
+    for (const f of files) {
+      const text = fs.readFileSync(f, 'utf8');
+      const L = text.split('\n');
+      let touched = false;
+      for (let i = 0; i < L.length; i++) {
+        const m = OPEN.exec(L[i]);
+        if (!m || /^\s*"/.test(L[i])) continue;
+        // depth at the start of each line, counted from VALUE #( - string and
+        // comment aware - up to the line that closes the list
+        let depth = 1;
+        let firstLine = m[1] ? i : null;
+        let li = i;
+        let ci = m.index + m[0].length - (m[1] ? 1 : 0);
+        const startDepth = new Map();
+        walk: for (; li < L.length; li++, ci = 0) {
+          if (li > i) startDepth.set(li, depth);
+          let q = null;
+          for (; ci < L[li].length; ci++) {
+            const ch = L[li][ci];
+            if (q) { if (ch === q) q = null; continue; }
+            if (ch === '`' || ch === "'" || ch === '|') { q = ch; continue; }
+            if (ch === '"') break;
+            if (ch === '(') { if (depth === 1 && firstLine === null) firstLine = li; depth++; }
+            if (ch === ')' && --depth === 0) break walk;
+          }
+        }
+        if (li === i || firstLine === null) continue;
+        // drift every entry after the first element's line - a row or a
+        // comment starting between rows - and the lines inside its row
+        let entry = false;
+        let moved = 0;
+        for (let k = firstLine + 1; k <= li; k++) {
+          const d = startDepth.get(k);
+          if (d === 1) entry = /^\s*[("]/.test(L[k]);
+          if (entry && L[k].trim()) { L[k] = L[k].slice(3); moved++; }
+        }
+        if (moved) { lists++; touched = true; }
+        i = li;
+      }
+      if (!touched) continue;
+      const rel = path.relative(REPO, f);
+      originals.set(rel, text);
+      fs.mkdirSync(path.dirname(path.join(root, rel)), { recursive: true });
+      fs.writeFileSync(path.join(root, rel), L.join('\n'));
+    }
+    assert.ok(lists >= 200, `the corpus still carries its wrapped t_arg lists (found ${lists})`);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 't-arg-hang');
+    assert.equal(r.code, 1, 'the drifted corpus fails first');
+    r = runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang');
+    assert.equal(r.code, 0, `the fixed corpus passes\n${r.out.slice(-2000)}`);
+    assert.match(r.out, new RegExp(`--fix: ${originals.size} file\\(s\\) rewritten`));
+    for (const [rel, text] of originals) {
+      assert.equal(fs.readFileSync(path.join(root, rel), 'utf8'), text, `${rel} is not byte-identical after drift + fix`);
+    }
+    assert.match(runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang').out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
  * The hold-out row: three facts, all derived. The fixture's holdout.json is
  * empty, so the row says 0 reserved; reserving the fixture's own sample makes
  * it SPENT (a sidecar names it), and a probe heading in docs/history.md is
@@ -1162,7 +1744,10 @@ test('generate-status: the hold-out row counts reserved, spent and recorded prob
 
     // regenerating is a no-op: the block is a function of meta/, holdout.json and the journal
     const before = out;
-    runIn(root, 'generate-status.mjs');
+    // the exit code first: a run that crashes before writing leaves the file
+    // as it was, and the equality below would pass on it
+    r = runIn(root, 'generate-status.mjs');
+    assert.equal(r.code, 0, `${r.out}${r.errout}`);
     assert.equal(fs.readFileSync(path.join(root, 'STATUS.md'), 'utf8'), before, 'idempotent');
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
@@ -1223,11 +1808,37 @@ test('e2e-changed: prose and generated artefacts boot nothing', async () => {
   const { portsToRun } = await import('../e2e-changed.mjs');
 
   const inert = ['README.md', 'AGENTS.md', 'api.md', 'catalogue.json', 'SAMPLES.md',
-    'ui5/sap.m/FixtureGood/V.view.xml', 'docs/history.md', 'scripts/generate-overview.mjs'];
+    'ui5/sap.m/FixtureGood/V.view.xml', 'docs/history.md', 'scripts/generate-coverage.mjs',
+    'scripts/lib/overview.md', 'scripts/lib/demoapps-notes.txt'];
   const r = portsToRun(inert);
   assert.equal(r.all, false);
   assert.deepEqual(r.classes, []);
-  assert.match(r.reason, /no port, demo app, sidecar or interaction module changed/);
+  assert.match(r.reason, /no port, demo app, sidecar, interaction module or overview generator changed/);
+});
+
+/*
+ * The overview app is GENERATED, so what builds it reaches it: the entry
+ * point, every scripts/lib/overview-*.mjs module and the chain formatter it
+ * lays the class out with all boot the overview - and only the overview.
+ */
+test('e2e-changed: the overview generator boots the overview app, and nothing else', async () => {
+  const { portsToRun } = await import('../e2e-changed.mjs');
+
+  for (const f of ['scripts/generate-overview.mjs', 'scripts/lib/overview-emit.mjs', 'scripts/lib/overview-model.mjs',
+    'scripts/lib/overview-openui5.mjs', 'scripts/lib/format-chain.mjs']) {
+    const r = portsToRun([f]);
+    assert.equal(r.all, false, `${f} does not reach every port`);
+    assert.deepEqual(r.classes, ['z2ui5_cl_smpc_app_000'], `${f} boots the overview app`);
+  }
+  // every overview module the generator imports is covered by the map
+  const imports = fs.readFileSync(path.join(REPO, 'scripts/generate-overview.mjs'), 'utf8')
+    .match(/from '\.\/lib\/[^']+'/g).map((s) => `scripts/lib/${s.slice(12, -1)}`);
+  for (const f of imports) {
+    assert.deepEqual(portsToRun([f]).classes, ['z2ui5_cl_smpc_app_000'], `${f} is imported by generate-overview.mjs`);
+  }
+  // together with a port: both, deduplicated with the class file itself
+  assert.deepEqual(portsToRun(['scripts/lib/overview-emit.mjs', 'src/z2ui5_cl_smpc_app_000.clas.abap',
+    'src/01/01/z2ui5_cl_smpc_app_462.clas.abap']).classes, ['z2ui5_cl_smpc_app_000', 'z2ui5_cl_smpc_app_462']);
 });
 
 /*
@@ -1273,13 +1884,41 @@ test('e2e-changed: a demo app, its interaction module and the registry all boot 
  * those classes (they have no sidecar to match). Asserted against the real
  * repository rather than the fixture, because the registry IS the contract.
  */
-test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', () => {
+test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', async () => {
   const ports = Object.keys(JSON.parse(fs.readFileSync(path.join(REPO, 'ui5/demoapps.json'), 'utf8')).ports);
   assert.ok(ports.length, 'the registry names at least one demo app');
 
-  for (const script of ['e2e-smoke.mjs', 'validate-meta.mjs']) {
-    const src = fs.readFileSync(path.join(REPO, 'scripts', script), 'utf8');
-    assert.match(src, /loadDemoApps/, `${script} must take the demo-app list from lib/demoapps.mjs`);
+  // the reader itself returns exactly the registry's classes
+  const { loadDemoApps } = await import('../lib/demoapps.mjs');
+  assert.deepEqual(Object.keys(loadDemoApps(REPO).ports).sort(), [...ports].sort());
+
+  // and both consumers USE what it returns — asserted by behaviour on a
+  // fixture registry, not by grepping the source for the function name (a
+  // script that imported it and then booted a hard-coded list passed that)
+  const root = makeFixtureRoot();
+  try {
+    for (const s of ['e2e-smoke.mjs', 'validate-meta.mjs', 'lib-a2ui5.mjs', 'lib-smoke.mjs', 'lib-packages.mjs']) {
+      fs.copyFileSync(path.join(REPO, 'scripts', s), path.join(root, 'scripts', s));
+    }
+    fs.symlinkSync(path.join(REPO, 'node_modules'), path.join(root, 'node_modules'), 'dir');
+    fs.writeFileSync(path.join(root, 'ui5', 'demoapps.json'), JSON.stringify({
+      apps: { fixtureApp: { name: 'Fixture App' } },
+      ports: { z2ui5_cl_smpc_demo_777: { app: 'fixtureApp', status: 'generated' } },
+    }));
+    const listed = run(root, 'e2e-smoke.mjs', '--list-demo-apps');
+    assert.equal(listed.code, 0, listed.out);
+    assert.equal(listed.out.trim(), 'z2ui5_cl_smpc_demo_777', 'e2e-smoke boots exactly the registry\'s demo apps');
+
+    const inter = path.join(root, 'meta', 'interactions');
+    fs.mkdirSync(inter, { recursive: true });
+    for (const c of ['z2ui5_cl_smpc_demo_777', 'z2ui5_cl_smpc_demo_999']) {
+      fs.writeFileSync(path.join(inter, `${c}.mjs`), 'export default async (page, expect) => { expect(1).toBe(1); };\n');
+    }
+    const vm = run(root, 'validate-meta.mjs');
+    assert.match(vm.out, /meta\/interactions\/z2ui5_cl_smpc_demo_999\.mjs matches no port sidecar/, 'an unmapped class is an orphan');
+    assert.doesNotMatch(vm.out, /z2ui5_cl_smpc_demo_777\.mjs matches no port sidecar/, 'a mapped demo app is accepted');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
   }
 
   // every demo class in src/04 is mapped there (the generators fail otherwise,
@@ -1295,7 +1934,9 @@ test('e2e-changed: a corpus-wide change answers `all` rather than a subset', asy
 
   for (const f of ['A2UI5_PIN', 'package.json', 'package-lock.json', 'scripts/e2e-build.mjs',
     'scripts/e2e-smoke.mjs', 'scripts/lib-e2e.mjs', 'web/ci/patch_open_abap_xml.mjs',
-    '.github/workflows/e2e-pr.yaml']) {
+    '.github/workflows/e2e-pr.yaml',
+    // imported by the harness: which classes get built, which demo apps boot
+    'scripts/lib/src-tree.mjs', 'scripts/lib/demoapps.mjs']) {
     assert.equal(portsToRun([f]).all, true, `${f} reaches every port`);
   }
 
@@ -1304,6 +1945,108 @@ test('e2e-changed: a corpus-wide change answers `all` rather than a subset', asy
   const mixed = portsToRun(['A2UI5_PIN', 'src/01/01/z2ui5_cl_smpc_app_462.clas.abap']);
   assert.equal(mixed.all, true);
   assert.match(mixed.reason, /A2UI5_PIN reaches every port/);
+});
+
+/*
+ * waitForPopup( ) chooses among the OPEN popups only (the page side filters on
+ * isOpen( ); what reaches the chooser is already open), a title match beats a
+ * text match, and the most recently created wins a tie. The case it exists
+ * for: the overflow popover that stays in the DOM is simply not a candidate,
+ * so "the first popover" can no longer be the wrong one.
+ */
+test('lib-e2e: choosePopup prefers a title over text, the latest over an earlier one, and takes a RegExp', async () => {
+  const { choosePopup } = await import('../lib-e2e.mjs');
+  const notes = { id: 'notes', title: 'Generation notes', text: 'Generation notes NOTE: Rebuilt 1:1' };
+  const dialog = { id: 'dlg', title: 'UI5 demo apps', text: 'UI5 demo apps Generation notes are elsewhere' };
+  const older = { id: 'old', title: 'Popover', text: 'Popover Delete Save' };
+  const newer = { id: 'new', title: 'Popover', text: 'Popover Delete Save' };
+  const untitled = { id: 'ovf', title: '', text: 'OData Model Operation Mode: Server' };
+
+  assert.equal(choosePopup([dialog, notes], 'Generation notes').id, 'notes', 'a title match beats an earlier text match');
+  assert.equal(choosePopup([notes, dialog], 'Generation notes').id, 'notes', 'and a later text match');
+  assert.equal(choosePopup([older, newer], 'Popover').id, 'new', 'two equal titles: the most recently created');
+  assert.equal(choosePopup([notes, untitled], { source: '\\b(Default|Server|Client|Auto)\\b', flags: '' }).id, 'ovf', 'a RegExp reaches an untitled popover by its text');
+  assert.equal(choosePopup([notes, dialog], 'View Settings'), null, 'nothing open shows it: null, so the wait keeps waiting');
+  assert.equal(choosePopup([], 'Generation notes'), null);
+
+  // it is stringified into the page, so it must not close over anything
+  const inPage = new Function(`return (${choosePopup.toString()})`)();
+  assert.equal(inPage([older, newer], 'Popover').id, 'new', 'the stringified chooser works on its own');
+});
+
+/*
+ * --port moves the run's backend off 3000 so shards can run side by side, and
+ * nothing in the run may still assume 3000: the interaction modules build
+ * their URLs from the page's own origin.
+ */
+test('e2e-smoke: --port is validated, and no interaction module names a port', () => {
+  const smoke = (...args) => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'e2e-smoke.mjs'), ...args], { encoding: 'utf8', cwd: REPO });
+  for (const bad of ['nope', '0', '70000']) {
+    const r = smoke('--port', bad, '--list-demo-apps');
+    assert.equal(r.status, 2, `--port ${bad} is refused`);
+    assert.match(r.stderr, /--port wants a TCP port number/);
+  }
+  assert.equal(smoke('--port', '3007', '--list-demo-apps').status, 0, 'a valid port passes the parse');
+
+  const src = fs.readFileSync(path.join(REPO, 'scripts', 'e2e-smoke.mjs'), 'utf8');
+  assert.doesNotMatch(src.replace(/^\s*(\/\/|\*).*$/gm, ''), /'3000'|localhost:3000/, 'e2e-smoke itself uses PORT/ORIGIN everywhere');
+  const dir = path.join(REPO, 'meta', 'interactions');
+  for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.mjs'))) {
+    const code = fs.readFileSync(path.join(dir, f), 'utf8').replace(/^\s*\/\/.*$/gm, '');
+    assert.doesNotMatch(code, /localhost:\d+|\.port\s*===?\s*['"`]\d+/, `${f} names a backend port - use new URL(page.url()).origin`);
+  }
+});
+
+/*
+ * e2e-build warns before it builds in a checkout somebody else may be using:
+ * uncommitted changes (the backend would not be a commit, and a framework
+ * `verify` dirties the tree while it runs) and its own lock files (a second
+ * build in flight, or a crashed one). A clean checkout says nothing, and a
+ * directory without a repository of its own is not judged by its parent's.
+ */
+test('lib-a2ui5: checkoutWarnings names a dirty checkout and a build lock, and is silent on a clean one', async () => {
+  const { checkoutWarnings, BUILD_LOCK_FILES } = await import('../lib-a2ui5.mjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'demokit-a2ui5-test-'));
+  const git = (...args) => spawnSync('git', ['-C', dir, '-c', 'user.email=t@example.invalid', '-c', 'user.name=t', ...args], { encoding: 'utf8' });
+  try {
+    // not a repository at all (an extracted backend): no git verdict, no throw
+    const plain = path.join(dir, 'plain');
+    fs.mkdirSync(plain);
+    assert.deepEqual(checkoutWarnings(plain), []);
+
+    assert.equal(git('init', '-q').status, 0);
+    fs.writeFileSync(path.join(dir, '.gitignore'), `${BUILD_LOCK_FILES.join('\n')}\nplain/\n`);
+    fs.mkdirSync(path.join(dir, 'src'));
+    fs.writeFileSync(path.join(dir, 'src', 'a.abap'), 'WRITE 1.\n');
+    git('add', '-A');
+    assert.equal(git('commit', '-qm', 'init').status, 0);
+    assert.deepEqual(checkoutWarnings(dir), [], 'a clean checkout is silent');
+
+    // a directory inside the repository is not the repository
+    fs.writeFileSync(path.join(dir, 'src', 'a.abap'), 'WRITE 2.\n');
+    assert.deepEqual(checkoutWarnings(plain), [], 'the outer work tree is not this directory\'s state');
+
+    let w = checkoutWarnings(dir);
+    assert.equal(w.length, 1);
+    assert.match(w[0], /1 uncommitted change\(s\) \(src\/a\.abap\)/);
+
+    // the lock: named on its own, and not counted again as a dirty file even
+    // where the checkout does not ignore it
+    fs.writeFileSync(path.join(dir, '.gitignore'), 'plain/\n');
+    git('commit', '-qam', 'unignore');
+    git('checkout', '-q', '--', 'src');
+    fs.writeFileSync(path.join(dir, 'e2e-downport.jsonc'), '{}');
+    w = checkoutWarnings(dir);
+    assert.equal(w.length, 1, w.join('\n'));
+    assert.match(w[0], /e2e-downport\.jsonc is present - another e2e-build is running/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+
+  // and e2e-build prints them before it touches anything
+  const build = fs.readFileSync(path.join(REPO, 'scripts', 'e2e-build.mjs'), 'utf8');
+  assert.ok(build.indexOf('checkoutWarnings(A2)') > 0 && build.indexOf('checkoutWarnings(A2)') < build.indexOf('fs.rmSync(downport'),
+    'e2e-build warns before it wipes node/downport');
 });
 
 /* --------------------------------------------------------- lib-smoke.mjs */

@@ -5,4 +5,4 @@ z2ui5_cl_smpc_app_002 (sap.m.sample.FixtureBad):
   ! UNDECLARED  attr missing  List.headerText
   ! UNDECLARED  binding value  Page.title: original {title} vs port `Static Title`
 
-2 ports checked, 2 with structural diffs, 3 undeclared differences, 0 declared skips (re-verified), 0 stale skip(s).
+2 ports checked, 2 with structural diffs, 3 undeclared differences, 0 port(s) with lost ids, 0 declared skips (re-verified), 0 stale skip(s).

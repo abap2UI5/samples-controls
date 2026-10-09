@@ -35,9 +35,13 @@
  *   node scripts/e2e-smoke.mjs --only 005      single port (debugging)
  *   node scripts/e2e-smoke.mjs --only 005,270  a comma-separated list
  *   node scripts/e2e-smoke.mjs --shard 2/4     the 2nd of 4 round-robin slices
+ *   node scripts/e2e-smoke.mjs --port 3001     serve the backend on another port
+ *                       (default 3000), so shards can run side by side
  *   node scripts/e2e-smoke.mjs --headed   show the browser (debugging)
  *   node scripts/e2e-smoke.mjs --dump-interactions
  *                       print every loaded interaction (key + source) and exit
+ *   node scripts/e2e-smoke.mjs --list-demo-apps
+ *                       print the src/04 demo-app classes it would boot and exit
  */
 import fs from 'fs';
 import path from 'path';
@@ -88,6 +92,26 @@ const SHARD = (() => {
   }
   return { index, total };
 })();
+/* `--port <n>`: the port the run's own backend listens on (default 3000).
+ *
+ * Each run spawns its own backend, and the backend keeps its drafts in an
+ * in-memory SQLite database, so two runs share nothing but the read-only
+ * transpiled output - what kept them from running side by side was this one
+ * fixed number. Four local shards at --port 3001..3004 take a quarter of the
+ * wall clock of one serial pass. Interaction modules must not name the port:
+ * a module that navigates builds its URL from `new URL(page.url()).origin`. */
+const PORT = (() => {
+  const i = process.argv.indexOf('--port');
+  if (i === -1) return 3000;
+  const v = process.argv[i + 1] || '';
+  if (!/^\d+$/.test(v) || Number(v) < 1 || Number(v) > 65535) {
+    console.error(`e2e-smoke: --port wants a TCP port number (e.g. --port 3001), got ${v || 'nothing'}`);
+    process.exit(2);
+  }
+  return Number(v);
+})();
+const ORIGIN = `http://localhost:${PORT}`;
+
 // the overview app is checked alongside the numbered ports (its interaction
 // module sits in meta/interactions/ like every other)
 const OVERVIEW = 'z2ui5_cl_smpc_app_000';
@@ -96,6 +120,13 @@ const OVERVIEW = 'z2ui5_cl_smpc_app_000';
  * src/04 already FAILS the generators (AGENTS section 3), so this list and the
  * folder cannot drift apart. */
 const DEMO_APPS = Object.keys(loadDemoApps(ROOT).ports).sort();
+// --list-demo-apps: print the demo-app classes this run would boot and exit —
+// needs neither the backend nor a browser; the tooling test holds the list to
+// the registry through it
+if (process.argv.includes('--list-demo-apps')) {
+  for (const cls of DEMO_APPS) console.log(cls);
+  process.exit(0);
+}
 
 // richer per-port checks (optional): ONE MODULE PER PORT under
 // meta/interactions/<class>.mjs, each default-exporting
@@ -172,7 +203,7 @@ function startBackend() {
     // one - a real system never parses this - so the harness raises the stack
     // rather than the corpus shortening its chains. --stack-size is a V8
     // option and NODE_OPTIONS rejects it, so it has to be passed on argv.
-    const srv = spawn('node', ['--stack-size=10000', path.join(A2, 'node/srv/express.mjs')], { env: { ...process.env, PORT: '3000' } });
+    const srv = spawn('node', ['--stack-size=10000', path.join(A2, 'node/srv/express.mjs')], { env: { ...process.env, PORT: String(PORT) } });
     let out = '';
     const onData = (d) => { out += d; if (/Listening on/.test(out)) { srv.stdout.off('data', onData); resolve(srv); } };
     srv.stdout.on('data', onData);
@@ -269,12 +300,12 @@ async function checkPort(browser, cls) {
   const page = await ctx.newPage();
   // real JS exceptions are always a defect (minus known env noise)
   page.on('pageerror', (e) => { if (!benign(e.message)) errs.push('pageerror: ' + e.message.slice(0, 160)); });
-  // a backend (localhost:3000) asset or roundtrip that 4xx/5xx is a port/app
+  // a backend (localhost:<PORT>) asset or roundtrip that 4xx/5xx is a port/app
   // defect; a UI5 resource we did not serve locally (sdk.openui5.org 404) is
   // benign environment noise and ignored
   page.on('response', (r) => {
     const u = new URL(r.url());
-    if (u.hostname === 'localhost' && u.port === '3000' && r.status() >= 400) {
+    if (u.hostname === 'localhost' && u.port === String(PORT) && r.status() >= 400) {
       // carry the body along: a bare "backend HTTP 500" says nothing, and the
       // ABAP exception the backend answers with is the whole diagnosis
       // (2026-08-22 — three b50 ports 500'd and the message named no cause)
@@ -291,7 +322,7 @@ async function checkPort(browser, cls) {
   });
   // the GET page itself: its CSP gets the 'unsafe-eval' the source-only UI5
   // below needs (lib-smoke.mjs says why). Documents only - a roundtrip passes.
-  await page.route((url) => url.origin === 'http://localhost:3000', async (route) => {
+  await page.route((url) => url.origin === ORIGIN, async (route) => {
     if (route.request().resourceType() !== 'document') return route.fallback();
     let response;
     try { response = await route.fetch({ timeout: 120000 }); } catch { return route.abort().catch(() => {}); }
@@ -303,7 +334,7 @@ async function checkPort(browser, cls) {
     return hit ? route.fulfill({ status: 200, contentType: hit.type, body: hit.body }) : route.fulfill({ status: 404, body: '' });
   });
   try {
-    await page.goto(`http://localhost:3000/?app_start=${cls}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${ORIGIN}/?app_start=${cls}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     // UI5 booted from source AND the initial roundtrip rendered real controls
     await page.waitForFunction(
       () => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3,
@@ -361,9 +392,9 @@ if (SHARD) {
   metas.push(...sharded);
 }
 
-console.log(`e2e-smoke: ${metas.length} port(s)${SHARD ? ` (shard ${SHARD.index}/${SHARD.total})` : ''}, backend from ${A2}`);
+console.log(`e2e-smoke: ${metas.length} port(s)${SHARD ? ` (shard ${SHARD.index}/${SHARD.total})` : ''}, backend from ${A2} on ${ORIGIN}`);
 const backend = await startBackend();
-await waitPort(3000);
+await waitPort(PORT);
 /* prefer the sandbox's pinned Chromium when present, else the playwright-managed
  * one (CI). PW_CHROMIUM overrides the first: CI has no /opt/pw-browsers, so it
  * launches playwright's chrome-headless-shell while a sandbox run launches FULL
