@@ -20,6 +20,21 @@ The build takes ~25 minutes and holds the checkout for all of it. Start it, wait
 abap2UI5 checkout is the check: if `src/` is dirty after a build, restore it with
 `git checkout -- src/` and re-run `npm run app2abap` for the generated `src/01/03`.
 
+`e2e:build` checks this itself before it wipes anything, and prints a
+`e2e-build: WARNING` line for each of two signals (it warns, it does not stop):
+
+- **uncommitted changes in the checkout** — the backend is then built from a
+  working tree, not from a commit, and a dirty tree is also what a framework
+  `verify` or `abaplint --fix` leaves while it runs, or what another agent is
+  editing in a shared `../abap2UI5`;
+- **`e2e-downport.jsonc` or `e2e-transpile.json` at the checkout root** — the
+  two files this build writes for its whole length and removes at the end, so
+  another `e2e:build` is running against the same checkout, or one crashed.
+
+Either way the way around it is a clone of your own: `npm run node:setup`
+clones abap2UI5 into `.abap2UI5` at `A2UI5_PIN`, and `A2UI5_HOME=.abap2UI5 npm
+run e2e:build` builds there while the shared checkout is left alone.
+
 ## Quick start (two commands)
 
 ```sh
@@ -97,7 +112,7 @@ node scripts/e2e-smoke.mjs --only z2ui5_cl_smpc_demo_003 --strict
 ```
 
 **Kill a backend that a crashed run left behind.** `e2e-smoke` starts its own
-server on port 3000 and kills it when it finishes — but a driver that throws
+server on port 3000 (or `--port`) and kills it when it finishes — but a driver that throws
 half-way through leaves it listening, and every later run then talks to the
 OLD build while looking perfectly healthy. On 2026-09-14 that cost an hour:
 a fix was in `src/`, in the transpiled output and provably correct when the
@@ -110,6 +125,21 @@ class was called directly, and the browser kept showing the pre-fix behaviour.
 node scripts/e2e-smoke.mjs --only 462,350   # named ports (debugging, and the PR job)
 node scripts/e2e-smoke.mjs --shard 2/4      # the 2nd of 4 round-robin slices
 ```
+
+Each run starts its own backend on port **3000**; `--port` moves it, and that
+is what lets shards run side by side on one machine (the backend keeps its
+drafts in an in-memory database, so two runs share nothing but the read-only
+transpiled output):
+
+```bash
+for i in 1 2 3 4; do
+  node scripts/e2e-smoke.mjs --strict --shard $i/4 --port 300$i > /tmp/e2e-$i.log 2>&1 &
+done; wait
+```
+
+An interaction module never names the port - one that navigates builds its
+URL from `new URL(page.url()).origin` (a tooling test holds every module to
+that).
 
 The shard is taken round-robin over the SORTED class list, not in contiguous
 blocks: the ports are numbered in batch order, so blocks would put a whole

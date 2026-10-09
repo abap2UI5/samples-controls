@@ -17,7 +17,7 @@
 //    ZCL_SICF), which parses any POST body as abap2UI5 JSON. The
 //    FileUploader's multipart form POST to uploadUrl="upload/" therefore
 //    answers `Json parsing error: Not JSON` inside a 500, and e2e-smoke's
-//    response listener books every localhost:3000 >= 400 against the port
+//    response listener books every backend answer >= 400 against the port
 //    (nightly 2026-08-25: `backend HTTP 500 for /upload/`). The original's
 //    `upload/` is a demo kit placeholder no server behind these samples
 //    implements either - the sidecar says the upload CYCLE is out of scope -
@@ -29,8 +29,10 @@
 //    empty-value branch, so it never reaches upload( ) and never hit this.)
 export default async (page, expect) => {
   let posted = false;
+  // the run's own backend, whichever port it listens on (e2e-smoke --port)
+  const origin = new URL(page.url()).origin;
   await page.route(
-    (url) => url.hostname === 'localhost' && url.port === '3000' && url.pathname === '/upload/',
+    (url) => url.origin === origin && url.pathname === '/upload/',
     (route) => {
       if (route.request().method() === 'POST') posted = true;
       // the body is what handleUploadComplete would have parsed; the port

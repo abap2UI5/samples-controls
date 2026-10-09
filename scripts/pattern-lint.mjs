@@ -85,7 +85,7 @@
  * BASELINE entry must be removed in the same change (stale entries are
  * reported).
  *
- * Run:  node scripts/pattern-lint.mjs [--fix] [--rule <id>]
+ * Run:  node scripts/pattern-lint.mjs [--fix] [--rule <id>[,<id>]]
  */
 
 import fs from 'fs';
@@ -205,6 +205,72 @@ function valueColumnBlocks(L) {
   flush();
   return blocks;
 }
+/* The wrapped t_arg lists t-arg-hang judges and fixes (view-chain-layout rule
+ * 7), read once for both like valueColumnBlocks. A list starts at
+ * `t_arg = VALUE #(` in code (not in a string or a comment) and runs, paren
+ * depth counted string- and comment-aware, to the `)` that closes it; one that
+ * closes on its own line is not wrapped and is not returned. `col` is the
+ * column of the FIRST element's `(`, wherever it sits. Each entry is a line
+ * that starts BETWEEN rows (depth 1) after the first element's line - a row
+ * `( … )` or a comment - with `cont` the lines that start inside that row
+ * (depth >= 2: a row wrapped with &&), which move with it. */
+function tArgLists(L) {
+  const lists = [];
+  const START = /\bt_arg\s*=\s*VALUE\s+#\(/g;
+  for (let i = 0; i < L.length; i++) {
+    if (/^\s*[*"]/.test(L[i])) continue;
+    START.lastIndex = 0;
+    let m;
+    while ((m = START.exec(L[i]))) {
+      if (inStringOrComment(L[i], m.index)) continue;
+      let depth = 1;
+      let first = null;
+      let quote = null;
+      let li = i;
+      let ci = m.index + m[0].length;
+      const entries = [];
+      let entry = null;
+      scan: for (; li < L.length; li++, ci = 0) {
+        const line = L[li];
+        if (li > i && quote === null) {
+          const lead = line.length - line.trimStart().length;
+          if (depth === 1 && first && li > first.li && /^[("]/.test(line.trimStart())) {
+            entry = { i: li, col: lead, cont: [] };
+            entries.push(entry);
+          } else if (depth > 1 && entry && line.trim()) {
+            entry.cont.push(li);
+          }
+        }
+        for (; ci < line.length; ci++) {
+          const ch = line[ci];
+          if (quote) { if (ch === quote) quote = null; continue; }
+          if (ch === BT || ch === "'" || ch === '|') { quote = ch; continue; }
+          if (ch === '"') break;
+          if (ch === '(') { if (depth === 1 && !first) first = { li, col: ci }; depth++; }
+          if (ch === ')' && --depth === 0) break scan;
+        }
+        // a string literal never spans lines in ABAP; a stray quote must not
+        // swallow the rest of the file
+        quote = null;
+      }
+      if (li > i && first) lists.push({ col: first.col, entries });
+    }
+  }
+  return lists;
+}
+
+// whether position `at` of a line lies inside a string literal or a comment
+function inStringOrComment(line, at) {
+  let quote = null;
+  for (let c = 0; c < at; c++) {
+    const ch = line[c];
+    if (quote) { if (ch === quote) quote = null; continue; }
+    if (ch === BT || ch === "'" || ch === '|') quote = ch;
+    else if (ch === '"') return true;
+  }
+  return quote !== null;
+}
+
 // the canonical prefix of each listed namespace, and its inverse
 const PREFIX_OWNER = new Map(Object.entries(CANONICAL_PREFIX).map(([ns, p]) => [p, ns]));
 
@@ -669,6 +735,43 @@ const RULES = [
     },
   },
   {
+    // view-chain-layout rule 7. Runs AFTER chain-value-column, whose fix moves
+    // a wrapped value's continuation lines but not the comment lines between
+    // them - which is how the corpus drifted: every comment inside a wrapped
+    // t_arg list sat 3-8 columns left of the first element (21 of 26 lines,
+    // 2026-10-09) and three ports' rows below such a comment followed it
+    // (186, 233, 547). Rows and comments are both "continuation lines" in the
+    // rule's sense, so both hang under the first element.
+    id: 't-arg-hang',
+    level: 'error',
+    doc: 'a wrapped t_arg list hangs under its FIRST element: every row and comment line between the rows starts in the column of the first ( … ), not under the # of VALUE #( (view-chain-layout rule 7); `npm run fmt:chains` realigns it (pattern-lint --fix --rule t-arg-hang), moving a row\'s own continuation lines with it',
+    find(content) {
+      const out = [];
+      for (const list of tArgLists(content.split('\n'))) {
+        for (const e of list.entries) {
+          if (e.col !== list.col) out.push({ line: e.i + 1, text: `starts at col ${e.col + 1}, the first element's ( is at col ${list.col + 1}` });
+        }
+      }
+      return out;
+    },
+    // whitespace only: the entry's indent becomes the list's column, and the
+    // lines inside a wrapped row move by the same amount
+    fix(content) {
+      const L = content.split('\n');
+      for (const list of tArgLists(L)) {
+        for (const e of list.entries) {
+          const delta = list.col - e.col;
+          if (!delta) continue;
+          for (const k of [e.i, ...e.cont]) {
+            if (delta > 0) L[k] = ' '.repeat(delta) + L[k];
+            else L[k] = L[k].slice(Math.min(-delta, L[k].length - L[k].trimStart().length));
+          }
+        }
+      }
+      return L.join('\n');
+    },
+  },
+  {
     id: 'line-headroom',
     level: 'warn',
     doc: `a line over ${LINE_HEADROOM} characters sits within ${255 - LINE_HEADROOM} of abaplint's 255 hard limit — re-wrap the padded VALUE row at the same field boundary in EVERY row (AGENTS §8; app 571 is the reference)`,
@@ -692,19 +795,20 @@ function grepLines(re) {
   };
 }
 
-/* --fix rewrites what a rule with a fix( ) reports (chain-value-column, the
- * one so far), then lints the result as usual; --rule <id> narrows the run -
- * fixing and reporting - to that rule, which is how `npm run fmt:chains`
- * calls it. A fix must leave the code identical up to whitespace: the run
+/* --fix rewrites what a rule with a fix( ) reports (chain-value-column and
+ * t-arg-hang, in that order), then lints the result as usual; --rule <id>[,<id>]
+ * narrows the run - fixing and reporting - to those rules, which is how
+ * `npm run fmt:chains` calls it. A fix must leave the code identical up to whitespace: the run
  * refuses to write a file where it does not, and fails instead. */
 const argv = process.argv.slice(2);
 const FIX = argv.includes('--fix');
-const ONLY = argv.includes('--rule') ? argv[argv.indexOf('--rule') + 1] : null;
-if (ONLY && !RULES.some((r) => r.id === ONLY)) {
-  console.log(`pattern-lint: unknown rule ${ONLY}`);
+const ONLY = argv.includes('--rule') ? String(argv[argv.indexOf('--rule') + 1] || '').split(',').filter(Boolean) : null;
+const unknown = (ONLY || []).filter((id) => !RULES.some((r) => r.id === id));
+if (ONLY && (!ONLY.length || unknown.length)) {
+  console.log(`pattern-lint: unknown rule ${unknown.join(', ') || '(none given)'}`);
   process.exit(2);
 }
-const ACTIVE = ONLY ? RULES.filter((r) => r.id === ONLY) : RULES;
+const ACTIVE = ONLY ? RULES.filter((r) => ONLY.includes(r.id)) : RULES;
 const squash = (t) => t.replace(/\s+/g, ' ');
 
 let errors = 0;

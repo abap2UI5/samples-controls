@@ -119,6 +119,68 @@ export async function revealInOverflow(page, locator) {
   throw new Error(`the control never appeared — tried ${n} overflow popover(s)`);
 }
 
+/* A popover or dialog located by what it SAYS - its title, else its text -
+ * among the ones that are OPEN, never as "the first .sapMPopover".
+ *
+ * The first one in the DOM is often not yours. A popup UI5 has closed stays
+ * in the static area, hidden, ahead of every popup opened after it: once
+ * revealInOverflow( ) has opened a toolbar's overflow, `.sapMPopover` first
+ * names that hidden associative popover, and a wait on it times out while the
+ * real one is open (the overview's generation-notes leg, red behind #259's
+ * subheader overflow, 2026-10-09). Visibility is no cure either: a popover
+ * whose content overflows its box measures empty headless (app 238) and
+ * Playwright calls it hidden while it is open and showing its text.
+ *
+ * So the candidates come from UI5, not from the DOM: every sap.m.Popover and
+ * sap.m.Dialog (which covers ResponsivePopover, MessageBox, SelectDialog,
+ * ViewSettingsDialog, ActionSheet, MessagePopover and the pickers - each
+ * renders through one of the two) that isOpen( ) with its node in the
+ * document. Among those a TITLE match wins over a text match, and the most
+ * recently created wins a tie. `want` is a substring or a RegExp. Resolves to
+ * a locator on that popup's own node; fails naming the popups that WERE open.
+ */
+export async function waitForPopup(page, want, { timeout = 10000 } = {}) {
+  const arg = want instanceof RegExp ? { source: want.source, flags: want.flags } : String(want);
+  const expr = `(() => { ${OPEN_POPUPS_SRC}
+    const hit = (${choosePopup.toString()})(openPopups(), ${JSON.stringify(arg)});
+    return hit ? hit.id : null; })()`;
+  const handle = await page.waitForFunction(expr, undefined, { timeout }).catch(async (e) => {
+    if (!/Timeout .* exceeded/.test(String(e && e.message))) throw e;
+    const open = await page.evaluate(`(() => { ${OPEN_POPUPS_SRC} return openPopups(); })()`).catch(() => []);
+    const seen = open.map((p) => `${p.type} "${p.title || p.text.slice(0, 40)}"`).join(', ') || 'none';
+    throw new Error(`no open popover or dialog shows ${want instanceof RegExp ? want : `"${want}"`} - open: ${seen}`);
+  });
+  const id = await handle.jsonValue();
+  return page.locator(`[id="${id}"]`);
+}
+
+// page side of waitForPopup( ): every OPEN popover/dialog as plain data
+const OPEN_POPUPS_SRC = `const openPopups = () => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+  .filter((c) => !c.bIsDestroyed && c.isA && c.isA(['sap.m.Popover', 'sap.m.Dialog']) && c.isOpen && c.isOpen())
+  .map((c) => {
+    const dom = c.getDomRef();
+    if (!dom || !document.body.contains(dom)) return null;
+    // a custom header (ViewSettingsDialog, ResponsivePopover) carries its
+    // title as a sap.m.Title inside the header bar
+    const head = dom.querySelector('header');
+    const named = head && head.querySelector('.sapMTitle, .sapMDialogTitle, [role="heading"]');
+    const headText = named ? named.textContent : head ? head.innerText || head.textContent : '';
+    return { id: dom.id, type: c.getMetadata().getName(),
+      title: ((c.getTitle && c.getTitle()) || headText || '').replace(/\\s+/g, ' ').trim(),
+      text: (dom.innerText || dom.textContent || '').replace(/\\s+/g, ' ').trim() };
+  })
+  .filter(Boolean);`;
+
+/* The choice itself, pure so it is testable without a browser (it is also
+ * stringified into the page, so it stays self-contained): `popups` are open
+ * ones in creation order, `want` a substring or { source, flags }. */
+export function choosePopup(popups, want) {
+  const re = typeof want === 'string' ? null : new RegExp(want.source, want.flags);
+  const match = (t) => !!t && (re ? re.test(t) : t.includes(want));
+  const last = (list) => (list.length ? list[list.length - 1] : null);
+  return last(popups.filter((p) => match(p.title))) || last(popups.filter((p) => match(p.text)));
+}
+
 // Type into a field whose liveChange ROUND-TRIPS per keystroke. Such a wire is
 // lossy, not queued: a round-trip in flight drops the events behind it, which
 // is what the linter's own `live-event-roundtrip` advisory says about these

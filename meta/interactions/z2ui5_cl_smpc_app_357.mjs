@@ -4,7 +4,7 @@
 // 115 rows and the first one must be back at the head of the model. The row
 // count is also the deviation's first half — that the sample's threshold /
 // scrollThreshold settings render the full model rather than a first page.
-import { waitForUi5, ui5All, UI5_ALL_SRC, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, UI5_ALL_SRC, revealInOverflow, waitForPopup } from '../../scripts/lib-e2e.mjs';
 
 const rowCount = async (page) => page.evaluate(`(() => { ${UI5_ALL_SRC}
   const t = ui5All().find((c) => c.getMetadata().getName() === 'sap.ui.table.Table');
@@ -35,7 +35,10 @@ export default async (page, expect) => {
   // clicking the key's own text in place leaves selectedKey untouched.
   const segmented = page.locator('[id$="operationMode"]');
   await revealInOverflow(page, segmented);
-  await page.locator('.sapMPopover .sapMSlt').first().click();
+  // the TABLE toolbar's overflow, opened for the refresh above, is still in
+  // the DOM ahead of this one - so the open popover is the one showing a mode
+  const footer = await waitForPopup(page, /\b(Default|Server|Client|Auto)\b/);
+  await footer.locator('.sapMSlt').first().click();
   await page.locator('.sapMSltPicker').getByText('Client', { exact: true }).first().click();
   await waitForUi5(page, () => {
     const s = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.SegmentedButton'

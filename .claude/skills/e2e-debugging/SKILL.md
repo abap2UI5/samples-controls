@@ -288,10 +288,15 @@ verdicts below turned out to be harness effects.
   stays in the DOM after it closes, AHEAD of any popover a later round-trip
   opens, so `page.waitForSelector('.sapMPopover')` waits for the hidden one and
   times out while the real popover is open (`isOpen()` true in the registry).
-  Locate a popover by its content -
-  `page.locator('.sapMPopover').filter({ hasText: '<title>' })` - (the
-  overview, 2026-10-09: its Demo apps button moved into the subheader's
-  overflow in #259 and the generation-notes leg went red behind it).
+  Locate a popup by what it says - `waitForPopup(page, '<title or text>')` in
+  `scripts/lib-e2e.mjs` picks among the popovers and dialogs that are OPEN in
+  the registry (title before text, the latest on a tie, a RegExp allowed),
+  returns a locator on that node, and names the popups that were open when it
+  times out (the overview, 2026-10-09: its Demo apps button moved into the
+  subheader's overflow in #259 and the generation-notes leg went red behind
+  it; 232, 238, 357 and demo_002 moved to it the same day). It reads the
+  registry, not Playwright visibility, so it also finds a popover whose box
+  measures empty headless (app 238).
 - **Several OverflowToolbars can share one page.** App 357 has one on the table
   and one in the footer, so "the first Additional Options button" opens the
   wrong popover and the control still never shows; app 407's menu button hides

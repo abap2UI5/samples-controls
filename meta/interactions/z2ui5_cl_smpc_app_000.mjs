@@ -9,7 +9,7 @@
 // its class, a start URL and a wired Open button. Until 2026-10-09 this module
 // still looked for the table the ports page used to carry above the ports, so
 // the overview read red in every run while the app was right.
-import { waitForUi5, ui5All, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, ui5All, revealInOverflow, waitForPopup } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   const demoBtn = page.getByRole('button', { name: /^Demo apps \(\d+\)$/ });
@@ -35,8 +35,7 @@ export default async (page, expect) => {
   // the subheader's overflow popover (opened above to reach the Demo apps
   // button) stays in the DOM, hidden, ahead of this one - so the popover is
   // located by its own title, not as "the first .sapMPopover"
-  const notes = page.locator('.sapMPopover').filter({ hasText: 'Generation notes' });
-  await notes.first().waitFor({ state: 'visible', timeout: 60000 })
-    .catch(() => { throw new Error('the generation-notes popover never opened (round-trip failed?)'); });
-  await expect(notes.first(), 'the generation-notes popover').toContainText('Generation notes');
+  const notes = await waitForPopup(page, 'Generation notes', { timeout: 60000 })
+    .catch((e) => { throw new Error(`the generation-notes popover never opened (round-trip failed?): ${e.message}`); });
+  await expect(notes, 'the generation-notes popover').toContainText('Generation notes');
 };

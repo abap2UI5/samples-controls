@@ -1582,6 +1582,140 @@ test('pattern-lint --fix: chain-value-column realigns a block and its continuati
 });
 
 /*
+ * t-arg-hang (view-chain-layout rule 7): every row and comment line of a
+ * wrapped t_arg list starts in the column of its first element. The fix moves
+ * a row's own continuation (a row wrapped with &&) with it, leaves a list that
+ * closes on its line and a `VALUE #(` inside a string alone, and is idempotent.
+ */
+test('pattern-lint --fix: t-arg-hang hangs a wrapped t_arg list under its first element, idempotently', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const at = path.join(root, 'src', '01', '01', 'z2ui5_cl_smpc_app_001.clas.abap');
+  const base = fs.readFileSync(at, 'utf8');
+  const body = (lines) => base.replace('                )->a( n = `text` v = `hello` ).', `${lines.join('\n')} ).`);
+  const fix = () => runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang');
+  try {
+    const want = body([
+      '                )->a( n = `text` v = `t_arg = VALUE #( ( no list ) )`',
+      '                )->a( n = `id`   v = client->_event( val   = `X`',
+      '                                                     t_arg = VALUE #( ( `a` )',
+      '                                                                      " a comment between rows',
+      '                                                                      ( `b` &&',
+      '                                                                        `c` )',
+      '                                                                      ( `d` ) ) )',
+      '                )->a( n = `id2`  v = client->_event( val = `Y` t_arg = VALUE #(',
+      '                                    ( `e` )',
+      '                                    ( `f` ) ) )',
+      '                )->a( n = `id3`  v = client->_event( val = `Z` t_arg = VALUE #( ( `g` ) ( `h` ) ) )']);
+    // the drift the rule exists for: under the # of VALUE #(, three columns
+    // left, the wrapped row's continuation with it - and one row too far right
+    const drifted = want
+      .replace('                                                                      " a comment', '                                                                   " a comment')
+      .replace('                                                                      ( `b` &&', '                                                                   ( `b` &&')
+      .replace('                                                                        `c` )', '                                                                     `c` )')
+      .replace('                                    ( `f` )', '                                        ( `f` )');
+    fs.writeFileSync(at, drifted);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 't-arg-hang');
+    assert.equal(r.code, 1, 'the drifted lists fail first');
+    assert.equal((r.out.match(/\[t-arg-hang\]/g) || []).length, 3, `the comment, the wrapped row and the right-hand row - not the row's own continuation\n${r.out}`);
+    assert.match(r.out, /\[t-arg-hang\] starts at col 68, the first element's \( is at col 71/);
+    r = fix();
+    assert.equal(r.code, 0, `the fixed file passes\n${r.out}`);
+    assert.match(r.out, /--fix: 1 file\(s\) rewritten/);
+    assert.equal(fs.readFileSync(at, 'utf8'), want, 'fix hangs every entry under the first element, the continuation moved with its row');
+    assert.match(fix().out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+    // both fixing rules in one pass, the way fmt:chains calls them
+    r = runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 'chain-value-column,t-arg-hang');
+    assert.equal(r.code, 0, r.out);
+    assert.equal(runIn(root, 'pattern-lint.mjs', '--rule', 'chain-value-column,no-such-rule').code, 2, 'an unknown id in a list is refused');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
+ * The same rule over the REAL corpus: every class with a wrapped t_arg list is
+ * copied into a scratch tree and every list drifted three columns left (the
+ * `#` of VALUE #(, rows, comments and a row's continuation alike). --fix must
+ * give back the committed files byte for byte, and a second run must change
+ * nothing - so the fixer is the exact inverse of the drift on every shape the
+ * corpus actually writes, not only on the fixture's.
+ */
+test('pattern-lint --fix: t-arg-hang round-trips every wrapped t_arg list of the corpus byte-identically', () => {
+  const { root } = makeMetaRoot(['pattern-lint.mjs']);
+  const OPEN = /\bt_arg\s*=\s*VALUE\s+#\(\s*(\(|$)/;
+  const files = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith('.clas.abap')) files.push(p);
+    }
+  })(path.join(REPO, 'src'));
+  try {
+    fs.rmSync(path.join(root, 'src'), { recursive: true, force: true });
+    let lists = 0;
+    const originals = new Map();
+    for (const f of files) {
+      const text = fs.readFileSync(f, 'utf8');
+      const L = text.split('\n');
+      let touched = false;
+      for (let i = 0; i < L.length; i++) {
+        const m = OPEN.exec(L[i]);
+        if (!m || /^\s*"/.test(L[i])) continue;
+        // depth at the start of each line, counted from VALUE #( - string and
+        // comment aware - up to the line that closes the list
+        let depth = 1;
+        let firstLine = m[1] ? i : null;
+        let li = i;
+        let ci = m.index + m[0].length - (m[1] ? 1 : 0);
+        const startDepth = new Map();
+        walk: for (; li < L.length; li++, ci = 0) {
+          if (li > i) startDepth.set(li, depth);
+          let q = null;
+          for (; ci < L[li].length; ci++) {
+            const ch = L[li][ci];
+            if (q) { if (ch === q) q = null; continue; }
+            if (ch === '`' || ch === "'" || ch === '|') { q = ch; continue; }
+            if (ch === '"') break;
+            if (ch === '(') { if (depth === 1 && firstLine === null) firstLine = li; depth++; }
+            if (ch === ')' && --depth === 0) break walk;
+          }
+        }
+        if (li === i || firstLine === null) continue;
+        // drift every entry after the first element's line - a row or a
+        // comment starting between rows - and the lines inside its row
+        let entry = false;
+        let moved = 0;
+        for (let k = firstLine + 1; k <= li; k++) {
+          const d = startDepth.get(k);
+          if (d === 1) entry = /^\s*[("]/.test(L[k]);
+          if (entry && L[k].trim()) { L[k] = L[k].slice(3); moved++; }
+        }
+        if (moved) { lists++; touched = true; }
+        i = li;
+      }
+      if (!touched) continue;
+      const rel = path.relative(REPO, f);
+      originals.set(rel, text);
+      fs.mkdirSync(path.dirname(path.join(root, rel)), { recursive: true });
+      fs.writeFileSync(path.join(root, rel), L.join('\n'));
+    }
+    assert.ok(lists >= 200, `the corpus still carries its wrapped t_arg lists (found ${lists})`);
+    let r = runIn(root, 'pattern-lint.mjs', '--rule', 't-arg-hang');
+    assert.equal(r.code, 1, 'the drifted corpus fails first');
+    r = runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang');
+    assert.equal(r.code, 0, `the fixed corpus passes\n${r.out.slice(-2000)}`);
+    assert.match(r.out, new RegExp(`--fix: ${originals.size} file\\(s\\) rewritten`));
+    for (const [rel, text] of originals) {
+      assert.equal(fs.readFileSync(path.join(root, rel), 'utf8'), text, `${rel} is not byte-identical after drift + fix`);
+    }
+    assert.match(runIn(root, 'pattern-lint.mjs', '--fix', '--rule', 't-arg-hang').out, /--fix: 0 file\(s\) rewritten/, 'a second run changes nothing');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/*
  * The hold-out row: three facts, all derived. The fixture's holdout.json is
  * empty, so the row says 0 reserved; reserving the fixture's own sample makes
  * it SPENT (a sidecar names it), and a probe heading in docs/history.md is
@@ -1674,11 +1808,37 @@ test('e2e-changed: prose and generated artefacts boot nothing', async () => {
   const { portsToRun } = await import('../e2e-changed.mjs');
 
   const inert = ['README.md', 'AGENTS.md', 'api.md', 'catalogue.json', 'SAMPLES.md',
-    'ui5/sap.m/FixtureGood/V.view.xml', 'docs/history.md', 'scripts/generate-overview.mjs'];
+    'ui5/sap.m/FixtureGood/V.view.xml', 'docs/history.md', 'scripts/generate-coverage.mjs',
+    'scripts/lib/overview.md', 'scripts/lib/demoapps-notes.txt'];
   const r = portsToRun(inert);
   assert.equal(r.all, false);
   assert.deepEqual(r.classes, []);
-  assert.match(r.reason, /no port, demo app, sidecar or interaction module changed/);
+  assert.match(r.reason, /no port, demo app, sidecar, interaction module or overview generator changed/);
+});
+
+/*
+ * The overview app is GENERATED, so what builds it reaches it: the entry
+ * point, every scripts/lib/overview-*.mjs module and the chain formatter it
+ * lays the class out with all boot the overview - and only the overview.
+ */
+test('e2e-changed: the overview generator boots the overview app, and nothing else', async () => {
+  const { portsToRun } = await import('../e2e-changed.mjs');
+
+  for (const f of ['scripts/generate-overview.mjs', 'scripts/lib/overview-emit.mjs', 'scripts/lib/overview-model.mjs',
+    'scripts/lib/overview-openui5.mjs', 'scripts/lib/format-chain.mjs']) {
+    const r = portsToRun([f]);
+    assert.equal(r.all, false, `${f} does not reach every port`);
+    assert.deepEqual(r.classes, ['z2ui5_cl_smpc_app_000'], `${f} boots the overview app`);
+  }
+  // every overview module the generator imports is covered by the map
+  const imports = fs.readFileSync(path.join(REPO, 'scripts/generate-overview.mjs'), 'utf8')
+    .match(/from '\.\/lib\/[^']+'/g).map((s) => `scripts/lib/${s.slice(12, -1)}`);
+  for (const f of imports) {
+    assert.deepEqual(portsToRun([f]).classes, ['z2ui5_cl_smpc_app_000'], `${f} is imported by generate-overview.mjs`);
+  }
+  // together with a port: both, deduplicated with the class file itself
+  assert.deepEqual(portsToRun(['scripts/lib/overview-emit.mjs', 'src/z2ui5_cl_smpc_app_000.clas.abap',
+    'src/01/01/z2ui5_cl_smpc_app_462.clas.abap']).classes, ['z2ui5_cl_smpc_app_000', 'z2ui5_cl_smpc_app_462']);
 });
 
 /*
@@ -1785,6 +1945,108 @@ test('e2e-changed: a corpus-wide change answers `all` rather than a subset', asy
   const mixed = portsToRun(['A2UI5_PIN', 'src/01/01/z2ui5_cl_smpc_app_462.clas.abap']);
   assert.equal(mixed.all, true);
   assert.match(mixed.reason, /A2UI5_PIN reaches every port/);
+});
+
+/*
+ * waitForPopup( ) chooses among the OPEN popups only (the page side filters on
+ * isOpen( ); what reaches the chooser is already open), a title match beats a
+ * text match, and the most recently created wins a tie. The case it exists
+ * for: the overflow popover that stays in the DOM is simply not a candidate,
+ * so "the first popover" can no longer be the wrong one.
+ */
+test('lib-e2e: choosePopup prefers a title over text, the latest over an earlier one, and takes a RegExp', async () => {
+  const { choosePopup } = await import('../lib-e2e.mjs');
+  const notes = { id: 'notes', title: 'Generation notes', text: 'Generation notes NOTE: Rebuilt 1:1' };
+  const dialog = { id: 'dlg', title: 'UI5 demo apps', text: 'UI5 demo apps Generation notes are elsewhere' };
+  const older = { id: 'old', title: 'Popover', text: 'Popover Delete Save' };
+  const newer = { id: 'new', title: 'Popover', text: 'Popover Delete Save' };
+  const untitled = { id: 'ovf', title: '', text: 'OData Model Operation Mode: Server' };
+
+  assert.equal(choosePopup([dialog, notes], 'Generation notes').id, 'notes', 'a title match beats an earlier text match');
+  assert.equal(choosePopup([notes, dialog], 'Generation notes').id, 'notes', 'and a later text match');
+  assert.equal(choosePopup([older, newer], 'Popover').id, 'new', 'two equal titles: the most recently created');
+  assert.equal(choosePopup([notes, untitled], { source: '\\b(Default|Server|Client|Auto)\\b', flags: '' }).id, 'ovf', 'a RegExp reaches an untitled popover by its text');
+  assert.equal(choosePopup([notes, dialog], 'View Settings'), null, 'nothing open shows it: null, so the wait keeps waiting');
+  assert.equal(choosePopup([], 'Generation notes'), null);
+
+  // it is stringified into the page, so it must not close over anything
+  const inPage = new Function(`return (${choosePopup.toString()})`)();
+  assert.equal(inPage([older, newer], 'Popover').id, 'new', 'the stringified chooser works on its own');
+});
+
+/*
+ * --port moves the run's backend off 3000 so shards can run side by side, and
+ * nothing in the run may still assume 3000: the interaction modules build
+ * their URLs from the page's own origin.
+ */
+test('e2e-smoke: --port is validated, and no interaction module names a port', () => {
+  const smoke = (...args) => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'e2e-smoke.mjs'), ...args], { encoding: 'utf8', cwd: REPO });
+  for (const bad of ['nope', '0', '70000']) {
+    const r = smoke('--port', bad, '--list-demo-apps');
+    assert.equal(r.status, 2, `--port ${bad} is refused`);
+    assert.match(r.stderr, /--port wants a TCP port number/);
+  }
+  assert.equal(smoke('--port', '3007', '--list-demo-apps').status, 0, 'a valid port passes the parse');
+
+  const src = fs.readFileSync(path.join(REPO, 'scripts', 'e2e-smoke.mjs'), 'utf8');
+  assert.doesNotMatch(src.replace(/^\s*(\/\/|\*).*$/gm, ''), /'3000'|localhost:3000/, 'e2e-smoke itself uses PORT/ORIGIN everywhere');
+  const dir = path.join(REPO, 'meta', 'interactions');
+  for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.mjs'))) {
+    const code = fs.readFileSync(path.join(dir, f), 'utf8').replace(/^\s*\/\/.*$/gm, '');
+    assert.doesNotMatch(code, /localhost:\d+|\.port\s*===?\s*['"`]\d+/, `${f} names a backend port - use new URL(page.url()).origin`);
+  }
+});
+
+/*
+ * e2e-build warns before it builds in a checkout somebody else may be using:
+ * uncommitted changes (the backend would not be a commit, and a framework
+ * `verify` dirties the tree while it runs) and its own lock files (a second
+ * build in flight, or a crashed one). A clean checkout says nothing, and a
+ * directory without a repository of its own is not judged by its parent's.
+ */
+test('lib-a2ui5: checkoutWarnings names a dirty checkout and a build lock, and is silent on a clean one', async () => {
+  const { checkoutWarnings, BUILD_LOCK_FILES } = await import('../lib-a2ui5.mjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'demokit-a2ui5-test-'));
+  const git = (...args) => spawnSync('git', ['-C', dir, '-c', 'user.email=t@example.invalid', '-c', 'user.name=t', ...args], { encoding: 'utf8' });
+  try {
+    // not a repository at all (an extracted backend): no git verdict, no throw
+    const plain = path.join(dir, 'plain');
+    fs.mkdirSync(plain);
+    assert.deepEqual(checkoutWarnings(plain), []);
+
+    assert.equal(git('init', '-q').status, 0);
+    fs.writeFileSync(path.join(dir, '.gitignore'), `${BUILD_LOCK_FILES.join('\n')}\nplain/\n`);
+    fs.mkdirSync(path.join(dir, 'src'));
+    fs.writeFileSync(path.join(dir, 'src', 'a.abap'), 'WRITE 1.\n');
+    git('add', '-A');
+    assert.equal(git('commit', '-qm', 'init').status, 0);
+    assert.deepEqual(checkoutWarnings(dir), [], 'a clean checkout is silent');
+
+    // a directory inside the repository is not the repository
+    fs.writeFileSync(path.join(dir, 'src', 'a.abap'), 'WRITE 2.\n');
+    assert.deepEqual(checkoutWarnings(plain), [], 'the outer work tree is not this directory\'s state');
+
+    let w = checkoutWarnings(dir);
+    assert.equal(w.length, 1);
+    assert.match(w[0], /1 uncommitted change\(s\) \(src\/a\.abap\)/);
+
+    // the lock: named on its own, and not counted again as a dirty file even
+    // where the checkout does not ignore it
+    fs.writeFileSync(path.join(dir, '.gitignore'), 'plain/\n');
+    git('commit', '-qam', 'unignore');
+    git('checkout', '-q', '--', 'src');
+    fs.writeFileSync(path.join(dir, 'e2e-downport.jsonc'), '{}');
+    w = checkoutWarnings(dir);
+    assert.equal(w.length, 1, w.join('\n'));
+    assert.match(w[0], /e2e-downport\.jsonc is present - another e2e-build is running/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+
+  // and e2e-build prints them before it touches anything
+  const build = fs.readFileSync(path.join(REPO, 'scripts', 'e2e-build.mjs'), 'utf8');
+  assert.ok(build.indexOf('checkoutWarnings(A2)') > 0 && build.indexOf('checkoutWarnings(A2)') < build.indexOf('fs.rmSync(downport'),
+    'e2e-build warns before it wipes node/downport');
 });
 
 /* --------------------------------------------------------- lib-smoke.mjs */

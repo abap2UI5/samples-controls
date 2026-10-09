@@ -20,6 +20,10 @@
  *                                     claim about the live behaviour)
  *   meta/interactions/<class>.mjs     the assertions that run against it
  *
+ * The overview app is written by a generator (scripts/generate-overview.mjs
+ * and its scripts/lib/overview-*.mjs / format-chain.mjs), and a change to the
+ * generator boots it too.
+ *
  * The src/04 DEMO APPS are flat and sidecar-less (AGENTS section 3), so the two
  * inputs that reach them are the class under src/04/ and its interaction
  * module; ui5/demoapps.json is their registry, and a change to it reaches all
@@ -59,6 +63,20 @@ const DEMO_APPS = () => Object.keys(
   JSON.parse(fs.readFileSync(path.join(ROOT, 'ui5/demoapps.json'), 'utf8')).ports || {},
 );
 
+/* The overview app's GENERATOR. z2ui5_cl_smpc_app_000 is written by these and
+ * committed (meta-valid regenerates it and fails on a diff), so a change that
+ * alters the class reaches it through the class file anyway - but not every
+ * one does: the weekly generate-result run and a generator change whose
+ * regenerated class lands in a LATER commit both leave the app's first boot
+ * to the nightly. The overview is one app and its module is the corpus's
+ * front-door check, so a change to what builds it boots it. */
+const OVERVIEW = 'z2ui5_cl_smpc_app_000';
+const OVERVIEW_GENERATOR = [
+  /^scripts\/generate-overview\.mjs$/,
+  /^scripts\/lib\/overview-[a-z0-9-]+\.mjs$/,
+  /^scripts\/lib\/format-chain\.mjs$/,
+];
+
 /** Paths whose change reaches EVERY port's live behaviour. */
 const CORPUS_WIDE = [
   /^A2UI5_PIN$/,
@@ -94,6 +112,7 @@ export function portsToRun(files) {
   const classes = new Set();
   for (const f of list) {
     if (/^ui5\/demoapps\.json$/.test(f)) { DEMO_APPS().forEach((c) => classes.add(c)); continue; }
+    if (OVERVIEW_GENERATOR.some((re) => re.test(f))) { classes.add(OVERVIEW); continue; }
     let m = /^src\/(?:\d+\/(?:\d+\/)?)?([a-z0-9_]+)\.clas\.(abap|xml)$/.exec(f);
     if (m && (CLASS.test(m[1]) || DEMO_CLASS.test(m[1]))) { classes.add(m[1]); continue; }
     m = /^meta\/([a-z0-9_]+)\.json$/.exec(f);
@@ -108,7 +127,7 @@ export function portsToRun(files) {
     classes: sorted,
     reason: sorted.length
       ? `${sorted.length} app(s) touched`
-      : 'no port, demo app, sidecar or interaction module changed',
+      : 'no port, demo app, sidecar, interaction module or overview generator changed',
   };
 }
 
