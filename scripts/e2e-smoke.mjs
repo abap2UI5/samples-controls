@@ -49,7 +49,6 @@ import http from 'http';
 import { spawn } from 'child_process';
 import { isDeepStrictEqual } from 'util';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { chromium } from 'playwright';
 import { resolveA2UI5 } from './lib-a2ui5.mjs';
 import { loadDemoApps } from './lib/demoapps.mjs';
 
@@ -412,6 +411,10 @@ const LOCAL_CHROMIUM = process.env.PW_CHROMIUM || '/opt/pw-browsers/chromium';
  * unbundled) are where the process dies. Measured 2026-08-25: 4 crashes in ~25
  * runs on that one port. */
 const LAUNCH_ARGS = ['--disable-dev-shm-usage'];
+/* playwright is loaded here, not at the top: the argument parse and
+ * --list-demo-apps run without it, and the tooling tests drive both in a job
+ * that installs no node_modules */
+const { chromium } = await import('playwright');
 const launchBrowser = () => (fs.existsSync(LOCAL_CHROMIUM)
   ? chromium.launch({ headless: !HEADED, executablePath: LOCAL_CHROMIUM, args: LAUNCH_ARGS })
   : chromium.launch({ headless: !HEADED, args: LAUNCH_ARGS }));
