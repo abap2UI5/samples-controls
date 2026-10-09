@@ -8,7 +8,7 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
 
     " RecurrenceRule.days is an int[]: a table of STRINGS serializes to ['1','2']
     " and UI5 rejects it, so the day tables are integer tables
-    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_appointment,
         start_at          TYPE string,
@@ -26,7 +26,7 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
         ruledayofweek     TYPE i,
         rulemonth         TYPE i,
       END OF ty_s_appointment.
-    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_non_working,
         date_at           TYPE string,
@@ -38,7 +38,7 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
         recurrenceenddate TYPE string,
         t_recurrence_day  TYPE ty_t_int,
       END OF ty_s_non_working.
-    TYPES ty_t_non_working TYPE STANDARD TABLE OF ty_s_non_working WITH EMPTY KEY.
+    TYPES ty_t_non_working TYPE STANDARD TABLE OF ty_s_non_working WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_header,
         start_at TYPE string,
@@ -47,7 +47,7 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
         type     TYPE string,
         pic      TYPE string,
       END OF ty_s_header.
-    TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
+    TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_person,
         pic            TYPE string,
@@ -57,14 +57,16 @@ CLASS z2ui5_cl_smpc_app_548 DEFINITION PUBLIC.
         t_non_working  TYPE ty_t_non_working,
         t_headers      TYPE ty_t_header,
       END OF ty_s_person.
-    DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
+    TYPES temp1_7f461aec6c TYPE STANDARD TABLE OF ty_s_person WITH DEFAULT KEY.
+DATA t_people TYPE temp1_7f461aec6c.
 
     TYPES:
       BEGIN OF ty_s_item,
         key  TYPE string,
         text TYPE string,
       END OF ty_s_item.
-    DATA t_person_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES temp2_7f461aec6c TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
+DATA t_person_items TYPE temp2_7f461aec6c.
 
     DATA startdate TYPE string.
     DATA viewkey   TYPE string.
@@ -110,12 +112,12 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -124,10 +126,42 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/startDate}.getFullYear()` INTO TABLE temp1.
+    INSERT `${$parameters>/startDate}.getMonth() + 1` INTO TABLE temp1.
+    INSERT `${$parameters>/startDate}.getDate()` INTO TABLE temp1.
+    INSERT `${$parameters>/startDate}.getHours()` INTO TABLE temp1.
+    INSERT `${$parameters>/startDate}.getMinutes()` INTO TABLE temp1.
+    INSERT `${$parameters>/endDate}.getFullYear()` INTO TABLE temp1.
+    INSERT `${$parameters>/endDate}.getMonth() + 1` INTO TABLE temp1.
+    INSERT `${$parameters>/endDate}.getDate()` INTO TABLE temp1.
+    INSERT `${$parameters>/endDate}.getHours()` INTO TABLE temp1.
+    INSERT `${$parameters>/endDate}.getMinutes()` INTO TABLE temp1.
+    INSERT `${$parameters>/calendarRow}.getBindingContext().getPath()` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/startDate}.getFullYear()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getMonth() + 1` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getDate()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getHours()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getMinutes()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getFullYear()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getMonth() + 1` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getDate()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getHours()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getMinutes()` INTO TABLE temp2.
+    INSERT `${$parameters>/appointment}.getBindingContext() ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` INTO TABLE temp2.
+    INSERT `${$parameters>/calendarRow}.getBindingContext().getPath()` INTO TABLE temp2.
+    INSERT `${$parameters>/copy} ? 'X' : ''` INTO TABLE temp2.
+    INSERT `${$parameters>/calendarRow}.getTitle()` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:core`   v = `sap.ui.core`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
@@ -176,35 +210,10 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                         " reschedules by the dragged delta
                         )->a( n = `appointmentCreate`             v = client->_event(
                                               val   = `APPT_CREATE`
-                                              t_arg = VALUE #(
-                                                ( `${$parameters>/startDate}.getFullYear()` )
-                                                ( `${$parameters>/startDate}.getMonth() + 1` )
-                                                ( `${$parameters>/startDate}.getDate()` )
-                                                ( `${$parameters>/startDate}.getHours()` )
-                                                ( `${$parameters>/startDate}.getMinutes()` )
-                                                ( `${$parameters>/endDate}.getFullYear()` )
-                                                ( `${$parameters>/endDate}.getMonth() + 1` )
-                                                ( `${$parameters>/endDate}.getDate()` )
-                                                ( `${$parameters>/endDate}.getHours()` )
-                                                ( `${$parameters>/endDate}.getMinutes()` )
-                                                ( `${$parameters>/calendarRow}.getBindingContext().getPath()` ) ) )
+                                              t_arg = temp1 )
                         )->a( n = `appointmentDrop`               v = client->_event(
                                                 val   = `APPT_DROP`
-                                                t_arg = VALUE #(
-                                                  ( `${$parameters>/startDate}.getFullYear()` )
-                                                  ( `${$parameters>/startDate}.getMonth() + 1` )
-                                                  ( `${$parameters>/startDate}.getDate()` )
-                                                  ( `${$parameters>/startDate}.getHours()` )
-                                                  ( `${$parameters>/startDate}.getMinutes()` )
-                                                  ( `${$parameters>/endDate}.getFullYear()` )
-                                                  ( `${$parameters>/endDate}.getMonth() + 1` )
-                                                  ( `${$parameters>/endDate}.getDate()` )
-                                                  ( `${$parameters>/endDate}.getHours()` )
-                                                  ( `${$parameters>/endDate}.getMinutes()` )
-                                                  ( `${$parameters>/appointment}.getBindingContext() ? ${$parameters>/appointment}.getBindingContext().getPath() : ''` )
-                                                  ( `${$parameters>/calendarRow}.getBindingContext().getPath()` )
-                                                  ( `${$parameters>/copy} ? 'X' : ''` )
-                                                  ( `${$parameters>/calendarRow}.getTitle()` ) ) )
+                                                t_arg = temp2 )
 
                         )->ele( `customData`
                             )->tag( n = `CustomData` ns = `core`
@@ -270,7 +279,8 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
   METHOD popup_create_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
@@ -637,6 +647,43 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA temp3 TYPE string_table.
+        DATA temp4 TYPE ty_s_appointment.
+        DATA new_appointment LIKE temp4.
+          DATA temp5 TYPE i.
+          DATA temp12 TYPE i.
+              DATA temp6 TYPE i.
+              DATA temp14 TYPE i.
+              DATA temp7 TYPE i.
+            DATA temp8 TYPE i.
+        DATA temp9 TYPE i.
+        FIELD-SYMBOLS <person> TYPE z2ui5_cl_smpc_app_548=>ty_s_person.
+        DATA drop_start TYPE string.
+        DATA drop_end TYPE string.
+        DATA appt_path TYPE string.
+        DATA row_path TYPE string.
+        DATA is_copy TYPE abap_bool.
+        DATA temp1 TYPE xsdboolean.
+        DATA row_title TYPE string.
+          TYPES temp15 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA parts TYPE temp15.
+          DATA temp10 TYPE i.
+          FIELD-SYMBOLS <temp15> LIKE LINE OF parts.
+          DATA temp16 LIKE sy-tabix.
+          DATA src_row LIKE temp10.
+          DATA temp11 TYPE i.
+          FIELD-SYMBOLS <temp17> LIKE LINE OF parts.
+          DATA temp18 LIKE sy-tabix.
+          DATA appt_idx LIKE temp11.
+          DATA dest_row TYPE i.
+          FIELD-SYMBOLS <source> TYPE z2ui5_cl_smpc_app_548=>ty_s_person.
+            DATA moved TYPE z2ui5_cl_smpc_app_548=>ty_s_appointment.
+            FIELD-SYMBOLS <temp19> LIKE LINE OF <source>-t_appointments.
+            DATA temp20 LIKE sy-tabix.
+              FIELD-SYMBOLS <copy_to> TYPE z2ui5_cl_smpc_app_548=>ty_s_person.
+              FIELD-SYMBOLS <move_to> TYPE z2ui5_cl_smpc_app_548=>ty_s_person.
+              FIELD-SYMBOLS <temp12> LIKE LINE OF <source>-t_appointments.
+              DATA temp13 LIKE sy-tabix.
 
     CASE client->get_event( ).
 
@@ -659,7 +706,9 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
       WHEN `RECURRENCE_TYPE`.
         " onRecurrenceTypeChange clears the parts the picked recurrence does not use
         IF c_rec_type <> `Weekly`.
-          c_rec_days = VALUE #( ).
+          
+          CLEAR temp3.
+          c_rec_days = temp3.
         ENDIF.
         IF c_rec_type <> `Monthly` AND c_rec_type <> `Yearly`.
           c_rule_type = `DayOfMonth`.
@@ -677,21 +726,30 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
         " original keeps the default by leaving the property off a non-recurring
         " appointment - a serialized ABAP structure cannot leave a field out, so
         " the initial 0 would reach the setter and terminate the app
-        DATA(new_appointment) = VALUE ty_s_appointment( start_at          = c_start
-                                                        end_at            = c_end
-                                                        title             = c_title
-                                                        text              = c_text
-                                                        type              = c_type
-                                                        recurrencepattern = 1 ).
+        
+        CLEAR temp4.
+        temp4-start_at = c_start.
+        temp4-end_at = c_end.
+        temp4-title = c_title.
+        temp4-text = c_text.
+        temp4-type = c_type.
+        temp4-recurrencepattern = 1.
+        
+        new_appointment = temp4.
         IF c_rec_type IS NOT INITIAL.
           new_appointment-recurrencetype    = c_rec_type.
           " guarded on characters AND length: c_rec_pattern comes straight from a
           " free-entry Input, so an unguarded CONV i can raise NO_NUMBER or
           " OVERFLOW; an unusable entry falls back to the sample's default
-          new_appointment-recurrencepattern = COND i( WHEN c_rec_pattern CO `0123456789` AND c_rec_pattern IS NOT INITIAL
-                                                      AND strlen( c_rec_pattern ) <= 9
-                                                      THEN CONV i( c_rec_pattern )
-                                                      ELSE 1 ).
+          
+          temp5 = c_rec_pattern.
+          
+          IF c_rec_pattern CO `0123456789` AND c_rec_pattern IS NOT INITIAL AND strlen( c_rec_pattern ) <= 9.
+            temp12 = temp5.
+          ELSE.
+            temp12 = 1.
+          ENDIF.
+          new_appointment-recurrencepattern = temp12.
           new_appointment-recurrenceenddate = c_rec_end.
           IF c_rec_type = `Weekly` AND c_rec_days IS NOT INITIAL.
             new_appointment-t_recurrence_day = c_rec_days.
@@ -700,21 +758,33 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
             new_appointment-ruletype = c_rule_type.
             IF c_rule_type = `DayOfMonth`.
               " same guard as recurrencepattern above - c_rule_dom is free entry too
-              new_appointment-ruledayofmonth = COND i( WHEN c_rule_dom CO `0123456789` AND c_rule_dom IS NOT INITIAL
-                                                       AND strlen( c_rule_dom ) <= 9
-                                                       THEN CONV i( c_rule_dom )
-                                                       ELSE 0 ).
+              
+              temp6 = c_rule_dom.
+              
+              IF c_rule_dom CO `0123456789` AND c_rule_dom IS NOT INITIAL AND strlen( c_rule_dom ) <= 9.
+                temp14 = temp6.
+              ELSE.
+                temp14 = 0.
+              ENDIF.
+              new_appointment-ruledayofmonth = temp14.
             ELSE.
               new_appointment-ruleweekofmonth = c_rule_wom.
-              new_appointment-ruledayofweek   = CONV i( c_rule_dow ).
+              
+              temp7 = c_rule_dow.
+              new_appointment-ruledayofweek   = temp7.
             ENDIF.
           ENDIF.
           IF c_rec_type = `Yearly`.
-            new_appointment-rulemonth = CONV i( c_rule_month ).
+            
+            temp8 = c_rule_month.
+            new_appointment-rulemonth = temp8.
           ENDIF.
         ENDIF.
 
-        READ TABLE t_people INDEX CONV i( c_person ) + 1 ASSIGNING FIELD-SYMBOL(<person>).
+        
+        temp9 = c_person.
+        
+        READ TABLE t_people INDEX temp9 + 1 ASSIGNING <person>.
         IF sy-subrc = 0.
           INSERT new_appointment INTO TABLE <person>-t_appointments.
         ENDIF.
@@ -728,43 +798,96 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
         " onAppointmentDrop shifts the appointment by the dragged DELTA; the new
         " start already carries it, so the port re-dates the row with the two
         " interval bounds the event hands it
-        DATA(drop_start) = iso_of( 1 ).
-        DATA(drop_end)   = iso_of( 6 ).
-        DATA(appt_path)  = client->get_event_arg( 11 ).
-        DATA(row_path)   = client->get_event_arg( 12 ).
-        DATA(is_copy)    = xsdbool( client->get_event_arg( 13 ) = `X` ).
-        DATA(row_title)  = client->get_event_arg( 14 ).
+        
+        drop_start = iso_of( 1 ).
+        
+        drop_end   = iso_of( 6 ).
+        
+        appt_path  = client->get_event_arg( 11 ).
+        
+        row_path   = client->get_event_arg( 12 ).
+        
+        
+        temp1 = boolc( client->get_event_arg( 13 ) = `X` ).
+        is_copy    = temp1.
+        
+        row_title  = client->get_event_arg( 14 ).
 
         IF appt_path IS INITIAL.
           client->message_toast_display( `Cannot move this appointment.` ).
         ELSE.
-          SPLIT appt_path AT `/` INTO TABLE DATA(parts).
-          DELETE parts WHERE table_line IS INITIAL.
-          DATA(src_row)  = CONV i( parts[ 2 ] ).
-          DATA(appt_idx) = CONV i( parts[ lines( parts ) ] ).
-          DATA(dest_row) = index_of( row_path ).
+          
 
-          READ TABLE t_people INDEX src_row + 1 ASSIGNING FIELD-SYMBOL(<source>).
+          SPLIT appt_path AT `/` INTO TABLE parts.
+          DELETE parts WHERE table_line IS INITIAL.
+          
+          
+          
+          temp16 = sy-tabix.
+          READ TABLE parts INDEX 2 ASSIGNING <temp15>.
+          sy-tabix = temp16.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          temp10 = <temp15>.
+          
+          src_row = temp10.
+          
+          
+          
+          temp18 = sy-tabix.
+          READ TABLE parts INDEX lines( parts ) ASSIGNING <temp17>.
+          sy-tabix = temp18.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          temp11 = <temp17>.
+          
+          appt_idx = temp11.
+          
+          dest_row = index_of( row_path ).
+
+          
+          READ TABLE t_people INDEX src_row + 1 ASSIGNING <source>.
           IF sy-subrc = 0 AND appt_idx >= 0 AND appt_idx < lines( <source>-t_appointments ).
-            DATA(moved) = <source>-t_appointments[ appt_idx + 1 ].
+            
+            
+            
+            temp20 = sy-tabix.
+            READ TABLE <source>-t_appointments INDEX appt_idx + 1 ASSIGNING <temp19>.
+            sy-tabix = temp20.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            moved = <temp19>.
             moved-start_at = drop_start.
             moved-end_at   = drop_end.
 
             IF is_copy = abap_true.
-              READ TABLE t_people INDEX dest_row + 1 ASSIGNING FIELD-SYMBOL(<copy_to>).
+              
+              READ TABLE t_people INDEX dest_row + 1 ASSIGNING <copy_to>.
               IF sy-subrc = 0.
                 INSERT moved INTO TABLE <copy_to>-t_appointments.
               ENDIF.
               client->message_toast_display( |Appointment copied to { row_title }.| ).
             ELSEIF src_row <> dest_row.
               DELETE <source>-t_appointments INDEX appt_idx + 1.
-              READ TABLE t_people INDEX dest_row + 1 ASSIGNING FIELD-SYMBOL(<move_to>).
+              
+              READ TABLE t_people INDEX dest_row + 1 ASSIGNING <move_to>.
               IF sy-subrc = 0.
                 INSERT moved INTO TABLE <move_to>-t_appointments.
               ENDIF.
               client->message_toast_display( |Appointment moved to { row_title }.| ).
             ELSE.
-              <source>-t_appointments[ appt_idx + 1 ] = moved.
+              
+              
+              temp13 = sy-tabix.
+              READ TABLE <source>-t_appointments INDEX appt_idx + 1 ASSIGNING <temp12>.
+              sy-tabix = temp13.
+              IF sy-subrc <> 0.
+                ASSERT 1 = 0.
+              ENDIF.
+              <temp12> = moved.
               client->message_toast_display( `Appointment rescheduled.` ).
             ENDIF.
           ENDIF.
@@ -779,11 +902,22 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
     " five consecutive event arguments (year, month, day, hour, minute) as one
     " ISO string - the parts travel LOCAL, so no timezone shifts the day
+    DATA temp14 TYPE i.
+    DATA temp21 TYPE i.
+    DATA temp1 TYPE i.
+    DATA temp2 TYPE i.
+    temp14 = client->get_event_arg( first + 1 ).
+    
+    temp21 = client->get_event_arg( first + 2 ).
+    
+    temp1 = client->get_event_arg( first + 3 ).
+    
+    temp2 = client->get_event_arg( first + 4 ).
     result = |{ client->get_event_arg( first ) }| &&
-             |-{ CONV i( client->get_event_arg( first + 1 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-             |-{ CONV i( client->get_event_arg( first + 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-             |T{ CONV i( client->get_event_arg( first + 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-             |:{ CONV i( client->get_event_arg( first + 4 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
+             |-{ temp14 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+             |-{ temp21 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+             |T{ temp1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+             |:{ temp2 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
 
   ENDMETHOD.
 
@@ -791,9 +925,28 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
   METHOD index_of.
 
     " the last segment of a binding path such as /T_PEOPLE/1
-    SPLIT path AT `/` INTO TABLE DATA(segments).
+    TYPES temp16 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA segments TYPE temp16.
+    DATA temp15 TYPE i.
+      FIELD-SYMBOLS <temp22> LIKE LINE OF segments.
+      DATA temp23 LIKE sy-tabix.
+    SPLIT path AT `/` INTO TABLE segments.
     DELETE segments WHERE table_line IS INITIAL.
-    result = COND i( WHEN segments IS NOT INITIAL THEN segments[ lines( segments ) ] ELSE 0 ).
+    
+    IF segments IS NOT INITIAL.
+      
+      
+      temp23 = sy-tabix.
+      READ TABLE segments INDEX lines( segments ) ASSIGNING <temp22>.
+      sy-tabix = temp23.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      temp15 = <temp22>.
+    ELSE.
+      temp15 = 0.
+    ENDIF.
+    result = temp15.
 
   ENDMETHOD.
 
@@ -802,16 +955,23 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
     " _openCreateDialog reseeds the dialog model at the next full hour. A backend
     " has no client clock, so the seed is the SERVER's local time (see sidecar)
-    DATA(now) = sy-timlo.
+    DATA now LIKE sy-timlo.
+    DATA temp16 TYPE i.
+    DATA temp17 TYPE string_table.
+    now = sy-timlo.
     c_person      = `0`.
     c_title       = ``.
     c_text        = ``.
     c_type        = `Type01`.
     c_start       = |{ sy-datlo DATE = ISO }T{ now(2) }:00:00|.
-    c_end         = |{ sy-datlo DATE = ISO }T{ CONV i( now(2) ) + 1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00:00|.
+    
+    temp16 = now(2).
+    c_end         = |{ sy-datlo DATE = ISO }T{ temp16 + 1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00:00|.
     c_rec_type    = ``.
     c_rec_pattern = `1`.
-    c_rec_days = VALUE #( ).
+    
+    CLEAR temp17.
+    c_rec_days = temp17.
     c_rec_end     = ``.
     c_rule_type   = `DayOfMonth`.
     c_rule_dom    = `0`.
@@ -823,54 +983,210 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp18 LIKE t_people.
+    DATA temp19 LIKE LINE OF temp18.
+    DATA temp24 TYPE z2ui5_cl_smpc_app_548=>ty_t_appointment.
+    DATA temp25 LIKE LINE OF temp24.
+    DATA temp26 TYPE z2ui5_cl_smpc_app_548=>ty_t_non_working.
+    DATA temp27 LIKE LINE OF temp26.
+    DATA temp28 TYPE z2ui5_cl_smpc_app_548=>ty_t_header.
+    DATA temp29 LIKE LINE OF temp28.
+    DATA temp30 TYPE z2ui5_cl_smpc_app_548=>ty_t_appointment.
+    DATA temp31 LIKE LINE OF temp30.
+    DATA temp32 TYPE z2ui5_cl_smpc_app_548=>ty_t_non_working.
+    DATA temp33 LIKE LINE OF temp32.
+    DATA temp34 TYPE z2ui5_cl_smpc_app_548=>ty_t_header.
+    DATA temp35 LIKE LINE OF temp34.
+    DATA temp36 TYPE z2ui5_cl_smpc_app_548=>ty_t_appointment.
+    DATA temp37 LIKE LINE OF temp36.
+    DATA temp38 TYPE z2ui5_cl_smpc_app_548=>ty_t_non_working.
+    DATA temp39 TYPE z2ui5_cl_smpc_app_548=>ty_t_header.
+    DATA temp40 LIKE LINE OF temp39.
+    DATA temp20 LIKE t_person_items.
+    DATA i TYPE i.
+    DATA temp22 LIKE sy-index.
+      DATA temp21 LIKE LINE OF temp20.
+      FIELD-SYMBOLS <temp41> LIKE LINE OF t_people.
+      DATA temp42 LIKE sy-tabix.
 
     startdate = `2019-09-01T00:00:00`.
     viewkey   = `Hour`.
 
-    t_people = VALUE #(
-      ( pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/John_Miller.png` name = `John Miller` role = `team member`
-        t_appointments = VALUE #(
-          ( start_at = `2019-09-02T09:00:00` end_at = `2019-09-02T09:30:00` title = `Daily Standup` type = `Type01` recurrencetype = `Daily` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-          ( start_at = `2019-09-04T14:00:00` end_at = `2019-09-04T15:00:00` title = `Weekly Team Meeting` type = `Type08` recurrencetype = `Weekly` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-        )
-        t_non_working = VALUE #(
-          ( date_at = `2019-09-01T00:00:00` start_at = `12:55` end_at = `13:15` valueformat = `HH:mm` recurrencetype = `Daily` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-          ( date_at = `2019-09-01T00:00:00` start_at = `04:30` end_at = `04:45` valueformat = `HH:mm` recurrencetype = `Daily` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-        )
-        t_headers = VALUE #(
-          ( start_at = `2017-01-15T08:00:00` end_at = `2017-01-15T10:00:00` title = `Reminder`    type = `Type06` )
-          ( start_at = `2017-01-15T17:00:00` end_at = `2017-01-15T19:00:00` title = `Reminder`    type = `Type06` )
-          ( start_at = `2017-09-01T00:00:00` end_at = `2017-11-30T23:59:00` title = `New quarter` type = `Type10` )
-          ( start_at = `2018-02-01T00:00:00` end_at = `2018-04-30T23:59:00` title = `New quarter` type = `Type10` )
-        )
-      )
-      ( pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/Donna_Moore.jpg` name = `Donna Moore` role = `team member`
-        t_appointments = VALUE #(
-          ( start_at = `2019-09-02T10:00:00` end_at = `2019-09-02T10:30:00` title = `Bi-weekly Sync` type = `Type03` recurrencetype = `Weekly` recurrencepattern = 2 recurrenceenddate = `2019-10-01T00:00:00` )
-        )
-        t_non_working = VALUE #(
-          ( date_at = `2019-09-01T00:00:00` start_at = `11:55` end_at = `13:15` valueformat = `HH:mm` recurrencetype = `Daily` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-          ( date_at = `2019-09-01T00:00:00` start_at = `03:30` end_at = `03:45` valueformat = `HH:mm` recurrencetype = `Daily` recurrencepattern = 1 recurrenceenddate = `2019-10-01T00:00:00` )
-        )
-        t_headers = VALUE #(
-          ( start_at = `2017-01-15T09:00:00` end_at = `2017-01-15T10:00:00` title = `Payment reminder` type = `Type06` )
-          ( start_at = `2017-01-15T16:30:00` end_at = `2017-01-15T18:00:00` title = `Private appointment` type = `Type06` )
-        )
-      )
-      ( pic = `sap-icon://employee` name = `Max Mustermann` role = `team member`
-        t_appointments = VALUE #(
-          ( start_at = `2019-09-03T11:00:00` end_at = `2019-09-03T12:00:00` title = `Every Other Day Check-in` type = `Type07` recurrencetype = `Daily` recurrencepattern = 2 recurrenceenddate = `2019-10-01T00:00:00` )
-        )
-        t_non_working = VALUE #(
-        )
-        t_headers = VALUE #(
-          ( start_at = `2017-01-16T00:00:00` end_at = `2017-01-16T23:59:00` title = `Private` type = `Type05` )
-        )
-      ) ).
+    
+    CLEAR temp18.
+    
+    temp19-pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/John_Miller.png`.
+    temp19-name = `John Miller`.
+    temp19-role = `team member`.
+    
+    CLEAR temp24.
+    
+    temp25-start_at = `2019-09-02T09:00:00`.
+    temp25-end_at = `2019-09-02T09:30:00`.
+    temp25-title = `Daily Standup`.
+    temp25-type = `Type01`.
+    temp25-recurrencetype = `Daily`.
+    temp25-recurrencepattern = 1.
+    temp25-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp25 INTO TABLE temp24.
+    temp25-start_at = `2019-09-04T14:00:00`.
+    temp25-end_at = `2019-09-04T15:00:00`.
+    temp25-title = `Weekly Team Meeting`.
+    temp25-type = `Type08`.
+    temp25-recurrencetype = `Weekly`.
+    temp25-recurrencepattern = 1.
+    temp25-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp25 INTO TABLE temp24.
+    temp19-t_appointments = temp24.
+    
+    CLEAR temp26.
+    
+    temp27-date_at = `2019-09-01T00:00:00`.
+    temp27-start_at = `12:55`.
+    temp27-end_at = `13:15`.
+    temp27-valueformat = `HH:mm`.
+    temp27-recurrencetype = `Daily`.
+    temp27-recurrencepattern = 1.
+    temp27-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp27 INTO TABLE temp26.
+    temp27-date_at = `2019-09-01T00:00:00`.
+    temp27-start_at = `04:30`.
+    temp27-end_at = `04:45`.
+    temp27-valueformat = `HH:mm`.
+    temp27-recurrencetype = `Daily`.
+    temp27-recurrencepattern = 1.
+    temp27-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp27 INTO TABLE temp26.
+    temp19-t_non_working = temp26.
+    
+    CLEAR temp28.
+    
+    temp29-start_at = `2017-01-15T08:00:00`.
+    temp29-end_at = `2017-01-15T10:00:00`.
+    temp29-title = `Reminder`.
+    temp29-type = `Type06`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2017-01-15T17:00:00`.
+    temp29-end_at = `2017-01-15T19:00:00`.
+    temp29-title = `Reminder`.
+    temp29-type = `Type06`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2017-09-01T00:00:00`.
+    temp29-end_at = `2017-11-30T23:59:00`.
+    temp29-title = `New quarter`.
+    temp29-type = `Type10`.
+    INSERT temp29 INTO TABLE temp28.
+    temp29-start_at = `2018-02-01T00:00:00`.
+    temp29-end_at = `2018-04-30T23:59:00`.
+    temp29-title = `New quarter`.
+    temp29-type = `Type10`.
+    INSERT temp29 INTO TABLE temp28.
+    temp19-t_headers = temp28.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/Donna_Moore.jpg`.
+    temp19-name = `Donna Moore`.
+    temp19-role = `team member`.
+    
+    CLEAR temp30.
+    
+    temp31-start_at = `2019-09-02T10:00:00`.
+    temp31-end_at = `2019-09-02T10:30:00`.
+    temp31-title = `Bi-weekly Sync`.
+    temp31-type = `Type03`.
+    temp31-recurrencetype = `Weekly`.
+    temp31-recurrencepattern = 2.
+    temp31-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp31 INTO TABLE temp30.
+    temp19-t_appointments = temp30.
+    
+    CLEAR temp32.
+    
+    temp33-date_at = `2019-09-01T00:00:00`.
+    temp33-start_at = `11:55`.
+    temp33-end_at = `13:15`.
+    temp33-valueformat = `HH:mm`.
+    temp33-recurrencetype = `Daily`.
+    temp33-recurrencepattern = 1.
+    temp33-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp33 INTO TABLE temp32.
+    temp33-date_at = `2019-09-01T00:00:00`.
+    temp33-start_at = `03:30`.
+    temp33-end_at = `03:45`.
+    temp33-valueformat = `HH:mm`.
+    temp33-recurrencetype = `Daily`.
+    temp33-recurrencepattern = 1.
+    temp33-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp33 INTO TABLE temp32.
+    temp19-t_non_working = temp32.
+    
+    CLEAR temp34.
+    
+    temp35-start_at = `2017-01-15T09:00:00`.
+    temp35-end_at = `2017-01-15T10:00:00`.
+    temp35-title = `Payment reminder`.
+    temp35-type = `Type06`.
+    INSERT temp35 INTO TABLE temp34.
+    temp35-start_at = `2017-01-15T16:30:00`.
+    temp35-end_at = `2017-01-15T18:00:00`.
+    temp35-title = `Private appointment`.
+    temp35-type = `Type06`.
+    INSERT temp35 INTO TABLE temp34.
+    temp19-t_headers = temp34.
+    INSERT temp19 INTO TABLE temp18.
+    temp19-pic = `sap-icon://employee`.
+    temp19-name = `Max Mustermann`.
+    temp19-role = `team member`.
+    
+    CLEAR temp36.
+    
+    temp37-start_at = `2019-09-03T11:00:00`.
+    temp37-end_at = `2019-09-03T12:00:00`.
+    temp37-title = `Every Other Day Check-in`.
+    temp37-type = `Type07`.
+    temp37-recurrencetype = `Daily`.
+    temp37-recurrencepattern = 2.
+    temp37-recurrenceenddate = `2019-10-01T00:00:00`.
+    INSERT temp37 INTO TABLE temp36.
+    temp19-t_appointments = temp36.
+    
+    CLEAR temp38.
+    temp19-t_non_working = temp38.
+    
+    CLEAR temp39.
+    
+    temp40-start_at = `2017-01-16T00:00:00`.
+    temp40-end_at = `2017-01-16T23:59:00`.
+    temp40-title = `Private`.
+    temp40-type = `Type05`.
+    INSERT temp40 INTO TABLE temp39.
+    temp19-t_headers = temp39.
+    INSERT temp19 INTO TABLE temp18.
+    t_people = temp18.
 
     " _openCreateDialog fills the person Select from the people table
-    t_person_items = VALUE #( FOR i = 0 WHILE i < lines( t_people )
-                              ( key = |{ i }| text = t_people[ i + 1 ]-name ) ).
+    
+    CLEAR temp20.
+    
+    i = 0.
+    
+    temp22 = sy-index.
+    WHILE i < lines( t_people ).
+      sy-index = temp22.
+      
+      temp21-key = |{ i }|.
+      
+      
+      temp42 = sy-tabix.
+      READ TABLE t_people INDEX i + 1 ASSIGNING <temp41>.
+      sy-tabix = temp42.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      temp21-text = <temp41>-name.
+      INSERT temp21 INTO TABLE temp20.
+      i = i + 1.
+    ENDWHILE.
+    t_person_items = temp20.
 
   ENDMETHOD.
 

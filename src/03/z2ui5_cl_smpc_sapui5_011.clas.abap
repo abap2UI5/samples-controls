@@ -29,9 +29,9 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( `ON_SCAN_SUCCESS` ).
+    ELSEIF client->check_on_event( `ON_SCAN_SUCCESS` ) IS NOT INITIAL.
       " get_event_arg( n ) answers empty for an argument the frontend did
       " not send; a table expression on t_event_arg would dump instead
       scan_input = client->get_event_arg( ).
@@ -44,8 +44,17 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE xsdboolean.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/text}` INTO TABLE temp1.
+    INSERT `${$parameters>/format}` INTO TABLE temp1.
+    
+    temp2 = boolc( client->get( )-check_launchpad_active = abap_false ).
     view->ele( n = `View` ns = `mvc`
         )->a( n = `displayBlock` v = `true`
         )->a( n = `height`       v = `100%`
@@ -59,7 +68,7 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
                 )->a( n = `title`          v = `abap2UI5 - sap.ndc - BarcodeScannerButton`
                 )->a( n = `navButtonPress` v = client->_event_nav_app_leave( )
                 )->a( n = `showNavButton`  b = client->check_app_prev_stack( )
-                )->a( n = `showHeader`     b = xsdbool( client->get( )-check_launchpad_active = abap_false )
+                )->a( n = `showHeader`     b = temp2
 
                 )->ele( n = `SimpleForm` ns = `form`
                     )->a( n = `title`    v = `Information`
@@ -79,8 +88,7 @@ CLASS z2ui5_cl_smpc_sapui5_011 IMPLEMENTATION.
                         )->tag( n = `BarcodeScannerButton` ns = `ndc`
                             )->a( n = `dialogTitle` v = `Barcode Scanner`
                             )->a( n = `scanSuccess` v = client->_event( val   = `ON_SCAN_SUCCESS`
-                                                                        t_arg = VALUE #( ( `${$parameters>/text}` )
-                                                                                         ( `${$parameters>/format}` ) ) ) ).
+                                                                        t_arg = temp1 ) ).
 
     client->view_display( view->stringify( ) ).
 

@@ -19,7 +19,7 @@ CLASS z2ui5_cl_smpc_app_093 DEFINITION PUBLIC.
         " discarded without an error and the browser kept showing it (measured)
         salary       TYPE string,
       END OF ty_s_emp.
-    DATA t_employees TYPE STANDARD TABLE OF ty_s_emp WITH EMPTY KEY.
+    DATA t_employees TYPE STANDARD TABLE OF ty_s_emp WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -41,12 +41,12 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -55,8 +55,18 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE z2ui5_if_client=>ty_s_event_control.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/item}.getName()` INTO TABLE temp1.
+    INSERT `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    temp2-check_prevent_default = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -72,8 +82,8 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
             " MessageBox.confirm decides - the eBP wire cancels the built-in close
             " and transports the tab name + its row index for the server decision
             )->a( n = `itemClose`         v = client->_event( val    = `CLOSE`
-                                                              t_arg  = VALUE #( ( `${$parameters>/item}.getName()` ) ( `${$parameters>/item/oParent}.indexOfItem(${$parameters>/item})` ) )
-                                                              s_ctrl = VALUE #( check_prevent_default = abap_true ) )
+                                                              t_arg  = temp1
+                                                              s_ctrl = temp2 )
 
             )->ele( `items`
                 )->ele( `TabContainerItem`
@@ -105,11 +115,16 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE z2ui5_cl_smpc_app_093=>ty_s_emp.
 
     CASE client->get_event( ).
       WHEN `ADD`.
         " addNewButtonPressHandler: add a new, empty employee tab
-        APPEND VALUE #( name = `New employee` modified = abap_false ) TO t_employees.
+        
+        CLEAR temp3.
+        temp3-name = `New employee`.
+        temp3-modified = abap_false.
+        APPEND temp3 TO t_employees.
       WHEN `CLOSE`.
         " itemCloseHandler: confirm before closing; the answer comes back as
         " the CLOSE_DECIDE event's action argument
@@ -136,14 +151,32 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
 
   METHOD model_init.
 
-    t_employees = VALUE #(
-      " the seeds are the digits UI5 renders today: the packed field serialized as a
-      " JSON NUMBER, so 1189.00 reached the browser as 1189 - and the original's
-      " salary: 1189.00 is likewise the JS number 1189, so both render 1189
-      ( name = `Jean Doe`       empfirstname = `Jean`     emplastname = `Doe`     salary = `1455.22` )
-      ( name = `John Smith`     empfirstname = `John`     emplastname = `Smith`   salary = `1390.77` modified = abap_true )
-      ( name = `Particia Clark` empfirstname = `Particia` emplastname = `Clark`   salary = `1189` )
-      ( name = `Tim McAfeed`    empfirstname = `Tim`      emplastname = `McAfeed` salary = `1235.37` ) ).
+    DATA temp4 LIKE t_employees.
+    DATA temp5 LIKE LINE OF temp4.
+    CLEAR temp4.
+    
+    temp5-name = `Jean Doe`.
+    temp5-empfirstname = `Jean`.
+    temp5-emplastname = `Doe`.
+    temp5-salary = `1455.22`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `John Smith`.
+    temp5-empfirstname = `John`.
+    temp5-emplastname = `Smith`.
+    temp5-salary = `1390.77`.
+    temp5-modified = abap_true.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `Particia Clark`.
+    temp5-empfirstname = `Particia`.
+    temp5-emplastname = `Clark`.
+    temp5-salary = `1189`.
+    INSERT temp5 INTO TABLE temp4.
+    temp5-name = `Tim McAfeed`.
+    temp5-empfirstname = `Tim`.
+    temp5-emplastname = `McAfeed`.
+    temp5-salary = `1235.37`.
+    INSERT temp5 INTO TABLE temp4.
+    t_employees = temp4.
 
   ENDMETHOD.
 

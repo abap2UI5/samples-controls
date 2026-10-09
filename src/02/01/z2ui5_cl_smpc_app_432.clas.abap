@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_432 DEFINITION PUBLIC.
         text TYPE string,
         key  TYPE string,
       END OF ty_s_token.
-    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH EMPTY KEY.
+    TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
 
     DATA t_tokens TYPE ty_t_token.
 
@@ -31,12 +31,12 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -45,8 +45,14 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.getParameter('tokens')[0].getKey()` INTO TABLE temp1.
+    INSERT `$event.getParameter('tokens').length` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m`
@@ -82,8 +88,7 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
                     )->a( n = `class`        v = `sapUiTinyMarginBeginEnd`
                     )->a( n = `width`        v = `100%`
                     )->a( n = `tokenDelete`  v = client->_event( val   = `TOKEN_DELETE`
-                                                                 t_arg = VALUE #( ( `$event.getParameter('tokens')[0].getKey()` )
-                                                                                  ( `$event.getParameter('tokens').length` ) ) )
+                                                                 t_arg = temp1 )
                     )->a( n = `multiLine`    v = `true`
                     )->a( n = `showClearAll` v = `true`
                     )->a( n = `tokens`       v = client->_bind( t_tokens )
@@ -98,16 +103,26 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA del_key TYPE string.
+      DATA temp3 TYPE i.
+      DATA del_count LIKE temp3.
+        DATA temp4 TYPE z2ui5_cl_smpc_app_432=>ty_t_token.
 
     IF client->get_event( ) = `TOKEN_DELETE`.
 
-      DATA(del_key)   = client->get_event_arg( ).
-      DATA(del_count) = CONV i( client->get_event_arg( 2 ) ).
+      
+      del_key   = client->get_event_arg( ).
+      
+      temp3 = client->get_event_arg( 2 ).
+      
+      del_count = temp3.
 
       " onTokenDelete removes every token the event carries; Clear All fires it
       " once with all of them, the token X with exactly one
       IF del_count >= lines( t_tokens ).
-        t_tokens = VALUE #( ).
+        
+        CLEAR temp4.
+        t_tokens = temp4.
       ELSE.
         DELETE t_tokens WHERE key = del_key.
       ENDIF.
@@ -120,27 +135,68 @@ CLASS z2ui5_cl_smpc_app_432 IMPLEMENTATION.
   METHOD model_init.
 
     " the 19 Tokens the original view declares, verbatim
-    t_tokens = VALUE #(
-      ( text = `Andora`                                                   key = `1` )
-      ( text = `Argentina`                                                key = `2` )
-      ( text = `Brazil`                                                   key = `3` )
-      ( text = `Bulgaria`                                                 key = `4` )
-      ( text = `Canada`                                                   key = `5` )
-      ( text = `China`                                                    key = `6` )
-      ( text = `Denmark`                                                  key = `7` )
-      ( text = `Estonia`                                                  key = `8` )
-      ( text = `The United Kingdom of Great Britain and Northern Ireland` key = `9` )
-      ( text = `Finland`                                                  key = `10` )
-      ( text = `Germany`                                                  key = `11` )
-      ( text = `Hungary`                                                  key = `12` )
-      ( text = `Ireland`                                                  key = `13` )
-      ( text = `Norway`                                                   key = `14` )
-      ( text = `Japan`                                                    key = `15` )
-      ( text = `Korea`                                                    key = `16` )
-      ( text = `Latvia`                                                   key = `17` )
-      ( text = `Independent and Sovereign Republic of Kiribati`           key = `18` )
-      ( text = `Italy`                                                    key = `19` )
-    ).
+    DATA temp5 TYPE z2ui5_cl_smpc_app_432=>ty_t_token.
+    DATA temp6 LIKE LINE OF temp5.
+    CLEAR temp5.
+    
+    temp6-text = `Andora`.
+    temp6-key = `1`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Argentina`.
+    temp6-key = `2`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Brazil`.
+    temp6-key = `3`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Bulgaria`.
+    temp6-key = `4`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Canada`.
+    temp6-key = `5`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `China`.
+    temp6-key = `6`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Denmark`.
+    temp6-key = `7`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Estonia`.
+    temp6-key = `8`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `The United Kingdom of Great Britain and Northern Ireland`.
+    temp6-key = `9`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Finland`.
+    temp6-key = `10`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Germany`.
+    temp6-key = `11`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Hungary`.
+    temp6-key = `12`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Ireland`.
+    temp6-key = `13`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Norway`.
+    temp6-key = `14`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Japan`.
+    temp6-key = `15`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Korea`.
+    temp6-key = `16`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Latvia`.
+    temp6-key = `17`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Independent and Sovereign Republic of Kiribati`.
+    temp6-key = `18`.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-text = `Italy`.
+    temp6-key = `19`.
+    INSERT temp6 INTO TABLE temp5.
+    t_tokens = temp5.
 
   ENDMETHOD.
 

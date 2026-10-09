@@ -11,14 +11,14 @@ CLASS z2ui5_cl_smpc_app_240 DEFINITION PUBLIC.
         type TYPE string,
         text TYPE string,
       END OF ty_s_legend.
-    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
+    TYPES ty_t_legend TYPE STANDARD TABLE OF ty_s_legend WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_special,
         start_date TYPE string,
         type       TYPE string,
         tooltip    TYPE string,
       END OF ty_s_special.
-    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
+    TYPES ty_t_special TYPE STANDARD TABLE OF ty_s_special WITH DEFAULT KEY.
 
     DATA t_legend  TYPE ty_t_legend.
     DATA t_special TYPE ty_t_special.
@@ -38,10 +38,10 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -50,7 +50,8 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " DateTypeRange.startDate is typed "object" and demands a real JS Date; the
     " model keeps ABAP DATS strings and Formatter.DateAbapDateToDateObject converts them at the
@@ -117,23 +118,55 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
     " Formatter.DateCreateObject until 2026-08-21, and `new Date('yyyy-mm-dd')`
     " is UTC midnight, so west of Greenwich every marked day landed one day
     " early. Same defect and same fix as apps 220 and 017.
-    DATA(prefix) = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
+    DATA prefix TYPE string.
+      DATA i LIKE sy-index.
+      DATA legend_type TYPE string.
+      DATA legend_text TYPE string.
+      DATA temp1 TYPE z2ui5_cl_smpc_app_240=>ty_t_legend.
+      DATA temp2 LIKE LINE OF temp1.
+      DATA date1 TYPE string.
+      DATA date2 TYPE string.
+      DATA temp3 TYPE z2ui5_cl_smpc_app_240=>ty_t_special.
+      DATA temp4 LIKE LINE OF temp3.
+    prefix = |{ sy-datum+0(4) }{ sy-datum+4(2) }|.
 
     DO 10 TIMES.
-      DATA(i)           = sy-index.
-      DATA(legend_type) = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
-      DATA(legend_text) = |Placeholder { i }|.
+      
+      i = sy-index.
+      
+      legend_type = |Type{ i WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      
+      legend_text = |Placeholder { i }|.
 
-      t_legend = VALUE #( BASE t_legend ( type = legend_type text = legend_text ) ).
+      
+      CLEAR temp1.
+      temp1 = t_legend.
+      
+      temp2-type = legend_type.
+      temp2-text = legend_text.
+      INSERT temp2 INTO TABLE temp1.
+      t_legend = temp1.
 
       day = i.
-      DATA(date1) = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      
+      date1 = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
       day = i + 12.
-      DATA(date2) = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      
+      date2 = |{ prefix }{ day WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
 
-      t_special = VALUE #( BASE t_special
-        ( start_date = date1 type = legend_type tooltip = legend_text )
-        ( start_date = date2 type = legend_type tooltip = legend_text ) ).
+      
+      CLEAR temp3.
+      temp3 = t_special.
+      
+      temp4-start_date = date1.
+      temp4-type = legend_type.
+      temp4-tooltip = legend_text.
+      INSERT temp4 INTO TABLE temp3.
+      temp4-start_date = date2.
+      temp4-type = legend_type.
+      temp4-tooltip = legend_text.
+      INSERT temp4 INTO TABLE temp3.
+      t_special = temp3.
     ENDDO.
 
   ENDMETHOD.

@@ -30,9 +30,9 @@ CLASS z2ui5_cl_smpc_app_447 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -41,7 +41,8 @@ CLASS z2ui5_cl_smpc_app_447 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -151,17 +152,24 @@ CLASS z2ui5_cl_smpc_app_447 IMPLEMENTATION.
     "     contains quotes, and a payload the backend cannot parse would be
     "     embedded as a plain string - the box would open with no options at
     "     all, quietly.
-    DATA(escaped) = details.
+    DATA escaped LIKE details.
+    DATA temp1 TYPE string_table.
+    DATA temp2 LIKE LINE OF temp1.
+    escaped = details.
     REPLACE ALL OCCURRENCES OF `\` IN escaped WITH `\\`.
     REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `\"`.
 
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_BOX` INTO TABLE temp1.
+    INSERT type INTO TABLE temp1.
+    INSERT text INTO TABLE temp1.
+    
+    temp2 = |\{"title":"{ title }","details":"{ escaped }",| && |"contentWidth":"100px","styleClass":"{ c_padding }"\}|.
+    INSERT temp2 INTO TABLE temp1.
     client->follow_up_action(
         val   = client->cs_event-control_global
-        t_arg = VALUE #( ( `MESSAGE_BOX` )
-                         ( type )
-                         ( text )
-                         ( |\{"title":"{ title }","details":"{ escaped }",| &&
-                           |"contentWidth":"100px","styleClass":"{ c_padding }"\}| ) ) ).
+        t_arg = temp1 ).
 
   ENDMETHOD.
 
