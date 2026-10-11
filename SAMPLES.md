@@ -1336,7 +1336,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 |---|---|
 | **sap.ui.integration.widgets.Card** — Card Explorer<br>Card Explorer is the application where you can learn more about integration cards.<br><sub>card sap.ui.integration.widgets explorer link vbox image</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_149`](src/01/02/z2ui5_cl_smpc_app_149.clas.abap) |
 | **sap.ui.integration.widgets.Card** — Home page with cards loading<br>Different types of cards types and their loading placeholder<br><sub>card sap.ui.integration.widgets cardsloading simpleform label input button gridcontainer gridcontaineritemlayoutdata</sub><br><sub>◐ reviewed · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_341`](src/01/02/z2ui5_cl_smpc_app_341.clas.abap) |
-| **sap.ui.integration.widgets.Card** — Lazy loading of cards on home page<br>dataMode:'Auto' activates lazy loading behavior of an integration card<br><sub>card sap.ui.integration.widgets lazyloading simpleform label input checkbox button gridcontainer gridcontaineritemlayoutdata</sub><br><sub>◐ reviewed · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_342`](src/01/02/z2ui5_cl_smpc_app_342.clas.abap) |
+| **sap.ui.integration.widgets.Card** — Lazy loading of cards on home page<br>dataMode:'Auto' activates lazy loading behavior of an integration card<br><sub>card sap.ui.integration.widgets lazyloading simpleform label input checkbox button gridcontainer gridcontaineritemlayoutdata</sub><br><sub>◐ reviewed · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_342`](src/01/02/z2ui5_cl_smpc_app_342.clas.abap) |
 
 ### sap.f.semantic
 

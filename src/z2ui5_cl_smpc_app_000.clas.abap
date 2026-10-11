@@ -9326,14 +9326,16 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` IMPROVISED: The artificial request delay is not reproducible and is dropped: the controller monkey-patches sap.ui.integration.util.RequestDataProvider._fetch with a sinon stub` &&
             ` (sap/ui/thirdparty/sinon-4) that wraps every card data request in a setTimeout of the entered number of seconds, and onExit restores it. There is no server-side equivalent for delaying a request the`.
     text1 = text1 && ` CLIENT issues to a foreign host, and stubbing a UI5 private module from the backend is exactly the frontend logic the thin-frontend principle forbids. The 'Time for requesting the card data' Input is` &&
-            ` kept 1:1 (the original view gives it no value either) but nothing reads it; the loading placeholders are still visible for as long as the real request takes. // NOTE: Unverified in a running system:` &&
-            ` whether the bound items aggregation instantiates the Cards with their per-row manifest URL, columns and dataMode, and whether the number-of-cards Input round-trip rebuilds the container as the` &&
-            ` original's destroyItems/addItem loop does. The module counts the rendered Cards against the entered number and no more, so only the COUNT half is covered: a wrong manifest base URL, a dropped columns` &&
-            ` or an inverted dataMode renders the same number of (error) cards and passes it. **e2e-verified 2026-08-17** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_342.mjs).`.
+            ` kept 1:1 (the original view gives it no value either) but nothing reads it; the loading placeholders are still visible for as long as the real request takes. // NOTE: The number of cards is capped at` &&
+            ` 100 (MAX_CARDS). The original creates as many Cards as the Input says, in the browser; the port holds one row per card in the session and sends the table on every round-trip, so an unbounded count` &&
+            ` lets a typed 999999999 exhaust the application server. Up to 100 the port builds exactly what the original builds. // NOTE: Unverified in a running system: whether the bound items aggregation` &&
+            ` instantiates the Cards with their per-row manifest URL, columns and dataMode, and whether the number-of-cards Input round-trip rebuilds the container as the original's destroyItems/addItem loop does.` &&
+            ` The module counts the rendered Cards against the entered number and no more, so only the COUNT half is covered: a wrong manifest base URL, a dropped columns or an inverted dataMode renders the same`.
+    text1 = text1 && ` number of (error) cards and passes it. **e2e-verified 2026-08-17** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_342.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.ui.integration` control = `sap.ui.integration.widgets.Card`       name = `LazyLoading`                                   class = `z2ui5_cl_smpc_app_342` path = `src/01/02/z2ui5_cl_smpc_app_342.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.62`
         notes = text1 ) ).
 

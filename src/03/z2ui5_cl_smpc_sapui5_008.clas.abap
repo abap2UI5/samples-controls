@@ -71,7 +71,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                                             attributes     = VALUE #( ( label = 35 value = `` ) )
                                             team           = 13
                                             location       = `Walldorf`
-                                            position       = `lobal Solutions Manager`
+                                            position       = `Global Solutions Manager`
                                             email          = `sophie.dinter@example.com`
                                             phone          = `+000 423 230 000`
                                           )
@@ -82,7 +82,7 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
                                             supervisor = `Dinter`
                                             team       = 9
                                             location   = `Walldorf`
-                                            position   = `Lead Markets Manage`
+                                            position   = `Lead Markets Manager`
                                             email      = `yamasaki.ninsei@example.com`
                                             phone      = `+000 423 230 002`
                                          )
