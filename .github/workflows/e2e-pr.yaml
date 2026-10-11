@@ -12,7 +12,7 @@ name: e2e-pr
 # `backToPage`, a lost NavContainer position, a value cast to the literal
 # word "false").
 #
-# The whole corpus does not fit in a PR gate (~19 min transpile plus ~4 s per
+# The whole corpus does not fit in a PR gate (~40 min transpile plus ~4 s per
 # port), but the touched ports do, and that is almost always a handful.
 # `scripts/e2e-changed.mjs` maps the diff to classes and is unit-tested
 # (`npm test`), so the mapping is not shell guesswork.
@@ -44,7 +44,10 @@ concurrency:
 jobs:
   e2e_pr:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 60, as e2e-nightly and abap-702: the v702 downport inside e2e:build
+    # alone took 42 and 44+ minutes on 2026-10-11, so 45 cancelled a run
+    # whose ports were fine
+    timeout-minutes: 60
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
