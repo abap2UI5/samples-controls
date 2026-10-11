@@ -12853,8 +12853,19 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
   METHOD start_url_of.
 
-    result = |{ client->get( )-s_config-origin }{ client->get( )-s_config-pathname }| &&
-             |?app_start={ to_upper( class ) }|.
+    " the new tab is a new session: without the client and the language of
+    " this one it logs on to the system's default client instead
+    DATA(config) = client->get( )-s_config.
+    DATA(search) = shift_left( val = config-search sub = `?` ).
+    SPLIT search AT `&` INTO TABLE DATA(t_param).
+    DATA(keep) = ``.
+    LOOP AT t_param INTO DATA(param).
+      IF param CP `sap-client=*` OR param CP `sap-language=*`.
+        keep = |{ keep }&{ param }|.
+      ENDIF.
+    ENDLOOP.
+
+    result = |{ config-origin }{ config-pathname }?app_start={ to_upper( class ) }{ keep }|.
 
   ENDMETHOD.
 
