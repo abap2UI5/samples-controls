@@ -30,7 +30,7 @@ how to express a control in ABAP? Its sample is already here — or on its way.
 
 1. Install [abap2UI5](https://github.com/abap2UI5/abap2UI5).
 2. Pull this repository with [abapGit](https://abapgit.org). What arrives:
-   **637 classes in 14 packages** — `src/01` (416 ports, OpenUI5 ≤ 1.71,
+   **642 classes in 15 packages** — `src/01` (401 ports, OpenUI5 ≤ 1.71,
    what every system renders), `src/02` (221 ports that need a UI5 runtime
    newer than 1.71: they install and activate on any release, and on an
    older UI5 the newer control simply does not render), `src/03` (the
