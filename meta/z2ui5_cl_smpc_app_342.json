@@ -29,6 +29,10 @@
     },
     {
       "type": "NOTE",
+      "what": "The number of cards is capped at 100 (MAX_CARDS). The original creates as many Cards as the Input says, in the browser; the port holds one row per card in the session and sends the table on every round-trip, so an unbounded count lets a typed 999999999 exhaust the application server. Up to 100 the port builds exactly what the original builds."
+    },
+    {
+      "type": "NOTE",
       "what": "Unverified in a running system: whether the bound items aggregation instantiates the Cards with their per-row manifest URL, columns and dataMode, and whether the number-of-cards Input round-trip rebuilds the container as the original's destroyItems/addItem loop does. The module counts the rendered Cards against the entered number and no more, so only the COUNT half is covered: a wrong manifest base URL, a dropped columns or an inverted dataMode renders the same number of (error) cards and passes it. **e2e-verified 2026-08-17** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_342.mjs)."
     }
   ]

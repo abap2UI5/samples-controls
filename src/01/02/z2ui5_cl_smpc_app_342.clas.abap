@@ -20,6 +20,9 @@ CLASS z2ui5_cl_smpc_app_342 DEFINITION PUBLIC.
       ty_t_card TYPE STANDARD TABLE OF ty_s_card WITH EMPTY KEY.
     DATA t_cards TYPE ty_t_card.
 
+    " the most cards one submit builds - see cards_build
+    CONSTANTS max_cards TYPE i VALUE 100.
+
     " the form fields the controller reads on submit
     DATA numberofcards   TYPE string.
     DATA datamode_active TYPE abap_bool.
@@ -154,6 +157,10 @@ CLASS z2ui5_cl_smpc_app_342 IMPLEMENTATION.
     DATA(count) = COND i( WHEN numberofcards CO ` 0123456789` AND numberofcards IS NOT INITIAL
                              AND strlen( condense( numberofcards ) ) <= 9
                              THEN CONV i( numberofcards ) ).
+    " the original builds as many Cards as typed, in the browser; here each
+    " is a row of a table the session holds and every round-trip carries, so
+    " a typed 999999999 would exhaust the server first - see the sidecar
+    count = nmin( val1 = count val2 = max_cards ).
 
     DO count TIMES.
       DATA(s_sample) = t_samples[ ( sy-index - 1 ) MOD lines( t_samples ) + 1 ].
