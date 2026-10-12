@@ -768,7 +768,7 @@ Only `global`, `dependencies` and `syntax` are per repository — plus exactly
 **one** rule: `object_naming`, which carries the `SMPC` token and is the only
 rule `check-app-rules` excludes from the comparison. It sits last in the file
 behind a marker that says so; everything above that marker must match the
-source. All 201 rules abaplint ships are named: 180 on, 21 off, each with
+source. All 212 rules abaplint ships are named: 190 on, 22 off, each with
 its reason in a comment. **A rule is never left out of the file** — when an
 upgrade adds one, add the key to `app-rules.json` and copy the block into all
 three consumers: on if all three corpora pass, off with the reason if they do
