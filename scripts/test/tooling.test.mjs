@@ -1021,6 +1021,36 @@ test('check-pins: the fixture pin policy passes, and a malformed pin does not', 
   }
 });
 
+test('check-pins: the bump workflow commits every prose file --fix can rewrite', () => {
+  const { root } = makePinRoot();
+  try {
+    fs.writeFileSync(path.join(root, 'AGENTS.md'), '# fixture\n');
+    const wf = path.join(root, '.github', 'workflows', 'bump-a2ui5.yaml');
+    fs.mkdirSync(path.dirname(wf), { recursive: true });
+    const workflow = (paths) => `jobs:
+  bump:
+    steps:
+    - uses: peter-evans/create-pull-request@v8
+      with:
+        add-paths: |
+${paths.map((p) => `          ${p}`).join('\n')}
+        delete-branch: true
+`;
+    // the #270 shape: the pin and the configs, none of the prose
+    fs.writeFileSync(wf, workflow(['A2UI5_PIN', 'abaplint.jsonc', '.github/abaplint']));
+    const short = runIn(root, 'check-pins.mjs');
+    assert.equal(short.code, 1, 'a prose file --fix may rewrite must be committed by the bump');
+    assert.match(short.out, /add-paths does not list AGENTS\.md/);
+
+    fs.writeFileSync(wf, workflow(['A2UI5_PIN', 'abaplint.jsonc', '.github/abaplint', 'AGENTS.md']));
+    const ok = runIn(root, 'check-pins.mjs');
+    assert.equal(ok.code, 0, `every existing prose file is listed\n${ok.out}`);
+    assert.match(ok.out, /bump add-paths cover the/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('check-pins: a duplicate branch key, a stray branch and a release pin all fail', () => {
   const { root } = makePinRoot();
   try {

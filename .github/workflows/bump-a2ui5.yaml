@@ -230,10 +230,26 @@ jobs:
         title: "${{ steps.report.outputs.title || 'chore: bump the pinned abap2UI5 framework commit' }}"
         body: "${{ steps.report.outputs.body || format('The bump PR body could not be composed. Read the run instead - {0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}"
         commit-message: 'chore: bump A2UI5_PIN to abap2UI5/abap2UI5@${{ steps.pin.outputs.sha }}'
+        # The prose files are here because the resolve step runs
+        # `check-pins.mjs --fix`, which rewrites the pin citation in them -
+        # and create-pull-request commits ONLY these paths. Without them the
+        # fix was thrown away: the bump to f9dc871a (#270) left AGENTS.md
+        # citing the old pin and merged red on check_pins. The list must stay
+        # the PROSE list of check-pins.mjs, and check-pins policy 7 holds it
+        # to that.
         add-paths: |
           A2UI5_PIN
           abaplint.jsonc
           .github/abaplint
+          README.md
+          AGENTS.md
+          CLAUDE.md
+          CONTRIBUTING.md
+          TRAINING.md
+          STATUS.md
+          CAPABILITIES.md
+          E2E.md
+          docs/upstream-requests.md
         delete-branch: true
 
     # The one remaining path that can open no PR: the job died before it knew
