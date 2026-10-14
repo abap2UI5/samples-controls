@@ -106,6 +106,15 @@
  *      commits" is a true record of a run that happened), exactly as the
  *      journal is: `docs/history.md` is out of scope for the same reason
  *      check-prose-names leaves it out.
+ *   7. The bump COMMITS what `--fix` writes. `bump-a2ui5.yaml` runs
+ *      `check-pins.mjs --fix` and then hands the tree to create-pull-request,
+ *      which commits only the paths in its `add-paths`. That list named
+ *      A2UI5_PIN and the abaplint configs but none of the PROSE files, so the
+ *      rewritten AGENTS.md was dropped on the floor: the bump to `f9dc871a`
+ *      (#270) moved the pin, left AGENTS.md citing `2dd43637`, and turned
+ *      `check_pins` red on main the moment it merged. Every PROSE file that
+ *      exists must therefore be in that `add-paths` - the list here and the
+ *      list there are one list, held together by this check.
  *
  * A deliberate, temporary feature-branch re-point (the documented re-pin
  * flow) must therefore edit ALLOWED_BRANCHES below in the same change — the
@@ -449,8 +458,38 @@ const FIX = process.argv.includes('--fix');
   pinProseNote = `${claims} pin citation(s) in ${sources.length} prose source(s)`;
 }
 
+// --- 7. the bump commits what --fix writes ----------------------------------
+let bumpNote = 'no bump workflow';
+{
+  const wf = path.join(ROOT, '.github', 'workflows', 'bump-a2ui5.yaml');
+  if (fs.existsSync(wf)) {
+    // the block scalar under `add-paths: |`: every following line indented
+    // deeper than the key, comments and blank lines skipped
+    const lines = fs.readFileSync(wf, 'utf8').split('\n');
+    const at = lines.findIndex((l) => /^\s*add-paths:\s*\|/.test(l));
+    const listed = new Set();
+    if (at >= 0) {
+      const indent = lines[at].match(/^\s*/)[0].length;
+      for (const l of lines.slice(at + 1)) {
+        if (!l.trim() || l.trim().startsWith('#')) continue;
+        if (l.match(/^\s*/)[0].length <= indent) break;
+        listed.add(l.trim());
+      }
+    }
+    const missing = PROSE.filter((rel) => fs.existsSync(path.join(ROOT, rel)) && !listed.has(rel));
+    for (const rel of missing) {
+      err(`.github/workflows/bump-a2ui5.yaml: add-paths does not list ${rel}\n`
+        + '        the bump runs `check-pins.mjs --fix`, which may rewrite that file, and create-pull-request '
+        + 'commits only the paths in add-paths - a pin citation fixed there would be dropped and the bump '
+        + 'would merge red on policy 6 (the #270 bump did exactly that)');
+    }
+    bumpNote = at < 0 ? 'bump workflow has no add-paths' : `bump add-paths cover the ${PROSE.length - missing.length} prose file(s) --fix can write`;
+    if (at < 0) err('.github/workflows/bump-a2ui5.yaml: no `add-paths: |` block found - the check for what the bump commits cannot run');
+  }
+}
+
 if (errors) {
   console.log(`check-pins: ${errors} error(s).`);
   process.exit(1);
 }
-console.log(`check-pins: ok (A2UI5_PIN well-formed, ${checked} abap2UI5 dependency entr${checked === 1 ? 'y' : 'ies'} on ${REQUIRED_BRANCH} (plus the 702 allowlist), ${snapshotNote}, ${runtimeNote}, ${pinProseNote})`);
+console.log(`check-pins: ok (A2UI5_PIN well-formed, ${checked} abap2UI5 dependency entr${checked === 1 ? 'y' : 'ies'} on ${REQUIRED_BRANCH} (plus the 702 allowlist), ${snapshotNote}, ${runtimeNote}, ${pinProseNote}, ${bumpNote})`);
