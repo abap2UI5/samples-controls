@@ -25,14 +25,14 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       slider_value    = 100.
       container_query = `false`.
       info_text       = `Layout size is: `.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -41,7 +41,8 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " onSliderMoved sets the Panel width imperatively - sap.m.Panel has a width
     " property, so it is the bound expression (app 214/270 form).
@@ -273,14 +274,21 @@ CLASS z2ui5_cl_smpc_app_271 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA layout TYPE string.
+      DATA temp1 TYPE string.
 
     IF client->get_event( ) = `LAYOUT_CHANGE`.
       " onLayoutChange: the info Text names the active GridSettings
       " aggregation; 'layout' covers both M and L
-      DATA(layout) = client->get_event_arg( ).
-      info_text = COND string( WHEN layout = `layout`
-                               THEN `Layout size is: layoutM or layoutL`
-                               ELSE |Layout size is: { layout }| ).
+      
+      layout = client->get_event_arg( ).
+      
+      IF layout = `layout`.
+        temp1 = `Layout size is: layoutM or layoutL`.
+      ELSE.
+        temp1 = |Layout size is: { layout }|.
+      ENDIF.
+      info_text = temp1.
     ENDIF.
 
   ENDMETHOD.

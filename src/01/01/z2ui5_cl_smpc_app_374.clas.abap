@@ -11,8 +11,8 @@ CLASS z2ui5_cl_smpc_app_374 DEFINITION PUBLIC.
         productid TYPE string,
         name      TYPE string,
       END OF ty_s_product.
-    DATA t_products  TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_products2 TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products  TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+    DATA t_products2 TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -29,10 +29,10 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -41,7 +41,8 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`     v = `100%`
@@ -79,20 +80,49 @@ CLASS z2ui5_cl_smpc_app_374 IMPLEMENTATION.
   METHOD model_init.
 
     " Data of the inline JSON model defined in the original sample controller
-    t_products = VALUE #(
-      ( productid = `HT-1001` name = `Select option 1` )
-      ( productid = `HT-1002` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry.` )
-      ( productid = `HT-1003` name = `Select option 3` )
-      ( productid = `HT-1007` name = `Select option 4` )
-      ( productid = `HT-1010` name = `Select option 5` ) ).
+    DATA temp1 LIKE t_products.
+    DATA temp2 LIKE LINE OF temp1.
+    DATA temp3 LIKE t_products2.
+    DATA temp4 LIKE LINE OF temp3.
+    CLEAR temp1.
+    
+    temp2-productid = `HT-1001`.
+    temp2-name = `Select option 1`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1002`.
+    temp2-name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1003`.
+    temp2-name = `Select option 3`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1007`.
+    temp2-name = `Select option 4`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-productid = `HT-1010`.
+    temp2-name = `Select option 5`.
+    INSERT temp2 INTO TABLE temp1.
+    t_products = temp1.
 
-    t_products2 = VALUE #(
-      ( productid = `key1` name = `Select option 1` )
-      ( productid = `key2` name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. ` &&
-                                   `Lorem Ipsum is simply dummy text of the printing and typesetting industry.` )
-      ( productid = `key3` name = `Select option 3` )
-      ( productid = `key4` name = `Select option 4` )
-      ( productid = `key5` name = `Select option 5` ) ).
+    
+    CLEAR temp3.
+    
+    temp4-productid = `key1`.
+    temp4-name = `Select option 1`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-productid = `key2`.
+    temp4-name = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. ` &&
+`Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-productid = `key3`.
+    temp4-name = `Select option 3`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-productid = `key4`.
+    temp4-name = `Select option 4`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-productid = `key5`.
+    temp4-name = `Select option 5`.
+    INSERT temp4 INTO TABLE temp3.
+    t_products2 = temp3.
 
   ENDMETHOD.
 
