@@ -3,7 +3,7 @@
 
 # The sample catalogue
 
-Every port in this repository — 636 of them — with what it shows and a
+Every port in this repository — 684 of them — with what it shows and a
 link to its source. This is the [overview app](src/z2ui5_cl_smpc_app_000.clas.abap)
 as a page you can read here, before installing anything.
 
@@ -40,19 +40,29 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 ## The ports — by UI5 library
 
-[sap.m](#sapm) · [sap.uxap](#sapuxap) · [sap.f](#sapf) · [sap.ui.layout.form](#sapuilayoutform) · [sap.ui.layout](#sapuilayout) · [sap.ui.unified](#sapuiunified) · [sap.ui.core](#sapuicore) · [sap.ui.table](#sapuitable) · [sap.tnt](#saptnt) · [sap.ui.layout.cssgrid](#sapuilayoutcssgrid) · [sap.ui.model.type](#sapuimodeltype) · [sap.m.semantic](#sapmsemantic) · [sap.ui.integration.widgets](#sapuiintegrationwidgets) · [sap.f.semantic](#sapfsemantic) · [sap.ui.codeeditor](#sapuicodeeditor) · [sap.ui.model](#sapuimodel) · [sap.m.upload](#sapmupload) · [sap.ui.core.hyphenation](#sapuicorehyphenation) · [sap.ui.core.theming](#sapuicoretheming) · [sap.ui.integration](#sapuiintegration)
+[sap.m](#sapm) · [sap.uxap](#sapuxap) · [sap.f](#sapf) · [sap.ui.layout.form](#sapuilayoutform) · [sap.ui.layout](#sapuilayout) · [sap.ui.unified](#sapuiunified) · [sap.ui.core](#sapuicore) · [sap.ui.table](#sapuitable) · [sap.tnt](#saptnt) · [sap.m.plugins](#sapmplugins) · [sap.ui.layout.cssgrid](#sapuilayoutcssgrid) · [sap.ui.model.type](#sapuimodeltype) · [sap.m.p13n](#sapmp13n) · [sap.m.semantic](#sapmsemantic) · [sap.ui.integration.widgets](#sapuiintegrationwidgets) · [sap.f.semantic](#sapfsemantic) · [sap.ui.codeeditor](#sapuicodeeditor) · [sap.ui.model](#sapuimodel) · [sap.m.upload](#sapmupload) · [sap.ui.core.hyphenation](#sapuicorehyphenation) · [sap.ui.core.theming](#sapuicoretheming) · [sap.ui.integration](#sapuiintegration)
 
 ### sap.m
 
-377 port(s), by control:
+398 port(s), by control:
 
-[ActionListItem](#sapmactionlistitem) · [Bar](#sapmbar) (2) · [Breadcrumbs](#sapmbreadcrumbs) (3) · [BusyDialog](#sapmbusydialog) (2) · [Button](#sapmbutton) (2) · [Carousel](#sapmcarousel) (5) · [CheckBox](#sapmcheckbox) (2) · [ColorPalette](#sapmcolorpalette) (2) · [Column](#sapmcolumn) · [ColumnListItem](#sapmcolumnlistitem) · [ComboBox](#sapmcombobox) (13) · [ComparisonPattern](#sapmcomparisonpattern) · [CookieSettingsDialogPattern](#sapmcookiesettingsdialogpattern) · [CustomListItem](#sapmcustomlistitem) · [CustomTreeItem](#sapmcustomtreeitem) · [DatePicker](#sapmdatepicker) (3) · [DateRangeSelection](#sapmdaterangeselection) (3) · [DateTimePicker](#sapmdatetimepicker) (3) · [Dialog](#sapmdialog) (5) · [DisplayListItem](#sapmdisplaylistitem) · [DraftIndicator](#sapmdraftindicator) (2) · [FacetFilter](#sapmfacetfilter) (3) · [FeedContent](#sapmfeedcontent) · [FeedInput](#sapmfeedinput) (2) · [FeedListItem](#sapmfeedlistitem) · [FlexBox](#sapmflexbox) (9) · [FormattedText](#sapmformattedtext) · [GenericTag](#sapmgenerictag) (2) · [GenericTile](#sapmgenerictile) (6) · [HeaderContainer](#sapmheadercontainer) (5) · [IconTabBar](#sapmicontabbar) (17) · [IconTabHeader](#sapmicontabheader) · [Image](#sapmimage) (3) · [ImageContent](#sapmimagecontent) · [InitialPagePattern](#sapminitialpagepattern) · [Input](#sapminput) (18) · [InputListItem](#sapminputlistitem) · [InputModelUpdate](#sapminputmodelupdate) · [Label](#sapmlabel) · [LightBox](#sapmlightbox) · [Link](#sapmlink) (3) · [List](#sapmlist) (16) · [MaskInput](#sapmmaskinput) · [Menu](#sapmmenu) (3) · [MenuButton](#sapmmenubutton) · [MessageBox](#sapmmessagebox) (3) · [MessagePopover](#sapmmessagepopover) (3) · [MessageStrip](#sapmmessagestrip) (3) · [MessageToast](#sapmmessagetoast) · [MessageView](#sapmmessageview) (5) · [MultiComboBox](#sapmmulticombobox) (10) · [MultiInput](#sapmmultiinput) (12) · [NavContainer](#sapmnavcontainer) · [NewsContent](#sapmnewscontent) · [NotificationListGroup](#sapmnotificationlistgroup) (4) · [NotificationListItem](#sapmnotificationlistitem) · [NumericContent](#sapmnumericcontent) (3) · [ObjectAttribute](#sapmobjectattribute) (4) · [ObjectHeader](#sapmobjectheader) (12) · [ObjectIdentifier](#sapmobjectidentifier) · [ObjectListItem](#sapmobjectlistitem) (2) · [ObjectMarker](#sapmobjectmarker) · [ObjectNumber](#sapmobjectnumber) · [ObjectStatus](#sapmobjectstatus) · [OverflowToolbar](#sapmoverflowtoolbar) (7) · [OverflowToolbarTokenizer](#sapmoverflowtoolbartokenizer) · [Page](#sapmpage) (3) · [Panel](#sapmpanel) (4) · [PDFViewer](#sapmpdfviewer) (3) · [PlanningCalendar](#sapmplanningcalendar) (14) · [Popover](#sapmpopover) (4) · [ProgressIndicator](#sapmprogressindicator) (2) · [PullToRefresh](#sapmpulltorefresh) (2) · [QuickView](#sapmquickview) (3) · [QuickViewCard](#sapmquickviewcard) (2) · [RadioButton](#sapmradiobutton) · [RangeSlider](#sapmrangeslider) · [ResponsivePopover](#sapmresponsivepopover) · [ScrollContainer](#sapmscrollcontainer) · [SearchField](#sapmsearchfield) (2) · [SegmentedButton](#sapmsegmentedbutton) (5) · [Select](#sapmselect) (6) · [SelectDialog](#sapmselectdialog) (2) · [SelectList](#sapmselectlist) (2) · [SinglePlanningCalendar](#sapmsingleplanningcalendar) (10) · [Slider](#sapmslider) · [SlideTile](#sapmslidetile) · [SplitApp](#sapmsplitapp) · [SplitContainer](#sapmsplitcontainer) · [StandardListItem](#sapmstandardlistitem) (9) · [StepInput](#sapmstepinput) (2) · [Switch](#sapmswitch) · [TabContainer](#sapmtabcontainer) (3) · [Table](#sapmtable) (19) · [TableSelectDialog](#sapmtableselectdialog) (2) · [Text](#sapmtext) (5) · [TextArea](#sapmtextarea) (5) · [TileContent](#sapmtilecontent) · [TimePicker](#sapmtimepicker) (2) · [TimePickerSliders](#sapmtimepickersliders) · [Title](#sapmtitle) (2) · [ToggleButton](#sapmtogglebutton) · [Tokenizer](#sapmtokenizer) (2) · [Toolbar](#sapmtoolbar) · [Tree](#sapmtree) (8) · [URLHelper](#sapmurlhelper) · [ViewSettingsDialog](#sapmviewsettingsdialog) (4) · [WhitespacePattern](#sapmwhitespacepattern) · [Wizard](#sapmwizard) (4)
+[ActionListItem](#sapmactionlistitem) · [Avatar](#sapmavatar) (5) · [Bar](#sapmbar) (2) · [Breadcrumbs](#sapmbreadcrumbs) (3) · [BusyDialog](#sapmbusydialog) (2) · [Button](#sapmbutton) (2) · [Carousel](#sapmcarousel) (5) · [CheckBox](#sapmcheckbox) (2) · [ColorPalette](#sapmcolorpalette) (2) · [Column](#sapmcolumn) · [ColumnListItem](#sapmcolumnlistitem) · [ComboBox](#sapmcombobox) (13) · [ComparisonPattern](#sapmcomparisonpattern) · [CookieSettingsDialogPattern](#sapmcookiesettingsdialogpattern) · [CustomListItem](#sapmcustomlistitem) · [CustomTreeItem](#sapmcustomtreeitem) · [DatePicker](#sapmdatepicker) (3) · [DateRangeSelection](#sapmdaterangeselection) (3) · [DateTimePicker](#sapmdatetimepicker) (3) · [Dialog](#sapmdialog) (5) · [DisplayListItem](#sapmdisplaylistitem) · [DraftIndicator](#sapmdraftindicator) (2) · [DynamicDateRange](#sapmdynamicdaterange) (4) · [ExpandableText](#sapmexpandabletext) · [FacetFilter](#sapmfacetfilter) (3) · [FeedContent](#sapmfeedcontent) · [FeedInput](#sapmfeedinput) (2) · [FeedListItem](#sapmfeedlistitem) · [FlexBox](#sapmflexbox) (9) · [FormattedText](#sapmformattedtext) · [GenericTag](#sapmgenerictag) (2) · [GenericTile](#sapmgenerictile) (6) · [HeaderContainer](#sapmheadercontainer) (5) · [IconTabBar](#sapmicontabbar) (17) · [IconTabHeader](#sapmicontabheader) · [IllustratedMessage](#sapmillustratedmessage) (10) · [Image](#sapmimage) (3) · [ImageContent](#sapmimagecontent) · [InitialPagePattern](#sapminitialpagepattern) · [Input](#sapminput) (18) · [InputListItem](#sapminputlistitem) · [InputModelUpdate](#sapminputmodelupdate) · [Label](#sapmlabel) · [LightBox](#sapmlightbox) · [Link](#sapmlink) (3) · [List](#sapmlist) (16) · [MaskInput](#sapmmaskinput) · [Menu](#sapmmenu) (3) · [MenuButton](#sapmmenubutton) · [MessageBox](#sapmmessagebox) (3) · [MessagePopover](#sapmmessagepopover) (3) · [MessageStrip](#sapmmessagestrip) (3) · [MessageToast](#sapmmessagetoast) · [MessageView](#sapmmessageview) (5) · [MultiComboBox](#sapmmulticombobox) (10) · [MultiInput](#sapmmultiinput) (12) · [NavContainer](#sapmnavcontainer) · [NewsContent](#sapmnewscontent) · [NotificationListGroup](#sapmnotificationlistgroup) (4) · [NotificationListItem](#sapmnotificationlistitem) · [NumericContent](#sapmnumericcontent) (3) · [ObjectAttribute](#sapmobjectattribute) (4) · [ObjectHeader](#sapmobjectheader) (12) · [ObjectIdentifier](#sapmobjectidentifier) · [ObjectListItem](#sapmobjectlistitem) (2) · [ObjectMarker](#sapmobjectmarker) · [ObjectNumber](#sapmobjectnumber) · [ObjectStatus](#sapmobjectstatus) · [OverflowToolbar](#sapmoverflowtoolbar) (7) · [OverflowToolbarTokenizer](#sapmoverflowtoolbartokenizer) · [Page](#sapmpage) (3) · [Panel](#sapmpanel) (4) · [PDFViewer](#sapmpdfviewer) (3) · [PlanningCalendar](#sapmplanningcalendar) (14) · [Popover](#sapmpopover) (4) · [ProgressIndicator](#sapmprogressindicator) (2) · [PullToRefresh](#sapmpulltorefresh) (2) · [QuickView](#sapmquickview) (3) · [QuickViewCard](#sapmquickviewcard) (2) · [RadioButton](#sapmradiobutton) · [RangeSlider](#sapmrangeslider) · [ResponsivePopover](#sapmresponsivepopover) · [ScrollContainer](#sapmscrollcontainer) · [SearchField](#sapmsearchfield) (2) · [SegmentedButton](#sapmsegmentedbutton) (5) · [Select](#sapmselect) (6) · [SelectDialog](#sapmselectdialog) (2) · [SelectList](#sapmselectlist) (2) · [SinglePlanningCalendar](#sapmsingleplanningcalendar) (10) · [Slider](#sapmslider) · [SlideTile](#sapmslidetile) · [SplitApp](#sapmsplitapp) · [SplitContainer](#sapmsplitcontainer) · [StandardListItem](#sapmstandardlistitem) (9) · [StepInput](#sapmstepinput) (2) · [Switch](#sapmswitch) · [TabContainer](#sapmtabcontainer) (3) · [Table](#sapmtable) (19) · [TableSelectDialog](#sapmtableselectdialog) (2) · [Text](#sapmtext) (5) · [TextArea](#sapmtextarea) (5) · [TileContent](#sapmtilecontent) · [TimePicker](#sapmtimepicker) (2) · [TimePickerSliders](#sapmtimepickersliders) · [Title](#sapmtitle) (2) · [ToggleButton](#sapmtogglebutton) · [Tokenizer](#sapmtokenizer) (2) · [Toolbar](#sapmtoolbar) · [Tree](#sapmtree) (8) · [URLHelper](#sapmurlhelper) · [VariantManagement](#sapmvariantmanagement) · [ViewSettingsDialog](#sapmviewsettingsdialog) (4) · [WhitespacePattern](#sapmwhitespacepattern) · [Wizard](#sapmwizard) (4)
 
 #### sap.m.ActionListItem
 
 | Sample | Class |
 |---|---|
 | **sap.m.ActionListItem**<br>Use the Action List Item to trigger an action directly from a list<br><sub>actionlistitem action list item sap.m</sub><br><sub>✓ checked</sub> | [`Z2UI5_CL_SMPC_APP_001`](src/01/01/z2ui5_cl_smpc_app_001.clas.abap) |
+
+#### sap.m.Avatar
+
+| Sample | Class |
+|---|---|
+| **sap.m.Avatar**<br>Avatar | [`Z2UI5_CL_SMPC_APP_624`](src/02/01/z2ui5_cl_smpc_app_624.clas.abap) |
+| **sap.m.Avatar** — Avatar with toggling of Active state<br>AvatarActiveState | [`Z2UI5_CL_SMPC_APP_625`](src/02/01/z2ui5_cl_smpc_app_625.clas.abap) |
+| **sap.m.Avatar** — Avatar with Badge Icon Color<br>AvatarBadgeIconColor | [`Z2UI5_CL_SMPC_APP_626`](src/02/01/z2ui5_cl_smpc_app_626.clas.abap) |
+| **sap.m.Avatar** — Avatar with badgeValueState<br>AvatarValueState | [`Z2UI5_CL_SMPC_APP_627`](src/02/01/z2ui5_cl_smpc_app_627.clas.abap) |
+| **sap.m.Avatar** — Avatar with Visual Affordance<br>AvatarWithAffordance | [`Z2UI5_CL_SMPC_APP_628`](src/02/01/z2ui5_cl_smpc_app_628.clas.abap) |
 
 #### sap.m.Bar
 
@@ -208,6 +218,21 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | **sap.m.DraftIndicator**<br>The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel.<br><sub>draftindicator draft indicator sap.m sap.m.label verticallayout button</sub><br><sub>✓ checked · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_021`](src/01/01/z2ui5_cl_smpc_app_021.clas.abap) |
 | **sap.m.DraftIndicator** — Semantic Page using Draft Indicator<br>Integration of Draft Indicator inside Semantic Page<br><sub>draftindicator draft indicator sap.m semanticpagedraftindicator fullscreenpage addaction flagaction favoriteaction messagesindicator messagepopover messageitem</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_448`](src/01/01/z2ui5_cl_smpc_app_448.clas.abap) |
 
+#### sap.m.DynamicDateRange
+
+| Sample | Class |
+|---|---|
+| **sap.m.DynamicDateRange**<br>DynamicDateRange | [`Z2UI5_CL_SMPC_APP_639`](src/02/01/z2ui5_cl_smpc_app_639.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range with calendarWeekNumbering<br>DynamicDateRangeAndCalendarWeekNumbering | [`Z2UI5_CL_SMPC_APP_640`](src/02/01/z2ui5_cl_smpc_app_640.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range - Open by Another Control<br>DynamicDateRangeHidden | [`Z2UI5_CL_SMPC_APP_641`](src/02/01/z2ui5_cl_smpc_app_641.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range with Custom Options<br>DynamicDateRangeWithCustomOptions | [`Z2UI5_CL_SMPC_APP_642`](src/02/01/z2ui5_cl_smpc_app_642.clas.abap) |
+
+#### sap.m.ExpandableText
+
+| Sample | Class |
+|---|---|
+| **sap.m.ExpandableText**<br>ExpandableText | [`Z2UI5_CL_SMPC_APP_643`](src/02/01/z2ui5_cl_smpc_app_643.clas.abap) |
+
 #### sap.m.FacetFilter
 
 | Sample | Class |
@@ -310,6 +335,21 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | Sample | Class |
 |---|---|
 | **sap.m.IconTabHeader** — Standalone Icon Tab Header<br>Icon Tab Header used standalone, outside of Icon Tab Bar.<br><sub>icontabheader icon tab header sap.m inline mode icontabfilter</sub><br><sub>◐ reviewed</sub> | [`Z2UI5_CL_SMPC_APP_055`](src/01/01/z2ui5_cl_smpc_app_055.clas.abap) |
+
+#### sap.m.IllustratedMessage
+
+| Sample | Class |
+|---|---|
+| **sap.m.IllustratedMessage** — Illustrated Message Enable Vertical Responsiveness<br>IllustratedMessageEVR | [`Z2UI5_CL_SMPC_APP_629`](src/02/01/z2ui5_cl_smpc_app_629.clas.abap) |
+| **sap.m.IllustratedMessage** — A demo application that imports a Custom Illustration Set from an npm package<br>IllustratedMessageInAppCustom | [`Z2UI5_CL_SMPC_APP_630`](src/02/01/z2ui5_cl_smpc_app_630.clas.abap) |
+| **sap.m.IllustratedMessage** — 'NoActivities' Illustrated Message in a Card<br>IllustratedMessageInCardNoActivities | [`Z2UI5_CL_SMPC_APP_631`](src/02/01/z2ui5_cl_smpc_app_631.clas.abap) |
+| **sap.m.IllustratedMessage** — 'NoEmail' Illustrated Message in a Card<br>IllustratedMessageInCardNoEmail | [`Z2UI5_CL_SMPC_APP_632`](src/02/01/z2ui5_cl_smpc_app_632.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Dialog<br>IllustratedMessageInDialog | [`Z2UI5_CL_SMPC_APP_633`](src/02/01/z2ui5_cl_smpc_app_633.clas.abap) |
+| **sap.m.IllustratedMessage** — Default Illustration Set (sapIllus)<br>IllustratedMessageInPage | [`Z2UI5_CL_SMPC_APP_634`](src/02/01/z2ui5_cl_smpc_app_634.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (Custom Illustration Set)<br>IllustratedMessageInPageCustom | [`Z2UI5_CL_SMPC_APP_635`](src/02/01/z2ui5_cl_smpc_app_635.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)<br>IllustratedMessageInPageTNT | [`Z2UI5_CL_SMPC_APP_636`](src/02/01/z2ui5_cl_smpc_app_636.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrative style illustrations using the 'src' property<br>IllustratedMessageInPageWithURI | [`Z2UI5_CL_SMPC_APP_637`](src/02/01/z2ui5_cl_smpc_app_637.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message Session Timeout<br>IllustratedMessageSessionTimeout | [`Z2UI5_CL_SMPC_APP_638`](src/02/01/z2ui5_cl_smpc_app_638.clas.abap) |
 
 #### sap.m.Image
 
@@ -946,6 +986,12 @@ For what is NOT here — which demo kit samples are still unported and why — s
 |---|---|
 | **sap.m.URLHelper**<br>The URL Helper can be used to easily trigger a phone's native apps like Email, Telephone and SMS. It can be used with any UI control but typically an active Display List Item is chosen.<br><sub>urlhelper sap.m tel sms email url triggers list displaylistitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_084`](src/01/01/z2ui5_cl_smpc_app_084.clas.abap) |
 
+#### sap.m.VariantManagement
+
+| Sample | Class |
+|---|---|
+| **sap.m.VariantManagement** — VariantManagement using dedicated items<br>VariantManagement | [`Z2UI5_CL_SMPC_APP_651`](src/02/01/z2ui5_cl_smpc_app_651.clas.abap) |
+
 #### sap.m.ViewSettingsDialog
 
 | Sample | Class |
@@ -1073,44 +1119,103 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 ### sap.f
 
-34 port(s).
+44 port(s), by control:
+
+[AvatarGroup](#sapfavatargroup) · [Card](#sapfcard) · [DynamicPage](#sapfdynamicpage) (5) · [FlexibleColumnLayout](#sapfflexiblecolumnlayout) (8) · [GridContainer](#sapfgridcontainer) (4) · [GridList](#sapfgridlist) (9) · [HeroBanner](#sapfherobanner) (5) · [ProductSwitch](#sapfproductswitch) (2) · [ShellBar](#sapfshellbar) (5) · [SidePanel](#sapfsidepanel) (4)
+
+#### sap.f.AvatarGroup
 
 | Sample | Class |
 |---|---|
-| **sap.f.GridList** — Grid List - Basic examples<br>A GridList with the default grid layout, resized live with a slider to show how the grid reflows.<br><sub>gridlist grid list sap.f layout slider panel toolbar title gridlistitem vbox flexitemdata</sub><br><sub>◐ reviewed · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_111`](src/01/04/z2ui5_cl_smpc_app_111.clas.abap) |
+| **sap.f.AvatarGroup**<br>AvatarGroup | [`Z2UI5_CL_SMPC_APP_662`](src/02/04/z2ui5_cl_smpc_app_662.clas.abap) |
+
+#### sap.f.Card
+
+| Sample | Class |
+|---|---|
 | **sap.f.Card** — Card Control<br>This sample illustrates how to specify the predefined header and the content of the Card control.<br><sub>card sap.f fiori header vbox hbox combobox item datepicker button list customlistitem</sub><br><sub>◐ reviewed · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_117`](src/01/04/z2ui5_cl_smpc_app_117.clas.abap) |
-| **sap.f.GridList** — Grid List - Different Modes With Various Item Types<br>This is a sample for GridList with different modes of selection.<br><sub>gridlist grid list sap.f selection modes html hbox segmentedbutton segmentedbuttonitem gridbasiclayout gridlistitem</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_133`](src/01/04/z2ui5_cl_smpc_app_133.clas.abap) |
-| **sap.f.GridList** — Grid List with GridBoxLayout<br>This layout allows to display same height grid items with configurable width.<br><sub>gridlist grid list sap.f gridboxlayout slider panel toolbar title gridlistitem vbox flexitemdata</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_144`](src/01/04/z2ui5_cl_smpc_app_144.clas.abap) |
-| **sap.f.GridList** — Grid List - Drag and Drop<br>This sample represents GridList with enabled Drag and Drop functionality.<br><sub>gridlist grid list sap.f drag drop panel toolbar title draginfo griddropinfo gridboxlayout</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_148`](src/01/04/z2ui5_cl_smpc_app_148.clas.abap) |
+
+#### sap.f.DynamicPage
+
+| Sample | Class |
+|---|---|
 | **sap.f.DynamicPage** — Dynamic Page Freestyle Example<br>Dynamic Page freestyle example with a responsive sap.m.Table in the content area, showing that each control can be placed in the title and the header content areas.<br><sub>dynamicpage dynamic sap.f dynamicpagefreestyle dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber</sub><br><sub>◐ reviewed · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_170`](src/01/04/z2ui5_cl_smpc_app_170.clas.abap) |
-| **sap.f.GridList** — Grid List features - Grouping, Header, Growing<br>This sample illustrates subgroups with headers, custom header and lazy loading of GridList items.<br><sub>gridlist grid list sap.f gridlistboxcontainergrouping slider panel toolbar title toolbarspacer searchfield gridboxlayout</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_176`](src/01/04/z2ui5_cl_smpc_app_176.clas.abap) |
-| **sap.f.GridList** — Grid List - Break point examples - S, M, L, XL<br>This sample illustrates how to configure the responsive settings for different container sizes.<br><sub>gridlist grid list sap.f gridlistbreakpoints slider panel toolbar title gridresponsivelayout gridsettings gridlistitem</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_213`](src/01/04/z2ui5_cl_smpc_app_213.clas.abap) |
-| **sap.f.FlexibleColumnLayout** — Flexible Column Layout (with Event Bus)<br>Clicking on a link in a column opens the next column.<br><sub>flexiblecolumnlayout flexible column layout sap.f master-detail table label columnlistitem text button</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_234`](src/01/04/z2ui5_cl_smpc_app_234.clas.abap) |
 | **sap.f.DynamicPage** — Dynamic Page with Sticky Subheader<br>Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area.<br><sub>dynamicpage dynamic sap.f dynamicpagewithstickysubheader dynamicpagetitle title breadcrumbs link label overflowtoolbar generictag objectnumber</sub><br><sub>◐ reviewed · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_238`](src/01/04/z2ui5_cl_smpc_app_238.clas.abap) |
-| **sap.f.GridContainer** — Grid Container - Drag and Drop<br>This sample represents GridContainer with enabled Drag and Drop functionality.<br><sub>gridcontainer grid container sap.f gridcontainerdraganddrop scrollcontainer draginfo griddropinfo gridcontainersettings gridcontaineritemlayoutdata imagecontent header</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_526`](src/01/04/z2ui5_cl_smpc_app_526.clas.abap) |
-| **sap.f.GridContainer** — Grid Container - Drag and Drop From List to GridContainer<br>This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer.<br><sub>gridcontainer grid container sap.f gridcontainerdraganddropfromlist scrollcontainer togglebutton hbox list draginfo dropinfo standardlistitem</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_527`](src/01/04/z2ui5_cl_smpc_app_527.clas.abap) |
 | **sap.f.DynamicPage** — Dynamic Page with Wizard<br>Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area.<br><sub>dynamicpage dynamic sap.f dynamicpagewithwizard navcontainer dynamicpagetitle title wizard wizardstep objectheader objectattribute list</sub><br><sub>○ generated · 10 deviations</sub> | [`Z2UI5_CL_SMPC_APP_560`](src/01/04/z2ui5_cl_smpc_app_560.clas.abap) |
-| **sap.f.GridList** — Grid List - Item Designs<br>This is a sample for GridList item templates representing a typical tools page dashboard style.<br><sub>gridlist grid list sap.f gridlistboxcontainerreal toolbar title gridboxlayout vbox flexitemdata label text</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_581`](src/01/04/z2ui5_cl_smpc_app_581.clas.abap) |
-| **sap.f.GridList** — Navigation with keyboard arrows between multiple GridLists<br>This sample demonstrates the keyboard navigation between multiple grids<br><sub>gridlist grid list sap.f gridlistkeyboardarrowsnavigation app slider gridresponsivelayout gridsettings gridbasiclayout gridlistitem griditemlayoutdata</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_582`](src/01/04/z2ui5_cl_smpc_app_582.clas.abap) |
-| **sap.f.ShellBar** — Shell Bar with title mega menu<br>Shell Bar example showing the control title as part of a mega menu, configurable by the app developer.<br><sub>shellbar shell bar sap.f application header menu menuitem avatar</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_110`](src/02/04/z2ui5_cl_smpc_app_110.clas.abap) |
-| **sap.f.SidePanel** — Side Panel with single action item<br>Demonstrates the usage of Side Panel with single action item.<br><sub>sidepanel side panel sap.f single item button vbox label switch text sidepanelitem</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_136`](src/02/04/z2ui5_cl_smpc_app_136.clas.abap) |
-| **sap.f.ShellBar** — Shell Bar with menu button<br>Shell Bar example with a menu button and a plain title.<br><sub>shellbar shell bar sap.f menu button avatar</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_152`](src/02/04/z2ui5_cl_smpc_app_152.clas.abap) |
-| **sap.f.ProductSwitch** — Product Switch with Navigation<br>This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.<br><sub>productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_165`](src/02/04/z2ui5_cl_smpc_app_165.clas.abap) |
-| **sap.f.GridContainer**<br>This sample represents the general usage of GridContainer.<br><sub>gridcontainer grid container sap.f scrollcontainer togglebutton panel hbox label switch text gridcontainersettings</sub><br><sub>◐ reviewed · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_168`](src/02/04/z2ui5_cl_smpc_app_168.clas.abap) |
-| **sap.f.ShellBar** — Shell Bar with search<br>Shell Bar example with configured search functionality.<br><sub>shellbar shell bar sap.f shellbarwithsearch menu menuitem avatar searchmanager suggestionitem</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_218`](src/02/04/z2ui5_cl_smpc_app_218.clas.abap) |
-| **sap.f.GridList** — Grid List with Responsive Column Layout<br>This layout displays a variable number of grid columns depending on available screen size. Grid row's height is dynamically determined by the height of the highest grid element on this row.<br><sub>gridlist grid list sap.f gridlistresponsivecolumnlayout togglebutton slider panel toolbar title responsivecolumnlayout gridlistitem</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_222`](src/02/04/z2ui5_cl_smpc_app_222.clas.abap) |
 | **sap.f.DynamicPage** — Dynamic Page with Responsive Avatar<br>Dynamic Page demonstrating the breakpointChange event to adjust Avatar sizes responsively based on breakpoints.<br><sub>dynamicpage dynamic sap.f dynamicpageresponsiveavatar dynamicpagetitle breadcrumbs link hbox title objectmarker text flexbox</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_244`](src/02/04/z2ui5_cl_smpc_app_244.clas.abap) |
+| **sap.f.DynamicPage** — Dynamic Page with Analytical Table<br>Dynamic Page containing an Analytical Table in the content area aligned with the SAP Fiori List Report floorplan.<br><sub>dynamicpage dynamic sap.f dynamicpageanalyticaltable dynamicpagetitle title label overflowtoolbar generictag objectnumber toolbarspacer button</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_559`](src/02/04/z2ui5_cl_smpc_app_559.clas.abap) |
+
+#### sap.f.FlexibleColumnLayout
+
+| Sample | Class |
+|---|---|
+| **sap.f.FlexibleColumnLayout** — Flexible Column Layout (with Event Bus)<br>Clicking on a link in a column opens the next column.<br><sub>flexiblecolumnlayout flexible column layout sap.f master-detail table label columnlistitem text button</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_234`](src/01/04/z2ui5_cl_smpc_app_234.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout Landmark Info For Columns<br>Flexible Column Layout where the first and the last columns have custom Landmark Info<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutlandmarkinfo flexiblecolumnlayoutaccessiblelandmarkinfo button vbox</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_449`](src/02/04/z2ui5_cl_smpc_app_449.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout Landmark Info For Arrows<br>Flexible Column Layout where the all the arrows have custom Landmark Info<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutlandmarkinfoarrow flexiblecolumnlayoutaccessiblelandmarkinfo button vbox</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_450`](src/02/04/z2ui5_cl_smpc_app_450.clas.abap) |
-| **sap.f.GridContainer** — Grid Container - Keyboard navigation between multiple grids<br>This sample demonstrates the keyboard navigation between multiple grids<br><sub>gridcontainer grid container sap.f gridcontainersnavigation scrollcontainer togglebutton hbox panel flexitemdata generictile gridcontaineritemlayoutdata</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_528`](src/02/04/z2ui5_cl_smpc_app_528.clas.abap) |
-| **sap.f.DynamicPage** — Dynamic Page with Analytical Table<br>Dynamic Page containing an Analytical Table in the content area aligned with the SAP Fiori List Report floorplan.<br><sub>dynamicpage dynamic sap.f dynamicpageanalyticaltable dynamicpagetitle title label overflowtoolbar generictag objectnumber toolbarspacer button</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_559`](src/02/04/z2ui5_cl_smpc_app_559.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout with programmatic scrolling to an item<br>FlexibleColumnLayout where the app programmatically scrolls to some item within the newly navigated column, once the column is fully resized<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutcolumnresize objectpagelayout objectpagedynamicheadertitle title objectpagesection objectpagesubsection button</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_577`](src/02/04/z2ui5_cl_smpc_app_577.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout with Routing and first page in fullscreen only<br>Flexible Column Layout as an app with routing that displays different pages in the initial column. The first page is only displayed in OneColumn layout type<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutwithfullscreenpage dynamicpagetitle title table text columnlistitem objectidentifier</sub><br><sub>○ generated · 15 deviations</sub> | [`Z2UI5_CL_SMPC_APP_578`](src/02/04/z2ui5_cl_smpc_app_578.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout with Routing and One Initial Column<br>Flexible Column Layout as an app with routing that starts with a single initial column.<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutwithonecolumnstart flexiblecolumnlayoutdata flexiblecolumnlayoutdatafordesktop flexiblecolumnlayoutdatafortablet dynamicpage dynamicpagetitle title</sub><br><sub>○ generated · 14 deviations</sub> | [`Z2UI5_CL_SMPC_APP_579`](src/02/04/z2ui5_cl_smpc_app_579.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Flexible Column Layout with Routing and Two Initial Columns<br>Flexible Column Layout as an app with routing that starts with two initial columns.<br><sub>flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutwithtwocolumnstart dynamicpage dynamicpagetitle title table overflowtoolbar toolbarspacer</sub><br><sub>○ generated · 14 deviations</sub> | [`Z2UI5_CL_SMPC_APP_580`](src/02/04/z2ui5_cl_smpc_app_580.clas.abap) |
-| **sap.f.ShellBar** — Shell Bar with Product Switch<br>Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state.<br><sub>shellbar shell bar sap.f shellbarproductswitch avatar responsivepopover productswitch productswitchitem</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_583`](src/02/04/z2ui5_cl_smpc_app_583.clas.abap) |
 | **sap.f.FlexibleColumnLayout** — Shell Bar with Flexible Column Layout<br>Example of Shell Bar in combination with Flexible Column Layout.<br><sub>flexiblecolumnlayout flexible column layout sap.f shellbarwithflexiblecolumnlayout shellbar menu menuitem avatar dynamicpage dynamicpagetitle</sub><br><sub>○ generated · 15 deviations</sub> | [`Z2UI5_CL_SMPC_APP_584`](src/02/04/z2ui5_cl_smpc_app_584.clas.abap) |
+
+#### sap.f.GridContainer
+
+| Sample | Class |
+|---|---|
+| **sap.f.GridContainer** — Grid Container - Drag and Drop<br>This sample represents GridContainer with enabled Drag and Drop functionality.<br><sub>gridcontainer grid container sap.f gridcontainerdraganddrop scrollcontainer draginfo griddropinfo gridcontainersettings gridcontaineritemlayoutdata imagecontent header</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_526`](src/01/04/z2ui5_cl_smpc_app_526.clas.abap) |
+| **sap.f.GridContainer** — Grid Container - Drag and Drop From List to GridContainer<br>This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer.<br><sub>gridcontainer grid container sap.f gridcontainerdraganddropfromlist scrollcontainer togglebutton hbox list draginfo dropinfo standardlistitem</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_527`](src/01/04/z2ui5_cl_smpc_app_527.clas.abap) |
+| **sap.f.GridContainer**<br>This sample represents the general usage of GridContainer.<br><sub>gridcontainer grid container sap.f scrollcontainer togglebutton panel hbox label switch text gridcontainersettings</sub><br><sub>◐ reviewed · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_168`](src/02/04/z2ui5_cl_smpc_app_168.clas.abap) |
+| **sap.f.GridContainer** — Grid Container - Keyboard navigation between multiple grids<br>This sample demonstrates the keyboard navigation between multiple grids<br><sub>gridcontainer grid container sap.f gridcontainersnavigation scrollcontainer togglebutton hbox panel flexitemdata generictile gridcontaineritemlayoutdata</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_528`](src/02/04/z2ui5_cl_smpc_app_528.clas.abap) |
+
+#### sap.f.GridList
+
+| Sample | Class |
+|---|---|
+| **sap.f.GridList** — Grid List - Basic examples<br>A GridList with the default grid layout, resized live with a slider to show how the grid reflows.<br><sub>gridlist grid list sap.f layout slider panel toolbar title gridlistitem vbox flexitemdata</sub><br><sub>◐ reviewed · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_111`](src/01/04/z2ui5_cl_smpc_app_111.clas.abap) |
+| **sap.f.GridList** — Grid List - Different Modes With Various Item Types<br>This is a sample for GridList with different modes of selection.<br><sub>gridlist grid list sap.f selection modes html hbox segmentedbutton segmentedbuttonitem gridbasiclayout gridlistitem</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_133`](src/01/04/z2ui5_cl_smpc_app_133.clas.abap) |
+| **sap.f.GridList** — Grid List with GridBoxLayout<br>This layout allows to display same height grid items with configurable width.<br><sub>gridlist grid list sap.f gridboxlayout slider panel toolbar title gridlistitem vbox flexitemdata</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_144`](src/01/04/z2ui5_cl_smpc_app_144.clas.abap) |
+| **sap.f.GridList** — Grid List - Drag and Drop<br>This sample represents GridList with enabled Drag and Drop functionality.<br><sub>gridlist grid list sap.f drag drop panel toolbar title draginfo griddropinfo gridboxlayout</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_148`](src/01/04/z2ui5_cl_smpc_app_148.clas.abap) |
+| **sap.f.GridList** — Grid List features - Grouping, Header, Growing<br>This sample illustrates subgroups with headers, custom header and lazy loading of GridList items.<br><sub>gridlist grid list sap.f gridlistboxcontainergrouping slider panel toolbar title toolbarspacer searchfield gridboxlayout</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_176`](src/01/04/z2ui5_cl_smpc_app_176.clas.abap) |
+| **sap.f.GridList** — Grid List - Break point examples - S, M, L, XL<br>This sample illustrates how to configure the responsive settings for different container sizes.<br><sub>gridlist grid list sap.f gridlistbreakpoints slider panel toolbar title gridresponsivelayout gridsettings gridlistitem</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_213`](src/01/04/z2ui5_cl_smpc_app_213.clas.abap) |
+| **sap.f.GridList** — Grid List - Item Designs<br>This is a sample for GridList item templates representing a typical tools page dashboard style.<br><sub>gridlist grid list sap.f gridlistboxcontainerreal toolbar title gridboxlayout vbox flexitemdata label text</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_581`](src/01/04/z2ui5_cl_smpc_app_581.clas.abap) |
+| **sap.f.GridList** — Navigation with keyboard arrows between multiple GridLists<br>This sample demonstrates the keyboard navigation between multiple grids<br><sub>gridlist grid list sap.f gridlistkeyboardarrowsnavigation app slider gridresponsivelayout gridsettings gridbasiclayout gridlistitem griditemlayoutdata</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_582`](src/01/04/z2ui5_cl_smpc_app_582.clas.abap) |
+| **sap.f.GridList** — Grid List with Responsive Column Layout<br>This layout displays a variable number of grid columns depending on available screen size. Grid row's height is dynamically determined by the height of the highest grid element on this row.<br><sub>gridlist grid list sap.f gridlistresponsivecolumnlayout togglebutton slider panel toolbar title responsivecolumnlayout gridlistitem</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_222`](src/02/04/z2ui5_cl_smpc_app_222.clas.abap) |
+
+#### sap.f.HeroBanner
+
+| Sample | Class |
+|---|---|
+| **sap.f.HeroBanner** — Hero Banner - Basic<br>HeroBannerBasic | [`Z2UI5_CL_SMPC_APP_667`](src/02/04/z2ui5_cl_smpc_app_667.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Columns Ratio<br>HeroBannerColumnsRatio | [`Z2UI5_CL_SMPC_APP_668`](src/02/04/z2ui5_cl_smpc_app_668.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Header Block and Actions Placement<br>HeroBannerHeaderBlockAndActionsPlacement | [`Z2UI5_CL_SMPC_APP_669`](src/02/04/z2ui5_cl_smpc_app_669.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Integration Card<br>HeroBannerIntegrationCard | [`Z2UI5_CL_SMPC_APP_670`](src/02/04/z2ui5_cl_smpc_app_670.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Use Cases<br>HeroBannerUseCases | [`Z2UI5_CL_SMPC_APP_671`](src/02/04/z2ui5_cl_smpc_app_671.clas.abap) |
+
+#### sap.f.ProductSwitch
+
+| Sample | Class |
+|---|---|
+| **sap.f.ProductSwitch** — Product Switch with Navigation<br>This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.<br><sub>productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_165`](src/02/04/z2ui5_cl_smpc_app_165.clas.abap) |
+| **sap.f.ProductSwitch** — Product Switch with imageSrc<br>ProductSwitchItemWithImageSrc | [`Z2UI5_CL_SMPC_APP_666`](src/02/04/z2ui5_cl_smpc_app_666.clas.abap) |
+
+#### sap.f.ShellBar
+
+| Sample | Class |
+|---|---|
+| **sap.f.ShellBar** — Shell Bar with title mega menu<br>Shell Bar example showing the control title as part of a mega menu, configurable by the app developer.<br><sub>shellbar shell bar sap.f application header menu menuitem avatar</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_110`](src/02/04/z2ui5_cl_smpc_app_110.clas.abap) |
+| **sap.f.ShellBar** — Shell Bar with menu button<br>Shell Bar example with a menu button and a plain title.<br><sub>shellbar shell bar sap.f menu button avatar</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_152`](src/02/04/z2ui5_cl_smpc_app_152.clas.abap) |
+| **sap.f.ShellBar** — Shell Bar with search<br>Shell Bar example with configured search functionality.<br><sub>shellbar shell bar sap.f shellbarwithsearch menu menuitem avatar searchmanager suggestionitem</sub><br><sub>◐ reviewed · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_218`](src/02/04/z2ui5_cl_smpc_app_218.clas.abap) |
+| **sap.f.ShellBar** — Shell Bar with Product Switch<br>Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state.<br><sub>shellbar shell bar sap.f shellbarproductswitch avatar responsivepopover productswitch productswitchitem</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_583`](src/02/04/z2ui5_cl_smpc_app_583.clas.abap) |
 | **sap.f.ShellBar** — Shell Bar with Split App<br>Example of Shell Bar in combination with Split App.<br><sub>shellbar shell bar sap.f shellbarwithsplitapp toolpage menu menuitem avatar searchmanager sidenavigation navcontainer</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_585`](src/02/04/z2ui5_cl_smpc_app_585.clas.abap) |
+
+#### sap.f.SidePanel
+
+| Sample | Class |
+|---|---|
+| **sap.f.SidePanel** — Side Panel with single action item<br>Demonstrates the usage of Side Panel with single action item.<br><sub>sidepanel side panel sap.f single item button vbox label switch text sidepanelitem</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_136`](src/02/04/z2ui5_cl_smpc_app_136.clas.abap) |
+| **sap.f.SidePanel**<br>SidePanel | [`Z2UI5_CL_SMPC_APP_663`](src/02/04/z2ui5_cl_smpc_app_663.clas.abap) |
+| **sap.f.SidePanel** — Side Panel with overflow menu<br>SidePanelOverflow | [`Z2UI5_CL_SMPC_APP_664`](src/02/04/z2ui5_cl_smpc_app_664.clas.abap) |
+| **sap.f.SidePanel** — Resizable Side Panel<br>SidePanelResizable | [`Z2UI5_CL_SMPC_APP_665`](src/02/04/z2ui5_cl_smpc_app_665.clas.abap) |
 
 ### sap.ui.layout.form
 
@@ -1287,6 +1392,23 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | **sap.tnt.ToolPage** — Tool Page with Horizontal Navigation<br>A tool page layout with horizontal navigation<br><sub>toolpage tool sap.tnt toolpagehorizontalnavigation toolheader image title overflowtoolbarlayoutdata text toolbarspacer searchfield button</sub><br><sub>◐ reviewed · 8 deviations</sub> | [`Z2UI5_CL_SMPC_APP_303`](src/02/05/z2ui5_cl_smpc_app_303.clas.abap) |
 | **sap.tnt.SideNavigation** — Side Navigation with Search<br>SideNavigation with a search field in the filter section and filterable navigation items.<br><sub>sidenavigation side navigation sap.tnt sidenavigationsearch toolpage toolheader button image title text toolbarspacer</sub><br><sub>◐ reviewed · 11 deviations</sub> | [`Z2UI5_CL_SMPC_APP_407`](src/02/05/z2ui5_cl_smpc_app_407.clas.abap) |
 
+### sap.m.plugins
+
+10 port(s).
+
+| Sample | Class |
+|---|---|
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Name validation configuration<br>UploadSetwithTablePlugin.FileNameValidationSample | [`Z2UI5_CL_SMPC_APP_652`](src/02/01/z2ui5_cl_smpc_app_652.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview with Custom Page Content for non supported file types<br> | [`Z2UI5_CL_SMPC_APP_653`](src/02/01/z2ui5_cl_smpc_app_653.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Grid Table (sap.ui.table.Table)<br>UploadSetwithTablePlugin.GridTableSimple | [`Z2UI5_CL_SMPC_APP_654`](src/02/01/z2ui5_cl_smpc_app_654.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Multiple plugin instances with multiple tables<br>UploadSetwithTablePlugin.MultiplePluginInstances | [`Z2UI5_CL_SMPC_APP_655`](src/02/01/z2ui5_cl_smpc_app_655.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File upload with user dialogs<br>UploadSetwithTablePlugin.ResponsiveTableFileDialogs | [`Z2UI5_CL_SMPC_APP_656`](src/02/01/z2ui5_cl_smpc_app_656.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview<br>UploadSetwithTablePlugin.ResponsiveTableFilePreview | [`Z2UI5_CL_SMPC_APP_657`](src/02/01/z2ui5_cl_smpc_app_657.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Upload Progress and Upload Termination<br> | [`Z2UI5_CL_SMPC_APP_658`](src/02/01/z2ui5_cl_smpc_app_658.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table)<br>UploadSetwithTablePlugin.ResponsiveTableSimple | [`Z2UI5_CL_SMPC_APP_659`](src/02/01/z2ui5_cl_smpc_app_659.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table (sap.ui.table.TreeTable)<br>UploadSetwithTablePlugin.TreeTableSimple | [`Z2UI5_CL_SMPC_APP_660`](src/02/01/z2ui5_cl_smpc_app_660.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table with folder hierarchy & folder uploads<br> | [`Z2UI5_CL_SMPC_APP_661`](src/02/01/z2ui5_cl_smpc_app_661.clas.abap) |
+
 ### sap.ui.layout.cssgrid
 
 9 port(s).
@@ -1317,6 +1439,20 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | **sap.ui.model.type.Currency** — Currency Format<br>Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string.<br><sub>currency sap.ui.model.type data type simpleform label input text</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_135`](src/02/02/z2ui5_cl_smpc_app_135.clas.abap) |
 | **sap.ui.model.type.Float** — Float Format<br>Formats and parses both integer and decimal digits.<br><sub>float sap.ui.model.type typefloat simpleform label input text</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_179`](src/02/02/z2ui5_cl_smpc_app_179.clas.abap) |
 | **sap.ui.model.type.FileSize** — FileSize Type<br>This sample explains the formatting options of the FileSize type.<br><sub>filesize file size sap.ui.model.type typefilesize simpleform label input text</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_180`](src/02/02/z2ui5_cl_smpc_app_180.clas.abap) |
+
+### sap.m.p13n
+
+7 port(s).
+
+| Sample | Class |
+|---|---|
+| **sap.m.p13n.Container** — p13n.Container usage in a Dialog/Popover<br>p13n.Container | [`Z2UI5_CL_SMPC_APP_644`](src/02/01/z2ui5_cl_smpc_app_644.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for responsive table<br>p13n.Engine | [`Z2UI5_CL_SMPC_APP_645`](src/02/01/z2ui5_cl_smpc_app_645.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization implementing custom filter controls<br>p13n.EngineCustomFilters | [`Z2UI5_CL_SMPC_APP_646`](src/02/01/z2ui5_cl_smpc_app_646.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for grid list<br>p13n.EngineGridList | [`Z2UI5_CL_SMPC_APP_647`](src/02/01/z2ui5_cl_smpc_app_647.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for grid table<br>p13n.EngineGridTable | [`Z2UI5_CL_SMPC_APP_648`](src/02/01/z2ui5_cl_smpc_app_648.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization with multiple SelectionControllers<br>p13n.EngineMultipleController | [`Z2UI5_CL_SMPC_APP_649`](src/02/01/z2ui5_cl_smpc_app_649.clas.abap) |
+| **sap.m.p13n.Popup** — p13n.Popup usage<br>p13n.Popup | [`Z2UI5_CL_SMPC_APP_650`](src/02/01/z2ui5_cl_smpc_app_650.clas.abap) |
 
 ### sap.m.semantic
 

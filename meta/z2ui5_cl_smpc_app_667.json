@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_667",
+  "sample": "sap.f.sample.HeroBannerBasic",
+  "entity": "sap.f.HeroBanner",
+  "file": "src/02/04/z2ui5_cl_smpc_app_667.clas.abap",
+  "batch": "b50",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152."
+    }
+  ]
+}

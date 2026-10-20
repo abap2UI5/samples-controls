@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_665",
+  "sample": "sap.f.sample.SidePanelResizable",
+  "entity": "sap.f.SidePanel",
+  "file": "src/02/04/z2ui5_cl_smpc_app_665.clas.abap",
+  "batch": "b49",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107."
+    }
+  ]
+}

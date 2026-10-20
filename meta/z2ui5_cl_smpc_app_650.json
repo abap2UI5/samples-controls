@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_650",
+  "sample": "sap.m.sample.p13n.Popup",
+  "entity": "sap.m.p13n.Popup",
+  "file": "src/02/01/z2ui5_cl_smpc_app_650.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_653",
+  "sample": "sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent",
+  "entity": "sap.m.plugins.UploadSetwithTable",
+  "file": "src/02/01/z2ui5_cl_smpc_app_653.clas.abap",
+  "batch": "b56",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124."
+    }
+  ]
+}

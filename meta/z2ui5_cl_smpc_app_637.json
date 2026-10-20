@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_637",
+  "sample": "sap.m.sample.IllustratedMessageInPageWithURI",
+  "entity": "sap.m.IllustratedMessage",
+  "file": "src/02/01/z2ui5_cl_smpc_app_637.clas.abap",
+  "batch": "b53",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    }
+  ]
+}
