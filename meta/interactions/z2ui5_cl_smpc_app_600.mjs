@@ -2,6 +2,27 @@
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
+  // backend round trips in flight - every POST to the app's own origin
+  let inflight = 0;
+  const own = (r) => r.method() === 'POST' && new URL(r.url()).origin === new URL(page.url()).origin;
+  page.on('request', (r) => { if (own(r)) inflight++; });
+  const done = (r) => { if (own(r)) inflight = Math.max(0, inflight - 1); };
+  page.on('requestfinished', done);
+  page.on('requestfailed', done);
+  // no POST in flight for 500 ms in a row (a probe's POST starts a beat after
+  // the firing that caused it, so one idle sample is not enough)
+  const settle = async () => {
+    const deadline = Date.now() + 15000;
+    let idleSince = null;
+    for (;;) {
+      if (inflight === 0) {
+        idleSince ??= Date.now();
+        if (Date.now() - idleSince >= 500) return;
+      } else idleSince = null;
+      if (Date.now() > deadline) throw new Error(`backend round trips still in flight after 15 s (${inflight})`);
+      await new Promise((r) => setTimeout(r, 50));
+    }
+  };
   await waitForUi5(page, () => {
     const t = ui5All().find((c) => c.getMetadata().getName() === 'sap.m.Tree');
     return t && t.getMode() === 'MultiSelect' && t.getItems().length >= 2;
@@ -54,14 +75,12 @@ export default async (page, expect) => {
   // Each veto probe is a real round trip - the wire fires DRAG_START whether or
   // not the default was prevented. An event dispatched while one is still in
   // flight is swallowed, which is why the drop below silently did nothing when
-  // it followed the probes directly. Wait for the round trips to land: the
-  // global BusyIndicator element is shown for the whole request and hidden
-  // again when the response is applied.
-  await page.waitForFunction(() => {
-    const b = document.getElementById('sapUiBusyIndicator');
-    return !b || getComputedStyle(b).visibility === 'hidden';
-  }, null, { timeout: 15000 });
-
+  // it followed the probes directly. Wait for the round trips to land by
+  // counting the backend POSTs themselves: the global BusyIndicator used for
+  // this until 2026-10-20 appears only after UI5's show DELAY, so under the
+  // load of a full-corpus run it still read "hidden" while a probe was in
+  // flight, and the drop was swallowed again (nightly-style run, 1 of 676).
+  await settle();
   // and the drop still reparents: Node2 onto Node1, the backend moves the node
   // and the tree redraws with one root left
   await page.evaluate(() => {
