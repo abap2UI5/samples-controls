@@ -119,7 +119,7 @@ export default async (page, expect) => {
     page.keyboard.press('Control+ArrowLeft'),
   ]);
   // the wire itself: the moved column's p13nKey and its new position
-  console.log('BODY', moveReq.postData().slice(0, 400));
+  expect(JSON.parse(moveReq.postData()).value.S_FRONT.T_EVENT_ARG, 'the columnMove arguments').toEqual(['city_col', 1]);
   await waitForIdle(page);
   /* KNOWN PORT DEFECT (2026-10-20): this is the third view rebuild since the
      popup was last opened, and it dies on "adding element with duplicate id
