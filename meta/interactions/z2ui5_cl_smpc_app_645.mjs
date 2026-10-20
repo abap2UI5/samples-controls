@@ -18,6 +18,10 @@ const tableState = () => {
 };
 
 export default async (page, expect) => {
+  // the frontend logs a failed view rebuild and carries on with an empty page
+  const rebuildErrors = [];
+  page.on('console', (m) => { if (/duplicate id/.test(m.text())) rebuildErrors.push(m.text().split('\n')[0].slice(0, 200)); });
+  const rebuildsFailed = () => (rebuildErrors.length ? ` - the view rebuild failed: ${rebuildErrors[0]}` : '');
   const state = () => page.evaluate(`(() => { const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all()); return (${tableState.toString()})(); })()`);
   await waitForIdle(page);
   const before = await state();
@@ -120,16 +124,22 @@ export default async (page, expect) => {
   });
   expect(!!groupSwitch, 'the QuickGroup switch in the open column menu').toBeTruthy();
   await page.evaluate((id) => document.getElementById(id).focus(), groupSwitch);
-  page.on('console', (m) => { if (/warn|error/.test(m.type())) console.log('CON', m.text().slice(0, 300)); });
-  page.on('request', (r) => { if (r.method() === 'POST') console.log('REQ', (r.postData() || '').slice(0, 300)); });
   await page.keyboard.press('Space');
   await waitForIdle(page);
-  console.log('DBG', await page.evaluate(() => { const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all()); const t = all.find((c) => c.getId().endsWith('--persoTable') && !c.bIsDestroyed && c.getDomRef()); return JSON.stringify([document.activeElement.id, all.filter((c)=>c.isA('sap.m.Switch')).map((c)=>[c.getId(), c.getState(), c.bIsDestroyed]), t.getItems().map((i) => i.getMetadata().getName() + ':' + (i.getTitle ? i.getTitle() : i.getCells()[2].getText())), t.getBinding('items').aSorters]); }));
+  /* KNOWN PORT DEFECT (2026-10-20): this is the third view rebuild since the
+     popup was last opened, and it dies on "adding element with duplicate id
+     '...mainView2--columnsPanel'". sap.m.p13n.Popup moves its panels into an
+     internal Container that only the Dialog created by open( ) owns - exit( )
+     destroys that Dialog, never the Container - so a view whose popup was
+     never opened leaks its panels, and the framework's alternating view id
+     (mainView / mainView2) collides with them two rebuilds later: the app is
+     left with an empty page. Two quick sorts without opening Settings are
+     enough. Not weakened here - the leg stays red until the port stops it. */
   await waitForUi5(page, () => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
     if (!t) return false;
     const heads = t.getItems().filter((i) => i.isA('sap.m.GroupHeaderListItem')).map((i) => i.getTitle());
     return heads.length === 2 && /Walldorf/.test(heads[0]) && /Heidelberg/.test(heads[1]);
-  }, 'the quick group switch on City did not group the rows (Walldorf, then Heidelberg group headers)');
+  }, `the quick group switch on City did not group the rows (Walldorf, then Heidelberg group headers)${rebuildsFailed()}`);
 };

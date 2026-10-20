@@ -3218,14 +3218,16 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // NOTE: onChange` &&
             ` round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a` &&
             ` cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the payments-table items -` &&
-            ` FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. // NOTE:` &&
-            ` the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter` &&
-            ` function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with`.
-    text1 = text1 && ` formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model` &&
-            ` as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as` &&
-            ` the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and` &&
-            ` day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0]` &&
-            ` event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
+            ` FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. toDates` &&
+            ` returns sap.ui.core.date.UniversalDate objects, not JS Dates, so each date is sent as .getJSDate() (the second guarded, since FROM/TO yield one date): a bare UniversalDate serialized as {oDate,` &&
+            ` sCalendarType} and filtered every row away (found by the e2e interaction, 2026-10-20). // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state,`.
+    text1 = text1 && ` seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME` &&
+            ` cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. //` &&
+            ` NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's` &&
+            ` !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is` &&
+            ` reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal` &&
+            ` (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO`.
+    text1 = text1 && ` string, and the binding_call filter that follows.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRange`                                          class = `z2ui5_cl_smpc_app_639` path = `src/02/01/z2ui5_cl_smpc_app_639.clas.abap`
         score = 5
@@ -3243,13 +3245,15 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` the same MiddleEastern week. // NOTE: onChange round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the` &&
             ` control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action(` &&
             ` binding_call ) on the payments-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which`.
-    text1 = text1 && ` orders like the original's Date compare. // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid` &&
-            ` parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard` &&
-            ` sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. // NOTE: the env named model` &&
-            ` ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto'` &&
-            ` rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit` &&
-            ` (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). // LIVE-TEST: unverified in a`.
-    text1 = text1 && ` running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
+    text1 = text1 && ` orders like the original's Date compare. toDates returns sap.ui.core.date.UniversalDate objects, not JS Dates, so each date is sent as .getJSDate() (the second guarded, since FROM/TO yield one date):` &&
+            ` a bare UniversalDate serialized as {oDate, sCalendarType} and filtered every row away (found by the e2e interaction, 2026-10-20). // NOTE: the controller's setValueState(ValueState.Error/None) is the` &&
+            ` bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not` &&
+            ` an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output,` &&
+            ` the formatter attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system` &&
+            ` with the original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days,`.
+    text1 = text1 && ` months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are` &&
+            ` their ISO literal (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to` &&
+            ` a local ISO string, and the binding_call filter that follows.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeAndCalendarWeekNumbering`                  class = `z2ui5_cl_smpc_app_640` path = `src/02/01/z2ui5_cl_smpc_app_640.clas.abap`
         score = 5
@@ -3290,15 +3294,17 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` row - only the BT branch filters orderTime. The port issues the same paths (PERFOMDATETIME / ORDERTIME). // NOTE: onChange round-trips: the change wire carries ${$parameters>/valid},`.
     text1 = text1 && ` ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp),` &&
             ` and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the orders-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty` &&
-            ` value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState` &&
-            ` attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed` &&
-            ` formatter; the ORDERTIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter` &&
-            ` attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the`.
-    text1 = text1 && ` original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years)` &&
-            ` is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO` &&
-            ` literal (month 5 = June). The orders' extra getChristmasDay(currentYear - 1) row is 25 December of the previous year at the current time; the original's setUTCDate (instead of setDate) only differs` &&
-            ` around midnight UTC. totalPrice is computed in model_init like the original's onInit forEach. // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg` &&
-            ` expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
+            ` value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. toDates returns sap.ui.core.date.UniversalDate objects, not JS Dates, so each date is` &&
+            ` sent as .getJSDate() (the second guarded, since FROM/TO yield one date): a bare UniversalDate serialized as {oDate, sCalendarType} and filtered every row away (found by the e2e interaction,` &&
+            ` 2026-10-20). // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the` &&
+            ` controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the ORDERTIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime`.
+    text1 = text1 && ` binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the` &&
+            ` default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in` &&
+            ` model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's)` &&
+            ` with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). The orders' extra getChristmasDay(currentYear - 1) row is 25 December of` &&
+            ` the previous year at the current time; the original's setUTCDate (instead of setDate) only differs around midnight UTC. totalPrice is computed in model_init like the original's onInit forEach. //` &&
+            ` LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the`.
+    text1 = text1 && ` binding_call filter that follows.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeWithCustomOptions`                         class = `z2ui5_cl_smpc_app_642` path = `src/02/01/z2ui5_cl_smpc_app_642.clas.abap`
         score = 5
@@ -4192,7 +4198,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup. // NOTE: the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick` &&
             ` pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the`.
     text1 = text1 && ` description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20**` &&
-            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs).`.
+            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, abap_true) since 2026-10-20, so a backend slower than UI5's` &&
+            ` 1 s busy delay does not flash the overlay over the countdown.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageSessionTimeout`                          class = `z2ui5_cl_smpc_app_638` path = `src/02/01/z2ui5_cl_smpc_app_638.clas.abap`
         score = 5

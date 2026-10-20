@@ -86,8 +86,8 @@ CLASS z2ui5_cl_smpc_app_642 IMPLEMENTATION.
                                                         val   = `CHANGE`
                                                         t_arg = VALUE #( ( `${$parameters>/valid}` )
                                                                          ( `${$parameters>/value/operator}` )
-                                                                         ( `${$parameters>/value} ? ${$source>}.toDates(${$parameters>/value})[0] : ''` )
-                                                                         ( `${$parameters>/value} ? ${$source>}.toDates(${$parameters>/value})[1] : ''` ) ) )
+                                                                         ( `${$parameters>/value} ? ${$source>}.toDates(${$parameters>/value})[0].getJSDate() : ''` )
+                                                                         ( `${$parameters>/value} ? (${$source>}.toDates(${$parameters>/value})[1] ? ${$source>}.toDates(${$parameters>/value})[1].getJSDate() : '') : ''` ) ) )
                         )->a( n = `width`       v = client->_bind( filterinputwidth )
 
                 )->end(

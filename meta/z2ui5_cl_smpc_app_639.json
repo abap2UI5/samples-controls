@@ -18,7 +18,7 @@
     },
     {
       "type": "NOTE",
-      "what": "onChange round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the payments-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare."
+      "what": "onChange round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the payments-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. toDates returns sap.ui.core.date.UniversalDate objects, not JS Dates, so each date is sent as .getJSDate() (the second guarded, since FROM/TO yield one date): a bare UniversalDate serialized as {oDate, sCalendarType} and filtered every row away (found by the e2e interaction, 2026-10-20)."
     },
     {
       "type": "NOTE",
