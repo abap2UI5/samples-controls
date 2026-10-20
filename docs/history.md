@@ -7,7 +7,51 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-08 (latest) — e2e-nightly green again: three modules that had fallen behind the app and the framework
+## 2026-10-20 (latest) — controls newer than UI5 1.71 come into scope: 48 ports, coverage 669 / 669
+
+**Decision (maintainer).** A sample whose control is newer than UI5 1.71 is no
+longer out of scope. The rule cost 48 samples on 12 controls — `sap.m.Avatar`,
+`IllustratedMessage`, `DynamicDateRange`, `ExpandableText`, the `sap.m.p13n`
+Container/Engine/Popup, `VariantManagement`, `plugins.UploadSetwithTable`,
+`sap.f.AvatarGroup`, `SidePanel`, `ProductSwitch` and `HeroBanner` — while
+`src/02` already held 221 ports needing a newer runtime for a member. Such a
+port now keeps the control 1:1 and declares it as a `POST_171` deviation
+naming it, which files it under `src/02`; `generate-coverage.mjs` fails a
+post-1.71 control port without that deviation, `scaffold.mjs` writes it, and
+`scope-of.mjs` reports the control `IN_SCOPE`. The four `newer` entries of
+`ui5/scope-exceptions.json` (apps 136/141/165/203, all already POST_171) went
+with the rule, and `lib-packages.mjs` reads the release level from POST_171
+alone.
+
+**Ports.** Apps 624–671 in seven batches (b49, b50, b52–b56), every gate
+green. What did not port 1:1, by gap:
+
+- **Illustration sets** cannot be registered (no `IllustrationPool` target) —
+  630, 635–638 render without the `Custom`/`tnt` illustration; new ❌ row in
+  CAPABILITIES.md.
+- **Function-typed properties** stay out of reach: `p13n.Popup.reset` (650),
+  `FilterPanel.itemFactory` (645/646, a Dialog improvised instead),
+  `UploadSetwithTable.itemValidationHandler` (656) and
+  `customPageContentHandler` (653); app-written `DynamicDateOption` subclasses
+  (642).
+- **The p13n Engine** is controller JS: 645–649 keep the state in ABAP, feed
+  the panels via `setP13nData` and apply what `getP13nData` returns through
+  the Popup's `close` args. `sap.ui.fl` VariantManagement is dropped there.
+- **Uploads** are emulated by vetoing `beforeUploadStarts` and adding the row
+  in the backend (652–661); an uploaded row has no blob to preview.
+- **Render harness:** `sap.f.AvatarGroup` loops ("Rendering has been
+  re-started too many times") even in a minimal static view, so 662 declares a
+  `render_smoke` skip.
+
+25 ports carry `LIVE_TEST`s (event-arg expressions such as
+`${$source>}.toDates( … )`, plugin calls with a live binding Context, the
+session-timeout countdown) for the next e2e run to close. The advisory budget
+moved by what the originals carry (+14 missing-accessibility, +13
+editable-control-without-binding, +1 event-on-disabled-control), and
+`7bit_ascii` excludes 649/668/671 for the original's `Müller` and `€` — the
+shared rule set in abap2UI5 changed first.
+
+## 2026-10-08 — e2e-nightly green again: three modules that had fallen behind the app and the framework
 
 The nightly of 2026-10-08 (run 37756011169, abap2UI5 main at 57ee33b) was
 red on three apps in shards 1 and 4, every other badge of the README green.
