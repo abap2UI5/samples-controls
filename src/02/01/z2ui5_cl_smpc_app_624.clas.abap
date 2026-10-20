@@ -1,3 +1,6 @@
+" @keywords avatar sap.m scrollcontainer text grid vbox
+" @summary This sample demonstrates different combinations of types, shapes, and sizes of the Avatar.
+" @origin sap.m.sample.Avatar - https://sdk.openui5.org/entity/sap.m.Avatar/sample/sap.m.sample.Avatar (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_624 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

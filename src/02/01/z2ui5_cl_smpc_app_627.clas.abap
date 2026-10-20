@@ -1,3 +1,6 @@
+" @keywords avatar sap.m avatarvaluestate scrollcontainer grid vbox text
+" @summary This sample demonstrates different badge value states of the Avatar.
+" @origin sap.m.sample.AvatarValueState - https://sdk.openui5.org/entity/sap.m.Avatar/sample/sap.m.sample.AvatarValueState (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_627 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

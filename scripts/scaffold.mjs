@@ -303,6 +303,13 @@ CLASS ${cls} IMPLEMENTATION.
 
 ENDCLASS.
 `;
+/* A GROUP-nested sample (`UploadSetwithTablePlugin.ResponsiveTableFilePreview`)
+ * often does not fit the 60 characters, and clipping it at a word left only
+ * `sap.m...` - identical for every child of the group, which abaplint's
+ * identical_descriptions rejects. The child name is what tells them apart. */
+const descript = `${lib} - ${name}`.length > 60 && name.includes('.')
+  ? `${lib} - ${name.slice(name.lastIndexOf('.') + 1)}`
+  : `${lib} - ${name}`;
 const clasXml = `﻿<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -310,7 +317,7 @@ const clasXml = `﻿<?xml version="1.0" encoding="utf-8"?>
    <VSEOCLASS>
     <CLSNAME>${cls.toUpperCase()}</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>${clipAtWord(`${lib} - ${name}`, 60)}</DESCRIPT>
+    <DESCRIPT>${clipAtWord(descript, 60)}</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>

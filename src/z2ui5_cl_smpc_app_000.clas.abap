@@ -998,15 +998,41 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     DATA text1 TYPE string.
     DATA text2 TYPE string.
 
+    text1 = `NOTE: Three JSONModels are folded onto the one default model: the named items model (model/avatargroup.json, {items>/content} -> {/T_CONTENT}, totalCount kept as a non-bound attribute), the unnamed` &&
+            ` settings model ({/viewPortPercentWidth} -> {/VIEWPORTPERCENTWIDTH}, {/popoverTitle} -> {/POPOVERTITLE}), the personData model (a structure S_PERSON, bound absolutely as {/S_PERSON/...} since there is` &&
+            ` no element binding) and the groupedAvatars model (T_GROUPED, the Grid's bound content). Same data and leaf names, so a prefix-drop. The JSON's per-row tooltip key ('1'..'15') is bound nowhere and` &&
+            ` stays out of the row type. // NOTE: onSliderMoved reads the slider value and calls setWidth( value + '%' ) on the VerticalLayout vl1. The port binds VerticalLayout.width to VL_WIDTH and computes the` &&
+            ` string in on_event on a liveChange round-trip carrying check_queue_last and check_no_busy (the per-drag-step wire shape), so the backend ends on the slider's last value. VIEWPORTPERCENTWIDTH is` &&
+            ` seeded 100 and VL_WIDTH '100%' as in onInit / the view. // NOTE: onIndividualPress / onGroupPress / _getContent / _getAvatarModel are rebuilt in ABAP. The press event transports`.
+    text1 = text1 && ` overflowButtonPressed, avatarsDisplayed, the eventSource id (the popover anchor) and the pressed item's row index (${$parameters>/eventSource}.getBindingContext().getPath().split('/').pop()); the` &&
+            ` Group-type AvatarGroup anchors at $event.oSource.sId as onGroupPress anchors at oEvent.getSource(). The popover rows are the avatars from avatarsDisplayed on (all for Group), the title 'Team Members` &&
+            ` (<n>)' and the contentHeight formula ((n DIV 2 + n MOD 2) * 68 + 48 px) are computed in ABAP. The backgroundColor _getAvatarModel reads off AvatarGroupItem.getAvatarColor( ) is derived in ABAP from` &&
+            ` the rule AvatarGroup.addItem applies (Accent1..Accent10 by item position, round robin) instead of being read from the control - same value, no control call. // IMPROVISED:` &&
+            ` IndividualPopover.fragment.xml and GroupPopover.fragment.xml are built in on_event (popover_display) and Card.fragment.xml is inlined into both, as the original's two core:Fragment references load it` &&
+            ` twice - so the port carries the Card subtree twice (control extra Card, VerticalLayout, HBox, Avatar, VBox, Title, Text, Label controls) and drops both core:Fragment references. Each popover is`.
+    text1 = text1 && ` rebuilt per press instead of being cached, which also makes oNavCon.to(oMainPage) on every open implicit (a fresh NavContainer starts on its first page). openBy(` &&
+            ` ).addStyleClass('sapFAvatarGroupPopover') becomes a class attribute on each Popover. onAvatarPress's setContentWidth('450px') is a no-op (the Popover already declares 450px) and its` &&
+            ` oGroupPopover.focus( ) is dropped; the NavContainer moves with control_by_id to( detail ) / back( ) in the popover slot, the contentHeight follows the bound POPOVER_HEIGHT (375px on the detail page,` &&
+            ` the computed height after navButtonPress). // NOTE: GroupPopover.fragment.xml binds the grid Avatar's fallbackIcon to {personData>/fallbackIcon} - the individual personData model, not the row's` &&
+            ` groupedAvatars model - so every grid avatar shows the fallback icon of whichever person was last opened. Ported verbatim as the absolute {/S_PERSON/FALLBACKICON} binding rather than repaired.` &&
+            ` S_PERSON-BACKGROUNDCOLOR is seeded Accent6 (the sap.m.Avatar default): the empty personData model leaves the property undefined, while an empty string on the enum-typed backgroundColor would make UI5`.
+    text1 = text1 && ` reject the whole popover. // NOTE: The two avatar image src values are host-absolutized to https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_01.png and Woman_avatar_02.png (the JSON's` &&
+            ` ./test-resources/... resolves against the Demo Kit). Row fields the JSON omits (initials, src, fallbackIcon) are left initial - all three are plain string/URI properties whose empty value renders` &&
+            ` like undefined. // POST-1.71: the sap.f.AvatarGroup and sap.f.AvatarGroupItem controls (since UI5 1.73) are newer than 1.71 and are the whole point of this sample - kept 1:1. The inlined card also` &&
+            ` uses sap.m.Avatar (@since 1.73, its press @since 1.73) and the Popover and Page titleAlignment property (@since 1.72), so the app needs a UI5 release >= 1.73.`.
     result = VALUE #(
       ( module = `sap.f`              control = `sap.f.AvatarGroup`                     name = `AvatarGroup`                                               class = `z2ui5_cl_smpc_app_662` path = `src/02/04/z2ui5_cl_smpc_app_662.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.73`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.AvatarGroup control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.f.AvatarGroup control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` )
+        notes = text1
+        post171 = `the sap.f.AvatarGroup and sap.f.AvatarGroupItem controls (since UI5 1.73) are newer than 1.71 and are the whole point of this sample - kept 1:1. The inlined card also uses sap.m.Avatar (@since 1.73,` &&
+                 ` its press @since 1.73) and the Popover and Page titleAlignment property (@since 1.72), so the app needs a UI5 release >= 1.73.` ) ).
+
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.Card`                            name = `Card`                                                      class = `z2ui5_cl_smpc_app_117` path = `src/01/04/z2ui5_cl_smpc_app_117.clas.abap`
         score = 3
         score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
@@ -1753,50 +1779,106 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since = `1.152`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
-        post171 = `the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` )
+        notes = `POST-1.71: the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
+        post171 = `the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` ) ).
+
+    text1 = `POST-1.71: the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+            ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations` &&
+            ` and the columnsRatio property with its sap.f.HeroBannerColumnsRatio values Equal and FirstWider - all @ui5-experimental-since 1.152 with the control. // NOTE: The sample's main.css (one rule,` &&
+            ` .heroBannerWhiteText { color: var(--sapTextInvertedColor) }, the class the startContent Text carries) is shipped with the port: it is injected through a core:HTML control carrying a <style> block` &&
+            ` (the documented CAPABILITIES form, as in apps 026/028/122), so the port adds one core:HTML control the original view does not have - the original loads the stylesheet through its manifest's` &&
+            ` sap.ui5/resources/css entry instead. The rule is verbatim, only whitespace-collapsed; its literal braces are escaped in a backtick literal because the XMLView parser reads an unescaped brace as a` &&
+            ` binding.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerColumnsRatio`                                    class = `z2ui5_cl_smpc_app_668` path = `src/02/04/z2ui5_cl_smpc_app_668.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.152`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
-        post171 = `the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` )
-      ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerHeaderBlockAndActionsPlacement`                  class = `z2ui5_cl_smpc_app_669` path = `src/02/04/z2ui5_cl_smpc_app_669.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.152`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
-        post171 = `the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` ) ).
+        notes = text1
+        post171 = `the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations` &&
+                 ` and the columnsRatio property with its sap.f.HeroBannerColumnsRatio values Equal and FirstWider - all @ui5-experimental-since 1.152 with the control.` ) ).
 
     result = VALUE #( BASE result
+      ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerHeaderBlockAndActionsPlacement`                  class = `z2ui5_cl_smpc_app_669` path = `src/02/04/z2ui5_cl_smpc_app_669.clas.abap`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        since = `1.152`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = `POST-1.71: the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions and endContent aggregations, columnsRatio` &&
+                 ` (sap.f.HeroBannerColumnsRatio Equal), actionsPlacement (sap.f.HeroBannerActionsPlacement BottomStart) and headerBlockPlacement (sap.f.HeroBannerHeaderBlockPlacement Bottom) - all` &&
+                 ` @ui5-experimental-since 1.152 with the control.`
+        post171 = `the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions and endContent aggregations, columnsRatio` &&
+                 ` (sap.f.HeroBannerColumnsRatio Equal), actionsPlacement (sap.f.HeroBannerActionsPlacement BottomStart) and headerBlockPlacement (sap.f.HeroBannerHeaderBlockPlacement Bottom) - all` &&
+                 ` @ui5-experimental-since 1.152 with the control.` ) ).
+
+    text1 = `POST-1.71: the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+            ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations` &&
+            ` and columnsRatio (sap.f.HeroBannerColumnsRatio FirstWider) - all @ui5-experimental-since 1.152 with the control. // NOTE: The two sap.ui.integration widgets Card controls keep their manifest as a` &&
+            ` literal URL, as in the original, but absolutized: the original's relative test-resources/sap/f/demokit/sample/HeroBannerIntegrationCard/startContentManifest.json and endContentManifest.json have no` &&
+            ` document root to resolve against in an abap2UI5 app, so the port points at https://sdk.openui5.org/test-resources/... (both files verified 2026-10-20: HTTP 200, byte-identical to the archived` &&
+            ` ui5/sap.f/HeroBannerIntegrationCard copies, served with access-control-allow-origin: *). The Cards therefore load their manifests from the live OpenUI5 demo kit, whose version moves on (1.153.0 on`.
+    text1 = text1 && ` that date); the manifests carry their list data inline (content.data.json), so no further request is needed. // LIVE-TEST: Unverified in a running system: that both Card controls fetch their manifest` &&
+            ` cross-origin from sdk.openui5.org and render their List content inside the HeroBanner's startContent and endContent slots. The render gate only proves the view creates; it does not wait for the` &&
+            ` manifest request.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerIntegrationCard`                                 class = `z2ui5_cl_smpc_app_670` path = `src/02/04/z2ui5_cl_smpc_app_670.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.152`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
-        post171 = `the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` )
+        notes = text1
+        post171 = `the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations` &&
+                 ` and columnsRatio (sap.f.HeroBannerColumnsRatio FirstWider) - all @ui5-experimental-since 1.152 with the control.` ) ).
+
+    text1 = `POST-1.71: the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+            ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations,` &&
+            ` columnsRatio (sap.f.HeroBannerColumnsRatio Equal, FirstWider), actionsPlacement (sap.f.HeroBannerActionsPlacement BottomStart) and headerBlockPlacement (sap.f.HeroBannerHeaderBlockPlacement Bottom) -` &&
+            ` all @ui5-experimental-since 1.152 with the control. // NOTE: The sample's main.css (one rule, .heroBannerWhiteText { color: var(--sapTextInvertedColor) }, the class the startContent Text carries) is` &&
+            ` shipped with the port: it is injected through a core:HTML control carrying a <style> block (the documented CAPABILITIES form, as in apps 026/028/122), so the port adds one core:HTML control the` &&
+            ` original view does not have - the original loads the stylesheet through its manifest's sap.ui5/resources/css entry instead. The rule is verbatim, only whitespace-collapsed; its literal braces are`.
+    text1 = text1 && ` escaped in a backtick literal because the XMLView parser reads an unescaped brace as a binding.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerUseCases`                                        class = `z2ui5_cl_smpc_app_671` path = `src/02/04/z2ui5_cl_smpc_app_671.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.152`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.`
-        post171 = `the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152.` )
+        notes = text1
+        post171 = `the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending` &&
+                 ` sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations,` &&
+                 ` columnsRatio (sap.f.HeroBannerColumnsRatio Equal, FirstWider), actionsPlacement (sap.f.HeroBannerActionsPlacement BottomStart) and headerBlockPlacement (sap.f.HeroBannerHeaderBlockPlacement Bottom) -` &&
+                 ` all @ui5-experimental-since 1.152 with the control.` ) ).
+
+    text1 = `NOTE: The view is the trigger Button plus two explanatory Texts; the ProductSwitch lives in ProductSwitchItemWithImageSrc.fragment.xml, which onInit loads once and fnOpen opens at pSwitchBtn (openBy).` &&
+            ` The port rebuilds the fragment as a core:FragmentDefinition in on_event and shows it with popover_display( by_id = pSwitchBtn ) - the documented fragment-popover path of app 165. The three` &&
+            ` ProductSwitchItem controls stay static 1:1 (the original binds no model). fnChange - MessageToast 'Redirecting to <targetSrc>' plus URLHelper.redirect( targetSrc, true ) - is two client actions` &&
+            ` chained on the one change event, both reading the pressed item off the event (${$parameters>/itemPressed}.getTargetSrc()). // NOTE: onInit gives the popover an Emphasized 'Close' endButton on a phone` &&
+            ` only (Device.system.phone), wired to fnClose. The branch stays a branch, as in app 165: the Button is declared once with visible bound to {= ${device>/system/phone} } and closes with the` &&
+            ` roundtrip-free popover_close action - so the port carries 2 Button controls where the original view declares 1, the second being the controller-built one. // NOTE: The imageSrc assets are`.
+    text1 = text1 && ` host-absolutized to https://sdk.openui5.org/ (test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg and test-resources/sap/m/images/Woman_avatar_01.png, which the original resolves relative to` &&
+            ` the Demo Kit); the SVG item keeps the original's absolute www.sap.com logo URL verbatim. // POST-1.71: the sap.f.ProductSwitch and sap.f.ProductSwitchItem controls (since UI5 1.72) are newer than` &&
+            ` 1.71 and are the whole point of this sample - kept 1:1. The sample's subject, ProductSwitchItem.imageSrc, is @since 1.140 (ProductSwitchItem.js), so the app needs a UI5 release >= 1.140.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.ProductSwitch`                   name = `ProductSwitchItemWithImageSrc`                             class = `z2ui5_cl_smpc_app_666` path = `src/02/04/z2ui5_cl_smpc_app_666.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.72`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.ProductSwitch control (since UI5 1.72) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.72.`
-        post171 = `the sap.f.ProductSwitch control (since UI5 1.72) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.72.` ) ).
+        notes = text1
+        post171 = `the sap.f.ProductSwitch and sap.f.ProductSwitchItem controls (since UI5 1.72) are newer than 1.71 and are the whole point of this sample - kept 1:1. The sample's subject, ProductSwitchItem.imageSrc,` &&
+                 ` is @since 1.140 (ProductSwitchItem.js), so the app needs a UI5 release >= 1.140.` ) ).
 
     text1 = `NOTE: The sample's UI is a trigger Button plus two explanatory Texts, and the ProductSwitch itself lives in ProductSwitchPopover.fragment.xml, opened on press. **Rebuilt 1:1 on 2026-08-05** (the` &&
             ` 2026-07-27 review had flagged the 'no JS controller' rationale as refuted): the fragment is a core:FragmentDefinition shown through popover_display( by_id = pSwitchBtn ), the three products come from` &&
@@ -1963,31 +2045,78 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         post171 = `two post-1.71 members are kept for the 1:1 port: sap.m.Avatar (since UI5 1.73) in the ShellBar's profile aggregation, and sap.tnt.NavigationListItem.expanded (since 1.121), which the sample's own` &&
                  ` NavigationList fragment binds - app 407 declares the same property with the note that it predates 1.71 on the control and only reads as 1.121 because it moved to a newer base class.` ) ).
 
+    text1 = `NOTE: onToggle vetoes the firing when the Switch for its direction is on (event.preventDefault) and resets that Switch with a toast. Reproduced 1:1 with the app-136 idiom: s_ctrl-prevent_default_expr` &&
+            ` (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires against the two two-way bound Switch states, the event still` &&
+            ` reaches the backend, and on_event raises the matching toast and resets that Switch through the automatic model push - no view_display( ), since the expanded item lives in the control. Unlike app` &&
+            ` 136's single-item panel, selecting a different item fires TWO toggle events back to back (collapse of the old item, then expand of the new one), so the wire also sets check_queue_last: without it the` &&
+            ` second firing would be dropped while the first round-trip is in flight and a vetoed expand would never get its toast and Switch reset. // IMPROVISED: onToggle's third branch destroys the content of` &&
+            ` the expanding item whose AUTO-GENERATED id ends in 2 and adds a controller-built VBox (a Text 'Dynamically added content', then Label 'Label 1'..'Label 3' each followed by an Input). abap2UI5 builds`.
+    text1 = text1 && ` no controls on the client, so the port declares that VBox, Text, Label and Input content statically inside the third SidePanelItem ('Go to office', the one item the original ships empty). Content of` &&
+            ` a SidePanelItem is only visible while the item is expanded, by which time the original has added it, so the screen shows the same thing; two things differ. (1) The original recreates the Inputs on` &&
+            ` every expansion, so typed values are wiped on re-expand - the port's Inputs keep them. (2) The original picks the item by parsing the digits of its auto id (parseInt(oItem.getId().replace(/^\D+/g,` &&
+            ` ''))), which counts every control created with the uid token 'item' before it - the SidePanel's two core:ListItem controls of the Select take __item0 and __item1 in a standalone run, so the counter` &&
+            ` actually lands on 'Run' there, and inside the Demo Kit app (a global counter shared with the shell's own list items) it hardly ever equals 2 at all. The port follows the evident intent, the item at` &&
+            ` index 2 of the items aggregation, and needs no toggle logic for it. // NOTE: The Select edits the named settings model ({settings>/sidePanelPosition}, seeded in onInit from the panel's own`.
+    text1 = text1 && ` getSidePanelPosition( ) default Right) and its change handler onChangePosition calls setSidePanelPosition with the selected key. The port folds the model onto the default model ({/SIDEPANELPOSITION},` &&
+            ` seeded Right from the control default) and binds SidePanel.sidePanelPosition two-way to the same field, so the client-side model update moves the panel without a round-trip - the Select's change` &&
+            ` attribute is dropped because the binding does its job. // POST-1.71: the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept` &&
+            ` 1:1, the app needs a UI5 release >= 1.146: the Run item uses the SidePanelItem title aggregation (a sap.m.Title, @since 1.146), and the SidePanelPosition enum the sidePanelPosition property takes is` &&
+            ` @since 1.104.`.
     result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.SidePanel`                       name = `SidePanel`                                                 class = `z2ui5_cl_smpc_app_663` path = `src/02/04/z2ui5_cl_smpc_app_663.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.107`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.`
-        post171 = `the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.` )
+        notes = text1
+        post171 = `the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.146: the Run item uses the` &&
+                 ` SidePanelItem title aggregation (a sap.m.Title, @since 1.146), and the SidePanelPosition enum the sidePanelPosition property takes is @since 1.104.` ) ).
+
+    text1 = `NOTE: onToggle vetoes the firing when the Switch for its direction is on (event.preventDefault) and resets that Switch with a toast. Reproduced 1:1 with the app-136 idiom: s_ctrl-prevent_default_expr` &&
+            ` (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires against the two two-way bound Switch states, the event still` &&
+            ` reaches the backend, and on_event raises the matching toast and resets that Switch through the automatic model push - no view_display( ), since the expanded item lives in the control. Unlike app` &&
+            ` 136's single-item panel, selecting a different item fires TWO toggle events back to back (collapse of the old item, then expand of the new one), so the wire also sets check_queue_last: without it the` &&
+            ` second firing would be dropped while the first round-trip is in flight and a vetoed expand would never get its toast and Switch reset. // IMPROVISED: onToggle's third branch replaces the content of` &&
+            ` an expanding item whose AUTO-GENERATED id ends in a number above 1 (parseInt(oItem.getId().replace(/^\D+/g, ''))) with a controller-built Text "Dynamically created content for item '<item text>'".`.
+    text1 = text1 && ` abap2UI5 builds no controls on the client, so the port declares that Text statically inside every ENABLED SidePanelItem past the second (13 Text controls; the three disabled items 'Go to office', 'Go` &&
+            ` to the theater' and 'Draw a picture' can never expand and get none). Item content is only visible while the item is expanded, by which time the original has added it, so the screen shows the same` &&
+            ` text. The auto-id rule is followed by its evident intent, the item index in the aggregation: in a standalone run 'Run' and 'Go home' are __item0/__item1 and keep their static content, while inside` &&
+            ` the Demo Kit app the id counter is shared with the shell's own list items and even those two get replaced - the port does not reproduce that accident. // POST-1.71: the SidePanel and SidePanelItem` &&
+            ` controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.SidePanel`                       name = `SidePanelOverflow`                                         class = `z2ui5_cl_smpc_app_664` path = `src/02/04/z2ui5_cl_smpc_app_664.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.107`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.`
-        post171 = `the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.` )
+        notes = text1
+        post171 = `the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.` ) ).
+
+    text1 = `NOTE: onToggle vetoes the firing when the Switch for its direction is on (event.preventDefault) and resets that Switch with a toast. Reproduced 1:1 with the app-136 idiom: s_ctrl-prevent_default_expr` &&
+            ` (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires against the two two-way bound Switch states, the event still` &&
+            ` reaches the backend, and on_event raises the matching toast and resets that Switch through the automatic model push - no view_display( ), since the expanded item lives in the control. Unlike app` &&
+            ` 136's single-item panel, selecting a different item fires TWO toggle events back to back (collapse of the old item, then expand of the new one), so the wire also sets check_queue_last: without it the` &&
+            ` second firing would be dropped while the first round-trip is in flight and a vetoed expand would never get its toast and Switch reset. // IMPROVISED: onToggle's third branch destroys the content of` &&
+            ` the expanding item whose AUTO-GENERATED id ends in 2 and adds a controller-built VBox (a Text 'Dynamically added content', then Label 'Label 1'..'Label 3' each followed by an Input). abap2UI5 builds`.
+    text1 = text1 && ` no controls on the client, so the port declares that VBox, Text, Label and Input content statically inside the third SidePanelItem ('Go to office', the one item the original ships empty). Content of` &&
+            ` a SidePanelItem is only visible while the item is expanded, by which time the original has added it, so the screen shows the same thing; two things differ. (1) The original recreates the Inputs on` &&
+            ` every expansion, so typed values are wiped on re-expand - the port's Inputs keep them. (2) The original picks the item by parsing the digits of its auto id (parseInt(oItem.getId().replace(/^\D+/g,` &&
+            ` ''))), which counts every control created with the uid token 'item' before it - in a standalone run that is 'Go to office' (__item2), inside the Demo Kit app the counter is shared with the shell's` &&
+            ` own list items and hardly ever equals 2. The port follows the evident intent, the item at index 2 of the items aggregation, and needs no toggle logic for it. // POST-1.71: the SidePanel and` &&
+            ` SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.109: sidePanelResizable is @since 1.109`.
+    text1 = text1 && ` (SidePanel.js), kept as the sample's subject.`.
+    result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.SidePanel`                       name = `SidePanelResizable`                                        class = `z2ui5_cl_smpc_app_665` path = `src/02/04/z2ui5_cl_smpc_app_665.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.107`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.`
-        post171 = `the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107.` ) ).
+        notes = text1
+        post171 = `the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.109: sidePanelResizable is` &&
+                 ` @since 1.109 (SidePanel.js), kept as the sample's subject.` ) ).
 
     text1 = `NOTE: onToggle vetoes the firing when the matching Switch is on (event.preventDefault) and resets that Switch. **Reproduced 1:1 since 2026-08-23** with s_ctrl-prevent_default_expr: the client` &&
             ` expression (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires and reads the two two-way bound Switch states, which` &&
@@ -2015,49 +2144,115 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-07-20): verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port. **e2e-verified 2026-09-12**` &&
                  ` (interaction module meta/interactions/z2ui5_cl_smpc_app_001.mjs: the Actions list header and all five ActionListItems render as .sapMALI rows with their texts - a static port, so the render IS the` &&
-                 ` check)` )
-      ( module = `sap.m`              control = `sap.m.Avatar`                          name = `Avatar`                                                    class = `z2ui5_cl_smpc_app_624` path = `src/02/01/z2ui5_cl_smpc_app_624.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.73`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` )
-      ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarActiveState`                                         class = `z2ui5_cl_smpc_app_625` path = `src/02/01/z2ui5_cl_smpc_app_625.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.73`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` ) ).
+                 ` check)` ) ).
 
+    text1 = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (all 30 Avatars, every` &&
+            ` displaySize/displayShape/backgroundColor/customDisplaySize/fallbackIcon/showBorder value of the original, including the AvatarColor values Transparent/TileIcon/Placeholder/Random), the app needs a` &&
+            ` UI5 release >= 1.73. // POST-1.71: the Avatar property enabled (since UI5 1.117) is kept 1:1 on the 'Disabled' Avatar (enabled="false") - the app needs a UI5 release >= 1.117 to render it disabled.` &&
+            ` Like the original it still carries a press wire that can never fire (the view-gates advisory on that line is the original's own shape). // NOTE: onInit's JSONModel` &&
+            ` (Speakers/Woman01/Woman02/Screw/Lamp = sap.ui.require.toUrl('sap/m/images/...')) is seeded in model_init as the default-model root fields speakers/woman01/woman02/screw/lamp; the module paths have no` &&
+            ` server-side resolution, so they are pinned to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/images/ (same file names, the folder the sample's resourceRoots sap.m.images points at) per`.
+    text1 = text1 && ` the runtime asset-URL rule. The Avatar.src bindings {/Speakers} {/Woman01} {/Woman02} {/Screw} {/Lamp} stay bindings (client->_bind), which structural-diff cannot read statically. // NOTE: onPress` &&
+            ` toasts oEvent.getSource().getId() + ' Pressed'. All eight press wires reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled` &&
+            ` by $event.oSource.sId, app 127 precedent); the id itself is a UI5 runtime value whose view prefix differs from the original's. // NOTE: the multi-line text attribute of the 'If there is no image...'` &&
+            ` Text (a line break plus tab indentation inside the attribute in the original view.xml) is written as one line with a single space at the break: XML attribute normalization turns the break and tabs` &&
+            ` into spaces, which sap.m.Text collapses when rendering, so the output is identical. The original's typo 'proivided' is kept verbatim.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.Avatar`                          name = `Avatar`                                                    class = `z2ui5_cl_smpc_app_624` path = `src/02/01/z2ui5_cl_smpc_app_624.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        since = `1.73`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (all 30 Avatars, every` &&
+                 ` displaySize/displayShape/backgroundColor/customDisplaySize/fallbackIcon/showBorder value of the original, including the AvatarColor values Transparent/TileIcon/Placeholder/Random), the app needs a` &&
+                 ` UI5 release >= 1.73. // the Avatar property enabled (since UI5 1.117) is kept 1:1 on the 'Disabled' Avatar (enabled="false") - the app needs a UI5 release >= 1.117 to render it disabled. Like the` &&
+                 ` original it still carries a press wire that can never fire (the view-gates advisory on that line is the original's own shape).` ) ).
+
+    text1 = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // POST-1.71: the Avatar property active` &&
+            ` (since UI5 1.120) is what this sample demonstrates. The original never writes it in the view - the controller calls setActive( ) - so the port binds it two-way to the ABAP flag active (an extra` &&
+            ` attribute, the scalar-to-binding move of the recipe); the app needs a UI5 release >= 1.120 to show the active state. // POST-1.71: the Popover property titleAlignment (since UI5 1.72, value Center)` &&
+            ` is kept 1:1 from Popover.fragment.xml - the app needs a UI5 release >= 1.72 for the centered title. // NOTE: onInit loads Popover.fragment.xml with Fragment.load and adds it to the view's dependents;` &&
+            ` the port declares the same Popover (id userMenu) 1:1 in the view's mvc:dependents aggregation, and the UserMenu.fragment.xml the Popover pulls in through a core:Fragment reference is inlined into it` &&
+            ` (the List with its eight StandardListItem rows, verbatim) - so the core:Fragment element itself is dropped, and the two core:FragmentDefinition roots are gone with the separate files. // NOTE: the`.
+    text1 = text1 && ` controller logic is moved to the backend: onPress (read getActive( ), setActive( !active ), then close( ) or openBy( source )) becomes the AVATAR_PRESS round-trip that flips the bound active flag and` &&
+            ` follows up with client->follow_up_action( cs_event-control_by_id ) close or openBy anchored to myAvatar; onPopoverClose (afterClose) becomes POPOVER_CLOSE resetting the flag; onListItemPress becomes` &&
+            ` LIST_ITEM_PRESS resetting the flag and closing the Popover. The original does this client-side, the port needs one round-trip per press, so the active state and the popover appear after that` &&
+            ` round-trip rather than instantly. // LIVE-TEST: the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover` &&
+            ` keeps its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property` &&
+            ` follows each step.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarActiveState`                                         class = `z2ui5_cl_smpc_app_625` path = `src/02/01/z2ui5_cl_smpc_app_625.clas.abap`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        since = `1.73`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // the Avatar property active (since UI5 1.120) is` &&
+                 ` what this sample demonstrates. The original never writes it in the view - the controller calls setActive( ) - so the port binds it two-way to the ABAP flag active (an extra attribute, the` &&
+                 ` scalar-to-binding move of the recipe); the app needs a UI5 release >= 1.120 to show the active state. // the Popover property titleAlignment (since UI5 1.72, value Center) is kept 1:1 from` &&
+                 ` Popover.fragment.xml - the app needs a UI5 release >= 1.72 for the centered title.` ) ).
+
+    text1 = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // POST-1.71: the Avatar properties` &&
+            ` badgeIcon (since UI5 1.77), badgeIconColor (since UI5 1.132, its enum sap.m.AvatarBadgeColor too, with the values Indication1..Indication10 only since UI5 1.140) and badgeValueState (since UI5 1.116)` &&
+            ` are what this sample demonstrates and are kept 1:1 on all 24 Avatars - the app needs a UI5 release >= 1.140 to render every badge colour. // NOTE: onPress toasts oEvent.getSource().getId() + '` &&
+            ` Pressed'. All 24 press wires reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled by $event.oSource.sId, app 127` &&
+            ` precedent); the id itself is a UI5 runtime value whose view prefix differs from the original's.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarBadgeIconColor`                                      class = `z2ui5_cl_smpc_app_626` path = `src/02/01/z2ui5_cl_smpc_app_626.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.73`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` )
+        notes = text1
+        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // the Avatar properties badgeIcon (since UI5 1.77),` &&
+                 ` badgeIconColor (since UI5 1.132, its enum sap.m.AvatarBadgeColor too, with the values Indication1..Indication10 only since UI5 1.140) and badgeValueState (since UI5 1.116) are what this sample` &&
+                 ` demonstrates and are kept 1:1 on all 24 Avatars - the app needs a UI5 release >= 1.140 to render every badge colour.` ) ).
+
+    text1 = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // POST-1.71: the Avatar properties` &&
+            ` badgeIcon and badgeTooltip (since UI5 1.77) and badgeValueState (since UI5 1.116) are what this sample demonstrates and are kept 1:1 - the app needs a UI5 release >= 1.116 to render the badge value` &&
+            ` states. // POST-1.71: the icon sap-icon://information (in the icon font since UI5 1.80) is kept 1:1 as the badgeIcon of the 'Information' Avatar - below 1.80 the badge renders with no icon; covered` &&
+            ` by the >= 1.116 the badgeValueState already needs. // NOTE: onInit's JSONModel (GettyImages/Shutterstock/LowShutterstock = sap.ui.require.toUrl('sap/m/images/...')) is seeded in model_init as the` &&
+            ` default-model root fields gettyimages and lowshutterstock - Shutterstock is never bound by this view, so it stays out of the model (unbound mock keys are not inlined). The module paths have no` &&
+            ` server-side resolution, so they are pinned to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/images/ (same file names, the folder the sample's resourceRoots sap.m.images points at) per`.
+    text1 = text1 && ` the runtime asset-URL rule. The bindings Avatar.src {/GettyImages} and {/LowShutterstock} stay bindings (client->_bind), which structural-diff cannot read statically. // NOTE: onPress toasts` &&
+            ` oEvent.getSource().getId() + ' Pressed'. All 5 press wires reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled by` &&
+            ` $event.oSource.sId, app 127 precedent); the id itself is a UI5 runtime value whose view prefix differs from the original's.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarValueState`                                          class = `z2ui5_cl_smpc_app_627` path = `src/02/01/z2ui5_cl_smpc_app_627.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.73`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` )
+        notes = text1
+        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73. // the Avatar properties badgeIcon and badgeTooltip` &&
+                 ` (since UI5 1.77) and badgeValueState (since UI5 1.116) are what this sample demonstrates and are kept 1:1 - the app needs a UI5 release >= 1.116 to render the badge value states. // the icon` &&
+                 ` sap-icon://information (in the icon font since UI5 1.80) is kept 1:1 as the badgeIcon of the 'Information' Avatar - below 1.80 the badge renders with no icon; covered by the >= 1.116 the` &&
+                 ` badgeValueState already needs.` ) ).
+
+    text1 = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (including its detailBox aggregation with the LightBox/LightBoxItem), the app` &&
+            ` needs a UI5 release >= 1.73. // POST-1.71: the Avatar properties badgeIcon and badgeTooltip (since UI5 1.77) are what this sample demonstrates and are kept 1:1 - the app needs a UI5 release >= 1.77` &&
+            ` to render the affordance badges and their tooltips. // NOTE: onInit's JSONModel (GettyImages/Shutterstock/LowShutterstock/LightBox = sap.ui.require.toUrl('sap/m/images/...')) is seeded in model_init` &&
+            ` as default-model root fields of the same names; the module paths have no server-side resolution, so they are pinned to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/images/ (same file` &&
+            ` names, the folder the sample's resourceRoots sap.m.images points at) per the runtime asset-URL rule. The bindings Avatar.src {/GettyImages} {/Shutterstock} {/LowShutterstock} {/LightBox} and` &&
+            ` LightBoxItem.imageSrc {/LightBox} stay bindings (client->_bind), which structural-diff cannot read statically. // NOTE: onPress toasts oEvent.getSource().getId() + ' Pressed'. All 7 press wires`.
+    text1 = text1 && ` reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled by $event.oSource.sId, app 127 precedent); the id itself is a UI5` &&
+            ` runtime value whose view prefix differs from the original's.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarWithAffordance`                                      class = `z2ui5_cl_smpc_app_628` path = `src/02/01/z2ui5_cl_smpc_app_628.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.73`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.`
-        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73.` ) ).
+        notes = text1
+        post171 = `the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (including its detailBox aggregation with the LightBox/LightBoxItem), the app needs a UI5` &&
+                 ` release >= 1.73. // the Avatar properties badgeIcon and badgeTooltip (since UI5 1.77) are what this sample demonstrates and are kept 1:1 - the app needs a UI5 release >= 1.77 to render the affordance` &&
+                 ` badges and their tooltips.` ) ).
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Bar`                             name = `Page`                                                      class = `z2ui5_cl_smpc_app_002` path = `src/01/01/z2ui5_cl_smpc_app_002.clas.abap`
@@ -3020,49 +3215,114 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since = `1.32.0`
         notes = text1 ) ).
 
+    text1 = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // NOTE: onChange` &&
+            ` round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a` &&
+            ` cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the payments-table items -` &&
+            ` FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. // NOTE:` &&
+            ` the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter` &&
+            ` function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with`.
+    text1 = text1 && ` formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model` &&
+            ` as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as` &&
+            ` the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and` &&
+            ` day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0]` &&
+            ` event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRange`                                          class = `z2ui5_cl_smpc_app_639` path = `src/02/01/z2ui5_cl_smpc_app_639.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.92.0`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.`
-        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.` )
+        notes = text1
+        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.` ) ).
+
+    text1 = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // POST-1.71:` &&
+            ` DynamicDateRange.calendarWeekNumbering (since UI5 1.111) with the CalendarWeekNumbering enum value MiddleEastern is the point of this sample - kept 1:1, the app needs a UI5 release >= 1.111. // NOTE:` &&
+            ` the original's _createFilter calls the static DynamicDateRange.toDates(oValue, 'MiddleEastern'); the port calls the source control's own toDates, which applies the control's calendarWeekNumbering -` &&
+            ` the same MiddleEastern week. // NOTE: onChange round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the` &&
+            ` control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action(` &&
+            ` binding_call ) on the payments-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which`.
+    text1 = text1 && ` orders like the original's Date compare. // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid` &&
+            ` parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard` &&
+            ` sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone. // NOTE: the env named model` &&
+            ` ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto'` &&
+            ` rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit` &&
+            ` (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). // LIVE-TEST: unverified in a`.
+    text1 = text1 && ` running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeAndCalendarWeekNumbering`                  class = `z2ui5_cl_smpc_app_640` path = `src/02/01/z2ui5_cl_smpc_app_640.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.92.0`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.`
-        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.` )
+        notes = text1
+        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. //` &&
+                 ` DynamicDateRange.calendarWeekNumbering (since UI5 1.111) with the CalendarWeekNumbering enum value MiddleEastern is the point of this sample - kept 1:1, the app needs a UI5 release >= 1.111.` ) ).
+
+    text1 = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // POST-1.71:` &&
+            ` DynamicDateRange.hideInput and DynamicDateRange.openBy (both since UI5 1.105) are the sample's central mechanism - kept 1:1, the app needs a UI5 release >= 1.105. // POST-1.71: Button.ariaHasPopup` &&
+            ` (since UI5 1.84) is kept 1:1 on both Button controls - the app needs a UI5 release >= 1.84 to render it. // POST-1.71: Link.ariaHasPopup (since UI5 1.86) is kept 1:1 - the app needs a UI5 release >=` &&
+            ` 1.86 to render it. // NOTE: changeDateHandler's MessageToast is composed in ABAP (on_event CHANGE) instead of in the controller: the wire carries ${$parameters>/value/operator}, the values count and` &&
+            ` values[0]/values[1] (no standard option has more than two values), each value as ``<value> + ''`` so a Date arrives as its toString and a boolean 'included' flag as true/false - exactly what the` &&
+            ` original's string concatenation prints. // LIVE-TEST: unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in`.
+    text1 = text1 && ` Popover.onfocusin HEADLESS only), and the ``${$parameters>/value/values/0} + ''`` string-concatenation event args reaching the toast.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeHidden`                                    class = `z2ui5_cl_smpc_app_641` path = `src/02/01/z2ui5_cl_smpc_app_641.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.92.0`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.`
+        notes = text1
+        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // DynamicDateRange.hideInput and` &&
+                 ` DynamicDateRange.openBy (both since UI5 1.105) are the sample's central mechanism - kept 1:1, the app needs a UI5 release >= 1.105. // Button.ariaHasPopup (since UI5 1.84) is kept 1:1 on both Button` &&
+                 ` controls - the app needs a UI5 release >= 1.84 to render it. // Link.ariaHasPopup (since UI5 1.86) is kept 1:1 - the app needs a UI5 release >= 1.86 to render it.` ) ).
+
+    text1 = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0. // IMPROVISED: the` &&
+            ` controller's addGroup('Custom', 'Custom Options') and the four custom options it adds to the customOptions aggregation (CustomPreviousXWeekend 'X To Last Weekend', CustomPreviousXWorkWeek 'X To Last` &&
+            ` Work Week', CustomLastChristmas 'Last Christmas', CustomBusinessDay 'Business Day') are not ported: each is an app-authored DynamicDateOption subclass whose getValueHelpUITypes/format/parse/toDates` &&
+            ` are JS code, which a thin frontend cannot ship (no app JS modules; a plain DynamicDateOption in the view has no toDates). The DynamicDateRange shows only its standard options. // NOTE: kept 1:1 with` &&
+            ` the original: _createFilter's FROM/FROMDATETIME and TO/TODATETIME branches filter the path PerfomDateTime (copied from the sibling sample), which no order row carries, so those operators hide every` &&
+            ` row - only the BT branch filters orderTime. The port issues the same paths (PERFOMDATETIME / ORDERTIME). // NOTE: onChange round-trips: the change wire carries ${$parameters>/valid},`.
+    text1 = text1 && ` ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp),` &&
+            ` and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the orders-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty` &&
+            ` value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare. // NOTE: the controller's setValueState(ValueState.Error/None) is the bound valueState` &&
+            ` attribute (value_state, seeded None), set in on_event from the valid parameter. // NOTE: the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed` &&
+            ` formatter; the ORDERTIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter` &&
+            ` attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the`.
+    text1 = text1 && ` original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years)` &&
+            ` is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO` &&
+            ` literal (month 5 = June). The orders' extra getChristmasDay(currentYear - 1) row is 25 December of the previous year at the current time; the original's setUTCDate (instead of setDate) only differs` &&
+            ` around midnight UTC. totalPrice is computed in model_init like the original's onInit forEach. // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg` &&
+            ` expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeWithCustomOptions`                         class = `z2ui5_cl_smpc_app_642` path = `src/02/01/z2ui5_cl_smpc_app_642.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.92.0`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
         post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.` ) ).
 
     result = VALUE #( BASE result
-      ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeWithCustomOptions`                         class = `z2ui5_cl_smpc_app_642` path = `src/02/01/z2ui5_cl_smpc_app_642.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.92.0`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.`
-        post171 = `the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0.` )
       ( module = `sap.m`              control = `sap.m.ExpandableText`                  name = `ExpandableText`                                            class = `z2ui5_cl_smpc_app_643` path = `src/02/01/z2ui5_cl_smpc_app_643.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.87`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.ExpandableText control (since UI5 1.87) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.87.`
-        post171 = `the sap.m.ExpandableText control (since UI5 1.87) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.87.` ) ).
+        notes = `POST-1.71: the sap.m.ExpandableText control (since UI5 1.87) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.87. // POST-1.71:` &&
+                 ` ExpandableText.overflowMode (since UI5 1.87, enum sap.m.ExpandableTextOverflowMode InPlace/Popover) is bound per row as in the original. // POST-1.71: Table.autoPopinMode (since UI5 1.76) is kept 1:1` &&
+                 ` - the app needs a UI5 release >= 1.87 anyway for the control. // NOTE: the controller's onInit products are seeded in model_init verbatim; the shared Lorem ipsum tail of the four attribute1 texts is` &&
+                 ` held once in a local and appended, the resulting strings are byte-identical to the original's.`
+        post171 = `the sap.m.ExpandableText control (since UI5 1.87) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.87. // ExpandableText.overflowMode (since UI5` &&
+                 ` 1.87, enum sap.m.ExpandableTextOverflowMode InPlace/Popover) is bound per row as in the original. // Table.autoPopinMode (since UI5 1.76) is kept 1:1 - the app needs a UI5 release >= 1.87 anyway for` &&
+                 ` the control.` ) ).
 
     text1 = `POST-1.71: one post-1.71 member is kept for the 1:1 port: the FacetFilterList search event (since UI5 1.76), which is the whole point of this sample - it is what lets the application replace the` &&
             ` list's built-in filtering with its own. // NOTE: lists="{/ProductCollectionStats/Filters}" stays BOUND here (unlike app 235, which unrolled the same collection into two static lists): the` &&
@@ -3745,26 +4005,47 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.15` )
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageEVR`                                     class = `z2ui5_cl_smpc_app_629` path = `src/02/01/z2ui5_cl_smpc_app_629.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` )
+        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+                 ` IllustratedMessage property enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know` &&
+                 ` IllustratedMessage (absent from ui5/properties.json) and passes it silently.`
+        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the IllustratedMessage property` &&
+                 ` enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know IllustratedMessage (absent` &&
+                 ` from ui5/properties.json) and passes it silently.` ) ).
+
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+            ` Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into` &&
+            ` illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate. // NOTE: the` &&
+            ` original's Select change handlers (onSelectSize) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field` &&
+            ` instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change` &&
+            ` attribute is therefore dropped vs the original view. // IMPROVISED: the original Component.js registers the 'Custom' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily,`.
+    text1 = text1 && ` setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no` &&
+            ` illustration-pool counterpart), so the port cannot register the set: illustrationType Custom-EmptyCart is kept verbatim, but the four Custom-*-EmptyCart.svg assets and metadata.json are never loaded,` &&
+            ` so the IllustratedMessage renders its title, description and Button with an EMPTY illustration area and UI5 logs 'The illustration set Custom is not registered'. The assets are not reachable as a` &&
+            ` plain URL either: IllustratedMessage.src only accepts the sap-illustration:// scheme, which resolves through the same registry. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL` &&
+            ` global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL. // NOTE: this sample's point is the BUILD pipeline (a UI5 CLI custom task add-illustrations-task.js` &&
+            ` that validates and copies the illustrations of an npm package, mock-external-package/ui5-illustrations-library, into webapp/resources/illustrations) - tooling with no abap2UI5 counterpart. Only its`.
+    text1 = text1 && ` runtime view (webapp/view/Main.view.xml, identical to IllustratedMessageInPageCustom) is ported.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInAppCustom`                             class = `z2ui5_cl_smpc_app_630` path = `src/02/01/z2ui5_cl_smpc_app_630.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` ) ).
+        notes = text1
+        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the Illustration Size Select offers` &&
+                 ` the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the` &&
+                 ` original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate.` ) ).
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInCardNoActivities`                      class = `z2ui5_cl_smpc_app_631` path = `src/02/01/z2ui5_cl_smpc_app_631.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -3777,58 +4058,148 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since_post171 = abap_true
         is_post171 = abap_true
         notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` )
+        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` ) ).
+
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInDialog`                                class = `z2ui5_cl_smpc_app_633` path = `src/02/01/z2ui5_cl_smpc_app_633.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
+        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // NOTE: the controller-built` &&
+                 ` Dialog (Fragment.load of fragments/Dialog + addDependent + open) is shown with client->popup_display( ) of the same fragment, rebuilt 1:1; onDialogClose's close() is the roundtrip-free` &&
+                 ` follow_up_action( cs_event-popup_close ) on the Close Button press.`
         post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` ) ).
 
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+            ` IllustratedMessage property enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know` &&
+            ` IllustratedMessage (absent from ui5/properties.json) and passes it silently. // POST-1.71: the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and` &&
+            ` Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136.` &&
+            ` Declared by policy: a bound enum value is invisible to every gate. // NOTE: the original's Select change handlers (onSelectSize, onSelectType) only copy selectedItem.getKey() into the model path the` &&
+            ` IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the`.
+    text1 = text1 && ` client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change attribute is therefore dropped vs the original view. // NOTE: the Switch change handler onSwitchEVS only` &&
+            ` re-writes oEvent.getParameter('state') into /sSelectedEVS, which the Switch state binding already writes two-way - the port keeps the two-way state binding and drops the redundant Switch change` &&
+            ` attribute (no loss; enableVerticalResponsiveness and the expression-bound Text follow on the client). // NOTE: the 32 illustration types are the original's own literal aIMITypeData list (key = the` &&
+            ` sap.m.IllustratedMessageType value, text = its name), in its order; the six sizes are its aIMISizeData list (key = text = the IllustratedMessageSize value). /sSelectedEVS is seeded from the` &&
+            ` IllustratedMessage default (false), which is what the original reads back via byId('im').getEnableVerticalResponsiveness().`.
+    text2 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the IllustratedMessage property` &&
+            ` enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know IllustratedMessage (absent` &&
+            ` from ui5/properties.json) and passes it silently. // the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto` &&
+            ` and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value` &&
+            ` is invisible to every gate.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPage`                                  class = `z2ui5_cl_smpc_app_634` path = `src/02/01/z2ui5_cl_smpc_app_634.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` )
-      ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageCustom`                            class = `z2ui5_cl_smpc_app_635` path = `src/02/01/z2ui5_cl_smpc_app_635.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.98`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` )
-      ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageTNT`                               class = `z2ui5_cl_smpc_app_636` path = `src/02/01/z2ui5_cl_smpc_app_636.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.98`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` ) ).
+        notes = text1
+        post171 = text2 ) ).
 
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+            ` Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into` &&
+            ` illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate. // NOTE: the` &&
+            ` original's Select change handlers (onSelectSize) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field` &&
+            ` instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change` &&
+            ` attribute is therefore dropped vs the original view. // IMPROVISED: the original Component.js registers the 'Custom' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily,`.
+    text1 = text1 && ` setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no` &&
+            ` illustration-pool counterpart), so the port cannot register the set: illustrationType Custom-EmptyCart is kept verbatim, but the four Custom-*-EmptyCart.svg assets and metadata.json are never loaded,` &&
+            ` so the IllustratedMessage renders its title, description and Button with an EMPTY illustration area and UI5 logs 'The illustration set Custom is not registered'. The assets are not reachable as a` &&
+            ` plain URL either: IllustratedMessage.src only accepts the sap-illustration:// scheme, which resolves through the same registry. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL` &&
+            ` global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageCustom`                            class = `z2ui5_cl_smpc_app_635` path = `src/02/01/z2ui5_cl_smpc_app_635.clas.abap`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        since = `1.98`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the Illustration Size Select offers` &&
+                 ` the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the` &&
+                 ` original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate.` ) ).
+
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+            ` Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into` &&
+            ` illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate. // NOTE: the` &&
+            ` original's Select change handlers (onSelectSize, onSelectType) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to` &&
+            ` that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern.` &&
+            ` The Select change attribute is therefore dropped vs the original view. // IMPROVISED: the original Component.js registers the 'tnt' illustration set via`.
+    text1 = text1 && ` sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets` &&
+            ` carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: every tnt-* type the Illustration Type Select offers resolves to no registered` &&
+            ` set, so the illustration area stays EMPTY (title, description and Button still render) and UI5 logs 'The illustration set tnt is not registered'. The view itself is kept 1:1. Upstream request: an` &&
+            ` ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL. // NOTE: the type list is the original's _populateIllustrationTypes result - every` &&
+            ` key of sap.tnt.IllustratedMessageType in declaration order (46 keys at OpenUI5 1.152, key = tnt-<Name>, text = <Name>), which overwrites the onInit placeholder [tnt-FaceID] before the view binds, so` &&
+            ` the port seeds the final list directly. The enum is read at runtime in the original, so a newer release may list more types than the port.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageTNT`                               class = `z2ui5_cl_smpc_app_636` path = `src/02/01/z2ui5_cl_smpc_app_636.clas.abap`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        since = `1.98`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the Illustration Size Select offers` &&
+                 ` the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the` &&
+                 ` original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate.` ) ).
+
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // POST-1.71: the` &&
+            ` IllustratedMessage property enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know` &&
+            ` IllustratedMessage (absent from ui5/properties.json) and passes it silently. // POST-1.71: the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and` &&
+            ` Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136.` &&
+            ` Declared by policy: a bound enum value is invisible to every gate. // NOTE: the original's Select change handlers (onSelectSize, onSelectType) only copy selectedItem.getKey() into the model path the` &&
+            ` IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the`.
+    text1 = text1 && ` client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change attribute is therefore dropped vs the original view. // NOTE: the Switch change handler onSwitchEVS only` &&
+            ` re-writes oEvent.getParameter('state') into /sSelectedEVS, which the Switch state binding already writes two-way - the port keeps the two-way state binding and drops the redundant Switch change` &&
+            ` attribute (no loss; enableVerticalResponsiveness and the expression-bound Text follow on the client). // POST-1.71: the IllustratedMessage property src (since UI5 1.132), the point of this sample, is` &&
+            ` kept 1:1 bound to /sSelectedSRC - the app needs a UI5 release >= 1.132. Declared by policy: the property gate does not know IllustratedMessage and passes it silently. // IMPROVISED: the original` &&
+            ` Component.js registers the 'tnt' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action` &&
+            ` reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: the 72`.
+    text1 = text1 && ` sap-illustration://<Name> entries (the default sapIllus set) render, but the 46 sap-illustration://tnt/<Name> entries resolve to no registered set and leave the illustration area EMPTY with 'The` &&
+            ` illustration set tnt is not registered' logged. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue` &&
+            ` of ICON_POOL. // NOTE: the Illustration URI list is computed in the original from Object.keys of sap.m.IllustratedMessageType and sap.tnt.IllustratedMessageType at runtime; the port inlines the same` &&
+            ` values in the same order (72 + 46 at OpenUI5 1.152) and builds the identical sap-illustration://<Name> and sap-illustration://tnt/<Name> keys in model_init. A newer release may list more types than` &&
+            ` the port.`.
+    text2 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // the IllustratedMessage property` &&
+            ` enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know IllustratedMessage (absent` &&
+            ` from ui5/properties.json) and passes it silently. // the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto` &&
+            ` and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value` &&
+            ` is invisible to every gate. // the IllustratedMessage property src (since UI5 1.132), the point of this sample, is kept 1:1 bound to /sSelectedSRC - the app needs a UI5 release >= 1.132. Declared by` &&
+            ` policy: the property gate does not know IllustratedMessage and passes it silently.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageWithURI`                           class = `z2ui5_cl_smpc_app_637` path = `src/02/01/z2ui5_cl_smpc_app_637.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
-        post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` )
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98. // IMPROVISED: the i18n` &&
+            ` ResourceModel the controller sets on the view is dropped and every {i18n>KEY} is folded to its English literal from i18n/i18n.properties (DialogTitle, ContinueWorking, SignIn, Close, TitleExpiring,` &&
+            ` TitleExpired, DescriptionExpiringBegin, DescriptionExpiringEnd, DescriptionExpired) - abap2UI5 has no i18n model by design, so the runtime language switch is lost. // IMPROVISED: the original` &&
+            ` Component.js registers the 'tnt' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action` &&
+            ` reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: illustrationType` &&
+            ` tnt-SessionExpiring / tnt-SessionExpired (expression-bound 1:1 on /bIsExpiring) resolve to no registered set, so the dialog shows the title, the counting description and the buttons with an EMPTY`.
+    text1 = text1 && ` illustration area and UI5 logs 'The illustration set tnt is not registered'. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily,` &&
+            ` setURI ), the exact analogue of ICON_POOL. // NOTE: the controller-built Dialog (Fragment.load + addDependent) is shown with client->popup_display( ) of the same fragment. The StepInput's literal` &&
+            ` value 3 becomes a two-way binding (field expiration, seeded 3) because the controller reads it via byId('expirationInput').getValue(). The setInterval( 1000 ) counter runs in ABAP: OPEN_DIALOG does` &&
+            ` _onCounterStart and arms follow_up_action( cs_event-start_timer COUNTER_TICK 1000 ), each COUNTER_TICK does _decrementCounter and re-arms it until the count reaches 0 (then /bIsExpiring = false);` &&
+            ` onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup. // LIVE-TEST: the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick` &&
+            ` pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the`.
+    text1 = text1 && ` description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick.`.
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageSessionTimeout`                          class = `z2ui5_cl_smpc_app_638` path = `src/02/01/z2ui5_cl_smpc_app_638.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.`
+        notes = text1
         post171 = `the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98.` ) ).
 
     text1 = `POST-1.71: ariaDetails on sap.m.Image (since UI5 1.79) is newer than 1.71 but kept for the 1:1 port - it links the active-state Image to its explaining Text. The app needs a UI5 release >= 1.79 for` &&
@@ -5756,67 +6127,220 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = text1
         post171 = text2 ) ).
 
+    text1 = `POST-1.71: the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96. // POST-1.71: the` &&
+            ` sap.m.p13n.AbstractContainerItem control (since UI5 1.96) and its key and text properties are newer than 1.71 - kept 1:1 as the container's views. // NOTE: addCustomView adds a new` &&
+            ` AbstractContainerItem (text View <n>, key view<n>, n = the number of views BEFORE the add, so the first added view repeats View 3/view3 exactly like the original) to the container of the pressed` &&
+            ` popup. The port keeps one ABAP row per view for each of the two containers and emits the container's views from it in a loop - the three original views with their VBox/Text content, the added ones` &&
+            ` without content, as the original adds them - so the add is a backend row plus a view rebuild that re-opens the popup the button sat in (d1 via open, p1 via openBy openBtn). The rebuild resets the` &&
+            ` container to its defaultView view2 where the original stays on the currently shown view. // NOTE: onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that`.
+    text1 = text1 && ` RadioButtonGroup's selectedIndex two-way and opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout` &&
+            ` stays a select wire carrying selectedIndex and sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button` &&
+            ` in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip. // LIVE-TEST: re-opening d1/p1 by a follow-up action directly after the view` &&
+            ` rebuild that an Add custom view press triggers is unverified in a running system.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Container`                  name = `p13n.Container`                                            class = `z2ui5_cl_smpc_app_644` path = `src/02/01/z2ui5_cl_smpc_app_644.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.96`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96.`
-        post171 = `the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96.` )
-      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.Engine`                                               class = `z2ui5_cl_smpc_app_645` path = `src/02/01/z2ui5_cl_smpc_app_645.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.104`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.`
-        post171 = `the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.` )
-      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineCustomFilters`                                  class = `z2ui5_cl_smpc_app_646` path = `src/02/01/z2ui5_cl_smpc_app_646.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.104`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.`
-        post171 = `the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.` ) ).
+        notes = text1
+        post171 = `the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96. // the sap.m.p13n.AbstractContainerItem` &&
+                 ` control (since UI5 1.96) and its key and text properties are newer than 1.71 - kept 1:1 as the container's views.` ) ).
 
+    text1 = `POST-1.71: the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since` &&
+            ` 1.97, its close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release` &&
+            ` >= 1.110. // POST-1.71: kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control` &&
+            ` 1.98), sap.m.Column headerMenu (1.98), the sap.m.plugins ColumnResizer control with its columnResize event (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with beforeOpen,` &&
+            ` showTableSettingsButton and tableSettingsPressed, QuickSort with change and its items aggregation, QuickSortItem with key, label and sortOrder, QuickGroup with change and its items aggregation,` &&
+            ` QuickGroupItem with key, label and grouped. // IMPROVISED: Engine.getInstance( ).register( ) with the Columns, Sorter, Groups, ColumnWidth and Filter controllers, Engine.show( ), retrieveState(`.
+    text1 = text1 && ` )/applyState( ) and the stateChange event are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column` &&
+            ` widths, sorters, groups) in ABAP, and the settings button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController` &&
+            ` creates it), a p13n:SortPanel and a p13n:GroupPanel (queryLimit 1, as the GroupController sets it for a sap.m.Table) - controls the port declares in the table's dependents, which the original view` &&
+            ` does not have (Popup, SelectionPanel, SortPanel, GroupPanel). Before opening, the backend hands each panel the controllers' adaptation data via setP13nData (active entries first in state order, the` &&
+            ` others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and handleStateChange is reproduced in ABAP: updateColumns (hide all, show and move the state's columns to` &&
+            ` the front, widths from the state, sort indicators), createGroups/createSorters (one group sorter per group, then the sorters, a sorter on a grouped path only setting its direction) and bindItems -`.
+    text1 = text1 && ` the items binding is composed by the backend as a binding-info string with that sorter list, and the view emits the Column controls and the cell template's Text cells in state order from a loop, so` &&
+            ` every state change is a view rebuild. The Engine's popup carries the title View Settings and contentHeight 50rem/contentWidth 45rem, which the declared Popup does not. // IMPROVISED: the Filter` &&
+            ` controller is dropped: its panel, sap.m.p13n.FilterPanel, renders each condition through itemFactory, a function-typed property (the FilterController passes a factory creating an Input bound to` &&
+            ` $p13n>conditions/0/values/0) that no abap2UI5 wire can supply - so the popup has no Filter tab, no filter can be set, createFilters has nothing to build, and the filterInfo info toolbar (kept with` &&
+            ` visible false, filterInfoText and its Remove All Filters Button) can never appear; its two press handlers (onFilterInfoPress on the OverflowToolbar, onClearFilterPress on the Button) are therefore` &&
+            ` not wired. Capability gap - a curated frontend module exporting a default itemFactory would close it. // NOTE: the column menu is driven from the backend: beforeOpen transports the opened column's`.
+    text1 = text1 && ` p13nKey custom data and the backend sets the QuickSortItem/QuickGroupItem key, label, sortOrder and grouped through bound model fields (the original sets them on the items directly); QuickSort change` &&
+            ` and QuickGroup change carry ${$parameters>/item}.getKey( ) plus getSortOrder( )/getGrouped( ) and do what onSort/onGroup do (clear all sorters/groups, push the column's), ColumnResizer columnResize` &&
+            ` stores the column width in the ColumnWidth state (the resizer has already sized the column), and the column drop does onColumnMove's position arithmetic on the backend's column order and moves the` &&
+            ` column in the visible-column state. The cell template's Text cells are emitted per column from the column state's model path, so their bindings {FIRSTNAME}, {LASTNAME}, {CITY} and {SIZE} (the` &&
+            ` original's {firstName}, {lastName}, {city}, {size}) are composed at run time and not visible to a static diff. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for` &&
+            ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the`.
+    text1 = text1 && ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire ($event.oSource.getPanels(` &&
+            ` )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments, the custom-data args (.data('p13nKey') on the column, dragged and dropped control) and the` &&
+            ` QuickSortItem/QuickGroupItem update arriving after beforeOpen's round-trip while the menu is already open are source-derived, not run in a live system.`.
+    text2 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its` &&
+            ` close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release >= 1.110.` &&
+            ` // kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column` &&
+            ` headerMenu (1.98), the sap.m.plugins ColumnResizer control with its columnResize event (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with beforeOpen, showTableSettingsButton and` &&
+            ` tableSettingsPressed, QuickSort with change and its items aggregation, QuickSortItem with key, label and sortOrder, QuickGroup with change and its items aggregation, QuickGroupItem with key, label` &&
+            ` and grouped.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.Engine`                                               class = `z2ui5_cl_smpc_app_645` path = `src/02/01/z2ui5_cl_smpc_app_645.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.104`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample - a JavaScript singleton, not a control, so it cannot be kept (see the IMPROVISED entries); the app needs a UI5 release` &&
+            ` >= 1.110 for the controls below. // POST-1.71: kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage` &&
+            ` (aggregation 1.101, control 1.98), sap.m.Column headerMenu (1.98), the sap.m.plugins ColumnResizer control (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with its items` &&
+            ` aggregation, QuickSort and QuickGroup with their items aggregation, QuickSortItem, QuickGroupItem, and ActionItem with icon and label. From the controller's itemFactory: sap.m.MultiInput` &&
+            ` showClearIcon (1.94). // IMPROVISED: the sample's point - a FilterController whose itemFactory callback builds a MultiInput per filter field inside the Engine's sap.m.p13n.FilterPanel (since 1.121) -` &&
+            ` is not expressible: itemFactory is a function-typed property (a controller closure per row) and no abap2UI5 wire can supply a function, and the FilterPanel calls it for every condition row it`.
+    text1 = text1 && ` renders. The port keeps what the factory produces and builds it declaratively: the settings button opens a Dialog (title Custom Filter Settings, contentHeight 50rem, contentWidth 45rem - the settings` &&
+            ` the controller passes to Engine.show( )) declared in the table's dependents, holding one Label and one MultiInput per filter field (showValueHelp false, showClearIcon true, suggestionItems over` &&
+            ` /items showing that field, the existing conditions as Token controls bound to a backend table per field), plus an OK Button and a Cancel Button - controls the original view does not have (Dialog,` &&
+            ` VBox, Label, MultiInput, Token, core:Item, two more Button controls). The FilterPanel's own row UI (a field ComboBox adding one row at a time) is replaced by the four fields shown at once.` &&
+            ` tokenUpdate transports addedTokens/removedTokens and the backend adds/removes the field's EQ condition like the factory's handler; OK applies them - createFilters' flat array of EQ filters (UI5 ORs` &&
+            ` the filters on one path and ANDs the paths) is composed by the backend into the items binding-info string and the view rebuilt, which is what getBinding( 'items' ).filter( ) did; Cancel closes the`.
+    text1 = text1 && ` dialog and the next open re-seeds the tokens from the applied conditions, as the Engine discards a cancelled panel. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for` &&
+            ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the` &&
+            ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the column menu (QuickSort/QuickGroup with empty items, three` &&
+            ` ActionItems), the ColumnResizer and the DragDropInfo on the columns carry no handlers in the original view and the controller registers only the Filter controller - they are kept 1:1 as inert` &&
+            ` configuration, exactly as the sample ships them. // LIVE-TEST: the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound` &&
+            ` tokens aggregation receiving a suggestion-created Token are unverified in a running system.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineCustomFilters`                                  class = `z2ui5_cl_smpc_app_646` path = `src/02/01/z2ui5_cl_smpc_app_646.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.104`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample - a JavaScript singleton, not a control, so it cannot be kept (see the IMPROVISED entries); the app needs a UI5 release >= 1.110` &&
+                 ` for the controls below. // kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control` &&
+                 ` 1.98), sap.m.Column headerMenu (1.98), the sap.m.plugins ColumnResizer control (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with its items aggregation, QuickSort and QuickGroup` &&
+                 ` with their items aggregation, QuickSortItem, QuickGroupItem, and ActionItem with icon and label. From the controller's itemFactory: sap.m.MultiInput showClearIcon (1.94).` ) ).
+
+    text1 = `POST-1.71: the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since` &&
+            ` 1.97, its close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader and enableCount properties), all newer than 1.71; the app needs a UI5 release >=` &&
+            ` 1.97. // IMPROVISED: Engine.getInstance( ).register( ) with an Items SelectionController and Engine.show( ) are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the` &&
+            ` backend: it keeps the Items state (visible person keys, in order) in ABAP, and the settings button opens a p13n:Popup with one p13n:SelectionPanel (showHeader/enableCount as the SelectionController` &&
+            ` creates it) that the port declares in the GridList's dependents - both are therefore controls the original view does not have (Popup, SelectionPanel). Before opening, the backend hands the panel the` &&
+            ` controller's adaptation data via setP13nData (visible persons first in state order, then the hidden ones sorted by label, labels from the MetadataHelper); on close with reason Ok, the panel's`.
+    text1 = text1 && ` getP13nData( true ) comes back and handleStateChange is reproduced in ABAP - the bound /items become the visible persons in the chosen order. The Engine's popup carries the panel's title (Fields) and` &&
+            ` the contentHeight 35rem/contentWidth 32rem settings, which the declared Popup does not. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoList) and the GridList's` &&
+            ` sap.ui.fl:flexibility attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app` &&
+            ` provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire` &&
+            ` ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineGridList`                                       class = `z2ui5_cl_smpc_app_647` path = `src/02/01/z2ui5_cl_smpc_app_647.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.104`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.`
-        post171 = `the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.` )
-      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineGridTable`                                      class = `z2ui5_cl_smpc_app_648` path = `src/02/01/z2ui5_cl_smpc_app_648.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.104`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.`
-        post171 = `the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.` )
-      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineMultipleController`                             class = `z2ui5_cl_smpc_app_649` path = `src/02/01/z2ui5_cl_smpc_app_649.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.104`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.`
-        post171 = `the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104.` ) ).
+        notes = text1
+        post171 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its` &&
+                 ` close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader and enableCount properties), all newer than 1.71; the app needs a UI5 release >= 1.97.` ) ).
 
+    text1 = `POST-1.71: the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since` &&
+            ` 1.97, its close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release` &&
+            ` >= 1.119. // POST-1.71: kept 1:1 from the original view and newer than 1.71: sap.ui.table.Table rowMode (1.119, the string form Auto), sap.ui.table.Column headerMenu (1.110), the` &&
+            ` sap.m.table.columnmenu Menu control with showTableSettingsButton and tableSettingsPressed (1.110), and the IllustratedMessage control (1.98) with enableVerticalResponsiveness (1.104) in the table's` &&
+            ` noData. // IMPROVISED: Engine.getInstance( ).register( ) with the Columns, Sorter, Groups and ColumnWidth controllers, Engine.show( ), retrieveState( )/applyState( ) and the stateChange event are` &&
+            ` controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column widths, sorters) in ABAP, and the settings`.
+    text1 = text1 && ` button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it) and a p13n:SortPanel - Engine.show(` &&
+            ` ['Columns', 'Sorter'] ) - controls the port declares in the table's dependents, which the original view does not have (Popup, SelectionPanel, SortPanel). Before opening, the backend hands both panels` &&
+            ` the controllers' adaptation data via setP13nData (active entries first in state order, the others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and` &&
+            ` handleStateChange is reproduced in ABAP: every column hidden, the state's columns shown and moved to the front in state order, widths from the state or the _mIntialWidth 11rem, each sorted column's` &&
+            ` sortOrder set, and the rows binding sorted - composed by the backend as a binding-info string with that sorter list. The view emits the Column controls (with their Label and template Text, whose` &&
+            ` binding {FIRSTNAME}, {LASTNAME}, {CITY} or {SIZE} - the original's {firstName}, {lastName}, {city}, {size} - comes from the column state's path) in state order from a loop, so every state change is a`.
+    text1 = text1 && ` view rebuild. The registered Groups controller has no panel in the original's show( ) call either and is not reproduced. The Engine's popup carries the title View Settings and contentHeight` &&
+            ` 35rem/contentWidth 32rem, which the declared Popup does not. // NOTE: the table's own events drive the same state as in the original: sort (onSort) transports the column's p13nKey custom data and` &&
+            ` sortOrder and replaces the sorters with that column's, columnResize stores the width in the ColumnWidth state (the table has already sized the column), and columnMove is vetoed with` &&
+            ` check_prevent_default exactly like oEvt.preventDefault( ) and then moves the column to newPos in the visible-column state. The original also calls Column.setSorted( true ), deprecated since 1.120;` &&
+            ` the port sets only sortOrder, which is what the sort indicator shows. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) and the table's sap.ui.fl:flexibility` &&
+            ` attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the`.
+    text1 = text1 && ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire ($event.oSource.getPanels(` &&
+            ` )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments and the .data('p13nKey') args on the sort/columnResize/columnMove column parameter are` &&
+            ` source-derived, not run in a live system.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineGridTable`                                      class = `z2ui5_cl_smpc_app_648` path = `src/02/01/z2ui5_cl_smpc_app_648.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.104`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its` &&
+                 ` close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release >= 1.119.` &&
+                 ` // kept 1:1 from the original view and newer than 1.71: sap.ui.table.Table rowMode (1.119, the string form Auto), sap.ui.table.Column headerMenu (1.110), the sap.m.table.columnmenu Menu control with` &&
+                 ` showTableSettingsButton and tableSettingsPressed (1.110), and the IllustratedMessage control (1.98) with enableVerticalResponsiveness (1.104) in the table's noData.` ) ).
+
+    text1 = `POST-1.71: the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since` &&
+            ` 1.97, its close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader, enableCount and enableReorder properties); the app needs a UI5 release >= 1.110.` &&
+            ` // POST-1.71: kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98),` &&
+            ` sap.m.Column headerMenu (1.98), the sap.m.table.columnmenu Menu control with its items aggregation and the ActionItem control with icon, label and press (all 1.110). // IMPROVISED:` &&
+            ` Engine.getInstance( ).register( ) with a Columns and a Rows SelectionController and Engine.show( ) are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend:` &&
+            ` it keeps the order and visibility of the table's columns and of its five items in ABAP, and each settings button (and the column menu's Columns ActionItem) opens a p13n:Popup with one`.
+    text1 = text1 && ` p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it, enableReorder false for Rows) - two Popup and two SelectionPanel controls the port declares in the table's` &&
+            ` dependents, which the original view does not have. Before opening, the backend hands each panel the controller's adaptation data via setP13nData (visible entries first in state order, then the hidden` &&
+            ` ones sorted by label; labels from the two MetadataHelpers); on close with reason Ok the panel's getP13nData( true ) comes back and handleStateChange is reproduced in ABAP: every column/item hidden,` &&
+            ` the state's entries shown and moved to the front in state order. The view emits the Column and ColumnListItem controls (and every item's Text cells, which follow their column) from those two tables` &&
+            ` in a loop, so a state change is a view rebuild. The Engine's popups carry the panel's title (Fields) and contentHeight 35rem/contentWidth 32rem, which the declared Popup controls do not. // NOTE:` &&
+            ` onColumnMove computes the drop position from the dragged/dropped column indices and applyState( { Columns: [ { key, position } ] } ) moves the column there. The port transports both columns' p13nKey`.
+    text1 = text1 && ` custom data and the dropPosition, does the same arithmetic on the backend's column order and moves the key in the visible-column state before re-emitting the view. The original handler searches the` &&
+            ` retrieved state with oColumn.data('p13nKey') on plain state objects, which throws as soon as the state holds a column, so in the demo kit the drop does not move anything; the port implements the move` &&
+            ` the handler evidently intends (the identical handler of sap.m.sample.p13n.Engine, which uses .key). // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) is` &&
+            ` dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is` &&
+            ` not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wires ($event.oSource.getPanels( )[0].getP13nData( true ) - read` &&
+            ` back as a JSON array of the panel's items), the setP13nData JSON argument and the drop wire's .data('p13nKey') args are source-derived, not run in a live system.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineMultipleController`                             class = `z2ui5_cl_smpc_app_649` path = `src/02/01/z2ui5_cl_smpc_app_649.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.104`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its` &&
+                 ` close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader, enableCount and enableReorder properties); the app needs a UI5 release >= 1.110. // kept 1:1` &&
+                 ` from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column headerMenu` &&
+                 ` (1.98), the sap.m.table.columnmenu Menu control with its items aggregation and the ActionItem control with icon, label and press (all 1.110).` ) ).
+
+    text1 = `POST-1.71: the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97. // POST-1.71: the SelectionPanel and` &&
+            ` SortPanel controls of sap.m.p13n (since UI5 1.96) and their members title, enableCount, showHeader and change are newer than 1.71 - kept 1:1 as the popup's panels. // IMPROVISED: Popup.reset is a` &&
+            ` function-typed property: the original's controller callback (reset -> _setInitialData + parseP13nState) is resolved by the XML template processor against the controller, and no abap2UI5 wire can` &&
+            ` supply a function, so the attribute is dropped and the popup shows no Reset button (warningText is kept 1:1 but has no visible effect without the callback). Capability gap - a curated frontend module` &&
+            ` exporting a reset callback that fires a named backend event would close it. // NOTE: the controller's _setInitialData (setP13nData on the three panels with _initialData, verbatim) is issued as three` &&
+            ` follow_up_action( control_by_id setP13nData ) calls with the JSON array as argument. The original seeds once, on the first open (_bIsOpen guard); the port seeds after every render of the view, which`.
+    text1 = text1 && ` is observably the same - the panels hold the initial data until the user first edits them and keep the edits across later opens - and also re-seeds the fresh panels a rebuilt view creates.` &&
+            ` onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument. // NOTE: parseP13nState writes` &&
+            ` JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's` &&
+            ` getP13nData( ) already stringified with the same indent (a $event-guarded JSON.stringify expression, since an argument has to start with $ to be evaluated on the client) and the backend keeps the` &&
+            ` last array per panel; an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. The backend nests the three arrays into the same object text` &&
+            ` (one level deeper indent) and binds it to the CodeEditor value - byte-identical to the original's output. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same`.
+    text1 = text1 && ` round-trip; the close toast (Dialog close reason: <reason>) is client-composed with no round-trip. // LIVE-TEST: the JSON.stringify expressions in the change/open event args (getPanels(` &&
+            ` )[n].getP13nData( ) through the event source) and the setP13nData JSON argument are source-derived, not run in a live system.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Popup`                      name = `p13n.Popup`                                                class = `z2ui5_cl_smpc_app_650` path = `src/02/01/z2ui5_cl_smpc_app_650.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.97`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97.`
-        post171 = `the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97.` )
+        notes = text1
+        post171 = `the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97. // the SelectionPanel and SortPanel controls of` &&
+                 ` sap.m.p13n (since UI5 1.96) and their members title, enableCount, showHeader and change are newer than 1.71 - kept 1:1 as the popup's panels.` ) ).
+
+    result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Page`                            name = `PageListReportIconTabBar`                                  class = `z2ui5_cl_smpc_app_406` path = `src/02/01/z2ui5_cl_smpc_app_406.clas.abap`
         score = 2
         score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
@@ -6289,93 +6813,601 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since = `1.34`
         notes = text1 ) ).
 
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin, and fileNameValidationConfig - the member this sample is about, kept as the view's` &&
+            ` literal {mode: 'override', characters: '@$#'} - is @since 1.136, so the app needs UI5 >= 1.136. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too:` &&
+            ` sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath,` &&
+            ` mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. //`.
+    text1 = text1 && ` POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original` &&
+            ` table. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the items path is the` &&
+            ` bound T_ITEMS, still as the original's {path, templateShareable: false} binding info. All six rows are inlined, and the top-level mode, characters, isConfigureButtonEnabled and defaultCharacterSet` &&
+            ` keys are model fields too (mode is kept PROTECTED - no binding reads it); the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no` &&
+            ` demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE)` &&
+            ` instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the`.
+    text1 = text1 && ` original's own Image/Icon visible expressions and highlight expression decide exactly as in the sample. // NOTE: The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType -` &&
+            ` IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row` &&
+            ` carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone` &&
+            ` with them. // NOTE: The validation panel: the three CheckBoxes keep their ids (cbInclude, cbExclude, cbOverride) and their select wire transports $event.oSource.getId(), from which the backend makes` &&
+            ` the three boxes one choice exactly like onCheckboxSelect (their selected is bound; cbOverride starts selected as in the view); charInput's value is bound to characters and its liveChange wire carries` &&
+            ` ${$parameters>/newValue} (onInputChange reads newValue, the bound model only follows on change) with check_queue_last and check_no_busy, and both recompute isConfigureButtonEnabled, which the`.
+    text1 = text1 && ` Configure button's enabled binds as in the original. Configure calls the plugin's setFileNameValidationConfig through control_by_id on the plugin with the {mode, characters} object as a JSON argument` &&
+            ` (characters JSON-escaped), shows the original's toast text, and remembers the payload so view_display re-issues it after a rebuild (the view's literal config would otherwise come back). The note Text` &&
+            ` binds the default character set /:\*?"<>|[]{}@#$ of documents.json. // NOTE: design='Bold' is dropped from the three Text controls of the panel: sap.m.Text has no design property (it is` &&
+            ` sap.m.Label's), and the view fails to load with it - the render gate measured 'Error found in View' on exactly that node. Nothing visible is lost, since the attribute never reached a control. //` &&
+            ` IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to /uploadFiles with 201 and unshifts the new document. There is no` &&
+            ` such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent)`.
+    text1 = text1 && ` that transports the item's file name, media type and size, and the backend unshifts the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns, Invoice,` &&
+            ` trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url,` &&
+            ` so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an added id` &&
+            ` uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5` &&
+            ` runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for` &&
+            ` EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument`.
+    text1 = text1 && ` is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not` &&
+            ` carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+            ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
+            ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size; (d) setFileNameValidationConfig reached with a JSON object argument through castArgAuto, and the plugin's rename dialog then` &&
+            ` validating against it. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's`.
+    text1 = text1 && ` Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild.` &&
+            ` onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000.` &&
+            ` After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. //` &&
+            ` IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what` &&
+            ` openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply),` &&
+            ` urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its`.
+    text1 = text1 && ` required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item,` &&
+            ` neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state` &&
+            ` Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the` &&
+            ` fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the` &&
+            ` warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin, and fileNameValidationConfig - the member this sample is about, kept as the view's` &&
+            ` literal {mode: 'override', characters: '@$#'} - is @since 1.136, so the app needs UI5 >= 1.136. // the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder` &&
+            ` (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath,` &&
+            ` previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // sap.m.Column importance`.
+    text2 = text2 && ` (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.FileNameValidationSample`         class = `z2ui5_cl_smpc_app_652` path = `src/02/01/z2ui5_cl_smpc_app_652.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.124`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.FilePreviewCustomPageContent`     class = `z2ui5_cl_smpc_app_653` path = `src/02/01/z2ui5_cl_smpc_app_653.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.GridTableSimple`                  class = `z2ui5_cl_smpc_app_654` path = `src/02/01/z2ui5_cl_smpc_app_654.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` ) ).
+        notes = text1
+        post171 = text2 ) ).
 
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation and its previewDialog association pointing at the FilePreviewDialog; the` &&
+            ` app needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions and previewDialog associations, beforeUploadStarts, itemRenamed) is as new as the` &&
+            ` plugin. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its` &&
+            ` upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // POST-1.71: sap.m.upload.FilePreviewDialog (@since 1.120) is kept in the table's dependents with its id`.
+    text1 = text1 && ` FilePreviewDialog, showCarouselArrows and maxFileSizeforPreview (both @1.120); the plugin's previewDialog association names it, so openFilePreview opens this dialog instead of a default instance. //` &&
+            ` IMPROVISED: The point of this variant is lost: FilePreviewDialog.customPageContentHandler='.pageContentHandler' is a function-typed property - the controller's callback returns a Promise that` &&
+            ` resolves, for the application/xml row, to a sap.ui.codeeditor.CodeEditor holding a hard-coded invoice XML, and rejects (no content) for every other type. A function cannot be bound or transported` &&
+            ` from the backend, so the attribute is dropped and the External XML document.xml row previews as an unsupported type with the dialog's default no-preview illustration - exactly what the second` &&
+            ` MessageStrip promises for the zip file only. Both MessageStrips are kept 1:1, so the first one now describes a behaviour the port does not show. // POST-1.71: sap.m.Column importance (@since 1.76) on` &&
+            ` the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table. // NOTE: The named JSONModel documents (manifest`.
+    text1 = text1 && ` dataSource model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the items path is the bound T_ITEMS, still as the original's {path,` &&
+            ` templateShareable: false} binding info. All eight rows are inlined; the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no` &&
+            ` demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE)` &&
+            ` instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the` &&
+            ` original's own Image/Icon visible expressions and highlight expression decide exactly as in the sample. // NOTE: The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType -` &&
+            ` IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row`.
+    text1 = text1 && ` carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone` &&
+            ` with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to /uploadFiles with 201 and unshifts the new document.` &&
+            ` There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no` &&
+            ` XHR is sent) that transports the item's file name, media type and size, and the backend unshifts the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns,` &&
+            ` Invoice, trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an`.
+    text1 = text1 && ` empty url, so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an` &&
+            ` added id uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and` &&
+            ` abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context,` &&
+            ` true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose` &&
+            ` argument is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does` &&
+            ` not carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with`.
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
+            ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's` &&
+            ` setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired` &&
+            ` binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. This variant's onDocumentRenamedSuccess only toasts` &&
+            ` 'Document Renamed.' with duration 2000 (it does not write the new name into the model, so the row keeps its old name - as in the original); the itemRenamed wire therefore carries no arguments. After` &&
+            ` a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED:`.
+    text1 = text1 && ` The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog /` &&
+            ` _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required,` &&
+            ` both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a` &&
+            ` ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither` &&
+            ` transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning,` &&
+            ` title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment,`.
+    text1 = text1 && ` DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's` &&
+            ` own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation and its previewDialog association pointing at the FilePreviewDialog; the app` &&
+            ` needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions and previewDialog associations, beforeUploadStarts, itemRenamed) is as new as the` &&
+            ` plugin. // the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload` &&
+            ` button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // sap.m.upload.FilePreviewDialog (@since 1.120) is kept in the table's dependents with its id`.
+    text2 = text2 && ` FilePreviewDialog, showCarouselArrows and maxFileSizeforPreview (both @1.120); the plugin's previewDialog association names it, so openFilePreview opens this dialog instead of a default instance. //` &&
+            ` sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.FilePreviewCustomPageContent`     class = `z2ui5_cl_smpc_app_653` path = `src/02/01/z2ui5_cl_smpc_app_653.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 4 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.Table's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable), with the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124.` &&
+            ` Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // POST-1.71: the plugin's companion controls` &&
+            ` are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and` &&
+            ` sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration` &&
+            ` for the original's dotted m:upload.UploadItemConfiguration. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the default model: every {documents>x}`.
+    text1 = text1 && ` binding is the row field {X} and the Table's rows are the bound T_ITEMS. All nine rows are inlined; the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/...` &&
+            ` because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL,` &&
+            ` PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no` &&
+            ` imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and the RowSettings highlight expression decide exactly as in the sample. // NOTE: The controller` &&
+            ` formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two` &&
+            ` decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the`.
+    text1 = text1 && ` thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which` &&
+            ` answers the POST to /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts` &&
+            ` is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size, and the backend unshifts the row the mock server would` &&
+            ` have created (uploadState Complete, revision 00, In work, Jane Burns, Invoice, trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost` &&
+            ` with it: the uploaded file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are`.
+    text1 = text1 && ` not wired (no upload completes, and the plugin is addressed by an added id uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several` &&
+            ` files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. //` &&
+            ` IMPROVISED: onDownloadFiles maps getSelectedIndices( ) to contexts and calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download` &&
+            ` button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is` &&
+            ` $controller.getView().byId('table-uploadSet').getContextByIndex(...getSelectedIndices()[0]). // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the` &&
+            ` original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with`.
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getContextByIndex($controller.getView().byId('table-uploadSet').getSelectedIndices()[0]) - each handing the live Context object through castArgAuto` &&
+            ` untouched; (b) rowSelectionChange transporting $event.oSource.getSelectedIndices().join() and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,` &&
+            ` Remove/Rename/Edit URL for exactly one; the selection travels as the row indices (the table neither sorts nor filters, so a row index is the model index). onDocumentRenamedSuccess writes the new name` &&
+            ` into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000. removeItem splices the row out of /items; its` &&
+            ` oTable.removeSelections( ) does not exist on sap.ui.table.Table, so the selection stays on the same indices in both the original and the port. // IMPROVISED: The AddViaUrl fragment is the port's`.
+    text1 = text1 && ` popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName /` &&
+            ` _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values` &&
+            ` and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme` &&
+            ` followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock` &&
+            ` server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save /` &&
+            ` DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes`.
+    text1 = text1 && ` the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.Table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted m:plugins.UploadSetwithTable), with the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries` &&
+            ` (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion controls are kept 1:1 and are post-1.71 too:` &&
+            ` sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath,` &&
+            ` mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.GridTableSimple`                  class = `z2ui5_cl_smpc_app_654` path = `src/02/01/z2ui5_cl_smpc_app_654.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - three instances, each kept 1:1 in its table's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace) with its rowConfiguration aggregation and its customData (the core:CustomData itemsPath` &&
+            ` the controller reads); the app needs a UI5 release >= 1.124. Every member they carry (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts) is as new as the` &&
+            ` plugin. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its` &&
+            ` upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table`.
+    text1 = text1 && ` autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the` &&
+            ` default model: every {documents>x} binding is the row field {X}, and the three arrays items, items-instance2 and items-instance3 are the bound T_ITEMS, T_ITEMSINSTANCE2 and T_ITEMSINSTANCE3 (an ABAP` &&
+            ` name cannot carry the hyphen), still as the original's {path, templateShareable: false} binding info. All nine rows (three per array) are inlined; the url and imageUrl fields are host-absolutized to` &&
+            ` https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case` &&
+            ` ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so` &&
+            ` a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and highlight expression decide exactly as in the sample. // NOTE: The`.
+    text1 = text1 && ` controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB` &&
+            ` with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the` &&
+            ` thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which` &&
+            ` answers the POST to /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts` &&
+            ` is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size plus the plugin's own customData itemsPath` &&
+            ` ($event.oSource.data('itemsPath') - what onBeforeUploadStarts hands the mock server as instancePath), and the backend unshifts into that array the row the mock server would have created (uploadState`.
+    text1 = text1 && ` Complete, revision 00, In work, Jane Burns, Invoice, trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded` &&
+            ` file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload` &&
+            ` completes, and each plugin is addressed by an added id - uploadSetPlugin, uploadSetPlugin-instance2, uploadSetPlugin-instance3 - instead of the instances onActivated handed the controller);` &&
+            ` URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the` &&
+            ` first and the last of them are added. // IMPROVISED: onDownloadFiles calls download( context, true ) for EVERY selected row of the table; a UI5 event expression has no loop, so each Download button` &&
+            ` calls download for the first selected row of its own table only, through a view-wired control_by_id on that table's plugin with $controller.getView().byId(<table id>).getSelectedContexts()[0]. (The`.
+    text1 = text1 && ` original always ends up in its first plugin instance - it looks for 'instance2' in the id of the table's PARENT, the VBox - which downloads the same files, since download only reads the context it is` &&
+            ` given.) // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, uploadSetPlugin-instance2, uploadSetPlugin-instance3 - ids the original does not carry) through the` &&
+            ` unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext() and download with $controller.getView().byId(<table id>).getSelectedContexts()[0] - each` &&
+            ` handing the live Context object through castArgAuto untouched; (b) the vetoed beforeUploadStarts with ${$parameters>/item}.getFileObject().size and $event.oSource.data('itemsPath'). // NOTE: The` &&
+            ` controller's quirks are kept 1:1 where they decide what happens to the data: every SearchField's onSearch filters the FIRST table (byId('table-uploadSet')) - the three liveChange wires are the same` &&
+            ` view-wired binding_call filter on that table; removeItem splices the clicked row's index out of /items and clears the first table's selection whichever table the row belongs to (the MessageBox still`.
+    text1 = text1 && ` names the clicked document) - the port deletes from T_ITEMS by the index in the row's binding path. Where the quirk only picks an equivalent instance the port is direct: openPreview reads 'instance2'` &&
+            ` from the template Link's generated id, so the original always previews through the first plugin; each port Link calls its own table's plugin. onSelectionChange enables each table's Download button` &&
+            ` from its own selection (the wire carries the table id and getSelectedContexts().length); after a removal the first table's Download button is disabled with its cleared selection (removeSelections` &&
+            ` fires no selectionChange, so the original left it enabled). // NOTE: removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit` &&
+            ` icon option is the warning box's own icon anyway. The mock server's 'Document Added' toast follows at once instead of after the controller's one-second setTimeout (see the upload deviation). // NOTE:`.
+    text1 = text1 && ` The sample ships view/fragment/AddViaUrl.fragment.xml (a Dialog addViaUrlDialog holding a form:SimpleForm addViaUrlSimpleform with two Label controls urlInputLabel and nameInputLabel - both required` &&
+            ` - two Input controls urlInput and nameInput, and the Button controls addDocumentBtn and Cancel), but nothing in this variant loads it: its view has no Add menu and its controller no` &&
+            ` openAddOrEditDialog / handleAddViaUrl. The port does not build the dead fragment, so structural_diff, which unions every archived fragment with the view, counts its controls as missing.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - three instances, each kept 1:1 in its table's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace) with its rowConfiguration aggregation and its customData (the core:CustomData itemsPath` &&
+            ` the controller reads); the app needs a UI5 release >= 1.124. Every member they carry (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts) is as new as the` &&
+            ` plugin. // the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload` &&
+            ` button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode`.
+    text2 = text2 && ` (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.MultiplePluginInstances`          class = `z2ui5_cl_smpc_app_655` path = `src/02/01/z2ui5_cl_smpc_app_655.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.124`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableFileDialogs`       class = `z2ui5_cl_smpc_app_656` path = `src/02/01/z2ui5_cl_smpc_app_656.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableFilePreview`       class = `z2ui5_cl_smpc_app_657` path = `src/02/01/z2ui5_cl_smpc_app_657.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` ) ).
+        notes = text1
+        post171 = text2 ) ).
 
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too:` &&
+            ` sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath,` &&
+            ` mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. //` &&
+            ` POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original`.
+    text1 = text1 && ` table. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the items path is the` &&
+            ` bound T_ITEMS, still as the original's {path, templateShareable: false} binding info. All nine rows are inlined; the url and imageUrl fields are host-absolutized to` &&
+            ` https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case` &&
+            ` ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so` &&
+            ` a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and highlight expression decide exactly as in the sample. // NOTE: The` &&
+            ` controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB`.
+    text1 = text1 && ` with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the` &&
+            ` thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which` &&
+            ` answers the POST to /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts` &&
+            ` is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size, and the backend queues the file for the FileUpload` &&
+            ` dialog (see the next deviation); its Add then unshifts, per file, the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns, the chosen document type,` &&
+            ` trustedSource) and shows 'Document Added' once, at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url, so`.
+    text1 = text1 && ` it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an added id` &&
+            ` uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5` &&
+            ` runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them reach the dialog. // IMPROVISED: The point of this variant, the FileUpload dialog, is driven` &&
+            ` differently: the original sets itemValidationHandler='.itemValidationCallback' on the plugin - a function-typed property that cannot be bound or transported, so it is dropped - and that callback` &&
+            ` parks each picked item with its Promise resolve/reject, then opens the FileUpload fragment on a dialog-local JSONModel {selectedItems, types}. In the port the vetoed beforeUploadStarts collects the` &&
+            ` file into T_SELECTEDITEMS (fileName, fileCategorySelected preset to the first category, plus the port's media type and size) and opens the fragment as the popup, rebuilt 1:1 (Dialog, Toolbar with`.
+    text1 = text1 && ` Title/ToolbarSpacer/Browse Button, the Table with its three Columns, the ComboBox over T_TYPES from getFileCategories with selectedKey, the valueState expression and valueStateText, core:ListItem,` &&
+            ` the decline Button, Add and Cancel); its named-model-free bindings /selectedItems and /types become the bound T_SELECTEDITEMS and T_TYPES. Browse calls the plugin's fileSelectionHandler through` &&
+            ` control_by_id. The ComboBox selectionChange names .onDocumentTypeChange, which the controller does not define; the port wires it to recompute the Add button's enabled (the isAddButtonEnabled` &&
+            ` formatter: at least one file and every file typed), which the original re-evaluated through its parts binding. handleRemove reads the item and its reject callback from two core:CustomData elements` &&
+            ` (key item and key reject) on the decline Button; they are dropped - the backend removes the row by its binding path. handleConfirmation resolves each Promise after adding a documentType header field,` &&
+            ` which the mock server files the document under; the port adds the rows itself with the chosen document type. Cancel (closeFileUplaodFragment) discards the queued files. // IMPROVISED: onDownloadFiles`.
+    text1 = text1 && ` calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a` &&
+            ` view-wired control_by_id on the plugin whose argument is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by` &&
+            ` id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download` &&
+            ` with $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
+            ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,`.
+    text1 = text1 && ` Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any` &&
+            ` binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and` &&
+            ` toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons` &&
+            ` stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel,` &&
+            ` nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the` &&
+            ` begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the`.
+    text1 = text1 && ` unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a` &&
+            ` documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's` &&
+            ` controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the` &&
+            ` selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and` &&
+            ` initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion controls are kept 1:1 and are post-1.71 too:` &&
+            ` sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath,` &&
+            ` mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. //` &&
+            ` sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableFileDialogs`       class = `z2ui5_cl_smpc_app_656` path = `src/02/01/z2ui5_cl_smpc_app_656.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 4 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation and its previewDialog association pointing at the FilePreviewDialog; the` &&
+            ` app needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions and previewDialog associations, beforeUploadStarts, itemRenamed) is as new as the` &&
+            ` plugin. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its` &&
+            ` upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // POST-1.71: sap.m.upload.FilePreviewDialog (@since 1.120) is the point of this variant and is kept 1:1 in`.
+    text1 = text1 && ` the table's dependents with its id FilePreviewDialog, showCarouselArrows and maxFileSizeforPreview (both @1.120); the plugin's previewDialog association names it, so openFilePreview opens this dialog` &&
+            ` (with carousel arrows and the 50 MB preview limit) instead of a default instance. // POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table` &&
+            ` autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the` &&
+            ` default model: every {documents>x} binding is the row field {X} and the items path is the bound T_ITEMS, still as the original's {path, templateShareable: false} binding info. All nine rows are` &&
+            ` inlined; the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths` &&
+            ` against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns.`.
+    text1 = text1 && ` IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and highlight` &&
+            ` expression decide exactly as in the sample. // NOTE: The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with` &&
+            ` sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and` &&
+            ` FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a` &&
+            ` sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so` &&
+            ` the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name,`.
+    text1 = text1 && ` media type and size, and the backend unshifts the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns, Invoice, trustedSource) and shows the 'Document` &&
+            ` Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or` &&
+            ` downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an added id uploadSetPlugin instead of the` &&
+            ` instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time:` &&
+            ` check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for EVERY selected row; a UI5 event` &&
+            ` expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is`.
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry)` &&
+            ` through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+            ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
+            ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,` &&
+            ` Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any`.
+    text1 = text1 && ` binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and` &&
+            ` toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons` &&
+            ` stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel,` &&
+            ` nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the` &&
+            ` begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the` &&
+            ` unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a`.
+    text1 = text1 && ` documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's` &&
+            ` controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the` &&
+            ` selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and` &&
+            ` initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation and its previewDialog association pointing at the FilePreviewDialog; the app` &&
+            ` needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions and previewDialog associations, beforeUploadStarts, itemRenamed) is as new as the` &&
+            ` plugin. // the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload` &&
+            ` button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // sap.m.upload.FilePreviewDialog (@since 1.120) is the point of this variant and is kept 1:1 in the table's`.
+    text2 = text2 && ` dependents with its id FilePreviewDialog, showCarouselArrows and maxFileSizeforPreview (both @1.120); the plugin's previewDialog association names it, so openFilePreview opens this dialog (with` &&
+            ` carousel arrows and the 50 MB preview limit) instead of a default instance. // sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76)` &&
+            ` and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableFilePreview`       class = `z2ui5_cl_smpc_app_657` path = `src/02/01/z2ui5_cl_smpc_app_657.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed, uploadCompleted) is as new as the plugin. // POST-1.71: the plugin's companion controls are kept 1:1 and` &&
+            ` are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since` &&
+            ` 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted` &&
+            ` upload.UploadItemConfiguration. // POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77),`.
+    text1 = text1 && ` are kept 1:1 from the original table, as is its growing='true'. // NOTE: The named JSONModel documents (manifest dataSource model/documents.json) is folded into the default model: every {documents>x}` &&
+            ` binding is the row field {X} and the items path is the bound T_ITEMS, still as the original's {path, templateShareable: false} binding info. All nine rows are inlined; the url and imageUrl fields are` &&
+            ` host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths` &&
+            ` name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with` &&
+            ` omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and highlight expression decide exactly as in the` &&
+            ` sample. // NOTE: The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and`.
+    text1 = text1 && ` getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and` &&
+            ` the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload progress - the point of this variant - is not reproduced. The` &&
+            ` controller's onBeforeUploadStarts builds a ColumnListItem in JS (a Text with the file name, a VBox with a ProgressIndicator 'Uploading..' label, a stop Button wired to terminateUpload, four empty` &&
+            ` Controls and a decline Button), inserts it with oTable.insertItem and drives it from the item's uploadProgress / uploadTerminated events; none of these controls exist in the view and their handlers` &&
+            ` are JS closures over live UploadItem instances, so beforeUploadStarts is not wired at all and no progress row appears. The upload itself goes out as in the original (the sample switches its mock` &&
+            ` server OFF here, so the POST to /uploadFiles reaches whatever server hosts the app and does not answer 201). onUploadCompleted is a backend wire: it transports the item's file name, url, getFileSize(`.
+    text1 = text1 && ` ) and the response status, and the backend unshifts the row the controller builds - id 'id' plus a running number where the controller appends new Date().getTime(), no media type because the` &&
+            ` controller stores it under fileType (which no binding reads), uploadState Complete - and shows 'Document Added' only for a status of 201, like the controller (without its one-second setTimeout). The` &&
+            ` progress rows' bookkeeping (aProgressItems) and URLListValidator.add('blob') are dropped. Several files picked at once complete back to back while abap2UI5 runs one round-trip at a time:` &&
+            ` check_queue_last keeps the last one, so only the first and the last of them are added. onActivated is not wired; the plugin is addressed by an added id uploadSetPlugin instead of the instance` &&
+            ` onActivated handed the controller. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download` &&
+            ` button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. //`.
+    text1 = text1 && ` LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the` &&
+            ` Link's $event.oSource.getBindingContext(), renameItem and download with $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through` &&
+            ` castArgAuto untouched; (b) selectionChange transporting $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading` &&
+            ` ${$parameters>/item}.getBindingContext().getPath(); (c) the uploadCompleted wire with ${$parameters>/item}.getFileSize() and ${$parameters>/status}. // NOTE: onSelectionChange's setEnabled calls` &&
+            ` become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter` &&
+            ` on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend`.
+    text1 = text1 && ` (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the` &&
+            ` original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept` &&
+            ` (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through` &&
+            ` Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText.` &&
+            ` Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the` &&
+            ` row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable; with the mock server off, the empty file's upload completes`.
+    text1 = text1 && ` without a 201, so onUploadCompleted adds the row (the URL as typed, size 0) and shows no toast, which is what the port does. showEditConfirmation's controller-built sap.m.Dialog (type Message, state` &&
+            ` Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the` &&
+            ` fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the` &&
+            ` warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed, uploadCompleted) is as new as the plugin. // the plugin's companion controls are kept 1:1 and are post-1.71` &&
+            ` too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124;` &&
+            ` fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted` &&
+            ` upload.UploadItemConfiguration. // sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1`.
+    text2 = text2 && ` from the original table, as is its growing='true'.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableProgressIndicator` class = `z2ui5_cl_smpc_app_658` path = `src/02/01/z2ui5_cl_smpc_app_658.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.124`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableSimple`            class = `z2ui5_cl_smpc_app_659` path = `src/02/01/z2ui5_cl_smpc_app_659.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` )
-      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.TreeTableSimple`                  class = `z2ui5_cl_smpc_app_660` path = `src/02/01/z2ui5_cl_smpc_app_660.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.124`
-        since_post171 = abap_true
-        is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` ) ).
+        notes = text1
+        post171 = text2 ) ).
 
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable` &&
+            ` (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed and itemRenameCanceled - the last one @since 1.142) is as new as the plugin or newer, so the app needs UI5` &&
+            ` >= 1.142 for the rename-cancel toast. // POST-1.71: the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the` &&
+            ` toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124,` &&
+            ` isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // POST-1.71: sap.m.Column importance (@since 1.76) on the File Name and`.
+    text1 = text1 && ` action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table. // NOTE: The named JSONModel documents (manifest dataSource` &&
+            ` model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the items path is the bound T_ITEMS, still as the original's {path, templateShareable:` &&
+            ` false} binding info. All nine rows are inlined; the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve` &&
+            ` the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of` &&
+            ` fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the original's` &&
+            ` own Image/Icon visible expressions and highlight expression decide exactly as in the sample. // NOTE: The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's`.
+    text1 = text1 && ` media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the` &&
+            ` finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them.` &&
+            ` // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to /uploadFiles with 201 and unshifts the new document. There is` &&
+            ` no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is` &&
+            ` sent) that transports the item's file name, media type and size, and the backend unshifts the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns, Invoice,`.
+    text1 = text1 && ` trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url,` &&
+            ` so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an added id` &&
+            ` uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5` &&
+            ` runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for` &&
+            ` EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument` &&
+            ` is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not`.
+    text1 = text1 && ` carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+            ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
+            ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,` &&
+            ` Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any` &&
+            ` binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and`.
+    text1 = text1 && ` toasts 'Document Renamed.' with duration 2000; itemRenameCanceled toasts 'Document Rename Cancelled.'. After a removal the port resets the selection AND the four buttons; the original's` &&
+            ` removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog,` &&
+            ` addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById` &&
+            ` is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with` &&
+            ` popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly -` &&
+            ` uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty`.
+    text1 = text1 && ` media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text,` &&
+            ` actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions` &&
+            ` Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
+            ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
+            ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed and itemRenameCanceled - the last one @since 1.142) is as new as the plugin or newer, so the app needs UI5` &&
+            ` >= 1.142 for the rename-cancel toast. // the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the` &&
+            ` plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath` &&
+            ` @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration. // sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table`.
+    text2 = text2 && ` autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.ResponsiveTableSimple`            class = `z2ui5_cl_smpc_app_659` path = `src/02/01/z2ui5_cl_smpc_app_659.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable), with the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124.` &&
+            ` Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // POST-1.71: the plugin's companion controls` &&
+            ` are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and` &&
+            ` sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125 and isDirectoryPath @1.139 - the app` &&
+            ` needs UI5 >= 1.139), written upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration. // NOTE: The named JSONModel documents (manifest dataSource`.
+    text1 = text1 && ` model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the TreeTable's rows are the bound T_ITEMS - documents.json is a folder tree three levels` &&
+            ` deep, so T_ITEMS has one row type per level (every level carrying every field, the upper two their ITEMS; an empty ITEMS array is a leaf to the JSON tree binding, like the original's absent` &&
+            ` property). All nine nodes (three folders, six files) are inlined; the revision and id columns of the original are commented out of its view, so revision is not carried (id is - the Edit URL lookup` &&
+            ` uses it); the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths` &&
+            ` against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns.` &&
+            ` IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and the`.
+    text1 = text1 && ` RowSettings highlight expression decide exactly as in the sample. // NOTE: The controller formatters getIconSrc (sap-icon://folder-full for a directory, else UploadSetwithTable.getIconForFileType -` &&
+            ` IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals; a folder has no fileSize, so its cell stays empty) run` &&
+            ` in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the` &&
+            ` {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to` &&
+            ` /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire` &&
+            ` with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size, and the backend unshifts the row the mock server would have created`.
+    text1 = text1 && ` (uploadState Complete, revision 00, In work, Jane Burns, Invoice, trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the` &&
+            ` uploaded file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired` &&
+            ` (no upload completes, and the plugin is addressed by an added id uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files` &&
+            ` picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED:` &&
+            ` onDownloadFiles maps the TreeTable's getSelectedIndices( ) to contexts and calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's` &&
+            ` Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is`.
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getContextByIndex(...getSelectedIndices()[0]). // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the` &&
+            ` original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+            ` $controller.getView().byId('table-uploadSet').getContextByIndex($controller.getView().byId('table-uploadSet').getSelectedIndices()[0]) - each handing the live Context object through castArgAuto` &&
+            ` untouched; (b) rowSelectionChange transporting $event.oSource.getBinding('rows').getSelectedContexts().join() (Context.toString is the binding path, e.g. /T_ITEMS/0/ITEMS/1) and the itemRenamed wire` &&
+            ` reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange reads the rows binding's` &&
+            ` selected contexts and tells files from folders: Download is enabled for one or more selected files, Remove/Rename/Edit URL for exactly one file, and both stay disabled as soon as a folder is selected`.
+    text1 = text1 && ` - two bound flags, decided in the backend from the selected rows' binding paths. onDocumentRenamedSuccess writes the new name into the renamed node at whatever depth it sits (the itemRenamed wire` &&
+            ` carries its path and the item's file name) and toasts 'Document Renamed.' with duration 2000. The controller's quirks are kept: removeItem splices index split('/')[2] of the row's path out of /items` &&
+            ` - for a file inside a folder that is its TOP-LEVEL folder, which is removed with everything in it - and its removeSelections( ) does not exist on sap.ui.table.TreeTable, so the selection stays; the` &&
+            ` Edit URL Save looks the selected row up by id in the top-level /items only, so for a file inside a folder the original's Object.assign throws and nothing is saved - the port saves nothing either,` &&
+            ` without the error. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput,` &&
+            ` addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button`.
+    text1 = text1 && ` text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL` &&
+            ` regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header` &&
+            ` field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog` &&
+            ` (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url` &&
+            ` and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon` &&
+            ` option is the warning box's own icon anyway.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable), with the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124.` &&
+            ` Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion controls are kept` &&
+            ` 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration` &&
+            ` (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125 and isDirectoryPath @1.139 - the app needs UI5 >= 1.139), written` &&
+            ` upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration.`.
+    result = VALUE #( BASE result
+      ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.TreeTableSimple`                  class = `z2ui5_cl_smpc_app_660` path = `src/02/01/z2ui5_cl_smpc_app_660.clas.abap`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
+        since = `1.124`
+        since_post171 = abap_true
+        is_post171 = abap_true
+        notes = text1
+        post171 = text2 ) ).
+
+    text1 = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable) with its own id uploadPlugin and the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs` &&
+            ` a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, uploadEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // POST-1.71: the plugin's` &&
+            ` companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and` &&
+            ` sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125 and isDirectoryPath @1.139 - the app` &&
+            ` needs UI5 >= 1.139), written upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration. // NOTE: The named JSONModel documents (loaded in onInit from`.
+    text1 = text1 && ` model/documents.json) is folded into the default model, and the folder navigation moves from the frontend to the backend. The controller re-binds the TreeTable's rows to <folder path>/items` &&
+            ` (bindTableItems) and keeps /history and the Breadcrumbs' currentLocationText in the model; the port keeps the whole tree flat in a PROTECTED table (every node with its parent's documentId - all 15` &&
+            ` nodes of documents.json, the document URLs host-absolutized to https://sdk.openui5.org/test-resources/...) and binds the rows to T_ITEMS, which it rebuilds as the open folder's subtree (one row type` &&
+            ` per level, four levels - the depth of documents.json; a folder created deeper than four levels below the open folder exists but is not shown until one navigates closer), and binds the Breadcrumbs'` &&
+            ` links to T_HISTORY and currentLocationText to CURRENTLOCATIONTEXT. The rowConfiguration paths name the upper-case ABAP fields (FILENAME, MIMETYPE, URL, SIZE, ISDIRECTORY, PREVIEWABLE, TRUSTEDSOURCE)` &&
+            ` instead of fileName/mimeType/... - the same columns. The mock's type and thumbnailUrl keys are not carried: nothing binds them. IMAGEURL (no node has one) and UPLOADSTATE are bound with`.
+    text1 = text1 && ` omit_initial_paths, so the original's undefined checks in the Image/Icon visible expressions and the RowSettings highlight decide as in the sample. // NOTE: The controller formatters getIconSrc` &&
+            ` (sap-icon://folder-full for a directory, else UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback) and formatFileSize (getFileSizeWithUnits: KB/MB/GB with` &&
+            ` two decimals - a folder's size 0 reads 0.00 KB as in the original) run in ABAP and the node carries the finished values in two port fields, ICON and SIZE_UNITS, which core:Icon.src and the File Size` &&
+            ` Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them. // IMPROVISED: Upload: the sample starts a sinon fake XHR server (model/mockserver.js, started with` &&
+            ` the open folder's path) in beforeUploadStarts, which answers the POST to ./uploadFiles with 201 and files the new document into the open folder in front of its first file. There is no such endpoint` &&
+            ` behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that`.
+    text1 = text1 && ` transports the item's file name, media type and size, and the backend inserts the document into the open folder behind its folders (uploadedBy Current User, uploadState Complete, trustedSource) and` &&
+            ` shows 'Upload completed successfully.' at once rather than after the controller's two-second setTimeout in uploadCompleted. Lost with it: the uploaded file's blob: object URL (an uploaded row has an` &&
+            ` empty url, so it cannot be previewed or downloaded), the random uid documentId (upload-<n>), and the browser-locale uploadedDate (new Date().toLocaleDateString()) - the port writes the server date in` &&
+            ` the ISO form the mock's own dates use (the same for a folder created with Add Folder). uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by its own id` &&
+            ` uploadPlugin); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last`.
+    text1 = text1 && ` one, so only the first and the last of them are added. // NOTE: TreeTable.toggleOpenState='.onToggleOpenState' is not wired: the controller's handler is empty (its comment says no action is needed),` &&
+            ` and a backend wire with nothing to do would only cost a round-trip per expand and collapse. // NOTE: The controller's handlers are ported 1:1 in the backend: onSelectionChange (the rows binding's` &&
+            ` selected contexts arrive as their paths - Download for files only, Rename for exactly one file or one folder, Remove All only while every item of the open folder is selected); onItemPress /` &&
+            ` navigateToFolder (a folder Link opens the folder: the rows, the history up to its parent and the current location text) and onBreadcrumbPress (a history Link, found by its binding path - the` &&
+            ` controller's indexOfLink - opens that level, Attachments the root; the -1 branch for the current location text cannot fire, the Breadcrumbs render it as text); onDownloadFiles (one <a download> click` &&
+            ` per selected file through the DOWNLOAD_B64_FILE frontend action - the same anchor trick the controller builds with document.createElement - and its toasts); onCreateFolder / onCreateFolderDialogPress`.
+    text1 = text1 && ` / createFolderWithName (the CreateFolderDialog fragment as the popup with folderNameInput bound, the empty-name and duplicate-name toasts, the new folder unshifted into the one selected folder or the` &&
+            ` open one, with the controller's fields and toast texts); onRemoveItemHandler (MessageBox.confirm 'Delete File', and on OK the file is filtered out of the OPEN folder's items - for a file shown inside` &&
+            ` an expanded subfolder that deletes nothing while the toast still says it did, as in the original); onRemoveAllHandler / deleteAllSelectedItems (its checks, the 'Delete All Items' confirm and the` &&
+            ` count toast; a removed folder takes its content with it). After a navigation the port also clears the TreeTable's selection (clearSelection) and the three buttons - the controller's bindRows drops` &&
+            ` the selection too but leaves the buttons as they were. The Create dialog is destroyed on Create where the controller only closes it for reuse; it opens empty either way. // IMPROVISED: onRenameItem` &&
+            ` decides per selected row: a folder goes to renameFolderWithDialog, a sap.m.Dialog the controller builds in JS (title Rename Folder, an Input with the current name at width 100%, OK emphasized and`.
+    text1 = text1 && ` Cancel) - the port builds that Dialog as its popup, so its Dialog, Input and the two Button controls are controls the original's views do not contain; OK renames the folder when the trimmed name is` &&
+            ` new and toasts 'Folder renamed successfully'. A file goes to the plugin's renameItem( context ), which only the browser can hand over, so the Rename button's press carries TWO handlers separated by` &&
+            ` ';' (UI5's EventHandlerResolver splits them): the backend RENAME event and a view-wired control_by_id renameItem on uploadPlugin whose argument is the first selected context of the rows binding - or` &&
+            ` null when that row is a folder, which renameItem ignores. onDocumentRenamedSuccess writes the new name into the node in the backend and toasts 'File renamed successfully' (duration 2000). //` &&
+            ` LIVE-TEST: Unverified in a running system: (a) the two-handler press on the Rename button (.eB(...); .eF(...)) and its renameItem argument` &&
+            ` $controller.getView().byId('table-uploadSet').getBinding('rows').getSelectedContexts()[0] (null for a folder) through the unlisted-method path of control_by_id, and openFilePreview with the Link's`.
+    text1 = text1 && ` $event.oSource.getBindingContext(); (b) rowSelectionChange transporting $event.oSource.getBinding('rows').getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire` &&
+            ` reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size; (d) DOWNLOAD_B64_FILE with an https test-resources URL and` &&
+            ` clearSelection after a navigation. // NOTE: The sample ships view/fragment/AddViaUrl.fragment.xml (a Dialog addViaUrlDialog with contentWidth and contentHeight under a core:FragmentDefinition` &&
+            ` carrying templateShareable and class, holding a form:SimpleForm addViaUrlSimpleform with two Label controls urlInputLabel and nameInputLabel - both required - two Input controls urlInput and` &&
+            ` nameInput, and the Button controls addDocumentBtn and Cancel), but nothing in this variant loads it: its view has no Add menu and its controller no openAddOrEditDialog. The port does not build the` &&
+            ` dead fragment, so structural_diff, which unions every archived fragment with the view, counts its controls, attributes and ids as missing.`.
+    text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
+            ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable) with its own id uploadPlugin and the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs` &&
+            ` a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, uploadEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion` &&
+            ` controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and` &&
+            ` sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125 and isDirectoryPath @1.139 - the app` &&
+            ` needs UI5 >= 1.139), written upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.plugins.UploadSetwithTable`      name = `UploadSetwithTablePlugin.TreeTableWithFolderHierarchy`     class = `z2ui5_cl_smpc_app_661` path = `src/02/01/z2ui5_cl_smpc_app_661.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.124`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.`
-        post171 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124.` ) ).
+        notes = text1
+        post171 = text2 ) ).
 
     text1 = `POST-1.71: Button.ariaHasPopup (since UI5 1.84) is kept 1:1 on the two view buttons (ariaHasPopup='Dialog'); the app needs a UI5 release >= 1.84 to render it. // NOTE:` &&
             ` handlePopoverPress/handleResizablePopoverPress lazily Fragment.load a Popover and openBy(button). The port builds each popover as a core:FragmentDefinition on the button-press round-trip and shows it` &&
@@ -8431,14 +9463,25 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         since = `1.10`
         notes = text1 ) ).
 
+    text1 = `POST-1.71: the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103. // NOTE: the original` &&
+            ` declares its four VariantItem controls statically and the controller adds (onSave -> addItem) and removes (onManage -> removeItem) items imperatively. The port binds the items aggregation to an ABAP` &&
+            ` table with one VariantItem template carrying the same ten properties per row (seeded with the four original entries, values verbatim), so the backend can add and delete rows - structural-diff` &&
+            ` therefore counts one VariantItem template against the original's four. selectedKey, defaultKey and modified are bound two-way: the Toggle Modify View button flips modified in the backend` &&
+            ` (setModified), select and save reset it, and a manage change of the default view reaches the model through the bound defaultKey. Renames, favorite and execute-on-select changes in the Manage Views` &&
+            ` dialog are written by the control onto the items' properties and so reach the model through the two-way bound template - the manage handler only applies the deleted keys and, like`.
+    text1 = text1 && ` _checkCurrentVariant, falls back to the standard (first) view when the selected one was deleted. // NOTE: a new view's key is built from an ABAP timestamp (key_<yyyymmddhhmmss>) instead of` &&
+            ` JavaScript's Date.now( ) milliseconds - unique per save as in the original, a different digit format. The three MessageToast texts are composed in the backend with the same wording and carry the` &&
+            ` original's closeOnBrowserNavigation option through the control_global MESSAGE_TOAST call. // LIVE-TEST: the manage event's deleted parameter is transported as ${$parameters>/deleted} and read as a` &&
+            ` JSON array of keys, and the save event's boolean parameters (overwrite, execute, def, public) as abap_bool - both unverified in a running system, as is the two-way write-back of a rename/favorite` &&
+            ` toggle from the Manage Views dialog through the bound VariantItem template.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.VariantManagement`               name = `VariantManagement`                                         class = `z2ui5_cl_smpc_app_651` path = `src/02/01/z2ui5_cl_smpc_app_651.clas.abap`
-        score = 1
-        score_tip = `Rating 1 of 5 - how much attention this port deserves (complexity + rework + review + test-priority). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.103`
         since_post171 = abap_true
         is_post171 = abap_true
-        notes = `POST-1.71: the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103.`
+        notes = text1
         post171 = `the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103.` ) ).
 
     text1 = `NOTE: The three controller-loaded fragments (Dialog / DialogPreselected / DialogPreset) are declared in the view's mvc:dependents aggregation and opened 1:1 via follow_up_action(` &&

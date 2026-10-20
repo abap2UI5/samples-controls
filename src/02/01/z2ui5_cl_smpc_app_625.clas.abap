@@ -1,3 +1,6 @@
+" @keywords avatar sap.m avataractivestate popover list standardlistitem messagestrip
+" @summary This sample demonstrates toggling of Avatar Active state, when a User menu is opened/closed.
+" @origin sap.m.sample.AvatarActiveState - https://sdk.openui5.org/entity/sap.m.Avatar/sample/sap.m.sample.AvatarActiveState (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_625 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

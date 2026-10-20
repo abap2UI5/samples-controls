@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageinpagewithuri simpleform label columnelementdata switch text select item
+" @summary The available illustrations are from the default illustration set with the use of the 'src' property.
+" @origin sap.m.sample.IllustratedMessageInPageWithURI - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInPageWithURI (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_637 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

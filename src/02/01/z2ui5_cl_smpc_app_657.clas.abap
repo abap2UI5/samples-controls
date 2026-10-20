@@ -1,3 +1,6 @@
+" @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablefilepreview dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
+" @summary This example showcases how uploaded files can be previewed with FilePreviewDialog control and its related configuration. UploadSetwithTable plugin creates and uses default instance of FilePreviewDialog, if not defined.
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview (status: generated)
 CLASS z2ui5_cl_smpc_app_657 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -727,7 +730,8 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      CASE to_lower( mediatype ).
+      DATA(type) = to_lower( mediatype ).
+      CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
           result = `sap-icon://doc-attachment`.
@@ -771,7 +775,8 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    CASE to_lower( substring( val = filename off = dot + 1 ) ).
+    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
       WHEN `csv` OR `xls` OR `xlsx`.

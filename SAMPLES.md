@@ -58,11 +58,11 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.Avatar**<br>Avatar | [`Z2UI5_CL_SMPC_APP_624`](src/02/01/z2ui5_cl_smpc_app_624.clas.abap) |
-| **sap.m.Avatar** — Avatar with toggling of Active state<br>AvatarActiveState | [`Z2UI5_CL_SMPC_APP_625`](src/02/01/z2ui5_cl_smpc_app_625.clas.abap) |
-| **sap.m.Avatar** — Avatar with Badge Icon Color<br>AvatarBadgeIconColor | [`Z2UI5_CL_SMPC_APP_626`](src/02/01/z2ui5_cl_smpc_app_626.clas.abap) |
-| **sap.m.Avatar** — Avatar with badgeValueState<br>AvatarValueState | [`Z2UI5_CL_SMPC_APP_627`](src/02/01/z2ui5_cl_smpc_app_627.clas.abap) |
-| **sap.m.Avatar** — Avatar with Visual Affordance<br>AvatarWithAffordance | [`Z2UI5_CL_SMPC_APP_628`](src/02/01/z2ui5_cl_smpc_app_628.clas.abap) |
+| **sap.m.Avatar**<br>This sample demonstrates different combinations of types, shapes, and sizes of the Avatar.<br><sub>avatar sap.m scrollcontainer text grid vbox</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_624`](src/02/01/z2ui5_cl_smpc_app_624.clas.abap) |
+| **sap.m.Avatar** — Avatar with toggling of Active state<br>This sample demonstrates toggling of Avatar Active state, when a User menu is opened/closed.<br><sub>avatar sap.m avataractivestate popover list standardlistitem messagestrip</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_625`](src/02/01/z2ui5_cl_smpc_app_625.clas.abap) |
+| **sap.m.Avatar** — Avatar with Badge Icon Color<br>This sample demonstrates different badge icon colors of the Avatar.<br><sub>avatar sap.m avatarbadgeiconcolor scrollcontainer text grid vbox</sub><br><sub>○ generated · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_626`](src/02/01/z2ui5_cl_smpc_app_626.clas.abap) |
+| **sap.m.Avatar** — Avatar with badgeValueState<br>This sample demonstrates different badge value states of the Avatar.<br><sub>avatar sap.m avatarvaluestate scrollcontainer grid vbox text</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_627`](src/02/01/z2ui5_cl_smpc_app_627.clas.abap) |
+| **sap.m.Avatar** — Avatar with Visual Affordance<br>This sample demonstrates different combinations of types, shapes, and sizes of the Avatar with visual affordance.<br><sub>avatar sap.m avatarwithaffordance scrollcontainer text grid vbox lightbox lightboxitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_628`](src/02/01/z2ui5_cl_smpc_app_628.clas.abap) |
 
 #### sap.m.Bar
 
@@ -222,16 +222,16 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.DynamicDateRange**<br>DynamicDateRange | [`Z2UI5_CL_SMPC_APP_639`](src/02/01/z2ui5_cl_smpc_app_639.clas.abap) |
-| **sap.m.DynamicDateRange** — Dynamic Date Range with calendarWeekNumbering<br>DynamicDateRangeAndCalendarWeekNumbering | [`Z2UI5_CL_SMPC_APP_640`](src/02/01/z2ui5_cl_smpc_app_640.clas.abap) |
-| **sap.m.DynamicDateRange** — Dynamic Date Range - Open by Another Control<br>DynamicDateRangeHidden | [`Z2UI5_CL_SMPC_APP_641`](src/02/01/z2ui5_cl_smpc_app_641.clas.abap) |
-| **sap.m.DynamicDateRange** — Dynamic Date Range with Custom Options<br>DynamicDateRangeWithCustomOptions | [`Z2UI5_CL_SMPC_APP_642`](src/02/01/z2ui5_cl_smpc_app_642.clas.abap) |
+| **sap.m.DynamicDateRange**<br>The dynamic date range is a control that offers a choice of absolute and relative dates, using different offset from the current date. The list of values offered must be defined by the application.<br><sub>dynamicdaterange dynamic date range sap.m table overflowtoolbar title toolbarspacer label column text</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_639`](src/02/01/z2ui5_cl_smpc_app_639.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range with calendarWeekNumbering<br>This example shows the Dynamic Date Range control with Middle Eastern calendar week numbering.<br><sub>dynamicdaterange dynamic date range sap.m dynamicdaterangeandcalendarweeknumbering table overflowtoolbar title toolbarspacer label column</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_640`](src/02/01/z2ui5_cl_smpc_app_640.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range - Open by Another Control<br>This example shows Dynamic Date Range which is opened by another control.<br><sub>dynamicdaterange dynamic date range sap.m dynamicdaterangehidden title vbox label button link</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_641`](src/02/01/z2ui5_cl_smpc_app_641.clas.abap) |
+| **sap.m.DynamicDateRange** — Dynamic Date Range with Custom Options<br>This example shows the Dynamic Date Range control with custom options for interval or date selection.<br><sub>dynamicdaterange dynamic date range sap.m dynamicdaterangewithcustomoptions table overflowtoolbar title toolbarspacer label column</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_642`](src/02/01/z2ui5_cl_smpc_app_642.clas.abap) |
 
 #### sap.m.ExpandableText
 
 | Sample | Class |
 |---|---|
-| **sap.m.ExpandableText**<br>ExpandableText | [`Z2UI5_CL_SMPC_APP_643`](src/02/01/z2ui5_cl_smpc_app_643.clas.abap) |
+| **sap.m.ExpandableText**<br>The ExpandableText control can be used to display a larger texts inside a table, list or form.<br><sub>expandabletext expandable text sap.m table column columnlistitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_643`](src/02/01/z2ui5_cl_smpc_app_643.clas.abap) |
 
 #### sap.m.FacetFilter
 
@@ -340,16 +340,16 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.IllustratedMessage** — Illustrated Message Enable Vertical Responsiveness<br>IllustratedMessageEVR | [`Z2UI5_CL_SMPC_APP_629`](src/02/01/z2ui5_cl_smpc_app_629.clas.abap) |
-| **sap.m.IllustratedMessage** — A demo application that imports a Custom Illustration Set from an npm package<br>IllustratedMessageInAppCustom | [`Z2UI5_CL_SMPC_APP_630`](src/02/01/z2ui5_cl_smpc_app_630.clas.abap) |
-| **sap.m.IllustratedMessage** — 'NoActivities' Illustrated Message in a Card<br>IllustratedMessageInCardNoActivities | [`Z2UI5_CL_SMPC_APP_631`](src/02/01/z2ui5_cl_smpc_app_631.clas.abap) |
-| **sap.m.IllustratedMessage** — 'NoEmail' Illustrated Message in a Card<br>IllustratedMessageInCardNoEmail | [`Z2UI5_CL_SMPC_APP_632`](src/02/01/z2ui5_cl_smpc_app_632.clas.abap) |
-| **sap.m.IllustratedMessage** — Illustrated Message in a Dialog<br>IllustratedMessageInDialog | [`Z2UI5_CL_SMPC_APP_633`](src/02/01/z2ui5_cl_smpc_app_633.clas.abap) |
-| **sap.m.IllustratedMessage** — Default Illustration Set (sapIllus)<br>IllustratedMessageInPage | [`Z2UI5_CL_SMPC_APP_634`](src/02/01/z2ui5_cl_smpc_app_634.clas.abap) |
-| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (Custom Illustration Set)<br>IllustratedMessageInPageCustom | [`Z2UI5_CL_SMPC_APP_635`](src/02/01/z2ui5_cl_smpc_app_635.clas.abap) |
-| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)<br>IllustratedMessageInPageTNT | [`Z2UI5_CL_SMPC_APP_636`](src/02/01/z2ui5_cl_smpc_app_636.clas.abap) |
-| **sap.m.IllustratedMessage** — Illustrative style illustrations using the 'src' property<br>IllustratedMessageInPageWithURI | [`Z2UI5_CL_SMPC_APP_637`](src/02/01/z2ui5_cl_smpc_app_637.clas.abap) |
-| **sap.m.IllustratedMessage** — Illustrated Message Session Timeout<br>IllustratedMessageSessionTimeout | [`Z2UI5_CL_SMPC_APP_638`](src/02/01/z2ui5_cl_smpc_app_638.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message Enable Vertical Responsiveness<br>Demonstrates the IllustratedMessage's 'enableVerticalResponsiveness' property.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageevr responsivesplitter panecontainer splitpane splitterlayoutdata button vbox</sub><br><sub>○ generated · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_629`](src/02/01/z2ui5_cl_smpc_app_629.clas.abap) |
+| **sap.m.IllustratedMessage** — A demo application that imports a Custom Illustration Set from an npm package<br>Shows how to import a Custom Illustration from an npm package into a UI5 application for usage with IllustratedMessage.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageinappcustom simpleform label select item text button</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_630`](src/02/01/z2ui5_cl_smpc_app_630.clas.abap) |
+| **sap.m.IllustratedMessage** — 'NoActivities' Illustrated Message in a Card<br>IllustratedMessage as content of sap.f.Card. 'NoActivities' illustration type is being used for the Illustrated Message.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageincardnoactivities card header button</sub><br><sub>○ generated · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_631`](src/02/01/z2ui5_cl_smpc_app_631.clas.abap) |
+| **sap.m.IllustratedMessage** — 'NoEmail' Illustrated Message in a Card<br>IllustratedMessage as content of sap.f.Card. 'NoEmail' illustration type is being used for the Illustrated Message.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageincardnoemail card header</sub><br><sub>○ generated · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_632`](src/02/01/z2ui5_cl_smpc_app_632.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Dialog<br>IllustratedMessage as content of sap.m.Dialog.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageindialog button dialog</sub><br><sub>○ generated · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_633`](src/02/01/z2ui5_cl_smpc_app_633.clas.abap) |
+| **sap.m.IllustratedMessage** — Default Illustration Set (sapIllus)<br>The available illustrations are from the default ('sapIllus') illustration set.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageinpage simpleform label columnelementdata switch text select item</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_634`](src/02/01/z2ui5_cl_smpc_app_634.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (Custom Illustration Set)<br>The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'custom' illustration set.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageinpagecustom simpleform label select item text button</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_635`](src/02/01/z2ui5_cl_smpc_app_635.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)<br>The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageinpagetnt simpleform label columnelementdata select item text button</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_636`](src/02/01/z2ui5_cl_smpc_app_636.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrative style illustrations using the 'src' property<br>The available illustrations are from the default illustration set with the use of the 'src' property.<br><sub>illustratedmessage illustrated message sap.m illustratedmessageinpagewithuri simpleform label columnelementdata switch text select item</sub><br><sub>○ generated · 8 deviations</sub> | [`Z2UI5_CL_SMPC_APP_637`](src/02/01/z2ui5_cl_smpc_app_637.clas.abap) |
+| **sap.m.IllustratedMessage** — Illustrated Message Session Timeout<br>All applications that require user sign-in should employ a mechanism for automating user sign-out. When the inactivity is about to reach that threshold, a session timeout dialog appears automatically to inform the user.<br><sub>illustratedmessage illustrated message sap.m illustratedmessagesessiontimeout vbox label stepinput button dialog</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_638`](src/02/01/z2ui5_cl_smpc_app_638.clas.abap) |
 
 #### sap.m.Image
 
@@ -990,7 +990,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.VariantManagement** — VariantManagement using dedicated items<br>VariantManagement | [`Z2UI5_CL_SMPC_APP_651`](src/02/01/z2ui5_cl_smpc_app_651.clas.abap) |
+| **sap.m.VariantManagement** — VariantManagement using dedicated items<br>VariantManagement with dedicated items<br><sub>variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle variantitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_651`](src/02/01/z2ui5_cl_smpc_app_651.clas.abap) |
 
 #### sap.m.ViewSettingsDialog
 
@@ -1127,7 +1127,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.f.AvatarGroup**<br>AvatarGroup | [`Z2UI5_CL_SMPC_APP_662`](src/02/04/z2ui5_cl_smpc_app_662.clas.abap) |
+| **sap.f.AvatarGroup**<br>This sample demonstrates the different group types and item sizes of the AvatarGroup control.<br><sub>avatargroup avatar group sap.f slider verticallayout label avatargroupitem popover card hbox vbox</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_662`](src/02/04/z2ui5_cl_smpc_app_662.clas.abap) |
 
 #### sap.f.Card
 
@@ -1185,18 +1185,18 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.f.HeroBanner** — Hero Banner - Basic<br>HeroBannerBasic | [`Z2UI5_CL_SMPC_APP_667`](src/02/04/z2ui5_cl_smpc_app_667.clas.abap) |
-| **sap.f.HeroBanner** — Hero Banner - Columns Ratio<br>HeroBannerColumnsRatio | [`Z2UI5_CL_SMPC_APP_668`](src/02/04/z2ui5_cl_smpc_app_668.clas.abap) |
-| **sap.f.HeroBanner** — Hero Banner - Header Block and Actions Placement<br>HeroBannerHeaderBlockAndActionsPlacement | [`Z2UI5_CL_SMPC_APP_669`](src/02/04/z2ui5_cl_smpc_app_669.clas.abap) |
-| **sap.f.HeroBanner** — Hero Banner - Integration Card<br>HeroBannerIntegrationCard | [`Z2UI5_CL_SMPC_APP_670`](src/02/04/z2ui5_cl_smpc_app_670.clas.abap) |
-| **sap.f.HeroBanner** — Hero Banner - Use Cases<br>HeroBannerUseCases | [`Z2UI5_CL_SMPC_APP_671`](src/02/04/z2ui5_cl_smpc_app_671.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Basic<br>A basic Hero Banner with a header text and overline text.<br><sub>herobanner hero banner sap.f herobannerbasic vbox</sub><br><sub>○ generated · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_667`](src/02/04/z2ui5_cl_smpc_app_667.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Columns Ratio<br>Demonstrates the three columnsRatio options: single column (no endContent), Equal, and FirstWider.<br><sub>herobanner hero banner sap.f herobannercolumnsratio html title vbox button text card header</sub><br><sub>○ generated · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_668`](src/02/04/z2ui5_cl_smpc_app_668.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Header Block and Actions Placement<br>Demonstrates actionsPlacement and headerBlockPlacement properties for controlling the position of the header and actions.<br><sub>herobanner hero banner sap.f herobannerheaderblockandactionsplacement vbox button card header title</sub><br><sub>○ generated · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_669`](src/02/04/z2ui5_cl_smpc_app_669.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Integration Card<br>Demonstrates the use of sap.ui.integration.widgets.Card inside both the startContent (default slot) and endContent aggregations of the Hero Banner.<br><sub>herobanner hero banner sap.f herobannerintegrationcard vbox button card</sub><br><sub>○ generated · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_670`](src/02/04/z2ui5_cl_smpc_app_670.clas.abap) |
+| **sap.f.HeroBanner** — Hero Banner - Use Cases<br>A collection of common Hero Banner use cases: header actions only, content with actions, actions below header, and header at bottom.<br><sub>herobanner hero banner sap.f herobannerusecases html title vbox button text card header</sub><br><sub>○ generated · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_671`](src/02/04/z2ui5_cl_smpc_app_671.clas.abap) |
 
 #### sap.f.ProductSwitch
 
 | Sample | Class |
 |---|---|
 | **sap.f.ProductSwitch** — Product Switch with Navigation<br>This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.<br><sub>productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_165`](src/02/04/z2ui5_cl_smpc_app_165.clas.abap) |
-| **sap.f.ProductSwitch** — Product Switch with imageSrc<br>ProductSwitchItemWithImageSrc | [`Z2UI5_CL_SMPC_APP_666`](src/02/04/z2ui5_cl_smpc_app_666.clas.abap) |
+| **sap.f.ProductSwitch** — Product Switch with imageSrc<br>This sample demonstrates the usage of Product Switch Item with imageSrc, configurable by the app developer.<br><sub>productswitch product switch sap.f productswitchitemwithimagesrc verticallayout button text responsivepopover productswitchitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_666`](src/02/04/z2ui5_cl_smpc_app_666.clas.abap) |
 
 #### sap.f.ShellBar
 
@@ -1213,9 +1213,9 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | Sample | Class |
 |---|---|
 | **sap.f.SidePanel** — Side Panel with single action item<br>Demonstrates the usage of Side Panel with single action item.<br><sub>sidepanel side panel sap.f single item button vbox label switch text sidepanelitem</sub><br><sub>◐ reviewed · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_136`](src/02/04/z2ui5_cl_smpc_app_136.clas.abap) |
-| **sap.f.SidePanel**<br>SidePanel | [`Z2UI5_CL_SMPC_APP_663`](src/02/04/z2ui5_cl_smpc_app_663.clas.abap) |
-| **sap.f.SidePanel** — Side Panel with overflow menu<br>SidePanelOverflow | [`Z2UI5_CL_SMPC_APP_664`](src/02/04/z2ui5_cl_smpc_app_664.clas.abap) |
-| **sap.f.SidePanel** — Resizable Side Panel<br>SidePanelResizable | [`Z2UI5_CL_SMPC_APP_665`](src/02/04/z2ui5_cl_smpc_app_665.clas.abap) |
+| **sap.f.SidePanel**<br>Demonstrates the basic usage of Side Panel.<br><sub>sidepanel side panel sap.f button vbox label switch select listitem text sidepanelitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_663`](src/02/04/z2ui5_cl_smpc_app_663.clas.abap) |
+| **sap.f.SidePanel** — Side Panel with overflow menu<br>Demonstrates the usage of Side Panel with overflow menu on desktop and tablet devices.<br><sub>sidepanel side panel sap.f sidepaneloverflow button vbox label switch text sidepanelitem</sub><br><sub>○ generated · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_664`](src/02/04/z2ui5_cl_smpc_app_664.clas.abap) |
+| **sap.f.SidePanel** — Resizable Side Panel<br>Demonstrates the usage of resizable Side Panel.<br><sub>sidepanel side panel sap.f sidepanelresizable button vbox label switch text sidepanelitem input</sub><br><sub>○ generated · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_665`](src/02/04/z2ui5_cl_smpc_app_665.clas.abap) |
 
 ### sap.ui.layout.form
 
@@ -1398,16 +1398,16 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Name validation configuration<br>UploadSetwithTablePlugin.FileNameValidationSample | [`Z2UI5_CL_SMPC_APP_652`](src/02/01/z2ui5_cl_smpc_app_652.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview with Custom Page Content for non supported file types<br> | [`Z2UI5_CL_SMPC_APP_653`](src/02/01/z2ui5_cl_smpc_app_653.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Grid Table (sap.ui.table.Table)<br>UploadSetwithTablePlugin.GridTableSimple | [`Z2UI5_CL_SMPC_APP_654`](src/02/01/z2ui5_cl_smpc_app_654.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Multiple plugin instances with multiple tables<br>UploadSetwithTablePlugin.MultiplePluginInstances | [`Z2UI5_CL_SMPC_APP_655`](src/02/01/z2ui5_cl_smpc_app_655.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File upload with user dialogs<br>UploadSetwithTablePlugin.ResponsiveTableFileDialogs | [`Z2UI5_CL_SMPC_APP_656`](src/02/01/z2ui5_cl_smpc_app_656.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview<br>UploadSetwithTablePlugin.ResponsiveTableFilePreview | [`Z2UI5_CL_SMPC_APP_657`](src/02/01/z2ui5_cl_smpc_app_657.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Upload Progress and Upload Termination<br> | [`Z2UI5_CL_SMPC_APP_658`](src/02/01/z2ui5_cl_smpc_app_658.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table)<br>UploadSetwithTablePlugin.ResponsiveTableSimple | [`Z2UI5_CL_SMPC_APP_659`](src/02/01/z2ui5_cl_smpc_app_659.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table (sap.ui.table.TreeTable)<br>UploadSetwithTablePlugin.TreeTableSimple | [`Z2UI5_CL_SMPC_APP_660`](src/02/01/z2ui5_cl_smpc_app_660.clas.abap) |
-| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table with folder hierarchy & folder uploads<br> | [`Z2UI5_CL_SMPC_APP_661`](src/02/01/z2ui5_cl_smpc_app_661.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Name validation configuration<br>This example demonstrates the usage of fileNameValidationConfig property to configure file name validation for renaming a file.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.filenamevalidationsample dynamicpage vbox messagestrip text hbox checkbox</sub><br><sub>○ generated · 12 deviations</sub> | [`Z2UI5_CL_SMPC_APP_652`](src/02/01/z2ui5_cl_smpc_app_652.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview with Custom Page Content for non supported file types<br>This example showcases how to display custom page content for non supported file types in the FilePreviewDialog control.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins filepreviewcustompagecontent dynamicpage vbox messagestrip overflowtoolbar title toolbarspacer</sub><br><sub>○ generated · 12 deviations</sub> | [`Z2UI5_CL_SMPC_APP_653`](src/02/01/z2ui5_cl_smpc_app_653.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Grid Table (sap.ui.table.Table)<br>This example demonstrates the usage of UploadSetwithTable plugin for grid table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.gridtablesimple dynamicpage overflowtoolbar title toolbarspacer actionsplaceholder button</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_654`](src/02/01/z2ui5_cl_smpc_app_654.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Multiple plugin instances with multiple tables<br>This example demonstrates the usage of multiple plugin instances with multiple tables. The plugin instances are created for each table and the uploaded files are displayed in their respective tables.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.multipleplugininstances dynamicpage vbox overflowtoolbar title toolbarspacer searchfield</sub><br><sub>○ generated · 11 deviations</sub> | [`Z2UI5_CL_SMPC_APP_655`](src/02/01/z2ui5_cl_smpc_app_655.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File upload with user dialogs<br>This example demonstrates usage of itemValidationHandler callback to leverage additional validations and configurations for the items that are to be uploaded, and also the manual trigger of the upload process.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablefiledialogs dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata</sub><br><sub>○ generated · 11 deviations</sub> | [`Z2UI5_CL_SMPC_APP_656`](src/02/01/z2ui5_cl_smpc_app_656.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - File Preview<br>This example showcases how uploaded files can be previewed with FilePreviewDialog control and its related configuration. UploadSetwithTable plugin creates and uses default instance of FilePreviewDialog, if not defined.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablefilepreview dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata</sub><br><sub>○ generated · 11 deviations</sub> | [`Z2UI5_CL_SMPC_APP_657`](src/02/01/z2ui5_cl_smpc_app_657.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table) - Upload Progress and Upload Termination<br>This example demonstrates the progress or termination of the items that are being uploaded. The upload progress is displayed for each item that is being uploaded. The users can terminate the upload process at any time.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins responsivetableprogressindicator dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata</sub><br><sub>○ generated · 10 deviations</sub> | [`Z2UI5_CL_SMPC_APP_658`](src/02/01/z2ui5_cl_smpc_app_658.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Responsive Table (sap.m.Table)<br>This example demonstrates the usage of UploadSetwithTable plugin for responsive table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablesimple dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata</sub><br><sub>○ generated · 10 deviations</sub> | [`Z2UI5_CL_SMPC_APP_659`](src/02/01/z2ui5_cl_smpc_app_659.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table (sap.ui.table.TreeTable)<br>This example demonstrates the usage of UploadSetwithTable plugin for tree table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.<br><sub>uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.treetablesimple dynamicpage treetable overflowtoolbar title toolbarspacer actionsplaceholder</sub><br><sub>○ generated · 9 deviations</sub> | [`Z2UI5_CL_SMPC_APP_660`](src/02/01/z2ui5_cl_smpc_app_660.clas.abap) |
+| **sap.m.plugins.UploadSetwithTable** — Plugin for Tree Table with folder hierarchy & folder uploads<br>This example demonstrates the usage of UploadSetwithTable plugin with a tree table featuring folder hierarchy, folder creation, folder uploads, folder navigation with breadcrumbs and folder management<br><sub>uploadsetwithtable upload setwith table sap.m.plugins treetablewithfolderhierarchy dynamicpage treetable overflowtoolbar breadcrumbs link actionsplaceholder</sub><br><sub>○ generated · 10 deviations</sub> | [`Z2UI5_CL_SMPC_APP_661`](src/02/01/z2ui5_cl_smpc_app_661.clas.abap) |
 
 ### sap.ui.layout.cssgrid
 
@@ -1446,13 +1446,13 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.p13n.Container** — p13n.Container usage in a Dialog/Popover<br>p13n.Container | [`Z2UI5_CL_SMPC_APP_644`](src/02/01/z2ui5_cl_smpc_app_644.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization for responsive table<br>p13n.Engine | [`Z2UI5_CL_SMPC_APP_645`](src/02/01/z2ui5_cl_smpc_app_645.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization implementing custom filter controls<br>p13n.EngineCustomFilters | [`Z2UI5_CL_SMPC_APP_646`](src/02/01/z2ui5_cl_smpc_app_646.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization for grid list<br>p13n.EngineGridList | [`Z2UI5_CL_SMPC_APP_647`](src/02/01/z2ui5_cl_smpc_app_647.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization for grid table<br>p13n.EngineGridTable | [`Z2UI5_CL_SMPC_APP_648`](src/02/01/z2ui5_cl_smpc_app_648.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization with multiple SelectionControllers<br>p13n.EngineMultipleController | [`Z2UI5_CL_SMPC_APP_649`](src/02/01/z2ui5_cl_smpc_app_649.clas.abap) |
-| **sap.m.p13n.Popup** — p13n.Popup usage<br>p13n.Popup | [`Z2UI5_CL_SMPC_APP_650`](src/02/01/z2ui5_cl_smpc_app_650.clas.abap) |
+| **sap.m.p13n.Container** — p13n.Container usage in a Dialog/Popover<br>Dialog & Popover with a sap.m.P13nContainer as content.<br><sub>container sap.m.p13n p13n.container vbox radiobuttongroup radiobutton label button text</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_644`](src/02/01/z2ui5_cl_smpc_app_644.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for responsive table<br>Responsive Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.engine table overflowtoolbar title toolbarseparator toolbarspacer button text columnresizer menu</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_645`](src/02/01/z2ui5_cl_smpc_app_645.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization implementing custom filter controls<br>Filtering using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginecustomfilters table overflowtoolbar title toolbarseparator toolbarspacer button columnresizer menu quicksort</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_646`](src/02/01/z2ui5_cl_smpc_app_646.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for grid list<br>GridList using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginegridlist vbox toolbar title toolbarseparator toolbarspacer button gridlist customlistitem flexitemdata</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_647`](src/02/01/z2ui5_cl_smpc_app_647.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for grid table<br>Grid Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu popup selectionpanel</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_648`](src/02/01/z2ui5_cl_smpc_app_648.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization with multiple SelectionControllers<br>Personalization for Reponsive Table using multiple SelectionControllers<br><sub>engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem popup</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_649`](src/02/01/z2ui5_cl_smpc_app_649.clas.abap) |
+| **sap.m.p13n.Popup** — p13n.Popup usage<br>Dialog with sap.m.p13n/* Panels<br><sub>popup sap.m.p13n p13n.popup vbox button selectionpanel sortpanel grouppanel codeeditor</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_650`](src/02/01/z2ui5_cl_smpc_app_650.clas.abap) |
 
 ### sap.m.semantic
 

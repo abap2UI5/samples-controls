@@ -1,3 +1,6 @@
+" @keywords avatar sap.m avatarwithaffordance scrollcontainer text grid vbox lightbox lightboxitem
+" @summary This sample demonstrates different combinations of types, shapes, and sizes of the Avatar with visual affordance.
+" @origin sap.m.sample.AvatarWithAffordance - https://sdk.openui5.org/entity/sap.m.Avatar/sample/sap.m.sample.AvatarWithAffordance (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_628 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

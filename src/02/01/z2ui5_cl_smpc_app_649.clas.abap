@@ -1,3 +1,6 @@
+" @keywords engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem popup
+" @summary Personalization for Reponsive Table using multiple SelectionControllers
+" @origin sap.m.sample.p13n.EngineMultipleController - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineMultipleController (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_649 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -373,7 +376,7 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
 
     " the static items of the view; the labels are the rows' MetadataHelper's
     t_rows = VALUE #(
-        ( key = `P1` label = `Peter Mueller` id = `P1` firstname = `Peter`  lastname = `Mueller`  city = `Walldorf` size = `1.75` visible = abap_true )
+        ( key = `P1` label = `Peter Müller`  id = `P1` firstname = `Peter`  lastname = `Mueller`  city = `Walldorf` size = `1.75` visible = abap_true )
         ( key = `P2` label = `Petra Maier`   id = `P2` firstname = `Petra`  lastname = `Maier`    city = `Walldorf` size = `1.85` visible = abap_true )
         ( key = `P3` label = `Thomas Smith`  id = `P3` firstname = `Thomas` lastname = `Smith`    city = `Walldorf` size = `1.95` visible = abap_true )
         ( key = `P4` label = `John Williams` id = `P4` firstname = `John`   lastname = `Williams` city = `Walldorf` size = `1.65` visible = abap_true )

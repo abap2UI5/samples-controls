@@ -1,3 +1,6 @@
+" @keywords sidepanel side panel sap.f sidepaneloverflow button vbox label switch text sidepanelitem
+" @summary Demonstrates the usage of Side Panel with overflow menu on desktop and tablet devices.
+" @origin sap.f.sample.SidePanelOverflow - https://sdk.openui5.org/entity/sap.f.SidePanel/sample/sap.f.sample.SidePanelOverflow (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_664 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

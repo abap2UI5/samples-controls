@@ -1,3 +1,6 @@
+" @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablesimple dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
+" @summary This example demonstrates the usage of UploadSetwithTable plugin for responsive table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple (status: generated)
 CLASS z2ui5_cl_smpc_app_659 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -725,7 +728,8 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      CASE to_lower( mediatype ).
+      DATA(type) = to_lower( mediatype ).
+      CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
           result = `sap-icon://doc-attachment`.
@@ -769,7 +773,8 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    CASE to_lower( substring( val = filename off = dot + 1 ) ).
+    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
       WHEN `csv` OR `xls` OR `xlsx`.

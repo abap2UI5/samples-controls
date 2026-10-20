@@ -1,3 +1,6 @@
+" @keywords herobanner hero banner sap.f herobannerusecases html title vbox button text card header
+" @summary A collection of common Hero Banner use cases: header actions only, content with actions, actions below header, and header at bottom.
+" @origin sap.f.sample.HeroBannerUseCases - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerUseCases (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_671 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

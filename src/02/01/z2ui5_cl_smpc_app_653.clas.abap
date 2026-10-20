@@ -1,3 +1,6 @@
+" @keywords uploadsetwithtable upload setwith table sap.m.plugins filepreviewcustompagecontent dynamicpage vbox messagestrip overflowtoolbar title toolbarspacer
+" @summary This example showcases how to display custom page content for non supported file types in the FilePreviewDialog control.
+" @origin sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent (status: generated)
 CLASS z2ui5_cl_smpc_app_653 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -740,7 +743,8 @@ CLASS z2ui5_cl_smpc_app_653 IMPLEMENTATION.
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      CASE to_lower( mediatype ).
+      DATA(type) = to_lower( mediatype ).
+      CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
           result = `sap-icon://doc-attachment`.
@@ -784,7 +788,8 @@ CLASS z2ui5_cl_smpc_app_653 IMPLEMENTATION.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    CASE to_lower( substring( val = filename off = dot + 1 ) ).
+    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
       WHEN `csv` OR `xls` OR `xlsx`.

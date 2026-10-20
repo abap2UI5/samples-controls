@@ -5,15 +5,51 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_661.clas.abap",
   "batch": "b56",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.124."
+      "what": "the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable) with its own id uploadPlugin and the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, uploadEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin."
+    },
+    {
+      "type": "POST_171",
+      "what": "the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125 and isDirectoryPath @1.139 - the app needs UI5 >= 1.139), written upload:UploadItemConfiguration for the original's dotted m:upload.UploadItemConfiguration."
+    },
+    {
+      "type": "NOTE",
+      "what": "The named JSONModel documents (loaded in onInit from model/documents.json) is folded into the default model, and the folder navigation moves from the frontend to the backend. The controller re-binds the TreeTable's rows to <folder path>/items (bindTableItems) and keeps /history and the Breadcrumbs' currentLocationText in the model; the port keeps the whole tree flat in a PROTECTED table (every node with its parent's documentId - all 15 nodes of documents.json, the document URLs host-absolutized to https://sdk.openui5.org/test-resources/...) and binds the rows to T_ITEMS, which it rebuilds as the open folder's subtree (one row type per level, four levels - the depth of documents.json; a folder created deeper than four levels below the open folder exists but is not shown until one navigates closer), and binds the Breadcrumbs' links to T_HISTORY and currentLocationText to CURRENTLOCATIONTEXT. The rowConfiguration paths name the upper-case ABAP fields (FILENAME, MIMETYPE, URL, SIZE, ISDIRECTORY, PREVIEWABLE, TRUSTEDSOURCE) instead of fileName/mimeType/... - the same columns. The mock's type and thumbnailUrl keys are not carried: nothing binds them. IMAGEURL (no node has one) and UPLOADSTATE are bound with omit_initial_paths, so the original's undefined checks in the Image/Icon visible expressions and the RowSettings highlight decide as in the sample."
+    },
+    {
+      "type": "NOTE",
+      "what": "The controller formatters getIconSrc (sap-icon://folder-full for a directory, else UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback) and formatFileSize (getFileSizeWithUnits: KB/MB/GB with two decimals - a folder's size 0 reads 0.00 KB as in the original) run in ABAP and the node carries the finished values in two port fields, ICON and SIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Upload: the sample starts a sinon fake XHR server (model/mockserver.js, started with the open folder's path) in beforeUploadStarts, which answers the POST to ./uploadFiles with 201 and files the new document into the open folder in front of its first file. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size, and the backend inserts the document into the open folder behind its folders (uploadedBy Current User, uploadState Complete, trustedSource) and shows 'Upload completed successfully.' at once rather than after the controller's two-second setTimeout in uploadCompleted. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or downloaded), the random uid documentId (upload-<n>), and the browser-locale uploadedDate (new Date().toLocaleDateString()) - the port writes the server date in the ISO form the mock's own dates use (the same for a folder created with Add Folder). uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by its own id uploadPlugin); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added."
+    },
+    {
+      "type": "NOTE",
+      "what": "TreeTable.toggleOpenState='.onToggleOpenState' is not wired: the controller's handler is empty (its comment says no action is needed), and a backend wire with nothing to do would only cost a round-trip per expand and collapse."
+    },
+    {
+      "type": "NOTE",
+      "what": "The controller's handlers are ported 1:1 in the backend: onSelectionChange (the rows binding's selected contexts arrive as their paths - Download for files only, Rename for exactly one file or one folder, Remove All only while every item of the open folder is selected); onItemPress / navigateToFolder (a folder Link opens the folder: the rows, the history up to its parent and the current location text) and onBreadcrumbPress (a history Link, found by its binding path - the controller's indexOfLink - opens that level, Attachments the root; the -1 branch for the current location text cannot fire, the Breadcrumbs render it as text); onDownloadFiles (one <a download> click per selected file through the DOWNLOAD_B64_FILE frontend action - the same anchor trick the controller builds with document.createElement - and its toasts); onCreateFolder / onCreateFolderDialogPress / createFolderWithName (the CreateFolderDialog fragment as the popup with folderNameInput bound, the empty-name and duplicate-name toasts, the new folder unshifted into the one selected folder or the open one, with the controller's fields and toast texts); onRemoveItemHandler (MessageBox.confirm 'Delete File', and on OK the file is filtered out of the OPEN folder's items - for a file shown inside an expanded subfolder that deletes nothing while the toast still says it did, as in the original); onRemoveAllHandler / deleteAllSelectedItems (its checks, the 'Delete All Items' confirm and the count toast; a removed folder takes its content with it). After a navigation the port also clears the TreeTable's selection (clearSelection) and the three buttons - the controller's bindRows drops the selection too but leaves the buttons as they were. The Create dialog is destroyed on Create where the controller only closes it for reuse; it opens empty either way."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "onRenameItem decides per selected row: a folder goes to renameFolderWithDialog, a sap.m.Dialog the controller builds in JS (title Rename Folder, an Input with the current name at width 100%, OK emphasized and Cancel) - the port builds that Dialog as its popup, so its Dialog, Input and the two Button controls are controls the original's views do not contain; OK renames the folder when the trimmed name is new and toasts 'Folder renamed successfully'. A file goes to the plugin's renameItem( context ), which only the browser can hand over, so the Rename button's press carries TWO handlers separated by ';' (UI5's EventHandlerResolver splits them): the backend RENAME event and a view-wired control_by_id renameItem on uploadPlugin whose argument is the first selected context of the rows binding - or null when that row is a folder, which renameItem ignores. onDocumentRenamedSuccess writes the new name into the node in the backend and toasts 'File renamed successfully' (duration 2000)."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "Unverified in a running system: (a) the two-handler press on the Rename button (.eB(...); .eF(...)) and its renameItem argument $controller.getView().byId('table-uploadSet').getBinding('rows').getSelectedContexts()[0] (null for a folder) through the unlisted-method path of control_by_id, and openFilePreview with the Link's $event.oSource.getBindingContext(); (b) rowSelectionChange transporting $event.oSource.getBinding('rows').getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size; (d) DOWNLOAD_B64_FILE with an https test-resources URL and clearSelection after a navigation."
+    },
+    {
+      "type": "NOTE",
+      "what": "The sample ships view/fragment/AddViaUrl.fragment.xml (a Dialog addViaUrlDialog with contentWidth and contentHeight under a core:FragmentDefinition carrying templateShareable and class, holding a form:SimpleForm addViaUrlSimpleform with two Label controls urlInputLabel and nameInputLabel - both required - two Input controls urlInput and nameInput, and the Button controls addDocumentBtn and Cancel), but nothing in this variant loads it: its view has no Add menu and its controller no openAddOrEditDialog. The port does not build the dead fragment, so structural_diff, which unions every archived fragment with the view, counts its controls, attributes and ids as missing."
     }
   ]
 }

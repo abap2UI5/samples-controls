@@ -1,3 +1,6 @@
+" @keywords dynamicdaterange dynamic date range sap.m dynamicdaterangehidden title vbox label button link
+" @summary This example shows Dynamic Date Range which is opened by another control.
+" @origin sap.m.sample.DynamicDateRangeHidden - https://sdk.openui5.org/entity/sap.m.DynamicDateRange/sample/sap.m.sample.DynamicDateRangeHidden (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_641 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

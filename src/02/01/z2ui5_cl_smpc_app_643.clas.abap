@@ -1,3 +1,6 @@
+" @keywords expandabletext expandable text sap.m table column columnlistitem
+" @summary The ExpandableText control can be used to display a larger texts inside a table, list or form.
+" @origin sap.m.sample.ExpandableText - https://sdk.openui5.org/entity/sap.m.ExpandableText/sample/sap.m.sample.ExpandableText (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_643 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

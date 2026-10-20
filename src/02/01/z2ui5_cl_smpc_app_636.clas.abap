@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageinpagetnt simpleform label columnelementdata select item text button
+" @summary The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set.
+" @origin sap.m.sample.IllustratedMessageInPageTNT - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInPageTNT (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_636 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

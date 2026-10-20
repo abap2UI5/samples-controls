@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageinpage simpleform label columnelementdata switch text select item
+" @summary The available illustrations are from the default ('sapIllus') illustration set.
+" @origin sap.m.sample.IllustratedMessageInPage - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInPage (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_634 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

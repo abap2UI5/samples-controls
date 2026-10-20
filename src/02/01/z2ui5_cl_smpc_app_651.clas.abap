@@ -1,3 +1,6 @@
+" @keywords variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle variantitem
+" @summary VariantManagement with dedicated items
+" @origin sap.m.sample.VariantManagement - https://sdk.openui5.org/entity/sap.m.VariantManagement/sample/sap.m.sample.VariantManagement (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_651 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,3 +1,6 @@
+" @keywords engine sap.m.p13n p13n.engine table overflowtoolbar title toolbarseparator toolbarspacer button text columnresizer menu
+" @summary Responsive Table using the personalization Engine
+" @origin sap.m.sample.p13n.Engine - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.Engine (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_645 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageinappcustom simpleform label select item text button
+" @summary Shows how to import a Custom Illustration from an npm package into a UI5 application for usage with IllustratedMessage.
+" @origin sap.m.sample.IllustratedMessageInAppCustom - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInAppCustom (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_630 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

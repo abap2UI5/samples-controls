@@ -1,3 +1,6 @@
+" @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.treetablesimple dynamicpage treetable overflowtoolbar title toolbarspacer actionsplaceholder
+" @summary This example demonstrates the usage of UploadSetwithTable plugin for tree table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.
+" @origin sap.m.sample.UploadSetwithTablePlugin.TreeTableSimple - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.TreeTableSimple (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
@@ -12,7 +15,6 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         mediatype      TYPE string,
         imageurl       TYPE string,
         url            TYPE string,
-        revision       TYPE string,
         status         TYPE string,
         filesize       TYPE i,
         lastmodifiedby TYPE string,
@@ -35,7 +37,6 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         mediatype      TYPE string,
         imageurl       TYPE string,
         url            TYPE string,
-        revision       TYPE string,
         status         TYPE string,
         filesize       TYPE i,
         lastmodifiedby TYPE string,
@@ -59,7 +60,6 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         mediatype      TYPE string,
         imageurl       TYPE string,
         url            TYPE string,
-        revision       TYPE string,
         status         TYPE string,
         filesize       TYPE i,
         lastmodifiedby TYPE string,
@@ -362,16 +362,6 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
                                     )->end(
                                 )->end(
-                            )->end(
-                        )->end(
-                        )->ele( `Column`
-                            )->tag( n = `Label` ns = `m`
-                                )->a( n = `text` v = `Revision`
-
-                            )->ele( `template`
-                                )->tag( n = `Link` ns = `m`
-                                    )->a( n = `text` v = `{REVISION}`
-
                             )->end(
                         )->end(
                         )->ele( `Column`
@@ -690,7 +680,6 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                  mediatype      = mediatype
                                  url            = url
                                  uploadstate    = `Complete`
-                                 revision       = `00`
                                  status         = `In work`
                                  filesize       = filesize
                                  lastmodifiedby = `Jane Burns`
@@ -789,7 +778,8 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      CASE to_lower( mediatype ).
+      DATA(type) = to_lower( mediatype ).
+      CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
           result = `sap-icon://doc-attachment`.
@@ -833,7 +823,8 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    CASE to_lower( substring( val = filename off = dot + 1 ) ).
+    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
       WHEN `csv` OR `xls` OR `xlsx`.
@@ -878,33 +869,33 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
         items = VALUE #(
           ( id = `23004579` filename = `Document.txt` mediatype = `text/plain`
             url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`
-            revision = `42` status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
+            status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
             documenttype = `Document` previewable = abap_true isdirectory = abap_false )
           ( filename = `Invoices`
             isdirectory = abap_true color = `#ffffff` bgcolor = `#30914c`
             items = VALUE #(
               ( id = `23004569` filename = `Invoice summary.doc` mediatype = `application/msword`
                 imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png` url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`
-                revision = `01` status = `In work` filesize = 200 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
+                status = `In work` filesize = 200 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
                 documenttype = `Invoice` previewable = abap_true isdirectory = abap_false ) ) ) ) )
       ( id = `23004583` filename = `Test Video.mp4` mediatype = `video/mp4`
         url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`
-        revision = `99` status = `In work` filesize = 420000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
+        status = `In work` filesize = 420000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
         documenttype = `Attachment` previewable = abap_true isdirectory = abap_false )
       ( id = `23004590` filename = `Sample Zip File.zip` mediatype = `application/zip`
         url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`
-        revision = `00` status = `In work` filesize = 42000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
+        status = `In work` filesize = 42000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
         documenttype = `Attachment` previewable = abap_true isdirectory = abap_false )
       ( filename = `Attachments`
         isdirectory = abap_true color = `#ffffff` bgcolor = `#e76500`
         items = VALUE #(
           ( id = `23004578` filename = `Instructions.pdf` mediatype = `application/pdf`
             url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`
-            revision = `01` status = `In work` filesize = 30000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
+            status = `In work` filesize = 30000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
             documenttype = `Specification` previewable = abap_true trustedsource = abap_true isdirectory = abap_false ) ) )
       ( id = `23004584` filename = `Transmission.vds` mediatype = `model/vnd.sap.vds`
         url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/transmission.vds`
-        revision = `42` status = `In work` filesize = 123 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
+        status = `In work` filesize = 123 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
         documenttype = `Attachment` previewable = abap_true trustedsource = abap_true isdirectory = abap_false ) ).
     " the derived ICON and FILESIZE_UNITS on every level
     LOOP AT t_items REFERENCE INTO DATA(root).

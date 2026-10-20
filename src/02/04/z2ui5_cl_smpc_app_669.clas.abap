@@ -1,3 +1,6 @@
+" @keywords herobanner hero banner sap.f herobannerheaderblockandactionsplacement vbox button card header title
+" @summary Demonstrates actionsPlacement and headerBlockPlacement properties for controlling the position of the header and actions.
+" @origin sap.f.sample.HeroBannerHeaderBlockAndActionsPlacement - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerHeaderBlockAndActionsPlacement (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_669 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

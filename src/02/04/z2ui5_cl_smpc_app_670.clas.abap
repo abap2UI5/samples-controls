@@ -1,3 +1,6 @@
+" @keywords herobanner hero banner sap.f herobannerintegrationcard vbox button card
+" @summary Demonstrates the use of sap.ui.integration.widgets.Card inside both the startContent (default slot) and endContent aggregations of the Hero Banner.
+" @origin sap.f.sample.HeroBannerIntegrationCard - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerIntegrationCard (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_670 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessagesessiontimeout vbox label stepinput button dialog
+" @summary All applications that require user sign-in should employ a mechanism for automating user sign-out. When the inactivity is about to reach that threshold, a session timeout dialog appears automatically to inform the user.
+" @origin sap.m.sample.IllustratedMessageSessionTimeout - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageSessionTimeout (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_638 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

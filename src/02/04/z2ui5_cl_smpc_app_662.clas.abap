@@ -1,3 +1,6 @@
+" @keywords avatargroup avatar group sap.f slider verticallayout label avatargroupitem popover card hbox vbox
+" @summary This sample demonstrates the different group types and item sizes of the AvatarGroup control.
+" @origin sap.f.sample.AvatarGroup - https://sdk.openui5.org/entity/sap.f.AvatarGroup/sample/sap.f.sample.AvatarGroup (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_662 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

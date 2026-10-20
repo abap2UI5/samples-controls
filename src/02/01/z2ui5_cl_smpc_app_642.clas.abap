@@ -1,3 +1,6 @@
+" @keywords dynamicdaterange dynamic date range sap.m dynamicdaterangewithcustomoptions table overflowtoolbar title toolbarspacer label column
+" @summary This example shows the Dynamic Date Range control with custom options for interval or date selection.
+" @origin sap.m.sample.DynamicDateRangeWithCustomOptions - https://sdk.openui5.org/entity/sap.m.DynamicDateRange/sample/sap.m.sample.DynamicDateRangeWithCustomOptions (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_642 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

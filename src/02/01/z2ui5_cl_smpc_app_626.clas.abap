@@ -1,3 +1,6 @@
+" @keywords avatar sap.m avatarbadgeiconcolor scrollcontainer text grid vbox
+" @summary This sample demonstrates different badge icon colors of the Avatar.
+" @origin sap.m.sample.AvatarBadgeIconColor - https://sdk.openui5.org/entity/sap.m.Avatar/sample/sap.m.sample.AvatarBadgeIconColor (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_626 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -26,10 +26,6 @@
     },
     {
       "type": "NOTE",
-      "what": "the rows' MetadataHelper labels the first person 'Peter Müller'; the port writes the label as 'Peter Mueller' (the spelling the row's own lastName cell uses), because the corpus keeps its ABAP sources 7-bit ASCII (abaplint 7bit_ascii) and an ABAP literal has no escape for the umlaut."
-    },
-    {
-      "type": "NOTE",
       "what": "onColumnMove computes the drop position from the dragged/dropped column indices and applyState( { Columns: [ { key, position } ] } ) moves the column there. The port transports both columns' p13nKey custom data and the dropPosition, does the same arithmetic on the backend's column order and moves the key in the visible-column state before re-emitting the view. The original handler searches the retrieved state with oColumn.data('p13nKey') on plain state objects, which throws as soon as the state holds a column, so in the demo kit the drop does not move anything; the port implements the move the handler evidently intends (the identical handler of sap.m.sample.p13n.Engine, which uses .key)."
     },
     {

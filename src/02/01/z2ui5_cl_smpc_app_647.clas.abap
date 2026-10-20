@@ -1,3 +1,6 @@
+" @keywords engine sap.m.p13n p13n.enginegridlist vbox toolbar title toolbarseparator toolbarspacer button gridlist customlistitem flexitemdata
+" @summary GridList using the personalization Engine
+" @origin sap.m.sample.p13n.EngineGridList - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineGridList (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_647 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

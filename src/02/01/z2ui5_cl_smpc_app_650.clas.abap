@@ -1,3 +1,6 @@
+" @keywords popup sap.m.p13n p13n.popup vbox button selectionpanel sortpanel grouppanel codeeditor
+" @summary Dialog with sap.m.p13n/* Panels
+" @origin sap.m.sample.p13n.Popup - https://sdk.openui5.org/entity/sap.m.p13n.Popup/sample/sap.m.sample.p13n.Popup (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_650 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

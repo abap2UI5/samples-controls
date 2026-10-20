@@ -1,3 +1,6 @@
+" @keywords dynamicdaterange dynamic date range sap.m table overflowtoolbar title toolbarspacer label column text
+" @summary The dynamic date range is a control that offers a choice of absolute and relative dates, using different offset from the current date. The list of values offered must be defined by the application.
+" @origin sap.m.sample.DynamicDateRange - https://sdk.openui5.org/entity/sap.m.DynamicDateRange/sample/sap.m.sample.DynamicDateRange (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_639 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

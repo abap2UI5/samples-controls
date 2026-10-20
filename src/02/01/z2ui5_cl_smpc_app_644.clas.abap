@@ -1,3 +1,6 @@
+" @keywords container sap.m.p13n p13n.container vbox radiobuttongroup radiobutton label button text
+" @summary Dialog & Popover with a sap.m.P13nContainer as content.
+" @origin sap.m.sample.p13n.Container - https://sdk.openui5.org/entity/sap.m.p13n.Container/sample/sap.m.sample.p13n.Container (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_644 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

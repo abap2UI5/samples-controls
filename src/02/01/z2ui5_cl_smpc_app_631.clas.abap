@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageincardnoactivities card header button
+" @summary IllustratedMessage as content of sap.f.Card. 'NoActivities' illustration type is being used for the Illustrated Message.
+" @origin sap.m.sample.IllustratedMessageInCardNoActivities - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInCardNoActivities (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_631 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

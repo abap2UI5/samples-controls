@@ -1,3 +1,6 @@
+" @keywords engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu popup selectionpanel
+" @summary Grid Table using the personalization Engine
+" @origin sap.m.sample.p13n.EngineGridTable - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineGridTable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_648 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

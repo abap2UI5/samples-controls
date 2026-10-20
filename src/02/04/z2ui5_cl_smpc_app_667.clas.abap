@@ -1,3 +1,6 @@
+" @keywords herobanner hero banner sap.f herobannerbasic vbox
+" @summary A basic Hero Banner with a header text and overline text.
+" @origin sap.f.sample.HeroBannerBasic - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerBasic (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_667 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

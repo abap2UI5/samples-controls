@@ -1,3 +1,6 @@
+" @keywords productswitch product switch sap.f productswitchitemwithimagesrc verticallayout button text responsivepopover productswitchitem
+" @summary This sample demonstrates the usage of Product Switch Item with imageSrc, configurable by the app developer.
+" @origin sap.f.sample.ProductSwitchItemWithImageSrc - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchItemWithImageSrc (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_666 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

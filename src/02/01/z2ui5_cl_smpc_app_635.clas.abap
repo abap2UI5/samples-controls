@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageinpagecustom simpleform label select item text button
+" @summary The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'custom' illustration set.
+" @origin sap.m.sample.IllustratedMessageInPageCustom - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInPageCustom (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_635 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

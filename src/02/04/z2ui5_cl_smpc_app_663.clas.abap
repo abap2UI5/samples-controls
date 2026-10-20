@@ -1,3 +1,6 @@
+" @keywords sidepanel side panel sap.f button vbox label switch select listitem text sidepanelitem
+" @summary Demonstrates the basic usage of Side Panel.
+" @origin sap.f.sample.SidePanel - https://sdk.openui5.org/entity/sap.f.SidePanel/sample/sap.f.sample.SidePanel (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_663 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

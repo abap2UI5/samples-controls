@@ -1,3 +1,6 @@
+" @keywords sidepanel side panel sap.f sidepanelresizable button vbox label switch text sidepanelitem input
+" @summary Demonstrates the usage of resizable Side Panel.
+" @origin sap.f.sample.SidePanelResizable - https://sdk.openui5.org/entity/sap.f.SidePanel/sample/sap.f.sample.SidePanelResizable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_665 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,3 +1,6 @@
+" @keywords illustratedmessage illustrated message sap.m illustratedmessageevr responsivesplitter panecontainer splitpane splitterlayoutdata button vbox
+" @summary Demonstrates the IllustratedMessage's 'enableVerticalResponsiveness' property.
+" @origin sap.m.sample.IllustratedMessageEVR - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageEVR (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_629 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
