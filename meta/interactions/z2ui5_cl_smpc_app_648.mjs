@@ -94,9 +94,8 @@ export default async (page, expect) => {
   await waitForIdle(page);
 
   // sort: the City header's column menu, its "sort descending" quick action
-  const city = await focusHeader('city_col');
-  console.log('STEP header', city);
-  await page.locator(`[id="${city}"]`).click();
+  await focusHeader('city_col');
+  await page.keyboard.press('Enter');
   await waitForUi5(page, () => ui5All().some((c) => c.isA('sap.m.Button') && !c.bIsDestroyed && c.getDomRef()
     && c.getIcon() === 'sap-icon://sort-descending'), 'the City column menu did not offer a sort-descending action');
   const desc = await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
