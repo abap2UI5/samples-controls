@@ -20,8 +20,8 @@ const tableState = () => {
 export default async (page, expect) => {
   // the frontend logs a failed view rebuild and carries on with an empty page
   const rebuildErrors = [];
-  page.on('console', (m) => { if (/duplicate id/.test(m.text())) rebuildErrors.push(m.text().split('\n')[0].slice(0, 200)); });
-  const rebuildsFailed = () => (rebuildErrors.length ? ` - the view rebuild failed: ${rebuildErrors[0]}` : '');
+  page.on('console', (m) => { const d = /duplicate id '([^']+)'/.exec(m.text()); if (d) rebuildErrors.push(d[1].replace(/^.*--/, '')); });
+  const rebuildsFailed = () => (rebuildErrors.length ? ` (rebuild died: duplicate id ${rebuildErrors[0]})` : '');
   const state = () => page.evaluate(`(() => { const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all()); return (${tableState.toString()})(); })()`);
   await waitForIdle(page);
   const before = await state();
@@ -141,5 +141,5 @@ export default async (page, expect) => {
     if (!t) return false;
     const heads = t.getItems().filter((i) => i.isA('sap.m.GroupHeaderListItem')).map((i) => i.getTitle());
     return heads.length === 2 && /Walldorf/.test(heads[0]) && /Heidelberg/.test(heads[1]);
-  }, `the quick group switch on City did not group the rows (Walldorf, then Heidelberg group headers)${rebuildsFailed()}`);
+  }, `quick group on City did not group the rows${rebuildsFailed()}`);
 };
