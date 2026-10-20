@@ -5,15 +5,40 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_649.clas.abap",
   "batch": "b55",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): setP13nData on the two SelectionPanels (JSON arrays built in ABAP) and open on the two p13n.Popups; the popups' close events pass the reason and getP13nData( true ); the column drop passes the dragged/dropped p13nKey and the drop position"
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104."
+      "what": "the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader, enableCount and enableReorder properties); the app needs a UI5 release >= 1.110."
+    },
+    {
+      "type": "POST_171",
+      "what": "kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column headerMenu (1.98), the sap.m.table.columnmenu Menu control with its items aggregation and the ActionItem control with icon, label and press (all 1.110)."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Engine.getInstance( ).register( ) with a Columns and a Rows SelectionController and Engine.show( ) are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the order and visibility of the table's columns and of its five items in ABAP, and each settings button (and the column menu's Columns ActionItem) opens a p13n:Popup with one p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it, enableReorder false for Rows) - two Popup and two SelectionPanel controls the port declares in the table's dependents, which the original view does not have. Before opening, the backend hands each panel the controller's adaptation data via setP13nData (visible entries first in state order, then the hidden ones sorted by label; labels from the two MetadataHelpers); on close with reason Ok the panel's getP13nData( true ) comes back and handleStateChange is reproduced in ABAP: every column/item hidden, the state's entries shown and moved to the front in state order. The view emits the Column and ColumnListItem controls (and every item's Text cells, which follow their column) from those two tables in a loop, so a state change is a view rebuild. The Engine's popups carry the panel's title (Fields) and contentHeight 35rem/contentWidth 32rem, which the declared Popup controls do not."
+    },
+    {
+      "type": "NOTE",
+      "what": "the rows' MetadataHelper labels the first person 'Peter Müller'; the port writes the label as 'Peter Mueller' (the spelling the row's own lastName cell uses), because the corpus keeps its ABAP sources 7-bit ASCII (abaplint 7bit_ascii) and an ABAP literal has no escape for the umlaut."
+    },
+    {
+      "type": "NOTE",
+      "what": "onColumnMove computes the drop position from the dragged/dropped column indices and applyState( { Columns: [ { key, position } ] } ) moves the column there. The port transports both columns' p13nKey custom data and the dropPosition, does the same arithmetic on the backend's column order and moves the key in the visible-column state before re-emitting the view. The original handler searches the retrieved state with oColumn.data('p13nKey') on plain state objects, which throws as soon as the state holds a column, so in the demo kit the drop does not move anything; the port implements the move the handler evidently intends (the identical handler of sap.m.sample.p13n.Engine, which uses .key)."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "the p13n.Popup close wires ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items), the setP13nData JSON argument and the drop wire's .data('p13nKey') args are source-derived, not run in a live system."
     }
   ]
 }

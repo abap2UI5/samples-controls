@@ -26,7 +26,7 @@ CLASS z2ui5_cl_smpc_app_647 DEFINITION PUBLIC.
     METHODS handle_state_change.
     METHODS p13n_names
       IMPORTING
-        !json         TYPE string
+        json          TYPE string
       RETURNING
         VALUE(result) TYPE string_table.
     METHODS model_init.

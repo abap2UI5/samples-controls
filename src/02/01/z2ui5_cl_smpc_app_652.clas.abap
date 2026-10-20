@@ -43,8 +43,6 @@ CLASS z2ui5_cl_smpc_app_652 DEFINITION PUBLIC.
     DATA cb_include               TYPE abap_bool.
     DATA cb_exclude               TYPE abap_bool.
     DATA cb_override              TYPE abap_bool.
-    " the plugin's fileNameValidationConfig object, as JSON
-    DATA name_config              TYPE string.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -54,10 +52,17 @@ CLASS z2ui5_cl_smpc_app_652 DEFINITION PUBLIC.
     DATA is_edit     TYPE abap_bool.
     DATA upload_no   TYPE i.
     DATA mode        TYPE string.
+    " the last config handed to setFileNameValidationConfig - re-issued after a
+    " view rebuild, which brings back the view's literal config
+    DATA config_live TYPE string.
 
     METHODS view_display.
+    METHODS config_apply.
     METHODS popup_url_display.
     METHODS on_event.
+    METHODS mode_select.
+    METHODS configure.
+    METHODS url_apply.
     METHODS remove_ask
       IMPORTING
         path TYPE string.
@@ -74,6 +79,9 @@ CLASS z2ui5_cl_smpc_app_652 DEFINITION PUBLIC.
         mediatype TYPE string
         url       TYPE string
         filesize  TYPE i.
+    METHODS selected_index
+      RETURNING
+        VALUE(result) TYPE i.
     METHODS row_index
       IMPORTING
         path          TYPE string
@@ -145,13 +153,13 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                     )->ele( `VBox`
                         )->a( n = `class` v = `sapUiMediumMarginTop sapUiMediumMarginBegin`
 
+                        " the original's design="Bold" on the three Texts is dropped - sap.m.Text
+                        " has no such property and the view fails to load with it
                         )->tag( `Text`
-                            )->a( n = `text`   v = |Note: Default restricted characters for file name ---> \{= ${ client->_bind( defaultcharacterset ) }\}|
-                            )->a( n = `design` v = `Bold`
+                            )->a( n = `text` v = |Note: Default restricted characters for file name ---> \{= ${ client->_bind( defaultcharacterset ) }\}|
                         )->tag( `Text`
-                            )->a( n = `text`   v = `Mode:`
-                            )->a( n = `class`  v = `sapUiTinyMarginBottom sapUiSmallMarginTop`
-                            )->a( n = `design` v = `Bold`
+                            )->a( n = `text`  v = `Mode:`
+                            )->a( n = `class` v = `sapUiTinyMarginBottom sapUiSmallMarginTop`
 
                         )->ele( `HBox`
                             )->a( n = `alignItems`     v = `Center`
@@ -176,9 +184,8 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
 
                         )->end(
                         )->tag( `Text`
-                            )->a( n = `text`   v = `Characters:`
-                            )->a( n = `class`  v = `sapUiTinyMarginTop`
-                            )->a( n = `design` v = `Bold`
+                            )->a( n = `text`  v = `Characters:`
+                            )->a( n = `class` v = `sapUiTinyMarginTop`
                         )->tag( `Input`
                             )->a( n = `id`          v = `charInput`
                             )->a( n = `class`       v = `sapUiSmallMarginTop`
@@ -314,23 +321,23 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                             )->ele( n = `UploadSetwithTable` ns = `plugins`
                                 " the id is added - the port calls the plugin by id where the
                                 " controller kept the instance onActivated handed it
-                                )->a( n = `id`                     v = `uploadSetPlugin`
-                                )->a( n = `uploadUrl`              v = `/uploadFiles`
-                                )->a( n = `multiple`               v = `true`
+                                )->a( n = `id`                       v = `uploadSetPlugin`
+                                )->a( n = `uploadUrl`                v = `/uploadFiles`
+                                )->a( n = `multiple`                 v = `true`
                                 " the mock server's part: the upload is vetoed and the backend
                                 " adds the row the fake 201 response would have created
-                                )->a( n = `beforeUploadStarts`     v = client->_event( val    = `UPLOAD`
-                                                                                       t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
-                                                                                                         ( `${$parameters>/item}.getMediaType()` )
-                                                                                                         ( `${$parameters>/item}.getFileObject().size` ) )
-                                                                                       s_ctrl = VALUE #( check_prevent_default = abap_true
-                                                                                                         check_queue_last      = abap_true ) )
-                                )->a( n = `itemRenamed`            v = client->_event( val   = `RENAMED`
-                                                                                       t_arg = VALUE #( ( `${$parameters>/item}.getBindingContext().getPath()` )
-                                                                                                        ( `${$parameters>/item}.getFileName()` ) ) )
-                                )->a( n = `cloudFilePickerEnabled` v = `true`
-                                )->a( n = `actions`                v = `uploadButton`
-                                )->a( n = `fileNameValidationConfig` v = client->_bind( val = name_config json = abap_true )
+                                )->a( n = `beforeUploadStarts`       v = client->_event( val    = `UPLOAD`
+                                                                                         t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
+                                                                                                           ( `${$parameters>/item}.getMediaType()` )
+                                                                                                           ( `${$parameters>/item}.getFileObject().size` ) )
+                                                                                         s_ctrl = VALUE #( check_prevent_default = abap_true
+                                                                                                           check_queue_last      = abap_true ) )
+                                )->a( n = `itemRenamed`              v = client->_event( val   = `RENAMED`
+                                                                                         t_arg = VALUE #( ( `${$parameters>/item}.getBindingContext().getPath()` )
+                                                                                                          ( `${$parameters>/item}.getFileName()` ) ) )
+                                )->a( n = `cloudFilePickerEnabled`   v = `true`
+                                )->a( n = `actions`                  v = `uploadButton`
+                                )->a( n = `fileNameValidationConfig` v = `{mode: 'override', characters: '@$#'}`
 
                                 )->ele( n = `rowConfiguration` ns = `plugins`
                                     " the paths name the model's upper-case ABAP fields
@@ -464,6 +471,19 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
 
     client->view_display( view->stringify( ) ).
 
+    IF config_live IS NOT INITIAL.
+      config_apply( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD config_apply.
+
+    " setFileNameValidationConfig - an object argument travels as real JSON
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              t_arg = VALUE #( ( `uploadSetPlugin` ) ( `setFileNameValidationConfig` ) ( config_live ) ) ).
+
   ENDMETHOD.
 
 
@@ -559,7 +579,11 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
 
       WHEN `EDIT_URL`.
         " onEditUrl - the same fragment as Edit URL, filled from the selected row
-        DATA(row) = t_items[ row_index( t_selected[ 1 ] ) ].
+        DATA(current) = selected_index( ).
+        IF current = 0.
+          RETURN.
+        ENDIF.
+        DATA(row) = t_items[ current ].
         is_edit         = abap_true.
         dialog_title    = `Edit URL`.
         apply_text      = `Apply`.
@@ -573,49 +597,25 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
         popup_url_display( ).
 
       WHEN `URL_APPLY`.
-        " handleAddViaUrl
-        IF is_edit = abap_true.
-          IF name_valid( ) = abap_true.
-            " showEditConfirmation - a Message dialog in the Warning state
-            client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
-                                         type             = `warning`
-                                         title            = `Warning`
-                                         actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
-                                         emphasizedaction = `Save`
-                                         onclose          = `EDIT_CONFIRM` ).
-          ELSE.
-            client->message_toast_display( `No Changes found` ).
-          ENDIF.
-          RETURN.
-        ENDIF.
-        DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
-        IF url_valid( ) = abap_false.
-          has_error = abap_true.
-        ENDIF.
-        IF has_error = abap_false.
-          " uploadItemViaUrl - the mock server answers with the typed URL as the
-          " document URL and an empty file
-          row_add( filename  = name_input
-                   mediatype = ``
-                   url       = url_input
-                   filesize  = 0 ).
-          client->popup_destroy( ).
-          client->message_toast_display( `Document Added` ).
-        ENDIF.
+        url_apply( ).
 
       WHEN `EDIT_CONFIRM`.
         IF client->get_event_arg( ) = `Save`.
           " the Save button validates (value states) and applies regardless
           name_valid( ).
           url_valid( ).
-          DATA(edited) = REF #( t_items[ row_index( t_selected[ 1 ] ) ] ).
-          edited->filename = name_input.
-          edited->url      = url_input.
+          DATA(target) = selected_index( ).
+          IF target > 0.
+            t_items[ target ]-filename = name_input.
+            t_items[ target ]-url      = url_input.
+          ENDIF.
           client->popup_destroy( ).
         ENDIF.
 
       WHEN `REMOVE_SELECTED`.
-        remove_ask( t_selected[ 1 ] ).
+        IF t_selected IS NOT INITIAL.
+          remove_ask( t_selected[ 1 ] ).
+        ENDIF.
 
       WHEN `REMOVE_ROW`.
         remove_ask( client->get_event_arg( ) ).
@@ -646,19 +646,7 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
         client->message_toast_display( text = `Document Renamed.` duration = `2000` ).
 
       WHEN `MODE_SELECT`.
-        " onCheckboxSelect - the three boxes behave as one choice
-        DATA(box) = client->get_event_arg( ).
-        cb_include  = xsdbool( box CS `cbInclude` ).
-        cb_exclude  = xsdbool( box CS `cbExclude` ).
-        cb_override = xsdbool( cb_include = abap_false AND cb_exclude = abap_false ).
-        IF cb_include = abap_true.
-          mode = `include`.
-        ELSEIF cb_exclude = abap_true.
-          mode = `exclude`.
-        ELSE.
-          mode = `override`.
-        ENDIF.
-        isconfigurebuttonenabled = xsdbool( characters IS NOT INITIAL AND mode IS NOT INITIAL ).
+        mode_select( ).
 
       WHEN `CHARACTERS_CHANGE`.
         " onInputChange reads newValue - the model only follows on change
@@ -666,26 +654,87 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
         isconfigurebuttonenabled = xsdbool( characters IS NOT INITIAL AND mode IS NOT INITIAL ).
 
       WHEN `CONFIGURE`.
-        " onConfigureHandler - the bound config object reaches the plugin's
-        " setFileNameValidationConfig through the binding
-        IF cb_include = abap_true.
-          mode = `include`.
-        ELSEIF cb_exclude = abap_true.
-          mode = `exclude`.
-        ELSEIF cb_override = abap_true.
-          mode = `override`.
-        ELSE.
-          mode = ``.
-        ENDIF.
-        DATA(json_chars) = replace( val  = replace( val = characters sub = `\` with = `\\` occ = 0 )
-                                    sub  = `"`
-                                    with = `\"`
-                                    occ  = 0 ).
-        name_config = |\{"mode":"{ mode }","characters":"{ json_chars }"\}|.
-        client->message_toast_display(
-            |Configuration mode: { mode }, Characters: { characters }, have been applied to the fileNameValidationConfig.| ).
+        configure( ).
 
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD mode_select.
+
+    " onCheckboxSelect - the three boxes behave as one choice
+    DATA(box) = client->get_event_arg( ).
+    cb_include  = xsdbool( box CS `cbInclude` ).
+    cb_exclude  = xsdbool( box CS `cbExclude` ).
+    cb_override = xsdbool( cb_include = abap_false AND cb_exclude = abap_false ).
+    IF cb_include = abap_true.
+      mode = `include`.
+    ELSEIF cb_exclude = abap_true.
+      mode = `exclude`.
+    ELSE.
+      mode = `override`.
+    ENDIF.
+    isconfigurebuttonenabled = xsdbool( characters IS NOT INITIAL AND mode IS NOT INITIAL ).
+
+  ENDMETHOD.
+
+
+  METHOD configure.
+
+    " onConfigureHandler - setFileNameValidationConfig with the config object
+    IF cb_include = abap_true.
+      mode = `include`.
+    ELSEIF cb_exclude = abap_true.
+      mode = `exclude`.
+    ELSEIF cb_override = abap_true.
+      mode = `override`.
+    ELSE.
+      mode = ``.
+    ENDIF.
+    DATA(json_chars) = replace( val  = replace( val = characters sub = `\` with = `\\` occ = 0 )
+                                sub  = `"`
+                                with = `\"`
+                                occ  = 0 ).
+    config_live = |\{"mode":"{ mode }","characters":"{ json_chars }"\}|.
+    config_apply( ).
+    client->message_toast_display(
+        |Configuration mode: { mode }, Characters: { characters }, have been applied to the fileNameValidationConfig.| ).
+
+  ENDMETHOD.
+
+
+  METHOD url_apply.
+
+    " handleAddViaUrl
+    IF is_edit = abap_true.
+      IF name_valid( ) = abap_true.
+        " showEditConfirmation - a Message dialog in the Warning state
+        client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
+                                     type             = `warning`
+                                     title            = `Warning`
+                                     actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
+                                     emphasizedaction = `Save`
+                                     onclose          = `EDIT_CONFIRM` ).
+      ELSE.
+        client->message_toast_display( `No Changes found` ).
+      ENDIF.
+      RETURN.
+    ENDIF.
+    DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
+    IF url_valid( ) = abap_false.
+      has_error = abap_true.
+    ENDIF.
+    IF has_error = abap_false.
+      " uploadItemViaUrl - the mock server answers with the typed URL as the
+      " document URL and an empty file
+      row_add( filename  = name_input
+               mediatype = ``
+               url       = url_input
+               filesize  = 0 ).
+      client->popup_destroy( ).
+      client->message_toast_display( `Document Added` ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -769,6 +818,20 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                                  trustedsource  = abap_true ).
     row_derive( CHANGING row = row ).
     INSERT row INTO t_items INDEX 1.
+
+  ENDMETHOD.
+
+
+  METHOD selected_index.
+
+    " the one selected row the toolbar actions work on - 0 when there is none
+    IF t_selected IS INITIAL.
+      RETURN.
+    ENDIF.
+    result = row_index( t_selected[ 1 ] ).
+    IF result > lines( t_items ).
+      result = 0.
+    ENDIF.
 
   ENDMETHOD.
 
@@ -920,8 +983,6 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
     isconfigurebuttonenabled = abap_true.
     defaultcharacterset      = `/:\*?"<>|[]{}@#$`.
     cb_override              = abap_true.
-    " the view's literal fileNameValidationConfig="{mode: 'override', characters: '@$#'}"
-    name_config              = `{"mode":"override","characters":"@$#"}`.
 
   ENDMETHOD.
 

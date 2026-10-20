@@ -48,6 +48,7 @@ CLASS z2ui5_cl_smpc_app_657 DEFINITION PUBLIC.
     METHODS view_display.
     METHODS popup_url_display.
     METHODS on_event.
+    METHODS url_apply.
     METHODS remove_ask
       IMPORTING
         path TYPE string.
@@ -64,6 +65,9 @@ CLASS z2ui5_cl_smpc_app_657 DEFINITION PUBLIC.
         mediatype TYPE string
         url       TYPE string
         filesize  TYPE i.
+    METHODS selected_index
+      RETURNING
+        VALUE(result) TYPE i.
     METHODS row_index
       IMPORTING
         path          TYPE string
@@ -491,7 +495,11 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
 
       WHEN `EDIT_URL`.
         " onEditUrl - the same fragment as Edit URL, filled from the selected row
-        DATA(row) = t_items[ row_index( t_selected[ 1 ] ) ].
+        DATA(current) = selected_index( ).
+        IF current = 0.
+          RETURN.
+        ENDIF.
+        DATA(row) = t_items[ current ].
         is_edit         = abap_true.
         dialog_title    = `Edit URL`.
         apply_text      = `Apply`.
@@ -505,49 +513,25 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
         popup_url_display( ).
 
       WHEN `URL_APPLY`.
-        " handleAddViaUrl
-        IF is_edit = abap_true.
-          IF name_valid( ) = abap_true.
-            " showEditConfirmation - a Message dialog in the Warning state
-            client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
-                                         type             = `warning`
-                                         title            = `Warning`
-                                         actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
-                                         emphasizedaction = `Save`
-                                         onclose          = `EDIT_CONFIRM` ).
-          ELSE.
-            client->message_toast_display( `No Changes found` ).
-          ENDIF.
-          RETURN.
-        ENDIF.
-        DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
-        IF url_valid( ) = abap_false.
-          has_error = abap_true.
-        ENDIF.
-        IF has_error = abap_false.
-          " uploadItemViaUrl - the mock server answers with the typed URL as the
-          " document URL and an empty file
-          row_add( filename  = name_input
-                   mediatype = ``
-                   url       = url_input
-                   filesize  = 0 ).
-          client->popup_destroy( ).
-          client->message_toast_display( `Document Added` ).
-        ENDIF.
+        url_apply( ).
 
       WHEN `EDIT_CONFIRM`.
         IF client->get_event_arg( ) = `Save`.
           " the Save button validates (value states) and applies regardless
           name_valid( ).
           url_valid( ).
-          DATA(edited) = REF #( t_items[ row_index( t_selected[ 1 ] ) ] ).
-          edited->filename = name_input.
-          edited->url      = url_input.
+          DATA(target) = selected_index( ).
+          IF target > 0.
+            t_items[ target ]-filename = name_input.
+            t_items[ target ]-url      = url_input.
+          ENDIF.
           client->popup_destroy( ).
         ENDIF.
 
       WHEN `REMOVE_SELECTED`.
-        remove_ask( t_selected[ 1 ] ).
+        IF t_selected IS NOT INITIAL.
+          remove_ask( t_selected[ 1 ] ).
+        ENDIF.
 
       WHEN `REMOVE_ROW`.
         remove_ask( client->get_event_arg( ) ).
@@ -578,6 +562,41 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
         client->message_toast_display( text = `Document Renamed.` duration = `2000` ).
 
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD url_apply.
+
+    " handleAddViaUrl
+    IF is_edit = abap_true.
+      IF name_valid( ) = abap_true.
+        " showEditConfirmation - a Message dialog in the Warning state
+        client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
+                                     type             = `warning`
+                                     title            = `Warning`
+                                     actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
+                                     emphasizedaction = `Save`
+                                     onclose          = `EDIT_CONFIRM` ).
+      ELSE.
+        client->message_toast_display( `No Changes found` ).
+      ENDIF.
+      RETURN.
+    ENDIF.
+    DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
+    IF url_valid( ) = abap_false.
+      has_error = abap_true.
+    ENDIF.
+    IF has_error = abap_false.
+      " uploadItemViaUrl - the mock server answers with the typed URL as the
+      " document URL and an empty file
+      row_add( filename  = name_input
+               mediatype = ``
+               url       = url_input
+               filesize  = 0 ).
+      client->popup_destroy( ).
+      client->message_toast_display( `Document Added` ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -661,6 +680,20 @@ CLASS z2ui5_cl_smpc_app_657 IMPLEMENTATION.
                                  trustedsource  = abap_true ).
     row_derive( CHANGING row = row ).
     INSERT row INTO t_items INDEX 1.
+
+  ENDMETHOD.
+
+
+  METHOD selected_index.
+
+    " the one selected row the toolbar actions work on - 0 when there is none
+    IF t_selected IS INITIAL.
+      RETURN.
+    ENDIF.
+    result = row_index( t_selected[ 1 ] ).
+    IF result > lines( t_items ).
+      result = 0.
+    ENDIF.
 
   ENDMETHOD.
 

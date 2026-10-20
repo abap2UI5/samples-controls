@@ -5,15 +5,36 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_648.clas.abap",
   "batch": "b55",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): setP13nData on the Selection/SortPanel (JSON arrays built in ABAP) and open on the p13n.Popup; the popup's close passes the reason and both panels' getP13nData( true ); the table's sort, columnResize and columnMove wires pass the column's p13nKey custom data plus sortOrder/width/newPos"
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.m.p13n.Engine control (since UI5 1.104) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.104."
+      "what": "the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release >= 1.119."
+    },
+    {
+      "type": "POST_171",
+      "what": "kept 1:1 from the original view and newer than 1.71: sap.ui.table.Table rowMode (1.119, the string form Auto), sap.ui.table.Column headerMenu (1.110), the sap.m.table.columnmenu Menu control with showTableSettingsButton and tableSettingsPressed (1.110), and the IllustratedMessage control (1.98) with enableVerticalResponsiveness (1.104) in the table's noData."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Engine.getInstance( ).register( ) with the Columns, Sorter, Groups and ColumnWidth controllers, Engine.show( ), retrieveState( )/applyState( ) and the stateChange event are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column widths, sorters) in ABAP, and the settings button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it) and a p13n:SortPanel - Engine.show( ['Columns', 'Sorter'] ) - controls the port declares in the table's dependents, which the original view does not have (Popup, SelectionPanel, SortPanel). Before opening, the backend hands both panels the controllers' adaptation data via setP13nData (active entries first in state order, the others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and handleStateChange is reproduced in ABAP: every column hidden, the state's columns shown and moved to the front in state order, widths from the state or the _mIntialWidth 11rem, each sorted column's sortOrder set, and the rows binding sorted - composed by the backend as a binding-info string with that sorter list. The view emits the Column controls (with their Label and template Text, whose binding {FIRSTNAME}, {LASTNAME}, {CITY} or {SIZE} - the original's {firstName}, {lastName}, {city}, {size} - comes from the column state's path) in state order from a loop, so every state change is a view rebuild. The registered Groups controller has no panel in the original's show( ) call either and is not reproduced. The Engine's popup carries the title View Settings and contentHeight 35rem/contentWidth 32rem, which the declared Popup does not."
+    },
+    {
+      "type": "NOTE",
+      "what": "the table's own events drive the same state as in the original: sort (onSort) transports the column's p13nKey custom data and sortOrder and replaces the sorters with that column's, columnResize stores the width in the ColumnWidth state (the table has already sized the column), and columnMove is vetoed with check_prevent_default exactly like oEvt.preventDefault( ) and then moves the column to newPos in the visible-column state. The original also calls Column.setSorted( true ), deprecated since 1.120; the port sets only sortOrder, which is what the sort indicator shows."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) and the table's sap.ui.fl:flexibility attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "the p13n.Popup close wire ($event.oSource.getPanels( )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments and the .data('p13nKey') args on the sort/columnResize/columnMove column parameter are source-derived, not run in a live system."
     }
   ]
 }
