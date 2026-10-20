@@ -30,7 +30,7 @@ async function until(page, pred, msg) {
   for (;;) {
     s = await state(page);
     if (pred(s)) return s;
-    if (Date.now() > deadline) throw new Error(`${msg} - last state ${JSON.stringify({ ...s, rows: undefined }).slice(0, 500)}`);
+    if (Date.now() > deadline) throw new Error(`${msg} - last state ${JSON.stringify({ ...s, rows: s.rows.length, model: s.model.length }).slice(0, 500)}`);
     await page.waitForTimeout(250);
   }
 }
