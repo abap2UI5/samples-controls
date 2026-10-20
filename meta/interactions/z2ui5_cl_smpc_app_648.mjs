@@ -42,8 +42,9 @@ export default async (page, expect) => {
     return b && b.getId();
   });
   const settings = page.locator(`[id="${settingsId}"]`);
+  console.log('RECT', settingsId, await page.evaluate((id) => JSON.stringify(document.getElementById(id)?.getBoundingClientRect()), settingsId));
   await revealInOverflow(page, settings);
-  await settings.click();
+  await settings.click({ timeout: 5000 });
   await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--p13nPopup-dialog') && !c.bIsDestroyed && c.isOpen()),
     'the Settings button did not open the p13n.Popup');
   await waitForUi5(page, () => {
