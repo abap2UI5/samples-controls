@@ -38,14 +38,15 @@ export default async (page, expect) => {
   const settingsId = await page.evaluate(() => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const b = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
-      .find((c) => c.isA('sap.m.Button') && c.getIcon() === 'sap-icon://action-settings' && /mainView\d*--/.test(c.getId()) && !c.bIsDestroyed);
+      .find((c) => c.isA('sap.m.Button') && c.getIcon() === 'sap-icon://action-settings' && !c.bIsDestroyed
+        && c.getParent() && c.getParent().isA('sap.m.OverflowToolbar'));
     return b && b.getId();
   });
   const settings = page.locator(`[id="${settingsId}"]`);
-  console.log('BTNS', await page.evaluate(() => JSON.stringify(Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => c.isA('sap.m.Button')).map((c) => [c.getId(), c.getIcon(), c.getText(), c.getParent() && c.getParent().getId(), !!c.getDomRef()]))));
-  console.log('RECT', settingsId, await page.evaluate((id) => JSON.stringify(document.getElementById(id)?.getBoundingClientRect()), settingsId));
   await revealInOverflow(page, settings);
-  await settings.click({ timeout: 5000 });
+  console.log('VIS', await settings.isVisible(), await settings.boundingBox());
+  await page.evaluate((id) => document.getElementById(id).focus(), settingsId);
+  await page.keyboard.press('Enter');
   await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--p13nPopup-dialog') && !c.bIsDestroyed && c.isOpen()),
     'the Settings button did not open the p13n.Popup');
   await waitForUi5(page, () => {
