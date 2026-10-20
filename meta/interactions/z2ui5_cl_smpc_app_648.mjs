@@ -42,6 +42,7 @@ export default async (page, expect) => {
     return b && b.getId();
   });
   const settings = page.locator(`[id="${settingsId}"]`);
+  console.log('BTNS', await page.evaluate(() => JSON.stringify(Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => c.isA('sap.m.Button')).map((c) => [c.getId(), c.getIcon(), c.getText(), c.getParent() && c.getParent().getId(), !!c.getDomRef()]))));
   console.log('RECT', settingsId, await page.evaluate((id) => JSON.stringify(document.getElementById(id)?.getBoundingClientRect()), settingsId));
   await revealInOverflow(page, settings);
   await settings.click({ timeout: 5000 });

@@ -14,12 +14,14 @@ const state = (page) => page.evaluate(() => {
   const live = (c) => c.getDomRef() && document.body.contains(c.getDomRef());
   const t = all.find((c) => c.getId().endsWith('--table-uploadSet') && live(c));
   const p = all.find((c) => c.getId().endsWith('--uploadSetPlugin'));
+  const up = all.find((c) => c.isA('sap.m.Dialog') && c.isOpen() && c.getTitle() === 'Add Document by Upload');
   const en = (s) => { const b = all.find((c) => c.getId().endsWith(`--${s}`)); return b ? b.getEnabled() : null; };
   return {
     rows: t.getItems().filter((i) => i.getBindingContext()).map((i) => i.getBindingContext().getProperty('FILENAME')),
     model: t.getModel().getProperty(t.getBinding('items').getPath()).map((r) => ({ name: r.FILENAME, size: r.FILESIZE, type: r.DOCUMENTTYPE })),
-    pending: (t.getModel().getProperty('/T_SELECTEDITEMS') || []).map((r) => ({ name: r.FILENAME, type: r.FILECATEGORYSELECTED })),
-    add: !!t.getModel().getProperty('/ADD_ENABLED'),
+    // the FileUpload popup carries its own copy of the model
+    pending: ((up && up.getModel().getProperty('/T_SELECTEDITEMS')) || []).map((r) => ({ name: r.FILENAME, type: r.FILECATEGORYSELECTED })),
+    add: !!(up && up.getModel().getProperty('/ADD_ENABLED')),
     dl: en('downloadSelectedButton'), rm: en('removeDocumentButton'), rn: en('renameButton'), ed: en('editUrlButton'),
   };
 });
@@ -151,16 +153,11 @@ export default async (page, expect) => {
   dlg = await waitForPopup(page, 'Add Document by Upload');
   const combo = dlg.locator('.sapMComboBox input').first();
   // real keystrokes: the type-ahead picks the item, Enter commits the selection
-  const L=[]; page.on('request', (r) => { if (r.method()==='POST') L.push('REQ '+(r.postData()||'').slice(0,700)); });
-  page.on('response', async (r) => { if (r.request().method()==='POST') { try { const t = await r.text(); const i=t.indexOf('FILECATEGORYSELECTED'); L.push('RESP '+t.slice(Math.max(0,i-100), i+80)); } catch {} } });
   await combo.click();
   await combo.press('Control+a');
   await combo.pressSequentially('Legal');
-  console.log('combo now', await combo.inputValue());
   await combo.press('Enter');
-  await waitForIdle(page); await page.waitForTimeout(1000);
-  console.log(L.join('\n'));
-  console.log(await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => !c.bIsDestroyed && c.isA('sap.m.ComboBox') && c.getDomRef()).map((c) => [c.getSelectedKey(), c.getValue(), c.getBinding('selectedKey') && c.getBinding('selectedKey').getBindingMode && c.getBinding('selectedKey').getBindingMode(), c.getBindingInfo('selectedKey').parts[0].path, c.getBindingContext() && c.getBindingContext().getPath()])));
+  await waitForIdle(page);
   await until(page, (s) => s.pending[0].type === 'Legal Document' && s.add, 'the chosen type never reached the queued file');
   await dlg.getByRole('button', { name: 'Add', exact: true }).click();
   await expect(page.locator('.sapMMessageToast'), 'the upload toast').toContainText('Document Added');
