@@ -73,7 +73,6 @@ export default async (page, expect) => {
     d.sort((a, b) => (b.sorted ? 1 : 0) - (a.sorted ? 1 : 0));
     p.setP13nData(d);
   });
-  console.log('STEP ok');
   await page.locator('[id$="--p13nPopup-confirmBtn"]').click();
   await waitForIdle(page);
   await waitForUi5(page, () => {
@@ -100,7 +99,6 @@ export default async (page, expect) => {
     && c.getIcon() === 'sap-icon://sort-descending'), 'the City column menu did not offer a sort-descending action');
   const desc = await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
     .find((c) => c.isA('sap.m.Button') && !c.bIsDestroyed && c.getDomRef() && c.getIcon() === 'sap-icon://sort-descending').getId());
-  console.log('STEP desc', desc);
   await page.locator(`[id="${desc}"]`).click();
   await waitForIdle(page);
   await waitForUi5(page, () => {
@@ -116,8 +114,21 @@ export default async (page, expect) => {
   // columnMove: Ctrl+ArrowLeft on the City header (prevented, moved by the backend)
   await waitForIdle(page);
   await focusHeader('city_col');
-  await page.keyboard.press('Control+ArrowLeft');
+  const [moveReq] = await Promise.all([
+    page.waitForRequest((r) => r.method() === 'POST' && /"EVENT":"COLUMN_MOVE"/.test(r.postData() || ''), { timeout: 10000 }),
+    page.keyboard.press('Control+ArrowLeft'),
+  ]);
+  // the wire itself: the moved column's p13nKey and its new position
+  console.log('BODY', moveReq.postData().slice(0, 400));
   await waitForIdle(page);
+  /* KNOWN PORT DEFECT (2026-10-20): this is the third view rebuild since the
+     popup was last opened, and it dies on "adding element with duplicate id
+     '...--columnsPanel'". sap.m.p13n.Popup moves its panels into an internal
+     Container that only the Dialog created by open( ) owns - exit( ) destroys
+     that Dialog, never the Container - so a view whose popup was never opened
+     leaks its panels, and the framework's alternating view id (mainView /
+     mainView2) collides with them two rebuilds later: the app is left with an
+     empty page. Not weakened here - the leg stays red until the port stops it. */
   await waitForUi5(page, () => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
