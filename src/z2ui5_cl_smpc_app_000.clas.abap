@@ -3267,12 +3267,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` (since UI5 1.84) is kept 1:1 on both Button controls - the app needs a UI5 release >= 1.84 to render it. // POST-1.71: Link.ariaHasPopup (since UI5 1.86) is kept 1:1 - the app needs a UI5 release >=` &&
             ` 1.86 to render it. // NOTE: changeDateHandler's MessageToast is composed in ABAP (on_event CHANGE) instead of in the controller: the wire carries ${$parameters>/value/operator}, the values count and` &&
             ` values[0]/values[1] (no standard option has more than two values), each value as ``<value> + ''`` so a Date arrives as its toString and a boolean 'included' flag as true/false - exactly what the` &&
-            ` original's string concatenation prints. // LIVE-TEST: unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in`.
-    text1 = text1 && ` Popover.onfocusin HEADLESS only), and the ``${$parameters>/value/values/0} + ''`` string-concatenation event args reaching the toast.`.
+            ` original's string concatenation prints. // NOTE: unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in Popover.onfocusin`.
+    text1 = text1 && ` HEADLESS only), and the ``${$parameters>/value/values/0} + ''`` string-concatenation event args reaching the toast. **e2e-verified 2026-10-20** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_641.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeHidden`                                    class = `z2ui5_cl_smpc_app_641` path = `src/02/01/z2ui5_cl_smpc_app_641.clas.abap`
         score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.92.0`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -7137,22 +7138,22 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time:` &&
             ` check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for EVERY selected row; a UI5 event` &&
             ` expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is`.
-    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry)` &&
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // NOTE: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry)` &&
             ` through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
             ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
             ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
-            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,` &&
-            ` Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any`.
-    text1 = text1 && ` binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and` &&
-            ` toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons` &&
-            ` stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel,` &&
-            ` nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the` &&
-            ` begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the` &&
-            ` unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a`.
-    text1 = text1 && ` documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's` &&
-            ` controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the` &&
-            ` selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and` &&
-            ` initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_657.mjs). // NOTE: onSelectionChange's` &&
+            ` setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired`.
+    text1 = text1 && ` binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the` &&
+            ` row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four` &&
+            ` buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids` &&
+            ` kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through` &&
+            ` Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText.`.
+    text1 = text1 && ` Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the` &&
+            ` row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as` &&
+            ` typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same` &&
+            ` title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text,` &&
+            ` actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
     text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
             ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation and its previewDialog association pointing at the FilePreviewDialog; the app` &&
             ` needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions and previewDialog associations, beforeUploadStarts, itemRenamed) is as new as the` &&
@@ -7197,22 +7198,22 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` check_queue_last keeps the last one, so only the first and the last of them are added. onActivated is not wired; the plugin is addressed by an added id uploadSetPlugin instead of the instance` &&
             ` onActivated handed the controller. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download` &&
             ` button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. //`.
-    text1 = text1 && ` LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the` &&
+    text1 = text1 && ` NOTE: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the` &&
             ` Link's $event.oSource.getBindingContext(), renameItem and download with $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through` &&
             ` castArgAuto untouched; (b) selectionChange transporting $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading` &&
-            ` ${$parameters>/item}.getBindingContext().getPath(); (c) the uploadCompleted wire with ${$parameters>/item}.getFileSize() and ${$parameters>/status}. // NOTE: onSelectionChange's setEnabled calls` &&
-            ` become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter` &&
-            ` on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend`.
-    text1 = text1 && ` (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the` &&
-            ` original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept` &&
-            ` (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through` &&
-            ` Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText.` &&
-            ` Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the` &&
-            ` row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable; with the mock server off, the empty file's upload completes`.
-    text1 = text1 && ` without a 201, so onUploadCompleted adds the row (the URL as typed, size 0) and shows no toast, which is what the port does. showEditConfirmation's controller-built sap.m.Dialog (type Message, state` &&
-            ` Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the` &&
-            ` fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the` &&
-            ` warning box's own icon anyway.`.
+            ` ${$parameters>/item}.getBindingContext().getPath(); (c) the uploadCompleted wire with ${$parameters>/item}.getFileSize() and ${$parameters>/status}. **e2e-verified 2026-10-20** (nightly e2e` &&
+            ` interaction, meta/interactions/z2ui5_cl_smpc_app_658.mjs). // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit` &&
+            ` URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it`.
+    text1 = text1 && ` does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document` &&
+            ` Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on` &&
+            ` an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput,` &&
+            ` addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button` &&
+            ` text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL` &&
+            ` regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header`.
+    text1 = text1 && ` field to the item, neither transportable; with the mock server off, the empty file's upload completes without a 201, so onUploadCompleted adds the row (the URL as typed, size 0) and shows no toast,` &&
+            ` which is what the port does. showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title,` &&
+            ` text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text,` &&
+            ` actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
     text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
             ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
             ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed, uploadCompleted) is as new as the plugin. // the plugin's companion controls are kept 1:1 and are post-1.71` &&
@@ -7253,22 +7254,23 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5` &&
             ` runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED: onDownloadFiles calls the plugin's download( context, true ) for` &&
             ` EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument` &&
-            ` is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not`.
-    text1 = text1 && ` carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+            ` is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]. // NOTE: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry)`.
+    text1 = text1 && ` through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with` &&
             ` $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting` &&
             ` $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed` &&
-            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows,` &&
-            ` Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any` &&
-            ` binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and`.
-    text1 = text1 && ` toasts 'Document Renamed.' with duration 2000; itemRenameCanceled toasts 'Document Rename Cancelled.'. After a removal the port resets the selection AND the four buttons; the original's` &&
-            ` removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog,` &&
-            ` addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById` &&
-            ` is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with` &&
-            ` popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly -` &&
-            ` uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty`.
-    text1 = text1 && ` media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text,` &&
-            ` actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions` &&
-            ` Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
+            ` beforeUploadStarts and ${$parameters>/item}.getFileObject().size. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_659.mjs). // NOTE: onSelectionChange's` &&
+            ` setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired` &&
+            ` binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the`.
+    text1 = text1 && ` row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000; itemRenameCanceled toasts 'Document Rename Cancelled.'.` &&
+            ` After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection. //` &&
+            ` IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what` &&
+            ` openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply),` &&
+            ` urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its` &&
+            ` required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item,`.
+    text1 = text1 && ` neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state` &&
+            ` Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the` &&
+            ` fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the` &&
+            ` warning box's own icon anyway.`.
     text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the` &&
             ` original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl,` &&
             ` multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed and itemRenameCanceled - the last one @since 1.142) is as new as the plugin or newer, so the app needs UI5` &&
@@ -7311,24 +7313,24 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added. // IMPROVISED:` &&
             ` onDownloadFiles maps the TreeTable's getSelectedIndices( ) to contexts and calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's` &&
             ` Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is`.
-    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getContextByIndex(...getSelectedIndices()[0]). // LIVE-TEST: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the` &&
-            ` original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with` &&
+    text1 = text1 && ` $controller.getView().byId('table-uploadSet').getContextByIndex(...getSelectedIndices()[0]). // NOTE: Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original` &&
+            ` does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with` &&
             ` $controller.getView().byId('table-uploadSet').getContextByIndex($controller.getView().byId('table-uploadSet').getSelectedIndices()[0]) - each handing the live Context object through castArgAuto` &&
             ` untouched; (b) rowSelectionChange transporting $event.oSource.getBinding('rows').getSelectedContexts().join() (Context.toString is the binding path, e.g. /T_ITEMS/0/ITEMS/1) and the itemRenamed wire` &&
-            ` reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size. // NOTE: onSelectionChange reads the rows binding's` &&
-            ` selected contexts and tells files from folders: Download is enabled for one or more selected files, Remove/Rename/Edit URL for exactly one file, and both stay disabled as soon as a folder is selected`.
-    text1 = text1 && ` - two bound flags, decided in the backend from the selected rows' binding paths. onDocumentRenamedSuccess writes the new name into the renamed node at whatever depth it sits (the itemRenamed wire` &&
-            ` carries its path and the item's file name) and toasts 'Document Renamed.' with duration 2000. The controller's quirks are kept: removeItem splices index split('/')[2] of the row's path out of /items` &&
-            ` - for a file inside a folder that is its TOP-LEVEL folder, which is removed with everything in it - and its removeSelections( ) does not exist on sap.ui.table.TreeTable, so the selection stays; the` &&
-            ` Edit URL Save looks the selected row up by id in the top-level /items only, so for a file inside a folder the original's Object.assign throws and nothing is saved - the port saves nothing either,` &&
-            ` without the error. // IMPROVISED: The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput,` &&
-            ` addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button`.
-    text1 = text1 && ` text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL` &&
-            ` regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header` &&
-            ` field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog` &&
-            ` (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url` &&
-            ` and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon` &&
-            ` option is the warning box's own icon anyway.`.
+            ` reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size. **e2e-verified 2026-10-20** (nightly e2e interaction,` &&
+            ` meta/interactions/z2ui5_cl_smpc_app_660.mjs). // NOTE: onSelectionChange reads the rows binding's selected contexts and tells files from folders: Download is enabled for one or more selected files,`.
+    text1 = text1 && ` Remove/Rename/Edit URL for exactly one file, and both stay disabled as soon as a folder is selected - two bound flags, decided in the backend from the selected rows' binding paths.` &&
+            ` onDocumentRenamedSuccess writes the new name into the renamed node at whatever depth it sits (the itemRenamed wire carries its path and the item's file name) and toasts 'Document Renamed.' with` &&
+            ` duration 2000. The controller's quirks are kept: removeItem splices index split('/')[2] of the row's path out of /items - for a file inside a folder that is its TOP-LEVEL folder, which is removed` &&
+            ` with everything in it - and its removeSelections( ) does not exist on sap.ui.table.TreeTable, so the selection stays; the Edit URL Save looks the selected row up by id in the top-level /items only,` &&
+            ` so for a file inside a folder the original's Object.assign throws and nothing is saved - the port saves nothing either, without the error. // IMPROVISED: The AddViaUrl fragment is the port's popup` &&
+            ` with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog`.
+    text1 = text1 && ` set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState /` &&
+            ` valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank)` &&
+            ` and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock server's answer is exactly` &&
+            ` that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a` &&
+            ` MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's` &&
+            ` MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway.`.
     text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
             ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable), with the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs a UI5 release >= 1.124.` &&
             ` Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion controls are kept` &&
@@ -7384,15 +7386,16 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` Cancel) - the port builds that Dialog as its popup, so its Dialog, Input and the two Button controls are controls the original's views do not contain; OK renames the folder when the trimmed name is` &&
             ` new and toasts 'Folder renamed successfully'. A file goes to the plugin's renameItem( context ), which only the browser can hand over, so the Rename button's press carries TWO handlers separated by` &&
             ` ';' (UI5's EventHandlerResolver splits them): the backend RENAME event and a view-wired control_by_id renameItem on uploadPlugin whose argument is the first selected context of the rows binding - or` &&
-            ` null when that row is a folder, which renameItem ignores. onDocumentRenamedSuccess writes the new name into the node in the backend and toasts 'File renamed successfully' (duration 2000). //` &&
-            ` LIVE-TEST: Unverified in a running system: (a) the two-handler press on the Rename button (.eB(...); .eF(...)) and its renameItem argument` &&
+            ` null when that row is a folder, which renameItem ignores. onDocumentRenamedSuccess writes the new name into the node in the backend and toasts 'File renamed successfully' (duration 2000). // NOTE:` &&
+            ` Unverified in a running system: (a) the two-handler press on the Rename button (.eB(...); .eF(...)) and its renameItem argument` &&
             ` $controller.getView().byId('table-uploadSet').getBinding('rows').getSelectedContexts()[0] (null for a folder) through the unlisted-method path of control_by_id, and openFilePreview with the Link's`.
     text1 = text1 && ` $event.oSource.getBindingContext(); (b) rowSelectionChange transporting $event.oSource.getBinding('rows').getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire` &&
             ` reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size; (d) DOWNLOAD_B64_FILE with an https test-resources URL and` &&
-            ` clearSelection after a navigation. // NOTE: The sample ships view/fragment/AddViaUrl.fragment.xml (a Dialog addViaUrlDialog with contentWidth and contentHeight under a core:FragmentDefinition` &&
-            ` carrying templateShareable and class, holding a form:SimpleForm addViaUrlSimpleform with two Label controls urlInputLabel and nameInputLabel - both required - two Input controls urlInput and` &&
-            ` nameInput, and the Button controls addDocumentBtn and Cancel), but nothing in this variant loads it: its view has no Add menu and its controller no openAddOrEditDialog. The port does not build the` &&
-            ` dead fragment, so structural_diff, which unions every archived fragment with the view, counts its controls, attributes and ids as missing.`.
+            ` clearSelection after a navigation. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_661.mjs). // NOTE: The sample ships view/fragment/AddViaUrl.fragment.xml` &&
+            ` (a Dialog addViaUrlDialog with contentWidth and contentHeight under a core:FragmentDefinition carrying templateShareable and class, holding a form:SimpleForm addViaUrlSimpleform with two Label` &&
+            ` controls urlInputLabel and nameInputLabel - both required - two Input controls urlInput and nameInput, and the Button controls addDocumentBtn and Cancel), but nothing in this variant loads it: its` &&
+            ` view has no Add menu and its controller no openAddOrEditDialog. The port does not build the dead fragment, so structural_diff, which unions every archived fragment with the view, counts its controls,`.
+    text1 = text1 && ` attributes and ids as missing.`.
     text2 = `the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the sap.ui.table.TreeTable's dependents as` &&
             ` plugins:UploadSetwithTable (the original's dotted m:plugins.UploadSetwithTable) with its own id uploadPlugin and the UploadItemConfiguration as its default rowConfiguration aggregation; the app needs` &&
             ` a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, uploadEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin. // the plugin's companion` &&

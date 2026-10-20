@@ -3,6 +3,10 @@
 // event the DynamicDateRange itself fires when its popover's Apply commits.
 // The wire is ${$source>}.toDates(value)[0|1]; the backend answers with the
 // valueState and a binding_call filter on the orders-table items.
+// RED until the port is fixed (2026-10-20): toDates() returns sap.ui.core.date.UniversalDate
+//, not a Date, so the arg reaches ABAP as {oDate, sCalendarType} instead of the
+// local ISO string, and the BT/GT filter compares every row against an object - 0 rows. The
+// t_arg needs .getJSDate() (guarded for the one-date FROM/TO, whose [1] is undefined).
 import { waitForUi5, ui5All } from '../../scripts/lib-e2e.mjs';
 
 const fire = (page, value, valid) => page.evaluate(([v, ok]) => {

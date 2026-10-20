@@ -77,5 +77,59 @@ export default async (page, expect) => {
   });
   await page.locator(`[id="${cityHeader}"]`).click();
   await waitForIdle(page);
-  console.log('DBG', await page.evaluate(() => JSON.stringify(Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => !c.bIsDestroyed && (c.isA('sap.m.table.columnmenu.QuickSortItem') || c.isA('sap.m.table.columnmenu.Menu') || (c.isA('sap.m.Button') && c.getDomRef() && /Ascending|Descending/i.test(c.getText()+c.getTooltip()+c.getIcon())) )).map((c) => [c.getMetadata().getName(), c.getId(), c.getKey ? c.getKey() : '', c.isOpen ? c.isOpen() : '', c.getText ? c.getText() : '', c.getIcon ? c.getIcon() : '']))));
+  await waitForUi5(page, () => ui5All().some((c) => c.isA('sap.m.table.columnmenu.QuickSortItem') && !c.bIsDestroyed
+    && c.getKey() === 'city_col' && c.getLabel() === 'City' && c.getSortOrder() === 'None'),
+    'the column menu\'s beforeOpen round-trip never filled the QuickSort item with the City column');
+  // the QuickSort's own "sort descending" button (icon-only, located through the registry)
+  const desc = await page.evaluate(() => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const b = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+      .find((c) => c.isA('sap.m.Button') && live(c) && c.getIcon() === 'sap-icon://sort-descending');
+    return b && b.getId();
+  });
+  expect(!!desc, 'the QuickSort "sort descending" button in the open column menu').toBeTruthy();
+  await page.locator(`[id="${desc}"]`).click();
+  await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
+    if (!t) return false;
+    const city = t.getColumns().find((c) => c.data('p13nKey') === 'city_col');
+    const cities = t.getItems().filter((i) => i.isA('sap.m.ColumnListItem')).map((i) => i.getCells()[2].getText());
+    return city.getSortIndicator() === 'Descending' && cities[cities.length - 1] === 'Heidelberg' && cities[0] === 'Walldorf'
+      && t.getColumns().filter((c) => c.getSortIndicator() !== 'None').length === 1;
+  }, 'the quick sort "descending" on City did not re-sort the rows (Heidelberg last) with only City carrying the sort indicator');
+
+  // quick group from the same menu: its Switch, toggled by keyboard
+  await waitForIdle(page);
+  const cityHeader2 = await page.evaluate(() => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const col = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+      .find((c) => c.isA('sap.m.Column') && live(c) && c.data('p13nKey') === 'city_col');
+    return col && col.getId();
+  });
+  await page.locator(`[id="${cityHeader2}"]`).click();
+  await waitForIdle(page);
+  await waitForUi5(page, () => ui5All().some((c) => c.isA('sap.m.table.columnmenu.QuickSortItem') && !c.bIsDestroyed
+    && c.getKey() === 'city_col' && c.getSortOrder() === 'Descending'),
+    'the re-opened column menu did not show City as sorted descending (beforeOpen round-trip)');
+  const groupSwitch = await page.evaluate(() => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const sw = Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).find((c) => c.isA('sap.m.Switch') && live(c));
+    return sw && sw.getId();
+  });
+  expect(!!groupSwitch, 'the QuickGroup switch in the open column menu').toBeTruthy();
+  await page.evaluate((id) => document.getElementById(id).focus(), groupSwitch);
+  page.on('console', (m) => { if (/warn|error/.test(m.type())) console.log('CON', m.text().slice(0, 300)); });
+  page.on('request', (r) => { if (r.method() === 'POST') console.log('REQ', (r.postData() || '').slice(0, 300)); });
+  await page.keyboard.press('Space');
+  await waitForIdle(page);
+  console.log('DBG', await page.evaluate(() => { const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all()); const t = all.find((c) => c.getId().endsWith('--persoTable') && !c.bIsDestroyed && c.getDomRef()); return JSON.stringify([document.activeElement.id, all.filter((c)=>c.isA('sap.m.Switch')).map((c)=>[c.getId(), c.getState(), c.bIsDestroyed]), t.getItems().map((i) => i.getMetadata().getName() + ':' + (i.getTitle ? i.getTitle() : i.getCells()[2].getText())), t.getBinding('items').aSorters]); }));
+  await waitForUi5(page, () => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
+    if (!t) return false;
+    const heads = t.getItems().filter((i) => i.isA('sap.m.GroupHeaderListItem')).map((i) => i.getTitle());
+    return heads.length === 2 && /Walldorf/.test(heads[0]) && /Heidelberg/.test(heads[1]);
+  }, 'the quick group switch on City did not group the rows (Walldorf, then Heidelberg group headers)');
 };

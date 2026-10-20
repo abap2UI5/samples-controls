@@ -33,12 +33,12 @@
       "what": "changeDateHandler's MessageToast is composed in ABAP (on_event CHANGE) instead of in the controller: the wire carries ${$parameters>/value/operator}, the values count and values[0]/values[1] (no standard option has more than two values), each value as `<value> + ''` so a Date arrives as its toString and a boolean 'included' flag as true/false - exactly what the original's string concatenation prints."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in Popover.onfocusin HEADLESS only), and the `${$parameters>/value/values/0} + ''` string-concatenation event args reaching the toast."
+      "type": "NOTE",
+      "what": "unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in Popover.onfocusin HEADLESS only), and the `${$parameters>/value/values/0} + ''` string-concatenation event args reaching the toast. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_641.mjs)."
     }
   ],
   "e2e_smoke": {
     "theme": true,
-    "reason": "probe"
+    "reason": "unthemed, the hidden DynamicDateRange popover opened by openBy loops in Popover.onfocusin (focus restore bounces off the hidden input) until the stack overflows - the original openBy(getDomRef()) does the same headless; themed it opens cleanly and the interaction drives the pick"
   }
 }
