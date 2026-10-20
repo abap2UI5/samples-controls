@@ -55,16 +55,17 @@ async function press(page, id) {
 async function pressLink(page, text) {
   await page.locator('.sapUiTableCell .sapMLnk', { hasText: text }).first().click();
 }
+// The Breadcrumbs can overflow (canOverflow, importance Medium), and in the
+// unthemed harness the toolbar does push them into its popover - where they
+// render collapsed into their Select. Reveal, then take whichever form shows.
+async function pressCrumb(page, text) {
+  await revealInOverflow(page, page.locator('.sapMBreadcrumbs'));
+  await pressBreadcrumb(page, text);
+}
 const toast = (page, text, label) => page.waitForFunction((t) => [...document.querySelectorAll('.sapMMessageToast')]
   .some((e) => e.textContent.includes(t)), text, { timeout: 10000 }).catch(() => { throw new Error(`no toast "${text}" (${label})`); });
 
 export default async (page, expect) => {
-  // The Breadcrumbs share the table's OverflowToolbar and cannot move into its
-  // popover; in the unthemed harness at 1280 px the toolbar pushes them out
-  // and they render NOTHING (no DOM, measured 2026-10-20) - a wide viewport
-  // gives them room, and they then render (collapsed into their Select, which
-  // pressBreadcrumb( ) handles).
-  await page.setViewportSize({ width: 2400, height: 900 });
   const uploads = [];
   page.on('request', (r) => { if (/uploadFiles/.test(r.url())) uploads.push(r.url()); });
   await waitForIdle(page);
@@ -177,14 +178,7 @@ export default async (page, expect) => {
   await rowsBecome(page, [], 'Remove All never emptied the folder');
 
   // ------------------------------------------------- breadcrumb back home
-  await page.setViewportSize({ width: 2400, height: 900 }); await page.waitForTimeout(1500);
-  console.log(await page.evaluate(`(() => { ${UI5_ALL_SRC}
-    const b = ui5All().find((c) => c.getId().endsWith('--breadcrumbs') && !c.bIsDestroyed);
-    const d = b.getDomRef(); const tb = b.getParent();
-    return JSON.stringify({ dom: !!d, html: d && d.outerHTML.slice(0, 600), parent: tb.getMetadata().getName(), vis: b.getVisible(),
-      w: tb.getDomRef().offsetWidth, tbContent: tb.getContent().map((c) => c.getMetadata().getName() + ':' + !!c.getDomRef() + ':' + (c.getDomRef() ? c.getDomRef().offsetWidth : '-')),
-      sel: [...document.querySelectorAll('.sapMBreadcrumbs')].length }); })()`));
-  await pressBreadcrumb(page, 'Attachments');
+  await pressCrumb(page, 'Attachments');
   await rowsBecome(page, ['My Documents', 'Readme.txt', 'Business Plan Topics.xls', 'sample-zip-file.zip', 'Scratch'],
     'the Attachments breadcrumb never brought the root back');
   expect(await crumbs(page), 'breadcrumbs back at the root').toEqual({ links: [], current: 'Attachments' });
@@ -195,7 +189,7 @@ export default async (page, expect) => {
   await pressLink(page, 'Images');
   await rowsBecome(page, ['Animation.gif', 'Screenshots'], 'the Images Link never opened the folder');
   expect(await crumbs(page), 'breadcrumbs inside Images').toEqual({ links: ['Attachments', 'My Documents'], current: 'Images' });
-  await pressBreadcrumb(page, 'My Documents');
+  await pressCrumb(page, 'My Documents');
   await rowsBecome(page, ['Images', 'Reports', 'Third Quarter Results.ppt'], 'the My Documents breadcrumb never went one level up');
 
   // ------------------------------------------------------------ add folder

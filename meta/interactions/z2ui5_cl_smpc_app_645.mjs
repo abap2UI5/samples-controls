@@ -2,7 +2,7 @@
 // its close wire hands the panels' getP13nData( true ) back and the backend
 // re-orders/shows the columns and sorts the rows. Then the column menu: its
 // beforeOpen round-trip fills the QuickSort item, and a quick sort re-sorts.
-import { waitForIdle, waitForUi5, waitForPopup, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForIdle, waitForUi5, revealInOverflow } from '../../scripts/lib-e2e.mjs';
 
 // the rendered table's visible column headers and its rows' first cells, in order
 const tableState = () => {
@@ -27,7 +27,8 @@ export default async (page, expect) => {
   const settings = page.getByRole('button', { name: 'Settings' });
   await revealInOverflow(page, settings);
   await settings.click();
-  const popup = await waitForPopup(page, /View Settings|Settings/);
+  await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--p13nPopup-dialog') && !c.bIsDestroyed && c.isOpen()),
+    'the Settings button did not open the p13n.Popup');
   await waitForIdle(page);
   await waitForUi5(page, () => {
     const p = ui5All().find((c) => c.getId().endsWith('--columnsPanel') && !c.bIsDestroyed);
@@ -54,8 +55,7 @@ export default async (page, expect) => {
     d.sort((a, b) => (b.sorted ? 1 : 0) - (a.sorted ? 1 : 0));
     p.setP13nData(d);
   });
-  console.log('DBG', await page.evaluate(() => JSON.stringify(Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => c.isA('sap.m.Dialog') && c.isOpen()).map((d) => [d.getId(), d.getTitle(), (d.getButtons()||[]).map((b) => [b.getId(), b.getText(), !!b.getDomRef(), b.getDomRef()?.getBoundingClientRect().width])]))));
-  await popup.getByRole('button', { name: 'OK' }).click();
+  await page.locator('[id$="--p13nPopup-confirmBtn"]').click();
   await waitForIdle(page);
   await waitForUi5(page, () => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
@@ -65,4 +65,17 @@ export default async (page, expect) => {
     const first = t.getItems().filter((i) => i.isA('sap.m.ColumnListItem')).map((i) => i.getCells()[0].getText());
     return cols.join() === 'First Name,Last Name,City,Size' && first.join() === 'John,Maria,Peter,Petra,Thomas';
   }, 'closing the p13n.Popup with OK did not show the Size column and sort the rows by First Name');
+
+  // the column menu: beforeOpen round-trips the column's p13nKey, the backend
+  // fills the QuickSort/QuickGroup items while the menu is already open
+  await waitForIdle(page);
+  const cityHeader = await page.evaluate(() => {
+    const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const col = all.find((c) => c.isA('sap.m.Column') && live(c) && c.data('p13nKey') === 'city_col');
+    return col && col.getId();
+  });
+  await page.locator(`[id="${cityHeader}"]`).click();
+  await waitForIdle(page);
+  console.log('DBG', await page.evaluate(() => JSON.stringify(Object.values(sap.ui.require('sap/ui/core/Element').registry.all()).filter((c) => !c.bIsDestroyed && (c.isA('sap.m.table.columnmenu.QuickSortItem') || c.isA('sap.m.table.columnmenu.Menu') || (c.isA('sap.m.Button') && c.getDomRef() && /Ascending|Descending/i.test(c.getText()+c.getTooltip()+c.getIcon())) )).map((c) => [c.getMetadata().getName(), c.getId(), c.getKey ? c.getKey() : '', c.isOpen ? c.isOpen() : '', c.getText ? c.getText() : '', c.getIcon ? c.getIcon() : '']))));
 };

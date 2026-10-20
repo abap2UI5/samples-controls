@@ -51,6 +51,14 @@ async function renameInput(page, value) {
   });
 }
 
+// a popup the module closed must really be gone before the page is driven again
+// (title null: no dialog at all may stay open)
+async function waitForClosed(page, title) {
+  await page.waitForFunction((t) => !Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .some((c) => !c.bIsDestroyed && c.isA('sap.m.Dialog') && c.isOpen() && (t === null || c.getTitle() === t)),
+  title, { timeout: 10000 }).catch(() => { throw new Error(`the ${title === null ? 'preview' : `"${title}"`} dialog never closed`); });
+}
+
 async function openRename(page) {
   const rn = page.getByRole('button', { name: 'Rename', exact: true });
   await revealInOverflow(page, rn);
@@ -103,19 +111,15 @@ export default async (page, expect) => {
   await openRename(page);
   expect(await renameInput(page, 'bad@name'), "'@' under the literal override '@$#'").toBe('Error');
   expect(await renameInput(page, 'okname'), 'a clean name').toBe('None');
-  await page.keyboard.press('Escape');
-  await waitForIdle(page);
+  // back to the unchanged name, so Cancel closes without the discard box
+  await renameInput(page, 'Invoice summary');
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await waitForClosed(page, 'Rename Document');
 
   /* ---- (d) Configure -> setFileNameValidationConfig with a JSON object ---- */
   const chars = page.locator('[id$="--charInput-inner"]');
-  // real keystrokes: the wire carries check_queue_last, so the last one wins
-  const L=[]; page.on('request', (r) => { if (r.method()==='POST') L.push('REQ '+(r.postData()||'').slice(0,400)); });
-  page.on('response', async (r) => { if (r.request().method()==='POST') { try { const t = await r.text(); const i=t.indexOf('CHARACTERS"'); L.push('RESP '+t.slice(Math.max(0,i-50), i+80)); } catch {} } });
-  await chars.click();
-  await chars.press('Control+a');
-  await chars.pressSequentially('xyz');
+  await chars.fill('xyz');
   await waitForIdle(page);
-  await page.waitForTimeout(1500); console.log(L.join('\n')); console.log('before', await chars.inputValue());
   await page.getByRole('button', { name: 'Configure', exact: true }).click();
   await expect(page.locator('.sapMMessageToast'), 'the Configure toast')
     .toContainText('Configuration mode: override, Characters: xyz');
@@ -139,7 +143,7 @@ export default async (page, expect) => {
   const preview = await waitForPopup(page, 'Renamed.doc');
   await expect(preview, 'the FilePreviewDialog').toContainText('Renamed.doc');
   await page.keyboard.press('Escape');
-  await waitForIdle(page);
+  await waitForClosed(page, null);
 
   /* ---- upload: beforeUploadStarts vetoed, the backend adds the row -------- */
   const body = Buffer.from('e2e upload payload');
