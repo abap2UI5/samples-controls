@@ -5,7 +5,8 @@ import { waitForIdle, waitForUi5 } from '../../scripts/lib-e2e.mjs';
 
 const P13N_ROW = ([panel, name]) => {
   const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
-  const p = all.find((c) => c.getId().endsWith('--' + panel) && !c.bIsDestroyed);
+  // the RENDERED panel - a never-opened popup's panels outlive their view
+  const p = all.find((c) => c.getId().endsWith('--' + panel) && !c.bIsDestroyed && c.getDomRef());
   const row = p && p._oListControl.getItems().find((i) => i.getBindingContext(p.P13N_MODEL).getProperty('name') === name);
   return row ? row.getId() : null;
 };

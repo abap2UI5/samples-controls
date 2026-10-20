@@ -36,8 +36,8 @@
       "what": "onDownloadFiles maps getSelectedIndices( ) to contexts and calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is $controller.getView().byId('table-uploadSet').getContextByIndex(...getSelectedIndices()[0])."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with $controller.getView().byId('table-uploadSet').getContextByIndex($controller.getView().byId('table-uploadSet').getSelectedIndices()[0]) - each handing the live Context object through castArgAuto untouched; (b) rowSelectionChange transporting $event.oSource.getSelectedIndices().join() and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size."
+      "type": "NOTE",
+      "what": "Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the template Link's $event.oSource.getBindingContext(), renameItem and download with $controller.getView().byId('table-uploadSet').getContextByIndex($controller.getView().byId('table-uploadSet').getSelectedIndices()[0]) - each handing the live Context object through castArgAuto untouched; (b) rowSelectionChange transporting $event.oSource.getSelectedIndices().join() and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_654.mjs)."
     },
     {
       "type": "NOTE",

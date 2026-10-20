@@ -40,8 +40,8 @@
       "what": "onDownloadFiles calls download( context, true ) for EVERY selected row of the table; a UI5 event expression has no loop, so each Download button calls download for the first selected row of its own table only, through a view-wired control_by_id on that table's plugin with $controller.getView().byId(<table id>).getSelectedContexts()[0]. (The original always ends up in its first plugin instance - it looks for 'instance2' in the id of the table's PARENT, the VBox - which downloads the same files, since download only reads the context it is given.)"
     },
     {
-      "type": "LIVE_TEST",
-      "what": "Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, uploadSetPlugin-instance2, uploadSetPlugin-instance3 - ids the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext() and download with $controller.getView().byId(<table id>).getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) the vetoed beforeUploadStarts with ${$parameters>/item}.getFileObject().size and $event.oSource.data('itemsPath')."
+      "type": "NOTE",
+      "what": "Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, uploadSetPlugin-instance2, uploadSetPlugin-instance3 - ids the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext() and download with $controller.getView().byId(<table id>).getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) the vetoed beforeUploadStarts with ${$parameters>/item}.getFileObject().size and $event.oSource.data('itemsPath'). **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_655.mjs)."
     },
     {
       "type": "NOTE",
