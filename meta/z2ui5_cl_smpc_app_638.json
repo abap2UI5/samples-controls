@@ -30,7 +30,7 @@
     },
     {
       "type": "NOTE",
-      "what": "the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, abap_true) since 2026-10-20, so a backend slower than UI5's 1 s busy delay does not flash the overlay over the countdown."
+      "what": "the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, `X` for abap_true) since 2026-10-20, so a backend slower than UI5's 1 s busy delay does not flash the overlay over the countdown."
     }
   ]
 }

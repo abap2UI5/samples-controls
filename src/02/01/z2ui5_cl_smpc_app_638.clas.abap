@@ -91,7 +91,7 @@ CLASS z2ui5_cl_smpc_app_638 IMPLEMENTATION.
         popup_display( ).
         " the original's setInterval( 1000 ) - one framework timer per tick, re-armed below
         client->follow_up_action( val   = client->cs_event-start_timer
-                                  t_arg = VALUE #( ( `COUNTER_TICK` ) ( `1000` ) ( abap_true ) ) ).
+                                  t_arg = VALUE #( ( `COUNTER_TICK` ) ( `1000` ) ( `X` ) ) ).
 
       WHEN `COUNTER_TICK`.
         " original _decrementCounter
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_smpc_app_638 IMPLEMENTATION.
         ENDIF.
         iseconds = iseconds - 1.
         client->follow_up_action( val   = client->cs_event-start_timer
-                                  t_arg = VALUE #( ( `COUNTER_TICK` ) ( `1000` ) ( abap_true ) ) ).
+                                  t_arg = VALUE #( ( `COUNTER_TICK` ) ( `1000` ) ( `X` ) ) ).
 
       WHEN `DIALOG_CLOSE` OR `SIGN_IN`.
         " original onDialogClose / onSignIn: close the dialog and stop the counter

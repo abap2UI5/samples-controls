@@ -4198,8 +4198,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup. // NOTE: the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick` &&
             ` pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the`.
     text1 = text1 && ` description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20**` &&
-            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, abap_true) since 2026-10-20, so a backend slower than UI5's` &&
-            ` 1 s busy delay does not flash the overlay over the countdown.`.
+            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, ``X`` for abap_true) since 2026-10-20, so a backend slower` &&
+            ` than UI5's 1 s busy delay does not flash the overlay over the countdown.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageSessionTimeout`                          class = `z2ui5_cl_smpc_app_638` path = `src/02/01/z2ui5_cl_smpc_app_638.clas.abap`
         score = 5

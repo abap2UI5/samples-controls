@@ -142,7 +142,7 @@ export default async (page, expect) => {
   await page.locator('[id*="table-uploadSet-0"] .sapMLnk', { hasText: 'Renamed.doc' }).first().click();
   const preview = await waitForPopup(page, 'Renamed.doc');
   await expect(preview, 'the FilePreviewDialog').toContainText('Renamed.doc');
-  await page.keyboard.press('Escape');
+  await preview.getByRole('button', { name: 'Close', exact: true }).click();
   await waitForClosed(page, null);
 
   /* ---- upload: beforeUploadStarts vetoed, the backend adds the row -------- */
