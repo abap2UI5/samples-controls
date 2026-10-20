@@ -1,16 +1,21 @@
-// p13n.Popup: the open/change wires carry the panels' getP13nData( ) as
-// JSON.stringify expressions through the event source - toggling a column in
-// the SelectionPanel the way the UI does (focus the row, Space) must land in
-// the backend and come back as the CodeEditor's JSON
-import { FRONTEND_STATE, waitForIdle, waitForUi5, waitForPopup } from '../../scripts/lib-e2e.mjs';
+// p13n.Popup: the open/change wires carry the panels' getP13nData( ) through
+// the event source - toggling a column in the SelectionPanel the way the UI
+// does (focus the row, Space) must land in the backend and come back as the
+// CodeEditor's JSON.
+//
+// KNOWN PORT DEFECT (2026-10-20): red on purpose. The wires wrap the data in
+// JSON.stringify( ), and an XML event-handler expression has no JSON global -
+// EventHandlerResolver hands the parser only $controller/$event, so UI5 logs
+// "Unsupported global identifier 'JSON'" and the handler dies with
+// "Cannot read properties of undefined (reading 'stringify')": no POPUP_OPEN
+// and no *_CHANGE round-trip ever leaves the browser. Passing
+// $event.oSource.getP13nData() as it is (the frontend sends an array
+// argument as JSON) makes this module pass - measured against a patched
+// transpiled backend.
+import { waitForIdle, waitForUi5, waitForPopup } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
   await waitForIdle(page);
-  page.on('console', (m) => console.log('CON', m.type(), m.text().slice(0, 400)));
-  page.on('pageerror', (e) => console.log('PERR', String(e).slice(0, 400)));
-  console.log('XML', (await page.evaluate(`JSON.stringify(${FRONTEND_STATE}.oResponse)`) || '').match(/columnsPanel.{0,700}/)?.[0]);
-  page.on('request', (r) => { if (r.method() === 'POST') console.log('REQ', (r.postData() || '').slice(0, 600)); });
-  page.on('response', async (r) => { if (r.request().method() === 'POST') { const t = await r.text().catch(() => ''); console.log('RES', r.status(), t.slice(0, 1500)); } });
   await page.getByRole('button', { name: 'Show p13n.Popup' }).click();
   await waitForPopup(page, 'My Custom View Settings');
   await waitForIdle(page);
@@ -24,17 +29,17 @@ export default async (page, expect) => {
   const rowId = await page.evaluate(() => {
     const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
     const p = all.find((c) => c.getId().endsWith('columnsPanel') && !c.bIsDestroyed);
-    const it = p._oListControl.getItems().find((i) => i.getBindingContext(p.P13N_MODEL || 'p13n')?.getProperty('name') === 'key2')
-      || p._oListControl.getItems()[1];
-    return it.getId();
+    const it = p._oListControl.getItems().find((i) => i.getBindingContext(p.P13N_MODEL).getProperty('name') === 'key2');
+    return it ? it.getId() : null;
   });
+  expect(!!rowId, 'a "Country" row in the Columns panel').toBeTruthy();
   await page.evaluate((id) => document.getElementById(id).focus(), rowId);
   await page.keyboard.press('Space');
   await waitForIdle(page);
-  console.log('DBG', await page.evaluate(() => { const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
-    const p = all.find((c) => c.getId().endsWith('columnsPanel') && !c.bIsDestroyed);
-    const e = all.filter((c) => c.getId().endsWith('p13nEditor'));
-    return JSON.stringify({ busy: (0), lst: [p.hasListeners('change'), all.find((c)=>c.getId().endsWith('p13nPopup')).hasListeners('open')], act: document.activeElement && document.activeElement.id, data: p && p.getP13nData(), ed: e.map((x) => [x.bIsDestroyed, x.getValue()]), items: p._oListControl.getItems().map((i)=>[i.getId(), i.getSelected()]) }); }));
+  await waitForUi5(page, () => {
+    const p = ui5All().find((c) => c.getId().endsWith('columnsPanel') && !c.bIsDestroyed);
+    return p.getP13nData()[1].visible === true;
+  }, 'Space on the Country row did not tick it in the panel');
   await waitForUi5(page, () => {
     const e = ui5All().find((c) => c.getId().endsWith('p13nEditor') && !c.bIsDestroyed && c.getDomRef());
     if (!e) return false;

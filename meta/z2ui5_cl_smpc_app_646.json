@@ -33,8 +33,8 @@
       "what": "the column menu (QuickSort/QuickGroup with empty items, three ActionItems), the ColumnResizer and the DragDropInfo on the columns carry no handlers in the original view and the controller registers only the Filter controller - they are kept 1:1 as inert configuration, exactly as the sample ships them."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound tokens aggregation receiving a suggestion-created Token are unverified in a running system."
+      "type": "NOTE",
+      "what": "the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound tokens aggregation receiving a suggestion-created Token are unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_646.mjs)."
     }
   ]
 }

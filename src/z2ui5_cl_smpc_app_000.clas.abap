@@ -6144,12 +6144,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` container to its defaultView view2 where the original stays on the currently shown view. // NOTE: onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that`.
     text1 = text1 && ` RadioButtonGroup's selectedIndex two-way and opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout` &&
             ` stays a select wire carrying selectedIndex and sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button` &&
-            ` in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip. // LIVE-TEST: re-opening d1/p1 by a follow-up action directly after the view` &&
-            ` rebuild that an Add custom view press triggers is unverified in a running system.`.
+            ` in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip. // NOTE: re-opening d1/p1 by a follow-up action directly after the view rebuild` &&
+            ` that an Add custom view press triggers is unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_644.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Container`                  name = `p13n.Container`                                            class = `z2ui5_cl_smpc_app_644` path = `src/02/01/z2ui5_cl_smpc_app_644.clas.abap`
-        score = 5
-        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.96`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -6217,8 +6217,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the` &&
             ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the column menu (QuickSort/QuickGroup with empty items, three` &&
             ` ActionItems), the ColumnResizer and the DragDropInfo on the columns carry no handlers in the original view and the controller registers only the Filter controller - they are kept 1:1 as inert` &&
-            ` configuration, exactly as the sample ships them. // LIVE-TEST: the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound` &&
-            ` tokens aggregation receiving a suggestion-created Token are unverified in a running system.`.
+            ` configuration, exactly as the sample ships them. // NOTE: the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound tokens` &&
+            ` aggregation receiving a suggestion-created Token are unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_646.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineCustomFilters`                                  class = `z2ui5_cl_smpc_app_646` path = `src/02/01/z2ui5_cl_smpc_app_646.clas.abap`
         score = 5
@@ -6242,8 +6242,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` getP13nData( true ) comes back and handleStateChange is reproduced in ABAP - the bound /items become the visible persons in the chosen order. The Engine's popup carries the panel's title (Fields) and` &&
             ` the contentHeight 35rem/contentWidth 32rem settings, which the declared Popup does not. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoList) and the GridList's` &&
             ` sap.ui.fl:flexibility attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app` &&
-            ` provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire` &&
-            ` ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system.`.
+            ` provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the p13n.Popup close wire ($event.oSource.getPanels(` &&
+            ` )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system. **e2e-verified 2026-10-20** (nightly e2e` &&
+            ` interaction, meta/interactions/z2ui5_cl_smpc_app_647.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineGridList`                                       class = `z2ui5_cl_smpc_app_647` path = `src/02/01/z2ui5_cl_smpc_app_647.clas.abap`
         score = 5

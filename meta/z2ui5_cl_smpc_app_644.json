@@ -29,8 +29,8 @@
       "what": "onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that RadioButtonGroup's selectedIndex two-way and opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout stays a select wire carrying selectedIndex and sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "re-opening d1/p1 by a follow-up action directly after the view rebuild that an Add custom view press triggers is unverified in a running system."
+      "type": "NOTE",
+      "what": "re-opening d1/p1 by a follow-up action directly after the view rebuild that an Add custom view press triggers is unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_644.mjs)."
     }
   ]
 }

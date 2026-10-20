@@ -166,7 +166,12 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
 
     " deleted arrives as a JSON array of keys, e.g. ["3","4"]
     DATA(deleted) = client->get_event_arg( ).
-    deleted = translate( val = deleted from = `[]"` to = `` ).
+    " three replace( ) calls, not translate( from = `[]"` to = `` ): the
+    " transpiled runtime builds an unescaped [...] regex class from FROM, so a
+    " closing bracket in it matches nothing and the key never came out clean
+    deleted = replace( val = deleted sub = `[` with = `` occ = 0 ).
+    deleted = replace( val = deleted sub = `]` with = `` occ = 0 ).
+    deleted = replace( val = deleted sub = `"` with = `` occ = 0 ).
     SPLIT deleted AT `,` INTO TABLE DATA(keys).
     LOOP AT keys INTO DATA(key) WHERE table_line IS NOT INITIAL.
       DELETE t_items WHERE key = key.

@@ -25,8 +25,8 @@
       "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoList) and the GridList's sap.ui.fl:flexibility attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "the p13n.Popup close wire ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system."
+      "type": "NOTE",
+      "what": "the p13n.Popup close wire ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_647.mjs)."
     }
   ]
 }
