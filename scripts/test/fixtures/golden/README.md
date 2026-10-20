@@ -9,8 +9,8 @@ covers both unported states.
 <!-- coverage:start -->
 
 Overall **2 / 3** portable demo kit samples ported (66.7 %).
-**In scope**: samples whose control exists since **UI5 1.71** and is **not deprecated** (legacy-free ready).
-Out of scope: 0 of 4 samples — 0 on deprecated controls, 0 on controls newer than 1.71, 0 that are not app views (UI5 test infrastructure, Component routing, view-templating demos — see `ui5/scope-nonapp.json`), 0 demo apps without an owning control.
+**In scope**: samples whose control is **not deprecated** (legacy-free ready). 0 of them use a control newer than **UI5 1.71** — their ports need a newer runtime and are filed under `src/02`.
+Out of scope: 0 of 4 samples — 0 on deprecated controls, 0 that are not app views (UI5 test infrastructure, Component routing, view-templating demos — see `ui5/scope-nonapp.json`), 0 demo apps without an owning control.
 Control metadata from OpenUI5 **1.152.0**.
 
 | Module | Samples | In scope | Reserved | To port | Ported | Coverage | |

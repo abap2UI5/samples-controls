@@ -89,12 +89,15 @@ if (!resolved.entity || resolved.entity.includes('.sample.')) {
   if (override) resolved.entity = override;
 }
 const { lib, name, entity } = resolved;
+// set by the scope pre-check: the control is newer than 1.71 — in scope, but
+// the port starts with a POST_171 deviation naming it, which files it in src/02
+let post171Since = null;
 
 // ---------- scope + hold-out pre-checks ----------
 // Both used to be MANUAL steps in the batch-planning prose (AGENTS §1) —
 // exactly the kind an agent skips. The scope verdict mirrors
 // generate-coverage.mjs scopeOf (universe facts enriched from
-// ui5/properties.json, the 1.71 floor, deprecation, non-app families), so
+// ui5/properties.json, deprecation, non-app families), so
 // the scaffolder refuses what the coverage gate would fail later anyway.
 // scope-exceptions.json entries — a maintainer decision — pass with a note;
 // --force scaffolds regardless, for exactly that kind of decision.
@@ -130,17 +133,19 @@ const { lib, name, entity } = resolved;
     && (f.entityPrefix || f.namePrefix)) || null;
 
   const verdict = !entity || entity.includes('.sample.') ? 'unknown'
-    : deprecated ? 'deprecated' : !sinceLeq171(since) ? 'newer'
+    : deprecated ? 'deprecated'
       : nonapp ? 'nonapp' : 'in';
+  if (verdict === 'in' && !sinceLeq171(since)) {
+    post171Since = since;
+    console.log(`note: control ${entity} is @since ${since} — newer than the 1.71 floor: in scope, scaffolded with a POST_171 deviation into src/02 (AGENTS §1)`);
+  }
 
   if (verdict === 'unknown') {
     console.log(`note: no control metadata for ${sampleId} — scope not judged (verify with scripts/scope-of.mjs)`);
   } else if (verdict !== 'in') {
     const facts = verdict === 'deprecated'
       ? `control ${entity} is deprecated (${deprecated?.since || deprecated?.text || deprecated})`
-      : verdict === 'newer'
-        ? `control ${entity} is @since ${since} — newer than the 1.71 floor`
-        : `non-app sample family (${nonapp.reason || 'ui5/scope-nonapp.json'})`;
+      : `non-app sample family (${nonapp.reason || 'ui5/scope-nonapp.json'})`;
     const excFile = path.join(UI5, 'scope-exceptions.json');
     const exceptions = fs.existsSync(excFile)
       ? JSON.parse(fs.readFileSync(excFile, 'utf8')).exceptions || []
@@ -161,14 +166,19 @@ const { lib, name, entity } = resolved;
 
 // ---------- entity -> src/<category>/<library> ----------
 // The category is derived from the sidecar (AGENTS §3); a fresh scaffold has no
-// deviation yet, so it always starts in the <= 1.71 half of its flavour. Declare
-// a POST_171 deviation later and validate-meta names the folder to move it to.
+// deviation yet, so it starts in the <= 1.71 half of its flavour — unless its
+// control is newer than 1.71, whose POST_171 deviation is written right away.
+// Declare a POST_171 deviation later and validate-meta names the folder to
+// move it to.
+const startDeviations = post171Since
+  ? [{ type: 'POST_171', what: `the ${entity} control (since UI5 ${post171Since}) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= ${post171Since}.` }]
+  : [];
 const libNr = libFolder(lib);
 if (!libNr) {
   console.error(`no library package for "${lib}" — extend LIB_FOLDER in scripts/lib-packages.mjs`);
   process.exit(1);
 }
-const catNr = catFolder({ sample: `${lib}.sample.${name}`, entity, deviations: [] });
+const catNr = catFolder({ sample: `${lib}.sample.${name}`, entity, deviations: startDeviations });
 const folder = `${catNr}/${libNr}`;
 
 // ---------- locate the OpenUI5 template dir ----------
@@ -319,7 +329,7 @@ const meta = {
   audit: { frontend_action: false, event_t_arg: false },
   status: 'generated',
   checked: null,
-  deviations: [],
+  deviations: startDeviations,
 };
 
 // ---------- copy template files (recursive) ----------

@@ -11,12 +11,12 @@ its ↗ opens the live fullscreen sample, **ABAP** is the generated class.
 hold-out set (`ui5/holdout.json`) that measures the generator, so it is
 kept unported on purpose and is not part of the backlog — see the
 [README](README.md#coverage).
-`✗` = **out of scope**: the control is deprecated or newer than UI5 1.71
-(not legacy-free ready / not 1.71-compatible), or the sample is not an app
+`✗` = **out of scope**: the control is deprecated (not legacy-free ready),
+or the sample is not an app
 view at all (UI5 test infrastructure, Component routing, view-templating and
 XMLComposite authoring demos — `ui5/scope-nonapp.json`) — these samples are
 listed for completeness but are not ported. A **⁺** after the class marks ports
-that keep members newer than UI5 1.71 for 1:1 fidelity (declared as
+that keep a control or members newer than UI5 1.71 for 1:1 fidelity (declared as
 POST_171 in the sidecar) — they need a correspondingly recent UI5.
 See the [README](README.md#coverage) for the per-module coverage summary.
 

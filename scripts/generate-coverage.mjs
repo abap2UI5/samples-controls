@@ -82,10 +82,13 @@ const fullscreenUrl = (lib, name) =>
 const apiUrl = (entity) => `${DEMOKIT}/api/${entity}`;
 // bare control name without its namespace (sap.f.GridList -> GridList)
 const bareControl = (entity) => entity.slice(entity.lastIndexOf('.') + 1);
-// the porting scope (AGENTS.md §1): a sample is IN SCOPE when its control
-// existed by UI5 1.71 (empty since = older than tracking) and is not
-// deprecated (legacy-free ready). Everything else is listed but not ported.
-// (sinceLeq171 comes from lib-universe.mjs — one definition for every gate.)
+// the porting scope (AGENTS.md §1): a sample is IN SCOPE when its control is
+// not deprecated (legacy-free ready) and the sample is an app view. A control
+// newer than UI5 1.71 is in scope since 2026-10-20 (maintainer decision): its
+// port keeps the control 1:1, declares it as a POST_171 deviation and is
+// therefore filed under src/02 (lib-packages.mjs). Everything else is listed
+// but not ported. (sinceLeq171 comes from lib-universe.mjs — one definition
+// for every gate.)
 // --- non-app sample families (maintainer decision 2026-07-31) --------------
 // ui5/scope-nonapp.json lists families whose control is in scope by the 1.71
 // rule but that are not app views at all — UI5's own test infrastructure
@@ -99,16 +102,21 @@ const nonAppFamilies = loadNonAppFamilies();
 const nonAppFamily = (lib, s) =>
   nonAppFamilyFor(nonAppFamilies, { lib, name: s.name, entity: s.entity });
 
-// -> 'in' | 'deprecated' | 'newer' | 'nonapp' | 'unknown'. An entity containing
+// -> 'in' | 'deprecated' | 'nonapp' | 'unknown'. An entity containing
 // '.sample.' is the sample id itself (demo apps without an owning control,
 // e.g. AIIntegration) — no control metadata, so scope is unknown.
 // Samples are enriched from ui5/properties.json BEFORE this runs (see
 // enrichFromProperties below), so a null since/deprecated from the snapshot
-// no longer silently passes controls newer than 1.71.
+// no longer silently passes controls newer than 1.71 — the POST_171 check
+// below needs that @since.
 const scopeOf = (lib, s) =>
   !s.entity || s.entity.includes('.sample.') ? 'unknown'
-    : s.deprecated ? 'deprecated' : !sinceLeq171(s.since) ? 'newer'
+    : s.deprecated ? 'deprecated'
       : nonAppFamily(lib, s) ? 'nonapp' : 'in';
+// the control itself is newer than the 1.71 floor — in scope, but its port
+// needs a UI5 runtime newer than 1.71 and must say so (POST_171 below)
+const post171ControlOf = (s) =>
+  !!s.entity && !s.entity.includes('.sample.') && !sinceLeq171(s.since);
 
 // --- scope fallback: control-level @since/@deprecated from the source scan --
 // ui5/universe.json carries since:null for most controls (the fork checkout
@@ -266,6 +274,7 @@ const libs = universe.libs.map((e) => ({
       ...enriched,
       port: ported.get(`${e.lib}\t${s.name}`) || null,
       scope: scopeOf(e.lib, enriched),
+      post171Control: post171ControlOf(enriched),
     };
   }),
 }));
@@ -326,6 +335,17 @@ for (const [sampleId, exc] of scopeExceptions) {
   const changed = ['scope', 'since', 'deprecated'].filter((k) => cur[k] !== dec[k]);
   if (changed.length) {
     console.error(`ERROR: scope exception "${sampleId}" (${exc.class}) was decided on facts that have changed — ${changed.map((k) => `${k}: decided ${JSON.stringify(dec[k])}, now ${JSON.stringify(cur[k])}`).join('; ')}. Re-decide the entry (and re-pin "decided") in ui5/scope-exceptions.json`);
+    scopeErrors++;
+  }
+}
+// a port of a control newer than 1.71 is in scope, but only as a declared
+// post-1.71 port: the POST_171 deviation is what files it under src/02
+// (lib-packages.mjs) and what tells an installer it needs a newer runtime.
+// Without it the port would sit in src/01, the half promised to run on 1.71.
+for (const e of libs) {
+  for (const s of e.samples) {
+    if (!s.port || !s.post171Control || s.port.post171) continue;
+    console.error(`ERROR: ported sample ${e.lib}.sample.${s.name} (${s.port.cls}) uses ${s.entity} @since ${s.since}, newer than UI5 1.71 — declare a POST_171 deviation naming the control in meta/${s.port.cls}.json (AGENTS §1); it files the port under src/02`);
     scopeErrors++;
   }
 }
@@ -417,17 +437,19 @@ let totalInScope = 0;
 let totalReserved = 0;
 let totalPorted = 0;
 let totalPortedOut = 0;
-const outBy = { deprecated: 0, newer: 0, nonapp: 0, unknown: 0 };
+const outBy = { deprecated: 0, nonapp: 0, unknown: 0 };
 for (const s of summary) { totalSamples += s.total; totalInScope += s.inScope; totalReserved += s.reserved; totalPorted += s.ported; totalPortedOut += s.portedOut; }
 const totalToPort = totalInScope - totalReserved;
 for (const e of libs) for (const s of e.samples) if (s.scope !== 'in') outBy[s.scope]++;
+let totalPost171Control = 0;
+for (const e of libs) for (const s of e.samples) if (s.scope === 'in' && s.post171Control) totalPost171Control++;
 
 // README block: overall figure + coverage-per-module summary table
 function summaryLines() {
   const l = [];
   l.push(`Overall **${totalPorted} / ${totalToPort}** portable demo kit samples ported (${pct(totalPorted, totalToPort)}).`);
-  l.push(`**In scope**: samples whose control exists since **UI5 1.71** and is **not deprecated** (legacy-free ready).`);
-  l.push(`Out of scope: ${totalSamples - totalInScope} of ${totalSamples} samples — ${outBy.deprecated} on deprecated controls, ${outBy.newer} on controls newer than 1.71, ${outBy.nonapp} that are not app views (UI5 test infrastructure, Component routing, view-templating demos — see \`ui5/scope-nonapp.json\`), ${outBy.unknown} demo apps without an owning control.`);
+  l.push(`**In scope**: samples whose control is **not deprecated** (legacy-free ready). ${totalPost171Control} of them use a control newer than **UI5 1.71** — their ports need a newer runtime and are filed under \`src/02\`.`);
+  l.push(`Out of scope: ${totalSamples - totalInScope} of ${totalSamples} samples — ${outBy.deprecated} on deprecated controls, ${outBy.nonapp} that are not app views (UI5 test infrastructure, Component routing, view-templating demos — see \`ui5/scope-nonapp.json\`), ${outBy.unknown} demo apps without an owning control.`);
   if (totalPortedOut) l.push(`Plus **${totalPortedOut}** ported samples outside that scope — maintainer-decided exceptions (\`ui5/scope-exceptions.json\`, listed in [STATUS.md](STATUS.md)); they are not counted as coverage of the in-scope backlog.`);
   if (release) l.push(`Control metadata from OpenUI5 **${release}**.`);
   l.push('');
@@ -462,12 +484,12 @@ function controlLines() {
   l.push('hold-out set (`ui5/holdout.json`) that measures the generator, so it is');
   l.push('kept unported on purpose and is not part of the backlog — see the');
   l.push('[README](README.md#coverage).');
-  l.push('`✗` = **out of scope**: the control is deprecated or newer than UI5 1.71');
-  l.push('(not legacy-free ready / not 1.71-compatible), or the sample is not an app');
+  l.push('`✗` = **out of scope**: the control is deprecated (not legacy-free ready),');
+  l.push('or the sample is not an app');
   l.push('view at all (UI5 test infrastructure, Component routing, view-templating and');
   l.push('XMLComposite authoring demos — `ui5/scope-nonapp.json`) — these samples are');
   l.push('listed for completeness but are not ported. A **⁺** after the class marks ports');
-  l.push('that keep members newer than UI5 1.71 for 1:1 fidelity (declared as');
+  l.push('that keep a control or members newer than UI5 1.71 for 1:1 fidelity (declared as');
   l.push('POST_171 in the sidecar) — they need a correspondingly recent UI5.');
   l.push('See the [README](README.md#coverage) for the per-module coverage summary.');
   if (release) {
