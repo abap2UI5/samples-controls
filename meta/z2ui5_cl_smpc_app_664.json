@@ -6,14 +6,22 @@
   "batch": "b49",
   "audit": {
     "frontend_action": false,
-    "event_t_arg": false
+    "event_t_arg": true
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
+      "type": "NOTE",
+      "what": "onToggle vetoes the firing when the Switch for its direction is on (event.preventDefault) and resets that Switch with a toast. Reproduced 1:1 with the app-136 idiom: s_ctrl-prevent_default_expr (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires against the two two-way bound Switch states, the event still reaches the backend, and on_event raises the matching toast and resets that Switch through the automatic model push - no view_display( ), since the expanded item lives in the control. Unlike app 136's single-item panel, selecting a different item fires TWO toggle events back to back (collapse of the old item, then expand of the new one), so the wire also sets check_queue_last: without it the second firing would be dropped while the first round-trip is in flight and a vetoed expand would never get its toast and Switch reset."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "onToggle's third branch replaces the content of an expanding item whose AUTO-GENERATED id ends in a number above 1 (parseInt(oItem.getId().replace(/^\\D+/g, ''))) with a controller-built Text \"Dynamically created content for item '<item text>'\". abap2UI5 builds no controls on the client, so the port declares that Text statically inside every ENABLED SidePanelItem past the second (13 Text controls; the three disabled items 'Go to office', 'Go to the theater' and 'Draw a picture' can never expand and get none). Item content is only visible while the item is expanded, by which time the original has added it, so the screen shows the same text. The auto-id rule is followed by its evident intent, the item index in the aggregation: in a standalone run 'Run' and 'Go home' are __item0/__item1 and keep their static content, while inside the Demo Kit app the id counter is shared with the shell's own list items and even those two get replaced - the port does not reproduce that accident."
+    },
+    {
       "type": "POST_171",
-      "what": "the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107."
+      "what": "the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107."
     }
   ]
 }

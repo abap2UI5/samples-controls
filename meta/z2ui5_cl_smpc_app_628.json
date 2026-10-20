@@ -5,15 +5,28 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_628.clas.abap",
   "batch": "b52",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the seven pressable Avatars toast client-side via control_global MESSAGE_TOAST.show with '{0} Pressed' filled by $event.oSource.sId (roundtrip-free); the LightBox opens by the Avatar itself - the app has no on_event"
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73."
+      "what": "the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (including its detailBox aggregation with the LightBox/LightBoxItem), the app needs a UI5 release >= 1.73."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Avatar properties badgeIcon and badgeTooltip (since UI5 1.77) are what this sample demonstrates and are kept 1:1 - the app needs a UI5 release >= 1.77 to render the affordance badges and their tooltips."
+    },
+    {
+      "type": "NOTE",
+      "what": "onInit's JSONModel (GettyImages/Shutterstock/LowShutterstock/LightBox = sap.ui.require.toUrl('sap/m/images/...')) is seeded in model_init as default-model root fields of the same names; the module paths have no server-side resolution, so they are pinned to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/images/ (same file names, the folder the sample's resourceRoots sap.m.images points at) per the runtime asset-URL rule. The bindings Avatar.src {/GettyImages} {/Shutterstock} {/LowShutterstock} {/LightBox} and LightBoxItem.imageSrc {/LightBox} stay bindings (client->_bind), which structural-diff cannot read statically."
+    },
+    {
+      "type": "NOTE",
+      "what": "onPress toasts oEvent.getSource().getId() + ' Pressed'. All 7 press wires reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled by $event.oSource.sId, app 127 precedent); the id itself is a UI5 runtime value whose view prefix differs from the original's."
     }
   ]
 }

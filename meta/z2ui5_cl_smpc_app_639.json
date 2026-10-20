@@ -5,8 +5,9 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_639.clas.abap",
   "batch": "b54",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the change handler round-trips the valid flag, the operator and the two toDates dates; on_event applies the filter with follow_up_action( binding_call ) on the table's items"
   },
   "status": "generated",
   "checked": null,
@@ -14,6 +15,30 @@
     {
       "type": "POST_171",
       "what": "the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0."
+    },
+    {
+      "type": "NOTE",
+      "what": "onChange round-trips: the change wire carries ${$parameters>/valid}, ${$parameters>/value/operator} and the two dates of ${$source>}.toDates(value) (the control's own toDates, guarded by a ternary for a cleared value; each Date reaches ABAP as a local ISO timestamp), and the backend applies the controller's _createFilter as follow_up_action( binding_call ) on the payments-table items - FROM/FROMDATETIME as GT, TO/TODATETIME as LT, everything else as BT, an empty value clearing the filter. Rows are filtered on their ISO string, which orders like the original's Date compare."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone."
+    },
+    {
+      "type": "NOTE",
+      "what": "the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's !Device.system.phone ? '300px' : 'auto' rule."
+    },
+    {
+      "type": "NOTE",
+      "what": "the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June)."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows."
     }
   ]
 }

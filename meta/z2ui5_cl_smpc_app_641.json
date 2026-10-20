@@ -5,8 +5,9 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_641.clas.abap",
   "batch": "b54",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the three anchors open the hidden DynamicDateRange roundtrip-free via follow_up_action( control_by_id, openBy, $event.oSource.sId ) (the app 016 DatePickerHidden idiom); the change handler round-trips operator, value count and the first two values, and the backend composes the toast"
   },
   "status": "generated",
   "checked": null,
@@ -14,6 +15,26 @@
     {
       "type": "POST_171",
       "what": "the sap.m.DynamicDateRange control (since UI5 1.92.0) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.92.0."
+    },
+    {
+      "type": "POST_171",
+      "what": "DynamicDateRange.hideInput and DynamicDateRange.openBy (both since UI5 1.105) are the sample's central mechanism - kept 1:1, the app needs a UI5 release >= 1.105."
+    },
+    {
+      "type": "POST_171",
+      "what": "Button.ariaHasPopup (since UI5 1.84) is kept 1:1 on both Button controls - the app needs a UI5 release >= 1.84 to render it."
+    },
+    {
+      "type": "POST_171",
+      "what": "Link.ariaHasPopup (since UI5 1.86) is kept 1:1 - the app needs a UI5 release >= 1.86 to render it."
+    },
+    {
+      "type": "NOTE",
+      "what": "changeDateHandler's MessageToast is composed in ABAP (on_event CHANGE) instead of in the controller: the wire carries ${$parameters>/value/operator}, the values count and values[0]/values[1] (no standard option has more than two values), each value as `<value> + ''` so a Date arrives as its toString and a boolean 'included' flag as true/false - exactly what the original's string concatenation prints."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in Popover.onfocusin HEADLESS only), and the `${$parameters>/value/values/0} + ''` string-concatenation event args reaching the toast."
     }
   ]
 }

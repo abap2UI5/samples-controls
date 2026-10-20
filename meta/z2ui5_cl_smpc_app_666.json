@@ -5,15 +5,28 @@
   "file": "src/02/04/z2ui5_cl_smpc_app_666.clas.abap",
   "batch": "b49",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the trigger press round-trips and on_event builds the fragment's ResponsivePopover with the f:ProductSwitch, anchored by id via popover_display (the app-165 shape); fnChange toasts and redirects off ${$parameters>/itemPressed}.getTargetSrc() through two chained client actions; the phone-only Close endButton closes with popover_close."
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
+      "type": "NOTE",
+      "what": "The view is the trigger Button plus two explanatory Texts; the ProductSwitch lives in ProductSwitchItemWithImageSrc.fragment.xml, which onInit loads once and fnOpen opens at pSwitchBtn (openBy). The port rebuilds the fragment as a core:FragmentDefinition in on_event and shows it with popover_display( by_id = pSwitchBtn ) - the documented fragment-popover path of app 165. The three ProductSwitchItem controls stay static 1:1 (the original binds no model). fnChange - MessageToast 'Redirecting to <targetSrc>' plus URLHelper.redirect( targetSrc, true ) - is two client actions chained on the one change event, both reading the pressed item off the event (${$parameters>/itemPressed}.getTargetSrc())."
+    },
+    {
+      "type": "NOTE",
+      "what": "onInit gives the popover an Emphasized 'Close' endButton on a phone only (Device.system.phone), wired to fnClose. The branch stays a branch, as in app 165: the Button is declared once with visible bound to {= ${device>/system/phone} } and closes with the roundtrip-free popover_close action - so the port carries 2 Button controls where the original view declares 1, the second being the controller-built one."
+    },
+    {
+      "type": "NOTE",
+      "what": "The imageSrc assets are host-absolutized to https://sdk.openui5.org/ (test-resources/sap/ui/documentation/sdk/images/HT-1002.jpg and test-resources/sap/m/images/Woman_avatar_01.png, which the original resolves relative to the Demo Kit); the SVG item keeps the original's absolute www.sap.com logo URL verbatim."
+    },
+    {
       "type": "POST_171",
-      "what": "the sap.f.ProductSwitch control (since UI5 1.72) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.72."
+      "what": "the sap.f.ProductSwitch and sap.f.ProductSwitchItem controls (since UI5 1.72) are newer than 1.71 and are the whole point of this sample - kept 1:1. The sample's subject, ProductSwitchItem.imageSrc, is @since 1.140 (ProductSwitchItem.js), so the app needs a UI5 release >= 1.140."
     }
   ]
 }

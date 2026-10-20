@@ -5,8 +5,9 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_651.clas.abap",
   "batch": "b55",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_global MESSAGE_TOAST show ) carries the original's closeOnBrowserNavigation toast option; select/save/manage pass their event parameters via t_arg"
   },
   "status": "generated",
   "checked": null,
@@ -14,6 +15,18 @@
     {
       "type": "POST_171",
       "what": "the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103."
+    },
+    {
+      "type": "NOTE",
+      "what": "the original declares its four VariantItem controls statically and the controller adds (onSave -> addItem) and removes (onManage -> removeItem) items imperatively. The port binds the items aggregation to an ABAP table with one VariantItem template carrying the same ten properties per row (seeded with the four original entries, values verbatim), so the backend can add and delete rows - structural-diff therefore counts one VariantItem template against the original's four. selectedKey, defaultKey and modified are bound two-way: the Toggle Modify View button flips modified in the backend (setModified), select and save reset it, and a manage change of the default view reaches the model through the bound defaultKey. Renames, favorite and execute-on-select changes in the Manage Views dialog are written by the control onto the items' properties and so reach the model through the two-way bound template - the manage handler only applies the deleted keys and, like _checkCurrentVariant, falls back to the standard (first) view when the selected one was deleted."
+    },
+    {
+      "type": "NOTE",
+      "what": "a new view's key is built from an ABAP timestamp (key_<yyyymmddhhmmss>) instead of JavaScript's Date.now( ) milliseconds - unique per save as in the original, a different digit format. The three MessageToast texts are composed in the backend with the same wording and carry the original's closeOnBrowserNavigation option through the control_global MESSAGE_TOAST call."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "the manage event's deleted parameter is transported as ${$parameters>/deleted} and read as a JSON array of keys, and the save event's boolean parameters (overwrite, execute, def, public) as abap_bool - both unverified in a running system, as is the two-way write-back of a rename/favorite toggle from the Manage Views dialog through the bound VariantItem template."
     }
   ]
 }

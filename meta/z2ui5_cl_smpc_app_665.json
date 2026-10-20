@@ -6,14 +6,22 @@
   "batch": "b49",
   "audit": {
     "frontend_action": false,
-    "event_t_arg": false
+    "event_t_arg": true
   },
   "status": "generated",
   "checked": null,
   "deviations": [
     {
+      "type": "NOTE",
+      "what": "onToggle vetoes the firing when the Switch for its direction is on (event.preventDefault) and resets that Switch with a toast. Reproduced 1:1 with the app-136 idiom: s_ctrl-prevent_default_expr (!${$parameters>/expanded} && {/PREVENT_COLLAPSE}) || (${$parameters>/expanded} && {/PREVENT_EXPAND}) is evaluated when the event fires against the two two-way bound Switch states, the event still reaches the backend, and on_event raises the matching toast and resets that Switch through the automatic model push - no view_display( ), since the expanded item lives in the control. Unlike app 136's single-item panel, selecting a different item fires TWO toggle events back to back (collapse of the old item, then expand of the new one), so the wire also sets check_queue_last: without it the second firing would be dropped while the first round-trip is in flight and a vetoed expand would never get its toast and Switch reset."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "onToggle's third branch destroys the content of the expanding item whose AUTO-GENERATED id ends in 2 and adds a controller-built VBox (a Text 'Dynamically added content', then Label 'Label 1'..'Label 3' each followed by an Input). abap2UI5 builds no controls on the client, so the port declares that VBox, Text, Label and Input content statically inside the third SidePanelItem ('Go to office', the one item the original ships empty). Content of a SidePanelItem is only visible while the item is expanded, by which time the original has added it, so the screen shows the same thing; two things differ. (1) The original recreates the Inputs on every expansion, so typed values are wiped on re-expand - the port's Inputs keep them. (2) The original picks the item by parsing the digits of its auto id (parseInt(oItem.getId().replace(/^\\D+/g, ''))), which counts every control created with the uid token 'item' before it - in a standalone run that is 'Go to office' (__item2), inside the Demo Kit app the counter is shared with the shell's own list items and hardly ever equals 2. The port follows the evident intent, the item at index 2 of the items aggregation, and needs no toggle logic for it."
+    },
+    {
       "type": "POST_171",
-      "what": "the sap.f.SidePanel control (since UI5 1.107) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.107."
+      "what": "the SidePanel and SidePanelItem controls (both since UI5 1.107) are newer than 1.71 and are the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.109: sidePanelResizable is @since 1.109 (SidePanel.js), kept as the sample's subject."
     }
   ]
 }
