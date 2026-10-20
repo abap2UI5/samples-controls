@@ -7,7 +7,6 @@ CLASS z2ui5_cl_smpc_app_629 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -18,10 +17,7 @@ CLASS z2ui5_cl_smpc_app_629 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
-      model_init( ).
-      view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    IF client->check_on_navigated( ).
       view_display( ).
     ENDIF.
 
@@ -32,27 +28,39 @@ CLASS z2ui5_cl_smpc_app_629 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    " TODO rebuild ui5/sap.m/IllustratedMessageEVR/*.view.xml 1:1 here (sap.m.IllustratedMessage)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:l`   v = `sap.ui.layout`
         )->a( n = `height`    v = `100%`
 
-        )->ele( `Page`
-            )->a( n = `title` v = `IllustratedMessageEVR`
+        )->ele( n = `ResponsiveSplitter` ns = `l`
+            )->ele( n = `PaneContainer` ns = `l`
+                )->a( n = `orientation` v = `Vertical`
 
-            )->tag( `Text`
-                )->a( n = `text` v = `TODO: port sap.m.sample.IllustratedMessageEVR` ).
+                )->ele( n = `SplitPane` ns = `l`
+                    )->ele( n = `layoutData` ns = `l`
+                        )->tag( n = `SplitterLayoutData` ns = `l`
+                            )->a( n = `size` v = `70%`
+
+                    )->end(
+
+                    )->ele( `IllustratedMessage`
+                        )->a( n = `enableVerticalResponsiveness` v = `true`
+                        )->a( n = `illustrationType`             v = `sapIllus-NoActivities`
+
+                        )->ele( `additionalContent`
+                            )->tag( `Button`
+                                )->a( n = `text` v = `Add Activity`
+
+                        )->end(
+                    )->end(
+                )->end(
+
+                )->ele( n = `SplitPane` ns = `l`
+                    )->tag( `VBox` ).
 
     client->view_display( view->stringify( ) ).
-
-  ENDMETHOD.
-
-
-  METHOD model_init.
-
-    " TODO seed the default model (see the sample's controller / JSON mock)
-    RETURN.
 
   ENDMETHOD.
 

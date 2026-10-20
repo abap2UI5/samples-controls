@@ -13,7 +13,7 @@
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152."
+      "what": "the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152."
     }
   ]
 }

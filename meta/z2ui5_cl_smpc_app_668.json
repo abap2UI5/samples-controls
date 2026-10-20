@@ -13,7 +13,11 @@
   "deviations": [
     {
       "type": "POST_171",
-      "what": "the sap.f.HeroBanner control (since UI5 1.152) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152."
+      "what": "the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions, startContent and endContent aggregations and the columnsRatio property with its sap.f.HeroBannerColumnsRatio values Equal and FirstWider - all @ui5-experimental-since 1.152 with the control."
+    },
+    {
+      "type": "NOTE",
+      "what": "The sample's main.css (one rule, .heroBannerWhiteText { color: var(--sapTextInvertedColor) }, the class the startContent Text carries) is shipped with the port: it is injected through a core:HTML control carrying a <style> block (the documented CAPABILITIES form, as in apps 026/028/122), so the port adds one core:HTML control the original view does not have - the original loads the stylesheet through its manifest's sap.ui5/resources/css entry instead. The rule is verbatim, only whitespace-collapsed; its literal braces are escaped in a backtick literal because the XMLView parser reads an unescaped brace as a binding."
     }
   ]
 }

@@ -7,7 +7,6 @@ CLASS z2ui5_cl_smpc_app_669 DEFINITION PUBLIC.
     DATA client TYPE REF TO z2ui5_if_client.
 
     METHODS view_display.
-    METHODS model_init.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -18,10 +17,7 @@ CLASS z2ui5_cl_smpc_app_669 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
-      model_init( ).
-      view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    IF client->check_on_navigated( ).
       view_display( ).
     ENDIF.
 
@@ -32,27 +28,59 @@ CLASS z2ui5_cl_smpc_app_669 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    " TODO rebuild ui5/sap.f/HeroBannerHeaderBlockAndActionsPlacement/*.view.xml 1:1 here (sap.f.HeroBanner)
     view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`     v = `sap.m`
-        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
-        )->a( n = `height`    v = `100%`
+        )->a( n = `xmlns`        v = `sap.m`
+        )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:f`      v = `sap.f`
+        )->a( n = `xmlns:card`   v = `sap.f.cards`
+        )->a( n = `height`       v = `100%`
+        )->a( n = `displayBlock` v = `true`
 
         )->ele( `Page`
-            )->a( n = `title` v = `HeroBannerHeaderBlockAndActionsPlacement`
+            )->a( n = `showHeader` v = `false`
 
-            )->tag( `Text`
-                )->a( n = `text` v = `TODO: port sap.f.sample.HeroBannerHeaderBlockAndActionsPlacement` ).
+            )->ele( `content`
+                )->ele( `VBox`
+                    )->a( n = `class` v = `sapUiMediumMarginBeginEnd sapUiMediumMarginTop`
+
+                    )->ele( n = `HeroBanner` ns = `f`
+                        )->a( n = `headerText`           v = `Good Morning, Anna`
+                        )->a( n = `overlineText`         v = `Monday, May 26, 2026`
+                        )->a( n = `columnsRatio`         v = `Equal`
+                        )->a( n = `actionsPlacement`     v = `BottomStart`
+                        )->a( n = `headerBlockPlacement` v = `Bottom`
+
+                        )->ele( n = `actions` ns = `f`
+                            )->tag( `Button`
+                                )->a( n = `icon` v = `sap-icon://create`
+                                )->a( n = `text` v = `New Request`
+                            )->tag( `Button`
+                                )->a( n = `icon` v = `sap-icon://document`
+                                )->a( n = `text` v = `Create Report`
+                            )->tag( `Button`
+                                )->a( n = `icon` v = `sap-icon://email`
+                                )->a( n = `text` v = `Send Message`
+
+                        )->end(
+                        )->ele( n = `endContent` ns = `f`
+                            )->ele( n = `Card` ns = `f`
+                                )->a( n = `width` v = `100%`
+
+                                )->ele( n = `header` ns = `f`
+                                    )->tag( n = `Header` ns = `card`
+                                        )->a( n = `title`    v = `Open Tickets`
+                                        )->a( n = `subtitle` v = `Support`
+
+                                )->end(
+                                )->ele( n = `content` ns = `f`
+                                    )->ele( `VBox`
+                                        )->a( n = `class` v = `sapUiSmallMargin`
+
+                                        )->tag( `Title`
+                                            )->a( n = `text`  v = `42`
+                                            )->a( n = `level` v = `H3` ).
 
     client->view_display( view->stringify( ) ).
-
-  ENDMETHOD.
-
-
-  METHOD model_init.
-
-    " TODO seed the default model (see the sample's controller / JSON mock)
-    RETURN.
 
   ENDMETHOD.
 
