@@ -36,5 +36,9 @@
       "type": "LIVE_TEST",
       "what": "unverified in a running system: the openBy anchor opening the hidden DynamicDateRange popover (app 016's hidden DatePicker loops in Popover.onfocusin HEADLESS only), and the `${$parameters>/value/values/0} + ''` string-concatenation event args reaching the toast."
     }
-  ]
+  ],
+  "e2e_smoke": {
+    "theme": true,
+    "reason": "probe"
+  }
 }

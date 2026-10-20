@@ -20,8 +20,8 @@
       "what": "The two sap.ui.integration widgets Card controls keep their manifest as a literal URL, as in the original, but absolutized: the original's relative test-resources/sap/f/demokit/sample/HeroBannerIntegrationCard/startContentManifest.json and endContentManifest.json have no document root to resolve against in an abap2UI5 app, so the port points at https://sdk.openui5.org/test-resources/... (both files verified 2026-10-20: HTTP 200, byte-identical to the archived ui5/sap.f/HeroBannerIntegrationCard copies, served with access-control-allow-origin: *). The Cards therefore load their manifests from the live OpenUI5 demo kit, whose version moves on (1.153.0 on that date); the manifests carry their list data inline (content.data.json), so no further request is needed."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "Unverified in a running system: that both Card controls fetch their manifest cross-origin from sdk.openui5.org and render their List content inside the HeroBanner's startContent and endContent slots. The render gate only proves the view creates; it does not wait for the manifest request."
+      "type": "NOTE",
+      "what": "Unverified in a running system: that both Card controls fetch their manifest cross-origin from sdk.openui5.org and render their List content inside the HeroBanner's startContent and endContent slots. The render gate only proves the view creates; it does not wait for the manifest request. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_670.mjs)."
     }
   ]
 }

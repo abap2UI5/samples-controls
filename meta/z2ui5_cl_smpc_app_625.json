@@ -33,8 +33,8 @@
       "what": "the controller logic is moved to the backend: onPress (read getActive( ), setActive( !active ), then close( ) or openBy( source )) becomes the AVATAR_PRESS round-trip that flips the bound active flag and follows up with client->follow_up_action( cs_event-control_by_id ) close or openBy anchored to myAvatar; onPopoverClose (afterClose) becomes POPOVER_CLOSE resetting the flag; onListItemPress becomes LIST_ITEM_PRESS resetting the flag and closing the Popover. The original does this client-side, the port needs one round-trip per press, so the active state and the popover appear after that round-trip rather than instantly."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover keeps its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property follows each step."
+      "type": "NOTE",
+      "what": "the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover keeps its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property follows each step. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_625.mjs)."
     }
   ]
 }
