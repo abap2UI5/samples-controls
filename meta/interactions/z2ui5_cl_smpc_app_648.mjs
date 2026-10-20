@@ -38,7 +38,7 @@ export default async (page, expect) => {
   const settingsId = await page.evaluate(() => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const b = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
-      .find((c) => c.isA('sap.m.Button') && c.getIcon() === 'sap-icon://action-settings' && !c.bIsDestroyed && c.getParent().isA('sap.m.OverflowToolbar'));
+      .find((c) => c.isA('sap.m.Button') && c.getIcon() === 'sap-icon://action-settings' && /mainView\d*--/.test(c.getId()) && !c.bIsDestroyed);
     return b && b.getId();
   });
   const settings = page.locator(`[id="${settingsId}"]`);
