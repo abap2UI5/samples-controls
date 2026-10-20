@@ -1825,13 +1825,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` literal URL, as in the original, but absolutized: the original's relative test-resources/sap/f/demokit/sample/HeroBannerIntegrationCard/startContentManifest.json and endContentManifest.json have no` &&
             ` document root to resolve against in an abap2UI5 app, so the port points at https://sdk.openui5.org/test-resources/... (both files verified 2026-10-20: HTTP 200, byte-identical to the archived` &&
             ` ui5/sap.f/HeroBannerIntegrationCard copies, served with access-control-allow-origin: *). The Cards therefore load their manifests from the live OpenUI5 demo kit, whose version moves on (1.153.0 on`.
-    text1 = text1 && ` that date); the manifests carry their list data inline (content.data.json), so no further request is needed. // LIVE-TEST: Unverified in a running system: that both Card controls fetch their manifest` &&
+    text1 = text1 && ` that date); the manifests carry their list data inline (content.data.json), so no further request is needed. // NOTE: Unverified in a running system: that both Card controls fetch their manifest` &&
             ` cross-origin from sdk.openui5.org and render their List content inside the HeroBanner's startContent and endContent slots. The render gate only proves the view creates; it does not wait for the` &&
-            ` manifest request.`.
+            ` manifest request. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_670.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.HeroBanner`                      name = `HeroBannerIntegrationCard`                                 class = `z2ui5_cl_smpc_app_670` path = `src/02/04/z2ui5_cl_smpc_app_670.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 2 noted). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.152`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -2179,13 +2179,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = text1 && ` controller logic is moved to the backend: onPress (read getActive( ), setActive( !active ), then close( ) or openBy( source )) becomes the AVATAR_PRESS round-trip that flips the bound active flag and` &&
             ` follows up with client->follow_up_action( cs_event-control_by_id ) close or openBy anchored to myAvatar; onPopoverClose (afterClose) becomes POPOVER_CLOSE resetting the flag; onListItemPress becomes` &&
             ` LIST_ITEM_PRESS resetting the flag and closing the Popover. The original does this client-side, the port needs one round-trip per press, so the active state and the popover appear after that` &&
-            ` round-trip rather than instantly. // LIVE-TEST: the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover` &&
-            ` keeps its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property` &&
-            ` follows each step.`.
+            ` round-trip rather than instantly. // NOTE: the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover keeps` &&
+            ` its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property` &&
+            ` follows each step. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_625.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Avatar`                          name = `AvatarActiveState`                                         class = `z2ui5_cl_smpc_app_625` path = `src/02/01/z2ui5_cl_smpc_app_625.clas.abap`
         score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.73`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -4188,9 +4188,10 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` setURI ), the exact analogue of ICON_POOL. // NOTE: the controller-built Dialog (Fragment.load + addDependent) is shown with client->popup_display( ) of the same fragment. The StepInput's literal` &&
             ` value 3 becomes a two-way binding (field expiration, seeded 3) because the controller reads it via byId('expirationInput').getValue(). The setInterval( 1000 ) counter runs in ABAP: OPEN_DIALOG does` &&
             ` _onCounterStart and arms follow_up_action( cs_event-start_timer COUNTER_TICK 1000 ), each COUNTER_TICK does _decrementCounter and re-arms it until the count reaches 0 (then /bIsExpiring = false);` &&
-            ` onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup. // LIVE-TEST: the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick` &&
+            ` onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup. // NOTE: the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick` &&
             ` pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the`.
-    text1 = text1 && ` description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick.`.
+    text1 = text1 && ` description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20**` &&
+            ` (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageSessionTimeout`                          class = `z2ui5_cl_smpc_app_638` path = `src/02/01/z2ui5_cl_smpc_app_638.clas.abap`
         score = 5
