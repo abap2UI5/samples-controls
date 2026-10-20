@@ -103,6 +103,9 @@ export default async (page, expect) => {
   await waitForClosed(page, null);
 
   /* ---- upload through plugin 2: itemsPath files the row into ITS array --- */
+  // the veto is the point: the plugin must never POST to its uploadUrl
+  const uploadPosts = [];
+  page.on('request', (r) => { if (r.url().includes('/uploadFiles')) uploadPosts.push(r.url()); });
   const body = Buffer.from('e2e upload payload');
   await page.locator('input[type=file][id$="--uploadSetPlugin-instance2-uploader-fu"]').setInputFiles({
     name: 'e2e-upload.txt', mimeType: 'text/plain', buffer: body,
@@ -112,6 +115,8 @@ export default async (page, expect) => {
     'the vetoed upload never added the row to table 2');
   expect(up[1].model[0], 'the unshifted row carries name and size').toEqual({ name: 'e2e-upload.txt', size: body.length });
   expect([up[0].model.length, up[2].model.length], 'tables 1 and 3 untouched').toEqual([3, 3]);
+
+  expect(uploadPosts.length, 'requests to /uploadFiles (the vetoed upload)').toBe(0);
 
   /* ---- remove in table 1 via the decline button + MessageBox ------------- */
   const idx = up[0].rows.indexOf('Business Plan Topics.xls');

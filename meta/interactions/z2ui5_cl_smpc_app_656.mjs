@@ -127,6 +127,9 @@ export default async (page, expect) => {
   await waitForClosed(page, null);
 
   /* ---- upload: beforeUploadStarts vetoed -> the FileUpload dialog -------- */
+  // the veto is the point: the plugin must never POST to its uploadUrl
+  const uploadPosts = [];
+  page.on('request', (r) => { if (r.url().includes('/uploadFiles')) uploadPosts.push(r.url()); });
   const one = Buffer.from('e2e upload one');
   await page.locator('input[type=file][id$="uploadSetPlugin-uploader-fu"]').setInputFiles({
     name: 'e2e-one.txt', mimeType: 'text/plain', buffer: one,
@@ -166,6 +169,8 @@ export default async (page, expect) => {
   expect(up.model[0], 'the unshifted row carries name, size and the chosen type')
     .toEqual({ name: 'e2e-one.txt', size: one.length, type: 'Legal Document' });
   await waitForClosed(page, 'Add Document by Upload');
+
+  expect(uploadPosts.length, 'requests to /uploadFiles (the vetoed upload)').toBe(0);
 
   /* ---- remove via the row's decline button + MessageBox ------------------- */
   const idx = up.rows.indexOf('Instructions.pdf');
