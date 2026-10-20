@@ -5,8 +5,9 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_650.clas.abap",
   "batch": "b55",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id setP13nData ) seeds the three panels and control_by_id open opens the popup; the close toast is a view-wired control_global MESSAGE_TOAST; the panels' getP13nData( ) travels as JSON.stringify'd event args"
   },
   "status": "generated",
   "checked": null,
@@ -14,6 +15,26 @@
     {
       "type": "POST_171",
       "what": "the sap.m.p13n.Popup control (since UI5 1.97) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.97."
+    },
+    {
+      "type": "POST_171",
+      "what": "the SelectionPanel and SortPanel controls of sap.m.p13n (since UI5 1.96) and their members title, enableCount, showHeader and change are newer than 1.71 - kept 1:1 as the popup's panels."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Popup.reset is a function-typed property: the original's controller callback (reset -> _setInitialData + parseP13nState) is resolved by the XML template processor against the controller, and no abap2UI5 wire can supply a function, so the attribute is dropped and the popup shows no Reset button (warningText is kept 1:1 but has no visible effect without the callback). Capability gap - a curated frontend module exporting a reset callback that fires a named backend event would close it."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller's _setInitialData (setP13nData on the three panels with _initialData, verbatim) is issued as three follow_up_action( control_by_id setP13nData ) calls with the JSON array as argument. The original seeds once, on the first open (_bIsOpen guard); the port seeds after every render of the view, which is observably the same - the panels hold the initial data until the user first edits them and keep the edits across later opens - and also re-seeds the fresh panels a rebuilt view creates. onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument."
+    },
+    {
+      "type": "NOTE",
+      "what": "parseP13nState writes JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's getP13nData( ) already stringified with the same indent (a $event-guarded JSON.stringify expression, since an argument has to start with $ to be evaluated on the client) and the backend keeps the last array per panel; an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. The backend nests the three arrays into the same object text (one level deeper indent) and binds it to the CodeEditor value - byte-identical to the original's output. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same round-trip; the close toast (Dialog close reason: <reason>) is client-composed with no round-trip."
+    },
+    {
+      "type": "LIVE_TEST",
+      "what": "the JSON.stringify expressions in the change/open event args (getPanels( )[n].getP13nData( ) through the event source) and the setP13nData JSON argument are source-derived, not run in a live system."
     }
   ]
 }

@@ -5,8 +5,9 @@
   "file": "src/02/01/z2ui5_cl_smpc_app_633.clas.abap",
   "batch": "b53",
   "audit": {
-    "frontend_action": false,
-    "event_t_arg": false
+    "frontend_action": true,
+    "event_t_arg": false,
+    "note": "follow_up_action( cs_event-popup_close ) on the dialog's Close button"
   },
   "status": "generated",
   "checked": null,
@@ -14,6 +15,10 @@
     {
       "type": "POST_171",
       "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller-built Dialog (Fragment.load of fragments/Dialog + addDependent + open) is shown with client->popup_display( ) of the same fragment, rebuilt 1:1; onDialogClose's close() is the roundtrip-free follow_up_action( cs_event-popup_close ) on the Close Button press."
     }
   ]
 }

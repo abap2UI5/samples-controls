@@ -100,9 +100,9 @@ CLASS z2ui5_cl_smpc_app_643 IMPLEMENTATION.
                && `At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr`.
 
     t_products = VALUE #(
-        ( name = `Product 1` attribute1 = |The full text is displayed in place. { lorem }|       attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
+        ( name = `Product 1` attribute1 = |The full text is displayed in place. { lorem }|     attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
         ( name = `Product 2` attribute1 = |The full text is displayed in a popover. { lorem }| attribute2 = `Attribute related to label` status = `Some status` overflowmode = `Popover` )
-        ( name = `Product 3` attribute1 = |The full text is displayed in place. { lorem }|       attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
+        ( name = `Product 3` attribute1 = |The full text is displayed in place. { lorem }|     attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
         ( name = `Product 4` attribute1 = |The full text is displayed in a popover. { lorem }| attribute2 = `Attribute related to label` status = `Some status` overflowmode = `Popover` ) ).
 
   ENDMETHOD.

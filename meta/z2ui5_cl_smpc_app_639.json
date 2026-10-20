@@ -25,7 +25,7 @@
       "what": "the controller's setValueState(ValueState.Error/None) is the bound valueState attribute (value_state, seeded None), set in on_event from the valid parameter."
     },
     {
-      "type": "IMPROVISED",
+      "type": "NOTE",
       "what": "the controller's _dateFormatter function (DateFormat pattern 'MMMM dd YY, hh:mm:ss') is not an allowed formatter; the PERFOMDATETIME cell keeps the same pattern as a standard sap.ui.model.type.DateTime binding with formatOptions.source over the ISO string the ABAP model holds - same output, the formatter attribute is gone."
     },
     {

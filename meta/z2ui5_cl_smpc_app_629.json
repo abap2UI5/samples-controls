@@ -14,6 +14,10 @@
     {
       "type": "POST_171",
       "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "POST_171",
+      "what": "the IllustratedMessage property enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know IllustratedMessage (absent from ui5/properties.json) and passes it silently."
     }
   ]
 }
