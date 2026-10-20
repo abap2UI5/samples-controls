@@ -44,5 +44,9 @@
   "render_smoke": {
     "skip": true,
     "reason": "sap.f.AvatarGroup itself loops in the static headless render harness: 'Rendering has been re-started too many times (21)' (its onAfterRendering resize handling re-invalidates the group). Reproduced 2026-10-20 with a minimal view outside this port - an l:VerticalLayout holding one AvatarGroup with three static AvatarGroupItem initials, no binding, no event - which fails the same way, and with each of this port's two AvatarGroups removed in turn; the docs/history.md 2026-07-24 entries record the same headless AvatarGroup render-restart loop. A harness boundary, not the port: the view reconstructs and the property and structure gates run in full. Verified against the render each run - the skip is honoured only while it still errors."
+  },
+  "e2e_smoke": {
+    "theme": true,
+    "reason": "sap.f.AvatarGroup sizes itself from its own CSS: unthemed it measures unstyled avatars, re-renders with fewer and loops (\"Rendering has been re-started too many times\"). Booted with the theme CSS it renders once and passes - verified 2026-10-20."
   }
 }

@@ -182,6 +182,15 @@ verdicts below turned out to be harness effects.
   property through the UI5 API — that bypasses the binding the test exists to
   prove. Same family: assert the *effect* (a bound property, a rendered
   class), not the pixels (apps 207/130).
+- **A control that sizes itself from its own CSS can loop unthemed** —
+  `sap.f.AvatarGroup` measures its unstyled avatars, re-renders with fewer,
+  measures again and dies on *"Rendering has been re-started too many times"*
+  (app 662). That is the harness, not the port: declare
+  `"e2e_smoke": { "theme": true, "reason": "…" }` in the sidecar and the port
+  boots with the theme CSS from sdk.openui5.org. It is no skip — the port runs
+  the full gate and its interaction themed — and it is re-verified like one:
+  the port is booted unthemed as well, and a declaration whose port passes
+  that way too FAILS as stale.
 - **OverflowToolbar controls ARE drivable headless — open the overflow
   popover first.** In the harness' 1280 px viewport a toolbar folds almost
   everything into its `Additional Options` button, so a direct
