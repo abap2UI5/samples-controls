@@ -4,7 +4,7 @@
 // the columns (order, visibility) and the rows' sorter. Then the table's own
 // columnResize, sort and columnMove events, each carrying the column's
 // .data('p13nKey'), driven from the column header the way a user does.
-import { waitForIdle, waitForUi5, revealInOverflow } from '../../scripts/lib-e2e.mjs';
+import { waitForIdle, waitForUi5 } from '../../scripts/lib-e2e.mjs';
 
 const P13N_ROW = ([panel, name]) => {
   const all = Object.values(sap.ui.require('sap/ui/core/Element').registry.all());
@@ -43,8 +43,14 @@ export default async (page, expect) => {
     return b && b.getId();
   });
   const settings = page.locator(`[id="${settingsId}"]`);
-  await revealInOverflow(page, settings);
-  console.log('VIS', await settings.isVisible(), await settings.boundingBox());
+  if (!(await settings.count())) {
+    // folded into the toolbar's overflow: open it with its own button (focus + Enter;
+    // a pointer click lands on the table's extension area and never reaches it)
+    const tb = await page.evaluate((id) => sap.ui.require('sap/ui/core/Element').getElementById(id).getParent().getId(), settingsId);
+    await page.evaluate((tb) => document.getElementById(`${tb}-overflowButton`).focus(), tb);
+    await page.keyboard.press('Enter');
+    await settings.waitFor({ state: 'attached', timeout: 5000 });
+  }
   await page.evaluate((id) => document.getElementById(id).focus(), settingsId);
   await page.keyboard.press('Enter');
   await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--p13nPopup-dialog') && !c.bIsDestroyed && c.isOpen()),
