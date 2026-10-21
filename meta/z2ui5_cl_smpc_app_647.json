@@ -1,0 +1,32 @@
+{
+  "class": "z2ui5_cl_smpc_app_647",
+  "sample": "sap.m.sample.p13n.EngineGridList",
+  "entity": "sap.m.p13n.Engine",
+  "file": "src/02/01/z2ui5_cl_smpc_app_647.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): setP13nData on the SelectionPanel (JSON array built in ABAP) and open on the p13n.Popup; the popup's close event passes the reason and getP13nData( true )"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its close event and panels aggregation) and the sap.m.p13n.SelectionPanel control (since 1.96, its showHeader and enableCount properties), all newer than 1.71; the app needs a UI5 release >= 1.97."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Engine.getInstance( ).register( ) with an Items SelectionController and Engine.show( ) are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the Items state (visible person keys, in order) in ABAP, and the settings button opens a p13n:Popup with one p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it) that the port declares in the GridList's dependents - both are therefore controls the original view does not have (Popup, SelectionPanel). Before opening, the backend hands the panel the controller's adaptation data via setP13nData (visible persons first in state order, then the hidden ones sorted by label, labels from the MetadataHelper); on close with reason Ok, the panel's getP13nData( true ) comes back and handleStateChange is reproduced in ABAP - the bound /items become the visible persons in the chosen order. The Engine's popup carries the panel's title (Fields) and the contentHeight 35rem/contentWidth 32rem settings, which the declared Popup does not."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoList) and the GridList's sap.ui.fl:flexibility attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
+    },
+    {
+      "type": "NOTE",
+      "what": "the p13n.Popup close wire ($event.oSource.getPanels( )[0].getP13nData( true ) - read back as a JSON array of the panel's items) and the setP13nData JSON argument are source-derived, not run in a live system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_647.mjs)."
+    }
+  ]
+}

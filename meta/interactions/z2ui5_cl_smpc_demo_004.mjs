@@ -336,7 +336,7 @@ export default async (page, expect) => {
    * 2026-10-08, never locally) */
   const enter = async (suffix) => {
     await Promise.all([
-      page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes(':3000'), { timeout: 15000 })
+      page.waitForResponse((r) => r.request().method() === 'POST' && new URL(r.url()).origin === new URL(page.url()).origin, { timeout: 15000 })
         .catch(() => { throw new Error(`Enter on the card field ${suffix} sent no round-trip`); }),
       cardInput(suffix).press('Enter'),
     ]);

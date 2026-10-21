@@ -1,0 +1,36 @@
+{
+  "class": "z2ui5_cl_smpc_app_638",
+  "sample": "sap.m.sample.IllustratedMessageSessionTimeout",
+  "entity": "sap.m.IllustratedMessage",
+  "file": "src/02/01/z2ui5_cl_smpc_app_638.clas.abap",
+  "batch": "b53",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( cs_event-start_timer COUNTER_TICK 1000 ) re-armed per tick"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the i18n ResourceModel the controller sets on the view is dropped and every {i18n>KEY} is folded to its English literal from i18n/i18n.properties (DialogTitle, ContinueWorking, SignIn, Close, TitleExpiring, TitleExpired, DescriptionExpiringBegin, DescriptionExpiringEnd, DescriptionExpired) - abap2UI5 has no i18n model by design, so the runtime language switch is lost."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the original Component.js registers the 'tnt' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: illustrationType tnt-SessionExpiring / tnt-SessionExpired (expression-bound 1:1 on /bIsExpiring) resolve to no registered set, so the dialog shows the title, the counting description and the buttons with an EMPTY illustration area and UI5 logs 'The illustration set tnt is not registered'. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller-built Dialog (Fragment.load + addDependent) is shown with client->popup_display( ) of the same fragment. The StepInput's literal value 3 becomes a two-way binding (field expiration, seeded 3) because the controller reads it via byId('expirationInput').getValue(). The setInterval( 1000 ) counter runs in ABAP: OPEN_DIALOG does _onCounterStart and arms follow_up_action( cs_event-start_timer COUNTER_TICK 1000 ), each COUNTER_TICK does _decrementCounter and re-arms it until the count reaches 0 (then /bIsExpiring = false); onDialogClose/onSignIn (DIALOG_CLOSE, SIGN_IN) stop it and destroy the popup."
+    },
+    {
+      "type": "NOTE",
+      "what": "the counter is a backend round-trip per second instead of the original's client-side setInterval: each tick pushes /iSecondsLeft and /bIsExpiring into the still-open popup (model push without a view rebuild), and any other round-trip cancels the pending start_timer. Verify in a running system that the description counts down 3-2-1-0, the dialog switches to the expired state with the Sign In and Close buttons, and that the busy indicator does not flicker on every tick. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_638.mjs). Each tick is armed with START_TIMER's no-busy flag (third argument, `X` for abap_true) since 2026-10-20, so a backend slower than UI5's 1 s busy delay does not flash the overlay over the countdown."
+    }
+  ]
+}

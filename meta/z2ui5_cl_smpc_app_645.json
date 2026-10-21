@@ -1,0 +1,48 @@
+{
+  "class": "z2ui5_cl_smpc_app_645",
+  "sample": "sap.m.sample.p13n.Engine",
+  "entity": "sap.m.p13n.Engine",
+  "file": "src/02/01/z2ui5_cl_smpc_app_645.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): setP13nData on the Selection/Sort/GroupPanel of the p13n.Popup fragment shown with popup_display (JSON arrays built in ABAP, view = POPUP); the popup's close passes the reason and the three panels' getP13nData( true ); the column menu, QuickSort/QuickGroup, ColumnResizer and drop wires pass p13nKey custom data and item getters"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release >= 1.110."
+    },
+    {
+      "type": "POST_171",
+      "what": "kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column headerMenu (1.98), the sap.m.plugins ColumnResizer control with its columnResize event (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with beforeOpen, showTableSettingsButton and tableSettingsPressed, QuickSort with change and its items aggregation, QuickSortItem with key, label and sortOrder, QuickGroup with change and its items aggregation, QuickGroupItem with key, label and grouped."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Engine.getInstance( ).register( ) with the Columns, Sorter, Groups, ColumnWidth and Filter controllers, Engine.show( ), retrieveState( )/applyState( ) and the stateChange event are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column widths, sorters, groups) in ABAP, and the settings button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it), a p13n:SortPanel and a p13n:GroupPanel (queryLimit 1, as the GroupController sets it for a sap.m.Table) - controls the port builds as a popup_display fragment, which the original view does not have (Popup, SelectionPanel, SortPanel, GroupPanel) - opened fresh on every press and destroyed (popup_destroy) in its close handler, as Engine.show( ) creates the popup per call. Right after opening it, the backend hands each panel the controllers' adaptation data via setP13nData (active entries first in state order, the others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and handleStateChange is reproduced in ABAP: updateColumns (hide all, show and move the state's columns to the front, widths from the state, sort indicators), createGroups/createSorters (one group sorter per group, then the sorters, a sorter on a grouped path only setting its direction) and bindItems - the items binding is composed by the backend as a binding-info string with that sorter list, and the view emits the Column controls and the cell template's Text cells in state order from a loop, so every state change is a view rebuild. The Engine's popup carries the title View Settings and contentHeight 50rem/contentWidth 45rem, which the declared Popup does not."
+    },
+    {
+      "type": "NOTE",
+      "what": "the p13n:Popup is built as a popup_display fragment of its own instead of a dependent of the table because of a UI5 leak: sap.m.p13n.Popup.addPanel moves its panels into an internal Container that only the Dialog created by open( ) takes as content, and Popup.exit destroys only that Dialog (sap/m/p13n/Popup.js, UI5 1.152) - so a Popup that is declared in a view and never opened leaks its Container and panels when the view is destroyed. abap2UI5 alternates the main view's id (mainView/mainView2) on every view_display, so two rebuilds later the leaked panels' ids collide with the new view's own and the rebuild dies on a duplicate id. A Popup that exists only while it is open (as Engine.show( ) creates it) has nothing to leak; any port that declares a p13n.Popup in a view it re-creates without opening the popup hits this."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the Filter controller is dropped: its panel, sap.m.p13n.FilterPanel, renders each condition through itemFactory, a function-typed property (the FilterController passes a factory creating an Input bound to $p13n>conditions/0/values/0) that no abap2UI5 wire can supply - so the popup has no Filter tab, no filter can be set, createFilters has nothing to build, and the filterInfo info toolbar (kept with visible false, filterInfoText and its Remove All Filters Button) can never appear; its two press handlers (onFilterInfoPress on the OverflowToolbar, onClearFilterPress on the Button) are therefore not wired. Capability gap - a curated frontend module exporting a default itemFactory would close it."
+    },
+    {
+      "type": "NOTE",
+      "what": "the column menu is driven from the backend: beforeOpen transports the opened column's p13nKey custom data and the backend sets the QuickSortItem/QuickGroupItem key, label, sortOrder and grouped through bound model fields (the original sets them on the items directly); QuickSort change and QuickGroup change carry ${$parameters>/item}.getKey( ) plus getSortOrder( )/getGrouped( ) and do what onSort/onGroup do (clear all sorters/groups, push the column's), ColumnResizer columnResize stores the column width in the ColumnWidth state (the resizer has already sized the column), and the column drop does onColumnMove's position arithmetic on the backend's column order and moves the column in the visible-column state. The cell template's Text cells are emitted per column from the column state's model path, so their bindings {FIRSTNAME}, {LASTNAME}, {CITY} and {SIZE} (the original's {firstName}, {lastName}, {city}, {size}) are composed at run time and not visible to a static diff."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
+    },
+    {
+      "type": "NOTE",
+      "what": "the p13n.Popup close wire ($event.oSource.getPanels( )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments, the custom-data args (.data('p13nKey') on the column, dragged and dropped control) and the QuickSortItem/QuickGroupItem update arriving after beforeOpen's round-trip while the menu is already open are source-derived, not run in a live system. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_645.mjs)."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "class": "z2ui5_cl_smpc_app_644",
+  "sample": "sap.m.sample.p13n.Container",
+  "entity": "sap.m.p13n.Container",
+  "file": "src/02/01/z2ui5_cl_smpc_app_644.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): d1 open/close and p1 openBy openBtn; the layout RadioButtonGroup passes its selectedIndex"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96."
+    },
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.AbstractContainerItem control (since UI5 1.96) and its key and text properties are newer than 1.71 - kept 1:1 as the container's views."
+    },
+    {
+      "type": "NOTE",
+      "what": "addCustomView adds a new AbstractContainerItem (text View <n>, key view<n>, n = getViews( ).length before the add, which counts the Container's own $default view - the navigation list it adds in list layout - next to the three static ones, so the first added view is View 4/view4 as in the original; the port counts its rows plus that one) to the container of the pressed popup. The port keeps one ABAP row per view for each of the two containers and emits the container's views from it in a loop - the three original views with their VBox/Text content, the added ones without content, as the original adds them - so the add is a backend row plus a view rebuild that re-opens the popup the button sat in (d1 via open, p1 via openBy openBtn). The rebuild resets the container to its defaultView view2 where the original stays on the currently shown view."
+    },
+    {
+      "type": "NOTE",
+      "what": "onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that RadioButtonGroup's selectedIndex two-way and opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout stays a select wire carrying selectedIndex and sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip."
+    },
+    {
+      "type": "NOTE",
+      "what": "re-opening d1/p1 by a follow-up action directly after the view rebuild that an Add custom view press triggers is unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_644.mjs)."
+    }
+  ]
+}

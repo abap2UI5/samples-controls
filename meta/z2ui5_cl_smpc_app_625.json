@@ -1,0 +1,40 @@
+{
+  "class": "z2ui5_cl_smpc_app_625",
+  "sample": "sap.m.sample.AvatarActiveState",
+  "entity": "sap.m.Avatar",
+  "file": "src/02/01/z2ui5_cl_smpc_app_625.clas.abap",
+  "batch": "b52",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "AVATAR_PRESS round-trip toggles the bound ACTIVE flag and follows up with control_by_id userMenu openBy myAvatar / close; LIST_ITEM_PRESS closes it the same way"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.73."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Avatar property active (since UI5 1.120) is what this sample demonstrates. The original never writes it in the view - the controller calls setActive( ) - so the port binds it two-way to the ABAP flag active (an extra attribute, the scalar-to-binding move of the recipe); the app needs a UI5 release >= 1.120 to show the active state."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Popover property titleAlignment (since UI5 1.72, value Center) is kept 1:1 from Popover.fragment.xml - the app needs a UI5 release >= 1.72 for the centered title."
+    },
+    {
+      "type": "NOTE",
+      "what": "onInit loads Popover.fragment.xml with Fragment.load and adds it to the view's dependents; the port declares the same Popover (id userMenu) 1:1 in the view's mvc:dependents aggregation, and the UserMenu.fragment.xml the Popover pulls in through a core:Fragment reference is inlined into it (the List with its eight StandardListItem rows, verbatim) - so the core:Fragment element itself is dropped, and the two core:FragmentDefinition roots are gone with the separate files."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller logic is moved to the backend: onPress (read getActive( ), setActive( !active ), then close( ) or openBy( source )) becomes the AVATAR_PRESS round-trip that flips the bound active flag and follows up with client->follow_up_action( cs_event-control_by_id ) close or openBy anchored to myAvatar; onPopoverClose (afterClose) becomes POPOVER_CLOSE resetting the flag; onListItemPress becomes LIST_ITEM_PRESS resetting the flag and closing the Popover. The original does this client-side, the port needs one round-trip per press, so the active state and the popover appear after that round-trip rather than instantly."
+    },
+    {
+      "type": "NOTE",
+      "what": "the round-trip sequence is unverified in a running system: Avatar press -> active true + openBy, second press -> active false + close (sap.m.Popover keeps its opener in the autoclose areas, so the second press should reach AVATAR_PRESS rather than an autoclose), list item press -> close + afterClose round-trip, and that the bound active property follows each step. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_625.mjs)."
+    }
+  ]
+}

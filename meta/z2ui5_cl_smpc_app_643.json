@@ -1,0 +1,31 @@
+{
+  "class": "z2ui5_cl_smpc_app_643",
+  "sample": "sap.m.sample.ExpandableText",
+  "entity": "sap.m.ExpandableText",
+  "file": "src/02/01/z2ui5_cl_smpc_app_643.clas.abap",
+  "batch": "b54",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.ExpandableText control (since UI5 1.87) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.87."
+    },
+    {
+      "type": "POST_171",
+      "what": "ExpandableText.overflowMode (since UI5 1.87, enum sap.m.ExpandableTextOverflowMode InPlace/Popover) is bound per row as in the original."
+    },
+    {
+      "type": "POST_171",
+      "what": "Table.autoPopinMode (since UI5 1.76) is kept 1:1 - the app needs a UI5 release >= 1.87 anyway for the control."
+    },
+    {
+      "type": "NOTE",
+      "what": "the controller's onInit products are seeded in model_init verbatim; the shared Lorem ipsum tail of the four attribute1 texts is held once in a local and appended, the resulting strings are byte-identical to the original's."
+    }
+  ]
+}

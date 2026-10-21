@@ -1,0 +1,63 @@
+{
+  "class": "z2ui5_cl_smpc_app_652",
+  "sample": "sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample",
+  "entity": "sap.m.plugins.UploadSetwithTable",
+  "file": "src/02/01/z2ui5_cl_smpc_app_652.clas.abap",
+  "batch": "b56",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.plugins.UploadSetwithTable control (since UI5 1.124) is newer than 1.71 and is the whole point of this sample - kept 1:1 in the table's dependents as plugins:UploadSetwithTable (the original's dotted plugins.UploadSetwithTable under the sap.m default namespace), with its rowConfiguration aggregation; the app needs a UI5 release >= 1.124. Every member it carries (uploadUrl, multiple, cloudFilePickerEnabled, the actions association, beforeUploadStarts, itemRenamed) is as new as the plugin, and fileNameValidationConfig - the member this sample is about, kept as the view's literal {mode: 'override', characters: '@$#'} - is @since 1.136, so the app needs UI5 >= 1.136."
+    },
+    {
+      "type": "POST_171",
+      "what": "the plugin's companion controls are kept 1:1 and are post-1.71 too: sap.m.upload.ActionsPlaceholder (@since 1.120, with placeholderFor - the toolbar slot the plugin renders its upload button into) and sap.m.upload.UploadItemConfiguration (@since 1.124; fileNamePath, mediaTypePath, urlPath, previewablePath and fileSizePath @1.124, isTrustedSourcePath @1.125), written upload:UploadItemConfiguration for the original's dotted upload.UploadItemConfiguration."
+    },
+    {
+      "type": "POST_171",
+      "what": "sap.m.Column importance (@since 1.76) on the File Name and action columns, and sap.m.Table autoPopinMode (@since 1.76) and hiddenInPopin (@since 1.77), are kept 1:1 from the original table."
+    },
+    {
+      "type": "NOTE",
+      "what": "The named JSONModel documents (manifest dataSource model/documents.json) is folded into the default model: every {documents>x} binding is the row field {X} and the items path is the bound T_ITEMS, still as the original's {path, templateShareable: false} binding info. All six rows are inlined, and the top-level mode, characters, isConfigureButtonEnabled and defaultCharacterSet keys are model fields too (mode is kept PROTECTED - no binding reads it); the url and imageUrl fields are host-absolutized to https://sdk.openui5.org/test-resources/... because an abap2UI5 app has no demo-kit root to resolve the relative test-resources paths against. The UploadItemConfiguration paths name the upper-case ABAP fields (FILENAME, MEDIATYPE, URL, PREVIEWABLE, FILESIZE, TRUSTEDSOURCE) instead of fileName/mediaType/... - the same model columns. IMAGEURL and UPLOADSTATE are bound with omit_initial_paths, so a row the mock gives no imageUrl/uploadState still reads undefined and the original's own Image/Icon visible expressions and highlight expression decide exactly as in the sample."
+    },
+    {
+      "type": "NOTE",
+      "what": "The controller formatters getIconSrc (UploadSetwithTable.getIconForFileType - IconPool's media-type table, the file-extension fallback with sap-icon://card for images) and getFileSizeWithUnits (KB/MB/GB with two decimals) run in ABAP (icon_for, size_with_units) and the row carries the finished values in two port fields, ICON and FILESIZE_UNITS, which core:Icon.src and the File Size Text bind - the thin-frontend rule; the {parts: [...], formatter: ...} bindings are gone with them."
+    },
+    {
+      "type": "NOTE",
+      "what": "The validation panel: the three CheckBoxes keep their ids (cbInclude, cbExclude, cbOverride) and their select wire transports $event.oSource.getId(), from which the backend makes the three boxes one choice exactly like onCheckboxSelect (their selected is bound; cbOverride starts selected as in the view); charInput's value is bound to characters and its liveChange wire carries ${$parameters>/newValue} (onInputChange reads newValue, the bound model only follows on change) with check_queue_last and check_no_busy, and both recompute isConfigureButtonEnabled, which the Configure button's enabled binds as in the original. Configure calls the plugin's setFileNameValidationConfig through control_by_id on the plugin with the {mode, characters} object as a JSON argument (characters JSON-escaped), shows the original's toast text, and remembers the payload so view_display re-issues it after a rebuild (the view's literal config would otherwise come back). The note Text binds the default character set /:\\*?\"<>|[]{}@#$ of documents.json."
+    },
+    {
+      "type": "NOTE",
+      "what": "design='Bold' is dropped from the three Text controls of the panel: sap.m.Text has no design property (it is sap.m.Label's), and the view fails to load with it - the render gate measured 'Error found in View' on exactly that node. Nothing visible is lost, since the attribute never reached a control."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "Upload: the sample starts a sinon fake XHR server (model/mockserver.js) in beforeUploadStarts, which answers the POST to /uploadFiles with 201 and unshifts the new document. There is no such endpoint behind an abap2UI5 app, so the port plays the mock server's part in the backend: beforeUploadStarts is a backend wire with check_prevent_default (the plugin's own veto - no XHR is sent) that transports the item's file name, media type and size, and the backend unshifts the row the mock server would have created (uploadState Complete, revision 00, In work, Jane Burns, Invoice, trustedSource) and shows the 'Document Added' toast at once rather than after the sample's one-second setTimeout. Lost with it: the uploaded file's blob: object URL (an uploaded row has an empty url, so it cannot be previewed or downloaded) and the random uid id (a running number); uploadCompleted and onActivated are not wired (no upload completes, and the plugin is addressed by an added id uploadSetPlugin instead of the instance onActivated handed the controller); URLListValidator.add('blob') is dropped. Several files picked at once fire beforeUploadStarts back to back and abap2UI5 runs one round-trip at a time: check_queue_last keeps the last one, so only the first and the last of them are added."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "onDownloadFiles calls the plugin's download( context, true ) for EVERY selected row; a UI5 event expression has no loop, so the port's Download button calls download for the first selected row only, through a view-wired control_by_id on the plugin whose argument is $controller.getView().byId('table-uploadSet').getSelectedContexts()[0]."
+    },
+    {
+      "type": "NOTE",
+      "what": "Unverified in a running system: (a) the plugin calls by id (uploadSetPlugin, an id the original does not carry) through the unlisted-method path of control_by_id - openFilePreview with the Link's $event.oSource.getBindingContext(), renameItem and download with $controller.getView().byId('table-uploadSet').getSelectedContexts()[0] - each handing the live Context object through castArgAuto untouched; (b) selectionChange transporting $event.oSource.getSelectedContexts().join() (Context.toString is the binding path) and the itemRenamed wire reading ${$parameters>/item}.getBindingContext().getPath(); (c) the vetoed beforeUploadStarts and ${$parameters>/item}.getFileObject().size; (d) setFileNameValidationConfig reached with a JSON object argument through castArgAuto, and the plugin's rename dialog then validating against it. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_652.mjs)."
+    },
+    {
+      "type": "NOTE",
+      "what": "onSelectionChange's setEnabled calls become two bound flags: Download is enabled for one or more selected rows, Remove/Rename/Edit URL for exactly one. onSearch's Filter('fileName', Contains, query) is the view-wired binding_call filter on the table's items with ${$source>/value} - roundtrip-free, and like any binding filter it does not survive a view rebuild. onDocumentRenamedSuccess writes the new name into the row in the backend (the itemRenamed wire carries the row's path and the item's file name) and toasts 'Document Renamed.' with duration 2000. After a removal the port resets the selection AND the four buttons; the original's removeSelections( ) fires no selectionChange, so there the buttons stayed enabled on an empty selection."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "The AddViaUrl fragment is the port's popup with its ids kept (addViaUrlDialog, addViaUrlSimpleform, urlInputLabel, urlInput, nameInputLabel, nameInput, addDocumentBtn), and what openAddOrEditDialog / _isValidName / _validateAddOrEditUrlDialog set through Element.getElementById is bound instead: the Dialog title (Add URL / Edit URL), the begin button text (Add / Apply), urlInputLabel.required, both Input values and their valueState / valueStateText. Cancel closes it with popup_close. Add validates name and URL in the backend (the unanchored URL regex reduced to its required part, a ftp/http/https scheme followed by a non-blank) and then adds the row directly - uploadItemViaUrl takes a JS Promise and the controller adds a documentUrl header field to the item, neither transportable, and the mock server's answer is exactly that row (the URL as typed, an empty media type and size 0). showEditConfirmation's controller-built sap.m.Dialog (type Message, state Warning, title Warning, Save / DiscardChanges) is a MessageBox.warning with the same title, text, actions and Save emphasized; Save updates the selected row's fileName and url and closes the fragment, DiscardChanges only closes the box. removeItem's MessageBox.warning keeps its text, actions Remove/CANCEL, emphasizedAction, styleClass and initialFocus; its explicit icon option is the warning box's own icon anyway."
+    }
+  ]
+}

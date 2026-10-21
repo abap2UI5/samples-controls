@@ -50,7 +50,7 @@ const selectRow = async (page, tableId, index) => {
   const n = await cells.count();
   if (n <= index) throw new Error(`${tableId} rendered ${n} row selector cell(s), need index ${index}`);
   await Promise.all([
-    page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes(':3000'), { timeout: 15000 }),
+    page.waitForResponse((r) => r.request().method() === 'POST' && new URL(r.url()).origin === new URL(page.url()).origin, { timeout: 15000 }),
     dispatchMouse(cells.nth(index)),
   ]);
 };

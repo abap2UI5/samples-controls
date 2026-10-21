@@ -10,8 +10,11 @@
  * control-level `@since` / `@deprecated` straight from the OpenUI5 source JSDoc,
  * the authoritative record, and prints a verdict.
  *
- * A control is IN SCOPE when it exists since UI5 <= 1.71 AND is not deprecated in
- * the current release (AGENTS.md §1). This is a STANDALONE reporter — it does not
+ * A control is IN SCOPE when it is not deprecated in the current release
+ * (AGENTS.md §1). A control newer than 1.71 is in scope too since 2026-10-20
+ * (maintainer decision), as a POST_171 port filed under src/02 — the verdict
+ * says so, because the @since is what the port has to declare. This is a
+ * STANDALONE reporter — it does not
  * alter any gate; `scopeOf` (generate-coverage.mjs) reads the same facts from
  * the committed `ui5/properties.json` snapshot, so the two verdicts agree.
  *
@@ -34,7 +37,7 @@ const OPENUI5_DIR = process.env.OPENUI5_SRC
   ? path.resolve(process.env.OPENUI5_SRC)
   : path.resolve(ROOT, '..', 'fork-openui5');
 const SRC = path.join(OPENUI5_DIR, 'src');
-const THRESHOLD = [1, 71]; // controls first available after 1.71 are out of scope
+const THRESHOLD = [1, 71]; // controls first available after 1.71 need a POST_171 port (src/02)
 
 // "1.73" / "1.109.0" -> [1,73] / [1,109,0]; loose text after the number is ignored
 function parseVer(s) {
@@ -152,12 +155,12 @@ function verdict(entity) {
   if (deprecated) {
     return { entity, ok: false, since, reason: `OUT_OF_SCOPE (deprecated${deprecated.since ? ` since ${deprecated.since}` : ''}${deprecated.text ? ` — ${deprecated.text.replace(/\s+/g, ' ').slice(0, 80)}` : ''})${tag}` };
   }
+  if (hit.root === 'sapui5') {
+    return { entity, ok: false, since, reason: `OUT_OF_SCOPE (SAPUI5-only library — no 1:1 port, collect it in src/03 instead, AGENTS §3); @since ${since || '<=1.71 (no @since header)'}` };
+  }
   const v = parseVer(since);
   if (v && gt(v, THRESHOLD)) {
-    return { entity, ok: false, since, reason: `OUT_OF_SCOPE (control @since ${since} > 1.71)${tag}` };
-  }
-  if (hit.root === 'sapui5') {
-    return { entity, ok: false, since, reason: `OUT_OF_SCOPE (SAPUI5-only library — no 1:1 port, collect it in src/03 instead, AGENTS §3); release-clean: @since ${since || '<=1.71 (no @since header)'}` };
+    return { entity, ok: true, since, reason: `IN_SCOPE (control @since ${since} > 1.71 — declare it as a POST_171 deviation; the port is filed under src/02)` };
   }
   return { entity, ok: true, since, reason: `IN_SCOPE (@since ${since || '<=1.71 (no @since header)'})` };
 }

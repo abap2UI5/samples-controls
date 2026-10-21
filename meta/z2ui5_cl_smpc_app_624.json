@@ -1,0 +1,36 @@
+{
+  "class": "z2ui5_cl_smpc_app_624",
+  "sample": "sap.m.sample.Avatar",
+  "entity": "sap.m.Avatar",
+  "file": "src/02/01/z2ui5_cl_smpc_app_624.clas.abap",
+  "batch": "b52",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the eight pressable Avatars toast client-side via control_global MESSAGE_TOAST.show with '{0} Pressed' filled by $event.oSource.sId (roundtrip-free) - the app has no on_event"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.Avatar control (since UI5 1.73) is newer than 1.71 and is the whole point of this sample - kept 1:1 (all 30 Avatars, every displaySize/displayShape/backgroundColor/customDisplaySize/fallbackIcon/showBorder value of the original, including the AvatarColor values Transparent/TileIcon/Placeholder/Random), the app needs a UI5 release >= 1.73."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Avatar property enabled (since UI5 1.117) is kept 1:1 on the 'Disabled' Avatar (enabled=\"false\") - the app needs a UI5 release >= 1.117 to render it disabled. Like the original it still carries a press wire that can never fire (the view-gates advisory on that line is the original's own shape)."
+    },
+    {
+      "type": "NOTE",
+      "what": "onInit's JSONModel (Speakers/Woman01/Woman02/Screw/Lamp = sap.ui.require.toUrl('sap/m/images/...')) is seeded in model_init as the default-model root fields speakers/woman01/woman02/screw/lamp; the module paths have no server-side resolution, so they are pinned to the OpenUI5 host https://sdk.openui5.org/test-resources/sap/m/images/ (same file names, the folder the sample's resourceRoots sap.m.images points at) per the runtime asset-URL rule. The Avatar.src bindings {/Speakers} {/Woman01} {/Woman02} {/Screw} {/Lamp} stay bindings (client->_bind), which structural-diff cannot read statically."
+    },
+    {
+      "type": "NOTE",
+      "what": "onPress toasts oEvent.getSource().getId() + ' Pressed'. All eight press wires reproduce that client-side and roundtrip-free (follow_up_action control_global MESSAGE_TOAST.show, template '{0} Pressed' filled by $event.oSource.sId, app 127 precedent); the id itself is a UI5 runtime value whose view prefix differs from the original's."
+    },
+    {
+      "type": "NOTE",
+      "what": "the multi-line text attribute of the 'If there is no image...' Text (a line break plus tab indentation inside the attribute in the original view.xml) is written as one line with a single space at the break: XML attribute normalization turns the break and tabs into spaces, which sap.m.Text collapses when rendering, so the output is identical. The original's typo 'proivided' is kept verbatim."
+    }
+  ]
+}

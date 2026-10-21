@@ -293,7 +293,7 @@ function makeExpect(errs) {
   });
 }
 
-async function checkPort(browser, cls) {
+async function checkPort(browser, cls, { theme = false } = {}) {
   const errs = [];
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
@@ -330,6 +330,10 @@ async function checkPort(browser, cls) {
   });
   await page.route('**://sdk.openui5.org/**', (route) => {
     const hit = resolveLocal(new URL(route.request().url()).pathname);
+    // a themed boot (sidecar e2e_smoke.theme, see THEMED below): the packages
+    // ship the themes as .less only, so the compiled CSS comes from the host
+    // the app bootstraps from anyway
+    if (!hit && theme && /\/themes\//.test(new URL(route.request().url()).pathname)) return route.continue();
     return hit ? route.fulfill({ status: 200, contentType: hit.type, body: hit.body }) : route.fulfill({ status: 404, body: '' });
   });
   try {
@@ -427,9 +431,9 @@ let browser = await launchBrowser();
  * hundreds of ports that never ran. Now the port is failed with the reason and
  * the browser is relaunched for the next one. */
 const BROWSER_GONE = /Target page, context or browser has been closed|Target closed|browser has been closed/i;
-async function checkPortResilient(cls) {
+async function checkPortResilient(cls, opts) {
   try {
-    return await checkPort(browser, cls);
+    return await checkPort(browser, cls, opts);
   } catch (e) {
     if (!BROWSER_GONE.test(String(e && e.message))) throw e;
     try { await browser.close(); } catch { /* already gone */ }
@@ -438,12 +442,27 @@ async function checkPortResilient(cls) {
   }
 }
 
+/* THEMED boots. The harness serves UI5 from the @openui5 packages, which
+ * carry the themes as .less sources and no compiled CSS, so every port runs
+ * UNTHEMED - zero-size icons and handles (e2e-debugging guide), and for a
+ * control that sizes itself from its own CSS, a different layout altogether:
+ * sap.f.AvatarGroup measures its unstyled avatars, re-renders with fewer,
+ * measures again and dies on "Rendering has been re-started too many times"
+ * (app 662, 2026-10-20; with the theme it renders once). A sidecar
+ * `"e2e_smoke": { "theme": true, "reason": "…" }` boots that port with the
+ * theme CSS from sdk.openui5.org instead. It is verified like every other
+ * declared exception: the port is also booted unthemed, and when that passes
+ * too the declaration is STALE and fails. */
 let failed = 0;
 for (const m of metas) {
-  const errs = await checkPortResilient(m.class);
   const cls = m.class.replace('z2ui5_cl_smpc_app_', '');
+  const themed = m.e2e_smoke?.theme === true;
+  const errs = await checkPortResilient(m.class, { theme: themed });
+  if (themed && !errs.length && !(await checkPortResilient(m.class)).length) {
+    errs.push('stale e2e_smoke.theme: the port passes unthemed too - drop the declaration from its sidecar');
+  }
   if (errs.length) { failed++; console.log(`FAIL  ${cls}  ${errs[0]}`); }
-  else console.log(`pass  ${cls}${INTERACTIONS[m.class] ? '  (+interaction)' : ''}`);
+  else console.log(`pass  ${cls}${themed ? '  (themed)' : ''}${INTERACTIONS[m.class] ? '  (+interaction)' : ''}`);
 }
 
 // the overview app: same generic gate, plus the info-popover round-trip

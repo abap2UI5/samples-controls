@@ -1,0 +1,39 @@
+{
+  "class": "z2ui5_cl_smpc_app_630",
+  "sample": "sap.m.sample.IllustratedMessageInAppCustom",
+  "entity": "sap.m.IllustratedMessage",
+  "file": "src/02/01/z2ui5_cl_smpc_app_630.clas.abap",
+  "batch": "b53",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate."
+    },
+    {
+      "type": "NOTE",
+      "what": "the original's Select change handlers (onSelectSize) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change attribute is therefore dropped vs the original view."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the original Component.js registers the 'Custom' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: illustrationType Custom-EmptyCart is kept verbatim, but the four Custom-*-EmptyCart.svg assets and metadata.json are never loaded, so the IllustratedMessage renders its title, description and Button with an EMPTY illustration area and UI5 logs 'The illustration set Custom is not registered'. The assets are not reachable as a plain URL either: IllustratedMessage.src only accepts the sap-illustration:// scheme, which resolves through the same registry. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL."
+    },
+    {
+      "type": "NOTE",
+      "what": "this sample's point is the BUILD pipeline (a UI5 CLI custom task add-illustrations-task.js that validates and copies the illustrations of an npm package, mock-external-package/ui5-illustrations-library, into webapp/resources/illustrations) - tooling with no abap2UI5 counterpart. Only its runtime view (webapp/view/Main.view.xml, identical to IllustratedMessageInPageCustom) is ported."
+    }
+  ],
+  "render_smoke": {
+    "skip": true,
+    "reason": "the port cannot register the Custom illustration set (see the IMPROVISED deviation), so the IllustratedMessage's illustrationType Custom-EmptyCart makes IllustrationPool log 'The illustration set Custom is not registered', which the render harness reports. The rest of the view renders. Lifts when an ILLUSTRATION_POOL frontend action exists and the port registers the set."
+  }
+}
