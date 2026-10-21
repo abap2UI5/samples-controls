@@ -1,9 +1,10 @@
-// VariantManagement on a bound VariantItem template: Save As (the save event's
-// name + boolean flags create a backend row and the defaultKey), Manage (rename
-// and delete in the dialog: the deleted keys arrive as a JSON array, the rename
-// is written back through the two-way bound item and must survive the next
-// round-trip), then select from the "my Favorites" popover (key round-trip,
-// two-way selectedKey)
+// VariantManagement with static VariantItems the backend emits from its table:
+// Save As (the save event's name + boolean flags create a backend row and the
+// defaultKey, and the rebuilt view shows it), Manage (rename and delete in the
+// dialog: the deleted keys and the renamed entries arrive as JSON arrays and
+// the backend applies both - the REBUILT control must show them, and keep
+// them across the next round-trip), then select from the "my Favorites"
+// popover (key round-trip, two-way selectedKey)
 import { waitForIdle, waitForUi5, revealInOverflow } from '../../scripts/lib-e2e.mjs';
 
 // the live VariantManagement's state: selected/default key, modified, items
@@ -74,35 +75,51 @@ export default async (page, expect) => {
     const keys = vm.getItems().map((i) => i.getKey());
     return { e2: keys.indexOf('2'), e3: keys.indexOf('3') };
   });
+  // type only once the dialog has finished opening: a field filled while it
+  // is still OPENING is re-rendered away and the rename never registers
+  await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--vm-managementdialog') && !c.bIsDestroyed
+    && c.oPopup && c.oPopup.getOpenState() === 'OPEN'), 'the management dialog never finished opening');
   const rename = page.locator(`[id$="--vm-manage-input-${rows.e2}-inner"]`);
   await rename.fill('Renamed2');
-  await rename.press('Tab');
-  await page.locator(`[id$="--vm-manage-del-${rows.e3}"]`).click();
-  await page.locator('[id$="--vm-managementsave"]').click();
-  await waitForIdle(page);
-  // one more round-trip: what the backend now holds comes back as the model
-  await toggleModified();
-  await waitForIdle(page);
+  await rename.press('Enter');
+  // the input is two-way bound to the item's title: the rename is in once the
+  // ITEM carries it - the manage event reads it from there on Save
   await waitForUi5(page, () => {
     const vm = ui5All().find((c) => c.getId().endsWith('--vm') && c.isA('sap.m.VariantManagement') && !c.bIsDestroyed && c.getDomRef());
-    if (!vm) return false;
-    const m = vm.getModel().getProperty('/T_ITEMS');
-    return !m.some((i) => i.KEY === '3') && m.find((i) => i.KEY === '2').TITLE === 'Renamed2' && m.length === 4;
-  }, 'Manage did not delete Entry3 in the backend (deleted keys) and keep the Entry2 rename (two-way write-back)');
-  /* (2026-10-20) this leg was red on the transpiled backend before the port
-     replaced translate( from = `[]"` to = `` ): the abaplint runtime builds an
-     unescaped [...] regex class from FROM, so `["3"]` came out unchanged and
-     no key was deleted. Measured green against a patched transpiled backend;
-     it reads green here once the backend is rebuilt from the fixed class. */
+    const it = vm && vm.getItems().find((i) => i.getKey() === '2');
+    return !!it && it.getTitle() === 'Renamed2';
+  }, 'the rename in the Manage Views input never reached the Entry2 item');
+  await page.locator(`[id$="--vm-manage-del-${rows.e3}"]`).click();
+  const vmBefore = await page.evaluate(() => Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+    .find((c) => c.getId().endsWith('--vm') && c.isA('sap.m.VariantManagement') && !c.bIsDestroyed && c.getDomRef()).getId());
+  // the manage event fires once the dialog has closed: wait for ITS request,
+  // or the next press races it and the busy guard drops one of the two
+  const [manageReq] = await Promise.all([
+    page.waitForRequest((r) => r.method() === 'POST' && /"EVENT":"MANAGE"/.test(r.postData() || ''), { timeout: 10000 }),
+    page.locator('[id$="--vm-managementsave"]').click(),
+  ]);
+  const manageArgs = JSON.parse(manageReq.postData()).value.S_FRONT.T_EVENT_ARG;
+  expect([manageArgs[0], manageArgs[1]], 'the manage event\'s deleted and renamed arguments')
+    .toEqual([['3'], [{ key: '2', name: 'Renamed2' }]]);
+  await waitForIdle(page);
+  // one more round-trip, then the items of the control the backend REBUILT
+  // (a new instance, not the one the dialog edited in place)
+  await toggleModified();
+  await waitForIdle(page);
+  await waitForUi5(page, (before) => {
+    const vm = ui5All().find((c) => c.getId().endsWith('--vm') && c.isA('sap.m.VariantManagement') && !c.bIsDestroyed && c.getDomRef()
+      && document.body.contains(c.getDomRef()));
+    if (!vm || vm.getId() === before) return false;
+    const items = vm.getItems();
+    return !items.some((i) => i.getKey() === '3') && items.find((i) => i.getKey() === '2').getTitle() === 'Renamed2'
+      && items.length === 4;
+  }, 'Manage did not delete Entry3 in the backend (deleted keys) and keep the Entry2 rename (renamed) in the rebuilt view', vmBefore);
 
   // select "Entry1" (Standard) from the popover
-  /* KNOWN DEFECT on UI5 1.152 (2026-10-20): the popover list is EMPTY. From
-     this release on VariantManagement filters that list (bound to its own
-     $mVariants ManagedObjectModel, properties `visible`/`favorite`) with the
-     paths of the app's items TEMPLATE (_resolveTemplatePath: `VISIBLE`,
-     `FAVORITE`), which the ManagedObjectModel does not know - every item is
-     filtered out, so no view can be selected. The original declares static
-     VariantItems and never meets it; the port's bound template does. */
+  /* the popover list is filled: the items are static VariantItems. A bound
+     items template made it EMPTY on UI5 1.152, which filters that list (on
+     its internal $mVariants model, properties visible/favorite) with the
+     template's paths VISIBLE/FAVORITE - every item filtered out. */
   await openVm();
   const entry1 = await page.evaluate(() => {
     const list = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())

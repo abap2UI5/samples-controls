@@ -5,17 +5,17 @@ import { waitForIdle, waitForUi5, waitForPopup } from '../../scripts/lib-e2e.mjs
 
 // open popup with this id, its p13n.Container carrying n views (live control
 // only). n counts the Container's own "$default" navigation view, which list
-// layout adds in front of the three static ones. The added view's TEXT is not
-// pinned: the original names it "View " + getViews().length (so "View 4", the
-// $default view counted), the port counts its backend rows ("View 3" again,
-// key view3 duplicated) - a fidelity defect reported separately, not what
-// this LIVE_TEST is about (the re-open on the rebuilt view)
+// layout adds in front of the three static ones - and so does the original's
+// addCustomView, which names the new view "View " + getViews().length: the
+// last view must be View <n-1> / key view<n-1>, so the first added one is
+// "View 4" / view4, never a second "View 3"
 const openWithViews = (want) => {
   const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
   const pop = ui5All().find((c) => c.getId().endsWith('--' + want.pop) && !c.bIsDestroyed && c.isOpen && c.isOpen());
   const cont = ui5All().find((c) => c.getId().endsWith('--' + want.cont) && live(c));
+  const last = cont && cont.getViews()[want.n - 1];
   return !!pop && !!cont && cont.getViews().length === want.n
-    && /^View \d$/.test(cont.getViews()[want.n - 1].getText());
+    && last.getText() === `View ${want.n - 1}` && last.getKey() === `view${want.n - 1}`;
 };
 
 export default async (page, expect) => {
@@ -29,7 +29,7 @@ export default async (page, expect) => {
   await page.getByRole('button', { name: 'Add custom view' }).first().click();
   await waitForIdle(page);
   await waitForUi5(page, openWithViews,
-    'Add custom view (dialog) did not come back as an OPEN d1 whose container carries a fourth "View 3"',
+    'Add custom view (dialog) did not come back as an OPEN d1 whose container carries a fourth view "View 4" (key view4)',
     { pop: 'd1', cont: 'P13nContainer', n: 5 });
   await page.getByRole('button', { name: 'Close Dialog' }).click();
   await waitForUi5(page, () => !ui5All().some((c) => c.getId().endsWith('--d1') && !c.bIsDestroyed && c.isOpen()),
@@ -46,6 +46,6 @@ export default async (page, expect) => {
   await (await waitForPopup(page, 'My custom p13n Popover')).getByRole('button', { name: 'Add custom view' }).click();
   await waitForIdle(page);
   await waitForUi5(page, openWithViews,
-    'Add custom view (popover) did not come back as an OPEN p1 whose container carries a fourth "View 3"',
+    'Add custom view (popover) did not come back as an OPEN p1 whose container carries a fourth view "View 4" (key view4)',
     { pop: 'p1', cont: 'P13nContainerPopover', n: 5 });
 };

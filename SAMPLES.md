@@ -990,7 +990,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.VariantManagement** — VariantManagement using dedicated items<br>VariantManagement with dedicated items<br><sub>variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle variantitem</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_651`](src/02/01/z2ui5_cl_smpc_app_651.clas.abap) |
+| **sap.m.VariantManagement** — VariantManagement using dedicated items<br>VariantManagement with dedicated items<br><sub>variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_651`](src/02/01/z2ui5_cl_smpc_app_651.clas.abap) |
 
 #### sap.m.ViewSettingsDialog
 
@@ -1447,11 +1447,11 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | Sample | Class |
 |---|---|
 | **sap.m.p13n.Container** — p13n.Container usage in a Dialog/Popover<br>Dialog & Popover with a sap.m.P13nContainer as content.<br><sub>container sap.m.p13n p13n.container vbox radiobuttongroup radiobutton label button text</sub><br><sub>○ generated · 5 deviations</sub> | [`Z2UI5_CL_SMPC_APP_644`](src/02/01/z2ui5_cl_smpc_app_644.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization for responsive table<br>Responsive Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.engine table overflowtoolbar title toolbarseparator toolbarspacer button text columnresizer menu</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_645`](src/02/01/z2ui5_cl_smpc_app_645.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for responsive table<br>Responsive Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.engine table overflowtoolbar title toolbarseparator toolbarspacer button text columnresizer menu</sub><br><sub>○ generated · 8 deviations</sub> | [`Z2UI5_CL_SMPC_APP_645`](src/02/01/z2ui5_cl_smpc_app_645.clas.abap) |
 | **sap.m.p13n.Engine** — Personalization implementing custom filter controls<br>Filtering using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginecustomfilters table overflowtoolbar title toolbarseparator toolbarspacer button columnresizer menu quicksort</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_646`](src/02/01/z2ui5_cl_smpc_app_646.clas.abap) |
 | **sap.m.p13n.Engine** — Personalization for grid list<br>GridList using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginegridlist vbox toolbar title toolbarseparator toolbarspacer button gridlist customlistitem flexitemdata</sub><br><sub>○ generated · 4 deviations</sub> | [`Z2UI5_CL_SMPC_APP_647`](src/02/01/z2ui5_cl_smpc_app_647.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization for grid table<br>Grid Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu popup selectionpanel</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_648`](src/02/01/z2ui5_cl_smpc_app_648.clas.abap) |
-| **sap.m.p13n.Engine** — Personalization with multiple SelectionControllers<br>Personalization for Reponsive Table using multiple SelectionControllers<br><sub>engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem popup</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_649`](src/02/01/z2ui5_cl_smpc_app_649.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization for grid table<br>Grid Table using the personalization Engine<br><sub>engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu illustratedmessage label</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_648`](src/02/01/z2ui5_cl_smpc_app_648.clas.abap) |
+| **sap.m.p13n.Engine** — Personalization with multiple SelectionControllers<br>Personalization for Reponsive Table using multiple SelectionControllers<br><sub>engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem dragdropinfo</sub><br><sub>○ generated · 7 deviations</sub> | [`Z2UI5_CL_SMPC_APP_649`](src/02/01/z2ui5_cl_smpc_app_649.clas.abap) |
 | **sap.m.p13n.Popup** — p13n.Popup usage<br>Dialog with sap.m.p13n/* Panels<br><sub>popup sap.m.p13n p13n.popup vbox button selectionpanel sortpanel grouppanel codeeditor</sub><br><sub>○ generated · 6 deviations</sub> | [`Z2UI5_CL_SMPC_APP_650`](src/02/01/z2ui5_cl_smpc_app_650.clas.abap) |
 
 ### sap.m.semantic

@@ -1,4 +1,4 @@
-" @keywords engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu popup selectionpanel
+" @keywords engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu illustratedmessage label
 " @summary Grid Table using the personalization Engine
 " @origin sap.m.sample.p13n.EngineGridTable - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineGridTable (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_648 DEFINITION PUBLIC.
@@ -41,8 +41,9 @@ CLASS z2ui5_cl_smpc_app_648 DEFINITION PUBLIC.
     METHODS rows_binding
       RETURNING
         VALUE(result) TYPE string.
-    METHODS set_p13n_data.
     METHODS on_event.
+    METHODS p13n_popup_display.
+    METHODS set_p13n_data.
     METHODS apply_columns
       IMPORTING
         state TYPE string_table.
@@ -82,13 +83,12 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(table) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.ui.table`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:m`    v = `sap.m`
-        )->a( n = `xmlns:tcm`  v = `sap.m.table.columnmenu`
-        )->a( n = `xmlns:p13n` v = `sap.m.p13n`
-        )->a( n = `xmlns:app`  v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
-        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`     v = `sap.ui.table`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:m`   v = `sap.m`
+        )->a( n = `xmlns:tcm` v = `sap.m.table.columnmenu`
+        )->a( n = `xmlns:app` v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
+        )->a( n = `height`    v = `100%`
 
         )->ele( n = `Page` ns = `m`
             )->a( n = `showHeader` v = `false`
@@ -127,23 +127,7 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
         )->tag( n = `Menu` ns = `tcm`
             )->a( n = `id`                      v = `menu`
             )->a( n = `showTableSettingsButton` v = `true`
-            )->a( n = `tableSettingsPressed`    v = client->_event( `OPEN_PERSO` )
-
-        " the popup Engine.show( ) creates for the Columns and Sorter controllers
-        )->ele( n = `Popup` ns = `p13n`
-            )->a( n = `id`    v = `p13nPopup`
-            )->a( n = `close` v = client->_event( val   = `P13N_CLOSE`
-                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` )
-                                                                   ( `$event.oSource.getPanels()[1].getP13nData(true)` ) ) )
-
-            )->ele( n = `panels` ns = `p13n`
-                )->tag( n = `SelectionPanel` ns = `p13n`
-                    )->a( n = `id`          v = `columnsPanel`
-                    )->a( n = `showHeader`  v = `true`
-                    )->a( n = `enableCount` v = `true`
-                )->tag( n = `SortPanel` ns = `p13n`
-                    )->a( n = `id` v = `sortPanel` ).
+            )->a( n = `tableSettingsPressed`    v = client->_event( `OPEN_PERSO` ) ).
 
     table->ele( `noData`
         )->tag( n = `IllustratedMessage` ns = `m`
@@ -179,9 +163,6 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
 
     client->view_display( view->stringify( ) ).
 
-    " a rebuilt view carries fresh, empty panels
-    set_p13n_data( ).
-
   ENDMETHOD.
 
 
@@ -199,54 +180,17 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_p13n_data.
-
-    " the controllers' panel data (mixInfoAndState): the active entries in
-    " state order, then the others sorted by label
-    DATA(by_label) = t_columns.
-    SORT by_label BY label.
-
-    DATA(json) = ``.
-    LOOP AT t_columns INTO DATA(column) WHERE visible = abap_true.
-      json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","visible":true\}|.
-    ENDLOOP.
-    LOOP AT by_label INTO column WHERE visible = abap_false.
-      json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","visible":false\}|.
-    ENDLOOP.
-    client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `columnsPanel` )
-                                               ( `setP13nData` )
-                                               ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
-
-    json = ``.
-    LOOP AT t_sorters INTO DATA(sorter).
-      json = |{ json },\{"name":"{ sorter-key }","label":"{ t_columns[ key = sorter-key ]-label }","sorted":true,| &&
-             |"descending":{ COND #( WHEN sorter-descending = abap_true THEN `true` ELSE `false` ) }\}|.
-    ENDLOOP.
-    LOOP AT by_label INTO column.
-      IF NOT line_exists( t_sorters[ key = column-key ] ).
-        json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","sorted":false,"descending":false\}|.
-      ENDIF.
-    ENDLOOP.
-    client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `sortPanel` )
-                                               ( `setP13nData` )
-                                               ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
-
-  ENDMETHOD.
-
-
   METHOD on_event.
 
     CASE client->get_event( ).
 
       WHEN `OPEN_PERSO`.
-        set_p13n_data( ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `p13nPopup` ) ( `open` ) ) ).
+        p13n_popup_display( ).
 
       WHEN `P13N_CLOSE`.
+        " Engine.show( ) creates the popup per call and destroys it once closed;
         " the Engine applies the panel state on Ok only
+        client->popup_destroy( ).
         IF client->get_event_arg( ) = `Ok`.
           apply_columns( VALUE #( FOR entry IN p13n_entries( client->get_event_arg( 2 ) ) ( entry-key ) ) ).
           t_sorters = p13n_entries( client->get_event_arg( 3 ) ).
@@ -273,6 +217,77 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
         ENDIF.
 
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD p13n_popup_display.
+
+    " the popup Engine.show( ) creates for the Columns and Sorter controllers
+    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+
+    popup->ele( n = `FragmentDefinition` ns = `core`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:p13n` v = `sap.m.p13n`
+
+        )->ele( n = `Popup` ns = `p13n`
+            )->a( n = `id`    v = `p13nPopup`
+            )->a( n = `close` v = client->_event( val   = `P13N_CLOSE`
+                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` )
+                                                                   ( `$event.oSource.getPanels()[1].getP13nData(true)` ) ) )
+
+            )->ele( n = `panels` ns = `p13n`
+                )->tag( n = `SelectionPanel` ns = `p13n`
+                    )->a( n = `id`          v = `gridColumnsPanel`
+                    )->a( n = `showHeader`  v = `true`
+                    )->a( n = `enableCount` v = `true`
+                )->tag( n = `SortPanel` ns = `p13n`
+                    )->a( n = `id` v = `gridSortPanel` ).
+
+    client->popup_display( popup->stringify( ) ).
+
+    " the fresh panels get the controllers' adaptation data
+    set_p13n_data( ).
+
+  ENDMETHOD.
+
+
+  METHOD set_p13n_data.
+
+    " the controllers' panel data (mixInfoAndState): the active entries in
+    " state order, then the others sorted by label
+    DATA(by_label) = t_columns.
+    SORT by_label BY label.
+
+    DATA(json) = ``.
+    LOOP AT t_columns INTO DATA(column) WHERE visible = abap_true.
+      json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","visible":true\}|.
+    ENDLOOP.
+    LOOP AT by_label INTO column WHERE visible = abap_false.
+      json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","visible":false\}|.
+    ENDLOOP.
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              view  = client->cs_view-popup
+                              t_arg = VALUE #( ( `gridColumnsPanel` )
+                                               ( `setP13nData` )
+                                               ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
+
+    json = ``.
+    LOOP AT t_sorters INTO DATA(sorter).
+      json = |{ json },\{"name":"{ sorter-key }","label":"{ t_columns[ key = sorter-key ]-label }","sorted":true,| &&
+             |"descending":{ COND #( WHEN sorter-descending = abap_true THEN `true` ELSE `false` ) }\}|.
+    ENDLOOP.
+    LOOP AT by_label INTO column.
+      IF NOT line_exists( t_sorters[ key = column-key ] ).
+        json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","sorted":false,"descending":false\}|.
+      ENDIF.
+    ENDLOOP.
+    client->follow_up_action( val   = client->cs_event-control_by_id
+                              view  = client->cs_view-popup
+                              t_arg = VALUE #( ( `gridSortPanel` )
+                                               ( `setP13nData` )
+                                               ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
 
   ENDMETHOD.
 

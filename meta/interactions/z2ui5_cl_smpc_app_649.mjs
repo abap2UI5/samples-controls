@@ -62,23 +62,24 @@ export default async (page, expect) => {
     cols: ['ID', 'First Name', 'Last Name', 'City'], rows: ['P1', 'P2', 'P3', 'P4', 'P5'] });
 
   // Columns popup: untick "City"
-  await openAndTick('sap-icon://action-settings', 'columnsPopup', 'columnsPanel', 'city_col');
+  await openAndTick('sap-icon://action-settings', 'columnsPopup', 'tableColumnsPanel', 'city_col');
   await waitForUi5(page, () => {
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef()));
     return !!t && t.getColumns().filter((c) => c.getVisible()).map((c) => c.data('p13nKey')).join() === 'id_col,firstName_col,lastName_col';
   }, `OK in the Columns popup did not hide the City column${rebuildsFailed()}`);
 
   // Rows popup: untick "Petra Maier"
-  /* KNOWN PORT DEFECT (2026-10-20): the second rebuild dies on "adding element
-     with duplicate id '...mainView--rowsPanel'". sap.m.p13n.Popup moves its
-     panels into an internal Container that only the Dialog created by open( )
-     owns - exit( ) destroys that Dialog, never the Container - so each view
-     whose rowsPopup was never opened leaks rowsPanel, and the framework's
-     alternating view id (mainView / mainView2) collides with it two rebuilds
-     later: the app is left with an empty page. Not weakened here. */
+  // the second view rebuild, with the Rows popup never opened before
   await openAndTick('sap-icon://add-employee', 'rowsPopup', 'rowsPanel', 'P2');
   await waitForUi5(page, () => {
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef()));
     return !!t && t.getItems().filter((i) => i.getVisible()).map((i) => i.data('p13nKey')).join() === 'P1,P3,P4,P5';
   }, `OK in the Rows popup did not hide Petra Maier's row${rebuildsFailed()}`);
+
+  // the popup lives only while it is open (a POPUP-slot fragment the close
+  // handler destroys), so no panel outlives it - a p13n.Popup declared in the
+  // view leaked its never-opened panels, and two rebuilds later the
+  // alternating view id collided with them
+  await waitForUi5(page, () => !ui5All().some((c) => !c.bIsDestroyed && ['tableColumnsPanel', 'rowsPanel'].some((p) => c.getId().endsWith('--' + p))),
+    'a p13n panel outlived its closed popup (the view-declared Popup leak)');
 };

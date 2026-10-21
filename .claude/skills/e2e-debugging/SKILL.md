@@ -182,6 +182,28 @@ verdicts below turned out to be harness effects.
   property through the UI5 API — that bypasses the binding the test exists to
   prove. Same family: assert the *effect* (a bound property, a rendered
   class), not the pixels (apps 207/130).
+- **An interaction module never names the port** — `r.url().includes(':3000')`
+  matched nothing under `--port 3110`, and apps 351/353/demo_004 failed a
+  full run that was perfectly healthy (2026-10-20). Compare origins:
+  `new URL(r.url()).origin === new URL(page.url()).origin`.
+- **Lessons the post-1.71 control ports paid for (2026-10-20)** — each a port
+  defect that only a running app showed:
+  - an XML event-handler expression knows `$controller`/`$event` and nothing
+    else: `JSON.stringify(…)` in a `t_arg` throws *Unsupported global
+    identifier 'JSON'* and the event never leaves the browser (app 650). Pass
+    the array/object itself; it arrives as JSON - with its keys **sorted
+    alphabetically** by the framework;
+  - `DynamicDateRange.toDates( )` returns `UniversalDate`s, which serialize as
+    `{oDate, sCalendarType}`: send `.getJSDate()` (apps 639/640/642);
+  - a `sap.m.p13n.Popup` declared in a view **leaks its panels** when it is
+    never opened (its `exit` destroys only the Dialog `open()` creates), and
+    the next-but-one re-render dies on a duplicate panel id - build it as a
+    `popup_display` fragment and `popup_destroy` it on close (apps 645/648/649);
+  - `sap.m.VariantManagement` with a **bound** `items` template filters its
+    own favourites list to nothing on 1.152 (it applies the template's paths to
+    its internal `$mVariants` model) - emit static `VariantItem`s (app 651);
+  - `translate( )` with a `]` in FROM breaks on the transpiled runtime (the set
+    becomes an unescaped regex class) - use `replace( … occ = 0 )` (app 651).
 - **A control that sizes itself from its own CSS can loop unthemed** —
   `sap.f.AvatarGroup` measures its unstyled avatars, re-renders with fewer,
   measures again and dies on *"Rendering has been re-started too many times"*

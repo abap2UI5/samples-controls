@@ -1,17 +1,11 @@
 // p13n.Popup: the open/change wires carry the panels' getP13nData( ) through
 // the event source - toggling a column in the SelectionPanel the way the UI
 // does (focus the row, Space) must land in the backend and come back as the
-// CodeEditor's JSON.
-//
-// KNOWN PORT DEFECT (2026-10-20): red on purpose. The wires wrap the data in
-// JSON.stringify( ), and an XML event-handler expression has no JSON global -
-// EventHandlerResolver hands the parser only $controller/$event, so UI5 logs
-// "Unsupported global identifier 'JSON'" and the handler dies with
-// "Cannot read properties of undefined (reading 'stringify')": no POPUP_OPEN
-// and no *_CHANGE round-trip ever leaves the browser. Passing
-// $event.oSource.getP13nData() as it is (the frontend sends an array
-// argument as JSON) makes this module pass - measured against a patched
-// transpiled backend.
+// CodeEditor's JSON - byte for byte what the original's
+// JSON.stringify( { columns, sort, group }, null, '  ' ) prints for the
+// panels' live data. The data travels as array args (an event-handler
+// expression has no JSON global, so the wires cannot stringify it) and the
+// backend prints it.
 import { waitForIdle, waitForUi5, waitForPopup } from '../../scripts/lib-e2e.mjs';
 
 export default async (page, expect) => {
@@ -49,4 +43,18 @@ export default async (page, expect) => {
       return c && c.visible === true && j.sort[0].sorted === true && j.group[0].grouped === true;
     } catch (x) { return false; }
   }, 'ticking Country in the Columns panel never came back as the CodeEditor JSON (columns.key2.visible = true)');
+  // the whole text: what the original's JSON.stringify( { columns, sort,
+  // group }, null, '  ' ) prints for the panels' live values - their items
+  // keyed in _initialData's order (the port's panels hold the same values,
+  // their keys reordered on the way through the framework)
+  await waitForUi5(page, () => {
+    const live = (id) => ui5All().find((c) => c.getId().endsWith(id) && !c.bIsDestroyed).getP13nData();
+    const e = ui5All().find((c) => c.getId().endsWith('p13nEditor') && !c.bIsDestroyed && c.getDomRef());
+    const want = JSON.stringify({
+      columns: live('columnsPanel').map((i) => ({ visible: i.visible, name: i.name, label: i.label })),
+      sort: live('sortPanel').map((i) => ({ sorted: i.sorted, name: i.name, label: i.label, descending: i.descending })),
+      group: live('groupPanel').map((i) => ({ grouped: i.grouped, name: i.name, label: i.label })),
+    }, null, '  ');
+    return !!e && e.getValue() === want;
+  }, 'the CodeEditor text is not JSON.stringify( { columns, sort, group }, null, \'  \' ) of the panels');
 };

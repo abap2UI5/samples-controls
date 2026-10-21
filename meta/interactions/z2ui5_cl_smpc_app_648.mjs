@@ -57,18 +57,18 @@ export default async (page, expect) => {
   await waitForUi5(page, () => ui5All().some((c) => c.getId().endsWith('--p13nPopup-dialog') && !c.bIsDestroyed && c.isOpen()),
     'the Settings button did not open the p13n.Popup');
   await waitForUi5(page, () => {
-    const p = ui5All().find((c) => c.getId().endsWith('--columnsPanel') && !c.bIsDestroyed);
+    const p = ui5All().find((c) => c.getId().endsWith('--gridColumnsPanel') && !c.bIsDestroyed);
     const d = p && p.getP13nData();
     return !!d && d.length === 4 && d[3].name === 'size_col' && d[3].visible === false;
   }, 'the Settings press never handed the Columns panel its setP13nData state');
 
   // Columns: tick Size (focus its row, Space); Sort: First Name ascending
-  const size = await page.evaluate(P13N_ROW, ['columnsPanel', 'size_col']);
+  const size = await page.evaluate(P13N_ROW, ['gridColumnsPanel', 'size_col']);
   await page.evaluate((id) => document.getElementById(id).focus(), size);
   await page.keyboard.press('Space');
   await page.evaluate(() => {
     const p = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
-      .find((c) => c.getId().endsWith('--sortPanel') && !c.bIsDestroyed);
+      .find((c) => c.getId().endsWith('--gridSortPanel') && !c.bIsDestroyed);
     const d = p.getP13nData();
     d.forEach((e) => { e.sorted = e.name === 'firstName_col'; e.descending = false; });
     d.sort((a, b) => (b.sorted ? 1 : 0) - (a.sorted ? 1 : 0));
@@ -122,18 +122,18 @@ export default async (page, expect) => {
   // the wire itself: the moved column's p13nKey and its new position
   expect(JSON.parse(moveReq.postData()).value.S_FRONT.T_EVENT_ARG, 'the columnMove arguments').toEqual(['city_col', 1]);
   await waitForIdle(page);
-  /* KNOWN PORT DEFECT (2026-10-20): this is the third view rebuild since the
-     popup was last opened, and it dies on "adding element with duplicate id
-     '...--columnsPanel'". sap.m.p13n.Popup moves its panels into an internal
-     Container that only the Dialog created by open( ) owns - exit( ) destroys
-     that Dialog, never the Container - so a view whose popup was never opened
-     leaks its panels, and the framework's alternating view id (mainView /
-     mainView2) collides with them two rebuilds later: the app is left with an
-     empty page. Not weakened here - the leg stays red until the port stops it. */
+  // the third view rebuild since the popup was last opened
   await waitForUi5(page, () => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
     return !!t && t.getColumns().filter((c) => c.getVisible()).map((c) => c.data('p13nKey')).join()
       === 'firstName_col,city_col,lastName_col,size_col';
   }, `moving City one to the left did not re-order the columns${rebuildsFailed()}`);
+
+  // the popup lives only while it is open (a POPUP-slot fragment the close
+  // handler destroys), so no panel outlives it - a p13n.Popup declared in the
+  // view leaked its never-opened panels, and two rebuilds later the
+  // alternating view id collided with them
+  await waitForUi5(page, () => !ui5All().some((c) => !c.bIsDestroyed && ['gridColumnsPanel', 'gridSortPanel'].some((p) => c.getId().endsWith('--' + p))),
+    'a p13n panel outlived its closed popup (the view-declared Popup leak)');
 };

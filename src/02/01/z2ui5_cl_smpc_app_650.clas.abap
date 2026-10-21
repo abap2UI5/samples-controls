@@ -10,6 +10,7 @@ CLASS z2ui5_cl_smpc_app_650 DEFINITION PUBLIC.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    " the three panels' getP13nData( ), last seen per panel, as JSON arrays
     DATA p13n_columns TYPE string.
     DATA p13n_sort TYPE string.
     DATA p13n_group TYPE string.
@@ -18,6 +19,12 @@ CLASS z2ui5_cl_smpc_app_650 DEFINITION PUBLIC.
     METHODS on_event.
     METHODS set_initial_data.
     METHODS parse_p13n_state.
+    METHODS p13n_json
+      IMPORTING
+        json          TYPE string
+        t_key         TYPE string_table
+      RETURNING
+        VALUE(result) TYPE string.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -68,12 +75,10 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                                                                                        ( `Dialog close reason: {0}` )
                                                                                        ( `${$parameters>/reason}` ) ) )
                 )->a( n = `warningText` v = `Are you sure?`
-                )->a( n = `open`        v = client->_event(
-                    val   = `POPUP_OPEN`
-                    t_arg = VALUE #(
-                        ( `$event.oSource ? JSON.stringify($event.oSource.getPanels()[0].getP13nData(), null, '  ') : ''` )
-                        ( `$event.oSource ? JSON.stringify($event.oSource.getPanels()[1].getP13nData(), null, '  ') : ''` )
-                        ( `$event.oSource ? JSON.stringify($event.oSource.getPanels()[2].getP13nData(), null, '  ') : ''` ) ) )
+                )->a( n = `open`        v = client->_event( val   = `POPUP_OPEN`
+                                                            t_arg = VALUE #( ( `$event.oSource.getPanels()[0].getP13nData()` )
+                                                                             ( `$event.oSource.getPanels()[1].getP13nData()` )
+                                                                             ( `$event.oSource.getPanels()[2].getP13nData()` ) ) )
 
                 )->ele( n = `panels` ns = `p13n`
                     )->tag( n = `SelectionPanel` ns = `p13n`
@@ -81,27 +86,21 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                         )->a( n = `title`       v = `Columns`
                         )->a( n = `enableCount` v = `true`
                         )->a( n = `showHeader`  v = `true`
-                        )->a( n = `change`      v = client->_event(
-                            val   = `COLUMNS_CHANGE`
-                            t_arg = VALUE #(
-                                ( `${$parameters>/reason}` )
-                                ( `$event.oSource ? JSON.stringify($event.oSource.getP13nData(), null, '  ') : ''` ) ) )
+                        )->a( n = `change`      v = client->_event( val   = `COLUMNS_CHANGE`
+                                                                    t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                                     ( `$event.oSource.getP13nData()` ) ) )
                     )->tag( n = `SortPanel` ns = `p13n`
                         )->a( n = `id`     v = `sortPanel`
                         )->a( n = `title`  v = `Sort`
-                        )->a( n = `change` v = client->_event(
-                            val   = `SORT_CHANGE`
-                            t_arg = VALUE #(
-                                ( `${$parameters>/reason}` )
-                                ( `$event.oSource ? JSON.stringify($event.oSource.getP13nData(), null, '  ') : ''` ) ) )
+                        )->a( n = `change` v = client->_event( val   = `SORT_CHANGE`
+                                                               t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                                ( `$event.oSource.getP13nData()` ) ) )
                     )->tag( n = `GroupPanel` ns = `p13n`
                         )->a( n = `id`     v = `groupPanel`
                         )->a( n = `title`  v = `Group`
-                        )->a( n = `change` v = client->_event(
-                            val   = `GROUP_CHANGE`
-                            t_arg = VALUE #(
-                                ( `${$parameters>/reason}` )
-                                ( `$event.oSource ? JSON.stringify($event.oSource.getP13nData(), null, '  ') : ''` ) ) )
+                        )->a( n = `change` v = client->_event( val   = `GROUP_CHANGE`
+                                                               t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                                ( `$event.oSource.getP13nData()` ) ) )
 
                 )->end(
             )->end(
@@ -184,13 +183,44 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
 
     client->message_toast_display( |P13n panel change reason:{ client->get_event_arg( ) }| ).
 
-    " JSON.stringify( { columns, sort, group }, null, '  ' ): each panel array
-    " arrives stringified with the same indent and is nested one level deeper
-    DATA(columns) = replace( val = p13n_columns sub = |\n| with = |\n  | occ = 0 ).
-    DATA(sort)    = replace( val = p13n_sort    sub = |\n| with = |\n  | occ = 0 ).
-    DATA(group)   = replace( val = p13n_group   sub = |\n| with = |\n  | occ = 0 ).
+    " JSON.stringify( { columns, sort, group }, null, '  ' ), each panel's
+    " items with their keys in the order _initialData gives them
+    DATA(columns) = p13n_json( json = p13n_columns t_key = VALUE #( ( `visible` ) ( `name` ) ( `label` ) ) ).
+    DATA(sort)    = p13n_json( json = p13n_sort t_key = VALUE #( ( `sorted` ) ( `name` ) ( `label` ) ( `descending` ) ) ).
+    DATA(group)   = p13n_json( json = p13n_group t_key = VALUE #( ( `grouped` ) ( `name` ) ( `label` ) ) ).
 
     editor_value = |\{\n  "columns": { columns },\n  "sort": { sort },\n  "group": { group }\n\}|.
+
+  ENDMETHOD.
+
+
+  METHOD p13n_json.
+
+    " getP13nData( ) arrives as a compact JSON array of flat objects whose
+    " values hold no comma, brace or quote; print it the way JSON.stringify
+    " indents it one level deep
+    DATA t_object TYPE string_table.
+
+    SPLIT json AT `}` INTO TABLE DATA(t_part).
+    LOOP AT t_part INTO DATA(part).
+      DATA(t_line) = VALUE string_table( ).
+      LOOP AT t_key INTO DATA(key).
+        DATA(offset) = find( val = part sub = |"{ key }":| ).
+        IF offset >= 0.
+          DATA(value) = substring( val = part off = offset + strlen( key ) + 3 ).
+          INSERT |      "{ key }": { segment( val = value index = 1 sep = `,` ) }| INTO TABLE t_line.
+        ENDIF.
+      ENDLOOP.
+      IF t_line IS NOT INITIAL.
+        INSERT |    \{\n{ concat_lines_of( table = t_line sep = |,\n| ) }\n    \}| INTO TABLE t_object.
+      ENDIF.
+    ENDLOOP.
+
+    IF t_object IS INITIAL.
+      result = `[]`.
+    ELSE.
+      result = |[\n{ concat_lines_of( table = t_object sep = |,\n| ) }\n  ]|.
+    ENDIF.
 
   ENDMETHOD.
 

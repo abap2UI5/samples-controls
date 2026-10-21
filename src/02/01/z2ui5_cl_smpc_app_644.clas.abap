@@ -193,14 +193,15 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
         ENDIF.
 
       WHEN `ADD_VIEW_DIALOG`.
-        " the original counts the views BEFORE adding, so the fourth one is View 3 again
-        DATA(count) = lines( t_dialog_views ).
+        " "View " + getViews( ).length: the views BEFORE adding, the Container's
+        " own $default navigation view counted too
+        DATA(count) = lines( t_dialog_views ) + 1.
         INSERT VALUE #( key = |view{ count }| text = |View { count }| ) INTO TABLE t_dialog_views.
         view_display( ).
         open_dialog( ).
 
       WHEN `ADD_VIEW_POPOVER`.
-        count = lines( t_popover_views ).
+        count = lines( t_popover_views ) + 1.
         INSERT VALUE #( key = |view{ count }| text = |View { count }| ) INTO TABLE t_popover_views.
         view_display( ).
         open_popover( ).

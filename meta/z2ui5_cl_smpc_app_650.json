@@ -7,7 +7,7 @@
   "audit": {
     "frontend_action": true,
     "event_t_arg": true,
-    "note": "follow_up_action( control_by_id setP13nData ) seeds the three panels and control_by_id open opens the popup; the close toast is a view-wired control_global MESSAGE_TOAST; the panels' getP13nData( ) travels as JSON.stringify'd event args"
+    "note": "follow_up_action( control_by_id setP13nData ) seeds the three panels and control_by_id open opens the popup; the close toast is a view-wired control_global MESSAGE_TOAST; the panels' getP13nData( ) travels as an array event arg the frontend sends as JSON"
   },
   "status": "generated",
   "checked": null,
@@ -26,15 +26,15 @@
     },
     {
       "type": "NOTE",
-      "what": "the controller's _setInitialData (setP13nData on the three panels with _initialData, verbatim) is issued as three follow_up_action( control_by_id setP13nData ) calls with the JSON array as argument. The original seeds once, on the first open (_bIsOpen guard); the port seeds after every render of the view, which is observably the same - the panels hold the initial data until the user first edits them and keep the edits across later opens - and also re-seeds the fresh panels a rebuilt view creates. onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument."
+      "what": "the controller's _setInitialData (setP13nData on the three panels with _initialData, verbatim) is issued as three follow_up_action( control_by_id setP13nData ) calls with the JSON array as argument. The original seeds once, on the first open (_bIsOpen guard); the port seeds after every render of the view, which is observably the same - the panels hold the initial data until the user first edits them and keep the edits across later opens - and also re-seeds the fresh panels a rebuilt view creates. onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument. The JSON argument reaches the panels through the framework's JSON layer, which orders each object's keys alphabetically, so the port's panels hold the same items and values with their keys in another order - invisible in the panels, and the editor text is printed by the backend in _initialData's order (see the parseP13nState note)."
     },
     {
       "type": "NOTE",
-      "what": "parseP13nState writes JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's getP13nData( ) already stringified with the same indent (a $event-guarded JSON.stringify expression, since an argument has to start with $ to be evaluated on the client) and the backend keeps the last array per panel; an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. The backend nests the three arrays into the same object text (one level deeper indent) and binds it to the CodeEditor value - byte-identical to the original's output. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same round-trip; the close toast (Dialog close reason: <reason>) is client-composed with no round-trip."
+      "what": "parseP13nState writes JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's getP13nData( ) as an event argument and the backend keeps the last array per panel; an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. An event-handler expression knows only $controller and $event as globals - JSON.stringify( ) itself is refused there (Unsupported global identifier 'JSON') and no round-trip is sent - so the array travels as it is: the frontend serializes an array argument as JSON and the backend receives it compactly, with each object's keys in alphabetical order. The backend prints it the way JSON.stringify( ..., null, '  ' ) does: the three arrays nested in one object, two-space indent, one key per line, each item's keys in the order _initialData gives them (visible/name/label, sorted/name/label/descending, grouped/name/label) - the panels only change the values of those keys, never add one, so the text is the original's output byte for byte. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same round-trip; the close toast (Dialog close reason: <reason>) is client-composed with no round-trip."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "the JSON.stringify expressions in the change/open event args (getPanels( )[n].getP13nData( ) through the event source) and the setP13nData JSON argument are source-derived, not run in a live system."
+      "type": "NOTE",
+      "what": "the getP13nData( ) array args of the change/open events (getPanels( )[n].getP13nData( ) through the event source, read back as compact JSON arrays) and the setP13nData JSON argument are source-derived, not run in a live system. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_650.mjs)."
     }
   ]
 }

@@ -45,7 +45,7 @@ const SPLITTER = `ui5All().find((c) => !c.bIsDestroyed && c.getMetadata().getNam
 // (measured 2026-08-21).
 const press = async (page, name) => {
   await Promise.all([
-    page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes(':3000'), { timeout: 15000 }),
+    page.waitForResponse((r) => r.request().method() === 'POST' && new URL(r.url()).origin === new URL(page.url()).origin, { timeout: 15000 }),
     page.getByRole('button', { name, exact: true }).click(),
   ]);
   // The RESPONSE is not the RE-RENDER. abap2UI5 rebuilds the view after the

@@ -126,15 +126,7 @@ export default async (page, expect) => {
   await page.evaluate((id) => document.getElementById(id).focus(), groupSwitch);
   await page.keyboard.press('Space');
   await waitForIdle(page);
-  /* KNOWN PORT DEFECT (2026-10-20): this is the third view rebuild since the
-     popup was last opened, and it dies on "adding element with duplicate id
-     '...mainView2--columnsPanel'". sap.m.p13n.Popup moves its panels into an
-     internal Container that only the Dialog created by open( ) owns - exit( )
-     destroys that Dialog, never the Container - so a view whose popup was
-     never opened leaks its panels, and the framework's alternating view id
-     (mainView / mainView2) collides with them two rebuilds later: the app is
-     left with an empty page. Two quick sorts without opening Settings are
-     enough. Not weakened here - the leg stays red until the port stops it. */
+  // the third view rebuild since the popup was last opened
   await waitForUi5(page, () => {
     const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
     const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
@@ -142,4 +134,39 @@ export default async (page, expect) => {
     const heads = t.getItems().filter((i) => i.isA('sap.m.GroupHeaderListItem')).map((i) => i.getTitle());
     return heads.length === 2 && /Walldorf/.test(heads[0]) && /Heidelberg/.test(heads[1]);
   }, `quick group on City did not group the rows${rebuildsFailed()}`);
+
+  // the column drop (DragDropInfo on the columns aggregation): City's header
+  // dragged onto the left half of Last Name's drops it Before; the wire
+  // carries the dragged/dropped columns' p13nKey and the drop position
+  await waitForIdle(page);
+  const headerOf = (key) => page.evaluate((k) => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const col = Object.values(sap.ui.require('sap/ui/core/Element').registry.all())
+      .find((c) => c.isA('sap.m.Column') && live(c) && c.data('p13nKey') === k);
+    return col && col.getId();
+  }, key);
+  const cityId = await headerOf('city_col');
+  const lastId = await headerOf('lastName_col');
+  const target = page.locator(`[id="${lastId}"]`);
+  const box = await target.boundingBox();
+  const [dropReq] = await Promise.all([
+    page.waitForRequest((r) => r.method() === 'POST' && /"EVENT":"COLUMN_MOVE"/.test(r.postData() || ''), { timeout: 10000 }),
+    page.locator(`[id="${cityId}"]`).dragTo(target, { targetPosition: { x: 4, y: box.height / 2 } }),
+  ]);
+  expect(JSON.parse(dropReq.postData()).value.S_FRONT.T_EVENT_ARG, 'the column drop arguments')
+    .toEqual(['city_col', 'lastName_col', 'Before']);
+  await waitForIdle(page);
+  await waitForUi5(page, () => {
+    const live = (c) => !c.bIsDestroyed && c.getDomRef() && document.body.contains(c.getDomRef());
+    const t = ui5All().find((c) => c.getId().endsWith('--persoTable') && live(c));
+    return !!t && t.getColumns().filter((c) => c.getVisible()).map((c) => c.data('p13nKey')).join()
+      === 'firstName_col,city_col,lastName_col,size_col';
+  }, `dropping City before Last Name did not re-order the columns${rebuildsFailed()}`);
+
+  // the popup lives only while it is open (a POPUP-slot fragment the close
+  // handler destroys), so no panel outlives it - a p13n.Popup declared in the
+  // view leaked its never-opened panels, and two rebuilds later the
+  // alternating view id collided with them
+  await waitForUi5(page, () => !ui5All().some((c) => !c.bIsDestroyed && ['columnsPanel', 'sortPanel', 'groupPanel'].some((p) => c.getId().endsWith('--' + p))),
+    'a p13n panel outlived its closed popup (the view-declared Popup leak)');
 };

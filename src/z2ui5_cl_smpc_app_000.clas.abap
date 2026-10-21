@@ -3226,8 +3226,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system with the original's` &&
             ` !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is` &&
             ` reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal` &&
-            ` (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO`.
-    text1 = text1 && ` string, and the binding_call filter that follows.`.
+            ` (month 5 = June). // NOTE: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string,`.
+    text1 = text1 && ` and the binding_call filter that follows. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_639.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRange`                                          class = `z2ui5_cl_smpc_app_639` path = `src/02/01/z2ui5_cl_smpc_app_639.clas.abap`
         score = 5
@@ -3252,8 +3252,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` the formatter attribute is gone. // NOTE: the env named model ({env>/filterInputWidth}) is folded into the default model as FILTERINPUTWIDTH, seeded server-side from client->get( )-s_device-system` &&
             ` with the original's !Device.system.phone ? '300px' : 'auto' rule. // NOTE: the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days,`.
     text1 = text1 && ` months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are` &&
-            ` their ISO literal (month 5 = June). // LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to` &&
-            ` a local ISO string, and the binding_call filter that follows.`.
+            ` their ISO literal (month 5 = June). // NOTE: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a` &&
+            ` local ISO string, and the binding_call filter that follows. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_640.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeAndCalendarWeekNumbering`                  class = `z2ui5_cl_smpc_app_640` path = `src/02/01/z2ui5_cl_smpc_app_640.clas.abap`
         score = 5
@@ -3303,8 +3303,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's)` &&
             ` with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). The orders' extra getChristmasDay(currentYear - 1) row is 25 December of` &&
             ` the previous year at the current time; the original's setUTCDate (instead of setDate) only differs around midnight UTC. totalPrice is computed in model_init like the original's onInit forEach. //` &&
-            ` LIVE-TEST: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the`.
-    text1 = text1 && ` binding_call filter that follows.`.
+            ` NOTE: unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call`.
+    text1 = text1 && ` filter that follows. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_642.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DynamicDateRange`                name = `DynamicDateRangeWithCustomOptions`                         class = `z2ui5_cl_smpc_app_642` path = `src/02/01/z2ui5_cl_smpc_app_642.clas.abap`
         score = 5
@@ -6138,14 +6138,15 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     text1 = `POST-1.71: the sap.m.p13n.Container control (since UI5 1.96) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.96. // POST-1.71: the` &&
             ` sap.m.p13n.AbstractContainerItem control (since UI5 1.96) and its key and text properties are newer than 1.71 - kept 1:1 as the container's views. // NOTE: addCustomView adds a new` &&
-            ` AbstractContainerItem (text View <n>, key view<n>, n = the number of views BEFORE the add, so the first added view repeats View 3/view3 exactly like the original) to the container of the pressed` &&
-            ` popup. The port keeps one ABAP row per view for each of the two containers and emits the container's views from it in a loop - the three original views with their VBox/Text content, the added ones` &&
-            ` without content, as the original adds them - so the add is a backend row plus a view rebuild that re-opens the popup the button sat in (d1 via open, p1 via openBy openBtn). The rebuild resets the` &&
-            ` container to its defaultView view2 where the original stays on the currently shown view. // NOTE: onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that`.
-    text1 = text1 && ` RadioButtonGroup's selectedIndex two-way and opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout` &&
-            ` stays a select wire carrying selectedIndex and sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button` &&
-            ` in line with listLayout. closeDialog (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip. // NOTE: re-opening d1/p1 by a follow-up action directly after the view rebuild` &&
-            ` that an Add custom view press triggers is unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_644.mjs).`.
+            ` AbstractContainerItem (text View <n>, key view<n>, n = getViews( ).length before the add, which counts the Container's own $default view - the navigation list it adds in list layout - next to the` &&
+            ` three static ones, so the first added view is View 4/view4 as in the original; the port counts its rows plus that one) to the container of the pressed popup. The port keeps one ABAP row per view for` &&
+            ` each of the two containers and emits the container's views from it in a loop - the three original views with their VBox/Text content, the added ones without content, as the original adds them - so` &&
+            ` the add is a backend row plus a view rebuild that re-opens the popup the button sat in (d1 via open, p1 via openBy openBtn). The rebuild resets the container to its defaultView view2 where the`.
+    text1 = text1 && ` original stays on the currently shown view. // NOTE: onContainerOpen reads dialogChose.getSelectedButton( ).getText( ) == 'Dialog'; the port binds that RadioButtonGroup's selectedIndex two-way and` &&
+            ` opens d1 for index 0 (Dialog) and p1 for index 1 (Popover), via control_by_id open / openBy with openBtn as anchor after the round-trip. selectLayout stays a select wire carrying selectedIndex and` &&
+            ` sets listLayout = (index === 0) on the default model; the layout group's selectedIndex is bound as well so a rebuilt view keeps the chosen radio button in line with listLayout. closeDialog` &&
+            ` (getParent( ).close( )) is a view-wired control_by_id d1 close with no round-trip. // NOTE: re-opening d1/p1 by a follow-up action directly after the view rebuild that an Add custom view press` &&
+            ` triggers is unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_644.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Container`                  name = `p13n.Container`                                            class = `z2ui5_cl_smpc_app_644` path = `src/02/01/z2ui5_cl_smpc_app_644.clas.abap`
         score = 4
@@ -6165,25 +6166,31 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` QuickGroupItem with key, label and grouped. // IMPROVISED: Engine.getInstance( ).register( ) with the Columns, Sorter, Groups, ColumnWidth and Filter controllers, Engine.show( ), retrieveState(`.
     text1 = text1 && ` )/applyState( ) and the stateChange event are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column` &&
             ` widths, sorters, groups) in ABAP, and the settings button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController` &&
-            ` creates it), a p13n:SortPanel and a p13n:GroupPanel (queryLimit 1, as the GroupController sets it for a sap.m.Table) - controls the port declares in the table's dependents, which the original view` &&
-            ` does not have (Popup, SelectionPanel, SortPanel, GroupPanel). Before opening, the backend hands each panel the controllers' adaptation data via setP13nData (active entries first in state order, the` &&
-            ` others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and handleStateChange is reproduced in ABAP: updateColumns (hide all, show and move the state's columns to` &&
-            ` the front, widths from the state, sort indicators), createGroups/createSorters (one group sorter per group, then the sorters, a sorter on a grouped path only setting its direction) and bindItems -`.
-    text1 = text1 && ` the items binding is composed by the backend as a binding-info string with that sorter list, and the view emits the Column controls and the cell template's Text cells in state order from a loop, so` &&
-            ` every state change is a view rebuild. The Engine's popup carries the title View Settings and contentHeight 50rem/contentWidth 45rem, which the declared Popup does not. // IMPROVISED: the Filter` &&
+            ` creates it), a p13n:SortPanel and a p13n:GroupPanel (queryLimit 1, as the GroupController sets it for a sap.m.Table) - controls the port builds as a popup_display fragment, which the original view` &&
+            ` does not have (Popup, SelectionPanel, SortPanel, GroupPanel) - opened fresh on every press and destroyed (popup_destroy) in its close handler, as Engine.show( ) creates the popup per call. Right` &&
+            ` after opening it, the backend hands each panel the controllers' adaptation data via setP13nData (active entries first in state order, the others sorted by label); on close with reason Ok the panels'` &&
+            ` getP13nData( true ) come back and handleStateChange is reproduced in ABAP: updateColumns (hide all, show and move the state's columns to the front, widths from the state, sort indicators),`.
+    text1 = text1 && ` createGroups/createSorters (one group sorter per group, then the sorters, a sorter on a grouped path only setting its direction) and bindItems - the items binding is composed by the backend as a` &&
+            ` binding-info string with that sorter list, and the view emits the Column controls and the cell template's Text cells in state order from a loop, so every state change is a view rebuild. The Engine's` &&
+            ` popup carries the title View Settings and contentHeight 50rem/contentWidth 45rem, which the declared Popup does not. // NOTE: the p13n:Popup is built as a popup_display fragment of its own instead of` &&
+            ` a dependent of the table because of a UI5 leak: sap.m.p13n.Popup.addPanel moves its panels into an internal Container that only the Dialog created by open( ) takes as content, and Popup.exit destroys` &&
+            ` only that Dialog (sap/m/p13n/Popup.js, UI5 1.152) - so a Popup that is declared in a view and never opened leaks its Container and panels when the view is destroyed. abap2UI5 alternates the main` &&
+            ` view's id (mainView/mainView2) on every view_display, so two rebuilds later the leaked panels' ids collide with the new view's own and the rebuild dies on a duplicate id. A Popup that exists only`.
+    text1 = text1 && ` while it is open (as Engine.show( ) creates it) has nothing to leak; any port that declares a p13n.Popup in a view it re-creates without opening the popup hits this. // IMPROVISED: the Filter` &&
             ` controller is dropped: its panel, sap.m.p13n.FilterPanel, renders each condition through itemFactory, a function-typed property (the FilterController passes a factory creating an Input bound to` &&
             ` $p13n>conditions/0/values/0) that no abap2UI5 wire can supply - so the popup has no Filter tab, no filter can be set, createFilters has nothing to build, and the filterInfo info toolbar (kept with` &&
             ` visible false, filterInfoText and its Remove All Filters Button) can never appear; its two press handlers (onFilterInfoPress on the OverflowToolbar, onClearFilterPress on the Button) are therefore` &&
-            ` not wired. Capability gap - a curated frontend module exporting a default itemFactory would close it. // NOTE: the column menu is driven from the backend: beforeOpen transports the opened column's`.
-    text1 = text1 && ` p13nKey custom data and the backend sets the QuickSortItem/QuickGroupItem key, label, sortOrder and grouped through bound model fields (the original sets them on the items directly); QuickSort change` &&
-            ` and QuickGroup change carry ${$parameters>/item}.getKey( ) plus getSortOrder( )/getGrouped( ) and do what onSort/onGroup do (clear all sorters/groups, push the column's), ColumnResizer columnResize` &&
+            ` not wired. Capability gap - a curated frontend module exporting a default itemFactory would close it. // NOTE: the column menu is driven from the backend: beforeOpen transports the opened column's` &&
+            ` p13nKey custom data and the backend sets the QuickSortItem/QuickGroupItem key, label, sortOrder and grouped through bound model fields (the original sets them on the items directly); QuickSort change`.
+    text1 = text1 && ` and QuickGroup change carry ${$parameters>/item}.getKey( ) plus getSortOrder( )/getGrouped( ) and do what onSort/onGroup do (clear all sorters/groups, push the column's), ColumnResizer columnResize` &&
             ` stores the column width in the ColumnWidth state (the resizer has already sized the column), and the column drop does onColumnMove's position arithmetic on the backend's column order and moves the` &&
             ` column in the visible-column state. The cell template's Text cells are emitted per column from the column state's model path, so their bindings {FIRSTNAME}, {LASTNAME}, {CITY} and {SIZE} (the` &&
             ` original's {firstName}, {lastName}, {city}, {size}) are composed at run time and not visible to a static diff. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for` &&
-            ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the`.
-    text1 = text1 && ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire ($event.oSource.getPanels(` &&
-            ` )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments, the custom-data args (.data('p13nKey') on the column, dragged and dropped control) and the` &&
-            ` QuickSortItem/QuickGroupItem update arriving after beforeOpen's round-trip while the menu is already open are source-derived, not run in a live system.`.
+            ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the` &&
+            ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the p13n.Popup close wire ($event.oSource.getPanels( )[n].getP13nData(`.
+    text1 = text1 && ` true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments, the custom-data args (.data('p13nKey') on the column, dragged and dropped control) and the` &&
+            ` QuickSortItem/QuickGroupItem update arriving after beforeOpen's round-trip while the menu is already open are source-derived, not run in a live system. **e2e-verified 2026-10-21** (nightly e2e` &&
+            ` interaction, meta/interactions/z2ui5_cl_smpc_app_645.mjs).`.
     text2 = `the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample. It is a JavaScript singleton, not a control - the port expresses what it does with the sap.m.p13n.Popup control (since 1.97, its` &&
             ` close event and panels aggregation), the SelectionPanel control (since 1.96, its showHeader and enableCount properties) and the SortPanel control (since 1.96); the app needs a UI5 release >= 1.110.` &&
             ` // kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column` &&
@@ -6264,20 +6271,27 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` noData. // IMPROVISED: Engine.getInstance( ).register( ) with the Columns, Sorter, Groups and ColumnWidth controllers, Engine.show( ), retrieveState( )/applyState( ) and the stateChange event are` &&
             ` controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend: it keeps the state (column order and visibility, column widths, sorters) in ABAP, and the settings`.
     text1 = text1 && ` button and the column menu's table settings button open a p13n:Popup with a p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it) and a p13n:SortPanel - Engine.show(` &&
-            ` ['Columns', 'Sorter'] ) - controls the port declares in the table's dependents, which the original view does not have (Popup, SelectionPanel, SortPanel). Before opening, the backend hands both panels` &&
-            ` the controllers' adaptation data via setP13nData (active entries first in state order, the others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and` &&
-            ` handleStateChange is reproduced in ABAP: every column hidden, the state's columns shown and moved to the front in state order, widths from the state or the _mIntialWidth 11rem, each sorted column's` &&
-            ` sortOrder set, and the rows binding sorted - composed by the backend as a binding-info string with that sorter list. The view emits the Column controls (with their Label and template Text, whose` &&
-            ` binding {FIRSTNAME}, {LASTNAME}, {CITY} or {SIZE} - the original's {firstName}, {lastName}, {city}, {size} - comes from the column state's path) in state order from a loop, so every state change is a`.
-    text1 = text1 && ` view rebuild. The registered Groups controller has no panel in the original's show( ) call either and is not reproduced. The Engine's popup carries the title View Settings and contentHeight` &&
-            ` 35rem/contentWidth 32rem, which the declared Popup does not. // NOTE: the table's own events drive the same state as in the original: sort (onSort) transports the column's p13nKey custom data and` &&
-            ` sortOrder and replaces the sorters with that column's, columnResize stores the width in the ColumnWidth state (the table has already sized the column), and columnMove is vetoed with` &&
+            ` ['Columns', 'Sorter'] ) - controls the port builds as a popup_display fragment, which the original view does not have (Popup, SelectionPanel, SortPanel) - opened fresh on every press and destroyed` &&
+            ` (popup_destroy) in its close handler, as Engine.show( ) creates the popup per call. Right after opening it, the backend hands both panels the controllers' adaptation data via setP13nData (active` &&
+            ` entries first in state order, the others sorted by label); on close with reason Ok the panels' getP13nData( true ) come back and handleStateChange is reproduced in ABAP: every column hidden, the` &&
+            ` state's columns shown and moved to the front in state order, widths from the state or the _mIntialWidth 11rem, each sorted column's sortOrder set, and the rows binding sorted - composed by the` &&
+            ` backend as a binding-info string with that sorter list. The view emits the Column controls (with their Label and template Text, whose binding {FIRSTNAME}, {LASTNAME}, {CITY} or {SIZE} - the`.
+    text1 = text1 && ` original's {firstName}, {lastName}, {city}, {size} - comes from the column state's path) in state order from a loop, so every state change is a view rebuild. The registered Groups controller has no` &&
+            ` panel in the original's show( ) call either and is not reproduced. The Engine's popup carries the title View Settings and contentHeight 35rem/contentWidth 32rem, which the declared Popup does not. //` &&
+            ` NOTE: the p13n:Popup is built as a popup_display fragment of its own instead of a dependent of the table because of a UI5 leak: sap.m.p13n.Popup.addPanel moves its panels into an internal Container` &&
+            ` that only the Dialog created by open( ) takes as content, and Popup.exit destroys only that Dialog (sap/m/p13n/Popup.js, UI5 1.152) - so a Popup that is declared in a view and never opened leaks its` &&
+            ` Container and panels when the view is destroyed. abap2UI5 alternates the main view's id (mainView/mainView2) on every view_display, so two rebuilds later the leaked panels' ids collide with the new` &&
+            ` view's own and the rebuild dies on a duplicate id. A Popup that exists only while it is open (as Engine.show( ) creates it) has nothing to leak; any port that declares a p13n.Popup in a view it`.
+    text1 = text1 && ` re-creates without opening the popup hits this. The panel ids (gridColumnsPanel/gridSortPanel, invented by the port - the Engine creates its panels without one) are distinct from the other p13n` &&
+            ` fragment ports' (app 645's columnsPanel/sortPanel/groupPanel): the render gate loads every popup fragment without an id prefix into a shared page pool, where the same leak keeps a never-opened` &&
+            ` fragment's panels registered, so equal ids in two ports collided there. // NOTE: the table's own events drive the same state as in the original: sort (onSort) transports the column's p13nKey custom` &&
+            ` data and sortOrder and replaces the sorters with that column's, columnResize stores the width in the ColumnWidth state (the table has already sized the column), and columnMove is vetoed with` &&
             ` check_prevent_default exactly like oEvt.preventDefault( ) and then moves the column to newPos in the visible-column state. The original also calls Column.setSorted( true ), deprecated since 1.120;` &&
-            ` the port sets only sortOrder, which is what the sort indicator shows. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) and the table's sap.ui.fl:flexibility` &&
-            ` attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the`.
-    text1 = text1 && ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wire ($event.oSource.getPanels(` &&
-            ` )[n].getP13nData( true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments and the .data('p13nKey') args on the sort/columnResize/columnMove column parameter are` &&
-            ` source-derived, not run in a live system.`.
+            ` the port sets only sortOrder, which is what the sort indicator shows. // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) and the table's sap.ui.fl:flexibility`.
+    text1 = text1 && ` attribute are dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the` &&
+            ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the p13n.Popup close wire ($event.oSource.getPanels( )[n].getP13nData(` &&
+            ` true ) - read back as JSON arrays of the panels' items), the setP13nData JSON arguments and the .data('p13nKey') args on the sort/columnResize/columnMove column parameter are source-derived, not run` &&
+            ` in a live system. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_648.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineGridTable`                                      class = `z2ui5_cl_smpc_app_648` path = `src/02/01/z2ui5_cl_smpc_app_648.clas.abap`
         score = 5
@@ -6298,18 +6312,26 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` sap.m.Column headerMenu (1.98), the sap.m.table.columnmenu Menu control with its items aggregation and the ActionItem control with icon, label and press (all 1.110). // IMPROVISED:` &&
             ` Engine.getInstance( ).register( ) with a Columns and a Rows SelectionController and Engine.show( ) are controller JavaScript no abap2UI5 wire can run. The port does the Engine's work in the backend:` &&
             ` it keeps the order and visibility of the table's columns and of its five items in ABAP, and each settings button (and the column menu's Columns ActionItem) opens a p13n:Popup with one`.
-    text1 = text1 && ` p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it, enableReorder false for Rows) - two Popup and two SelectionPanel controls the port declares in the table's` &&
-            ` dependents, which the original view does not have. Before opening, the backend hands each panel the controller's adaptation data via setP13nData (visible entries first in state order, then the hidden` &&
-            ` ones sorted by label; labels from the two MetadataHelpers); on close with reason Ok the panel's getP13nData( true ) comes back and handleStateChange is reproduced in ABAP: every column/item hidden,` &&
-            ` the state's entries shown and moved to the front in state order. The view emits the Column and ColumnListItem controls (and every item's Text cells, which follow their column) from those two tables` &&
-            ` in a loop, so a state change is a view rebuild. The Engine's popups carry the panel's title (Fields) and contentHeight 35rem/contentWidth 32rem, which the declared Popup controls do not. // NOTE:` &&
-            ` onColumnMove computes the drop position from the dragged/dropped column indices and applyState( { Columns: [ { key, position } ] } ) moves the column there. The port transports both columns' p13nKey`.
-    text1 = text1 && ` custom data and the dropPosition, does the same arithmetic on the backend's column order and moves the key in the visible-column state before re-emitting the view. The original handler searches the` &&
-            ` retrieved state with oColumn.data('p13nKey') on plain state objects, which throws as soon as the state holds a column, so in the demo kit the drop does not move anything; the port implements the move` &&
-            ` the handler evidently intends (the identical handler of sap.m.sample.p13n.Engine, which uses .key). // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) is` &&
-            ` dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is` &&
-            ` not part of the corpus' render harness. Without the Engine the control would have nothing to save. // LIVE-TEST: the p13n.Popup close wires ($event.oSource.getPanels( )[0].getP13nData( true ) - read` &&
-            ` back as a JSON array of the panel's items), the setP13nData JSON argument and the drop wire's .data('p13nKey') args are source-derived, not run in a live system.`.
+    text1 = text1 && ` p13n:SelectionPanel (showHeader/enableCount as the SelectionController creates it, enableReorder false for Rows) - two Popup and two SelectionPanel controls the port builds as two popup_display` &&
+            ` fragments, which the original view does not have - each opened fresh on its press and destroyed (popup_destroy) in its close handler, as Engine.show( ) creates the popup per call. Right after opening` &&
+            ` one, the backend hands each panel the controller's adaptation data via setP13nData (visible entries first in state order, then the hidden ones sorted by label; labels from the two MetadataHelpers);` &&
+            ` on close with reason Ok the panel's getP13nData( true ) comes back and handleStateChange is reproduced in ABAP: every column/item hidden, the state's entries shown and moved to the front in state` &&
+            ` order. The view emits the Column and ColumnListItem controls (and every item's Text cells, which follow their column) from those two tables in a loop, so a state change is a view rebuild. The` &&
+            ` Engine's popups carry the panel's title (Fields) and contentHeight 35rem/contentWidth 32rem, which the declared Popup controls do not. // NOTE: the p13n:Popup is built as a popup_display fragment of`.
+    text1 = text1 && ` its own instead of a dependent of the table because of a UI5 leak: sap.m.p13n.Popup.addPanel moves its panels into an internal Container that only the Dialog created by open( ) takes as content, and` &&
+            ` Popup.exit destroys only that Dialog (sap/m/p13n/Popup.js, UI5 1.152) - so a Popup that is declared in a view and never opened leaks its Container and panels when the view is destroyed. abap2UI5` &&
+            ` alternates the main view's id (mainView/mainView2) on every view_display, so two rebuilds later the leaked panels' ids collide with the new view's own and the rebuild dies on a duplicate id. A Popup` &&
+            ` that exists only while it is open (as Engine.show( ) creates it) has nothing to leak; any port that declares a p13n.Popup in a view it re-creates without opening the popup hits this. The panel ids` &&
+            ` (tableColumnsPanel/rowsPanel, invented by the port - the Engine creates its panels without one) are distinct from the other p13n fragment ports' (app 645's columnsPanel/sortPanel/groupPanel): the` &&
+            ` render gate loads every popup fragment without an id prefix into a shared page pool, where the same leak keeps a never-opened fragment's panels registered, so equal ids in two ports collided there.`.
+    text1 = text1 && ` // NOTE: onColumnMove computes the drop position from the dragged/dropped column indices and applyState( { Columns: [ { key, position } ] } ) moves the column there. The port transports both columns'` &&
+            ` p13nKey custom data and the dropPosition, does the same arithmetic on the backend's column order and moves the key in the visible-column state before re-emitting the view. The original handler` &&
+            ` searches the retrieved state with oColumn.data('p13nKey') on plain state objects, which throws as soon as the state holds a column, so in the demo kit the drop does not move anything; the port` &&
+            ` implements the move the handler evidently intends (the identical handler of sap.m.sample.p13n.Engine, which uses .key). // IMPROVISED: the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for` &&
+            ` persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the` &&
+            ` sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save. // NOTE: the p13n.Popup close wires ($event.oSource.getPanels(`.
+    text1 = text1 && ` )[0].getP13nData( true ) - read back as a JSON array of the panel's items), the setP13nData JSON argument and the drop wire's .data('p13nKey') args are source-derived, not run in a live system.` &&
+            ` **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_649.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Engine`                     name = `p13n.EngineMultipleController`                             class = `z2ui5_cl_smpc_app_649` path = `src/02/01/z2ui5_cl_smpc_app_649.clas.abap`
         score = 5
@@ -6331,13 +6353,18 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` exporting a reset callback that fires a named backend event would close it. // NOTE: the controller's _setInitialData (setP13nData on the three panels with _initialData, verbatim) is issued as three` &&
             ` follow_up_action( control_by_id setP13nData ) calls with the JSON array as argument. The original seeds once, on the first open (_bIsOpen guard); the port seeds after every render of the view, which`.
     text1 = text1 && ` is observably the same - the panels hold the initial data until the user first edits them and keep the edits across later opens - and also re-seeds the fresh panels a rebuilt view creates.` &&
-            ` onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument. // NOTE: parseP13nState writes` &&
-            ` JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's` &&
-            ` getP13nData( ) already stringified with the same indent (a $event-guarded JSON.stringify expression, since an argument has to start with $ to be evaluated on the client) and the backend keeps the` &&
-            ` last array per panel; an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. The backend nests the three arrays into the same object text` &&
-            ` (one level deeper indent) and binds it to the CodeEditor value - byte-identical to the original's output. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same`.
-    text1 = text1 && ` round-trip; the close toast (Dialog close reason: <reason>) is client-composed with no round-trip. // LIVE-TEST: the JSON.stringify expressions in the change/open event args (getPanels(` &&
-            ` )[n].getP13nData( ) through the event source) and the setP13nData JSON argument are source-derived, not run in a live system.`.
+            ` onContainerOpen's popup.open( ) is a control_by_id open call after the round-trip; the popup is in Dialog mode, where open( ) ignores its source argument. The JSON argument reaches the panels through` &&
+            ` the framework's JSON layer, which orders each object's keys alphabetically, so the port's panels hold the same items and values with their keys in another order - invisible in the panels, and the` &&
+            ` editor text is printed by the backend in _initialData's order (see the parseP13nState note). // NOTE: parseP13nState writes JSON.stringify( { columns, sort, group }, null, '  ' ) into the CodeEditor` &&
+            ` with setValue. The panels are not reachable from a panel's change event, so each change wire sends its own panel's getP13nData( ) as an event argument and the backend keeps the last array per panel;` &&
+            ` an added open event on the Popup captures all three panels via getPanels( ) so the panels not yet changed are known. An event-handler expression knows only $controller and $event as globals -`.
+    text1 = text1 && ` JSON.stringify( ) itself is refused there (Unsupported global identifier 'JSON') and no round-trip is sent - so the array travels as it is: the frontend serializes an array argument as JSON and the` &&
+            ` backend receives it compactly, with each object's keys in alphabetical order. The backend prints it the way JSON.stringify( ..., null, '  ' ) does: the three arrays nested in one object, two-space` &&
+            ` indent, one key per line, each item's keys in the order _initialData gives them (visible/name/label, sorted/name/label/descending, grouped/name/label) - the panels only change the values of those` &&
+            ` keys, never add one, so the text is the original's output byte for byte. The change toast (P13n panel change reason:<reason>) is raised by the backend in the same round-trip; the close toast (Dialog` &&
+            ` close reason: <reason>) is client-composed with no round-trip. // NOTE: the getP13nData( ) array args of the change/open events (getPanels( )[n].getP13nData( ) through the event source, read back as` &&
+            ` compact JSON arrays) and the setP13nData JSON argument are source-derived, not run in a live system. **e2e-verified 2026-10-21** (nightly e2e interaction,`.
+    text1 = text1 && ` meta/interactions/z2ui5_cl_smpc_app_650.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.p13n.Popup`                      name = `p13n.Popup`                                                class = `z2ui5_cl_smpc_app_650` path = `src/02/01/z2ui5_cl_smpc_app_650.clas.abap`
         score = 5
@@ -9478,20 +9505,23 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = text1 ) ).
 
     text1 = `POST-1.71: the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103. // NOTE: the original` &&
-            ` declares its four VariantItem controls statically and the controller adds (onSave -> addItem) and removes (onManage -> removeItem) items imperatively. The port binds the items aggregation to an ABAP` &&
-            ` table with one VariantItem template carrying the same ten properties per row (seeded with the four original entries, values verbatim), so the backend can add and delete rows - structural-diff` &&
-            ` therefore counts one VariantItem template against the original's four. selectedKey, defaultKey and modified are bound two-way: the Toggle Modify View button flips modified in the backend` &&
-            ` (setModified), select and save reset it, and a manage change of the default view reaches the model through the bound defaultKey. Renames, favorite and execute-on-select changes in the Manage Views` &&
-            ` dialog are written by the control onto the items' properties and so reach the model through the two-way bound template - the manage handler only applies the deleted keys and, like`.
-    text1 = text1 && ` _checkCurrentVariant, falls back to the standard (first) view when the selected one was deleted. // NOTE: a new view's key is built from an ABAP timestamp (key_<yyyymmddhhmmss>) instead of` &&
-            ` JavaScript's Date.now( ) milliseconds - unique per save as in the original, a different digit format. The three MessageToast texts are composed in the backend with the same wording and carry the` &&
-            ` original's closeOnBrowserNavigation option through the control_global MESSAGE_TOAST call. // LIVE-TEST: the manage event's deleted parameter is transported as ${$parameters>/deleted} and read as a` &&
-            ` JSON array of keys, and the save event's boolean parameters (overwrite, execute, def, public) as abap_bool - both unverified in a running system, as is the two-way write-back of a rename/favorite` &&
-            ` toggle from the Manage Views dialog through the bound VariantItem template.`.
+            ` declares its four VariantItem controls statically and the controller adds (onSave -> addItem) and removes (onManage -> removeItem) items imperatively. The port keeps the VariantItem controls static` &&
+            ` as well - one per row of a backend table seeded with the four original entries (values verbatim, all ten properties), emitted in a loop - so the backend can add and delete views by re-rendering the` &&
+            ` view: a Save As that creates a view and every Manage rebuild it. An items binding with a template would be the shorter form, but it breaks the control on UI5 1.152: VariantManagement filters its own` &&
+            ` popover and Manage Views lists (bound to its internal $mVariants ManagedObjectModel, properties visible and favorite) with the paths it reads off the app's items TEMPLATE` &&
+            ` (_getFilters/_resolveTemplatePath: VISIBLE, FAVORITE), which that model does not have, so every view is filtered out and the my Favorites list stays empty. Because the items are not bound, the manage`.
+    text1 = text1 && ` handler applies everything the Manage Views dialog changed on them, as the control's manage event reports it: the deleted keys (removed), renamed (title), fav (favorite) and exe (executeOnSelect),` &&
+            ` and like _checkCurrentVariant falls back to the standard (first) view when the selected one was deleted. selectedKey, defaultKey and modified are bound two-way: the Toggle Modify View button flips` &&
+            ` modified in the backend (setModified), select and save reset it, and a manage change of the default view (onManage's setDefaultKey( def )) reaches the model through the bound defaultKey. // NOTE: a` &&
+            ` new view's key is built from an ABAP timestamp (key_<yyyymmddhhmmss>) instead of JavaScript's Date.now( ) milliseconds - unique per save as in the original, a different digit format. The three` &&
+            ` MessageToast texts are composed in the backend with the same wording and carry the original's closeOnBrowserNavigation option through the control_global MESSAGE_TOAST call. // NOTE: the manage` &&
+            ` event's deleted, renamed, fav and exe parameters are transported as ${$parameters>/...} array args and read back as JSON, and the save event's boolean parameters (overwrite, execute, def, public) as`.
+    text1 = text1 && ` abap_bool - unverified in a running system, as is a rename/favorite/execute-on-select change from the Manage Views dialog surviving the view rebuild the manage event triggers. **e2e-verified` &&
+            ` 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_651.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.VariantManagement`               name = `VariantManagement`                                         class = `z2ui5_cl_smpc_app_651` path = `src/02/01/z2ui5_cl_smpc_app_651.clas.abap`
-        score = 5
-        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.103`
         since_post171 = abap_true
         is_post171 = abap_true

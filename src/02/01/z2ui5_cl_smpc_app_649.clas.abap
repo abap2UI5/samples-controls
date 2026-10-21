@@ -1,4 +1,4 @@
-" @keywords engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem popup
+" @keywords engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem dragdropinfo
 " @summary Personalization for Reponsive Table using multiple SelectionControllers
 " @origin sap.m.sample.p13n.EngineMultipleController - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineMultipleController (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_649 DEFINITION PUBLIC.
@@ -34,8 +34,11 @@ CLASS z2ui5_cl_smpc_app_649 DEFINITION PUBLIC.
     DATA t_rows TYPE ty_t_row.
 
     METHODS view_display.
-    METHODS set_p13n_data.
     METHODS on_event.
+    METHODS columns_popup_display.
+    METHODS set_columns_p13n_data.
+    METHODS rows_popup_display.
+    METHODS set_rows_p13n_data.
     METHODS apply_columns
       IMPORTING
         state TYPE string_table.
@@ -76,13 +79,12 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
     DATA(table) = view->ele( n = `View` ns = `mvc`
-        )->a( n = `xmlns`      v = `sap.m`
-        )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
-        )->a( n = `xmlns:tcm`  v = `sap.m.table.columnmenu`
-        )->a( n = `xmlns:dnd`  v = `sap.ui.core.dnd`
-        )->a( n = `xmlns:p13n` v = `sap.m.p13n`
-        )->a( n = `xmlns:app`  v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
-        )->a( n = `height`     v = `100%`
+        )->a( n = `xmlns`     v = `sap.m`
+        )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
+        )->a( n = `xmlns:tcm` v = `sap.m.table.columnmenu`
+        )->a( n = `xmlns:dnd` v = `sap.ui.core.dnd`
+        )->a( n = `xmlns:app` v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`
+        )->a( n = `height`    v = `100%`
 
         )->ele( `Page`
             )->a( n = `showHeader` v = `false`
@@ -121,39 +123,7 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
                 )->tag( n = `ActionItem` ns = `tcm`
                     )->a( n = `icon`  v = `sap-icon://table-column`
                     )->a( n = `label` v = `Columns`
-                    )->a( n = `press` v = client->_event( `OPEN_COLUMNS` )
-
-            )->end(
-        )->end(
-
-        " the two popups Engine.show( ) creates for the Columns and the Rows controller
-        )->ele( n = `Popup` ns = `p13n`
-            )->a( n = `id`    v = `columnsPopup`
-            )->a( n = `close` v = client->_event( val   = `COLUMNS_CLOSE`
-                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
-
-            )->ele( n = `panels` ns = `p13n`
-                )->tag( n = `SelectionPanel` ns = `p13n`
-                    )->a( n = `id`          v = `columnsPanel`
-                    )->a( n = `showHeader`  v = `true`
-                    )->a( n = `enableCount` v = `true`
-
-            )->end(
-        )->end(
-
-        )->ele( n = `Popup` ns = `p13n`
-            )->a( n = `id`    v = `rowsPopup`
-            )->a( n = `close` v = client->_event( val   = `ROWS_CLOSE`
-                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
-
-            )->ele( n = `panels` ns = `p13n`
-                )->tag( n = `SelectionPanel` ns = `p13n`
-                    )->a( n = `id`            v = `rowsPanel`
-                    )->a( n = `showHeader`    v = `true`
-                    )->a( n = `enableCount`   v = `true`
-                    )->a( n = `enableReorder` v = `false` ).
+                    )->a( n = `press` v = client->_event( `OPEN_COLUMNS` ) ).
 
     table->ele( `dragDropConfig`
         )->tag( n = `DragDropInfo` ns = `dnd`
@@ -207,15 +177,76 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
 
     client->view_display( view->stringify( ) ).
 
-    " a rebuilt view carries fresh, empty panels
-    set_p13n_data( ).
+  ENDMETHOD.
+
+
+  METHOD on_event.
+
+    CASE client->get_event( ).
+
+      WHEN `OPEN_COLUMNS`.
+        columns_popup_display( ).
+
+      WHEN `OPEN_ROWS`.
+        rows_popup_display( ).
+
+      WHEN `COLUMNS_CLOSE`.
+        " Engine.show( ) creates the popup per call and destroys it once closed;
+        " the Engine applies the panel state on Ok only
+        client->popup_destroy( ).
+        IF client->get_event_arg( ) = `Ok`.
+          apply_columns( p13n_names( client->get_event_arg( 2 ) ) ).
+          view_display( ).
+        ENDIF.
+
+      WHEN `ROWS_CLOSE`.
+        client->popup_destroy( ).
+        IF client->get_event_arg( ) = `Ok`.
+          apply_rows( p13n_names( client->get_event_arg( 2 ) ) ).
+          view_display( ).
+        ENDIF.
+
+      WHEN `COLUMN_MOVE`.
+        move_column( ).
+        view_display( ).
+
+    ENDCASE.
 
   ENDMETHOD.
 
 
-  METHOD set_p13n_data.
+  METHOD columns_popup_display.
 
-    " the SelectionControllers' panel data: the visible entries in state
+    " the popup Engine.show( ) creates for the Columns controller
+    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+
+    popup->ele( n = `FragmentDefinition` ns = `core`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:p13n` v = `sap.m.p13n`
+
+        )->ele( n = `Popup` ns = `p13n`
+            )->a( n = `id`    v = `columnsPopup`
+            )->a( n = `close` v = client->_event( val   = `COLUMNS_CLOSE`
+                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
+
+            )->ele( n = `panels` ns = `p13n`
+                )->tag( n = `SelectionPanel` ns = `p13n`
+                    )->a( n = `id`          v = `tableColumnsPanel`
+                    )->a( n = `showHeader`  v = `true`
+                    )->a( n = `enableCount` v = `true` ).
+
+    client->popup_display( popup->stringify( ) ).
+
+    " the fresh panels get the controllers' adaptation data
+    set_columns_p13n_data( ).
+
+  ENDMETHOD.
+
+
+  METHOD set_columns_p13n_data.
+
+    " the SelectionController's panel data: the visible entries in state
     " order, then the hidden ones sorted by label
     DATA(json) = ``.
     LOOP AT t_columns INTO DATA(column) WHERE visible = abap_true.
@@ -227,11 +258,49 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
       json = |{ json },\{"name":"{ column-key }","label":"{ column-label }","visible":false\}|.
     ENDLOOP.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `columnsPanel` )
+                              view  = client->cs_view-popup
+                              t_arg = VALUE #( ( `tableColumnsPanel` )
                                                ( `setP13nData` )
                                                ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
 
-    json = ``.
+  ENDMETHOD.
+
+
+  METHOD rows_popup_display.
+
+    " the popup Engine.show( ) creates for the Rows controller
+    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+
+    popup->ele( n = `FragmentDefinition` ns = `core`
+        )->a( n = `xmlns:core` v = `sap.ui.core`
+        )->a( n = `xmlns:p13n` v = `sap.m.p13n`
+
+        )->ele( n = `Popup` ns = `p13n`
+            )->a( n = `id`    v = `rowsPopup`
+            )->a( n = `close` v = client->_event( val   = `ROWS_CLOSE`
+                                                  t_arg = VALUE #( ( `${$parameters>/reason}` )
+                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
+
+            )->ele( n = `panels` ns = `p13n`
+                )->tag( n = `SelectionPanel` ns = `p13n`
+                    )->a( n = `id`            v = `rowsPanel`
+                    )->a( n = `showHeader`    v = `true`
+                    )->a( n = `enableCount`   v = `true`
+                    )->a( n = `enableReorder` v = `false` ).
+
+    client->popup_display( popup->stringify( ) ).
+
+    " the fresh panels get the controllers' adaptation data
+    set_rows_p13n_data( ).
+
+  ENDMETHOD.
+
+
+  METHOD set_rows_p13n_data.
+
+    " the Rows controller's panel data: the visible entries in state order,
+    " then the hidden ones sorted by label
+    DATA(json) = ``.
     LOOP AT t_rows INTO DATA(row) WHERE visible = abap_true.
       json = |{ json },\{"name":"{ row-key }","label":"{ row-label }","visible":true\}|.
     ENDLOOP.
@@ -241,45 +310,10 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
       json = |{ json },\{"name":"{ row-key }","label":"{ row-label }","visible":false\}|.
     ENDLOOP.
     client->follow_up_action( val   = client->cs_event-control_by_id
+                              view  = client->cs_view-popup
                               t_arg = VALUE #( ( `rowsPanel` )
                                                ( `setP13nData` )
                                                ( |[{ shift_left( val = json sub = `,` ) }]| ) ) ).
-
-  ENDMETHOD.
-
-
-  METHOD on_event.
-
-    CASE client->get_event( ).
-
-      WHEN `OPEN_COLUMNS`.
-        set_p13n_data( ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `columnsPopup` ) ( `open` ) ) ).
-
-      WHEN `OPEN_ROWS`.
-        set_p13n_data( ).
-        client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `rowsPopup` ) ( `open` ) ) ).
-
-      WHEN `COLUMNS_CLOSE`.
-        " the Engine applies the panel state on Ok only
-        IF client->get_event_arg( ) = `Ok`.
-          apply_columns( p13n_names( client->get_event_arg( 2 ) ) ).
-          view_display( ).
-        ENDIF.
-
-      WHEN `ROWS_CLOSE`.
-        IF client->get_event_arg( ) = `Ok`.
-          apply_rows( p13n_names( client->get_event_arg( 2 ) ) ).
-          view_display( ).
-        ENDIF.
-
-      WHEN `COLUMN_MOVE`.
-        move_column( ).
-        view_display( ).
-
-    ENDCASE.
 
   ENDMETHOD.
 

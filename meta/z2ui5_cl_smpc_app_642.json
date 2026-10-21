@@ -45,8 +45,8 @@
       "what": "the mock rows are built in model_init exactly as the controller's aPayments/aOrders: getIcrementedDateFromToday(days, months, years) is reproduced by shifted_now on sy-datum / sy-uzeit (server date and time, not the browser's) with the JS month and day overflow; the fixed UI5Date.getInstance(2021, 5, ...) rows are their ISO literal (month 5 = June). The orders' extra getChristmasDay(currentYear - 1) row is 25 December of the previous year at the current time; the original's setUTCDate (instead of setDate) only differs around midnight UTC. totalPrice is computed in model_init like the original's onInit forEach."
     },
     {
-      "type": "LIVE_TEST",
-      "what": "unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows."
+      "type": "NOTE",
+      "what": "unverified in a running system: the ${$source>}.toDates(${$parameters>/value})[0] event-arg expression with its ternary guard, the Date projection to a local ISO string, and the binding_call filter that follows. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_642.mjs)."
     }
   ]
 }

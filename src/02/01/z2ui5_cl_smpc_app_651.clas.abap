@@ -1,4 +1,4 @@
-" @keywords variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle variantitem
+" @keywords variantmanagement variant management sap.m panel overflowtoolbar title toolbarspacer button dynamicpage dynamicpagetitle
 " @summary VariantManagement with dedicated items
 " @origin sap.m.sample.VariantManagement - https://sdk.openui5.org/entity/sap.m.VariantManagement/sample/sap.m.sample.VariantManagement (status: generated - machine-written, not yet reviewed)
 CLASS z2ui5_cl_smpc_app_651 DEFINITION PUBLIC.
@@ -6,6 +6,11 @@ CLASS z2ui5_cl_smpc_app_651 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
+    DATA selectedkey TYPE string.
+    DATA defaultkey  TYPE string.
+    DATA modified    TYPE abap_bool.
+
+  PROTECTED SECTION.
     TYPES:
       BEGIN OF ty_s_item,
         key             TYPE string,
@@ -19,17 +24,26 @@ CLASS z2ui5_cl_smpc_app_651 DEFINITION PUBLIC.
         remove          TYPE abap_bool,
         sharing         TYPE string,
       END OF ty_s_item.
-    DATA t_items     TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
-    DATA selectedkey TYPE string.
-    DATA defaultkey  TYPE string.
-    DATA modified    TYPE abap_bool.
+    TYPES:
+      BEGIN OF ty_s_change,
+        key   TYPE string,
+        value TYPE string,
+      END OF ty_s_change.
+    TYPES ty_t_change TYPE STANDARD TABLE OF ty_s_change WITH EMPTY KEY.
 
-  PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
+    " the VariantItem controls of the view, as the controller leaves them
+    DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
 
     METHODS view_display.
     METHODS on_event.
     METHODS update_items.
+    METHODS manage_changes
+      IMPORTING
+        json          TYPE string
+        field         TYPE string
+      RETURNING
+        VALUE(result) TYPE ty_t_change.
     METHODS create_new_item.
     METHODS show_message
       IMPORTING
@@ -61,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    view->ele( n = `View` ns = `mvc`
+    DATA(items) = view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
         )->a( n = `xmlns:f`   v = `sap.f`
@@ -91,8 +105,6 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
                 )->ele( n = `title` ns = `f`
                     )->ele( n = `DynamicPageTitle` ns = `f`
                         )->ele( n = `heading` ns = `f`
-                            " the four static VariantItem controls become one bound template, so
-                            " the backend can add and remove views like the controller does
                             )->ele( `VariantManagement`
                                 )->a( n = `id`           v = `vm`
                                 )->a( n = `select`       v = client->_event( val = `SELECT`
@@ -104,27 +116,41 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
                                                                                               ( `${$parameters>/execute}` )
                                                                                               ( `${$parameters>/def}` )
                                                                                               ( `${$parameters>/public}` ) ) )
-                                )->a( n = `manage`       v = client->_event( val = `MANAGE`
-                                                                             arg = `${$parameters>/deleted}` )
+                                )->a( n = `manage`       v = client->_event( val   = `MANAGE`
+                                                                             t_arg = VALUE #( ( `${$parameters>/deleted}` )
+                                                                                              ( `${$parameters>/renamed}` )
+                                                                                              ( `${$parameters>/fav}` )
+                                                                                              ( `${$parameters>/exe}` ) ) )
                                 )->a( n = `selectedKey`  v = client->_bind( selectedkey )
                                 )->a( n = `defaultKey`   v = client->_bind( defaultkey )
                                 )->a( n = `modified`     v = client->_bind( modified )
                                 )->a( n = `showFooter`   v = `true`
                                 )->a( n = `popoverTitle` v = `my Favorites`
-                                )->a( n = `items`        v = client->_bind( t_items )
 
-                                )->ele( `items`
-                                    )->tag( `VariantItem`
-                                        )->a( n = `key`             v = `{KEY}`
-                                        )->a( n = `title`           v = `{TITLE}`
-                                        )->a( n = `author`          v = `{AUTHOR}`
-                                        )->a( n = `favorite`        v = `{FAVORITE}`
-                                        )->a( n = `visible`         v = `{VISIBLE}`
-                                        )->a( n = `executeOnSelect` v = `{EXECUTEONSELECT}`
-                                        )->a( n = `rename`          v = `{RENAME}`
-                                        )->a( n = `changeable`      v = `{CHANGEABLE}`
-                                        )->a( n = `remove`          v = `{REMOVE}`
-                                        )->a( n = `sharing`         v = `{SHARING}` ).
+                                )->ele( `items` ).
+
+    " the static VariantItem controls, emitted from the backend's table so a
+    " saved view can be added and a deleted one removed like the controller does
+    LOOP AT t_items INTO DATA(item).
+      " sharing is an enum: written as a literal, so the view gates can check it
+      IF item-sharing = `Public`.
+        items->tag( `VariantItem`
+            )->a( n = `sharing` v = `Public` ).
+      ELSE.
+        items->tag( `VariantItem`
+            )->a( n = `sharing` v = `Private` ).
+      ENDIF.
+      " a( ) lands on the VariantItem just added
+      items->a( n = `key`             t = item-key
+          )->a( n = `title`           t = item-title
+          )->a( n = `author`          t = item-author
+          )->a( n = `favorite`        b = item-favorite
+          )->a( n = `visible`         b = item-visible
+          )->a( n = `executeOnSelect` b = item-executeonselect
+          )->a( n = `rename`          b = item-rename
+          )->a( n = `changeable`      b = item-changeable
+          )->a( n = `remove`          b = item-remove ).
+    ENDLOOP.
 
     client->view_display( view->stringify( ) ).
 
@@ -139,9 +165,8 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
         modified = xsdbool( modified = abap_false ).
 
       WHEN `MANAGE`.
-        " renamed, favorite, executeOnSelect and the default key are written
-        " back by the two-way bound item properties; only deletions need code
         update_items( ).
+        view_display( ).
 
       WHEN `SELECT`.
         show_message( |Selected Key: { client->get_event_arg( ) }| ).
@@ -154,6 +179,7 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
           show_message( |View '{ title }' updated.| ).
         ELSE.
           create_new_item( ).
+          view_display( ).
         ENDIF.
         modified = abap_false.
 
@@ -177,10 +203,49 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
       DELETE t_items WHERE key = key.
     ENDLOOP.
 
+    " what the Manage Views dialog changed on the items: renamed, fav, exe
+    " (the default key comes back through the two-way bound defaultKey)
+    LOOP AT manage_changes( json = client->get_event_arg( 2 ) field = `name` ) INTO DATA(change).
+      IF line_exists( t_items[ key = change-key ] ).
+        t_items[ key = change-key ]-title = change-value.
+      ENDIF.
+    ENDLOOP.
+    LOOP AT manage_changes( json = client->get_event_arg( 3 ) field = `visible` ) INTO change.
+      IF line_exists( t_items[ key = change-key ] ).
+        t_items[ key = change-key ]-favorite = xsdbool( change-value = `true` ).
+      ENDIF.
+    ENDLOOP.
+    LOOP AT manage_changes( json = client->get_event_arg( 4 ) field = `exe` ) INTO change.
+      IF line_exists( t_items[ key = change-key ] ).
+        t_items[ key = change-key ]-executeonselect = xsdbool( change-value = `true` ).
+      ENDIF.
+    ENDLOOP.
+
     " like _checkCurrentVariant: a removed selection falls back to the standard variant
     IF NOT line_exists( t_items[ key = selectedkey ] ) AND t_items IS NOT INITIAL.
       selectedkey = t_items[ 1 ]-key.
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD manage_changes.
+
+    " renamed/fav/exe arrive as compact JSON arrays of flat objects, keys in
+    " alphabetical order: [{"key":"2","name":"New"}], [{"exe":true,"key":"3"}]
+    SPLIT json AT `{"` INTO TABLE DATA(t_object).
+    LOOP AT t_object INTO DATA(object) FROM 2.
+      DATA(value) = substring_after( val = object sub = |{ field }":| ).
+      IF value CP `"*`.
+        " a string (the new name, the last key) runs to the quote before the brace
+        value = substring_before( val = shift_left( val = value places = 1 ) sub = `"}` ).
+      ELSE.
+        " a boolean runs to the next comma or brace
+        value = segment( val = substring_before( val = value sub = `}` ) index = 1 sep = `,` ).
+      ENDIF.
+      INSERT VALUE #( key   = substring_before( val = substring_after( val = object sub = `key":"` ) sub = `"` )
+                      value = replace( val = value sub = `\"` with = `"` occ = 0 ) ) INTO TABLE result.
+    ENDLOOP.
 
   ENDMETHOD.
 
