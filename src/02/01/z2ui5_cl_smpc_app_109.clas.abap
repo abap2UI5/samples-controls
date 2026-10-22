@@ -21,7 +21,7 @@ CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
         startdate TYPE string,
         enddate   TYPE string,
       END OF ty_s_appointment.
-    DATA t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    DATA t_appointments TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
     DATA startdate TYPE string.
 
   PROTECTED SECTION.
@@ -32,7 +32,7 @@ CLASS z2ui5_cl_smpc_app_109 DEFINITION PUBLIC.
       BEGIN OF ty_s_event_range,
         startdate TYPE string,
       END OF ty_s_event_range.
-    TYPES ty_t_event_range TYPE STANDARD TABLE OF ty_s_event_range WITH EMPTY KEY.
+    TYPES ty_t_event_range TYPE STANDARD TABLE OF ty_s_event_range WITH DEFAULT KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
 
@@ -54,12 +54,12 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -68,7 +68,8 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " startDate + CalendarAppointment startDate/endDate are object-typed: the model
     " keeps ISO strings and Formatter.DateCreateObject converts them at the binding
@@ -149,6 +150,10 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA output TYPE string.
+        DATA ranges TYPE z2ui5_cl_smpc_app_109=>ty_t_event_range.
+        DATA temp1 LIKE LINE OF ranges.
+        DATA range LIKE REF TO temp1.
 
     CASE client->get_event( ).
 
@@ -170,9 +175,13 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
         " handleSelectedDateChange numbers every selected range and appends its
         " start date, one per line - the array arrives marshalled, so the loop
         " the original writes in JavaScript is an ABAP loop here
-        DATA(output) = ``.
-        DATA(ranges) = event_ranges( client->get_event_arg( ) ).
-        LOOP AT ranges REFERENCE INTO DATA(range).
+        
+        output = ``.
+        
+        ranges = event_ranges( client->get_event_arg( ) ).
+        
+        
+        LOOP AT ranges REFERENCE INTO range.
           IF strlen( range->startdate ) < 10.
             CONTINUE.
           ENDIF.
@@ -195,7 +204,12 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
 
   METHOD event_ranges.
 
-    DATA(json) = condense( val ).
+    DATA json TYPE string.
+    DATA marker TYPE string.
+    DATA rest LIKE json.
+      DATA offset TYPE i.
+      DATA temp2 TYPE z2ui5_cl_smpc_app_109=>ty_s_event_range.
+    json = condense( val ).
     IF json IS INITIAL.
       RETURN.
     ENDIF.
@@ -213,23 +227,31 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
     " The same reader as Z2UI5_CL_SMP_APP_197 in abap2UI5/samples, and the
     " same limit: it reads what the FRAMEWORK wrote, which is flat, and it
     " would need to resolve escapes for a payload composed from free text.
-    DATA(marker) = |"startDate":"|.
-    DATA(rest)   = json.
+    
+    marker = |"startDate":"|.
+    
+    rest = json.
 
     DO.
-      DATA(offset) = find( val = rest sub = marker ).
+      
+      offset = find( val = rest sub = marker ).
       IF offset < 0.
         EXIT.
       ENDIF.
 
       rest = substring( val = rest off = offset + strlen( marker ) ).
-      INSERT VALUE #( startdate = substring_before( val = rest sub = `"` ) ) INTO TABLE result.
+      
+      CLEAR temp2.
+      temp2-startdate = substring_before( val = rest sub = `"` ).
+      INSERT temp2 INTO TABLE result.
     ENDDO.
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp3 LIKE t_appointments.
+    DATA temp4 LIKE LINE OF temp3.
 
     " the calendar opens in single-day selection, and the button offers to
     " enable the multi-day one - the original's view defaults
@@ -237,18 +259,87 @@ CLASS z2ui5_cl_smpc_app_109 IMPLEMENTATION.
     multiselect_tooltip = `Enable multi-day selection`.
 
     startdate = `2018-07-09T00:00:00`.
-    t_appointments = VALUE #(
-      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        startdate = `2018-07-09T00:00:00` enddate = `2018-07-09T00:00:00` )
-      ( title = `Meet John Miller`                                  text = ``               type = `Type05` icon = ``                        startdate = `2018-07-08T05:00:00` enddate = `2018-07-08T06:00:00` )
-      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        startdate = `2018-07-08T07:00:00` enddate = `2018-07-08T08:00:00` )
-      ( title = `New Product`                                       text = `room 105`       type = `Type01` icon = `sap-icon://meeting-room` startdate = `2018-07-08T08:00:00` enddate = `2018-07-08T09:00:00` )
-      ( title = `Discussion with clients for the new release dates` text = `Online meeting` type = `Type08` icon = ``                        startdate = `2018-07-09T09:00:00` enddate = `2018-07-09T10:00:00` )
-      ( title = `Meeting with the manager`                          text = ``               type = `Type03` icon = ``                        startdate = `2018-07-06T09:00:00` enddate = `2018-07-06T10:00:00` )
-      ( title = `Daily standup meeting`                             text = ``               type = `Type01` icon = ``                        startdate = `2018-07-07T10:00:00` enddate = `2018-07-07T10:30:00` )
-      ( title = `Private meeting`                                   text = ``               type = `Type03` icon = ``                        startdate = `2018-07-06T11:30:00` enddate = `2018-07-06T12:00:00` )
-      ( title = `Lunch`                                             text = ``               type = `Type05` icon = ``                        startdate = `2018-07-06T12:00:00` enddate = `2018-07-06T13:00:00` )
-      ( title = `Discussion of the plan`                            text = ``               type = `Type01` icon = ``                        startdate = `2018-07-16T11:00:00` enddate = `2018-07-16T12:00:00` )
-      ( title = `Lunch`                                             text = `canteen`        type = `Type05` icon = ``                        startdate = `2018-07-16T12:00:00` enddate = `2018-07-16T13:00:00` ) ).
+    
+    CLEAR temp3.
+    
+    temp4-title = `Discussion of the plan`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-09T00:00:00`.
+    temp4-enddate = `2018-07-09T00:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Meet John Miller`.
+    temp4-text = ``.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-08T05:00:00`.
+    temp4-enddate = `2018-07-08T06:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = `canteen`.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-08T07:00:00`.
+    temp4-enddate = `2018-07-08T08:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `New Product`.
+    temp4-text = `room 105`.
+    temp4-type = `Type01`.
+    temp4-icon = `sap-icon://meeting-room`.
+    temp4-startdate = `2018-07-08T08:00:00`.
+    temp4-enddate = `2018-07-08T09:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Discussion with clients for the new release dates`.
+    temp4-text = `Online meeting`.
+    temp4-type = `Type08`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-09T09:00:00`.
+    temp4-enddate = `2018-07-09T10:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Meeting with the manager`.
+    temp4-text = ``.
+    temp4-type = `Type03`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-06T09:00:00`.
+    temp4-enddate = `2018-07-06T10:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Daily standup meeting`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-07T10:00:00`.
+    temp4-enddate = `2018-07-07T10:30:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Private meeting`.
+    temp4-text = ``.
+    temp4-type = `Type03`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-06T11:30:00`.
+    temp4-enddate = `2018-07-06T12:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = ``.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-06T12:00:00`.
+    temp4-enddate = `2018-07-06T13:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Discussion of the plan`.
+    temp4-text = ``.
+    temp4-type = `Type01`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-16T11:00:00`.
+    temp4-enddate = `2018-07-16T12:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-title = `Lunch`.
+    temp4-text = `canteen`.
+    temp4-type = `Type05`.
+    temp4-icon = ``.
+    temp4-startdate = `2018-07-16T12:00:00`.
+    temp4-enddate = `2018-07-16T13:00:00`.
+    INSERT temp4 INTO TABLE temp3.
+    t_appointments = temp3.
 
   ENDMETHOD.
 

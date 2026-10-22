@@ -14,7 +14,7 @@ CLASS z2ui5_cl_smpc_app_643 DEFINITION PUBLIC.
         status       TYPE string,
         overflowmode TYPE string,
       END OF ty_s_product.
-    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
+    DATA t_products TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -31,10 +31,10 @@ CLASS z2ui5_cl_smpc_app_643 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -43,7 +43,8 @@ CLASS z2ui5_cl_smpc_app_643 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -97,16 +98,42 @@ CLASS z2ui5_cl_smpc_app_643 IMPLEMENTATION.
 
   METHOD model_init.
 
-    DATA(lorem) = `Lorem ipsum dolor sit amet, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. `
+    DATA lorem TYPE string.
+    DATA temp1 LIKE t_products.
+    DATA temp2 LIKE LINE OF temp1.
+    lorem = `Lorem ipsum dolor sit amet, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. `
                && `At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, `
                && `sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. `
                && `At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr`.
 
-    t_products = VALUE #(
-        ( name = `Product 1` attribute1 = |The full text is displayed in place. { lorem }|     attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
-        ( name = `Product 2` attribute1 = |The full text is displayed in a popover. { lorem }| attribute2 = `Attribute related to label` status = `Some status` overflowmode = `Popover` )
-        ( name = `Product 3` attribute1 = |The full text is displayed in place. { lorem }|     attribute2 = `Attribute related to label` status = `Some status` overflowmode = `InPlace` )
-        ( name = `Product 4` attribute1 = |The full text is displayed in a popover. { lorem }| attribute2 = `Attribute related to label` status = `Some status` overflowmode = `Popover` ) ).
+    
+    CLEAR temp1.
+    
+    temp2-name = `Product 1`.
+    temp2-attribute1 = |The full text is displayed in place. { lorem }|.
+    temp2-attribute2 = `Attribute related to label`.
+    temp2-status = `Some status`.
+    temp2-overflowmode = `InPlace`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-name = `Product 2`.
+    temp2-attribute1 = |The full text is displayed in a popover. { lorem }|.
+    temp2-attribute2 = `Attribute related to label`.
+    temp2-status = `Some status`.
+    temp2-overflowmode = `Popover`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-name = `Product 3`.
+    temp2-attribute1 = |The full text is displayed in place. { lorem }|.
+    temp2-attribute2 = `Attribute related to label`.
+    temp2-status = `Some status`.
+    temp2-overflowmode = `InPlace`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-name = `Product 4`.
+    temp2-attribute1 = |The full text is displayed in a popover. { lorem }|.
+    temp2-attribute2 = `Attribute related to label`.
+    temp2-status = `Some status`.
+    temp2-overflowmode = `Popover`.
+    INSERT temp2 INTO TABLE temp1.
+    t_products = temp1.
 
   ENDMETHOD.
 

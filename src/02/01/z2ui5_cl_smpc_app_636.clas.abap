@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_636 DEFINITION PUBLIC.
         key  TYPE string,
         text TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
 
     DATA sizetypes TYPE ty_t_item.
     DATA typetypes TYPE ty_t_item.
@@ -33,10 +33,10 @@ CLASS z2ui5_cl_smpc_app_636 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -45,7 +45,8 @@ CLASS z2ui5_cl_smpc_app_636 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -146,69 +147,117 @@ CLASS z2ui5_cl_smpc_app_636 IMPLEMENTATION.
 
   METHOD model_init.
 
-    sizetypes = VALUE #(
-        ( key = `Auto`       text = `Auto` )
-        ( key = `Base`       text = `Base` )
-        ( key = `ExtraSmall` text = `ExtraSmall` )
-        ( key = `Small`      text = `Small` )
-        ( key = `Medium`     text = `Medium` )
-        ( key = `Large`      text = `Large` ) ).
+    DATA temp1 TYPE z2ui5_cl_smpc_app_636=>ty_t_item.
+    DATA temp2 LIKE LINE OF temp1.
+    DATA temp3 TYPE string_table.
+    DATA tnt_keys LIKE temp3.
+    DATA tnt_key LIKE LINE OF tnt_keys.
+      DATA temp5 TYPE z2ui5_cl_smpc_app_636=>ty_s_item.
+    FIELD-SYMBOLS <temp6> LIKE LINE OF sizetypes.
+    DATA temp7 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp8> LIKE LINE OF typetypes.
+    DATA temp9 LIKE sy-tabix.
+    CLEAR temp1.
+    
+    temp2-key = `Auto`.
+    temp2-text = `Auto`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Base`.
+    temp2-text = `Base`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `ExtraSmall`.
+    temp2-text = `ExtraSmall`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Small`.
+    temp2-text = `Small`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Medium`.
+    temp2-text = `Medium`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Large`.
+    temp2-text = `Large`.
+    INSERT temp2 INTO TABLE temp1.
+    sizetypes = temp1.
 
     " original _populateIllustrationTypes: every key of sap.tnt.IllustratedMessageType, in declaration order
-    DATA(tnt_keys) = VALUE string_table(
-        ( `Avatar` )
-        ( `Calculator` )
-        ( `ChartArea` )
-        ( `ChartArea2` )
-        ( `ChartBar` )
-        ( `ChartBPMNFlow` )
-        ( `ChartBullet` )
-        ( `ChartDoughnut` )
-        ( `ChartFlow` )
-        ( `ChartGantt` )
-        ( `ChartOrg` )
-        ( `ChartPie` )
-        ( `CodePlaceholder` )
-        ( `Company` )
-        ( `Compass` )
-        ( `Components` )
-        ( `Dialog` )
-        ( `EmptyContentPane` )
-        ( `ExternalLink` )
-        ( `FaceID` )
-        ( `Fingerprint` )
-        ( `Handshake` )
-        ( `Help` )
-        ( `Lock` )
-        ( `Mission` )
-        ( `MissionFailed` )
-        ( `NoApplications` )
-        ( `NoFlows` )
-        ( `NoUsers` )
-        ( `Radar` )
-        ( `RoadMap` )
-        ( `Secrets` )
-        ( `Services` )
-        ( `SessionExpired` )
-        ( `SessionExpiring` )
-        ( `Settings` )
-        ( `Success` )
-        ( `SuccessfulAuth` )
-        ( `Systems` )
-        ( `Teams` )
-        ( `Tools` )
-        ( `Tutorials` )
-        ( `UnableToLoad` )
-        ( `Unlock` )
-        ( `UnsuccessfulAuth` )
-        ( `User2` ) ).
+    
+    CLEAR temp3.
+    INSERT `Avatar` INTO TABLE temp3.
+    INSERT `Calculator` INTO TABLE temp3.
+    INSERT `ChartArea` INTO TABLE temp3.
+    INSERT `ChartArea2` INTO TABLE temp3.
+    INSERT `ChartBar` INTO TABLE temp3.
+    INSERT `ChartBPMNFlow` INTO TABLE temp3.
+    INSERT `ChartBullet` INTO TABLE temp3.
+    INSERT `ChartDoughnut` INTO TABLE temp3.
+    INSERT `ChartFlow` INTO TABLE temp3.
+    INSERT `ChartGantt` INTO TABLE temp3.
+    INSERT `ChartOrg` INTO TABLE temp3.
+    INSERT `ChartPie` INTO TABLE temp3.
+    INSERT `CodePlaceholder` INTO TABLE temp3.
+    INSERT `Company` INTO TABLE temp3.
+    INSERT `Compass` INTO TABLE temp3.
+    INSERT `Components` INTO TABLE temp3.
+    INSERT `Dialog` INTO TABLE temp3.
+    INSERT `EmptyContentPane` INTO TABLE temp3.
+    INSERT `ExternalLink` INTO TABLE temp3.
+    INSERT `FaceID` INTO TABLE temp3.
+    INSERT `Fingerprint` INTO TABLE temp3.
+    INSERT `Handshake` INTO TABLE temp3.
+    INSERT `Help` INTO TABLE temp3.
+    INSERT `Lock` INTO TABLE temp3.
+    INSERT `Mission` INTO TABLE temp3.
+    INSERT `MissionFailed` INTO TABLE temp3.
+    INSERT `NoApplications` INTO TABLE temp3.
+    INSERT `NoFlows` INTO TABLE temp3.
+    INSERT `NoUsers` INTO TABLE temp3.
+    INSERT `Radar` INTO TABLE temp3.
+    INSERT `RoadMap` INTO TABLE temp3.
+    INSERT `Secrets` INTO TABLE temp3.
+    INSERT `Services` INTO TABLE temp3.
+    INSERT `SessionExpired` INTO TABLE temp3.
+    INSERT `SessionExpiring` INTO TABLE temp3.
+    INSERT `Settings` INTO TABLE temp3.
+    INSERT `Success` INTO TABLE temp3.
+    INSERT `SuccessfulAuth` INTO TABLE temp3.
+    INSERT `Systems` INTO TABLE temp3.
+    INSERT `Teams` INTO TABLE temp3.
+    INSERT `Tools` INTO TABLE temp3.
+    INSERT `Tutorials` INTO TABLE temp3.
+    INSERT `UnableToLoad` INTO TABLE temp3.
+    INSERT `Unlock` INTO TABLE temp3.
+    INSERT `UnsuccessfulAuth` INTO TABLE temp3.
+    INSERT `User2` INTO TABLE temp3.
+    
+    tnt_keys = temp3.
 
-    LOOP AT tnt_keys INTO DATA(tnt_key).
-      INSERT VALUE #( key = |tnt-{ tnt_key }| text = tnt_key ) INTO TABLE typetypes.
+    
+    LOOP AT tnt_keys INTO tnt_key.
+      
+      CLEAR temp5.
+      temp5-key = |tnt-{ tnt_key }|.
+      temp5-text = tnt_key.
+      INSERT temp5 INTO TABLE typetypes.
     ENDLOOP.
 
-    sselectedsize = sizetypes[ 1 ]-key.
-    sselectedtype = typetypes[ 1 ]-key.
+    
+    
+    temp7 = sy-tabix.
+    READ TABLE sizetypes INDEX 1 ASSIGNING <temp6>.
+    sy-tabix = temp7.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    sselectedsize = <temp6>-key.
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE typetypes INDEX 1 ASSIGNING <temp8>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    sselectedtype = <temp8>-key.
 
   ENDMETHOD.
 

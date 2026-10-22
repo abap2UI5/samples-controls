@@ -25,7 +25,8 @@ CLASS z2ui5_cl_smpc_app_659 DEFINITION PUBLIC.
         icon           TYPE string,
         filesize_units TYPE string,
       END OF ty_s_item.
-    DATA t_items TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES temp1_30fe27a234 TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
+DATA t_items TYPE temp1_30fe27a234.
     " onSelectionChange: Download for one or more rows, the rest for exactly one
     DATA download_enabled TYPE abap_bool.
     DATA single_enabled   TYPE abap_bool.
@@ -101,12 +102,12 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -115,8 +116,58 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp7 TYPE string_table.
+    DATA temp8 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `IMAGEURL` INTO TABLE temp1.
+    INSERT `UPLOADSTATE` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `table-uploadSet` INTO TABLE temp2.
+    INSERT `items` INTO TABLE temp2.
+    INSERT `filter` INTO TABLE temp2.
+    INSERT `FILENAME` INTO TABLE temp2.
+    INSERT `Contains` INTO TABLE temp2.
+    INSERT `${$source>/value}` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `uploadSetPlugin` INTO TABLE temp3.
+    INSERT `download` INTO TABLE temp3.
+    INSERT `$controller.getView().byId('table-uploadSet').getSelectedContexts()[0]` INTO TABLE temp3.
+    INSERT `true` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `uploadSetPlugin` INTO TABLE temp4.
+    INSERT `renameItem` INTO TABLE temp4.
+    INSERT `$controller.getView().byId('table-uploadSet').getSelectedContexts()[0]` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp5.
+    INSERT `${$parameters>/item}.getMediaType()` INTO TABLE temp5.
+    INSERT `${$parameters>/item}.getFileObject().size` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    temp6-check_prevent_default = abap_true.
+    temp6-check_queue_last = abap_true.
+    
+    CLEAR temp7.
+    INSERT `${$parameters>/item}.getBindingContext().getPath()` INTO TABLE temp7.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp7.
+    
+    CLEAR temp8.
+    INSERT `uploadSetPlugin` INTO TABLE temp8.
+    INSERT `openFilePreview` INTO TABLE temp8.
+    INSERT `$event.oSource.getBindingContext()` INTO TABLE temp8.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`         v = `sap.m`
         )->a( n = `xmlns:mvc`     v = `sap.ui.core.mvc`
@@ -144,8 +195,7 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                     " none, so the view's undefined checks read as in the sample
                     )->a( n = `items`           v = |\{ path: '{ client->_bind( val                = t_items
                                                                                 path               = abap_true
-                                                                                omit_initial_paths = VALUE #( ( `IMAGEURL` )
-                                                                                                              ( `UPLOADSTATE` ) ) ) }', templateShareable: false \}|
+                                                                                omit_initial_paths = temp1 ) }', templateShareable: false \}|
                     )->a( n = `selectionChange` v = client->_event( val = `SELECTION`
                                                                     arg = `$event.oSource.getSelectedContexts().join()` )
 
@@ -159,12 +209,7 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                             )->ele( `SearchField`
                                 )->a( n = `width`      v = `20%`
                                 )->a( n = `liveChange` v = client->follow_up_action( val   = client->cs_event-binding_call
-                                                                                     t_arg = VALUE #( ( `table-uploadSet` )
-                                                                                                      ( `items` )
-                                                                                                      ( `filter` )
-                                                                                                      ( `FILENAME` )
-                                                                                                      ( `Contains` )
-                                                                                                      ( `${$source>/value}` ) ) )
+                                                                                     t_arg = temp2 )
 
                                 )->ele( `layoutData`
                                     )->tag( `OverflowToolbarLayoutData`
@@ -181,10 +226,7 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                                 )->a( n = `text`    v = `Download`
                                 )->a( n = `enabled` v = client->_bind( download_enabled )
                                 )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                  t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                   ( `download` )
-                                                                                                   ( `$controller.getView().byId('table-uploadSet').getSelectedContexts()[0]` )
-                                                                                                   ( `true` ) ) )
+                                                                                  t_arg = temp3 )
 
                             )->ele( `MenuButton`
                                 )->a( n = `text` v = `Add`
@@ -219,9 +261,7 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                                 )->a( n = `id`      v = `renameButton`
                                 )->a( n = `enabled` v = client->_bind( single_enabled )
                                 )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                  t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                   ( `renameItem` )
-                                                                                                   ( `$controller.getView().byId('table-uploadSet').getSelectedContexts()[0]` ) ) )
+                                                                                  t_arg = temp4 )
                                 )->a( n = `text`    v = `Rename`
 
                                 )->ele( `layoutData`
@@ -254,14 +294,10 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                             " the mock server's part: the upload is vetoed and the backend
                             " adds the row the fake 201 response would have created
                             )->a( n = `beforeUploadStarts`     v = client->_event( val    = `UPLOAD`
-                                                                                   t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
-                                                                                                     ( `${$parameters>/item}.getMediaType()` )
-                                                                                                     ( `${$parameters>/item}.getFileObject().size` ) )
-                                                                                   s_ctrl = VALUE #( check_prevent_default = abap_true
-                                                                                                     check_queue_last      = abap_true ) )
+                                                                                   t_arg  = temp5
+                                                                                   s_ctrl = temp6 )
                             )->a( n = `itemRenamed`            v = client->_event( val   = `RENAMED`
-                                                                                   t_arg = VALUE #( ( `${$parameters>/item}.getBindingContext().getPath()` )
-                                                                                                    ( `${$parameters>/item}.getFileName()` ) ) )
+                                                                                   t_arg = temp7 )
                             )->a( n = `itemRenameCanceled`     v = client->_event( `RENAME_CANCELED` )
                             )->a( n = `cloudFilePickerEnabled` v = `true`
                             )->a( n = `actions`                v = `uploadButton`
@@ -362,9 +398,7 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
                                         )->tag( `Link`
                                             )->a( n = `text`  v = `{FILENAME}`
                                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                            t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                             ( `openFilePreview` )
-                                                                                                             ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                            t_arg = temp8 )
                                             )->a( n = `class` v = `sapUiTinyMarginBottom`
                                         )->tag( `Text`
                                             )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -403,7 +437,8 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
   METHOD popup_url_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`             v = `sap.m`
@@ -464,18 +499,43 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA temp3 TYPE string_table.
+        DATA temp1 TYPE xsdboolean.
+        DATA temp2 TYPE xsdboolean.
+        DATA current TYPE i.
+        DATA row LIKE LINE OF t_items.
+        FIELD-SYMBOLS <temp5> LIKE LINE OF t_items.
+        DATA temp6 LIKE sy-tabix.
+          DATA target TYPE i.
+            FIELD-SYMBOLS <temp4> LIKE LINE OF t_items.
+            DATA temp5 LIKE sy-tabix.
+            FIELD-SYMBOLS <temp6> LIKE LINE OF t_items.
+            DATA temp7 LIKE sy-tabix.
+          FIELD-SYMBOLS <temp8> LIKE LINE OF t_selected.
+          DATA temp9 LIKE sy-tabix.
+          DATA index TYPE i.
+        DATA temp10 TYPE i.
+        DATA renamed TYPE i.
+          FIELD-SYMBOLS <temp11> LIKE LINE OF t_items.
+          DATA temp12 LIKE sy-tabix.
 
     CASE client->get_event( ).
 
       WHEN `SELECTION`.
         " onSelectionChange - the selected rows arrive as their binding paths
         IF client->get_event_arg( ) IS INITIAL.
-          t_selected = VALUE #( ).
+          
+          CLEAR temp3.
+          t_selected = temp3.
         ELSE.
           SPLIT client->get_event_arg( ) AT `,` INTO TABLE t_selected.
         ENDIF.
-        download_enabled = xsdbool( t_selected IS NOT INITIAL ).
-        single_enabled   = xsdbool( lines( t_selected ) = 1 ).
+        
+        temp1 = boolc( t_selected IS NOT INITIAL ).
+        download_enabled = temp1.
+        
+        temp2 = boolc( lines( t_selected ) = 1 ).
+        single_enabled   = temp2.
 
       WHEN `ADD_URL`.
         " openAddOrEditDialog in its Add shape
@@ -493,11 +553,21 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
       WHEN `EDIT_URL`.
         " onEditUrl - the same fragment as Edit URL, filled from the selected row
-        DATA(current) = selected_index( ).
+        
+        current = selected_index( ).
         IF current = 0.
           RETURN.
         ENDIF.
-        DATA(row) = t_items[ current ].
+        
+        
+        
+        temp6 = sy-tabix.
+        READ TABLE t_items INDEX current ASSIGNING <temp5>.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        row = <temp5>.
         is_edit         = abap_true.
         dialog_title    = `Edit URL`.
         apply_text      = `Apply`.
@@ -518,17 +588,42 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
           " the Save button validates (value states) and applies regardless
           name_valid( ).
           url_valid( ).
-          DATA(target) = selected_index( ).
+          
+          target = selected_index( ).
           IF target > 0.
-            t_items[ target ]-filename = name_input.
-            t_items[ target ]-url      = url_input.
+            
+            
+            temp5 = sy-tabix.
+            READ TABLE t_items INDEX target ASSIGNING <temp4>.
+            sy-tabix = temp5.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            <temp4>-filename = name_input.
+            
+            
+            temp7 = sy-tabix.
+            READ TABLE t_items INDEX target ASSIGNING <temp6>.
+            sy-tabix = temp7.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            <temp6>-url      = url_input.
           ENDIF.
           client->popup_destroy( ).
         ENDIF.
 
       WHEN `REMOVE_SELECTED`.
         IF t_selected IS NOT INITIAL.
-          remove_ask( t_selected[ 1 ] ).
+          
+          
+          temp9 = sy-tabix.
+          READ TABLE t_selected INDEX 1 ASSIGNING <temp8>.
+          sy-tabix = temp9.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          remove_ask( <temp8> ).
         ENDIF.
 
       WHEN `REMOVE_ROW`.
@@ -536,7 +631,8 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
       WHEN `REMOVE_CLOSE`.
         IF client->get_event_arg( ) = `Remove`.
-          DATA(index) = row_index( remove_path ).
+          
+          index = row_index( remove_path ).
           IF index BETWEEN 1 AND lines( t_items ).
             DELETE t_items INDEX index.
           ENDIF.
@@ -545,17 +641,28 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
       WHEN `UPLOAD`.
         " the file the FileUploader picked, as the mock server would answer it
+        
+        temp10 = client->get_event_arg( 3 ).
         row_add( filename  = client->get_event_arg( )
                  mediatype = client->get_event_arg( 2 )
                  url       = ``
-                 filesize  = CONV #( client->get_event_arg( 3 ) ) ).
+                 filesize  = temp10 ).
         client->message_toast_display( `Document Added` ).
 
       WHEN `RENAMED`.
         " onDocumentRenamedSuccess writes the new name into the row
-        DATA(renamed) = row_index( client->get_event_arg( ) ).
+        
+        renamed = row_index( client->get_event_arg( ) ).
         IF renamed BETWEEN 1 AND lines( t_items ).
-          t_items[ renamed ]-filename = client->get_event_arg( 2 ).
+          
+          
+          temp12 = sy-tabix.
+          READ TABLE t_items INDEX renamed ASSIGNING <temp11>.
+          sy-tabix = temp12.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          <temp11>-filename = client->get_event_arg( 2 ).
         ENDIF.
         client->message_toast_display( text = `Document Renamed.` duration = `2000` ).
 
@@ -568,15 +675,22 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
 
   METHOD url_apply.
+        DATA temp13 TYPE string_table.
+    DATA has_error TYPE abap_bool.
+    DATA temp3 TYPE xsdboolean.
 
     " handleAddViaUrl
     IF is_edit = abap_true.
       IF name_valid( ) = abap_true.
         " showEditConfirmation - a Message dialog in the Warning state
+        
+        CLEAR temp13.
+        INSERT `Save` INTO TABLE temp13.
+        INSERT `DiscardChanges` INTO TABLE temp13.
         client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
                                      type             = `warning`
                                      title            = `Warning`
-                                     actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
+                                     actions          = temp13
                                      emphasizedaction = `Save`
                                      onclose          = `EDIT_CONFIRM` ).
       ELSE.
@@ -584,7 +698,10 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
       ENDIF.
       RETURN.
     ENDIF.
-    DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
+    
+    
+    temp3 = boolc( name_valid( ) = abap_false ).
+    has_error = temp3.
     IF url_valid( ) = abap_false.
       has_error = abap_true.
     ENDIF.
@@ -605,14 +722,30 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
   METHOD remove_ask.
 
     " removeItem - MessageBox.warning; the icon is the warning box's own
-    DATA(index) = row_index( path ).
+    DATA index TYPE i.
+    DATA temp15 TYPE string_table.
+    FIELD-SYMBOLS <temp7> LIKE LINE OF t_items.
+    DATA temp8 LIKE sy-tabix.
+    index = row_index( path ).
     IF index NOT BETWEEN 1 AND lines( t_items ).
       RETURN.
     ENDIF.
     remove_path = path.
-    client->message_box_display( text             = |Are you sure you want to remove the document { t_items[ index ]-filename } ?|
+    
+    CLEAR temp15.
+    INSERT `Remove` INTO TABLE temp15.
+    INSERT `CANCEL` INTO TABLE temp15.
+    
+    
+    temp8 = sy-tabix.
+    READ TABLE t_items INDEX index ASSIGNING <temp7>.
+    sy-tabix = temp8.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    client->message_box_display( text             = |Are you sure you want to remove the document { <temp7>-filename } ?|
                                  type             = `warning`
-                                 actions          = VALUE #( ( `Remove` ) ( `CANCEL` ) )
+                                 actions          = temp15
                                  emphasizedaction = `Remove`
                                  styleclass       = `sapMUSTRemovePopoverContainer`
                                  initialfocus     = `CANCEL`
@@ -624,9 +757,16 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
   METHOD selection_reset.
 
     " oTable.removeSelections( ) - and the buttons follow the empty selection
+    DATA temp17 TYPE string_table.
+    DATA temp19 TYPE string_table.
+    CLEAR temp17.
+    INSERT `table-uploadSet` INTO TABLE temp17.
+    INSERT `removeSelections` INTO TABLE temp17.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `table-uploadSet` ) ( `removeSelections` ) ) ).
-    t_selected       = VALUE #( ).
+                              t_arg = temp17 ).
+    
+    CLEAR temp19.
+    t_selected       = temp19.
     download_enabled = abap_false.
     single_enabled   = abap_false.
 
@@ -664,21 +804,27 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
 
   METHOD row_add.
+    DATA temp20 TYPE ty_s_item.
+    DATA row LIKE temp20.
 
     " the mock server's Create branch - unshift the new document
     upload_no = upload_no + 1.
-    DATA(row) = VALUE ty_s_item( id             = |{ upload_no }|
-                                 filename       = filename
-                                 mediatype      = mediatype
-                                 url            = url
-                                 uploadstate    = `Complete`
-                                 revision       = `00`
-                                 status         = `In work`
-                                 filesize       = filesize
-                                 lastmodifiedby = `Jane Burns`
-                                 lastmodified   = `10/03/21, 10:03:00 PM`
-                                 documenttype   = `Invoice`
-                                 trustedsource  = abap_true ).
+    
+    CLEAR temp20.
+    temp20-id = |{ upload_no }|.
+    temp20-filename = filename.
+    temp20-mediatype = mediatype.
+    temp20-url = url.
+    temp20-uploadstate = `Complete`.
+    temp20-revision = `00`.
+    temp20-status = `In work`.
+    temp20-filesize = filesize.
+    temp20-lastmodifiedby = `Jane Burns`.
+    temp20-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp20-documenttype = `Invoice`.
+    temp20-trustedsource = abap_true.
+    
+    row = temp20.
     row_derive( CHANGING row = row ).
     INSERT row INTO t_items INDEX 1.
 
@@ -686,12 +832,22 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
 
   METHOD selected_index.
+    FIELD-SYMBOLS <temp21> LIKE LINE OF t_selected.
+    DATA temp22 LIKE sy-tabix.
 
     " the one selected row the toolbar actions work on - 0 when there is none
     IF t_selected IS INITIAL.
       RETURN.
     ENDIF.
-    result = row_index( t_selected[ 1 ] ).
+    
+    
+    temp22 = sy-tabix.
+    READ TABLE t_selected INDEX 1 ASSIGNING <temp21>.
+    sy-tabix = temp22.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = row_index( <temp21> ).
     IF result > lines( t_items ).
       result = 0.
     ENDIF.
@@ -702,15 +858,21 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
   METHOD row_index.
 
     " a row's binding path ends in its 0-based index: /T_ITEMS/3 is the 4th row
-    DATA(slash) = find( val = path sub = `/` occ = -1 ).
+    DATA slash TYPE i.
+    DATA digits TYPE string.
+    DATA temp23 TYPE i.
+    slash = find( val = path sub = `/` occ = -1 ).
     IF slash < 0.
       RETURN.
     ENDIF.
-    DATA(digits) = substring( val = path off = slash + 1 ).
+    
+    digits = substring( val = path off = slash + 1 ).
     IF digits IS INITIAL OR digits CN `0123456789`.
       RETURN.
     ENDIF.
-    result = CONV i( digits ) + 1.
+    
+    temp23 = digits.
+    result = temp23 + 1.
 
   ENDMETHOD.
 
@@ -724,11 +886,15 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
 
   METHOD icon_for.
+      DATA type TYPE string.
+    DATA dot TYPE i.
+    DATA extension TYPE string.
 
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      DATA(type) = to_lower( mediatype ).
+      
+      type = to_lower( mediatype ).
       CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
@@ -768,12 +934,14 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(dot) = find( val = filename sub = `.` occ = -1 ).
+    
+    dot = find( val = filename sub = `.` occ = -1 ).
     IF dot < 0.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    
+    extension = to_lower( substring( val = filename off = dot + 1 ) ).
     CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
@@ -798,7 +966,11 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
 
     " UploadSetwithTable.getFileSizeWithUnits - KB below a megabyte, then MB, then GB
     CONSTANTS kilobyte TYPE i VALUE 1024.
-    DATA(bytes) = CONV decfloat34( size ).
+    DATA temp24 TYPE decfloat34.
+    DATA bytes LIKE temp24.
+    temp24 = size.
+    
+    bytes = temp24.
     IF size < kilobyte * kilobyte.
       result = |{ bytes / kilobyte DECIMALS = 2 } KB|.
     ELSEIF size < kilobyte * kilobyte * kilobyte.
@@ -813,44 +985,137 @@ CLASS z2ui5_cl_smpc_app_659 IMPLEMENTATION.
   METHOD model_init.
 
     " model/documents.json, every row - the document URLs point at the OpenUI5 host
-    t_items = VALUE #(
-      ( id = `23004569` filename = `Invoice summary.doc` mediatype = `application/msword`
-        imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png` url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`
-        revision = `01` status = `In work` filesize = 200 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Invoice` previewable = abap_true )
-      ( id = `23004589` filename = `Business Plan Topics.xls` mediatype = `application/vnd.ms-excel`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Topics.xls`
-        revision = `00` status = `In work` filesize = 2400 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Invoice` previewable = abap_true )
-      ( id = `23004578` filename = `Instructions.pdf` mediatype = `application/pdf`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`
-        revision = `01` status = `In work` filesize = 30000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Specification` previewable = abap_true trustedsource = abap_true )
-      ( id = `23004579` filename = `Document.txt` mediatype = `text/plain`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`
-        revision = `42` status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Document` previewable = abap_true )
-      ( id = `23004581` filename = `Test Image.png` mediatype = `image/png`
-        imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png` url = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png`
-        revision = `06` status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Attachment` previewable = abap_true )
-      ( id = `23004582` filename = `Test Attachment.gif` mediatype = `image/gif`
-        imageurl = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif` url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif`
-        revision = `11` status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Attachment` previewable = abap_true )
-      ( id = `23004583` filename = `Test Video.mp4` mediatype = `video/mp4`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`
-        revision = `99` status = `In work` filesize = 420000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Attachment` previewable = abap_true )
-      ( id = `23004590` filename = `Sample Zip File.zip` mediatype = `application/zip`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`
-        revision = `00` status = `In work` filesize = 42000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
-        documenttype = `Attachment` previewable = abap_true )
-      ( id = `23004584` filename = `Transmission.vds` mediatype = `model/vnd.sap.vds`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/transmission.vds`
-        revision = `42` status = `In work` filesize = 123 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
-        documenttype = `Attachment` previewable = abap_true ) ).
-    LOOP AT t_items REFERENCE INTO DATA(row).
+    DATA temp25 LIKE t_items.
+    DATA temp26 LIKE LINE OF temp25.
+    DATA temp27 LIKE LINE OF t_items.
+    DATA row LIKE REF TO temp27.
+    CLEAR temp25.
+    
+    CLEAR temp26.
+    temp26-id = `23004569`.
+    temp26-filename = `Invoice summary.doc`.
+    temp26-mediatype = `application/msword`.
+    temp26-imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`.
+    temp26-revision = `01`.
+    temp26-status = `In work`.
+    temp26-filesize = 200.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Invoice`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004589`.
+    temp26-filename = `Business Plan Topics.xls`.
+    temp26-mediatype = `application/vnd.ms-excel`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Topics.xls`.
+    temp26-revision = `00`.
+    temp26-status = `In work`.
+    temp26-filesize = 2400.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Invoice`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004578`.
+    temp26-filename = `Instructions.pdf`.
+    temp26-mediatype = `application/pdf`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`.
+    temp26-revision = `01`.
+    temp26-status = `In work`.
+    temp26-filesize = 30000.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Specification`.
+    temp26-previewable = abap_true.
+    temp26-trustedsource = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004579`.
+    temp26-filename = `Document.txt`.
+    temp26-mediatype = `text/plain`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`.
+    temp26-revision = `42`.
+    temp26-status = `In work`.
+    temp26-filesize = 420.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Document`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004581`.
+    temp26-filename = `Test Image.png`.
+    temp26-mediatype = `image/png`.
+    temp26-imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png`.
+    temp26-revision = `06`.
+    temp26-status = `In work`.
+    temp26-filesize = 420.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Attachment`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004582`.
+    temp26-filename = `Test Attachment.gif`.
+    temp26-mediatype = `image/gif`.
+    temp26-imageurl = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif`.
+    temp26-revision = `11`.
+    temp26-status = `In work`.
+    temp26-filesize = 420.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Attachment`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004583`.
+    temp26-filename = `Test Video.mp4`.
+    temp26-mediatype = `video/mp4`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`.
+    temp26-revision = `99`.
+    temp26-status = `In work`.
+    temp26-filesize = 420000.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp26-documenttype = `Attachment`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004590`.
+    temp26-filename = `Sample Zip File.zip`.
+    temp26-mediatype = `application/zip`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`.
+    temp26-revision = `00`.
+    temp26-status = `In work`.
+    temp26-filesize = 42000.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/22, 10:20:00 PM`.
+    temp26-documenttype = `Attachment`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    CLEAR temp26.
+    temp26-id = `23004584`.
+    temp26-filename = `Transmission.vds`.
+    temp26-mediatype = `model/vnd.sap.vds`.
+    temp26-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/transmission.vds`.
+    temp26-revision = `42`.
+    temp26-status = `In work`.
+    temp26-filesize = 123.
+    temp26-lastmodifiedby = `Jane Burns`.
+    temp26-lastmodified = `10/03/22, 10:20:00 PM`.
+    temp26-documenttype = `Attachment`.
+    temp26-previewable = abap_true.
+    INSERT temp26 INTO TABLE temp25.
+    t_items = temp25.
+    
+    
+    LOOP AT t_items REFERENCE INTO row.
       row_derive( CHANGING row = row->* ).
     ENDLOOP.
 

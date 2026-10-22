@@ -21,9 +21,9 @@ CLASS z2ui5_cl_smpc_app_666 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -32,7 +32,8 @@ CLASS z2ui5_cl_smpc_app_666 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -61,10 +62,27 @@ CLASS z2ui5_cl_smpc_app_666 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp1 TYPE string_table.
+      DATA temp2 TYPE string_table.
+      DATA temp3 LIKE LINE OF temp2.
 
     IF client->get_event( ) = `OPEN_SWITCH`.
-      DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+      
+      popover = z2ui5_cl_ui5_view_builder=>factory( ).
 
+      
+      CLEAR temp1.
+      INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+      INSERT `show` INTO TABLE temp1.
+      INSERT `Redirecting to {0}` INTO TABLE temp1.
+      INSERT `${$parameters>/itemPressed}.getTargetSrc()` INTO TABLE temp1.
+      
+      CLEAR temp2.
+      INSERT `REDIRECT` INTO TABLE temp2.
+      
+      temp3 = |\{ URL: $\{$parameters>/itemPressed\}.getTargetSrc(), NEW_WINDOW: true \}|.
+      INSERT temp3 INTO TABLE temp2.
       popover->ele( n = `FragmentDefinition` ns = `core`
           )->a( n = `xmlns`      v = `sap.m`
           )->a( n = `xmlns:f`    v = `sap.f`
@@ -90,14 +108,10 @@ CLASS z2ui5_cl_smpc_app_666 IMPLEMENTATION.
                   " URLHelper.redirect( targetSrc, true ) - two client actions on one event
                   )->a( n = `change` v = client->follow_up_action(
                             val   = client->cs_event-control_global
-                            t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                             ( `show` )
-                                             ( `Redirecting to {0}` )
-                                             ( `${$parameters>/itemPressed}.getTargetSrc()` ) ) ) && `; ` &&
+                            t_arg = temp1 ) && `; ` &&
                                         client->follow_up_action(
                             val   = client->cs_event-urlhelper
-                            t_arg = VALUE #( ( `REDIRECT` )
-                                             ( |\{ URL: $\{$parameters>/itemPressed\}.getTargetSrc(), NEW_WINDOW: true \}| ) ) )
+                            t_arg = temp2 )
 
                   )->ele( n = `items` ns = `f`
                       )->tag( n = `ProductSwitchItem` ns = `f`

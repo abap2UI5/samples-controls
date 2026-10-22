@@ -20,7 +20,7 @@ CLASS z2ui5_cl_smpc_app_120 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -29,7 +29,8 @@ CLASS z2ui5_cl_smpc_app_120 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " raw HTML injected via the core:HTML content attribute (the builder xml-escapes it into the attribute)
     view->ele( n = `View` ns = `mvc`
