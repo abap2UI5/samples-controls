@@ -5607,6 +5607,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         score = 4
         score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.34`
+        is_deprecated = abap_true
+        dep_text = `Deprecated since 1.153: Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant.`
         notes = text1 ) ).
 
     text1 = `NOTE: onItemClose is reproduced 1:1 since 2026-08-05. The original removes the item from its list (oList.removeItem(oItem)) and toasts its title; the port does BOTH client-side on the same event.` &&
@@ -5632,6 +5634,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` look.`
         since = `1.34`
         is_post171 = abap_true
+        is_deprecated = abap_true
+        dep_text = `Deprecated since 1.153: Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant.`
         notes = text1
         post171 = `the NotificationList container control (since UI5 1.90) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.90 to render it (control-level, invisible to the member-level` &&
                  ` property gate).` ) ).
@@ -5657,6 +5661,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` look.`
         since = `1.34`
         is_post171 = abap_true
+        is_deprecated = abap_true
+        dep_text = `Deprecated since 1.153: Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant.`
         notes = text1
         post171 = `sap.m.NotificationList (control since UI5 1.90) is the container the sample binds its groups to and is kept 1:1, like the other notification ports (076/077). templateShareable: true is a binding-info` &&
                  ` parameter, not a control member, so no gate can see it - it is kept verbatim on all four aggregation bindings and declared here by policy (apps 264/265 precedent). The app needs a UI5 release >=` &&
@@ -5678,6 +5684,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` look.`
         since = `1.34`
         is_post171 = abap_true
+        is_deprecated = abap_true
+        dep_text = `Deprecated since 1.153: Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant.`
         notes = text1
         post171 = `The sap.m.NotificationList container is @since 1.90 - newer than the 1.71 floor. The sample's two groups live in it, so it is kept and the port is filed under src/02.` ) ).
 
@@ -5701,6 +5709,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` look.`
         since = `1.34`
         is_post171 = abap_true
+        is_deprecated = abap_true
+        dep_text = `Deprecated since 1.153: Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant.`
         notes = text1
         post171 = `the NotificationList container control (since UI5 1.90) is newer than 1.71 but kept for the 1:1 port - the app needs a UI5 release >= 1.90 to render it (control-level, invisible to the member-level` &&
                  ` property gate).` ) ).

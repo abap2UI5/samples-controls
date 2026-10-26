@@ -1927,7 +1927,7 @@ test('e2e-smoke and validate-meta read the demo apps from ui5/demoapps.json', as
   // script that imported it and then booted a hard-coded list passed that)
   const root = makeFixtureRoot();
   try {
-    for (const s of ['e2e-smoke.mjs', 'validate-meta.mjs', 'lib-a2ui5.mjs', 'lib-smoke.mjs', 'lib-packages.mjs']) {
+    for (const s of ['e2e-smoke.mjs', 'validate-meta.mjs', 'lib-a2ui5.mjs', 'lib-smoke.mjs', 'lib-e2e.mjs', 'lib-packages.mjs']) {
       fs.copyFileSync(path.join(REPO, 'scripts', s), path.join(root, 'scripts', s));
     }
     fs.symlinkSync(path.join(REPO, 'node_modules'), path.join(root, 'node_modules'), 'dir');

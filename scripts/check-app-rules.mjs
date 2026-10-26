@@ -41,34 +41,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { parseJsonc } from './lib/jsonc.mjs';
 
 const HERE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE = '.github/abaplint/app-rules.json';
 const RAW = `https://raw.githubusercontent.com/abap2UI5/abap2UI5/main/${SOURCE}`;
 const SIBLING = path.join(HERE, '..', 'abap2UI5', SOURCE);
-
-/* JSONC: strip comments, keeping anything inside a string. A naive strip eats
- * the `//` of the dependency URLs this config carries. */
-function parseJsonc(text) {
-  let out = '';
-  let inString = false;
-  let quote = '';
-  for (let i = 0; i < text.length; i += 1) {
-    const c = text[i];
-    const next = text[i + 1];
-    if (inString) {
-      out += c;
-      if (c === '\\') { out += next; i += 1; continue; }
-      if (c === quote) inString = false;
-      continue;
-    }
-    if (c === '"' || c === "'") { inString = true; quote = c; out += c; continue; }
-    if (c === '/' && next === '/') { while (i < text.length && text[i] !== '\n') i += 1; out += '\n'; continue; }
-    if (c === '/' && next === '*') { i += 2; while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i += 1; i += 1; continue; }
-    out += c;
-  }
-  return JSON.parse(out.replace(/,(\s*[}\]])/g, '$1'));
-}
 
 const shared = (rules) => {
   const out = {};

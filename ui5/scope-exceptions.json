@@ -10,6 +10,56 @@
     "deprecated": "1.129"
    },
    "reason": "KEEP permanently (decided 2026-07-30, session decision under the standing continue-with-everything mandate; revertible by deleting the port + this entry): sap.m.UploadSet is deprecated but the port is gate-verified and exercises upload-set idioms no other port covers; deleting it would remove working training signal. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.NotificationListItem",
+   "class": "z2ui5_cl_smpc_app_076",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListItem was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.NotificationListGroup",
+   "class": "z2ui5_cl_smpc_app_077",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.NotificationListGroupBindings",
+   "class": "z2ui5_cl_smpc_app_291",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.MaxNumberOfNotificationsReached",
+   "class": "z2ui5_cl_smpc_app_444",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.NotificationListGroupLazyLoading",
+   "class": "z2ui5_cl_smpc_app_520",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
   }
  ]
 }
