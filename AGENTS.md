@@ -76,10 +76,16 @@ rebuild it as an abap2UI5 sample**. Doing that systematically reveals the gaps
 between what UI5 ships and what abap2UI5 can already express — and those gaps
 become the backlog to close.
 
-**Porting scope**: a sample is in scope when its **control exists since UI5
-1.71** and is **not deprecated** in the current release (legacy-free ready) —
-computed per sample from `ui5/universe.json` by `generate-coverage.mjs`
-(`scopeOf`). Out-of-scope samples stay listed in `api.md` (marked `✗`) but are
+**Porting scope**: a sample is in scope when its **control is not
+deprecated** in the current release (legacy-free ready) — computed per sample
+from `ui5/universe.json` by `generate-coverage.mjs` (`scopeOf`). A control
+**newer than UI5 1.71** is in scope too (maintainer decision 2026-10-20 — it
+was out of scope before, which left 48 samples of Avatar, IllustratedMessage,
+DynamicDateRange, SidePanel, p13n, UploadSetwithTable & co. unported): its
+port keeps the control 1:1 and declares it as a **`POST_171` deviation naming
+the control**, which files the port under `src/02` (§3). `generate-coverage.mjs`
+fails a port of a post-1.71 control without that deviation, and the scaffolder
+writes it for you. Out-of-scope samples stay listed in `api.md` (marked `✗`) but are
 **never ported**; `node scripts/generate-coverage.mjs --backlog` prints the
 in-scope, unported samples for batch planning.
 
@@ -109,7 +115,7 @@ family **before** the control has to resolve in the fork checkout
 (`ControllerExtension` carries `entity: null` in the universe and would
 otherwise report `UNRESOLVED`). Adding a family is a maintainer decision —
 write the reason into the file; a ported sample that matches hits the same
-hard scope gate as a deprecated/newer one.
+hard scope gate as a deprecated one.
 
 > **⚠️ Verify scope from source before porting.** The gate is not blind:
 > `ui5/properties.json` carries each control's class-level
@@ -276,17 +282,18 @@ naming the folder it belongs in. A port needs a newer runtime in two ways, and
 both are committed facts, so the verdict is offline and deterministic:
 
 - it **keeps a post-1.71 member** — always a `POST_171` deviation in the sidecar;
-- its **control itself is post-1.71** — which needs no deviation (the sample uses
-  the control as the original does) and can only exist as a maintainer-decided
-  entry in `ui5/scope-exceptions.json`, since the scope gate blocks every other
-  post-1.71 control. That entry pins the control's `@since`, which is what
-  `lib-packages.mjs` reads (app 141, `sap.ui.core.InvisibleMessage` @1.78, is
-  the case with no deviation at all).
+- its **control itself is post-1.71** — also a `POST_171` deviation, naming the
+  control (§1; `generate-coverage.mjs` fails the port without it). Until
+  2026-10-20 such a port could only exist as a `ui5/scope-exceptions.json`
+  entry whose pinned `@since` `lib-packages.mjs` read; that path is gone with
+  the scope change.
 
 So **declaring the first `POST_171` deviation on a port moves it from
 `src/01/<lib>/` to `src/02/<lib>/`** (and dropping the last one moves it back);
 `scaffold.mjs` starts every fresh port in the `<= 1.71` half of its flavour,
-which is where a port with no deviations belongs.
+which is where a port with no deviations belongs — except a port of a
+post-1.71 control, which it scaffolds with that `POST_171` deviation straight
+into `src/02`.
 
 Below the library there is **no further level**: the former batch subpackages
 `src/<NN>/b<nn>/` were flattened away on 2026-08-12, when the corpus stood at
@@ -614,9 +621,10 @@ source of truth:
   as-is; only improve the trailing text to a human phrase when you know one
   (e.g. `sap.m.Switch - Some say it is only a switch...`). Do not agonize over
   entity-vs-library — existing ports use both; keep the scaffolder default.
-- The **control** must exist since UI5 1.71 and not be deprecated — samples
-  whose control is newer or deprecated are **out of scope** (§1) and never
-  enter a batch. **Members (properties/aggregations/associations/events)
+- The **control** must not be deprecated — samples whose control is
+  deprecated are **out of scope** (§1) and never enter a batch. A control
+  newer than 1.71 is in scope and kept 1:1, declared as a `POST_171`
+  deviation naming the control (§1, §3). **Members (properties/aggregations/associations/events)
   newer than 1.71 ARE kept when the original uses them — 1:1 fidelity wins**
   (policy decision). Every such member must be declared with a `POST_171`
   deviation naming it (the `property_gate` enforces this via

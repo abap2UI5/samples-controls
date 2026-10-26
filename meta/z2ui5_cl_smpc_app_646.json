@@ -1,0 +1,40 @@
+{
+  "class": "z2ui5_cl_smpc_app_646",
+  "sample": "sap.m.sample.p13n.EngineCustomFilters",
+  "entity": "sap.m.p13n.Engine",
+  "file": "src/02/01/z2ui5_cl_smpc_app_646.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_by_id ): open/close of the filter Dialog; each MultiInput's tokenUpdate passes addedTokens and removedTokens"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.p13n.Engine (since UI5 1.104) is the subject of this sample - a JavaScript singleton, not a control, so it cannot be kept (see the IMPROVISED entries); the app needs a UI5 release >= 1.110 for the controls below."
+    },
+    {
+      "type": "POST_171",
+      "what": "kept 1:1 from the original view and newer than 1.71: sap.m.Table autoPopinMode (1.76) and its noData aggregation holding an IllustratedMessage (aggregation 1.101, control 1.98), sap.m.Column headerMenu (1.98), the sap.m.plugins ColumnResizer control (1.91), and the sap.m.table.columnmenu controls (all 1.110): Menu with its items aggregation, QuickSort and QuickGroup with their items aggregation, QuickSortItem, QuickGroupItem, and ActionItem with icon and label. From the controller's itemFactory: sap.m.MultiInput showClearIcon (1.94)."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sample's point - a FilterController whose itemFactory callback builds a MultiInput per filter field inside the Engine's sap.m.p13n.FilterPanel (since 1.121) - is not expressible: itemFactory is a function-typed property (a controller closure per row) and no abap2UI5 wire can supply a function, and the FilterPanel calls it for every condition row it renders. The port keeps what the factory produces and builds it declaratively: the settings button opens a Dialog (title Custom Filter Settings, contentHeight 50rem, contentWidth 45rem - the settings the controller passes to Engine.show( )) declared in the table's dependents, holding one Label and one MultiInput per filter field (showValueHelp false, showClearIcon true, suggestionItems over /items showing that field, the existing conditions as Token controls bound to a backend table per field), plus an OK Button and a Cancel Button - controls the original view does not have (Dialog, VBox, Label, MultiInput, Token, core:Item, two more Button controls). The FilterPanel's own row UI (a field ComboBox adding one row at a time) is replaced by the four fields shown at once. tokenUpdate transports addedTokens/removedTokens and the backend adds/removes the field's EQ condition like the factory's handler; OK applies them - createFilters' flat array of EQ filters (UI5 ORs the filters on one path and ANDs the paths) is composed by the backend into the items binding-info string and the view rebuilt, which is what getBinding( 'items' ).filter( ) did; Cancel closes the dialog and the next open re-seeds the tokens from the applied conditions, as the Engine discards a cancelled panel."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the sap.ui.fl VariantManagement (vm:VariantManagement p13nVm for persoTable) is dropped: variant persistence through sap.ui.fl needs a flex-enabled component with an LRep connector and the $FlexVariants model, none of which an abap2UI5 app provides, and the sap.ui.fl library is not part of the corpus' render harness. Without the Engine the control would have nothing to save."
+    },
+    {
+      "type": "NOTE",
+      "what": "the column menu (QuickSort/QuickGroup with empty items, three ActionItems), the ColumnResizer and the DragDropInfo on the columns carry no handlers in the original view and the controller registers only the Filter controller - they are kept 1:1 as inert configuration, exactly as the sample ships them."
+    },
+    {
+      "type": "NOTE",
+      "what": "the tokenUpdate args (${$parameters>/addedTokens} and removedTokens, read back as JSON arrays of the tokens' properties) and the bound tokens aggregation receiving a suggestion-created Token are unverified in a running system. **e2e-verified 2026-10-20** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_646.mjs)."
+    }
+  ]
+}

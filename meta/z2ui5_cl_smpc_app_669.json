@@ -1,0 +1,19 @@
+{
+  "class": "z2ui5_cl_smpc_app_669",
+  "sample": "sap.f.sample.HeroBannerHeaderBlockAndActionsPlacement",
+  "entity": "sap.f.HeroBanner",
+  "file": "src/02/04/z2ui5_cl_smpc_app_669.clas.abap",
+  "batch": "b50",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.f.HeroBanner control is newer than 1.71 (sap/f/HeroBanner.js: @ui5-experimental-since 1.152 - an EXPERIMENTAL wrapper around the UI5 Web Components fiori HeroBanner, extending sap.ui.core.webc.WebComponent) and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.152. HeroBanner members used: the actions and endContent aggregations, columnsRatio (sap.f.HeroBannerColumnsRatio Equal), actionsPlacement (sap.f.HeroBannerActionsPlacement BottomStart) and headerBlockPlacement (sap.f.HeroBannerHeaderBlockPlacement Bottom) - all @ui5-experimental-since 1.152 with the control."
+    }
+  ]
+}

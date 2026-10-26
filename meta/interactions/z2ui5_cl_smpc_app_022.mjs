@@ -21,7 +21,7 @@
  * view_display( ) and the last assertion fails — that is what makes this leg
  * worth its runtime.
  */
-import { waitForUi5, FRONTEND_STATE } from '../../scripts/lib-e2e.mjs';
+import { waitForUi5, FRONTEND_STATE, appRendered } from '../../scripts/lib-e2e.mjs';
 
 const UI5_ALL = 'const ui5All = () => Object.values(sap.ui.require("sap/ui/core/Element").registry.all());';
 
@@ -41,7 +41,7 @@ async function boot(page, url) {
   // navigation and does NOT reload, so the restore would never be requested
   await page.goto('about:blank');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3, undefined, { timeout: 90000 });
+  await page.waitForFunction(appRendered, undefined, { timeout: 90000 });
   await waitForUi5(page, () => {
     const t = ui5All().find((c) => c.getId().endsWith('idProductsTable'));
     return !!(t && t.getBinding('items'));

@@ -517,10 +517,12 @@ the two is passed, never both and never neither.
 
 #### The 1.71 rule in practice
 
-The **control** must exist since UI5 1.71 and not be deprecated — otherwise
-the sample is out of scope and is never ported (pre-check with
-`node scripts/scope-of.mjs <entity>`); never silently substitute a different
-control. **Members** (properties/aggregations/associations/events) newer than
+The **control** must not be deprecated — otherwise the sample is out of scope
+and is never ported (pre-check with `node scripts/scope-of.mjs <entity>`);
+never silently substitute a different control. A **control** newer than 1.71
+is in scope since 2026-10-20: it is kept 1:1 and declared as a `POST_171`
+deviation naming the control (the scaffolder writes it), which files the port
+under `src/02` (AGENTS §1, §3). **Members** (properties/aggregations/associations/events) newer than
 1.71 ARE kept when the original uses them — 1:1 fidelity wins (AGENTS §5) —
 and each one is declared as a `POST_171` deviation naming the member (app 040
 keeps `showClearIcon` @1.94 that way; the app then needs a UI5 release ≥ that

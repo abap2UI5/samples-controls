@@ -57,14 +57,37 @@ export function formatSource(source, { skipMethods = [] } = {}) {
   );
 }
 
+/* A `"` comment line inside a chain sits at the column of the chain line it
+ * describes - the one right below it. The template strings emit it there,
+ * but at the template's indent, and the linter's fix (0.9.0 on) leaves a
+ * comment line where the author put it when it re-lays the segment below
+ * (0.8.x moved it by the segment's delta, which happened to be what the
+ * template needed). So after every pass the comment is snapped to the next
+ * non-blank line's column when that line continues the chain. */
+function alignChainComments(source) {
+  const lines = source.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^(\s*)"/.exec(lines[i]);
+    if (!m) continue;
+    let j = i + 1;
+    while (j < lines.length && /^\s*"/.test(lines[j])) j++;
+    if (j >= lines.length) break;
+    const next = /^(\s*)\)->/.exec(lines[j]);
+    if (!next) continue;
+    for (let k = i; k < j; k++) lines[k] = next[1] + lines[k].trimStart();
+    i = j - 1;
+  }
+  return lines.join('\n');
+}
+
 function formatChains(source) {
   let out = source;
   for (let pass = 0; pass < MAX_PASSES; pass++) {
     const { findings } = checkAbapSource(out, { rules: RULES, file: 'overview.clas.abap' });
     const fixable = findings.filter((f) => f.type === 'chain-house-layout' && isFixable(f));
-    if (!fixable.length) return out;
+    if (!fixable.length) return alignChainComments(out);
     const { output, applied } = applyFixes(out, fixable);
-    if (!applied) return out;
+    if (!applied) return alignChainComments(out);
     out = output;
   }
   /* Loud rather than silent: reaching this means the rule keeps reporting a

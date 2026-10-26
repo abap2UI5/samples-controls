@@ -29,6 +29,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { resolveA2UI5, checkoutWarnings, IN_REPO_A2UI5 } from './lib-a2ui5.mjs';
 import { isSkippedDir } from './lib/src-tree.mjs';
+import { parseJsonc } from './lib/jsonc.mjs';
 import { patchFollowUpAction } from '../web/ci/patch_follow_up_action.mjs';
 import { patchOpenAbapXml } from '../web/ci/patch_open_abap_xml.mjs';
 
@@ -125,7 +126,8 @@ function main() {
   // downport can only split inline DATA(x) into a top DATA + assignment when it
   // can resolve the type, so a minimal config produces broken JS (undefined
   // vars). Base it on .github/abaplint/abap_702.jsonc, override only `files`.
-  const base = JSON.parse(fs.readFileSync(path.join(A2, '.github/abaplint/abap_702.jsonc'), 'utf8'));
+  // It is a .jsonc and carries comments since abap2UI5#2950 - lib/jsonc.mjs.
+  const base = parseJsonc(fs.readFileSync(path.join(A2, '.github/abaplint/abap_702.jsonc'), 'utf8'));
   base.global = { files: '/node/downport/**/*.*' };
   const cfg = path.join(A2, 'e2e-downport.jsonc');
   fs.writeFileSync(cfg, JSON.stringify(base, null, 2));

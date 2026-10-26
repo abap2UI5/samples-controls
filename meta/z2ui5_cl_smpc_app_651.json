@@ -1,0 +1,32 @@
+{
+  "class": "z2ui5_cl_smpc_app_651",
+  "sample": "sap.m.sample.VariantManagement",
+  "entity": "sap.m.VariantManagement",
+  "file": "src/02/01/z2ui5_cl_smpc_app_651.clas.abap",
+  "batch": "b55",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "follow_up_action( control_global MESSAGE_TOAST show ) carries the original's closeOnBrowserNavigation toast option; select/save/manage pass their event parameters via t_arg (manage: the deleted, renamed, fav and exe arrays as JSON)"
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.VariantManagement control (since UI5 1.103) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.103."
+    },
+    {
+      "type": "NOTE",
+      "what": "the original declares its four VariantItem controls statically and the controller adds (onSave -> addItem) and removes (onManage -> removeItem) items imperatively. The port keeps the VariantItem controls static as well - one per row of a backend table seeded with the four original entries (values verbatim, all ten properties), emitted in a loop - so the backend can add and delete views by re-rendering the view: a Save As that creates a view and every Manage rebuild it. An items binding with a template would be the shorter form, but it breaks the control on UI5 1.152: VariantManagement filters its own popover and Manage Views lists (bound to its internal $mVariants ManagedObjectModel, properties visible and favorite) with the paths it reads off the app's items TEMPLATE (_getFilters/_resolveTemplatePath: VISIBLE, FAVORITE), which that model does not have, so every view is filtered out and the my Favorites list stays empty. Because the items are not bound, the manage handler applies everything the Manage Views dialog changed on them, as the control's manage event reports it: the deleted keys (removed), renamed (title), fav (favorite) and exe (executeOnSelect), and like _checkCurrentVariant falls back to the standard (first) view when the selected one was deleted. selectedKey, defaultKey and modified are bound two-way: the Toggle Modify View button flips modified in the backend (setModified), select and save reset it, and a manage change of the default view (onManage's setDefaultKey( def )) reaches the model through the bound defaultKey."
+    },
+    {
+      "type": "NOTE",
+      "what": "a new view's key is built from an ABAP timestamp (key_<yyyymmddhhmmss>) instead of JavaScript's Date.now( ) milliseconds - unique per save as in the original, a different digit format. The three MessageToast texts are composed in the backend with the same wording and carry the original's closeOnBrowserNavigation option through the control_global MESSAGE_TOAST call."
+    },
+    {
+      "type": "NOTE",
+      "what": "the manage event's deleted, renamed, fav and exe parameters are transported as ${$parameters>/...} array args and read back as JSON, and the save event's boolean parameters (overwrite, execute, def, public) as abap_bool - unverified in a running system, as is a rename/favorite/execute-on-select change from the Manage Views dialog surviving the view rebuild the manage event triggers. **e2e-verified 2026-10-21** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_651.mjs)."
+    }
+  ]
+}

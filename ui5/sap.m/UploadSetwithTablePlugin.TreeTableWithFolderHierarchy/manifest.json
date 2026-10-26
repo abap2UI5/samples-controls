@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy.view.UploadSetwithTable",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {},
+				"sap.f": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/UploadSetwithTable.view.xml",
+					"controller/Page.controller.js",
+					"model/documents.json",
+					"model/mockserver.js",
+					"view/fragment/AddViaUrl.fragment.xml",
+					"view/fragment/CreateFolderDialog.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

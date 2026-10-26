@@ -20,7 +20,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
-  loadUniverseSnapshot, loadPropertiesControls, loadEntityOverrides, sinceLeq171,
+  loadUniverseSnapshot, loadPropertiesControls, loadEntityOverrides,
 } from './lib-universe.mjs';
 import { CAT_CTEXT, LIB_CTEXT } from './lib-packages.mjs';
 
@@ -84,10 +84,9 @@ for (const p of ports) {
   if (!s) continue;
   const entity = overrides[p.sample] || s.entity;
   const c = entity && props[entity];
-  const since = s.since || c?.since || null;
   const deprecated = s.deprecated || c?.deprecated || null;
+  // a control newer than 1.71 is in scope since 2026-10-20 (POST_171 port)
   if (deprecated) outOfScope.push(`${p.class} (${p.sample} — deprecated)`);
-  else if (!sinceLeq171(since)) outOfScope.push(`${p.class} (${p.sample} — control @since ${since})`);
 }
 
 // --- the hold-out set: the generator KPI ---------------------------------------

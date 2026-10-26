@@ -42,7 +42,7 @@ each port's `meta/<class>.json`. Per batch:
 
 1. **Generate** — the agent picks ~10 related samples from the in-scope
    backlog (`node scripts/generate-coverage.mjs --backlog` — only controls that
-   exist since UI5 1.71 and are not deprecated, see AGENTS §1) and ports them
+   are not deprecated, see AGENTS §1) and ports them
    under a new `b<nn>` batch id (`npm run scaffold … --new-batch`), prompt fed
    with AGENTS.md, CAPABILITIES.md and
    the 2–3 nearest `checked` ports. Pick **breadth-first**: `NEW-CONTROL` rows

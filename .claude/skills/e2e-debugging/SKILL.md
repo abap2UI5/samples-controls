@@ -60,6 +60,24 @@ verdicts below turned out to be harness effects.
   broken ports. Confirm in a headed run or with a `console` listener: the
   browser logs `Refused to execute inline script because it violates ...
   script-src`.
+- **"Booted" means the PORT's view rendered, never a count of UI5 elements -
+  wait with `appRendered` from `scripts/lib-e2e.mjs`.** The smoke's boot wait
+  was `[data-sap-ui]` count > 3, one more than the framework's shell
+  (ComponentContainer, shell XMLView, sap.m.App). abap2UI5#2913 (2026-10-13)
+  added a fourth shell element (`z2ui5.core.RootSlot`), so the wait was met
+  before the first roundtrip answered: every port without an interaction
+  module passed boot and render on an EMPTY page, and the overview app - the
+  largest response, so the last to land - failed on every nightly from
+  2026-10-14 with `the control never appeared — tried 0 overflow popover(s)`.
+  The tell: zero overflow popovers tried and only App/RootSlot/XMLView in the
+  element registry. `appRendered` waits for a second rendered
+  `sap.ui.core.mvc.View` (or the error overlay); an interaction that reloads
+  waits the same way.
+- **The abaplint configs read from abap2UI5 are JSONC - parse them with
+  `scripts/lib/jsonc.mjs`, never `JSON.parse`.** abap2UI5#2950 (2026-10-26)
+  put a comment into `.github/abaplint/abap_702.jsonc`, and `e2e-build`
+  died with `SyntaxError: Expected double-quoted property name` before the
+  downport.
 - **Read the frontend state through `FRONTEND_STATE`, never through
   `z2ui5/core/AppState`.** The state moved twice in two days: off
   `window.z2ui5` (abap2UI5#2777) and then off the module onto a per-component
@@ -182,6 +200,37 @@ verdicts below turned out to be harness effects.
   property through the UI5 API — that bypasses the binding the test exists to
   prove. Same family: assert the *effect* (a bound property, a rendered
   class), not the pixels (apps 207/130).
+- **An interaction module never names the port** — `r.url().includes(':3000')`
+  matched nothing under `--port 3110`, and apps 351/353/demo_004 failed a
+  full run that was perfectly healthy (2026-10-20). Compare origins:
+  `new URL(r.url()).origin === new URL(page.url()).origin`.
+- **Lessons the post-1.71 control ports paid for (2026-10-20)** — each a port
+  defect that only a running app showed:
+  - an XML event-handler expression knows `$controller`/`$event` and nothing
+    else: `JSON.stringify(…)` in a `t_arg` throws *Unsupported global
+    identifier 'JSON'* and the event never leaves the browser (app 650). Pass
+    the array/object itself; it arrives as JSON - with its keys **sorted
+    alphabetically** by the framework;
+  - `DynamicDateRange.toDates( )` returns `UniversalDate`s, which serialize as
+    `{oDate, sCalendarType}`: send `.getJSDate()` (apps 639/640/642);
+  - a `sap.m.p13n.Popup` declared in a view **leaks its panels** when it is
+    never opened (its `exit` destroys only the Dialog `open()` creates), and
+    the next-but-one re-render dies on a duplicate panel id - build it as a
+    `popup_display` fragment and `popup_destroy` it on close (apps 645/648/649);
+  - `sap.m.VariantManagement` with a **bound** `items` template filters its
+    own favourites list to nothing on 1.152 (it applies the template's paths to
+    its internal `$mVariants` model) - emit static `VariantItem`s (app 651);
+  - `translate( )` with a `]` in FROM breaks on the transpiled runtime (the set
+    becomes an unescaped regex class) - use `replace( … occ = 0 )` (app 651).
+- **A control that sizes itself from its own CSS can loop unthemed** —
+  `sap.f.AvatarGroup` measures its unstyled avatars, re-renders with fewer,
+  measures again and dies on *"Rendering has been re-started too many times"*
+  (app 662). That is the harness, not the port: declare
+  `"e2e_smoke": { "theme": true, "reason": "…" }` in the sidecar and the port
+  boots with the theme CSS from sdk.openui5.org. It is no skip — the port runs
+  the full gate and its interaction themed — and it is re-verified like one:
+  the port is booted unthemed as well, and a declaration whose port passes
+  that way too FAILS as stale.
 - **OverflowToolbar controls ARE drivable headless — open the overflow
   popover first.** In the harness' 1280 px viewport a toolbar folds almost
   everything into its `Additional Options` button, so a direct

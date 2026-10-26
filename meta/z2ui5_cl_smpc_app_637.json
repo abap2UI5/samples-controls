@@ -1,0 +1,47 @@
+{
+  "class": "z2ui5_cl_smpc_app_637",
+  "sample": "sap.m.sample.IllustratedMessageInPageWithURI",
+  "entity": "sap.m.IllustratedMessage",
+  "file": "src/02/01/z2ui5_cl_smpc_app_637.clas.abap",
+  "batch": "b53",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "POST_171",
+      "what": "the IllustratedMessage property enableVerticalResponsiveness (since UI5 1.104) is newer than 1.71 but kept 1:1 - the app needs a UI5 release >= 1.104. Declared by policy: the property gate does not know IllustratedMessage (absent from ui5/properties.json) and passes it silently."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate."
+    },
+    {
+      "type": "NOTE",
+      "what": "the original's Select change handlers (onSelectSize, onSelectType) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change attribute is therefore dropped vs the original view."
+    },
+    {
+      "type": "NOTE",
+      "what": "the Switch change handler onSwitchEVS only re-writes oEvent.getParameter('state') into /sSelectedEVS, which the Switch state binding already writes two-way - the port keeps the two-way state binding and drops the redundant Switch change attribute (no loss; enableVerticalResponsiveness and the expression-bound Text follow on the client)."
+    },
+    {
+      "type": "POST_171",
+      "what": "the IllustratedMessage property src (since UI5 1.132), the point of this sample, is kept 1:1 bound to /sSelectedSRC - the app needs a UI5 release >= 1.132. Declared by policy: the property gate does not know IllustratedMessage and passes it silently."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the original Component.js registers the 'tnt' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: the 72 sap-illustration://<Name> entries (the default sapIllus set) render, but the 46 sap-illustration://tnt/<Name> entries resolve to no registered set and leave the illustration area EMPTY with 'The illustration set tnt is not registered' logged. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL."
+    },
+    {
+      "type": "NOTE",
+      "what": "the Illustration URI list is computed in the original from Object.keys of sap.m.IllustratedMessageType and sap.tnt.IllustratedMessageType at runtime; the port inlines the same values in the same order (72 + 46 at OpenUI5 1.152) and builds the identical sap-illustration://<Name> and sap-illustration://tnt/<Name> keys in model_init. A newer release may list more types than the port."
+    }
+  ]
+}

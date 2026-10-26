@@ -1,35 +1,65 @@
 {
- "note": "ported samples whose control is out of scope (deprecated or newer than UI5 1.71) but which are ALLOWED to stay - each with the reason. The out-of-scope check in generate-coverage.mjs FAILS (exit 1) on any ported out-of-scope sample NOT listed here, so new violations can never land silently; listed ones print an informational note. Entries are a maintainer decision - do not add one just to silence the gate. Each entry PINS the scope facts the decision was made on ('decided': scope verdict, control @since, deprecation @since) - when a metadata refresh changes any of them the gate FAILS so a maintainer re-decides (and re-pins) instead of the entry silently outliving its rationale.",
+ "note": "ported samples whose control is out of scope (deprecated; a control newer than UI5 1.71 is in scope since 2026-10-20 and needs no entry - its port declares POST_171 instead) but which are ALLOWED to stay - each with the reason. The out-of-scope check in generate-coverage.mjs FAILS (exit 1) on any ported out-of-scope sample NOT listed here, so new violations can never land silently; listed ones print an informational note. Entries are a maintainer decision - do not add one just to silence the gate. Each entry PINS the scope facts the decision was made on ('decided': scope verdict, control @since, deprecation @since) - when a metadata refresh changes any of them the gate FAILS so a maintainer re-decides (and re-pins) instead of the entry silently outliving its rationale.",
  "exceptions": [
   {
    "sample": "sap.m.sample.UploadSet",
    "class": "z2ui5_cl_smpc_app_121",
-   "decided": { "scope": "deprecated", "since": "1.63", "deprecated": "1.129" },
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.63",
+    "deprecated": "1.129"
+   },
    "reason": "KEEP permanently (decided 2026-07-30, session decision under the standing continue-with-everything mandate; revertible by deleting the port + this entry): sap.m.UploadSet is deprecated but the port is gate-verified and exercises upload-set idioms no other port covers; deleting it would remove working training signal. The hard gate keeps blocking NEW deprecated-control ports."
   },
   {
-   "sample": "sap.f.sample.SidePanelSingle",
-   "class": "z2ui5_cl_smpc_app_136",
-   "decided": { "scope": "newer", "since": "1.107", "deprecated": null },
-   "reason": "KEEP permanently (decided 2026-07-30, same mandate; revertible): sap.f.SidePanel is @since 1.107 - a post-1.71 CONTROL rather than member, kept as the corpus-wide fidelity-first policy already keeps post-1.71 members; the app declares the runtime floor it needs."
+   "sample": "sap.m.sample.NotificationListItem",
+   "class": "z2ui5_cl_smpc_app_076",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListItem was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
   },
   {
-   "sample": "sap.ui.core.sample.InvisibleMessage",
-   "class": "z2ui5_cl_smpc_app_141",
-   "decided": { "scope": "newer", "since": "1.78", "deprecated": null },
-   "reason": "KEEP permanently (decided 2026-07-30, same mandate; revertible): sap.ui.core.InvisibleMessage is @since 1.78, the accessibility-announcement idiom exists nowhere else in the corpus; needs UI5 >= 1.78 only."
+   "sample": "sap.m.sample.NotificationListGroup",
+   "class": "z2ui5_cl_smpc_app_077",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
   },
   {
-   "sample": "sap.f.sample.ProductSwitchNavigation",
-   "class": "z2ui5_cl_smpc_app_165",
-   "decided": { "scope": "newer", "since": "1.72", "deprecated": null },
-   "reason": "KEEP permanently (decided 2026-07-30, same mandate; revertible): sap.f.ProductSwitch is @since 1.72 - one minor release past the 1.71 line, the most borderline of the six; the port is the only ProductSwitch coverage."
+   "sample": "sap.m.sample.NotificationListGroupBindings",
+   "class": "z2ui5_cl_smpc_app_291",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
   },
   {
-   "sample": "sap.m.sample.OverflowToolbarTokenizer",
-   "class": "z2ui5_cl_smpc_app_203",
-   "decided": { "scope": "newer", "since": "1.139", "deprecated": null },
-   "reason": "KEEP permanently (decided 2026-07-30, same mandate; revertible): sap.m.OverflowToolbarTokenizer is @ui5-experimental-since 1.139 - experimental API may change, which the sidecar declares; the port documents the experimental-tag scanner lesson and needs UI5 >= 1.139."
+   "sample": "sap.m.sample.MaxNumberOfNotificationsReached",
+   "class": "z2ui5_cl_smpc_app_444",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
+  },
+  {
+   "sample": "sap.m.sample.NotificationListGroupLazyLoading",
+   "class": "z2ui5_cl_smpc_app_520",
+   "decided": {
+    "scope": "deprecated",
+    "since": "1.34",
+    "deprecated": "1.153"
+   },
+   "reason": "KEEP (maintainer decision 2026-10-26; revertible by deleting the port + this entry): sap.m.NotificationListGroup was ported while in scope and was deprecated only afterwards, with OpenUI5 1.153 (the whole NotificationList family - NotificationList, NotificationListBase, NotificationListGroup, NotificationListItem - in favour of the UI5 Web Components notifications). The control still ships and renders on every release the corpus targets, the port is gate-verified, and removing it would drop the only notification samples. The hard gate keeps blocking NEW deprecated-control ports."
   }
  ]
 }

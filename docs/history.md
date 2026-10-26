@@ -7,7 +7,90 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-08 (latest) — e2e-nightly green again: three modules that had fallen behind the app and the framework
+## 2026-10-26 (latest) — e2e-nightly red since 2026-10-14: the boot wait counted the framework's shell
+
+The overview app failed every nightly from 2026-10-14 (`the control never
+appeared — tried 0 overflow popover(s)`) while it passed against the pin -
+e2e-nightly builds abap2UI5 main, e2e-pr the pin. abap2UI5#2913 (2026-10-13)
+creates the root control at run time through a new `z2ui5.core.RootSlot`
+element in the shell view, and the smoke's boot wait, `[data-sap-ui]` count
+> 3, had been exactly one more than the shell's three elements. With four it
+was met before the first roundtrip answered, so the smoke went on with an
+empty page: every port without an interaction module passed boot and render
+without having rendered, and the overview - the largest response, so the
+last to arrive - clicked into nothing. `appRendered` (`scripts/lib-e2e.mjs`)
+now waits for the port's own view, a second rendered `sap.ui.core.mvc.View`
+(or the framework's error overlay), in the smoke and in the eight interaction
+modules that repeated the old count after a reload.
+
+The same day abap2UI5#2950 put a comment into
+`.github/abaplint/abap_702.jsonc`, which `e2e-build.mjs` read with a bare
+`JSON.parse` - the next nightly would have died before the downport. The
+JSONC reader of `check-app-rules.mjs` moved to `scripts/lib/jsonc.mjs` and
+both scripts use it.
+
+## 2026-10-26 — OpenUI5 1.153 deprecates the NotificationList family: the five ports stay
+
+**Decision (maintainer).** OpenUI5 1.153 marks `sap.m.NotificationList`,
+`NotificationListBase`, `NotificationListGroup` and `NotificationListItem`
+`@deprecated` (replaced by the UI5 Web Components notifications). The weekly
+`generate-result` run of 2026-10-26 refreshed `ui5/properties.json` from
+OpenUI5 main and the hard scope gate failed on the five ports of that family:
+076 `NotificationListItem`, 077 `NotificationListGroup`, 291
+`NotificationListGroupBindings`, 444 `MaxNumberOfNotificationsReached` and 520
+`NotificationListGroupLazyLoading`. They were ported while in scope, the
+controls still ship and render, and they are the only notification samples -
+so they stay, each as a `ui5/scope-exceptions.json` entry pinned to
+`{ deprecated, 1.34, 1.153 }`, the same KEEP shape as UploadSet (app 121).
+`ui5/properties.json` is committed at the refreshed state in the same change,
+because an exception whose sample the committed snapshot still reads as in
+scope fails as stale.
+
+## 2026-10-20 — controls newer than UI5 1.71 come into scope: 48 ports, coverage 669 / 669
+
+**Decision (maintainer).** A sample whose control is newer than UI5 1.71 is no
+longer out of scope. The rule cost 48 samples on 12 controls — `sap.m.Avatar`,
+`IllustratedMessage`, `DynamicDateRange`, `ExpandableText`, the `sap.m.p13n`
+Container/Engine/Popup, `VariantManagement`, `plugins.UploadSetwithTable`,
+`sap.f.AvatarGroup`, `SidePanel`, `ProductSwitch` and `HeroBanner` — while
+`src/02` already held 221 ports needing a newer runtime for a member. Such a
+port now keeps the control 1:1 and declares it as a `POST_171` deviation
+naming it, which files it under `src/02`; `generate-coverage.mjs` fails a
+post-1.71 control port without that deviation, `scaffold.mjs` writes it, and
+`scope-of.mjs` reports the control `IN_SCOPE`. The four `newer` entries of
+`ui5/scope-exceptions.json` (apps 136/141/165/203, all already POST_171) went
+with the rule, and `lib-packages.mjs` reads the release level from POST_171
+alone.
+
+**Ports.** Apps 624–671 in seven batches (b49, b50, b52–b56), every gate
+green. What did not port 1:1, by gap:
+
+- **Illustration sets** cannot be registered (no `IllustrationPool` target) —
+  630, 635–638 render without the `Custom`/`tnt` illustration; new ❌ row in
+  CAPABILITIES.md.
+- **Function-typed properties** stay out of reach: `p13n.Popup.reset` (650),
+  `FilterPanel.itemFactory` (645/646, a Dialog improvised instead),
+  `UploadSetwithTable.itemValidationHandler` (656) and
+  `customPageContentHandler` (653); app-written `DynamicDateOption` subclasses
+  (642).
+- **The p13n Engine** is controller JS: 645–649 keep the state in ABAP, feed
+  the panels via `setP13nData` and apply what `getP13nData` returns through
+  the Popup's `close` args. `sap.ui.fl` VariantManagement is dropped there.
+- **Uploads** are emulated by vetoing `beforeUploadStarts` and adding the row
+  in the backend (652–661); an uploaded row has no blob to preview.
+- **Render harness:** `sap.f.AvatarGroup` loops ("Rendering has been
+  re-started too many times") even in a minimal static view, so 662 declares a
+  `render_smoke` skip.
+
+25 ports carry `LIVE_TEST`s (event-arg expressions such as
+`${$source>}.toDates( … )`, plugin calls with a live binding Context, the
+session-timeout countdown) for the next e2e run to close. The advisory budget
+moved by what the originals carry (+14 missing-accessibility, +13
+editable-control-without-binding, +1 event-on-disabled-control), and
+`7bit_ascii` excludes 649/668/671 for the original's `Müller` and `€` — the
+shared rule set in abap2UI5 changed first.
+
+## 2026-10-08 — e2e-nightly green again: three modules that had fallen behind the app and the framework
 
 The nightly of 2026-10-08 (run 37756011169, abap2UI5 main at 57ee33b) was
 red on three apps in shards 1 and 4, every other badge of the README green.

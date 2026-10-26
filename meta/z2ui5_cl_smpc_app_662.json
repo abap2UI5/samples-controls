@@ -1,0 +1,52 @@
+{
+  "class": "z2ui5_cl_smpc_app_662",
+  "sample": "sap.f.sample.AvatarGroup",
+  "entity": "sap.f.AvatarGroup",
+  "file": "src/02/04/z2ui5_cl_smpc_app_662.clas.abap",
+  "batch": "b49",
+  "audit": {
+    "frontend_action": true,
+    "event_t_arg": true,
+    "note": "the Slider's liveChange round-trips (check_queue_last + check_no_busy) and the backend sets the VerticalLayout width; both AvatarGroup presses round-trip and on_event builds the individual or the group popover (popover_display anchored at the pressed control's id); the group popover's NavContainer is driven by control_by_id to/back in the popover slot."
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "NOTE",
+      "what": "Three JSONModels are folded onto the one default model: the named items model (model/avatargroup.json, {items>/content} -> {/T_CONTENT}, totalCount kept as a non-bound attribute), the unnamed settings model ({/viewPortPercentWidth} -> {/VIEWPORTPERCENTWIDTH}, {/popoverTitle} -> {/POPOVERTITLE}), the personData model (a structure S_PERSON, bound absolutely as {/S_PERSON/...} since there is no element binding) and the groupedAvatars model (T_GROUPED, the Grid's bound content). Same data and leaf names, so a prefix-drop. The JSON's per-row tooltip key ('1'..'15') is bound nowhere and stays out of the row type."
+    },
+    {
+      "type": "NOTE",
+      "what": "onSliderMoved reads the slider value and calls setWidth( value + '%' ) on the VerticalLayout vl1. The port binds VerticalLayout.width to VL_WIDTH and computes the string in on_event on a liveChange round-trip carrying check_queue_last and check_no_busy (the per-drag-step wire shape), so the backend ends on the slider's last value. VIEWPORTPERCENTWIDTH is seeded 100 and VL_WIDTH '100%' as in onInit / the view."
+    },
+    {
+      "type": "NOTE",
+      "what": "onIndividualPress / onGroupPress / _getContent / _getAvatarModel are rebuilt in ABAP. The press event transports overflowButtonPressed, avatarsDisplayed, the eventSource id (the popover anchor) and the pressed item's row index (${$parameters>/eventSource}.getBindingContext().getPath().split('/').pop()); the Group-type AvatarGroup anchors at $event.oSource.sId as onGroupPress anchors at oEvent.getSource(). The popover rows are the avatars from avatarsDisplayed on (all for Group), the title 'Team Members (<n>)' and the contentHeight formula ((n DIV 2 + n MOD 2) * 68 + 48 px) are computed in ABAP. The backgroundColor _getAvatarModel reads off AvatarGroupItem.getAvatarColor( ) is derived in ABAP from the rule AvatarGroup.addItem applies (Accent1..Accent10 by item position, round robin) instead of being read from the control - same value, no control call."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "IndividualPopover.fragment.xml and GroupPopover.fragment.xml are built in on_event (popover_display) and Card.fragment.xml is inlined into both, as the original's two core:Fragment references load it twice - so the port carries the Card subtree twice (control extra Card, VerticalLayout, HBox, Avatar, VBox, Title, Text, Label controls) and drops both core:Fragment references. Each popover is rebuilt per press instead of being cached, which also makes oNavCon.to(oMainPage) on every open implicit (a fresh NavContainer starts on its first page). openBy( ).addStyleClass('sapFAvatarGroupPopover') becomes a class attribute on each Popover. onAvatarPress's setContentWidth('450px') is a no-op (the Popover already declares 450px) and its oGroupPopover.focus( ) is dropped; the NavContainer moves with control_by_id to( detail ) / back( ) in the popover slot, the contentHeight follows the bound POPOVER_HEIGHT (375px on the detail page, the computed height after navButtonPress)."
+    },
+    {
+      "type": "NOTE",
+      "what": "GroupPopover.fragment.xml binds the grid Avatar's fallbackIcon to {personData>/fallbackIcon} - the individual personData model, not the row's groupedAvatars model - so every grid avatar shows the fallback icon of whichever person was last opened. Ported verbatim as the absolute {/S_PERSON/FALLBACKICON} binding rather than repaired. S_PERSON-BACKGROUNDCOLOR is seeded Accent6 (the sap.m.Avatar default): the empty personData model leaves the property undefined, while an empty string on the enum-typed backgroundColor would make UI5 reject the whole popover."
+    },
+    {
+      "type": "NOTE",
+      "what": "The two avatar image src values are host-absolutized to https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_01.png and Woman_avatar_02.png (the JSON's ./test-resources/... resolves against the Demo Kit). Row fields the JSON omits (initials, src, fallbackIcon) are left initial - all three are plain string/URI properties whose empty value renders like undefined."
+    },
+    {
+      "type": "POST_171",
+      "what": "the sap.f.AvatarGroup and sap.f.AvatarGroupItem controls (since UI5 1.73) are newer than 1.71 and are the whole point of this sample - kept 1:1. The inlined card also uses sap.m.Avatar (@since 1.73, its press @since 1.73) and the Popover and Page titleAlignment property (@since 1.72), so the app needs a UI5 release >= 1.73."
+    }
+  ],
+  "render_smoke": {
+    "skip": true,
+    "reason": "sap.f.AvatarGroup itself loops in the static headless render harness: 'Rendering has been re-started too many times (21)' (its onAfterRendering resize handling re-invalidates the group). Reproduced 2026-10-20 with a minimal view outside this port - an l:VerticalLayout holding one AvatarGroup with three static AvatarGroupItem initials, no binding, no event - which fails the same way, and with each of this port's two AvatarGroups removed in turn; the docs/history.md 2026-07-24 entries record the same headless AvatarGroup render-restart loop. A harness boundary, not the port: the view reconstructs and the property and structure gates run in full. Verified against the render each run - the skip is honoured only while it still errors."
+  },
+  "e2e_smoke": {
+    "theme": true,
+    "reason": "sap.f.AvatarGroup sizes itself from its own CSS: unthemed it measures unstyled avatars, re-renders with fewer and loops (\"Rendering has been re-started too many times\"). Booted with the theme CSS it renders once and passes - verified 2026-10-20."
+  }
+}

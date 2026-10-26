@@ -36,7 +36,7 @@ const DEV_TYPES = ['IMPROVISED', 'POST_171', 'DROPPED_171', 'LIVE_TEST', 'SUBSET
 const KNOWN_KEYS = new Set([
   'class', 'sample', 'entity', 'file', 'batch', 'audit', 'status', 'checked',
   'deviations', 'render_smoke', 'data_fidelity', 'structural_diff',
-  'property_gate',
+  'property_gate', 'e2e_smoke',
 ]);
 
 /* Hold-out samples (TRAINING.md): regenerated from scratch to measure the
@@ -223,6 +223,21 @@ for (const sf of sidecars.sort()) {
       if (!sd.reason || typeof sd.reason !== 'string') err(`${sf}: structural_diff.reason must be a non-empty string`);
       for (const k of Object.keys(sd)) {
         if (!['skip', 'reason'].includes(k)) err(`${sf}: unknown structural_diff field "${k}"`);
+      }
+    }
+  }
+
+  // optional e2e_smoke.theme: boot the port with the theme CSS (e2e-smoke.mjs
+  // THEMED); its staleness is verified per run there, this guards the schema
+  if (m.e2e_smoke !== undefined) {
+    const es = m.e2e_smoke;
+    if (typeof es !== 'object' || es === null || Array.isArray(es)) {
+      err(`${sf}: e2e_smoke must be an object { theme: true, reason }`);
+    } else {
+      if (es.theme !== true) err(`${sf}: e2e_smoke.theme must be true when present (drop the field otherwise)`);
+      if (!es.reason || typeof es.reason !== 'string') err(`${sf}: e2e_smoke.reason must be a non-empty string`);
+      for (const k of Object.keys(es)) {
+        if (!['theme', 'reason'].includes(k)) err(`${sf}: unknown e2e_smoke field "${k}"`);
       }
     }
   }

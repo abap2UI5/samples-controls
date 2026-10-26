@@ -1,0 +1,35 @@
+{
+  "class": "z2ui5_cl_smpc_app_636",
+  "sample": "sap.m.sample.IllustratedMessageInPageTNT",
+  "entity": "sap.m.IllustratedMessage",
+  "file": "src/02/01/z2ui5_cl_smpc_app_636.clas.abap",
+  "batch": "b53",
+  "audit": {
+    "frontend_action": false,
+    "event_t_arg": false
+  },
+  "status": "generated",
+  "checked": null,
+  "deviations": [
+    {
+      "type": "POST_171",
+      "what": "the sap.m.IllustratedMessage control (since UI5 1.98) is newer than 1.71 and is the whole point of this sample - kept 1:1, the app needs a UI5 release >= 1.98."
+    },
+    {
+      "type": "POST_171",
+      "what": "the Illustration Size Select offers the sap.m.IllustratedMessageSize values ExtraSmall, Small, Medium and Large (enum values since UI5 1.136; Auto and Base since 1.98), bound as model data into illustrationSize exactly like the original's library-derived list - selecting one needs a UI5 release >= 1.136. Declared by policy: a bound enum value is invisible to every gate."
+    },
+    {
+      "type": "NOTE",
+      "what": "the original's Select change handlers (onSelectSize, onSelectType) only copy selectedItem.getKey() into the model path the IllustratedMessage binds; the port binds each Select's selectedKey two-way to that same field instead (an attribute the original view does not carry), so the illustration follows the selection on the client with no round-trip - the app-009 prefer-a-bindable-property pattern. The Select change attribute is therefore dropped vs the original view."
+    },
+    {
+      "type": "IMPROVISED",
+      "what": "the original Component.js registers the 'tnt' illustration set via sap.m.IllustrationPool.registerIllustrationSet( { setFamily, setURI } ) in its init. abap2UI5 has no Component of its own and no frontend action reaches IllustrationPool (the CONTROL_GLOBAL targets carry ICON_POOL registerFont for icon fonts, but no illustration-pool counterpart), so the port cannot register the set: every tnt-* type the Illustration Type Select offers resolves to no registered set, so the illustration area stays EMPTY (title, description and Button still render) and UI5 logs 'The illustration set tnt is not registered'. The view itself is kept 1:1. Upstream request: an ILLUSTRATION_POOL global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL."
+    },
+    {
+      "type": "NOTE",
+      "what": "the type list is the original's _populateIllustrationTypes result - every key of sap.tnt.IllustratedMessageType in declaration order (46 keys at OpenUI5 1.152, key = tnt-<Name>, text = <Name>), which overwrites the onInit placeholder [tnt-FaceID] before the view binds, so the port seeds the final list directly. The enum is read at runtime in the original, so a newer release may list more types than the port."
+    }
+  ]
+}
