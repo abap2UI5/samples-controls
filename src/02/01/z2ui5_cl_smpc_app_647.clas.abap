@@ -14,7 +14,7 @@ CLASS z2ui5_cl_smpc_app_647 DEFINITION PUBLIC.
         size      TYPE string,
         city      TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
     DATA t_items TYPE ty_t_item.
 
   PROTECTED SECTION.
@@ -43,12 +43,12 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -57,8 +57,14 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/reason}` INTO TABLE temp1.
+    INSERT `$event.oSource.getPanels()[0].getP13nData(true)` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -164,8 +170,7 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
                         )->a( n = `id`    v = `p13nPopup`
                         )->a( n = `close` v = client->_event(
                             val   = `P13N_CLOSE`
-                            t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                             ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
+                            t_arg = temp1 )
 
                         )->ele( n = `panels` ns = `p13n`
                             )->tag( n = `SelectionPanel` ns = `p13n`
@@ -185,15 +190,37 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
 
     " the SelectionController's panel data: the visible persons in state order,
     " then the hidden ones sorted by label
-    DATA(json) = ``.
-    LOOP AT t_state INTO DATA(key).
-      DATA(person) = t_persons[ key = key ].
+    DATA json TYPE string.
+    DATA key LIKE LINE OF t_state.
+      DATA person LIKE LINE OF t_persons.
+      FIELD-SYMBOLS <temp1> LIKE LINE OF t_persons.
+      DATA temp2 LIKE sy-tabix.
+    DATA hidden LIKE t_persons.
+      DATA temp3 LIKE sy-subrc.
+    DATA temp4 TYPE string_table.
+    json = ``.
+    
+    LOOP AT t_state INTO key.
+      
+      
+      
+      temp2 = sy-tabix.
+      READ TABLE t_persons WITH KEY key = key ASSIGNING <temp1>.
+      sy-tabix = temp2.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      person = <temp1>.
       json = |{ json },\{"name":"{ key }","label":"{ person-firstname } { person-lastname }","visible":true\}|.
     ENDLOOP.
 
-    DATA(hidden) = t_persons.
+    
+    hidden = t_persons.
     LOOP AT hidden INTO person.
-      IF line_exists( t_state[ table_line = person-key ] ).
+      
+      READ TABLE t_state WITH KEY table_line = person-key TRANSPORTING NO FIELDS.
+      temp3 = sy-subrc.
+      IF temp3 = 0.
         DELETE hidden WHERE key = person-key.
       ENDIF.
     ENDLOOP.
@@ -204,21 +231,31 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
 
     json = |[{ shift_left( val = json sub = `,` ) }]|.
 
+    
+    CLEAR temp4.
+    INSERT `itemsPanel` INTO TABLE temp4.
+    INSERT `setP13nData` INTO TABLE temp4.
+    INSERT json INTO TABLE temp4.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `itemsPanel` ) ( `setP13nData` ) ( json ) ) ).
+                              t_arg = temp4 ).
 
   ENDMETHOD.
 
 
   METHOD on_event.
+        DATA temp6 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `OPEN_PERSO`.
         " Engine.show( ): the panel shows the current state, a cancelled edit is gone
         set_p13n_data( ).
+        
+        CLEAR temp6.
+        INSERT `p13nPopup` INTO TABLE temp6.
+        INSERT `open` INTO TABLE temp6.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `p13nPopup` ) ( `open` ) ) ).
+                                  t_arg = temp6 ).
 
       WHEN `P13N_CLOSE`.
         " the Engine applies the panel state on Ok only
@@ -235,7 +272,24 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
   METHOD handle_state_change.
 
     " like handleStateChange: the items become the visible persons, in state order
-    t_items = VALUE #( FOR key IN t_state ( t_persons[ key = key ] ) ).
+    DATA temp8 TYPE z2ui5_cl_smpc_app_647=>ty_t_item.
+    DATA key LIKE LINE OF t_state.
+      FIELD-SYMBOLS <temp3> LIKE LINE OF t_persons.
+      DATA temp4 LIKE sy-tabix.
+    CLEAR temp8.
+    
+    LOOP AT t_state INTO key.
+      
+      
+      temp4 = sy-tabix.
+      READ TABLE t_persons WITH KEY key = key ASSIGNING <temp3>.
+      sy-tabix = temp4.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      INSERT <temp3> INTO TABLE temp8.
+    ENDLOOP.
+    t_items = temp8.
 
   ENDMETHOD.
 
@@ -244,9 +298,14 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
 
     " getP13nData( true ) arrives as a JSON array of the panel's flat item
     " objects; collect their names in order
-    SPLIT json AT `}` INTO TABLE DATA(objects).
-    LOOP AT objects INTO DATA(object).
-      DATA(offset) = find( val = object sub = `"name":"` ).
+    DATA objects TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA object LIKE LINE OF objects.
+      DATA offset TYPE i.
+    SPLIT json AT `}` INTO TABLE objects.
+    
+    LOOP AT objects INTO object.
+      
+      offset = find( val = object sub = `"name":"` ).
       IF offset >= 0.
         INSERT substring_before( val = substring( val = object off = offset + 8 ) sub = `"` ) INTO TABLE result.
       ENDIF.
@@ -257,15 +316,52 @@ CLASS z2ui5_cl_smpc_app_647 IMPLEMENTATION.
 
   METHOD model_init.
 
-    t_persons = VALUE #(
-        ( key = `person1` firstname = `Peter`  lastname = `Mueller`  size = `1.75` city = `Walldorf` )
-        ( key = `person2` firstname = `Petra`  lastname = `Maier`    size = `1.85` city = `Walldorf` )
-        ( key = `person3` firstname = `Thomas` lastname = `Smith`    size = `1.95` city = `Walldorf` )
-        ( key = `person4` firstname = `Maria`  lastname = `Jones`    size = `1.55` city = `Walldorf` )
-        ( key = `person5` firstname = `John`   lastname = `Williams` size = `1.65` city = `Walldorf` ) ).
+    DATA temp10 TYPE z2ui5_cl_smpc_app_647=>ty_t_item.
+    DATA temp11 LIKE LINE OF temp10.
+    DATA temp12 TYPE string_table.
+    DATA person LIKE LINE OF t_persons.
+    CLEAR temp10.
+    
+    temp11-key = `person1`.
+    temp11-firstname = `Peter`.
+    temp11-lastname = `Mueller`.
+    temp11-size = `1.75`.
+    temp11-city = `Walldorf`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-key = `person2`.
+    temp11-firstname = `Petra`.
+    temp11-lastname = `Maier`.
+    temp11-size = `1.85`.
+    temp11-city = `Walldorf`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-key = `person3`.
+    temp11-firstname = `Thomas`.
+    temp11-lastname = `Smith`.
+    temp11-size = `1.95`.
+    temp11-city = `Walldorf`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-key = `person4`.
+    temp11-firstname = `Maria`.
+    temp11-lastname = `Jones`.
+    temp11-size = `1.55`.
+    temp11-city = `Walldorf`.
+    INSERT temp11 INTO TABLE temp10.
+    temp11-key = `person5`.
+    temp11-firstname = `John`.
+    temp11-lastname = `Williams`.
+    temp11-size = `1.65`.
+    temp11-city = `Walldorf`.
+    INSERT temp11 INTO TABLE temp10.
+    t_persons = temp10.
 
     t_items = t_persons.
-    t_state = VALUE #( FOR person IN t_persons ( person-key ) ).
+    
+    CLEAR temp12.
+    
+    LOOP AT t_persons INTO person.
+      INSERT person-key INTO TABLE temp12.
+    ENDLOOP.
+    t_state = temp12.
 
   ENDMETHOD.
 

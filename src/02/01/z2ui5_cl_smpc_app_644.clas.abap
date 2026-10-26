@@ -17,7 +17,7 @@ CLASS z2ui5_cl_smpc_app_644 DEFINITION PUBLIC.
         text    TYPE string,
         content TYPE string,
       END OF ty_s_view.
-    TYPES ty_t_view TYPE STANDARD TABLE OF ty_s_view WITH EMPTY KEY.
+    TYPES ty_t_view TYPE STANDARD TABLE OF ty_s_view WITH DEFAULT KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
     DATA t_dialog_views TYPE ty_t_view.
@@ -38,12 +38,12 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -52,9 +52,21 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA vbox TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA dialog TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA dialog_container TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA popover_container TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA dialog_view LIKE LINE OF t_dialog_views.
+      DATA dialog_item TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA popover_view LIKE LINE OF t_popover_views.
+      DATA popover_item TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(vbox) = view->ele( n = `View` ns = `mvc`
+    
+    vbox = view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns:p13n` v = `sap.m.p13n`
@@ -109,18 +121,24 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
             )->a( n = `text`  v = `Show P13nContainer used in Popup`
             )->a( n = `press` v = client->_event( `OPEN` ) ).
 
-    DATA(dialog) = vbox->ele( `Dialog`
+    
+    dialog = vbox->ele( `Dialog`
         )->a( n = `id`                v = `d1`
         )->a( n = `title`             v = `My custom p13n Dialog`
         )->a( n = `verticalScrolling` v = `false`
         )->a( n = `contentWidth`      v = `25rem`
         )->a( n = `contentHeight`     v = `35rem` ).
 
-    DATA(dialog_container) = dialog->ele( n = `Container` ns = `p13n`
+    
+    dialog_container = dialog->ele( n = `Container` ns = `p13n`
         )->a( n = `id`          v = `P13nContainer`
         )->a( n = `listLayout`  v = client->_bind( listlayout )
         )->a( n = `defaultView` v = `view2` ).
 
+    
+    CLEAR temp1.
+    INSERT `d1` INTO TABLE temp1.
+    INSERT `close` INTO TABLE temp1.
     dialog->ele( `buttons`
         )->tag( `Button`
             )->a( n = `text`  v = `Add custom view`
@@ -128,16 +146,18 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
         )->tag( `Button`
             )->a( n = `text`  v = `Close Dialog`
             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                            t_arg = VALUE #( ( `d1` ) ( `close` ) ) ) ).
+                                                            t_arg = temp1 ) ).
 
-    DATA(popover) = vbox->ele( `ResponsivePopover`
+    
+    popover = vbox->ele( `ResponsivePopover`
         )->a( n = `id`                v = `p1`
         )->a( n = `title`             v = `My custom p13n Popover`
         )->a( n = `verticalScrolling` v = `false`
         )->a( n = `contentWidth`      v = `25rem`
         )->a( n = `contentHeight`     v = `15rem` ).
 
-    DATA(popover_container) = popover->ele( n = `Container` ns = `p13n`
+    
+    popover_container = popover->ele( n = `Container` ns = `p13n`
         )->a( n = `id`          v = `P13nContainerPopover`
         )->a( n = `listLayout`  v = client->_bind( listlayout )
         )->a( n = `defaultView` v = `view2` ).
@@ -149,8 +169,10 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
 
     " the three static views of each container, plus the ones addCustomView
     " appended - the controller's addView( ) is a backend row and a rebuild
-    LOOP AT t_dialog_views INTO DATA(dialog_view).
-      DATA(dialog_item) = dialog_container->ele( n = `AbstractContainerItem` ns = `p13n`
+    
+    LOOP AT t_dialog_views INTO dialog_view.
+      
+      dialog_item = dialog_container->ele( n = `AbstractContainerItem` ns = `p13n`
           )->a( n = `key`  t = dialog_view-key
           )->a( n = `text` t = dialog_view-text ).
       IF dialog_view-content IS NOT INITIAL.
@@ -161,8 +183,10 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
-    LOOP AT t_popover_views INTO DATA(popover_view).
-      DATA(popover_item) = popover_container->ele( n = `AbstractContainerItem` ns = `p13n`
+    
+    LOOP AT t_popover_views INTO popover_view.
+      
+      popover_item = popover_container->ele( n = `AbstractContainerItem` ns = `p13n`
           )->a( n = `key`  t = popover_view-key
           )->a( n = `text` t = popover_view-text ).
       IF popover_view-content IS NOT INITIAL.
@@ -179,11 +203,17 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp1 TYPE xsdboolean.
+        DATA count TYPE i.
+        DATA temp3 TYPE z2ui5_cl_smpc_app_644=>ty_s_view.
+        DATA temp4 TYPE z2ui5_cl_smpc_app_644=>ty_s_view.
 
     CASE client->get_event( ).
 
       WHEN `SELECT_LAYOUT`.
-        listlayout = xsdbool( client->get_event_arg( ) = `0` ).
+        
+        temp1 = boolc( client->get_event_arg( ) = `0` ).
+        listlayout = temp1.
 
       WHEN `OPEN`.
         IF dialog_index = 0.
@@ -195,14 +225,23 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
       WHEN `ADD_VIEW_DIALOG`.
         " "View " + getViews( ).length: the views BEFORE adding, the Container's
         " own $default navigation view counted too
-        DATA(count) = lines( t_dialog_views ) + 1.
-        INSERT VALUE #( key = |view{ count }| text = |View { count }| ) INTO TABLE t_dialog_views.
+        
+        count = lines( t_dialog_views ) + 1.
+        
+        CLEAR temp3.
+        temp3-key = |view{ count }|.
+        temp3-text = |View { count }|.
+        INSERT temp3 INTO TABLE t_dialog_views.
         view_display( ).
         open_dialog( ).
 
       WHEN `ADD_VIEW_POPOVER`.
         count = lines( t_popover_views ) + 1.
-        INSERT VALUE #( key = |view{ count }| text = |View { count }| ) INTO TABLE t_popover_views.
+        
+        CLEAR temp4.
+        temp4-key = |view{ count }|.
+        temp4-text = |View { count }|.
+        INSERT temp4 INTO TABLE t_popover_views.
         view_display( ).
         open_popover( ).
 
@@ -213,28 +252,51 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
 
   METHOD open_dialog.
 
+    DATA temp5 TYPE string_table.
+    CLEAR temp5.
+    INSERT `d1` INTO TABLE temp5.
+    INSERT `open` INTO TABLE temp5.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `d1` ) ( `open` ) ) ).
+                              t_arg = temp5 ).
 
   ENDMETHOD.
 
 
   METHOD open_popover.
 
+    DATA temp7 TYPE string_table.
+    CLEAR temp7.
+    INSERT `p1` INTO TABLE temp7.
+    INSERT `openBy` INTO TABLE temp7.
+    INSERT `openBtn` INTO TABLE temp7.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `p1` ) ( `openBy` ) ( `openBtn` ) ) ).
+                              t_arg = temp7 ).
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp9 TYPE z2ui5_cl_smpc_app_644=>ty_t_view.
+    DATA temp10 LIKE LINE OF temp9.
 
     listlayout = abap_true.
 
-    t_dialog_views = VALUE #(
-        ( key = `view1` text = `View 1` content = `My Test View 1` )
-        ( key = `view2` text = `View 2` content = `My Test View 2` )
-        ( key = `view3` text = `View 3` content = `My Test View 3` ) ).
+    
+    CLEAR temp9.
+    
+    temp10-key = `view1`.
+    temp10-text = `View 1`.
+    temp10-content = `My Test View 1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-key = `view2`.
+    temp10-text = `View 2`.
+    temp10-content = `My Test View 2`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-key = `view3`.
+    temp10-text = `View 3`.
+    temp10-content = `My Test View 3`.
+    INSERT temp10 INTO TABLE temp9.
+    t_dialog_views = temp9.
     t_popover_views = t_dialog_views.
 
   ENDMETHOD.
