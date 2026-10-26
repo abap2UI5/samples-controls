@@ -7,7 +7,24 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-20 (latest) — controls newer than UI5 1.71 come into scope: 48 ports, coverage 669 / 669
+## 2026-10-26 (latest) — OpenUI5 1.153 deprecates the NotificationList family: the five ports stay
+
+**Decision (maintainer).** OpenUI5 1.153 marks `sap.m.NotificationList`,
+`NotificationListBase`, `NotificationListGroup` and `NotificationListItem`
+`@deprecated` (replaced by the UI5 Web Components notifications). The weekly
+`generate-result` run of 2026-10-26 refreshed `ui5/properties.json` from
+OpenUI5 main and the hard scope gate failed on the five ports of that family:
+076 `NotificationListItem`, 077 `NotificationListGroup`, 291
+`NotificationListGroupBindings`, 444 `MaxNumberOfNotificationsReached` and 520
+`NotificationListGroupLazyLoading`. They were ported while in scope, the
+controls still ship and render, and they are the only notification samples -
+so they stay, each as a `ui5/scope-exceptions.json` entry pinned to
+`{ deprecated, 1.34, 1.153 }`, the same KEEP shape as UploadSet (app 121).
+`ui5/properties.json` is committed at the refreshed state in the same change,
+because an exception whose sample the committed snapshot still reads as in
+scope fails as stale.
+
+## 2026-10-20 — controls newer than UI5 1.71 come into scope: 48 ports, coverage 669 / 669
 
 **Decision (maintainer).** A sample whose control is newer than UI5 1.71 is no
 longer out of scope. The rule cost 48 samples on 12 controls — `sap.m.Avatar`,
