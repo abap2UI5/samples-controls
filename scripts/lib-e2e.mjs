@@ -400,3 +400,29 @@ export async function busyOverlayCount(page) {
   }
   return n;
 }
+
+/* Page function for `page.waitForFunction(appRendered, undefined, { timeout })`:
+ * true once the APP's view has rendered, not just the framework's shell.
+ *
+ * The check used to be `[data-sap-ui]` count > 3, which the shell alone missed
+ * by one: ComponentContainer, the shell XMLView and its sap.m.App. abap2UI5#2913
+ * (2026-10-13) put a fourth element into that shell (z2ui5.core.RootSlot, which
+ * creates the root control at run time), so from that commit on the count was
+ * reached BEFORE the first roundtrip came back. The smoke went on with an empty
+ * page: every port without an interaction module "passed" boot and render
+ * without having rendered, and the overview app - the largest response of the
+ * corpus, so the last to arrive - failed its first click on every nightly from
+ * 2026-10-14 ("the control never appeared — tried 0 overflow popover(s)").
+ *
+ * What it waits for now does not count the shell's parts: a rendered port view
+ * is a second sap.ui.core.mvc.View next to the shell's. A start that ends on
+ * the framework's error overlay counts as rendered too, so the smoke still
+ * reports it as the fatal overlay it is rather than as a boot timeout. */
+export function appRendered() {
+  const Element = window.sap && window.sap.ui && window.sap.ui.require
+    && window.sap.ui.require('sap/ui/core/Element');
+  if (!Element || !Element.registry) return false;
+  if (/Unexpected Error Occurred/.test(document.body.innerText || '')) return true;
+  return Object.values(Element.registry.all())
+    .filter((c) => c.isA && c.isA('sap.ui.core.mvc.View') && c.getDomRef()).length >= 2;
+}

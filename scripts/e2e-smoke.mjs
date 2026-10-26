@@ -188,6 +188,7 @@ function resolveLocal(pathname) {
 
 // benign-noise contract shared with the MCP server — see lib-smoke.mjs
 import { benign, allowEvalForSourceUi5 } from './lib-smoke.mjs';
+import { appRendered } from './lib-e2e.mjs';
 
 function startBackend() {
   return new Promise((resolve, reject) => {
@@ -338,9 +339,10 @@ async function checkPort(browser, cls, { theme = false } = {}) {
   });
   try {
     await page.goto(`${ORIGIN}/?app_start=${cls}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    // UI5 booted from source AND the initial roundtrip rendered real controls
+    // UI5 booted from source AND the initial roundtrip rendered the port's
+    // view - not only the shell (lib-e2e.mjs appRendered says why)
     await page.waitForFunction(
-      () => window.sap && window.sap.ui && document.querySelectorAll('[data-sap-ui]').length > 3,
+      appRendered,
       // the options are the THIRD argument - the second is the page function's
       // arg, and an options object passed there left Playwright's 30 s default
       undefined,

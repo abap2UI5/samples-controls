@@ -60,6 +60,24 @@ verdicts below turned out to be harness effects.
   broken ports. Confirm in a headed run or with a `console` listener: the
   browser logs `Refused to execute inline script because it violates ...
   script-src`.
+- **"Booted" means the PORT's view rendered, never a count of UI5 elements -
+  wait with `appRendered` from `scripts/lib-e2e.mjs`.** The smoke's boot wait
+  was `[data-sap-ui]` count > 3, one more than the framework's shell
+  (ComponentContainer, shell XMLView, sap.m.App). abap2UI5#2913 (2026-10-13)
+  added a fourth shell element (`z2ui5.core.RootSlot`), so the wait was met
+  before the first roundtrip answered: every port without an interaction
+  module passed boot and render on an EMPTY page, and the overview app - the
+  largest response, so the last to land - failed on every nightly from
+  2026-10-14 with `the control never appeared — tried 0 overflow popover(s)`.
+  The tell: zero overflow popovers tried and only App/RootSlot/XMLView in the
+  element registry. `appRendered` waits for a second rendered
+  `sap.ui.core.mvc.View` (or the error overlay); an interaction that reloads
+  waits the same way.
+- **The abaplint configs read from abap2UI5 are JSONC - parse them with
+  `scripts/lib/jsonc.mjs`, never `JSON.parse`.** abap2UI5#2950 (2026-10-26)
+  put a comment into `.github/abaplint/abap_702.jsonc`, and `e2e-build`
+  died with `SyntaxError: Expected double-quoted property name` before the
+  downport.
 - **Read the frontend state through `FRONTEND_STATE`, never through
   `z2ui5/core/AppState`.** The state moved twice in two days: off
   `window.z2ui5` (abap2UI5#2777) and then off the module onto a per-component

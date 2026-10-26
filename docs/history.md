@@ -7,7 +7,29 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-26 (latest) — OpenUI5 1.153 deprecates the NotificationList family: the five ports stay
+## 2026-10-26 (latest) — e2e-nightly red since 2026-10-14: the boot wait counted the framework's shell
+
+The overview app failed every nightly from 2026-10-14 (`the control never
+appeared — tried 0 overflow popover(s)`) while it passed against the pin -
+e2e-nightly builds abap2UI5 main, e2e-pr the pin. abap2UI5#2913 (2026-10-13)
+creates the root control at run time through a new `z2ui5.core.RootSlot`
+element in the shell view, and the smoke's boot wait, `[data-sap-ui]` count
+> 3, had been exactly one more than the shell's three elements. With four it
+was met before the first roundtrip answered, so the smoke went on with an
+empty page: every port without an interaction module passed boot and render
+without having rendered, and the overview - the largest response, so the
+last to arrive - clicked into nothing. `appRendered` (`scripts/lib-e2e.mjs`)
+now waits for the port's own view, a second rendered `sap.ui.core.mvc.View`
+(or the framework's error overlay), in the smoke and in the eight interaction
+modules that repeated the old count after a reload.
+
+The same day abap2UI5#2950 put a comment into
+`.github/abaplint/abap_702.jsonc`, which `e2e-build.mjs` read with a bare
+`JSON.parse` - the next nightly would have died before the downport. The
+JSONC reader of `check-app-rules.mjs` moved to `scripts/lib/jsonc.mjs` and
+both scripts use it.
+
+## 2026-10-26 — OpenUI5 1.153 deprecates the NotificationList family: the five ports stay
 
 **Decision (maintainer).** OpenUI5 1.153 marks `sap.m.NotificationList`,
 `NotificationListBase`, `NotificationListGroup` and `NotificationListItem`
