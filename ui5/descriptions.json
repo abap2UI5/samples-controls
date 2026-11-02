@@ -1,11 +1,11 @@
 {
   "source": {
     "repo": "https://github.com/SAP/openui5",
-    "commit": "1f98a298ea8f2bd146831186bc5023d1360e43c4",
-    "committed": "2026-08-28",
-    "version": "1.153.0-SNAPSHOT",
+    "commit": "58efb49f68f6a5f722533d79eac81893a7f6e8e7",
+    "committed": "2026-11-02",
+    "version": "1.155.0-SNAPSHOT",
     "from": "src/*/test/**/demokit/docuindex.json -> explored.samples[]",
-    "libraries": 12,
+    "libraries": 13,
     "licence": "Apache-2.0 (OpenUI5). Held verbatim, like the sample sources under ui5/<lib>/<Sample>/."
   },
   "demokit": {
@@ -440,6 +440,10 @@
     "sap.m.sample.DialogFullScreen": {
       "name": "Dialog - Fullscreen",
       "description": "A dialog that can be toggled to fullscreen mode through a header button, by double-clicking the header, or by using the 'Shift+Ctrl+F' keyboard shortcut."
+    },
+    "sap.m.sample.DialogLandmarkInfo": {
+      "name": "Dialog - Landmark Roles",
+      "description": "Configuring the Dialog's Header, Content and Footer region landmarks with DialogAccessibleLandmarkInfo - suppressing the Content region when the content is a Page with its own landmarks, and suppressing all regions for a small dialog."
     },
     "sap.m.sample.DialogMessage": {
       "name": "Message Dialog",
@@ -1117,6 +1121,14 @@
       "name": "Numeric Content Without Margins",
       "description": "This is an example of the NumericContent that contains no margins, so the control is aligned to the left and to the top without any margins."
     },
+    "sap.m.sample.NumericInput": {
+      "name": "Numeric Input",
+      "description": "The NumericInput is a numeric input field that allows the user to enter or adjust a value using configurable step increments. It supports optional min/max bounds, decimal precision, and an optional description suffix for units or currencies."
+    },
+    "sap.m.sample.NumericInputValueState": {
+      "name": "Numeric Input - Value States",
+      "description": "This example shows different NumericInput value states."
+    },
     "sap.m.sample.ObjectAttributeInTable": {
       "name": "Object Attribute inside Table",
       "description": "This is an example of Object Attribute used inside Table."
@@ -1202,8 +1214,16 @@
       "description": "The <code>ObjectMarker</code> is a small building block representing an object by an icon or text and icon. Often it is used in a table."
     },
     "sap.m.sample.ObjectNumber": {
-      "name": "Object Number",
+      "name": "Object Number - Default Mode",
       "description": "The object number is a small building block representing an important, numerical attribute of an object together with it's unit. Often it is used in the last column of a table."
+    },
+    "sap.m.sample.ObjectNumberCurrency": {
+      "name": "Object Number - Currency Mode",
+      "description": "Shows ObjectNumber with displayMode Currency, demonstrating currency symbol vs ISO code rendering and decimal alignment across different currencies."
+    },
+    "sap.m.sample.ObjectNumberUnit": {
+      "name": "Object Number - Unit Mode",
+      "description": "Shows ObjectNumber with displayMode Unit, demonstrating measurement values with localized unit labels and decimal alignment."
     },
     "sap.m.sample.ObjectStatus": {
       "name": "Object Status",
@@ -1716,6 +1736,10 @@
     "sap.m.sample.TableSelectDialogGrowing": {
       "name": "Table Select Dialog Growing",
       "description": "Table Select Dialog can be created with property growing set to true or false."
+    },
+    "sap.m.sample.TableSticky": {
+      "name": "Table - Sticky",
+      "description": "This example demonstrates the sticky behavior of the table header toolbar, info toolbar, column headers, and group headers."
     },
     "sap.m.sample.TableStrictLayout": {
       "name": "Table - Strict layout",
@@ -2449,6 +2473,10 @@
       "name": "Sales Orders Template",
       "description": "Example for OData V4 EPM Sales Orders using XML Templating"
     },
+    "sap.ui.geomap.sample.basic": {
+      "name": "Basic usage",
+      "description": "Basic usage of Geomap displaying spot."
+    },
     "sap.ui.integration.sample.CardExplorer": {
       "name": "Card Explorer",
       "description": "Card Explorer is the application where you can learn more about integration cards."
@@ -2737,6 +2765,10 @@
       "name": "FilterBar - with custom validation state visualization",
       "description": "A filter bar with custom implementation of FilterBarDelegate.visualizeValidationState."
     },
+    "sap.ui.mdc.demokit.sample.LinkCustomControl": {
+      "name": "Link - with custom control (freestyle)",
+      "description": "Opens a navigation popover from custom controls using Link.open() programmatically"
+    },
     "sap.ui.mdc.demokit.sample.LinkPayloadJson": {
       "name": "Link - with JSON model",
       "description": "A link using a delegate payload"
@@ -3021,6 +3053,10 @@
       "name": "Complex",
       "description": "File Uploader Example with Parameters"
     },
+    "sap.ui.unified.sample.FileUploaderMultiple": {
+      "name": "Multiple Files",
+      "description": "File Uploader Example with Multiple Files"
+    },
     "sap.ui.unified.sample.MenuItemEventing": {
       "name": "Item Eventing",
       "description": "Menu with Item Eventing"
@@ -3032,6 +3068,14 @@
     "sap.ui.unified.sample.MenuSelectable": {
       "name": "Menu with Selectable Items",
       "description": "Some menu items can be added to groups to allow single or multiple item selection."
+    },
+    "sap.ui.unified.sample.ObjectNumberCurrency": {
+      "name": "Object Number in Currency Mode",
+      "description": "Display currencies with Object Numbers in Currency Mode"
+    },
+    "sap.ui.unified.sample.ObjectNumberCurrencyInTable": {
+      "name": "Object Number in Currency Mode in Table",
+      "description": "Display currencies with Object Numbers in Currency Mode in Table"
     },
     "sap.uxap.sample.AlternativeProfileObjectPageHeader": {
       "name": "ObjectPageHeader options",
