@@ -4,7 +4,7 @@
   "ref": "main",
   "catalogue": "https://raw.githubusercontent.com/abap2UI5/samples-controls/main/catalogue.json",
   "minUi5": "1.71",
-  "ui5Snapshot": "1.152.0",
+  "ui5Snapshot": "1.155.0",
   "releases": [
     "1.71",
     "1.72",

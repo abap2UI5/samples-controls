@@ -623,7 +623,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 
 | Sample | Class |
 |---|---|
-| **sap.m.ObjectNumber**<br>The object number is a small building block representing an important, numerical attribute of an object together with it's unit. Often it is used in the last column of a table.<br><sub>objectnumber object number sap.m states inverted interactive styles verticallayout label horizontallayout panel</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_072`](src/02/01/z2ui5_cl_smpc_app_072.clas.abap) |
+| **sap.m.ObjectNumber** — Object Number - Default Mode<br>The object number is a small building block representing an important, numerical attribute of an object together with it's unit. Often it is used in the last column of a table.<br><sub>objectnumber object number sap.m states inverted interactive styles verticallayout label horizontallayout panel</sub><br><sub>◐ reviewed · 3 deviations</sub> | [`Z2UI5_CL_SMPC_APP_072`](src/02/01/z2ui5_cl_smpc_app_072.clas.abap) |
 
 #### sap.m.ObjectStatus
 

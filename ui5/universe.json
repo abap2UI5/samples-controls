@@ -1,5 +1,5 @@
 {
- "release": "1.152.0",
+ "release": "1.155.0",
  "libs": [
   {
    "lib": "sap.f",
@@ -662,6 +662,12 @@
     },
     {
      "name": "DialogFullScreen",
+     "entity": "sap.m.Dialog",
+     "since": null,
+     "deprecated": null
+    },
+    {
+     "name": "DialogLandmarkInfo",
      "entity": "sap.m.Dialog",
      "since": null,
      "deprecated": null
@@ -1372,7 +1378,10 @@
      "name": "MaxNumberOfNotificationsReached",
      "entity": "sap.m.NotificationListGroup",
      "since": "1.34",
-     "deprecated": null
+     "deprecated": {
+      "since": "1.153",
+      "text": "Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant. The UI5 Web Components can be integrated seamlessly using ui5-tooling-modules. See Using Web Components and the UXC integration sample."
+     }
     },
     {
      "name": "Menu",
@@ -1648,25 +1657,37 @@
      "name": "NotificationListGroup",
      "entity": "sap.m.NotificationListGroup",
      "since": "1.34",
-     "deprecated": null
+     "deprecated": {
+      "since": "1.153",
+      "text": "Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant. The UI5 Web Components can be integrated seamlessly using ui5-tooling-modules. See Using Web Components and the UXC integration sample."
+     }
     },
     {
      "name": "NotificationListGroupBindings",
      "entity": "sap.m.NotificationListGroup",
      "since": "1.34",
-     "deprecated": null
+     "deprecated": {
+      "since": "1.153",
+      "text": "Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant. The UI5 Web Components can be integrated seamlessly using ui5-tooling-modules. See Using Web Components and the UXC integration sample."
+     }
     },
     {
      "name": "NotificationListGroupLazyLoading",
      "entity": "sap.m.NotificationListGroup",
      "since": "1.34",
-     "deprecated": null
+     "deprecated": {
+      "since": "1.153",
+      "text": "Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant. The UI5 Web Components can be integrated seamlessly using ui5-tooling-modules. See Using Web Components and the UXC integration sample."
+     }
     },
     {
      "name": "NotificationListItem",
      "entity": "sap.m.NotificationListItem",
      "since": "1.34",
-     "deprecated": null
+     "deprecated": {
+      "since": "1.153",
+      "text": "Will no longer be aligned with future design updates. Replaced by the UI5 Web Components' notifications, which are UXC-compliant. The UI5 Web Components can be integrated seamlessly using ui5-tooling-modules. See Using Web Components and the UXC integration sample."
+     }
     },
     {
      "name": "NumericContentDifColors",
@@ -1684,6 +1705,18 @@
      "name": "NumericContentWithoutMargin",
      "entity": "sap.m.NumericContent",
      "since": "1.34",
+     "deprecated": null
+    },
+    {
+     "name": "NumericInput",
+     "entity": "sap.m.NumericInput",
+     "since": null,
+     "deprecated": null
+    },
+    {
+     "name": "NumericInputValueState",
+     "entity": "sap.m.NumericInput",
+     "since": null,
      "deprecated": null
     },
     {
@@ -1808,6 +1841,18 @@
     },
     {
      "name": "ObjectNumber",
+     "entity": "sap.m.ObjectNumber",
+     "since": "1.12",
+     "deprecated": null
+    },
+    {
+     "name": "ObjectNumberCurrency",
+     "entity": "sap.m.ObjectNumber",
+     "since": "1.12",
+     "deprecated": null
+    },
+    {
+     "name": "ObjectNumberUnit",
      "entity": "sap.m.ObjectNumber",
      "since": "1.12",
      "deprecated": null
@@ -2227,6 +2272,12 @@
      "deprecated": null
     },
     {
+     "name": "SelectGrouping",
+     "entity": "sap.m.Select",
+     "since": null,
+     "deprecated": null
+    },
+    {
      "name": "SelectList",
      "entity": "sap.m.SelectList",
      "since": "1.26.0",
@@ -2613,6 +2664,12 @@
     {
      "name": "TableSelectDialogGrowing",
      "entity": "sap.m.TableSelectDialog",
+     "since": "1.16",
+     "deprecated": null
+    },
+    {
+     "name": "TableSticky",
+     "entity": "sap.m.Table",
      "since": "1.16",
      "deprecated": null
     },
@@ -4263,6 +4320,12 @@
      "deprecated": null
     },
     {
+     "name": "FileUploaderMultiple",
+     "entity": "sap.ui.unified.FileUploader",
+     "since": null,
+     "deprecated": null
+    },
+    {
      "name": "MenuItemEventing",
      "entity": "sap.ui.unified.Menu",
      "since": null,
@@ -4277,6 +4340,18 @@
     {
      "name": "MenuSelectable",
      "entity": "sap.ui.unified.Menu",
+     "since": null,
+     "deprecated": null
+    },
+    {
+     "name": "ObjectNumberCurrency",
+     "entity": "sap.ui.unified.Currency",
+     "since": null,
+     "deprecated": null
+    },
+    {
+     "name": "ObjectNumberCurrencyInTable",
+     "entity": "sap.ui.unified.Currency",
      "since": null,
      "deprecated": null
     }
