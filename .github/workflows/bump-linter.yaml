@@ -13,9 +13,9 @@
 # ports fails this workflow instead of landing on main.
 name: bump-linter
 
+# no schedule: bump-deps.yaml does this once a month, in its one
+# pull request; a dispatch still runs it on its own
 on:
-  schedule:
-    - cron: '23 6 * * 1'   # Mondays 06:23 UTC — right after the extension's 06:17 bump
   workflow_dispatch:
 
 # one run at a time: a manual dispatch that overlaps the weekly cron would

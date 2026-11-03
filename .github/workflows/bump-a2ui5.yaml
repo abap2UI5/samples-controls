@@ -28,9 +28,9 @@
 # itself on its own red checks.
 name: bump-a2ui5
 
+# no schedule: bump-deps.yaml does this once a month, in its one
+# pull request; a dispatch still runs it on its own
 on:
-  schedule:
-    - cron: '11 5 * * 2'   # Tuesdays 05:11 UTC, off the full-hour load spikes
   workflow_dispatch:
 
 # one run at a time: a manual dispatch that overlaps the weekly cron would
