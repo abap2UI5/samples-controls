@@ -27,10 +27,10 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -39,9 +39,66 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    DATA temp8 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " original onPress: MessageToast.show( source.getId() + ' Pressed' ) - client-composed, roundtrip-free
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `{0} Pressed` INTO TABLE temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `{0} Pressed` INTO TABLE temp2.
+    INSERT `$event.oSource.sId` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp3.
+    INSERT `show` INTO TABLE temp3.
+    INSERT `{0} Pressed` INTO TABLE temp3.
+    INSERT `$event.oSource.sId` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp4.
+    INSERT `show` INTO TABLE temp4.
+    INSERT `{0} Pressed` INTO TABLE temp4.
+    INSERT `$event.oSource.sId` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp5.
+    INSERT `show` INTO TABLE temp5.
+    INSERT `{0} Pressed` INTO TABLE temp5.
+    INSERT `$event.oSource.sId` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp6.
+    INSERT `show` INTO TABLE temp6.
+    INSERT `{0} Pressed` INTO TABLE temp6.
+    INSERT `$event.oSource.sId` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp7.
+    INSERT `show` INTO TABLE temp7.
+    INSERT `{0} Pressed` INTO TABLE temp7.
+    INSERT `$event.oSource.sId` INTO TABLE temp7.
+    
+    CLEAR temp8.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp8.
+    INSERT `show` INTO TABLE temp8.
+    INSERT `{0} Pressed` INTO TABLE temp8.
+    INSERT `$event.oSource.sId` INTO TABLE temp8.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -71,7 +128,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `displayShape` v = `Square`
                             )->a( n = `showBorder`   v = `true`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp1 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Avatar of a product with border`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -85,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `displaySize` v = `XL`
                             )->a( n = `showBorder`  v = `true`
                             )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                  t_arg = temp2 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Avatar of a person with border`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -99,7 +156,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `XL`
                             )->a( n = `displayShape` v = `Square`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp3 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Square with initials`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -113,7 +170,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `initials`    v = `PI`
                             )->a( n = `displaySize` v = `XL`
                             )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                  t_arg = temp4 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Disabled`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -126,7 +183,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `displaySize`     v = `XL`
                             )->a( n = `backgroundColor` v = `Transparent`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp5 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Transparent background`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -140,7 +197,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `displaySize`     v = `XL`
                             )->a( n = `backgroundColor` v = `TileIcon`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp6 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `TileIcon background`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -154,7 +211,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                             )->a( n = `backgroundColor` v = `Placeholder`
                             )->a( n = `displayShape`    v = `Square`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp7 )
                         )->tag( `Text`
                             )->a( n = `text`  v = `Placeholder background`
                             )->a( n = `class` v = `sapUiSmallMarginTop`
@@ -166,7 +223,7 @@ CLASS z2ui5_cl_smpc_app_624 IMPLEMENTATION.
                         )->tag( `Avatar`
                             )->a( n = `displaySize` v = `XL`
                             )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                  t_arg = temp8 )
                             )->a( n = `initials`    v = `ABC`
                         )->tag( `Text`
                             )->a( n = `text`  v = `Circular avatar with 3 letter initials`

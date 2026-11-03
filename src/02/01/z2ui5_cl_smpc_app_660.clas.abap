@@ -29,7 +29,7 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         icon           TYPE string,
         filesize_units TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_folder,
         id             TYPE string,
@@ -52,7 +52,7 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         filesize_units TYPE string,
         items          TYPE ty_t_item,
       END OF ty_s_folder.
-    TYPES ty_t_folder TYPE STANDARD TABLE OF ty_s_folder WITH EMPTY KEY.
+    TYPES ty_t_folder TYPE STANDARD TABLE OF ty_s_folder WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_root,
         id             TYPE string,
@@ -75,7 +75,8 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
         filesize_units TYPE string,
         items          TYPE ty_t_folder,
       END OF ty_s_root.
-    DATA t_items TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
+    TYPES temp1_94db705a1f TYPE STANDARD TABLE OF ty_s_root WITH DEFAULT KEY.
+DATA t_items TYPE temp1_94db705a1f.
     " onSelectionChange: Download for one or more rows, the rest for exactly one
     DATA download_enabled TYPE abap_bool.
     DATA single_enabled   TYPE abap_bool.
@@ -91,7 +92,7 @@ CLASS z2ui5_cl_smpc_app_660 DEFINITION PUBLIC.
     DATA name_state_text  TYPE string.
 
   PROTECTED SECTION.
-    TYPES ty_t_index TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    TYPES ty_t_index TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
     " the binding paths of the selected rows and of the row a removal asks about
@@ -158,12 +159,12 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -172,8 +173,55 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 LIKE LINE OF temp2.
+    DATA temp4 TYPE string_table.
+    DATA temp5 LIKE LINE OF temp4.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp8 TYPE string_table.
+    DATA temp9 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `IMAGEURL` INTO TABLE temp1.
+    INSERT `UPLOADSTATE` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `uploadSetPlugin` INTO TABLE temp2.
+    INSERT `download` INTO TABLE temp2.
+    
+    temp3 = `$controller.getView().byId('table-uploadSet').getContextByIndex(` && `$controller.getView().byId('table-uploadSet').getSelectedIndices()[0])`.
+    INSERT temp3 INTO TABLE temp2.
+    INSERT `true` INTO TABLE temp2.
+    
+    CLEAR temp4.
+    INSERT `uploadSetPlugin` INTO TABLE temp4.
+    INSERT `renameItem` INTO TABLE temp4.
+    
+    temp5 = `$controller.getView().byId('table-uploadSet').getContextByIndex(` && `$controller.getView().byId('table-uploadSet').getSelectedIndices()[0])`.
+    INSERT temp5 INTO TABLE temp4.
+    
+    CLEAR temp6.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp6.
+    INSERT `${$parameters>/item}.getMediaType()` INTO TABLE temp6.
+    INSERT `${$parameters>/item}.getFileObject().size` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    temp7-check_prevent_default = abap_true.
+    temp7-check_queue_last = abap_true.
+    
+    CLEAR temp8.
+    INSERT `${$parameters>/item}.getBindingContext().getPath()` INTO TABLE temp8.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp8.
+    
+    CLEAR temp9.
+    INSERT `uploadSetPlugin` INTO TABLE temp9.
+    INSERT `openFilePreview` INTO TABLE temp9.
+    INSERT `$event.oSource.getBindingContext()` INTO TABLE temp9.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`         v = `sap.ui.table`
         )->a( n = `xmlns:m`       v = `sap.m`
@@ -194,8 +242,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                     " IMAGEURL and UPLOADSTATE stay absent where the mock has
                     " none, so the view's undefined checks read as in the sample
                     )->a( n = `rows`               v = client->_bind( val                = t_items
-                                                                      omit_initial_paths = VALUE #( ( `IMAGEURL` )
-                                                                                                    ( `UPLOADSTATE` ) ) )
+                                                                      omit_initial_paths = temp1 )
                     )->a( n = `selectionMode`      v = `MultiToggle`
                     )->a( n = `rowSelectionChange` v = client->_event( val = `SELECTION`
                                                                        arg = `$event.oSource.getBinding('rows').getSelectedContexts().join()` )
@@ -216,11 +263,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                 )->a( n = `text`    v = `Download`
                                 )->a( n = `enabled` v = client->_bind( download_enabled )
                                 )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                  t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                   ( `download` )
-                                                                                                   ( `$controller.getView().byId('table-uploadSet').getContextByIndex(` &&
-                                                                                                     `$controller.getView().byId('table-uploadSet').getSelectedIndices()[0])` )
-                                                                                                   ( `true` ) ) )
+                                                                                  t_arg = temp2 )
 
                             )->ele( n = `MenuButton` ns = `m`
                                 )->a( n = `text` v = `Add`
@@ -255,10 +298,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                 )->a( n = `id`      v = `renameButton`
                                 )->a( n = `enabled` v = client->_bind( single_enabled )
                                 )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                  t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                   ( `renameItem` )
-                                                                                                   ( `$controller.getView().byId('table-uploadSet').getContextByIndex(` &&
-                                                                                                     `$controller.getView().byId('table-uploadSet').getSelectedIndices()[0])` ) ) )
+                                                                                  t_arg = temp4 )
                                 )->a( n = `text`    v = `Rename`
 
                                 )->ele( n = `layoutData` ns = `m`
@@ -291,14 +331,10 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                             " the mock server's part: the upload is vetoed and the backend
                             " adds the row the fake 201 response would have created
                             )->a( n = `beforeUploadStarts`     v = client->_event( val    = `UPLOAD`
-                                                                                   t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
-                                                                                                     ( `${$parameters>/item}.getMediaType()` )
-                                                                                                     ( `${$parameters>/item}.getFileObject().size` ) )
-                                                                                   s_ctrl = VALUE #( check_prevent_default = abap_true
-                                                                                                     check_queue_last      = abap_true ) )
+                                                                                   t_arg  = temp6
+                                                                                   s_ctrl = temp7 )
                             )->a( n = `itemRenamed`            v = client->_event( val   = `RENAMED`
-                                                                                   t_arg = VALUE #( ( `${$parameters>/item}.getBindingContext().getPath()` )
-                                                                                                    ( `${$parameters>/item}.getFileName()` ) ) )
+                                                                                   t_arg = temp8 )
                             )->a( n = `cloudFilePickerEnabled` v = `true`
                             )->a( n = `actions`                v = `uploadButton`
 
@@ -352,9 +388,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                         )->tag( n = `Link` ns = `m`
                                             )->a( n = `text`    v = `{FILENAME}`
                                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                              t_arg = VALUE #( ( `uploadSetPlugin` )
-                                                                                                               ( `openFilePreview` )
-                                                                                                               ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                              t_arg = temp9 )
                                             )->a( n = `class`   v = `sapUiTinyMarginBottom`
                                             )->a( n = `visible` v = `{= ${ISDIRECTORY} === false }`
                                         )->tag( n = `Text` ns = `m`
@@ -417,7 +451,8 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
   METHOD popup_url_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`             v = `sap.m`
@@ -478,27 +513,58 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
+        DATA files TYPE i.
+        DATA folders TYPE i.
+        DATA path LIKE LINE OF t_selected.
+        DATA temp1 TYPE xsdboolean.
+        DATA temp2 TYPE xsdboolean.
+        DATA row TYPE z2ui5_cl_smpc_app_660=>ty_s_item.
+        FIELD-SYMBOLS <temp4> LIKE LINE OF t_selected.
+        DATA temp5 LIKE sy-tabix.
+            DATA edit_id TYPE z2ui5_cl_smpc_app_660=>ty_s_item-id.
+            FIELD-SYMBOLS <temp6> LIKE LINE OF t_selected.
+            DATA temp7 LIKE sy-tabix.
+            DATA temp4 LIKE LINE OF t_items.
+            DATA top LIKE REF TO temp4.
+          FIELD-SYMBOLS <temp5> LIKE LINE OF t_selected.
+          DATA temp6 LIKE sy-tabix.
+          DATA levels TYPE z2ui5_cl_smpc_app_660=>ty_t_index.
+          FIELD-SYMBOLS <temp7> LIKE LINE OF levels.
+          DATA temp8 LIKE sy-tabix.
+            FIELD-SYMBOLS <temp9> LIKE LINE OF levels.
+            DATA temp10 LIKE sy-tabix.
+        DATA temp11 TYPE i.
 
     CASE client->get_event( ).
 
       WHEN `SELECTION`.
         " onSelectionChange - the binding's selected contexts arrive as their paths;
         " the buttons only count files, and only while no folder is selected
-        t_selected = VALUE #( ).
+        
+        CLEAR temp3.
+        t_selected = temp3.
         IF client->get_event_arg( ) IS NOT INITIAL.
           SPLIT client->get_event_arg( ) AT `,` INTO TABLE t_selected.
         ENDIF.
-        DATA(files)   = 0.
-        DATA(folders) = 0.
-        LOOP AT t_selected INTO DATA(path).
+        
+        files   = 0.
+        
+        folders = 0.
+        
+        LOOP AT t_selected INTO path.
           IF node_get( path )-isdirectory = abap_true.
             folders = folders + 1.
           ELSE.
             files = files + 1.
           ENDIF.
         ENDLOOP.
-        download_enabled = xsdbool( files > 0 AND folders = 0 ).
-        single_enabled   = xsdbool( files = 1 AND folders = 0 ).
+        
+        temp1 = boolc( files > 0 AND folders = 0 ).
+        download_enabled = temp1.
+        
+        temp2 = boolc( files = 1 AND folders = 0 ).
+        single_enabled   = temp2.
 
       WHEN `ADD_URL`.
         " openAddOrEditDialog in its Add shape
@@ -519,7 +585,16 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
         IF t_selected IS INITIAL.
           RETURN.
         ENDIF.
-        DATA(row) = node_get( t_selected[ 1 ] ).
+        
+        
+        
+        temp5 = sy-tabix.
+        READ TABLE t_selected INDEX 1 ASSIGNING <temp4>.
+        sy-tabix = temp5.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        row = node_get( <temp4> ).
         is_edit         = abap_true.
         dialog_title    = `Edit URL`.
         apply_text      = `Apply`.
@@ -542,8 +617,19 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
           url_valid( ).
           " the sample looks the row up by id in the top-level /items only
           IF t_selected IS NOT INITIAL.
-            DATA(edit_id) = node_get( t_selected[ 1 ] )-id.
-            LOOP AT t_items REFERENCE INTO DATA(top) WHERE id = edit_id AND id IS NOT INITIAL.
+            
+            
+            
+            temp7 = sy-tabix.
+            READ TABLE t_selected INDEX 1 ASSIGNING <temp6>.
+            sy-tabix = temp7.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            edit_id = node_get( <temp6> )-id.
+            
+            
+            LOOP AT t_items REFERENCE INTO top WHERE id = edit_id AND id IS NOT INITIAL.
               top->filename = name_input.
               top->url      = url_input.
             ENDLOOP.
@@ -553,7 +639,15 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
       WHEN `REMOVE_SELECTED`.
         IF t_selected IS NOT INITIAL.
-          remove_ask( t_selected[ 1 ] ).
+          
+          
+          temp6 = sy-tabix.
+          READ TABLE t_selected INDEX 1 ASSIGNING <temp5>.
+          sy-tabix = temp6.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          remove_ask( <temp5> ).
         ENDIF.
 
       WHEN `REMOVE_ROW`.
@@ -563,18 +657,37 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
         " removeItem splices the TOP-LEVEL index of the path (split('/')[2]) out of
         " /items - for a file inside a folder, that is its top-level folder
         IF client->get_event_arg( ) = `Remove`.
-          DATA(levels) = path_indices( remove_path ).
-          IF levels IS NOT INITIAL AND levels[ 1 ] <= lines( t_items ).
-            DELETE t_items INDEX levels[ 1 ].
+          
+          levels = path_indices( remove_path ).
+          
+          
+          temp8 = sy-tabix.
+          READ TABLE levels INDEX 1 ASSIGNING <temp7>.
+          sy-tabix = temp8.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          IF levels IS NOT INITIAL AND <temp7> <= lines( t_items ).
+            
+            
+            temp10 = sy-tabix.
+            READ TABLE levels INDEX 1 ASSIGNING <temp9>.
+            sy-tabix = temp10.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            DELETE t_items INDEX <temp9>.
           ENDIF.
         ENDIF.
 
       WHEN `UPLOAD`.
         " the file the FileUploader picked, as the mock server would answer it
+        
+        temp11 = client->get_event_arg( 3 ).
         row_add( filename  = client->get_event_arg( )
                  mediatype = client->get_event_arg( 2 )
                  url       = ``
-                 filesize  = CONV #( client->get_event_arg( 3 ) ) ).
+                 filesize  = temp11 ).
         client->message_toast_display( `Document Added` ).
 
       WHEN `RENAMED`.
@@ -588,15 +701,22 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
 
   METHOD url_apply.
+        DATA temp12 TYPE string_table.
+    DATA has_error TYPE abap_bool.
+    DATA temp3 TYPE xsdboolean.
 
     " handleAddViaUrl
     IF is_edit = abap_true.
       IF name_valid( ) = abap_true.
         " showEditConfirmation - a Message dialog in the Warning state
+        
+        CLEAR temp12.
+        INSERT `Save` INTO TABLE temp12.
+        INSERT `DiscardChanges` INTO TABLE temp12.
         client->message_box_display( text             = `You have made changes to this object. What would you like to do?`
                                      type             = `warning`
                                      title            = `Warning`
-                                     actions          = VALUE #( ( `Save` ) ( `DiscardChanges` ) )
+                                     actions          = temp12
                                      emphasizedaction = `Save`
                                      onclose          = `EDIT_CONFIRM` ).
       ELSE.
@@ -604,7 +724,10 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
       ENDIF.
       RETURN.
     ENDIF.
-    DATA(has_error) = xsdbool( name_valid( ) = abap_false ).
+    
+    
+    temp3 = boolc( name_valid( ) = abap_false ).
+    has_error = temp3.
     IF url_valid( ) = abap_false.
       has_error = abap_true.
     ENDIF.
@@ -625,14 +748,20 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
   METHOD remove_ask.
 
     " removeItem - MessageBox.warning; the icon is the warning box's own
-    DATA(node) = node_get( path ).
+    DATA node TYPE z2ui5_cl_smpc_app_660=>ty_s_item.
+    DATA temp14 TYPE string_table.
+    node = node_get( path ).
     IF node IS INITIAL.
       RETURN.
     ENDIF.
     remove_path = path.
+    
+    CLEAR temp14.
+    INSERT `Remove` INTO TABLE temp14.
+    INSERT `CANCEL` INTO TABLE temp14.
     client->message_box_display( text             = |Are you sure you want to remove the document { node-filename } ?|
                                  type             = `warning`
-                                 actions          = VALUE #( ( `Remove` ) ( `CANCEL` ) )
+                                 actions          = temp14
                                  emphasizedaction = `Remove`
                                  styleclass       = `sapMUSTRemovePopoverContainer`
                                  initialfocus     = `CANCEL`
@@ -672,20 +801,26 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
 
   METHOD row_add.
+    DATA temp16 TYPE ty_s_root.
+    DATA row LIKE temp16.
 
     " the mock server's Create branch - unshift the new document
     upload_no = upload_no + 1.
-    DATA(row) = VALUE ty_s_root( id             = |{ upload_no }|
-                                 filename       = filename
-                                 mediatype      = mediatype
-                                 url            = url
-                                 uploadstate    = `Complete`
-                                 status         = `In work`
-                                 filesize       = filesize
-                                 lastmodifiedby = `Jane Burns`
-                                 lastmodified   = `10/03/21, 10:03:00 PM`
-                                 documenttype   = `Invoice`
-                                 trustedsource  = abap_true ).
+    
+    CLEAR temp16.
+    temp16-id = |{ upload_no }|.
+    temp16-filename = filename.
+    temp16-mediatype = mediatype.
+    temp16-url = url.
+    temp16-uploadstate = `Complete`.
+    temp16-status = `In work`.
+    temp16-filesize = filesize.
+    temp16-lastmodifiedby = `Jane Burns`.
+    temp16-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp16-documenttype = `Invoice`.
+    temp16-trustedsource = abap_true.
+    
+    row = temp16.
     row-icon           = icon_for( mediatype = row-mediatype filename = row-filename ).
     row-filesize_units = size_with_units( row-filesize ).
     INSERT row INTO t_items INDEX 1.
@@ -697,10 +832,20 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
     " a row's binding path holds its index on every level, 0-based:
     " /T_ITEMS/0/ITEMS/1 is the 2nd child of the 1st row
-    SPLIT path AT `/` INTO TABLE DATA(parts).
-    LOOP AT parts INTO DATA(part).
+    TYPES temp2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA parts TYPE temp2.
+    DATA part LIKE LINE OF parts.
+        DATA temp17 LIKE LINE OF result.
+        DATA temp8 LIKE LINE OF result.
+    SPLIT path AT `/` INTO TABLE parts.
+    
+    LOOP AT parts INTO part.
       IF part IS NOT INITIAL AND part CO `0123456789`.
-        INSERT CONV i( part ) + 1 INTO TABLE result.
+        
+        temp17 = part.
+        
+        temp8 = temp17 + 1.
+        INSERT temp8 INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
@@ -709,25 +854,120 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
   METHOD node_get.
 
-    DATA(levels) = path_indices( path ).
-    IF levels IS INITIAL OR levels[ 1 ] > lines( t_items ).
+    DATA levels TYPE z2ui5_cl_smpc_app_660=>ty_t_index.
+    FIELD-SYMBOLS <temp18> LIKE LINE OF levels.
+    DATA temp19 LIKE sy-tabix.
+    DATA root LIKE LINE OF t_items.
+    FIELD-SYMBOLS <temp9> LIKE LINE OF t_items.
+    DATA temp10 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp6> LIKE LINE OF levels.
+    DATA temp7 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp20> LIKE LINE OF levels.
+    DATA temp21 LIKE sy-tabix.
+    DATA folder TYPE z2ui5_cl_smpc_app_660=>ty_s_folder.
+    FIELD-SYMBOLS <temp11> LIKE LINE OF root-items.
+    DATA temp12 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp8> LIKE LINE OF levels.
+    DATA temp9 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp22> LIKE LINE OF levels.
+    DATA temp23 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp24> LIKE LINE OF folder-items.
+      DATA temp25 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp13> LIKE LINE OF levels.
+      DATA temp14 LIKE sy-tabix.
+    levels = path_indices( path ).
+    
+    
+    temp19 = sy-tabix.
+    READ TABLE levels INDEX 1 ASSIGNING <temp18>.
+    sy-tabix = temp19.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF levels IS INITIAL OR <temp18> > lines( t_items ).
       RETURN.
     ENDIF.
-    DATA(root) = t_items[ levels[ 1 ] ].
+    
+    
+    
+    temp10 = sy-tabix.
+    
+    
+    temp7 = sy-tabix.
+    READ TABLE levels INDEX 1 ASSIGNING <temp6>.
+    sy-tabix = temp7.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    READ TABLE t_items INDEX <temp6> ASSIGNING <temp9>.
+    sy-tabix = temp10.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    root = <temp9>.
     IF lines( levels ) = 1.
-      result = CORRESPONDING #( root ).
+      MOVE-CORRESPONDING root TO result.
       RETURN.
     ENDIF.
-    IF levels[ 2 ] > lines( root-items ).
+    
+    
+    temp21 = sy-tabix.
+    READ TABLE levels INDEX 2 ASSIGNING <temp20>.
+    sy-tabix = temp21.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF <temp20> > lines( root-items ).
       RETURN.
     ENDIF.
-    DATA(folder) = root-items[ levels[ 2 ] ].
+    
+    
+    
+    temp12 = sy-tabix.
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE levels INDEX 2 ASSIGNING <temp8>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    READ TABLE root-items INDEX <temp8> ASSIGNING <temp11>.
+    sy-tabix = temp12.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    folder = <temp11>.
     IF lines( levels ) = 2.
-      result = CORRESPONDING #( folder ).
+      MOVE-CORRESPONDING folder TO result.
       RETURN.
     ENDIF.
-    IF levels[ 3 ] <= lines( folder-items ).
-      result = folder-items[ levels[ 3 ] ].
+    
+    
+    temp23 = sy-tabix.
+    READ TABLE levels INDEX 3 ASSIGNING <temp22>.
+    sy-tabix = temp23.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF <temp22> <= lines( folder-items ).
+      
+      
+      temp25 = sy-tabix.
+      
+      
+      temp14 = sy-tabix.
+      READ TABLE levels INDEX 3 ASSIGNING <temp13>.
+      sy-tabix = temp14.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      READ TABLE folder-items INDEX <temp13> ASSIGNING <temp24>.
+      sy-tabix = temp25.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      result = <temp24>.
     ENDIF.
 
   ENDMETHOD.
@@ -735,25 +975,112 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
   METHOD node_rename.
 
-    DATA(levels) = path_indices( path ).
-    IF levels IS INITIAL OR levels[ 1 ] > lines( t_items ).
+    DATA levels TYPE z2ui5_cl_smpc_app_660=>ty_t_index.
+    FIELD-SYMBOLS <temp26> LIKE LINE OF levels.
+    DATA temp27 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp28> TYPE z2ui5_cl_smpc_app_660=>ty_s_root.
+    FIELD-SYMBOLS <temp8> LIKE LINE OF levels.
+    DATA temp9 LIKE sy-tabix.
+DATA root LIKE REF TO <temp28>.
+    FIELD-SYMBOLS <temp29> LIKE LINE OF levels.
+    DATA temp30 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp31> TYPE z2ui5_cl_smpc_app_660=>ty_s_folder.
+    FIELD-SYMBOLS <temp10> LIKE LINE OF levels.
+    DATA temp11 LIKE sy-tabix.
+DATA folder LIKE REF TO <temp31>.
+    FIELD-SYMBOLS <temp32> LIKE LINE OF levels.
+    DATA temp33 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp34> LIKE LINE OF folder->items.
+      DATA temp35 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp15> LIKE LINE OF levels.
+      DATA temp16 LIKE sy-tabix.
+    levels = path_indices( path ).
+    
+    
+    temp27 = sy-tabix.
+    READ TABLE levels INDEX 1 ASSIGNING <temp26>.
+    sy-tabix = temp27.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF levels IS INITIAL OR <temp26> > lines( t_items ).
       RETURN.
     ENDIF.
-    DATA(root) = REF #( t_items[ levels[ 1 ] ] ).
+    
+    
+    
+    temp9 = sy-tabix.
+    READ TABLE levels INDEX 1 ASSIGNING <temp8>.
+    sy-tabix = temp9.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    READ TABLE t_items INDEX <temp8> ASSIGNING <temp28>.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+
+GET REFERENCE OF <temp28> INTO root.
     IF lines( levels ) = 1.
       root->filename = name.
       RETURN.
     ENDIF.
-    IF levels[ 2 ] > lines( root->items ).
+    
+    
+    temp30 = sy-tabix.
+    READ TABLE levels INDEX 2 ASSIGNING <temp29>.
+    sy-tabix = temp30.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF <temp29> > lines( root->items ).
       RETURN.
     ENDIF.
-    DATA(folder) = REF #( root->items[ levels[ 2 ] ] ).
+    
+    
+    
+    temp11 = sy-tabix.
+    READ TABLE levels INDEX 2 ASSIGNING <temp10>.
+    sy-tabix = temp11.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    READ TABLE root->items INDEX <temp10> ASSIGNING <temp31>.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+
+GET REFERENCE OF <temp31> INTO folder.
     IF lines( levels ) = 2.
       folder->filename = name.
       RETURN.
     ENDIF.
-    IF levels[ 3 ] <= lines( folder->items ).
-      folder->items[ levels[ 3 ] ]-filename = name.
+    
+    
+    temp33 = sy-tabix.
+    READ TABLE levels INDEX 3 ASSIGNING <temp32>.
+    sy-tabix = temp33.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    IF <temp32> <= lines( folder->items ).
+      
+      
+      temp35 = sy-tabix.
+      
+      
+      temp16 = sy-tabix.
+      READ TABLE levels INDEX 3 ASSIGNING <temp15>.
+      sy-tabix = temp16.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      READ TABLE folder->items INDEX <temp15> ASSIGNING <temp34>.
+      sy-tabix = temp35.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      <temp34>-filename = name.
     ENDIF.
 
   ENDMETHOD.
@@ -774,11 +1101,15 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
 
   METHOD icon_for.
+      DATA type TYPE string.
+    DATA dot TYPE i.
+    DATA extension TYPE string.
 
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      DATA(type) = to_lower( mediatype ).
+      
+      type = to_lower( mediatype ).
       CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
@@ -818,12 +1149,14 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(dot) = find( val = filename sub = `.` occ = -1 ).
+    
+    dot = find( val = filename sub = `.` occ = -1 ).
     IF dot < 0.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    
+    extension = to_lower( substring( val = filename off = dot + 1 ) ).
     CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
@@ -848,7 +1181,11 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
 
     " UploadSetwithTable.getFileSizeWithUnits - KB below a megabyte, then MB, then GB
     CONSTANTS kilobyte TYPE i VALUE 1024.
-    DATA(bytes) = CONV decfloat34( size ).
+    DATA temp36 TYPE decfloat34.
+    DATA bytes LIKE temp36.
+    temp36 = size.
+    
+    bytes = temp36.
     IF size < kilobyte * kilobyte.
       result = |{ bytes / kilobyte DECIMALS = 2 } KB|.
     ELSEIF size < kilobyte * kilobyte * kilobyte.
@@ -863,52 +1200,162 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
   METHOD model_init.
 
     " model/documents.json, every row - the document URLs point at the OpenUI5 host
-    t_items = VALUE #(
-      ( filename = `Documents`
-        isdirectory = abap_true color = `#ffffff` bgcolor = `#30914c`
-        items = VALUE #(
-          ( id = `23004579` filename = `Document.txt` mediatype = `text/plain`
-            url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`
-            status = `In work` filesize = 420 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-            documenttype = `Document` previewable = abap_true isdirectory = abap_false )
-          ( filename = `Invoices`
-            isdirectory = abap_true color = `#ffffff` bgcolor = `#30914c`
-            items = VALUE #(
-              ( id = `23004569` filename = `Invoice summary.doc` mediatype = `application/msword`
-                imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png` url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`
-                status = `In work` filesize = 200 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-                documenttype = `Invoice` previewable = abap_true isdirectory = abap_false ) ) ) ) )
-      ( id = `23004583` filename = `Test Video.mp4` mediatype = `video/mp4`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`
-        status = `In work` filesize = 420000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-        documenttype = `Attachment` previewable = abap_true isdirectory = abap_false )
-      ( id = `23004590` filename = `Sample Zip File.zip` mediatype = `application/zip`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`
-        status = `In work` filesize = 42000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
-        documenttype = `Attachment` previewable = abap_true isdirectory = abap_false )
-      ( filename = `Attachments`
-        isdirectory = abap_true color = `#ffffff` bgcolor = `#e76500`
-        items = VALUE #(
-          ( id = `23004578` filename = `Instructions.pdf` mediatype = `application/pdf`
-            url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`
-            status = `In work` filesize = 30000 lastmodifiedby = `Jane Burns` lastmodified = `10/03/21, 10:03:00 PM`
-            documenttype = `Specification` previewable = abap_true trustedsource = abap_true isdirectory = abap_false ) ) )
-      ( id = `23004584` filename = `Transmission.vds` mediatype = `model/vnd.sap.vds`
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/transmission.vds`
-        status = `In work` filesize = 123 lastmodifiedby = `Jane Burns` lastmodified = `10/03/22, 10:20:00 PM`
-        documenttype = `Attachment` previewable = abap_true trustedsource = abap_true isdirectory = abap_false ) ).
+    DATA temp37 LIKE t_items.
+    DATA temp38 LIKE LINE OF temp37.
+    DATA temp17 TYPE z2ui5_cl_smpc_app_660=>ty_t_folder.
+    DATA temp18 LIKE LINE OF temp17.
+    DATA temp10 TYPE z2ui5_cl_smpc_app_660=>ty_t_item.
+    DATA temp11 LIKE LINE OF temp10.
+    DATA temp19 TYPE z2ui5_cl_smpc_app_660=>ty_t_folder.
+    DATA temp20 LIKE LINE OF temp19.
+    DATA temp39 LIKE LINE OF t_items.
+    DATA root LIKE REF TO temp39.
+      DATA temp40 TYPE ty_s_item.
+      DATA root_item LIKE temp40.
+      DATA temp41 LIKE LINE OF root->items.
+      DATA folder LIKE REF TO temp41.
+        DATA temp42 TYPE ty_s_item.
+        DATA folder_item LIKE temp42.
+        DATA temp43 LIKE LINE OF folder->items.
+        DATA item LIKE REF TO temp43.
+    CLEAR temp37.
+    
+    CLEAR temp38.
+    temp38-filename = `Documents`.
+    temp38-isdirectory = abap_true.
+    temp38-color = `#ffffff`.
+    temp38-bgcolor = `#30914c`.
+    
+    CLEAR temp17.
+    
+    CLEAR temp18.
+    temp18-id = `23004579`.
+    temp18-filename = `Document.txt`.
+    temp18-mediatype = `text/plain`.
+    temp18-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`.
+    temp18-status = `In work`.
+    temp18-filesize = 420.
+    temp18-lastmodifiedby = `Jane Burns`.
+    temp18-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp18-documenttype = `Document`.
+    temp18-previewable = abap_true.
+    temp18-isdirectory = abap_false.
+    INSERT temp18 INTO TABLE temp17.
+    CLEAR temp18.
+    temp18-filename = `Invoices`.
+    temp18-isdirectory = abap_true.
+    temp18-color = `#ffffff`.
+    temp18-bgcolor = `#30914c`.
+    
+    CLEAR temp10.
+    
+    temp11-id = `23004569`.
+    temp11-filename = `Invoice summary.doc`.
+    temp11-mediatype = `application/msword`.
+    temp11-imageurl = `https://sdk.openui5.org/test-resources/sap/m/images/invoice_manager.png`.
+    temp11-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`.
+    temp11-status = `In work`.
+    temp11-filesize = 200.
+    temp11-lastmodifiedby = `Jane Burns`.
+    temp11-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp11-documenttype = `Invoice`.
+    temp11-previewable = abap_true.
+    temp11-isdirectory = abap_false.
+    INSERT temp11 INTO TABLE temp10.
+    temp18-items = temp10.
+    INSERT temp18 INTO TABLE temp17.
+    temp38-items = temp17.
+    INSERT temp38 INTO TABLE temp37.
+    CLEAR temp38.
+    temp38-id = `23004583`.
+    temp38-filename = `Test Video.mp4`.
+    temp38-mediatype = `video/mp4`.
+    temp38-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`.
+    temp38-status = `In work`.
+    temp38-filesize = 420000.
+    temp38-lastmodifiedby = `Jane Burns`.
+    temp38-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp38-documenttype = `Attachment`.
+    temp38-previewable = abap_true.
+    temp38-isdirectory = abap_false.
+    INSERT temp38 INTO TABLE temp37.
+    CLEAR temp38.
+    temp38-id = `23004590`.
+    temp38-filename = `Sample Zip File.zip`.
+    temp38-mediatype = `application/zip`.
+    temp38-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`.
+    temp38-status = `In work`.
+    temp38-filesize = 42000.
+    temp38-lastmodifiedby = `Jane Burns`.
+    temp38-lastmodified = `10/03/22, 10:20:00 PM`.
+    temp38-documenttype = `Attachment`.
+    temp38-previewable = abap_true.
+    temp38-isdirectory = abap_false.
+    INSERT temp38 INTO TABLE temp37.
+    CLEAR temp38.
+    temp38-filename = `Attachments`.
+    temp38-isdirectory = abap_true.
+    temp38-color = `#ffffff`.
+    temp38-bgcolor = `#e76500`.
+    
+    CLEAR temp19.
+    
+    temp20-id = `23004578`.
+    temp20-filename = `Instructions.pdf`.
+    temp20-mediatype = `application/pdf`.
+    temp20-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`.
+    temp20-status = `In work`.
+    temp20-filesize = 30000.
+    temp20-lastmodifiedby = `Jane Burns`.
+    temp20-lastmodified = `10/03/21, 10:03:00 PM`.
+    temp20-documenttype = `Specification`.
+    temp20-previewable = abap_true.
+    temp20-trustedsource = abap_true.
+    temp20-isdirectory = abap_false.
+    INSERT temp20 INTO TABLE temp19.
+    temp38-items = temp19.
+    INSERT temp38 INTO TABLE temp37.
+    CLEAR temp38.
+    temp38-id = `23004584`.
+    temp38-filename = `Transmission.vds`.
+    temp38-mediatype = `model/vnd.sap.vds`.
+    temp38-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/transmission.vds`.
+    temp38-status = `In work`.
+    temp38-filesize = 123.
+    temp38-lastmodifiedby = `Jane Burns`.
+    temp38-lastmodified = `10/03/22, 10:20:00 PM`.
+    temp38-documenttype = `Attachment`.
+    temp38-previewable = abap_true.
+    temp38-trustedsource = abap_true.
+    temp38-isdirectory = abap_false.
+    INSERT temp38 INTO TABLE temp37.
+    t_items = temp37.
     " the derived ICON and FILESIZE_UNITS on every level
-    LOOP AT t_items REFERENCE INTO DATA(root).
-      DATA(root_item) = CORRESPONDING ty_s_item( root->* ).
+    
+    
+    LOOP AT t_items REFERENCE INTO root.
+      
+      CLEAR temp40.
+      MOVE-CORRESPONDING root->* TO temp40.
+      
+      root_item = temp40.
       row_derive( CHANGING row = root_item ).
       root->icon           = root_item-icon.
       root->filesize_units = root_item-filesize_units.
-      LOOP AT root->items REFERENCE INTO DATA(folder).
-        DATA(folder_item) = CORRESPONDING ty_s_item( folder->* ).
+      
+      
+      LOOP AT root->items REFERENCE INTO folder.
+        
+        CLEAR temp42.
+        MOVE-CORRESPONDING folder->* TO temp42.
+        
+        folder_item = temp42.
         row_derive( CHANGING row = folder_item ).
         folder->icon           = folder_item-icon.
         folder->filesize_units = folder_item-filesize_units.
-        LOOP AT folder->items REFERENCE INTO DATA(item).
+        
+        
+        LOOP AT folder->items REFERENCE INTO item.
           row_derive( CHANGING row = item->* ).
         ENDLOOP.
       ENDLOOP.

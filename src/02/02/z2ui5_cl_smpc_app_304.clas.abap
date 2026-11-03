@@ -22,7 +22,7 @@ CLASS z2ui5_cl_smpc_app_304 DEFINITION PUBLIC.
       BEGIN OF ty_s_day,
         start TYPE string,
       END OF ty_s_day.
-    DATA t_selected TYPE STANDARD TABLE OF ty_s_day WITH EMPTY KEY.
+    DATA t_selected TYPE STANDARD TABLE OF ty_s_day WITH DEFAULT KEY.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -39,12 +39,12 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       selected_date = `No Date Selected`.
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -53,8 +53,15 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` INTO TABLE temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` INTO TABLE temp1.
+    INSERT `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`      v = `sap.ui.layout`
         )->a( n = `xmlns:u`      v = `sap.ui.unified`
@@ -79,10 +86,7 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
                 " Greenwich
                 )->a( n = `selectedDates` v = client->_bind( t_selected )
                 )->a( n = `select`        v = client->_event( val   = `CAL_SELECT`
-                                                              t_arg = VALUE #(
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                                                              t_arg = temp1 )
 
                 )->ele( n = `selectedDates` ns = `u`
                     )->tag( n = `DateRange` ns = `u`
@@ -115,23 +119,47 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA year TYPE string.
+          DATA temp3 LIKE t_selected.
+          DATA temp4 TYPE i.
+          DATA month TYPE string.
+          DATA temp5 TYPE i.
+          DATA day TYPE string.
+          DATA temp6 LIKE t_selected.
+          DATA temp7 LIKE LINE OF temp6.
+        DATA temp8 LIKE t_selected.
+        DATA temp9 LIKE LINE OF temp8.
 
     CASE client->get_event( ).
 
       WHEN `CAL_SELECT`.
         " _updateText: format getSelectedDates()[0] as yyyy-MM-dd. The day arrives
         " as its three LOCAL parts (see the wire in view_display)
-        DATA(year) = client->get_event_arg( ).
+        
+        year = client->get_event_arg( ).
         IF year IS INITIAL OR year = `0`.
           selected_date = `No Date Selected`.
-          t_selected = VALUE #( ).
+          
+          CLEAR temp3.
+          t_selected = temp3.
         ELSE.
-          DATA(month) = |{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
-          DATA(day)   = |{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+          
+          temp4 = client->get_event_arg( 2 ).
+          
+          month = |{ temp4 WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+          
+          temp5 = client->get_event_arg( 3 ).
+          
+          day   = |{ temp5 WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
           selected_date = |{ year }-{ month }-{ day }|.
           " the bound aggregation is re-stated with the day the user picked, so
           " the model and the control's own highlight cannot drift apart
-          t_selected    = VALUE #( ( start = |{ year }{ month }{ day }| ) ).
+          
+          CLEAR temp6.
+          
+          temp7-start = |{ year }{ month }{ day }|.
+          INSERT temp7 INTO TABLE temp6.
+          t_selected    = temp6.
         ENDIF.
 
       WHEN `SELECT_TODAY`.
@@ -144,7 +172,12 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
         " is true of the METHOD and beside the point, because selectedDates is
         " a bindable aggregation (app 220 binds disabledDates, the same type).
         selected_date = |{ sy-datum DATE = ISO }|.
-        t_selected    = VALUE #( ( start = |{ sy-datum }| ) ).
+        
+        CLEAR temp8.
+        
+        temp9-start = |{ sy-datum }|.
+        INSERT temp9 INTO TABLE temp8.
+        t_selected    = temp8.
 
     ENDCASE.
 

@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_634 DEFINITION PUBLIC.
         key  TYPE string,
         text TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
 
     DATA sizetypes TYPE ty_t_item.
     DATA typetypes TYPE ty_t_item.
@@ -34,10 +34,10 @@ CLASS z2ui5_cl_smpc_app_634 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -46,7 +46,8 @@ CLASS z2ui5_cl_smpc_app_634 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -206,50 +207,155 @@ CLASS z2ui5_cl_smpc_app_634 IMPLEMENTATION.
 
   METHOD model_init.
 
-    sizetypes = VALUE #(
-        ( key = `Auto`       text = `Auto` )
-        ( key = `Base`       text = `Base` )
-        ( key = `ExtraSmall` text = `ExtraSmall` )
-        ( key = `Small`      text = `Small` )
-        ( key = `Medium`     text = `Medium` )
-        ( key = `Large`      text = `Large` ) ).
+    DATA temp1 TYPE z2ui5_cl_smpc_app_634=>ty_t_item.
+    DATA temp2 LIKE LINE OF temp1.
+    DATA temp3 TYPE z2ui5_cl_smpc_app_634=>ty_t_item.
+    DATA temp4 LIKE LINE OF temp3.
+    FIELD-SYMBOLS <temp5> LIKE LINE OF sizetypes.
+    DATA temp6 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp7> LIKE LINE OF typetypes.
+    DATA temp8 LIKE sy-tabix.
+    CLEAR temp1.
+    
+    temp2-key = `Auto`.
+    temp2-text = `Auto`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Base`.
+    temp2-text = `Base`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `ExtraSmall`.
+    temp2-text = `ExtraSmall`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Small`.
+    temp2-text = `Small`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Medium`.
+    temp2-text = `Medium`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Large`.
+    temp2-text = `Large`.
+    INSERT temp2 INTO TABLE temp1.
+    sizetypes = temp1.
 
-    typetypes = VALUE #(
-        ( key = `sapIllus-Achievement`           text = `Achievement` )
-        ( key = `sapIllus-AddDimensions`         text = `AddDimensions` )
-        ( key = `sapIllus-AddPeopleToCalendar`   text = `AddPeopleToCalendar` )
-        ( key = `sapIllus-AddingColumns`         text = `AddingColumns` )
-        ( key = `sapIllus-BeforeSearch`          text = `BeforeSearch` )
-        ( key = `sapIllus-DragFilesToUpload`     text = `DragFilesToUpload` )
-        ( key = `sapIllus-EmptyPlanningCalendar` text = `EmptyPlanningCalendar` )
-        ( key = `sapIllus-FilteringColumns`      text = `FilteringColumns` )
-        ( key = `sapIllus-GroupingColumns`       text = `GroupingColumns` )
-        ( key = `sapIllus-KeyTask`               text = `KeyTask` )
-        ( key = `sapIllus-PageNotFound`          text = `PageNotFound` )
-        ( key = `sapIllus-ResizingColumns`       text = `ResizingColumns` )
-        ( key = `sapIllus-NewMail`               text = `NewMail` )
-        ( key = `sapIllus-NoColumnsSet`          text = `NoColumnsSet` )
-        ( key = `sapIllus-NoChartData`           text = `NoChartData` )
-        ( key = `sapIllus-NoSearchResults`       text = `NoSearchResults` )
-        ( key = `sapIllus-NoNotifications`       text = `NoNotifications` )
-        ( key = `sapIllus-NoFilterResults`       text = `NoFilterResults` )
-        ( key = `sapIllus-NoMail`                text = `NoMail` )
-        ( key = `sapIllus-NoData`                text = `NoData` )
-        ( key = `sapIllus-NoActivities`          text = `NoActivities` )
-        ( key = `sapIllus-NoEntries`             text = `NoEntries` )
-        ( key = `sapIllus-NoTasks`               text = `NoTasks` )
-        ( key = `sapIllus-NoSavedItems`          text = `NoSavedItems` )
-        ( key = `sapIllus-ReceiveAppreciation`   text = `ReceiveAppreciation` )
-        ( key = `sapIllus-UnableToLoad`          text = `UnableToLoad` )
-        ( key = `sapIllus-UnableToLoadImage`     text = `UnableToLoadImage` )
-        ( key = `sapIllus-UploadToCloud`         text = `UploadToCloud` )
-        ( key = `sapIllus-UnableToUpload`        text = `UnableToUpload` )
-        ( key = `sapIllus-UserHasSignedUp`       text = `UserHasSignedUp` )
-        ( key = `sapIllus-SignOut`               text = `SignOut` )
-        ( key = `sapIllus-SortingColumns`        text = `SortingColumns` ) ).
+    
+    CLEAR temp3.
+    
+    temp4-key = `sapIllus-Achievement`.
+    temp4-text = `Achievement`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-AddDimensions`.
+    temp4-text = `AddDimensions`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-AddPeopleToCalendar`.
+    temp4-text = `AddPeopleToCalendar`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-AddingColumns`.
+    temp4-text = `AddingColumns`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-BeforeSearch`.
+    temp4-text = `BeforeSearch`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-DragFilesToUpload`.
+    temp4-text = `DragFilesToUpload`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-EmptyPlanningCalendar`.
+    temp4-text = `EmptyPlanningCalendar`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-FilteringColumns`.
+    temp4-text = `FilteringColumns`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-GroupingColumns`.
+    temp4-text = `GroupingColumns`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-KeyTask`.
+    temp4-text = `KeyTask`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-PageNotFound`.
+    temp4-text = `PageNotFound`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-ResizingColumns`.
+    temp4-text = `ResizingColumns`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NewMail`.
+    temp4-text = `NewMail`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoColumnsSet`.
+    temp4-text = `NoColumnsSet`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoChartData`.
+    temp4-text = `NoChartData`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoSearchResults`.
+    temp4-text = `NoSearchResults`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoNotifications`.
+    temp4-text = `NoNotifications`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoFilterResults`.
+    temp4-text = `NoFilterResults`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoMail`.
+    temp4-text = `NoMail`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoData`.
+    temp4-text = `NoData`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoActivities`.
+    temp4-text = `NoActivities`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoEntries`.
+    temp4-text = `NoEntries`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoTasks`.
+    temp4-text = `NoTasks`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-NoSavedItems`.
+    temp4-text = `NoSavedItems`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-ReceiveAppreciation`.
+    temp4-text = `ReceiveAppreciation`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-UnableToLoad`.
+    temp4-text = `UnableToLoad`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-UnableToLoadImage`.
+    temp4-text = `UnableToLoadImage`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-UploadToCloud`.
+    temp4-text = `UploadToCloud`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-UnableToUpload`.
+    temp4-text = `UnableToUpload`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-UserHasSignedUp`.
+    temp4-text = `UserHasSignedUp`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-SignOut`.
+    temp4-text = `SignOut`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-key = `sapIllus-SortingColumns`.
+    temp4-text = `SortingColumns`.
+    INSERT temp4 INTO TABLE temp3.
+    typetypes = temp3.
 
-    sselectedsize = sizetypes[ 1 ]-key.
-    sselectedtype = typetypes[ 1 ]-key.
+    
+    
+    temp6 = sy-tabix.
+    READ TABLE sizetypes INDEX 1 ASSIGNING <temp5>.
+    sy-tabix = temp6.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    sselectedsize = <temp5>-key.
+    
+    
+    temp8 = sy-tabix.
+    READ TABLE typetypes INDEX 1 ASSIGNING <temp7>.
+    sy-tabix = temp8.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    sselectedtype = <temp7>-key.
 
   ENDMETHOD.
 

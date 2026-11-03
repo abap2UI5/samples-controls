@@ -24,9 +24,9 @@ CLASS z2ui5_cl_smpc_app_665 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -38,11 +38,19 @@ CLASS z2ui5_cl_smpc_app_665 IMPLEMENTATION.
     " onToggle vetoes the firing (preventDefault) when the Switch for its
     " direction is on - decided per firing on the client, reading the two
     " two-way bound Switch states: (!expanded && collapse) || (expanded && expand)
-    DATA(veto_expr) = `(!${$parameters>/expanded} && $` && client->_bind( prevent_collapse ) &&
+    DATA veto_expr TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    veto_expr = `(!${$parameters>/expanded} && $` && client->_bind( prevent_collapse ) &&
                       `) || (${$parameters>/expanded} && $` && client->_bind( prevent_expand ) && `)`.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-prevent_default_expr = veto_expr.
+    temp1-check_queue_last = abap_true.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:f`   v = `sap.f`
@@ -56,7 +64,7 @@ CLASS z2ui5_cl_smpc_app_665 IMPLEMENTATION.
                     )->a( n = `sidePanelResizable` v = `true`
                     )->a( n = `toggle`             v = client->_event( val    = `TOGGLE`
                                                                        arg    = `${$parameters>/expanded}`
-                                                                       s_ctrl = VALUE #( prevent_default_expr = veto_expr check_queue_last = abap_true ) )
+                                                                       s_ctrl = temp1 )
 
                     )->ele( n = `mainContent` ns = `f`
                         )->tag( `Button`
@@ -160,13 +168,18 @@ CLASS z2ui5_cl_smpc_app_665 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA expanded TYPE abap_bool.
+      DATA temp1 TYPE xsdboolean.
 
     IF client->get_event( ) = `TOGGLE`.
       " the event reaches the backend whether or not the veto fired; on a
       " vetoed direction the original toasts and resets that Switch, otherwise
       " the control has already toggled itself. No view_display( ): the
       " expanded item lives in the control, a re-render would collapse it
-      DATA(expanded) = xsdbool( client->get_event_arg( ) = abap_true ).
+      
+      
+      temp1 = boolc( client->get_event_arg( ) = abap_true ).
+      expanded = temp1.
       IF expanded = abap_false AND prevent_collapse = abap_true.
         prevent_collapse = abap_false.
         client->message_toast_display( `I am prevented COLLAPSE event` ).

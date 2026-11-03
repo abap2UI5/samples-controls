@@ -35,9 +35,9 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -46,8 +46,37 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `Dialog close reason: {0}` INTO TABLE temp1.
+    INSERT `${$parameters>/reason}` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `$event.oSource.getPanels()[0].getP13nData()` INTO TABLE temp2.
+    INSERT `$event.oSource.getPanels()[1].getP13nData()` INTO TABLE temp2.
+    INSERT `$event.oSource.getPanels()[2].getP13nData()` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `${$parameters>/reason}` INTO TABLE temp3.
+    INSERT `$event.oSource.getP13nData()` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `${$parameters>/reason}` INTO TABLE temp4.
+    INSERT `$event.oSource.getP13nData()` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `${$parameters>/reason}` INTO TABLE temp5.
+    INSERT `$event.oSource.getP13nData()` INTO TABLE temp5.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -70,15 +99,10 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                 )->a( n = `id`          v = `p13nPopup`
                 )->a( n = `title`       v = `My Custom View Settings`
                 )->a( n = `close`       v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                                                                                       ( `show` )
-                                                                                       ( `Dialog close reason: {0}` )
-                                                                                       ( `${$parameters>/reason}` ) ) )
+                                                                      t_arg = temp1 )
                 )->a( n = `warningText` v = `Are you sure?`
                 )->a( n = `open`        v = client->_event( val   = `POPUP_OPEN`
-                                                            t_arg = VALUE #( ( `$event.oSource.getPanels()[0].getP13nData()` )
-                                                                             ( `$event.oSource.getPanels()[1].getP13nData()` )
-                                                                             ( `$event.oSource.getPanels()[2].getP13nData()` ) ) )
+                                                            t_arg = temp2 )
 
                 )->ele( n = `panels` ns = `p13n`
                     )->tag( n = `SelectionPanel` ns = `p13n`
@@ -87,20 +111,17 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                         )->a( n = `enableCount` v = `true`
                         )->a( n = `showHeader`  v = `true`
                         )->a( n = `change`      v = client->_event( val   = `COLUMNS_CHANGE`
-                                                                    t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                     ( `$event.oSource.getP13nData()` ) ) )
+                                                                    t_arg = temp3 )
                     )->tag( n = `SortPanel` ns = `p13n`
                         )->a( n = `id`     v = `sortPanel`
                         )->a( n = `title`  v = `Sort`
                         )->a( n = `change` v = client->_event( val   = `SORT_CHANGE`
-                                                               t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                ( `$event.oSource.getP13nData()` ) ) )
+                                                               t_arg = temp4 )
                     )->tag( n = `GroupPanel` ns = `p13n`
                         )->a( n = `id`     v = `groupPanel`
                         )->a( n = `title`  v = `Group`
                         )->a( n = `change` v = client->_event( val   = `GROUP_CHANGE`
-                                                               t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                ( `$event.oSource.getP13nData()` ) ) )
+                                                               t_arg = temp5 )
 
                 )->end(
             )->end(
@@ -121,12 +142,17 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp3 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `OPEN`.
+        
+        CLEAR temp3.
+        INSERT `p13nPopup` INTO TABLE temp3.
+        INSERT `open` INTO TABLE temp3.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `p13nPopup` ) ( `open` ) ) ).
+                                  t_arg = temp3 ).
 
       WHEN `POPUP_OPEN`.
         " what the three panels hold right now, for the state shown in the editor
@@ -154,40 +180,79 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
   METHOD set_initial_data.
 
     " _initialData of the original controller, handed to setP13nData( ) as JSON
+    DATA temp5 TYPE string_table.
+    DATA temp4 LIKE LINE OF temp5.
+    DATA temp7 TYPE string_table.
+    DATA temp6 LIKE LINE OF temp7.
+    DATA temp9 TYPE string_table.
+    DATA temp8 LIKE LINE OF temp9.
+    CLEAR temp5.
+    INSERT `columnsPanel` INTO TABLE temp5.
+    INSERT `setP13nData` INTO TABLE temp5.
+    
+    temp4 = `[{"visible":true,"name":"key1","label":"City"},` && `{"visible":false,"name":"key2","label":"Country"},` && `{"visible":false,"name":"key3","label":"Region"}]`.
+    INSERT temp4 INTO TABLE temp5.
     client->follow_up_action(
         val   = client->cs_event-control_by_id
-        t_arg = VALUE #( ( `columnsPanel` )
-                         ( `setP13nData` )
-                         ( `[{"visible":true,"name":"key1","label":"City"},` &&
-                           `{"visible":false,"name":"key2","label":"Country"},` &&
-                           `{"visible":false,"name":"key3","label":"Region"}]` ) ) ).
+        t_arg = temp5 ).
+    
+    CLEAR temp7.
+    INSERT `sortPanel` INTO TABLE temp7.
+    INSERT `setP13nData` INTO TABLE temp7.
+    
+    temp6 = `[{"sorted":true,"name":"key1","label":"City","descending":true},` && `{"sorted":false,"name":"key2","label":"Country","descending":false},` && `{"sorted":false,"name":"key3","label":"Region","descending":false}]`.
+    INSERT temp6 INTO TABLE temp7.
     client->follow_up_action(
         val   = client->cs_event-control_by_id
-        t_arg = VALUE #( ( `sortPanel` )
-                         ( `setP13nData` )
-                         ( `[{"sorted":true,"name":"key1","label":"City","descending":true},` &&
-                           `{"sorted":false,"name":"key2","label":"Country","descending":false},` &&
-                           `{"sorted":false,"name":"key3","label":"Region","descending":false}]` ) ) ).
+        t_arg = temp7 ).
+    
+    CLEAR temp9.
+    INSERT `groupPanel` INTO TABLE temp9.
+    INSERT `setP13nData` INTO TABLE temp9.
+    
+    temp8 = `[{"grouped":true,"name":"key1","label":"City"},` && `{"grouped":false,"name":"key2","label":"Country"},` && `{"grouped":false,"name":"key3","label":"Region"}]`.
+    INSERT temp8 INTO TABLE temp9.
     client->follow_up_action(
         val   = client->cs_event-control_by_id
-        t_arg = VALUE #( ( `groupPanel` )
-                         ( `setP13nData` )
-                         ( `[{"grouped":true,"name":"key1","label":"City"},` &&
-                           `{"grouped":false,"name":"key2","label":"Country"},` &&
-                           `{"grouped":false,"name":"key3","label":"Region"}]` ) ) ).
+        t_arg = temp9 ).
 
   ENDMETHOD.
 
 
   METHOD parse_p13n_state.
+    DATA temp11 TYPE string_table.
+    DATA columns TYPE string.
+    DATA temp13 TYPE string_table.
+    DATA sort TYPE string.
+    DATA temp15 TYPE string_table.
+    DATA group TYPE string.
 
     client->message_toast_display( |P13n panel change reason:{ client->get_event_arg( ) }| ).
 
     " JSON.stringify( { columns, sort, group }, null, '  ' ), each panel's
     " items with their keys in the order _initialData gives them
-    DATA(columns) = p13n_json( json = p13n_columns t_key = VALUE #( ( `visible` ) ( `name` ) ( `label` ) ) ).
-    DATA(sort)    = p13n_json( json = p13n_sort t_key = VALUE #( ( `sorted` ) ( `name` ) ( `label` ) ( `descending` ) ) ).
-    DATA(group)   = p13n_json( json = p13n_group t_key = VALUE #( ( `grouped` ) ( `name` ) ( `label` ) ) ).
+    
+    CLEAR temp11.
+    INSERT `visible` INTO TABLE temp11.
+    INSERT `name` INTO TABLE temp11.
+    INSERT `label` INTO TABLE temp11.
+    
+    columns = p13n_json( json = p13n_columns t_key = temp11 ).
+    
+    CLEAR temp13.
+    INSERT `sorted` INTO TABLE temp13.
+    INSERT `name` INTO TABLE temp13.
+    INSERT `label` INTO TABLE temp13.
+    INSERT `descending` INTO TABLE temp13.
+    
+    sort    = p13n_json( json = p13n_sort t_key = temp13 ).
+    
+    CLEAR temp15.
+    INSERT `grouped` INTO TABLE temp15.
+    INSERT `name` INTO TABLE temp15.
+    INSERT `label` INTO TABLE temp15.
+    
+    group   = p13n_json( json = p13n_group t_key = temp15 ).
 
     editor_value = |\{\n  "columns": { columns },\n  "sort": { sort },\n  "group": { group }\n\}|.
 
@@ -201,18 +266,38 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
     " indents it one level deep
     DATA t_object TYPE string_table.
 
-    SPLIT json AT `}` INTO TABLE DATA(t_part).
-    LOOP AT t_part INTO DATA(part).
-      DATA(t_line) = VALUE string_table( ).
-      LOOP AT t_key INTO DATA(key).
-        DATA(offset) = find( val = part sub = |"{ key }":| ).
+    DATA t_part TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA part LIKE LINE OF t_part.
+      DATA temp17 TYPE string_table.
+      DATA t_line LIKE temp17.
+      DATA key LIKE LINE OF t_key.
+        DATA offset TYPE i.
+          DATA value TYPE string.
+          DATA temp18 LIKE LINE OF t_line.
+        DATA temp19 LIKE LINE OF t_object.
+    SPLIT json AT `}` INTO TABLE t_part.
+    
+    LOOP AT t_part INTO part.
+      
+      CLEAR temp17.
+      
+      t_line = temp17.
+      
+      LOOP AT t_key INTO key.
+        
+        offset = find( val = part sub = |"{ key }":| ).
         IF offset >= 0.
-          DATA(value) = substring( val = part off = offset + strlen( key ) + 3 ).
-          INSERT |      "{ key }": { segment( val = value index = 1 sep = `,` ) }| INTO TABLE t_line.
+          
+          value = substring( val = part off = offset + strlen( key ) + 3 ).
+          
+          temp18 = |      "{ key }": { segment( val = value index = 1 sep = `,` ) }|.
+          INSERT temp18 INTO TABLE t_line.
         ENDIF.
       ENDLOOP.
       IF t_line IS NOT INITIAL.
-        INSERT |    \{\n{ concat_lines_of( table = t_line sep = |,\n| ) }\n    \}| INTO TABLE t_object.
+        
+        temp19 = |    \{\n{ concat_lines_of( table = t_line sep = |,\n| ) }\n    \}|.
+        INSERT temp19 INTO TABLE t_object.
       ENDIF.
     ENDLOOP.
 

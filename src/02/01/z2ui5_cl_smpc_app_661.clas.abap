@@ -28,7 +28,7 @@ CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
         icon          TYPE string,
         size_units    TYPE string,
       END OF ty_s_level4.
-    TYPES ty_t_level4 TYPE STANDARD TABLE OF ty_s_level4 WITH EMPTY KEY.
+    TYPES ty_t_level4 TYPE STANDARD TABLE OF ty_s_level4 WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_level3,
         documentid    TYPE string,
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
         size_units    TYPE string,
         items         TYPE ty_t_level4,
       END OF ty_s_level3.
-    TYPES ty_t_level3 TYPE STANDARD TABLE OF ty_s_level3 WITH EMPTY KEY.
+    TYPES ty_t_level3 TYPE STANDARD TABLE OF ty_s_level3 WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_level2,
         documentid    TYPE string,
@@ -74,7 +74,7 @@ CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
         size_units    TYPE string,
         items         TYPE ty_t_level3,
       END OF ty_s_level2.
-    TYPES ty_t_level2 TYPE STANDARD TABLE OF ty_s_level2 WITH EMPTY KEY.
+    TYPES ty_t_level2 TYPE STANDARD TABLE OF ty_s_level2 WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_level1,
         documentid    TYPE string,
@@ -102,9 +102,11 @@ CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
         name TYPE string,
         path TYPE string,
       END OF ty_s_history.
-    DATA t_items             TYPE STANDARD TABLE OF ty_s_level1 WITH EMPTY KEY.
+    TYPES temp1_0782f146ed TYPE STANDARD TABLE OF ty_s_level1 WITH DEFAULT KEY.
+DATA t_items             TYPE temp1_0782f146ed.
     DATA currentlocationtext TYPE string.
-    DATA t_history           TYPE STANDARD TABLE OF ty_s_history WITH EMPTY KEY.
+    TYPES temp2_0782f146ed TYPE STANDARD TABLE OF ty_s_history WITH DEFAULT KEY.
+DATA t_history           TYPE temp2_0782f146ed.
     " onSelectionChange's three buttons
     DATA download_enabled    TYPE abap_bool.
     DATA rename_enabled      TYPE abap_bool.
@@ -137,10 +139,11 @@ CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
         icon          TYPE string,
         size_units    TYPE string,
       END OF ty_s_doc.
-    TYPES ty_t_index TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    TYPES ty_t_index TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
     DATA client TYPE REF TO z2ui5_if_client.
-    DATA t_docs      TYPE STANDARD TABLE OF ty_s_doc WITH EMPTY KEY.
+    TYPES temp3_0782f146ed TYPE STANDARD TABLE OF ty_s_doc WITH DEFAULT KEY.
+DATA t_docs      TYPE temp3_0782f146ed.
     " the folder the table shows - initial is the root, Attachments
     DATA current_id  TYPE string.
     " the documentIds of the selected rows, of the row a removal asks about and
@@ -214,12 +217,12 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -228,8 +231,45 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 LIKE LINE OF temp2.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `IMAGEURL` INTO TABLE temp1.
+    INSERT `UPLOADSTATE` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `uploadPlugin` INTO TABLE temp2.
+    INSERT `renameItem` INTO TABLE temp2.
+    
+    temp3 = `$controller.getView().byId('table-uploadSet').getBinding('rows')` && `.getSelectedContexts()[0].getProperty('ISDIRECTORY') ? null : ` && `$controller.getView().byId('table-uploadSet').getBinding('rows')` && `.getSelectedContexts()[0]`.
+    INSERT temp3 INTO TABLE temp2.
+    
+    CLEAR temp4.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp4.
+    INSERT `${$parameters>/item}.getMediaType()` INTO TABLE temp4.
+    INSERT `${$parameters>/item}.getFileObject().size` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    temp5-check_prevent_default = abap_true.
+    temp5-check_queue_last = abap_true.
+    
+    CLEAR temp6.
+    INSERT `${$parameters>/item}.getBindingContext().getPath()` INTO TABLE temp6.
+    INSERT `${$parameters>/item}.getFileName()` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `uploadPlugin` INTO TABLE temp7.
+    INSERT `openFilePreview` INTO TABLE temp7.
+    INSERT `$event.oSource.getBindingContext()` INTO TABLE temp7.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`         v = `sap.ui.table`
         )->a( n = `xmlns:m`       v = `sap.m`
@@ -251,8 +291,7 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
                     " IMAGEURL and UPLOADSTATE stay absent where the data has none, so
                     " the view's undefined checks read as in the sample
                     )->a( n = `rows`               v = client->_bind( val                = t_items
-                                                                      omit_initial_paths = VALUE #( ( `IMAGEURL` )
-                                                                                                    ( `UPLOADSTATE` ) ) )
+                                                                      omit_initial_paths = temp1 )
                     )->a( n = `selectionMode`      v = `MultiToggle`
                     )->a( n = `rowSelectionChange` v = client->_event( val = `SELECTION`
                                                                        arg = `$event.oSource.getBinding('rows').getSelectedContexts().join()` )
@@ -294,12 +333,7 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
                                 )->a( n = `enabled` v = client->_bind( rename_enabled )
                                 )->a( n = `press`   v = client->_event( `RENAME` ) && `; ` &&
                                                         client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                  t_arg = VALUE #( ( `uploadPlugin` )
-                                                                                                   ( `renameItem` )
-                                                                                                   ( `$controller.getView().byId('table-uploadSet').getBinding('rows')` &&
-                                                                                                     `.getSelectedContexts()[0].getProperty('ISDIRECTORY') ? null : ` &&
-                                                                                                     `$controller.getView().byId('table-uploadSet').getBinding('rows')` &&
-                                                                                                     `.getSelectedContexts()[0]` ) ) )
+                                                                                  t_arg = temp2 )
                             )->tag( n = `Button` ns = `m`
                                 )->a( n = `id`      v = `removeAllButton`
                                 )->a( n = `text`    v = `Remove All`
@@ -317,14 +351,10 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
                             " the mock server's part: the upload is vetoed and the backend
                             " files the document into the open folder
                             )->a( n = `beforeUploadStarts` v = client->_event( val    = `UPLOAD`
-                                                                               t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
-                                                                                                 ( `${$parameters>/item}.getMediaType()` )
-                                                                                                 ( `${$parameters>/item}.getFileObject().size` ) )
-                                                                               s_ctrl = VALUE #( check_prevent_default = abap_true
-                                                                                                 check_queue_last      = abap_true ) )
+                                                                               t_arg  = temp4
+                                                                               s_ctrl = temp5 )
                             )->a( n = `itemRenamed`        v = client->_event( val   = `RENAMED`
-                                                                               t_arg = VALUE #( ( `${$parameters>/item}.getBindingContext().getPath()` )
-                                                                                                ( `${$parameters>/item}.getFileName()` ) ) )
+                                                                               t_arg = temp6 )
                             )->a( n = `actions`            v = `uploadButton`
 
                             " the paths name the model's upper-case ABAP fields
@@ -379,9 +409,7 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
                                         )->tag( n = `Link` ns = `m`
                                             )->a( n = `text`    v = `{FILENAME}`
                                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                              t_arg = VALUE #( ( `uploadPlugin` )
-                                                                                                               ( `openFilePreview` )
-                                                                                                               ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                              t_arg = temp7 )
                                             )->a( n = `class`   v = `sapUiTinyMarginBottom`
                                             )->a( n = `visible` v = `{= ${ISDIRECTORY} === false }`
                                         )->tag( n = `Text` ns = `m`
@@ -445,7 +473,8 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
   METHOD popup_folder_display.
 
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
@@ -485,7 +514,8 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD popup_rename_display.
 
     " renameFolderWithDialog builds this Dialog in the controller
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
@@ -518,6 +548,35 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA name TYPE string.
+        DATA selected LIKE LINE OF t_docs.
+        FIELD-SYMBOLS <temp5> LIKE LINE OF t_docs.
+        DATA temp6 LIKE sy-tabix.
+        FIELD-SYMBOLS <temp8> LIKE LINE OF t_selected.
+        DATA temp10 LIKE sy-tabix.
+        FIELD-SYMBOLS <temp3> TYPE z2ui5_cl_smpc_app_661=>ty_s_doc.
+DATA folder LIKE REF TO <temp3>.
+        DATA new_name TYPE string.
+        DATA renamed TYPE string.
+          FIELD-SYMBOLS <temp4> LIKE LINE OF t_docs.
+          DATA temp5 LIKE sy-tabix.
+        DATA crumb TYPE z2ui5_cl_smpc_app_661=>ty_t_index.
+        FIELD-SYMBOLS <temp6> LIKE LINE OF crumb.
+        DATA temp7 LIKE sy-tabix.
+        DATA entry LIKE LINE OF t_history.
+        FIELD-SYMBOLS <temp7> LIKE LINE OF t_history.
+        DATA temp9 LIKE sy-tabix.
+        FIELD-SYMBOLS <temp11> LIKE LINE OF crumb.
+        DATA temp12 LIKE sy-tabix.
+        DATA doc LIKE LINE OF t_docs.
+        FIELD-SYMBOLS <temp10> LIKE LINE OF t_docs.
+        DATA temp11 LIKE sy-tabix.
+          DATA removed TYPE z2ui5_cl_smpc_app_661=>ty_s_doc-filename.
+          FIELD-SYMBOLS <temp12> LIKE LINE OF t_docs.
+          DATA temp13 LIKE sy-tabix.
+        DATA temp8 TYPE ty_s_doc.
+        DATA temp14 TYPE z2ui5_cl_smpc_app_661=>ty_s_doc-size.
+        DATA file LIKE temp8.
 
     CASE client->get_event( ).
 
@@ -534,7 +593,8 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
       WHEN `CREATE_FOLDER`.
         " onCreateFolderDialogPress - an empty name keeps the dialog open
-        DATA(name) = condense( folder_name ).
+        
+        name = condense( folder_name ).
         IF name IS INITIAL.
           client->message_toast_display( `Please enter a folder name` ).
           RETURN.
@@ -549,7 +609,24 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
           client->message_toast_display( `Please select exactly one item to rename` ).
           RETURN.
         ENDIF.
-        DATA(selected) = t_docs[ documentid = t_selected[ 1 ] ].
+        
+        
+        
+        temp6 = sy-tabix.
+        
+        
+        temp10 = sy-tabix.
+        READ TABLE t_selected INDEX 1 ASSIGNING <temp8>.
+        sy-tabix = temp10.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        READ TABLE t_docs WITH KEY documentid = <temp8> ASSIGNING <temp5>.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        selected = <temp5>.
         IF selected-isdirectory = abap_true.
           rename_id   = selected-documentid.
           rename_name = selected-filename.
@@ -557,8 +634,15 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
         ENDIF.
 
       WHEN `RENAME_FOLDER_OK`.
-        DATA(folder) = REF #( t_docs[ documentid = rename_id ] ).
-        DATA(new_name) = condense( rename_name ).
+        
+        READ TABLE t_docs WITH KEY documentid = rename_id ASSIGNING <temp3>.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+
+GET REFERENCE OF <temp3> INTO folder.
+        
+        new_name = condense( rename_name ).
         IF new_name IS NOT INITIAL AND new_name <> folder->filename.
           folder->filename = new_name.
           rows_build( ).
@@ -568,9 +652,18 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
       WHEN `RENAMED`.
         " onDocumentRenamedSuccess
-        DATA(renamed) = doc_at_path( client->get_event_arg( ) ).
+        
+        renamed = doc_at_path( client->get_event_arg( ) ).
         IF renamed IS NOT INITIAL.
-          t_docs[ documentid = renamed ]-filename = client->get_event_arg( 2 ).
+          
+          
+          temp5 = sy-tabix.
+          READ TABLE t_docs WITH KEY documentid = renamed ASSIGNING <temp4>.
+          sy-tabix = temp5.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          <temp4>-filename = client->get_event_arg( 2 ).
           rows_build( ).
           client->message_toast_display( text = `File renamed successfully` duration = `2000` ).
         ENDIF.
@@ -581,16 +674,51 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
       WHEN `CRUMB`.
         " onBreadcrumbPress - a link is one level of the history
-        DATA(crumb) = path_indices( client->get_event_arg( ) ).
-        IF crumb IS INITIAL OR crumb[ 1 ] > lines( t_history ).
+        
+        crumb = path_indices( client->get_event_arg( ) ).
+        
+        
+        temp7 = sy-tabix.
+        READ TABLE crumb INDEX 1 ASSIGNING <temp6>.
+        sy-tabix = temp7.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        IF crumb IS INITIAL OR <temp6> > lines( t_history ).
           RETURN.
         ENDIF.
-        DATA(entry) = t_history[ crumb[ 1 ] ].
+        
+        
+        
+        temp9 = sy-tabix.
+        
+        
+        temp12 = sy-tabix.
+        READ TABLE crumb INDEX 1 ASSIGNING <temp11>.
+        sy-tabix = temp12.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        READ TABLE t_history INDEX <temp11> ASSIGNING <temp7>.
+        sy-tabix = temp9.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        entry = <temp7>.
         folder_open( entry-path ).
 
       WHEN `REMOVE_ROW`.
         " onRemoveItemHandler - files only, the button is hidden on folders
-        DATA(doc) = t_docs[ documentid = doc_at_path( client->get_event_arg( ) ) ].
+        
+        
+        
+        temp11 = sy-tabix.
+        READ TABLE t_docs WITH KEY documentid = doc_at_path( client->get_event_arg( ) ) ASSIGNING <temp10>.
+        sy-tabix = temp11.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        doc = <temp10>.
         IF doc-isdirectory = abap_true.
           client->message_toast_display( `Folder deletion is not allowed` ).
           RETURN.
@@ -604,7 +732,16 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
       WHEN `REMOVE_CLOSE`.
         " the file is filtered out of the OPEN folder's items
         IF client->get_event_arg( ) = `OK`.
-          DATA(removed) = t_docs[ documentid = remove_id ]-filename.
+          
+          
+          
+          temp13 = sy-tabix.
+          READ TABLE t_docs WITH KEY documentid = remove_id ASSIGNING <temp12>.
+          sy-tabix = temp13.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          removed = <temp12>-filename.
           DELETE t_docs WHERE documentid = remove_id AND parentid = current_id.
           rows_build( ).
           client->message_toast_display( |File '{ removed }' deleted successfully| ).
@@ -621,15 +758,21 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
       WHEN `UPLOAD`.
         " the mock server files the upload into the open folder, after its folders
         new_no = new_no + 1.
-        DATA(file) = VALUE ty_s_doc( parentid      = current_id
-                                     documentid    = |upload-{ new_no }|
-                                     filename      = client->get_event_arg( )
-                                     mimetype      = client->get_event_arg( 2 )
-                                     size          = CONV #( client->get_event_arg( 3 ) )
-                                     uploadeddate  = |{ sy-datum DATE = ISO }|
-                                     uploadedby    = `Current User`
-                                     uploadstate   = `Complete`
-                                     trustedsource = abap_true ).
+        
+        CLEAR temp8.
+        temp8-parentid = current_id.
+        temp8-documentid = |upload-{ new_no }|.
+        temp8-filename = client->get_event_arg( ).
+        temp8-mimetype = client->get_event_arg( 2 ).
+        
+        temp14 = client->get_event_arg( 3 ).
+        temp8-size = temp14.
+        temp8-uploadeddate = |{ sy-datum DATE = ISO }|.
+        temp8-uploadedby = `Current User`.
+        temp8-uploadstate = `Complete`.
+        temp8-trustedsource = abap_true.
+        
+        file = temp8.
         row_derive( CHANGING row = file ).
         doc_insert( doc = file after_folders = abap_true ).
         rows_build( ).
@@ -644,33 +787,68 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
     " onSelectionChange - files and folders are told apart, and Remove All needs
     " every item of the open folder selected
-    t_selected = VALUE #( ).
+    DATA temp9 TYPE string_table.
+      TYPES temp4 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA selected_paths TYPE temp4.
+      DATA path LIKE LINE OF selected_paths.
+        DATA id TYPE string.
+    DATA files TYPE i.
+    DATA folders TYPE i.
+      FIELD-SYMBOLS <temp10> LIKE LINE OF t_docs.
+      DATA temp11 LIKE sy-tabix.
+    DATA total TYPE i.
+    DATA temp1 TYPE xsdboolean.
+      DATA temp2 TYPE xsdboolean.
+      DATA temp3 TYPE xsdboolean.
+    CLEAR temp9.
+    t_selected = temp9.
     IF paths IS NOT INITIAL.
-      SPLIT paths AT `,` INTO TABLE DATA(selected_paths).
-      LOOP AT selected_paths INTO DATA(path).
-        DATA(id) = doc_at_path( path ).
+      
+
+      SPLIT paths AT `,` INTO TABLE selected_paths.
+      
+      LOOP AT selected_paths INTO path.
+        
+        id = doc_at_path( path ).
         IF id IS NOT INITIAL.
           INSERT id INTO TABLE t_selected.
         ENDIF.
       ENDLOOP.
     ENDIF.
-    DATA(files) = 0.
-    DATA(folders) = 0.
+    
+    files = 0.
+    
+    folders = 0.
     LOOP AT t_selected INTO id.
-      IF t_docs[ documentid = id ]-isdirectory = abap_true.
+      
+      
+      temp11 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = id ASSIGNING <temp10>.
+      sy-tabix = temp11.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      IF <temp10>-isdirectory = abap_true.
         folders = folders + 1.
       ELSE.
         files = files + 1.
       ENDIF.
     ENDLOOP.
-    DATA(total) = children_count( current_id ).
-    removeall_enabled = xsdbool( t_selected IS NOT INITIAL AND lines( t_selected ) = total AND total > 0 ).
+    
+    total = children_count( current_id ).
+    
+    temp1 = boolc( t_selected IS NOT INITIAL AND lines( t_selected ) = total AND total > 0 ).
+    removeall_enabled = temp1.
     IF files > 0 AND folders = 0.
       download_enabled = abap_true.
-      rename_enabled   = xsdbool( files = 1 ).
+      
+      temp2 = boolc( files = 1 ).
+      rename_enabled   = temp2.
     ELSEIF folders > 0 AND files = 0.
       download_enabled = abap_false.
-      rename_enabled   = xsdbool( folders = 1 ).
+      
+      temp3 = boolc( folders = 1 ).
+      rename_enabled   = temp3.
     ELSE.
       download_enabled = abap_false.
       rename_enabled   = abap_false.
@@ -682,16 +860,36 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD download.
 
     " onDownloadFiles - one <a download> click per selected file with a URL
-    DATA(files) = 0.
-    LOOP AT t_selected INTO DATA(id).
-      DATA(doc) = t_docs[ documentid = id ].
+    DATA files TYPE i.
+    DATA id LIKE LINE OF t_selected.
+      DATA doc LIKE LINE OF t_docs.
+      FIELD-SYMBOLS <temp15> LIKE LINE OF t_docs.
+      DATA temp16 LIKE sy-tabix.
+        DATA temp12 TYPE string_table.
+    files = 0.
+    
+    LOOP AT t_selected INTO id.
+      
+      
+      
+      temp16 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = id ASSIGNING <temp15>.
+      sy-tabix = temp16.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      doc = <temp15>.
       IF doc-isdirectory = abap_true.
         CONTINUE.
       ENDIF.
       files = files + 1.
       IF doc-url IS NOT INITIAL.
+        
+        CLEAR temp12.
+        INSERT doc-url INTO TABLE temp12.
+        INSERT doc-filename INTO TABLE temp12.
         client->follow_up_action( val   = client->cs_event-download_b64_file
-                                  t_arg = VALUE #( ( doc-url ) ( doc-filename ) ) ).
+                                  t_arg = temp12 ).
       ENDIF.
     ENDLOOP.
     IF files = 0.
@@ -706,36 +904,73 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD folder_create.
 
     " createFolderWithName - into the one selected folder, else the open one
-    DATA(target) = current_id.
-    DATA(inside) = ``.
-    DATA(selected_folders) = 0.
-    LOOP AT t_selected INTO DATA(id).
-      IF t_docs[ documentid = id ]-isdirectory = abap_true.
+    DATA target LIKE current_id.
+    DATA inside TYPE string.
+    DATA selected_folders TYPE i.
+    DATA id LIKE LINE OF t_selected.
+      FIELD-SYMBOLS <temp14> LIKE LINE OF t_docs.
+      DATA temp15 LIKE sy-tabix.
+      FIELD-SYMBOLS <temp16> LIKE LINE OF t_docs.
+      DATA temp17 LIKE sy-tabix.
+    DATA temp18 LIKE sy-subrc.
+    DATA temp19 TYPE ty_s_doc.
+    DATA folder LIKE temp19.
+    target = current_id.
+    
+    inside = ``.
+    
+    selected_folders = 0.
+    
+    LOOP AT t_selected INTO id.
+      
+      
+      temp15 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = id ASSIGNING <temp14>.
+      sy-tabix = temp15.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      IF <temp14>-isdirectory = abap_true.
         selected_folders = selected_folders + 1.
         target = id.
       ENDIF.
     ENDLOOP.
     IF selected_folders = 1.
-      inside = t_docs[ documentid = target ]-filename.
+      
+      
+      temp17 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = target ASSIGNING <temp16>.
+      sy-tabix = temp17.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      inside = <temp16>-filename.
     ELSE.
       target = current_id.
     ENDIF.
-    IF line_exists( t_docs[ parentid = target filename = name ] ).
+    
+    READ TABLE t_docs WITH KEY parentid = target filename = name TRANSPORTING NO FIELDS.
+    temp18 = sy-subrc.
+    IF temp18 = 0.
       client->message_toast_display( `A folder with this name already exists` ).
       RETURN.
     ENDIF.
     new_no = new_no + 1.
-    DATA(folder) = VALUE ty_s_doc( parentid     = target
-                                   documentid   = |folder-new-{ new_no }|
-                                   filename     = name
-                                   isdirectory  = abap_true
-                                   uploadeddate = |{ sy-datum DATE = ISO }|
-                                   uploadedby   = `Current User`
-                                   status       = `Active`
-                                   documenttype = `Folder`
-                                   color        = `#ffffff`
-                                   bgcolor      = `#30914c`
-                                   uploadstate  = `Complete` ).
+    
+    CLEAR temp19.
+    temp19-parentid = target.
+    temp19-documentid = |folder-new-{ new_no }|.
+    temp19-filename = name.
+    temp19-isdirectory = abap_true.
+    temp19-uploadeddate = |{ sy-datum DATE = ISO }|.
+    temp19-uploadedby = `Current User`.
+    temp19-status = `Active`.
+    temp19-documenttype = `Folder`.
+    temp19-color = `#ffffff`.
+    temp19-bgcolor = `#30914c`.
+    temp19-uploadstate = `Complete`.
+    
+    folder = temp19.
     row_derive( CHANGING row = folder ).
     doc_insert( doc = folder after_folders = abap_false ).
     rows_build( ).
@@ -749,30 +984,92 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
 
   METHOD folder_open.
+    DATA temp20 LIKE t_history.
+      FIELD-SYMBOLS <temp21> LIKE LINE OF t_docs.
+      DATA temp22 LIKE sy-tabix.
+      DATA parent TYPE z2ui5_cl_smpc_app_661=>ty_s_doc-parentid.
+      FIELD-SYMBOLS <temp17> LIKE LINE OF t_docs.
+      DATA temp18 LIKE sy-tabix.
+        DATA temp23 TYPE z2ui5_cl_smpc_app_661=>ty_s_history.
+        FIELD-SYMBOLS <temp19> LIKE LINE OF t_docs.
+        DATA temp21 LIKE sy-tabix.
+        FIELD-SYMBOLS <temp24> LIKE LINE OF t_docs.
+        DATA temp25 LIKE sy-tabix.
+      DATA temp26 TYPE z2ui5_cl_smpc_app_661=>ty_s_history.
+    DATA temp27 TYPE string_table.
+    DATA temp28 TYPE string_table.
 
     " bindTableItems on the folder's items, the Breadcrumbs history up to its
     " parent and the folder as the current location; initial is the root
     current_id = id.
-    t_history  = VALUE #( ).
+    
+    CLEAR temp20.
+    t_history  = temp20.
     IF id IS INITIAL.
       currentlocationtext = `Attachments`.
     ELSE.
-      currentlocationtext = t_docs[ documentid = id ]-filename.
-      DATA(parent) = t_docs[ documentid = id ]-parentid.
+      
+      
+      temp22 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = id ASSIGNING <temp21>.
+      sy-tabix = temp22.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      currentlocationtext = <temp21>-filename.
+      
+      
+      
+      temp18 = sy-tabix.
+      READ TABLE t_docs WITH KEY documentid = id ASSIGNING <temp17>.
+      sy-tabix = temp18.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      parent = <temp17>-parentid.
       WHILE parent IS NOT INITIAL.
-        INSERT VALUE #( name = t_docs[ documentid = parent ]-filename path = parent ) INTO t_history INDEX 1.
-        parent = t_docs[ documentid = parent ]-parentid.
+        
+        CLEAR temp23.
+        
+        
+        temp21 = sy-tabix.
+        READ TABLE t_docs WITH KEY documentid = parent ASSIGNING <temp19>.
+        sy-tabix = temp21.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        temp23-name = <temp19>-filename.
+        temp23-path = parent.
+        INSERT temp23 INTO t_history INDEX 1.
+        
+        
+        temp25 = sy-tabix.
+        READ TABLE t_docs WITH KEY documentid = parent ASSIGNING <temp24>.
+        sy-tabix = temp25.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        parent = <temp24>-parentid.
       ENDWHILE.
-      INSERT VALUE #( name = `Attachments` ) INTO t_history INDEX 1.
+      
+      CLEAR temp26.
+      temp26-name = `Attachments`.
+      INSERT temp26 INTO t_history INDEX 1.
     ENDIF.
     rows_build( ).
     " the rebound rows start without a selection
-    t_selected        = VALUE #( ).
+    
+    CLEAR temp27.
+    t_selected        = temp27.
     download_enabled  = abap_false.
     rename_enabled    = abap_false.
     removeall_enabled = abap_false.
+    
+    CLEAR temp28.
+    INSERT `table-uploadSet` INTO TABLE temp28.
+    INSERT `clearSelection` INTO TABLE temp28.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `table-uploadSet` ) ( `clearSelection` ) ) ).
+                              t_arg = temp28 ).
 
   ENDMETHOD.
 
@@ -799,9 +1096,17 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD remove_selected.
 
     " deleteAllSelectedItems - files and folders of the open folder
-    DATA(deleted) = 0.
-    LOOP AT t_selected INTO DATA(id).
-      IF line_exists( t_docs[ documentid = id parentid = current_id ] ).
+    DATA deleted TYPE i.
+    DATA id LIKE LINE OF t_selected.
+      DATA temp30 LIKE sy-subrc.
+    DATA temp31 TYPE string_table.
+    deleted = 0.
+    
+    LOOP AT t_selected INTO id.
+      
+      READ TABLE t_docs WITH KEY documentid = id parentid = current_id TRANSPORTING NO FIELDS.
+      temp30 = sy-subrc.
+      IF temp30 = 0.
         doc_delete( id ).
         deleted = deleted + 1.
       ENDIF.
@@ -810,7 +1115,9 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
       client->message_toast_display( `No items were found to delete` ).
       RETURN.
     ENDIF.
-    t_selected = VALUE #( ).
+    
+    CLEAR temp31.
+    t_selected = temp31.
     rows_build( ).
     client->message_toast_display( |{ deleted } item(s) deleted successfully| ).
 
@@ -820,15 +1127,47 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD rows_build.
 
     " the open folder's subtree as the TreeTable's rows
-    t_items = VALUE #( ).
-    LOOP AT t_docs INTO DATA(doc1) WHERE parentid = current_id.
-      DATA(level1) = CORRESPONDING ty_s_level1( doc1 ).
-      LOOP AT t_docs INTO DATA(doc2) WHERE parentid = doc1-documentid.
-        DATA(level2) = CORRESPONDING ty_s_level2( doc2 ).
-        LOOP AT t_docs INTO DATA(doc3) WHERE parentid = doc2-documentid.
-          DATA(level3) = CORRESPONDING ty_s_level3( doc3 ).
-          LOOP AT t_docs INTO DATA(doc4) WHERE parentid = doc3-documentid.
-            INSERT CORRESPONDING ty_s_level4( doc4 ) INTO TABLE level3-items.
+    DATA temp32 LIKE t_items.
+    DATA doc1 LIKE LINE OF t_docs.
+      DATA temp33 TYPE ty_s_level1.
+      DATA level1 LIKE temp33.
+      DATA doc2 LIKE LINE OF t_docs.
+        DATA temp34 TYPE ty_s_level2.
+        DATA level2 LIKE temp34.
+        DATA doc3 LIKE LINE OF t_docs.
+          DATA temp35 TYPE ty_s_level3.
+          DATA level3 LIKE temp35.
+          DATA doc4 LIKE LINE OF t_docs.
+            DATA temp36 TYPE ty_s_level4.
+    CLEAR temp32.
+    t_items = temp32.
+    
+    LOOP AT t_docs INTO doc1 WHERE parentid = current_id.
+      
+      CLEAR temp33.
+      MOVE-CORRESPONDING doc1 TO temp33.
+      
+      level1 = temp33.
+      
+      LOOP AT t_docs INTO doc2 WHERE parentid = doc1-documentid.
+        
+        CLEAR temp34.
+        MOVE-CORRESPONDING doc2 TO temp34.
+        
+        level2 = temp34.
+        
+        LOOP AT t_docs INTO doc3 WHERE parentid = doc2-documentid.
+          
+          CLEAR temp35.
+          MOVE-CORRESPONDING doc3 TO temp35.
+          
+          level3 = temp35.
+          
+          LOOP AT t_docs INTO doc4 WHERE parentid = doc3-documentid.
+            
+            CLEAR temp36.
+            MOVE-CORRESPONDING doc4 TO temp36.
+            INSERT temp36 INTO TABLE level3-items.
           ENDLOOP.
           INSERT level3 INTO TABLE level2-items.
         ENDLOOP.
@@ -853,12 +1192,21 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
     " a row's binding path holds its position on every level below the open
     " folder: /T_ITEMS/0/ITEMS/1 is the 2nd child of its 1st item
-    DATA(parent) = current_id.
-    DATA(levels) = path_indices( path ).
-    LOOP AT levels INTO DATA(index).
+    DATA parent LIKE current_id.
+    DATA levels TYPE z2ui5_cl_smpc_app_661=>ty_t_index.
+    DATA index LIKE LINE OF levels.
+      DATA position TYPE i.
+      DATA doc LIKE LINE OF t_docs.
+    parent = current_id.
+    
+    levels = path_indices( path ).
+    
+    LOOP AT levels INTO index.
       result = ``.
-      DATA(position) = 0.
-      LOOP AT t_docs INTO DATA(doc) WHERE parentid = parent.
+      
+      position = 0.
+      
+      LOOP AT t_docs INTO doc WHERE parentid = parent.
         position = position + 1.
         IF position = index.
           result = doc-documentid.
@@ -877,7 +1225,8 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
   METHOD doc_delete.
 
     " the node and, below a folder, everything in it
-    LOOP AT t_docs INTO DATA(child) WHERE parentid = id.
+    DATA child LIKE LINE OF t_docs.
+    LOOP AT t_docs INTO child WHERE parentid = id.
       doc_delete( child-documentid ).
     ENDLOOP.
     DELETE t_docs WHERE documentid = id.
@@ -889,7 +1238,8 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
     " unshift into the parent's items - or, for an uploaded file, in front of
     " its first file (behind the folders)
-    LOOP AT t_docs INTO DATA(sibling) WHERE parentid = doc-parentid.
+    DATA sibling LIKE LINE OF t_docs.
+    LOOP AT t_docs INTO sibling WHERE parentid = doc-parentid.
       IF after_folders = abap_false OR sibling-isdirectory = abap_false.
         INSERT doc INTO t_docs INDEX sy-tabix.
         RETURN.
@@ -902,10 +1252,20 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
   METHOD path_indices.
 
-    SPLIT path AT `/` INTO TABLE DATA(parts).
-    LOOP AT parts INTO DATA(part).
+    TYPES temp5 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA parts TYPE temp5.
+    DATA part LIKE LINE OF parts.
+        DATA temp37 LIKE LINE OF result.
+        DATA temp22 LIKE LINE OF result.
+    SPLIT path AT `/` INTO TABLE parts.
+    
+    LOOP AT parts INTO part.
       IF part IS NOT INITIAL AND part CO `0123456789`.
-        INSERT CONV i( part ) + 1 INTO TABLE result.
+        
+        temp37 = part.
+        
+        temp22 = temp37 + 1.
+        INSERT temp22 INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
@@ -926,11 +1286,15 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
 
   METHOD icon_for.
+      DATA type TYPE string.
+    DATA dot TYPE i.
+    DATA extension TYPE string.
 
     " UploadSetwithTable.getIconForFileType: IconPool's media type table, or the
     " file extension when there is no media type
     IF mediatype IS NOT INITIAL.
-      DATA(type) = to_lower( mediatype ).
+      
+      type = to_lower( mediatype ).
       CASE type.
         WHEN `application/msword` OR `application/vnd.google-apps.document` OR `application/rtf`
             OR `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
@@ -970,12 +1334,14 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(dot) = find( val = filename sub = `.` occ = -1 ).
+    
+    dot = find( val = filename sub = `.` occ = -1 ).
     IF dot < 0.
       result = `sap-icon://document`.
       RETURN.
     ENDIF.
-    DATA(extension) = to_lower( substring( val = filename off = dot + 1 ) ).
+    
+    extension = to_lower( substring( val = filename off = dot + 1 ) ).
     CASE extension.
       WHEN `bmp` OR `jpg` OR `jpeg` OR `png`.
         result = `sap-icon://card`.
@@ -1000,7 +1366,11 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
     " UploadSetwithTable.getFileSizeWithUnits - KB below a megabyte, then MB, then GB
     CONSTANTS kilobyte TYPE i VALUE 1024.
-    DATA(bytes) = CONV decfloat34( size ).
+    DATA temp38 TYPE decfloat34.
+    DATA bytes LIKE temp38.
+    temp38 = size.
+    
+    bytes = temp38.
     IF size < kilobyte * kilobyte.
       result = |{ bytes / kilobyte DECIMALS = 2 } KB|.
     ELSEIF size < kilobyte * kilobyte * kilobyte.
@@ -1016,58 +1386,201 @@ CLASS z2ui5_cl_smpc_app_661 IMPLEMENTATION.
 
     " model/documents.json, the whole tree flattened - the document URLs point at
     " the OpenUI5 host
-    t_docs = VALUE #(
-      ( documentid = `folder-1` filename = `My Documents` isdirectory = abap_true
-        size = 0 uploadeddate = `2023-01-15` uploadedby = `System` status = `Active` documenttype = `Folder`
-        color = `#ffffff` bgcolor = `#30914c` )
-      ( parentid = `folder-1` documentid = `folder-images` filename = `Images` isdirectory = abap_true
-        size = 0 uploadeddate = `2023-02-10` uploadedby = `User` status = `Active` documenttype = `Folder`
-        color = `#ffffff` bgcolor = `#30914c` )
-      ( parentid = `folder-images` documentid = `img-001` filename = `Animation.gif` mimetype = `image/gif` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif`
-        size = 1048576 uploadeddate = `2023-03-05` uploadedby = `John Doe` status = `Complete` documenttype = `Image`
-        previewable = abap_true )
-      ( parentid = `folder-images` documentid = `folder-screenshots` filename = `Screenshots` isdirectory = abap_true
-        size = 0 uploadeddate = `2023-04-01` uploadedby = `User` status = `Active` documenttype = `Folder`
-        color = `#ffffff` bgcolor = `#30914c` )
-      ( parentid = `folder-screenshots` documentid = `screenshot-001` filename = `Video.mp4` mimetype = `video/mp4` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`
-        size = 42000000 uploadeddate = `2023-04-01` uploadedby = `Current User` status = `Complete` documenttype = `Video`
-        previewable = abap_true )
-      ( parentid = `folder-1` documentid = `folder-reports` filename = `Reports` isdirectory = abap_true
-        size = 0 uploadeddate = `2023-02-15` uploadedby = `Admin` status = `Active` documenttype = `Folder`
-        color = `#ffffff` bgcolor = `#30914c` )
-      ( parentid = `folder-reports` documentid = `report-001` filename = `Instructions.pdf` mimetype = `application/pdf` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`
-        size = 30000 uploadeddate = `2023-04-01` uploadedby = `Finance Team` status = `Complete` documenttype = `Document`
-        previewable = abap_true )
-      ( parentid = `folder-reports` documentid = `report-002` filename = `Business Plan Agenda.doc` mimetype = `application/msword` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`
-        size = 200000 uploadeddate = `2023-04-02` uploadedby = `Planning Team` status = `Complete` documenttype = `Document`
-        previewable = abap_true )
-      ( parentid = `folder-1` documentid = `doc-002` filename = `Third Quarter Results.ppt` mimetype = `application/vnd.ms-powerpoint` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Third Quarter Results.ppt`
-        size = 3145728 uploadeddate = `2023-03-15` uploadedby = `Support Team` status = `Complete` documenttype = `Presentation`
-        previewable = abap_true )
-      ( documentid = `doc-001` filename = `Document.txt` mimetype = `text/plain` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`
-        size = 420 uploadeddate = `2023-02-20` uploadedby = `User` status = `Complete` documenttype = `Document`
-        previewable = abap_true )
-      ( documentid = `doc-003` filename = `Business Plan Topics.xls` mimetype = `application/vnd.ms-excel` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Topics.xls`
-        size = 1048576 uploadeddate = `2023-03-20` uploadedby = `Marketing` status = `In work` documenttype = `Spreadsheet`
-        previewable = abap_true )
-      ( documentid = `doc-004` filename = `sample-zip-file.zip` mimetype = `application/zip` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`
-        size = 42000 uploadeddate = `2023-03-25` uploadedby = `Development Team` status = `Complete` documenttype = `Archive` )
-      ( documentid = `folder-temp` filename = `Temporary Files` isdirectory = abap_true
-        size = 0 uploadeddate = `2023-04-01` uploadedby = `System` status = `Active` documenttype = `Folder`
-        color = `#ffffff` bgcolor = `#30914c` )
-      ( parentid = `folder-temp` documentid = `temp-001` filename = `Notes.txt` mimetype = `text/plain` isdirectory = abap_false
-        url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Notes.txt`
-        size = 2048 uploadeddate = `2023-04-01` uploadedby = `System` status = `Complete` documenttype = `Document`
-        previewable = abap_true ) ).
-    LOOP AT t_docs REFERENCE INTO DATA(doc).
+    DATA temp39 LIKE t_docs.
+    DATA temp40 LIKE LINE OF temp39.
+    DATA temp41 LIKE LINE OF t_docs.
+    DATA doc LIKE REF TO temp41.
+    CLEAR temp39.
+    
+    CLEAR temp40.
+    temp40-documentid = `folder-1`.
+    temp40-filename = `My Documents`.
+    temp40-isdirectory = abap_true.
+    temp40-size = 0.
+    temp40-uploadeddate = `2023-01-15`.
+    temp40-uploadedby = `System`.
+    temp40-status = `Active`.
+    temp40-documenttype = `Folder`.
+    temp40-color = `#ffffff`.
+    temp40-bgcolor = `#30914c`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-1`.
+    temp40-documentid = `folder-images`.
+    temp40-filename = `Images`.
+    temp40-isdirectory = abap_true.
+    temp40-size = 0.
+    temp40-uploadeddate = `2023-02-10`.
+    temp40-uploadedby = `User`.
+    temp40-status = `Active`.
+    temp40-documenttype = `Folder`.
+    temp40-color = `#ffffff`.
+    temp40-bgcolor = `#30914c`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-images`.
+    temp40-documentid = `img-001`.
+    temp40-filename = `Animation.gif`.
+    temp40-mimetype = `image/gif`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Animation.gif`.
+    temp40-size = 1048576.
+    temp40-uploadeddate = `2023-03-05`.
+    temp40-uploadedby = `John Doe`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Image`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-images`.
+    temp40-documentid = `folder-screenshots`.
+    temp40-filename = `Screenshots`.
+    temp40-isdirectory = abap_true.
+    temp40-size = 0.
+    temp40-uploadeddate = `2023-04-01`.
+    temp40-uploadedby = `User`.
+    temp40-status = `Active`.
+    temp40-documenttype = `Folder`.
+    temp40-color = `#ffffff`.
+    temp40-bgcolor = `#30914c`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-screenshots`.
+    temp40-documentid = `screenshot-001`.
+    temp40-filename = `Video.mp4`.
+    temp40-mimetype = `video/mp4`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Video.mp4`.
+    temp40-size = 42000000.
+    temp40-uploadeddate = `2023-04-01`.
+    temp40-uploadedby = `Current User`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Video`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-1`.
+    temp40-documentid = `folder-reports`.
+    temp40-filename = `Reports`.
+    temp40-isdirectory = abap_true.
+    temp40-size = 0.
+    temp40-uploadeddate = `2023-02-15`.
+    temp40-uploadedby = `Admin`.
+    temp40-status = `Active`.
+    temp40-documenttype = `Folder`.
+    temp40-color = `#ffffff`.
+    temp40-bgcolor = `#30914c`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-reports`.
+    temp40-documentid = `report-001`.
+    temp40-filename = `Instructions.pdf`.
+    temp40-mimetype = `application/pdf`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Instructions.pdf`.
+    temp40-size = 30000.
+    temp40-uploadeddate = `2023-04-01`.
+    temp40-uploadedby = `Finance Team`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Document`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-reports`.
+    temp40-documentid = `report-002`.
+    temp40-filename = `Business Plan Agenda.doc`.
+    temp40-mimetype = `application/msword`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Agenda.doc`.
+    temp40-size = 200000.
+    temp40-uploadeddate = `2023-04-02`.
+    temp40-uploadedby = `Planning Team`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Document`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-1`.
+    temp40-documentid = `doc-002`.
+    temp40-filename = `Third Quarter Results.ppt`.
+    temp40-mimetype = `application/vnd.ms-powerpoint`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Third Quarter Results.ppt`.
+    temp40-size = 3145728.
+    temp40-uploadeddate = `2023-03-15`.
+    temp40-uploadedby = `Support Team`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Presentation`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-documentid = `doc-001`.
+    temp40-filename = `Document.txt`.
+    temp40-mimetype = `text/plain`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Document.txt`.
+    temp40-size = 420.
+    temp40-uploadeddate = `2023-02-20`.
+    temp40-uploadedby = `User`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Document`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-documentid = `doc-003`.
+    temp40-filename = `Business Plan Topics.xls`.
+    temp40-mimetype = `application/vnd.ms-excel`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Business Plan Topics.xls`.
+    temp40-size = 1048576.
+    temp40-uploadeddate = `2023-03-20`.
+    temp40-uploadedby = `Marketing`.
+    temp40-status = `In work`.
+    temp40-documenttype = `Spreadsheet`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-documentid = `doc-004`.
+    temp40-filename = `sample-zip-file.zip`.
+    temp40-mimetype = `application/zip`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/sample-zip-file.zip`.
+    temp40-size = 42000.
+    temp40-uploadeddate = `2023-03-25`.
+    temp40-uploadedby = `Development Team`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Archive`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-documentid = `folder-temp`.
+    temp40-filename = `Temporary Files`.
+    temp40-isdirectory = abap_true.
+    temp40-size = 0.
+    temp40-uploadeddate = `2023-04-01`.
+    temp40-uploadedby = `System`.
+    temp40-status = `Active`.
+    temp40-documenttype = `Folder`.
+    temp40-color = `#ffffff`.
+    temp40-bgcolor = `#30914c`.
+    INSERT temp40 INTO TABLE temp39.
+    CLEAR temp40.
+    temp40-parentid = `folder-temp`.
+    temp40-documentid = `temp-001`.
+    temp40-filename = `Notes.txt`.
+    temp40-mimetype = `text/plain`.
+    temp40-isdirectory = abap_false.
+    temp40-url = `https://sdk.openui5.org/test-resources/sap/m/UploadSetwithTableSampleFiles/Notes.txt`.
+    temp40-size = 2048.
+    temp40-uploadeddate = `2023-04-01`.
+    temp40-uploadedby = `System`.
+    temp40-status = `Complete`.
+    temp40-documenttype = `Document`.
+    temp40-previewable = abap_true.
+    INSERT temp40 INTO TABLE temp39.
+    t_docs = temp39.
+    
+    
+    LOOP AT t_docs REFERENCE INTO doc.
       row_derive( CHANGING row = doc->* ).
     ENDLOOP.
     folder_open( `` ).

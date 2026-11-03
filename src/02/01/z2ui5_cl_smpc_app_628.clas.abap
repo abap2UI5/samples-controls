@@ -26,10 +26,10 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -38,9 +38,59 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    DATA temp3 TYPE string_table.
+    DATA temp4 TYPE string_table.
+    DATA temp5 TYPE string_table.
+    DATA temp6 TYPE string_table.
+    DATA temp7 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " original onPress: MessageToast.show( source.getId() + ' Pressed' ) - client-composed, roundtrip-free
+    
+    CLEAR temp1.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+    INSERT `show` INTO TABLE temp1.
+    INSERT `{0} Pressed` INTO TABLE temp1.
+    INSERT `$event.oSource.sId` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp2.
+    INSERT `show` INTO TABLE temp2.
+    INSERT `{0} Pressed` INTO TABLE temp2.
+    INSERT `$event.oSource.sId` INTO TABLE temp2.
+    
+    CLEAR temp3.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp3.
+    INSERT `show` INTO TABLE temp3.
+    INSERT `{0} Pressed` INTO TABLE temp3.
+    INSERT `$event.oSource.sId` INTO TABLE temp3.
+    
+    CLEAR temp4.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp4.
+    INSERT `show` INTO TABLE temp4.
+    INSERT `{0} Pressed` INTO TABLE temp4.
+    INSERT `$event.oSource.sId` INTO TABLE temp4.
+    
+    CLEAR temp5.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp5.
+    INSERT `show` INTO TABLE temp5.
+    INSERT `{0} Pressed` INTO TABLE temp5.
+    INSERT `$event.oSource.sId` INTO TABLE temp5.
+    
+    CLEAR temp6.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp6.
+    INSERT `show` INTO TABLE temp6.
+    INSERT `{0} Pressed` INTO TABLE temp6.
+    INSERT `$event.oSource.sId` INTO TABLE temp6.
+    
+    CLEAR temp7.
+    INSERT `MESSAGE_TOAST` INTO TABLE temp7.
+    INSERT `show` INTO TABLE temp7.
+    INSERT `{0} Pressed` INTO TABLE temp7.
+    INSERT `$event.oSource.sId` INTO TABLE temp7.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -95,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `XL`
                             )->a( n = `imageFitType` v = `Cover`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp1 )
                             )->a( n = `badgeIcon`    v = `sap-icon://camera`
                             )->a( n = `badgeTooltip` v = `Sabine Mayer`
                         )->tag( `Text`
@@ -111,7 +161,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `M`
                             )->a( n = `displayShape` v = `Circle`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp2 )
                             )->a( n = `src`          v = client->_bind( lowshutterstock )
                             )->a( n = `badgeIcon`    v = `sap-icon://edit`
                             )->a( n = `badgeTooltip` v = `Julie Armstrong`
@@ -129,7 +179,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `backgroundColor` v = `Accent7`
                             )->a( n = `initials`        v = `JD`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp3 )
                             )->a( n = `badgeIcon`       v = `sap-icon://camera`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -150,7 +200,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`     v = `M`
                             )->a( n = `backgroundColor` v = `Accent3`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp4 )
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -165,7 +215,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `XL`
                             )->a( n = `displayShape` v = `Square`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = temp5 )
                             )->a( n = `src`          v = client->_bind( shutterstock )
                             )->a( n = `badgeIcon`    v = `sap-icon://edit`
                         )->tag( `Text`
@@ -183,7 +233,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `src`             v = `sap-icon://soccer`
                             )->a( n = `displayShape`    v = `Square`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp6 )
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -199,7 +249,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `backgroundColor` v = `Accent3`
                             )->a( n = `src`             v = `sap-icon://customer`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = temp7 )
                             )->a( n = `badgeIcon`       v = `sap-icon://add`
                             )->a( n = `badgeTooltip`    v = `People`
                         )->tag( `Text`

@@ -121,7 +121,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         status_state TYPE string,
         selected     TYPE abap_bool,
       END OF ty_s_row.
-    TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    TYPES ty_t_row TYPE STANDARD TABLE OF ty_s_row WITH DEFAULT KEY.
     " one product as the product page and a comparison panel show it
     TYPES:
       BEGIN OF ty_s_detail,
@@ -151,7 +151,7 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
         status_text  TYPE string,
         status_state TYPE string,
       END OF ty_s_entry.
-    TYPES ty_t_entry TYPE STANDARD TABLE OF ty_s_entry WITH EMPTY KEY.
+    TYPES ty_t_entry TYPE STANDARD TABLE OF ty_s_entry WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_store,
         cart  TYPE ty_t_entry,
@@ -209,12 +209,14 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     " Home
     DATA search_visible    TYPE abap_bool.
     DATA t_search          TYPE ty_t_row.
-    DATA t_categories      TYPE STANDARD TABLE OF ty_s_category WITH EMPTY KEY.
+    TYPES temp1_a91376a05f TYPE STANDARD TABLE OF ty_s_category WITH DEFAULT KEY.
+DATA t_categories      TYPE temp1_a91376a05f.
 
     " Category, and its filter dialog
     DATA category_name     TYPE string.
     DATA t_category        TYPE ty_t_row.
-    DATA t_suppliers       TYPE STANDARD TABLE OF ty_s_supplier WITH EMPTY KEY.
+    TYPES temp2_a91376a05f TYPE STANDARD TABLE OF ty_s_supplier WITH DEFAULT KEY.
+DATA t_suppliers       TYPE temp2_a91376a05f.
     DATA flt_available     TYPE abap_bool.
     DATA flt_out_of_stock  TYPE abap_bool.
     DATA flt_discontinued  TYPE abap_bool.
@@ -286,7 +288,8 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     DATA inv_valid         TYPE abap_bool.
     DATA del_valid         TYPE abap_bool.
     " the message model: one entry per input that failed its type
-    DATA t_messages        TYPE STANDARD TABLE OF ty_s_message WITH EMPTY KEY.
+    TYPES temp3_a91376a05f TYPE STANDARD TABLE OF ty_s_message WITH DEFAULT KEY.
+DATA t_messages        TYPE temp3_a91376a05f.
     DATA msg_count         TYPE i.
 
   PROTECTED SECTION.
@@ -356,12 +359,15 @@ CLASS z2ui5_cl_smpc_demo_004 DEFINITION PUBLIC.
     CONSTANTS c_carousel_ms TYPE string VALUE `8000`.
 
     DATA client          TYPE REF TO z2ui5_if_client.
-    DATA t_all           TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_featured      TYPE STANDARD TABLE OF ty_s_featured WITH EMPTY KEY.
+    TYPES temp4_a91376a05f TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+DATA t_all           TYPE temp4_a91376a05f.
+    TYPES temp5_a91376a05f TYPE STANDARD TABLE OF ty_s_featured WITH DEFAULT KEY.
+DATA t_featured      TYPE temp5_a91376a05f.
     " the route on show and the ones before it - what the browser history
     " holds there, walked by the Back buttons
     DATA s_route         TYPE ty_s_route.
-    DATA t_history       TYPE STANDARD TABLE OF ty_s_route WITH EMPTY KEY.
+    TYPES temp6_a91376a05f TYPE STANDARD TABLE OF ty_s_route WITH DEFAULT KEY.
+DATA t_history       TYPE temp6_a91376a05f.
     " the page each NavContainer shows, re-issued after a rebuilt view
     DATA page_begin      TYPE string VALUE `page-home`.
     DATA page_mid        TYPE string VALUE `page-welcome`.
@@ -585,15 +591,16 @@ ENDCLASS.
 CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
+      DATA temp1 TYPE string_table.
 
     me->client = client.
 
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -605,8 +612,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " it keeps the busy overlay down
     IF page_mid = `page-welcome` AND layout <> `OneColumn`
         AND client->get( )-s_device-system <> client->cs_device-system-phone.
+      
+      CLEAR temp1.
+      INSERT `CAROUSEL_TICK` INTO TABLE temp1.
+      INSERT c_carousel_ms INTO TABLE temp1.
+      INSERT `X` INTO TABLE temp1.
       client->follow_up_action( val   = client->cs_event-start_timer
-                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ( `X` ) ) ).
+                                t_arg = temp1 ).
     ENDIF.
 
   ENDMETHOD.
@@ -616,7 +628,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the chain hangs off the factory( ), so `view` holds the mvc:View and the
     " statements below add INTO it (view-chain-layout)
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp3 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp4 TYPE string_table.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA fcl TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA nav_begin TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA nav_mid TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA nav_end TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp6 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `displayBlock` v = `true`
             )->a( n = `height`       v = `100%`
@@ -631,6 +652,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the read half of the original's LocalStorageModel: an invisible control
     " that reads the key and fires `finished` when what it finds differs from
     " the bound value. The write half is the STORE_DATA action in cart_refresh( )
+    
+    CLEAR temp3.
+    temp3-check_queue_last = abap_true.
     view->tag( n = `Storage` ns = `z2ui5`
         )->a( n = `type`     v = client->_bind( s_storage-type )
         )->a( n = `prefix`   v = client->_bind( s_storage-prefix )
@@ -649,7 +673,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                                  " (View1.eB busy guard) and with it the whole restore.
                                                  " check_queue_last keeps it and dispatches it once the
                                                  " response has landed
-                                                 s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
+                                                 s_ctrl = temp3 ) ).
 
     dialogs( view ).
 
@@ -659,7 +683,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " OneColumn layout back into two columns once there is room. The FCL
     " fires it while the initial view renders, which is why the wire queues
     " (check_queue_last), like the storage read above
-    DATA(fcl) = view->ele( `App`
+    
+    CLEAR temp4.
+    INSERT `${$parameters>/maxColumnsCount}` INTO TABLE temp4.
+    INSERT `${$parameters>/layout}` INTO TABLE temp4.
+    
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
+    
+    fcl = view->ele( `App`
         )->a( n = `id`    v = `app`
         )->a( n = `class` v = `sapUiDemoCart`
 
@@ -669,14 +701,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->a( n = `backgroundDesign` v = `Translucent`
             )->a( n = `class`            v = `sapUiDemoCart`
             )->a( n = `stateChange`      v = client->_event( val    = `STATE_CHANGE`
-                                                             t_arg  = VALUE #( ( `${$parameters>/maxColumnsCount}` )
-                                                                               ( `${$parameters>/layout}` ) )
-                                                             s_ctrl = VALUE #( check_queue_last = abap_true ) ) ).
+                                                             t_arg  = temp4
+                                                             s_ctrl = temp1 ) ).
 
     " the router's targets, column by column (manifest.json): home, category,
     " checkout and ordercompleted go to the begin column, welcome, product
     " and comparison to the mid column, the cart to the end column
-    DATA(nav_begin) = fcl->ele( n = `beginColumnPages` ns = `f`
+    
+    nav_begin = fcl->ele( n = `beginColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-begin` ).
     page_home( nav_begin ).
@@ -684,14 +716,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     page_checkout( nav_begin ).
     page_order_completed( nav_begin ).
 
-    DATA(nav_mid) = fcl->ele( n = `midColumnPages` ns = `f`
+    
+    nav_mid = fcl->ele( n = `midColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-mid` ).
     page_welcome( nav_mid ).
     page_product( nav_mid ).
     page_comparison( nav_mid ).
 
-    DATA(nav_end) = fcl->ele( n = `endColumnPages` ns = `f`
+    
+    nav_end = fcl->ele( n = `endColumnPages` ns = `f`
         )->ele( `NavContainer`
             )->a( n = `id` v = `nav-end` ).
     page_cart( nav_end ).
@@ -715,8 +749,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " Welcome.controller.onInit: the carousel opens on a page drawn at random
     " (model_init draws it, so a rebuilt view opens on the same one)
     IF carousel_page IS NOT INITIAL.
+      
+      CLEAR temp6.
+      INSERT `welcomeCarousel` INTO TABLE temp6.
+      INSERT `setActivePage` INTO TABLE temp6.
+      INSERT carousel_page INTO TABLE temp6.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `welcomeCarousel` ) ( `setActivePage` ) ( carousel_page ) ) ).
+                                t_arg = temp6 ).
     ENDIF.
 
   ENDMETHOD.
@@ -728,12 +767,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " filter (CategoryFilterDialog.fragment.xml) and the checkout's
     " MessagePopover - held in the view's dependents and opened by id from a
     " view-wired control call, so opening either costs no round-trip
-    DATA(dependents) = parent->ele( n = `dependents` ns = `mvc` ).
+    DATA dependents TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp8 TYPE string_table.
+    dependents = parent->ele( n = `dependents` ns = `mvc` ).
 
     " every selection of the dialog is two-way bound: the ViewSettingsItems'
     " `selected`, the RangeSlider's two values and the custom item's
     " filterCount. The dialog restores its items itself on cancel, so what
     " arrives with confirm, cancel and reset is what it shows
+    
+    CLEAR temp8.
+    INSERT `${$parameters>/range}[0]` INTO TABLE temp8.
+    INSERT `${$parameters>/range}[1]` INTO TABLE temp8.
     dependents->ele( `ViewSettingsDialog`
         )->a( n = `id`           v = `categoryFilterDialog`
         )->a( n = `confirm`      v = client->_event( `FILTER_CONFIRM` )
@@ -780,8 +825,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                             )->a( n = `max`    v = `5000`
                             )->a( n = `step`   v = `10`
                             )->a( n = `change` v = client->_event( val   = `FILTER_CHANGE`
-                                                                   t_arg = VALUE #( ( `${$parameters>/range}[0]` )
-                                                                                    ( `${$parameters>/range}[1]` ) ) )
+                                                                   t_arg = temp8 )
 
                     )->end(
                 )->end(
@@ -820,7 +864,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_home.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp10 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `page-home`
         )->a( n = `title`            v = `Product Catalog`
         )->a( n = `backgroundDesign` v = `Solid` ).
@@ -847,6 +894,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " NOT bound: a bound value would come back with every response and
     " overwrite what was typed while the round-trip was on its way. The queue
     " keeps the last keystroke when they come faster than the round-trips
+    
+    CLEAR temp10.
+    temp10-check_queue_last = abap_true.
+    temp10-check_no_busy = abap_true.
     page->ele( `subHeader`
         )->ele( `Toolbar`
             )->a( n = `id` v = `searchBar33343`
@@ -855,13 +906,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `id`          v = `searchField`
                 )->a( n = `liveChange`  v = client->_event( val    = `SEARCH`
                                                             arg    = `${$parameters>/newValue}`
-                                                            s_ctrl = VALUE #( check_queue_last = abap_true
-                                                                              check_no_busy    = abap_true ) )
+                                                            s_ctrl = temp10 )
                 )->a( n = `placeholder` v = `Search`
                 )->a( n = `tooltip`     v = `Search`
                 )->a( n = `width`       v = `100%` ).
 
-    DATA(content) = page->ele( `content` ).
+    
+    content = page->ele( `content` ).
 
     content->tag( `PullToRefresh`
         )->a( n = `id`      v = `pullToRefresh`
@@ -926,7 +977,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_category.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp11 TYPE string_table.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `page-category`
         )->a( n = `title`            v = client->_bind( category_name )
         )->a( n = `backgroundDesign` v = `Solid`
@@ -944,12 +997,16 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->a( n = `headerRole`   v = `Region`
             )->a( n = `headerLabel`  v = `Category Header` ).
 
+    
+    CLEAR temp11.
+    INSERT `categoryFilterDialog` INTO TABLE temp11.
+    INSERT `open` INTO TABLE temp11.
     page->ele( `headerContent`
         )->tag( `Button`
             )->a( n = `id`    v = `masterListFilterButton`
             )->a( n = `icon`  v = `sap-icon://filter`
             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                            t_arg = VALUE #( ( `categoryFilterDialog` ) ( `open` ) ) ) ).
+                                                            t_arg = temp11 ) ).
 
     " the product list of the category. `selected` is bound, so the product
     " a product route opens is the selected row, as fnDataReceived selects it
@@ -1009,7 +1066,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_product.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `page-product`
         )->a( n = `backgroundDesign` v = `Solid` ).
 
@@ -1063,7 +1122,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `type`  v = `Emphasized`
                 )->a( n = `press` v = client->_event( `ADD_TO_CART` ) ).
 
-    DATA(content) = page->ele( `content` ).
+    
+    content = page->ele( `content` ).
 
     content->ele( `ObjectHeader`
         )->a( n = `title`      v = client->_bind( s_prod-name )
@@ -1120,7 +1180,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_comparison.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA box TYPE REF TO z2ui5_cl_ui5_view_builder.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `page-comparison`
         )->a( n = `backgroundDesign` v = `Solid` ).
 
@@ -1146,7 +1208,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the two ComparisonItem fragments, written out once each: the panel of
     " a product the route does not carry is hidden, and the placeholder with
     " the how-to shows instead (_onRoutePatternMatched's updatePanel)
-    DATA(box) = page->ele( `content`
+    
+    box = page->ele( `content`
         )->ele( `ScrollContainer`
             )->a( n = `height`     v = `100%`
             )->a( n = `width`      v = `100%`
@@ -1440,7 +1503,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_cart.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp13 TYPE string_table.
+    DATA temp15 TYPE string_table.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `page-cart`
         )->a( n = `title`            v = client->_bind( cart_title )
         )->a( n = `backgroundDesign` v = `Solid`
@@ -1491,15 +1558,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `visible` v = client->_bind( in_delete )
                 )->a( n = `press`   v = client->_event( `EDIT_TOGGLE` ) ).
 
-    DATA(content) = page->ele( `content` ).
+    
+    content = page->ele( `content` ).
 
     " a row of either list opens its product: on a desktop through the
     " SingleSelectMaster selection (onEntryListSelect), on a phone through the
     " item press (onEntryListPress) - which also closes the cart
+    
+    CLEAR temp13.
+    INSERT `entryList` INTO TABLE temp13.
+    INSERT `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` INTO TABLE temp13.
     content->ele( `List`
         )->a( n = `delete`          v = client->_event( val   = `CART_DELETE`
-                                                        t_arg = VALUE #( ( `entryList` )
-                                                                         ( `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` ) ) )
+                                                        t_arg = temp13 )
         )->a( n = `id`              v = `entryList`
         )->a( n = `items`           v = client->_bind( t_cart )
         )->a( n = `mode`            v = |\{= ${ client->_bind( in_delete ) } ? 'Delete' : $\{device>/system/phone\} ? 'None' : 'SingleSelectMaster' \}|
@@ -1539,10 +1610,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                         )->a( n = `text`  v = `{STATUS_TEXT}`
                         )->a( n = `state` v = `{STATUS_STATE}` ).
 
+    
+    CLEAR temp15.
+    INSERT `saveForLaterList` INTO TABLE temp15.
+    INSERT `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` INTO TABLE temp15.
     content->ele( `List`
         )->a( n = `delete`          v = client->_event( val   = `CART_DELETE`
-                                                        t_arg = VALUE #( ( `saveForLaterList` )
-                                                                         ( `${$parameters>/listItem}.getBindingContext().getProperty('PRODUCTID')` ) ) )
+                                                        t_arg = temp15 )
         )->a( n = `id`              v = `saveForLaterList`
         )->a( n = `items`           v = client->_bind( t_saved )
         )->a( n = `mode`            v = |\{= ${ client->_bind( in_delete ) } ? 'Delete' : $\{device>/system/phone\} ? 'None' : 'SingleSelectMaster' \}|
@@ -1591,11 +1665,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " A literal line break survives the attribute: the builder writes it as the
     " character reference `&#xA;`, which XML attribute-value normalization -
     " it turns a raw LF into a plain space - then leaves alone
-    DATA(line_break) = cl_abap_char_utilities=>newline.
+    DATA line_break LIKE cl_abap_char_utilities=>newline.
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp17 TYPE string_table.
+    DATA promoted TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA viewed TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA favorite TYPE REF TO z2ui5_cl_ui5_view_builder.
+    line_break = cl_abap_char_utilities=>newline.
 
     " core:require as the original's view declares it: the tiles' prices are
     " a CurrencyType binding
-    DATA(page) = parent->ele( `Page`
+    
+    page = parent->ele( `Page`
         )->a( n = `id`           v = `page-welcome`
         )->a( n = `core:require` v = `{CurrencyType: 'sap/ui/model/type/Currency'}` ).
 
@@ -1642,7 +1724,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                     )->a( n = `tooltip` v = `Show Shopping Cart`
                     )->a( n = `press`   v = client->_event( val = `TOGGLE_CART` arg = `welcome` ) ).
 
-    DATA(content) = page->ele( `content` ).
+    
+    content = page->ele( `content` ).
 
     " the app's style.css, rule for rule, under the same `.sapUiDemoCart`
     " scope - the class the App and the FlexibleColumnLayout carry here as
@@ -1660,6 +1743,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " against the app's own webapp root - so they come from the demo kit's
     " deployed copy of that folder (c_img), the same rule c_base follows for
     " the product pictures
+    
+    CLEAR temp17.
+    INSERT `CAROUSEL_TICK` INTO TABLE temp17.
+    INSERT c_carousel_ms INTO TABLE temp17.
+    INSERT `X` INTO TABLE temp17.
     content->ele( n = `BlockLayout` ns = `l`
         )->a( n = `background` v = `Light`
 
@@ -1677,7 +1765,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                     )->a( n = `showPageIndicator` v = `false`
                     )->a( n = `loop`              v = `true`
                     )->a( n = `pageChanged`       v = client->follow_up_action( val   = client->cs_event-start_timer
-                                                                                t_arg = VALUE #( ( `CAROUSEL_TICK` ) ( c_carousel_ms ) ( `X` ) ) )
+                                                                                t_arg = temp17 )
                     )->a( n = `visible`           v = `{=!${device>/system/phone}}`
                     )->a( n = `tooltip`           v = `This demo app shows you how to use the sap.m library for a classical shopping cart. ` &&
                                                      `You can browse and search a catalog of products, add the chosen products to your ` &&
@@ -1738,7 +1826,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " Promoted Items. The panel's rows are an aggregation binding on the
     " BlockLayoutRow's `content`, with the cell as its template - the original's
     " own shape, one tile per featured product
-    DATA(promoted) = content->ele( `Panel`
+    
+    promoted = content->ele( `Panel`
         )->a( n = `id`               v = `panelPromoted`
         )->a( n = `accessibleRole`   v = `Region`
         )->a( n = `backgroundDesign` v = `Transparent`
@@ -1821,7 +1910,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                     )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL8 L8 M8 S8` ).
 
-    DATA(viewed) = content->ele( `Panel`
+    
+    viewed = content->ele( `Panel`
         )->a( n = `id`               v = `panelViewed`
         )->a( n = `accessibleRole`   v = `Region`
         )->a( n = `backgroundDesign` v = `Transparent`
@@ -1905,7 +1995,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                                     )->tag( n = `GridData` ns = `l`
                                         )->a( n = `span` v = `XL8 L8 M8 S8` ).
 
-    DATA(favorite) = content->ele( `Panel`
+    
+    favorite = content->ele( `Panel`
         )->a( n = `id`               v = `panelFavorite`
         )->a( n = `accessibleRole`   v = `Region`
         )->a( n = `backgroundDesign` v = `Transparent`
@@ -1997,12 +2088,25 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " Checkout.view.xml is one NavContainer with two pages - the wizard and
     " its summary - and sits in the begin column, which the checkout route
     " shows alone (OneColumn)
-    DATA(checkout) = parent->ele( `NavContainer`
+    DATA checkout TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp19 TYPE string_table.
+    DATA wizard TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA contents TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA payment TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA credit TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA bank TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA cod TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA invoice TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA delivery TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA delivery_type TYPE REF TO z2ui5_cl_ui5_view_builder.
+    checkout = parent->ele( `NavContainer`
         )->a( n = `id` v = `wizardNavContainer`
 
         )->ele( `pages` ).
 
-    DATA(page) = checkout->ele( `Page`
+    
+    page = checkout->ele( `Page`
         )->a( n = `id`    v = `wizardContentPage`
         )->a( n = `title` v = `Checkout` ).
 
@@ -2024,6 +2128,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the footer bar shows while the message model holds a message; its
     " button opens the MessagePopover of dialogs( ) at itself, in the browser
+    
+    CLEAR temp19.
+    INSERT `messagePopover` INTO TABLE temp19.
+    INSERT `openBy` INTO TABLE temp19.
+    INSERT `showPopoverButton` INTO TABLE temp19.
     page->ele( `footer`
         )->ele( `Bar`
             )->a( n = `id`      v = `wizardFooterBar`
@@ -2036,21 +2145,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                     )->a( n = `text`  v = client->_bind( msg_count )
                     )->a( n = `type`  v = `Emphasized`
                     )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                    t_arg = VALUE #( ( `messagePopover` )
-                                                                                     ( `openBy` )
-                                                                                     ( `showPopoverButton` ) ) ) ).
+                                                                    t_arg = temp19 ) ).
 
     " enableBranching + subsequentSteps is what lets the payment type pick the
     " step after it; the branch itself is set from the backend with
     " setNextStep, and re-issued on every render (see view_display)
-    DATA(wizard) = page->ele( `content`
+    
+    wizard = page->ele( `content`
         )->ele( `Wizard`
             )->a( n = `id`               v = `shoppingCartWizard`
             )->a( n = `complete`         v = client->_event( `WIZARD_COMPLETE` )
             )->a( n = `enableBranching`  b = abap_true
             )->a( n = `finishButtonText` v = `Order Summary` ).
 
-    DATA(contents) = wizard->ele( `WizardStep`
+    
+    contents = wizard->ele( `WizardStep`
         )->a( n = `id`       v = `contentsStep`
         )->a( n = `nextStep` v = `paymentTypeStep`
         )->a( n = `title`    v = `Items`
@@ -2080,7 +2189,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->tag( `Text`
                 )->a( n = `text` v = client->_bind( cart_total ) ).
 
-    DATA(payment) = wizard->ele( `WizardStep`
+    
+    payment = wizard->ele( `WizardStep`
         )->a( n = `id`              v = `paymentTypeStep`
         )->a( n = `title`           v = `Payment Type`
         )->a( n = `subsequentSteps` v = `creditCardStep, bankAccountStep, cashOnDeliveryStep`
@@ -2126,7 +2236,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " CHECK_STEP on `activate` (onCheckStepActivation). The original gives
     " each label XL4 L4 M4 S12 and each field XL8 L8 M8 S12 as GridData; the
     " form's label spans say the same once per form
-    DATA(credit) = wizard->ele( `WizardStep`
+    
+    credit = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `creditCardStep`
         )->a( n = `title`     v = `Credit Card Details`
         )->a( n = `icon`      v = `sap-icon://credit-card`
@@ -2210,7 +2321,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `valueStateText` v = client->_bind( s_state_text-cc_expire )
                 )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `CC_EXPIRE` ) ).
 
-    DATA(bank) = wizard->ele( `WizardStep`
+    
+    bank = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `bankAccountStep`
         )->a( n = `title`     v = `Bank Account Details`
         )->a( n = `icon`      v = `sap-icon://official-service`
@@ -2239,7 +2351,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->tag( `Label`
                 )->a( n = `text` v = `06110702027218` ).
 
-    DATA(cod) = wizard->ele( `WizardStep`
+    
+    cod = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `cashOnDeliveryStep`
         )->a( n = `title`     v = `Details for Cash on Delivery`
         )->a( n = `icon`      v = `sap-icon://money-bills`
@@ -2301,7 +2414,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `valueStateText` v = client->_bind( s_state_text-cod_email )
                 )->a( n = `change`         v = client->_event( val = `CHECK_INPUT` arg = `COD_EMAIL` ) ).
 
-    DATA(invoice) = wizard->ele( `WizardStep`
+    
+    invoice = wizard->ele( `WizardStep`
         )->a( n = `id`              v = `invoiceStep`
         )->a( n = `title`           v = `Invoice Address`
         )->a( n = `icon`            v = `sap-icon://sales-quote`
@@ -2376,7 +2490,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
                 )->a( n = `placeholder` v = `Additional comments (max 500 characters)`
                 )->a( n = `value`       v = client->_bind( inv_note ) ).
 
-    DATA(delivery) = wizard->ele( `WizardStep`
+    
+    delivery = wizard->ele( `WizardStep`
         )->a( n = `id`        v = `deliveryAddressStep`
         )->a( n = `title`     v = `Shipping Address`
         )->a( n = `icon`      v = `sap-icon://sales-quote`
@@ -2447,7 +2562,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the original's deliveryTypeStep has no activate; the one here only
     " tells the backend the wizard is past the invoice step (invoice_passed)
-    DATA(delivery_type) = wizard->ele( `WizardStep`
+    
+    delivery_type = wizard->ele( `WizardStep`
         )->a( n = `id`       v = `deliveryTypeStep`
         )->a( n = `title`    v = `Delivery Type`
         )->a( n = `icon`     v = `sap-icon://insurance-car`
@@ -2489,7 +2605,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the summary page: one section per wizard step, each with the edit
     " button back into its step (_navBackToStep), and Submit / Cancel
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA items TYPE REF TO z2ui5_cl_ui5_view_builder.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `summaryPage`
         )->a( n = `backgroundDesign` v = `Solid`
         )->a( n = `showHeader`       b = abap_false ).
@@ -2503,9 +2622,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
             )->a( n = `footerRole`   v = `Banner`
             )->a( n = `footerLabel`  v = `Checkout Footer` ).
 
-    DATA(content) = page->ele( `content` ).
+    
+    content = page->ele( `content` ).
 
-    DATA(items) = content->ele( `Panel` ).
+    
+    items = content->ele( `Panel` ).
 
     items->ele( `headerToolbar`
         )->ele( `Toolbar`
@@ -2874,7 +2995,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD page_order_completed.
 
-    DATA(page) = parent->ele( `Page`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    page = parent->ele( `Page`
         )->a( n = `id`               v = `orderCompletedPage`
         )->a( n = `title`            v = `Order Completed`
         )->a( n = `backgroundDesign` v = `Solid`
@@ -2923,6 +3045,30 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD on_event_shop.
+        DATA temp4 TYPE xsdboolean.
+        DATA temp21 TYPE string_table.
+        DATA temp23 TYPE string_table.
+          FIELD-SYMBOLS <temp25> LIKE LINE OF t_history.
+          DATA temp26 LIKE sy-tabix.
+        DATA cart_visible TYPE abap_bool.
+        DATA temp5 TYPE xsdboolean.
+        DATA temp27 TYPE string.
+        DATA compare_id TYPE string.
+        DATA temp28 TYPE string.
+        DATA temp2 TYPE string.
+        DATA temp29 TYPE string.
+        DATA pressed TYPE abap_bool.
+        DATA temp6 TYPE xsdboolean.
+        DATA temp30 TYPE string.
+            DATA temp31 TYPE string.
+            DATA temp32 TYPE string.
+            DATA temp33 TYPE string.
+        DATA add_id TYPE string.
+        DATA temp34 TYPE string.
+        DATA temp35 TYPE i.
+        DATA temp36 TYPE i.
+        DATA temp3 TYPE i.
+        DATA temp1 TYPE i.
 
     result = abap_true.
 
@@ -2937,7 +3083,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN `STATE_CHANGE`.
         " BaseController.onStateChange: one column means a small screen; with
         " room for more, a OneColumn layout goes back to two columns
-        small_screen = xsdbool( client->get_event_arg( ) = `1` ).
+        
+        temp4 = boolc( client->get_event_arg( ) = `1` ).
+        small_screen = temp4.
         IF small_screen = abap_false AND client->get_event_arg( 2 ) = `OneColumn`.
           set_layout( `Two` ).
         ENDIF.
@@ -2946,8 +3094,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " the START_TIMER of main( ) ran out: the carousel's next( ) and
         " nothing else - no view_display( ), so the tick re-renders nothing,
         " and main( ) arms the next one
+        
+        CLEAR temp21.
+        INSERT `welcomeCarousel` INTO TABLE temp21.
+        INSERT `next` INTO TABLE temp21.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `welcomeCarousel` ) ( `next` ) ) ).
+                                  t_arg = temp21 ).
 
       WHEN `AVATAR`.
         " BaseController.onAvatarPress: a MessageToast and nothing else -
@@ -2961,8 +3113,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN `SEARCH_REFRESH`.
         " Home.onRefresh: the search once more, then the pull-down closes
         search_refresh( ).
+        
+        CLEAR temp23.
+        INSERT `pullToRefresh` INTO TABLE temp23.
+        INSERT `hide` INTO TABLE temp23.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `pullToRefresh` ) ( `hide` ) ) ).
+                                  t_arg = temp23 ).
 
       WHEN `HOME`.
         route_to( `home` ).
@@ -2976,7 +3132,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         IF t_history IS INITIAL.
           route_to( `home` ).
         ELSE.
-          s_route = t_history[ lines( t_history ) ].
+          
+          
+          temp26 = sy-tabix.
+          READ TABLE t_history INDEX lines( t_history ) ASSIGNING <temp25>.
+          sy-tabix = temp26.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          s_route = <temp25>.
           DELETE t_history INDEX lines( t_history ).
           route_apply( ).
         ENDIF.
@@ -2993,42 +3157,95 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN `CATEGORY_PRODUCT`.
         " Category.onProductDetails: two columns - or three, if the cart was
         " open, which the productCart route then opens again
-        DATA(cart_visible) = xsdbool( layout CP `Three*` ).
+        
+        
+        temp5 = boolc( layout CP `Three*` ).
+        cart_visible = temp5.
         set_layout( `Two` ).
+        
+        IF cart_visible = abap_true.
+          temp27 = `productCart`.
+        ELSE.
+          temp27 = `product`.
+        ENDIF.
         product_route( productid = client->get_event_arg( )
-                       name      = COND #( WHEN cart_visible = abap_true THEN `productCart` ELSE `product` ) ).
+                       name      = temp27 ).
 
       WHEN `COMPARE`.
         " Category.compareProducts: the first product compared stays item 1,
         " the one chosen now becomes item 2
-        DATA(compare_id) = client->get_event_arg( ).
+        
+        compare_id = client->get_event_arg( ).
+        
+        IF cmp_item1 IS NOT INITIAL.
+          temp28 = cmp_item1.
+        ELSE.
+          temp28 = compare_id.
+        ENDIF.
+        
+        IF cmp_item1 IS NOT INITIAL AND cmp_item1 <> compare_id.
+          temp2 = compare_id.
+        ELSE.
+          temp2 = cmp_item2.
+        ENDIF.
         route_to( name     = `comparison`
                   category = category_of( compare_id )
-                  item1    = COND #( WHEN cmp_item1 IS NOT INITIAL THEN cmp_item1 ELSE compare_id )
-                  item2    = COND #( WHEN cmp_item1 IS NOT INITIAL AND cmp_item1 <> compare_id
-                                     THEN compare_id
-                                     ELSE cmp_item2 ) ).
+                  item1    = temp28
+                  item2    = temp2 ).
 
       WHEN `CMP_REMOVE`.
         " Comparison.onRemoveComparison: the other product stays, as item 1
+        
+        IF client->get_event_arg( ) = `1`.
+          temp29 = cmp_item2.
+        ELSE.
+          temp29 = cmp_item1.
+        ENDIF.
         route_to( name     = `comparison`
                   category = cmp_category
-                  item1    = COND #( WHEN client->get_event_arg( ) = `1` THEN cmp_item2 ELSE cmp_item1 ) ).
+                  item1    = temp29 ).
 
       WHEN `TOGGLE_CART`.
         " onToggleCart of Welcome, Product and Comparison. The ToggleButton's
         " new state is the opposite of the layout its `pressed` is derived from
-        DATA(pressed) = xsdbool( layout NP `ThreeColumns*` ).
-        set_layout( COND #( WHEN pressed = abap_true THEN `Three` ELSE `Two` ) ).
+        
+        
+        temp6 = boolc( layout NP `ThreeColumns*` ).
+        pressed = temp6.
+        
+        IF pressed = abap_true.
+          temp30 = `Three`.
+        ELSE.
+          temp30 = `Two`.
+        ENDIF.
+        set_layout( temp30 ).
         CASE client->get_event_arg( ).
           WHEN `welcome`.
-            route_to( COND #( WHEN pressed = abap_true THEN `cart` ELSE `home` ) ).
+            
+            IF pressed = abap_true.
+              temp31 = `cart`.
+            ELSE.
+              temp31 = `home`.
+            ENDIF.
+            route_to( temp31 ).
           WHEN `product`.
-            route_to( name     = COND #( WHEN pressed = abap_true THEN `productCart` ELSE `product` )
+            
+            IF pressed = abap_true.
+              temp32 = `productCart`.
+            ELSE.
+              temp32 = `product`.
+            ENDIF.
+            route_to( name     = temp32
                       category = s_prod-category
                       product  = s_prod-productid ).
           WHEN OTHERS.
-            route_to( name     = COND #( WHEN pressed = abap_true THEN `comparisonCart` ELSE `comparison` )
+            
+            IF pressed = abap_true.
+              temp33 = `comparisonCart`.
+            ELSE.
+              temp33 = `comparison`.
+            ENDIF.
+            route_to( name     = temp33
                       category = cmp_category
                       item1    = cmp_item1
                       item2    = cmp_item2 ).
@@ -3038,14 +3255,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " the product page's footer button adds the product it shows and sends
         " nothing, a welcome tile sends its row's id - the split the original
         " has between BaseController.onAddToCart and Welcome.onAddToCart
-        DATA(add_id) = client->get_event_arg( ).
+        
+        add_id = client->get_event_arg( ).
         IF add_id IS INITIAL.
           add_id = s_prod-productid.
         ENDIF.
         cart_add_request( add_id ).
 
       WHEN `CMP_ADD_TO_CART`.
-        cart_add_request( COND #( WHEN client->get_event_arg( ) = `1` THEN s_cmp1-productid ELSE s_cmp2-productid ) ).
+        
+        IF client->get_event_arg( ) = `1`.
+          temp34 = s_cmp1-productid.
+        ELSE.
+          temp34 = s_cmp2-productid.
+        ENDIF.
+        cart_add_request( temp34 ).
 
       WHEN `OUT_OF_STOCK_CLOSED`.
         " the onClose of the original's confirmation box: only OK orders
@@ -3065,15 +3289,28 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " handleCancel: the slider goes back to the last confirmed values
         flt_low         = flt_low_prev.
         flt_high        = flt_high_prev.
-        flt_price_count = COND #( WHEN flt_low_prev > 0 OR flt_high_prev <> 5000 THEN 1 ELSE 0 ).
+        
+        IF flt_low_prev > 0 OR flt_high_prev <> 5000.
+          temp35 = 1.
+        ELSE.
+          temp35 = 0.
+        ENDIF.
+        flt_price_count = temp35.
 
       WHEN `FILTER_CHANGE`.
         " handleChange: the Price item counts as a filter once the range is
         " narrower than the slider
-        flt_price_count = COND #( WHEN CONV i( client->get_event_arg( ) ) <> 0
-                                    OR CONV i( client->get_event_arg( 2 ) ) <> 5000
-                                  THEN 1
-                                  ELSE 0 ).
+        
+        temp36 = client->get_event_arg( ).
+        
+        temp3 = client->get_event_arg( 2 ).
+        
+        IF temp36 <> 0 OR temp3 <> 5000.
+          temp1 = 1.
+        ELSE.
+          temp1 = 0.
+        ENDIF.
+        flt_price_count = temp1.
 
       WHEN `FILTER_RESET`.
         " handleResetFilters - the dialog clears its own items
@@ -3090,6 +3327,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD on_event_cart.
+        DATA saved_id TYPE string.
+        DATA temp37 LIKE sy-subrc.
+          DATA temp38 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+          DATA temp39 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+        DATA back_id TYPE string.
+        DATA temp40 LIKE sy-subrc.
+          DATA temp41 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+          DATA temp42 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+        DATA temp43 TYPE string_table.
 
     result = abap_true.
 
@@ -3101,18 +3347,40 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       WHEN `SAVE_LATER`.
         " Cart._changeList: into the saved list - unless it is there already -
         " and out of the cart
-        DATA(saved_id) = client->get_event_arg( ).
-        IF NOT line_exists( t_saved[ productid = saved_id ] ).
-          INSERT VALUE #( t_cart[ productid = saved_id ] OPTIONAL ) INTO TABLE t_saved.
+        
+        saved_id = client->get_event_arg( ).
+        
+        READ TABLE t_saved WITH KEY productid = saved_id TRANSPORTING NO FIELDS.
+        temp37 = sy-subrc.
+        IF NOT temp37 = 0.
+          
+          CLEAR temp38.
+          
+          READ TABLE t_cart INTO temp39 WITH KEY productid = saved_id.
+          IF sy-subrc = 0.
+            temp38 = temp39.
+          ENDIF.
+          INSERT temp38 INTO TABLE t_saved.
         ENDIF.
         DELETE t_cart WHERE productid = saved_id.
         cart_refresh( ).
 
       WHEN `ADD_BACK`.
         " onAddBackToBasket: the same move the other way, quantity and all
-        DATA(back_id) = client->get_event_arg( ).
-        IF NOT line_exists( t_cart[ productid = back_id ] ).
-          INSERT VALUE #( t_saved[ productid = back_id ] OPTIONAL ) INTO TABLE t_cart.
+        
+        back_id = client->get_event_arg( ).
+        
+        READ TABLE t_cart WITH KEY productid = back_id TRANSPORTING NO FIELDS.
+        temp40 = sy-subrc.
+        IF NOT temp40 = 0.
+          
+          CLEAR temp41.
+          
+          READ TABLE t_saved INTO temp42 WITH KEY productid = back_id.
+          IF sy-subrc = 0.
+            temp41 = temp42.
+          ENDIF.
+          INSERT temp41 INTO TABLE t_cart.
         ENDIF.
         DELETE t_saved WHERE productid = back_id.
         cart_refresh( ).
@@ -3121,10 +3389,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " _deleteProduct: every removal is confirmed first
         delete_list    = client->get_event_arg( ).
         delete_pending = client->get_event_arg( 2 ).
+        
+        CLEAR temp43.
+        INSERT `DELETE` INTO TABLE temp43.
+        INSERT `CANCEL` INTO TABLE temp43.
         client->message_box_display( text    = `Do you want to remove this entry from your cart?`
                                      type    = `show`
                                      title   = `Confirmation`
-                                     actions = VALUE #( ( `DELETE` ) ( `CANCEL` ) )
+                                     actions = temp43
                                      onclose = `CART_DELETE_CLOSED` ).
 
       WHEN `CART_DELETE_CLOSED`.
@@ -3153,6 +3425,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD on_event_checkout.
+          DATA temp45 TYPE string_table.
+          DATA temp47 TYPE string_table.
+          DATA temp49 TYPE string_table.
+          DATA temp51 TYPE string_table.
+        DATA temp53 TYPE string_table.
+        DATA temp55 TYPE string_table.
+          DATA temp57 TYPE z2ui5_cl_smpc_demo_004=>ty_t_entry.
+          DATA temp58 TYPE string.
 
     result = abap_true.
 
@@ -3168,9 +3448,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " the payment step, a new payment type throws that progress away, so
         " the user is asked first. Before that it simply becomes the branch
         IF payment_passed = abap_true.
+          
+          CLEAR temp45.
+          INSERT `YES` INTO TABLE temp45.
+          INSERT `NO` INTO TABLE temp45.
           client->message_box_display( text    = `Are you sure you want to change the payment type? This will discard your progress.`
                                        type    = `warning`
-                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       actions = temp45
                                        onclose = `PAY_TYPE_DECIDE` ).
         ELSE.
           pay_type_apply( ).
@@ -3178,8 +3462,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
       WHEN `PAY_TYPE_DECIDE`.
         IF client->get_event_arg( ) = `YES`.
+          
+          CLEAR temp47.
+          INSERT `shoppingCartWizard` INTO TABLE temp47.
+          INSERT `discardProgress` INTO TABLE temp47.
+          INSERT `paymentTypeStep` INTO TABLE temp47.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `paymentTypeStep` ) ) ).
+                                    t_arg = temp47 ).
           payment_passed = abap_false.
           invoice_passed = abap_false.
           pay_type_apply( ).
@@ -3198,9 +3487,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " setDifferentDeliveryAddress - the same question once the wizard is
         " past the invoice step
         IF invoice_passed = abap_true.
+          
+          CLEAR temp49.
+          INSERT `YES` INTO TABLE temp49.
+          INSERT `NO` INTO TABLE temp49.
           client->message_box_display( text    = `Are you sure you want to change the shipping address? This will discard your progress`
                                        type    = `warning`
-                                       actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                       actions = temp49
                                        onclose = `DELIVERY_DECIDE` ).
         ELSE.
           delivery_apply( ).
@@ -3208,8 +3501,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
       WHEN `DELIVERY_DECIDE`.
         IF client->get_event_arg( ) = `YES`.
+          
+          CLEAR temp51.
+          INSERT `shoppingCartWizard` INTO TABLE temp51.
+          INSERT `discardProgress` INTO TABLE temp51.
+          INSERT `invoiceStep` INTO TABLE temp51.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `invoiceStep` ) ) ).
+                                    t_arg = temp51 ).
           invoice_passed = abap_false.
           delivery_apply( ).
         ELSE.
@@ -3251,15 +3549,23 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         wizard_to_step( client->get_event_arg( ) ).
 
       WHEN `WIZARD_SUBMIT`.
+        
+        CLEAR temp53.
+        INSERT `YES` INTO TABLE temp53.
+        INSERT `NO` INTO TABLE temp53.
         client->message_box_display( text    = `Are you sure you want to submit your order?`
                                      type    = `confirm`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp53
                                      onclose = `WIZARD_SUBMIT_CLOSED` ).
 
       WHEN `WIZARD_CANCEL`.
+        
+        CLEAR temp55.
+        INSERT `YES` INTO TABLE temp55.
+        INSERT `NO` INTO TABLE temp55.
         client->message_box_display( text    = `Are you sure you want to cancel your order?`
                                      type    = `warning`
-                                     actions = VALUE #( ( `YES` ) ( `NO` ) )
+                                     actions = temp55
                                      onclose = `WIZARD_CANCEL_CLOSED` ).
 
       WHEN `WIZARD_SUBMIT_CLOSED` OR `WIZARD_CANCEL_CLOSED`.
@@ -3268,9 +3574,17 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " home. The original posts nothing either
         IF client->get_event_arg( ) = `YES`.
           wizard_reset( ).
-          t_cart = VALUE #( ).
+          
+          CLEAR temp57.
+          t_cart = temp57.
           cart_refresh( ).
-          route_to( COND #( WHEN client->get_event( ) = `WIZARD_SUBMIT_CLOSED` THEN `ordercompleted` ELSE `home` ) ).
+          
+          IF client->get_event( ) = `WIZARD_SUBMIT_CLOSED`.
+            temp58 = `ordercompleted`.
+          ELSE.
+            temp58 = `home`.
+          ENDIF.
+          route_to( temp58 ).
         ENDIF.
 
       WHEN OTHERS.
@@ -3288,17 +3602,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     IF s_route-name IS NOT INITIAL.
       INSERT s_route INTO TABLE t_history.
     ENDIF.
-    s_route = VALUE #( name     = name
-                       category = category
-                       product  = product
-                       item1    = item1
-                       item2    = item2 ).
+    CLEAR s_route.
+    s_route-name = name.
+    s_route-category = category.
+    s_route-product = product.
+    s_route-item1 = item1.
+    s_route-item2 = item2.
     route_apply( ).
 
   ENDMETHOD.
 
 
   METHOD route_apply.
+        DATA temp59 TYPE string.
+        DATA temp60 TYPE string_table.
 
     " the targets of each route of manifest.json, column by column, and what
     " the controllers' route-matched handlers load for them
@@ -3342,7 +3659,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         ENDIF.
       WHEN `category`.
         " Category._loadCategories
-        set_layout( COND #( WHEN small_screen = abap_true THEN `One` ELSE `Two` ) ).
+        
+        IF small_screen = abap_true.
+          temp59 = `One`.
+        ELSE.
+          temp59 = `Two`.
+        ENDIF.
+        set_layout( temp59 ).
       WHEN `checkout`.
         " the checkout route's handler in Checkout.onInit
         set_layout( `One` ).
@@ -3350,8 +3673,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " Cart._routePatternMatched: three columns, and no row selected
         nav_to( nav = `nav-end` page = `page-cart` ).
         set_layout( `Three` ).
+        
+        CLEAR temp60.
+        INSERT `entryList` INTO TABLE temp60.
+        INSERT `removeSelections` INTO TABLE temp60.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `entryList` ) ( `removeSelections` ) ) ).
+                                  t_arg = temp60 ).
     ENDCASE.
 
   ENDMETHOD.
@@ -3360,12 +3687,19 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD set_layout.
 
     " BaseController._setLayout
-    layout = |{ columns }Column{ COND #( WHEN columns = `One` THEN `` ELSE `sMidExpanded` ) }|.
+    DATA temp62 TYPE string.
+    IF columns = `One`.
+      temp62 = ``.
+    ELSE.
+      temp62 = `sMidExpanded`.
+    ENDIF.
+    layout = |{ columns }Column{ temp62 }|.
 
   ENDMETHOD.
 
 
   METHOD nav_to.
+    DATA temp63 TYPE string_table.
 
     " a NavContainer page switch: no round-trip when it is wired to a
     " control, one when the backend decides which page comes next - as here,
@@ -3381,8 +3715,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         page_wizard = page.
     ENDCASE.
 
+    
+    CLEAR temp63.
+    INSERT nav INTO TABLE temp63.
+    INSERT `to` INTO TABLE temp63.
+    INSERT page INTO TABLE temp63.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( nav ) ( `to` ) ( page ) ) ).
+                              t_arg = temp63 ).
 
   ENDMETHOD.
 
@@ -3392,7 +3731,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " Category._loadCategories and _loadSuppliers: the category and its
     " products, the product of a product route selected (fnDataReceived), and
     " the comparison model cleared (_clearComparison)
-    category_name = VALUE #( t_categories[ category = category ]-categoryname OPTIONAL ).
+    DATA temp65 TYPE string.
+    DATA temp66 TYPE z2ui5_cl_smpc_demo_004=>ty_s_category.
+    CLEAR temp65.
+    
+    READ TABLE t_categories INTO temp66 WITH KEY category = category.
+    IF sy-subrc = 0.
+      temp65 = temp66-categoryname.
+    ENDIF.
+    category_name = temp65.
     category_rows( category = category productid = productid ).
     CLEAR: cmp_category, cmp_item1, cmp_item2.
 
@@ -3403,11 +3750,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the list binding of the category's Products, sorted by Name - with the
     " filter of the dialog still on it
-    t_category = VALUE #( ).
-    LOOP AT t_all INTO DATA(product) WHERE category = category.
+    DATA temp67 TYPE z2ui5_cl_smpc_demo_004=>ty_t_row.
+    DATA product LIKE LINE OF t_all.
+        DATA row TYPE z2ui5_cl_smpc_demo_004=>ty_s_row.
+        DATA temp7 TYPE xsdboolean.
+    CLEAR temp67.
+    t_category = temp67.
+    
+    LOOP AT t_all INTO product WHERE category = category.
       IF filter_match( product ) = abap_true.
-        DATA(row) = row_of( product ).
-        row-selected = xsdbool( product-productid = productid ).
+        
+        row = row_of( product ).
+        
+        temp7 = boolc( product-productid = productid ).
+        row-selected = temp7.
         INSERT row INTO TABLE t_category.
       ENDIF.
     ENDLOOP.
@@ -3417,16 +3773,29 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD filter_match.
+    DATA temp68 LIKE sy-subrc.
+    DATA temp4 LIKE sy-subrc.
+      DATA temp70 TYPE ty_amount.
+      DATA price LIKE temp70.
 
     " _applyFilter's Filter objects: OR inside a group, AND across groups,
     " the price BT the slider's range
     result = abap_true.
-    IF flt_status IS NOT INITIAL AND NOT line_exists( flt_status[ table_line = product-status ] ).
+    
+    READ TABLE flt_status WITH KEY table_line = product-status TRANSPORTING NO FIELDS.
+    temp68 = sy-subrc.
+    
+    READ TABLE flt_supplier WITH KEY table_line = product-suppliername TRANSPORTING NO FIELDS.
+    temp4 = sy-subrc.
+    IF flt_status IS NOT INITIAL AND NOT temp68 = 0.
       result = abap_false.
-    ELSEIF flt_supplier IS NOT INITIAL AND NOT line_exists( flt_supplier[ table_line = product-suppliername ] ).
+    ELSEIF flt_supplier IS NOT INITIAL AND NOT temp4 = 0.
       result = abap_false.
     ELSEIF flt_price = abap_true.
-      DATA(price) = CONV ty_amount( product-price ).
+      
+      temp70 = product-price.
+      
+      price = temp70.
       IF price < flt_low_prev OR price > flt_high_prev.
         result = abap_false.
       ENDIF.
@@ -3442,7 +3811,17 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " dialog's order, the price range last
     DATA keys TYPE string_table.
 
-    flt_status = VALUE #( ).
+    DATA temp71 TYPE string_table.
+    DATA temp72 TYPE string_table.
+    DATA supplier LIKE LINE OF t_suppliers.
+    DATA temp8 TYPE xsdboolean.
+    DATA temp73 TYPE string.
+    DATA temp74 TYPE z2ui5_cl_smpc_demo_004=>ty_s_row.
+      DATA temp75 LIKE LINE OF keys.
+    DATA temp9 TYPE xsdboolean.
+    DATA temp76 TYPE string.
+    CLEAR temp71.
+    flt_status = temp71.
     IF flt_available = abap_true.
       INSERT `A` INTO TABLE flt_status.
     ENDIF.
@@ -3452,14 +3831,26 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     IF flt_discontinued = abap_true.
       INSERT `D` INTO TABLE flt_status.
     ENDIF.
-    flt_supplier = VALUE #( ).
-    LOOP AT t_suppliers INTO DATA(supplier) WHERE selected = abap_true.
+    
+    CLEAR temp72.
+    flt_supplier = temp72.
+    
+    LOOP AT t_suppliers INTO supplier WHERE selected = abap_true.
       INSERT supplier-suppliername INTO TABLE flt_supplier.
     ENDLOOP.
-    flt_price = xsdbool( flt_low <> 0 OR flt_high <> 5000 ).
+    
+    temp8 = boolc( flt_low <> 0 OR flt_high <> 5000 ).
+    flt_price = temp8.
 
+    
+    CLEAR temp73.
+    
+    READ TABLE t_category INTO temp74 WITH KEY selected = abap_true.
+    IF sy-subrc = 0.
+      temp73 = temp74-productid.
+    ENDIF.
     category_rows( category  = s_route-category
-                   productid = VALUE #( t_category[ selected = abap_true ]-productid OPTIONAL ) ).
+                   productid = temp73 ).
 
     IF flt_status IS NOT INITIAL.
       INSERT `Availability` INTO TABLE keys.
@@ -3468,10 +3859,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       INSERT `Supplier` INTO TABLE keys.
     ENDIF.
     IF flt_price = abap_true.
-      INSERT |Price ({ flt_low_prev } - { flt_high_prev } EUR)| INTO TABLE keys.
+      
+      temp75 = |Price ({ flt_low_prev } - { flt_high_prev } EUR)|.
+      INSERT temp75 INTO TABLE keys.
     ENDIF.
-    info_visible = xsdbool( keys IS NOT INITIAL ).
-    info_text    = COND #( WHEN keys IS NOT INITIAL THEN |Filtered by { concat_lines_of( table = keys sep = `, ` ) }| ).
+    
+    temp9 = boolc( keys IS NOT INITIAL ).
+    info_visible = temp9.
+    
+    IF keys IS NOT INITIAL.
+      temp76 = |Filtered by { concat_lines_of( table = keys sep = `, ` ) }|.
+    ELSE.
+      CLEAR temp76.
+    ENDIF.
+    info_text    = temp76.
 
   ENDMETHOD.
 
@@ -3482,9 +3883,14 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " categories while the field holds a text. The original filters with
     " Contains on Name, which the mock server answers with a case-sensitive
     " substringof - so does find( ) here
-    t_search = VALUE #( ).
+    DATA temp77 TYPE z2ui5_cl_smpc_demo_004=>ty_t_row.
+      DATA found LIKE LINE OF t_all.
+    DATA temp10 TYPE xsdboolean.
+    CLEAR temp77.
+    t_search = temp77.
     IF search_term IS NOT INITIAL.
-      LOOP AT t_all INTO DATA(found).
+      
+      LOOP AT t_all INTO found.
         IF find( val = found-name sub = search_term ) >= 0.
           INSERT row_of( found ) INTO TABLE t_search.
         ENDIF.
@@ -3492,7 +3898,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       " the productList of the original sorts by Name
       SORT t_search BY name AS TEXT.
     ENDIF.
-    search_visible = xsdbool( search_term IS NOT INITIAL ).
+    
+    temp10 = boolc( search_term IS NOT INITIAL ).
+    search_visible = temp10.
 
   ENDMETHOD.
 
@@ -3506,7 +3914,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD category_of.
 
-    result = VALUE #( t_all[ productid = productid ]-category OPTIONAL ).
+    DATA temp78 TYPE string.
+    DATA temp79 TYPE z2ui5_cl_smpc_demo_004=>ty_s_product.
+    CLEAR temp78.
+    
+    READ TABLE t_all INTO temp79 WITH KEY productid = productid.
+    IF sy-subrc = 0.
+      temp78 = temp79-category.
+    ENDIF.
+    result = temp78.
 
   ENDMETHOD.
 
@@ -3522,41 +3938,49 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD detail_of.
 
-    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_demo_004=>ty_s_product.
+    READ TABLE t_all WITH KEY productid = productid ASSIGNING <product>.
     IF <product> IS NOT ASSIGNED.
       " enum-typed: an empty state is rejected outright
       result-status_state = `None`.
       RETURN.
     ENDIF.
 
-    result = VALUE #( productid        = <product>-productid
-                      category         = <product>-category
-                      name             = <product>-name
-                      suppliername     = <product>-suppliername
-                      shortdescription = <product>-shortdescription
-                      price_text       = price_text( <product>-price )
-                      pictureurl       = picture_url( <product>-pictureurl )
-                      status_text      = status_text( <product>-status )
-                      status_state     = status_state( <product>-status )
-                      weight_text      = |{ <product>-weight } { <product>-weightunit }|
-                      " Product.view.xml and ComparisonItem.fragment.xml bind
-                      " `{DimensionWidth} {Unit}, ...` - and the entity has no Unit,
-                      " so the original shows the three numbers with an empty unit
-                      measures_text    = |{ <product>-dimensionwidth } , { <product>-dimensiondepth } , | &&
-                                         |{ <product>-dimensionheight } | ).
+    CLEAR result.
+    result-productid = <product>-productid.
+    result-category = <product>-category.
+    result-name = <product>-name.
+    result-suppliername = <product>-suppliername.
+    result-shortdescription = <product>-shortdescription.
+    result-price_text = price_text( <product>-price ).
+    result-pictureurl = picture_url( <product>-pictureurl ).
+    result-status_text = status_text( <product>-status ).
+    result-status_state = status_state( <product>-status ).
+    result-weight_text = |{ <product>-weight } { <product>-weightunit }|.
+    result-measures_text = |{ <product>-dimensionwidth } , { <product>-dimensiondepth } , | &&
+|{ <product>-dimensionheight } |.
 
   ENDMETHOD.
 
 
   METHOD comparison_show.
+    DATA temp11 TYPE xsdboolean.
+    DATA temp12 TYPE xsdboolean.
+    DATA temp13 TYPE xsdboolean.
 
     " Comparison._onRoutePatternMatched: a panel per product of the route,
     " the placeholder while one of the two is missing
     s_cmp1       = detail_of( cmp_item1 ).
     s_cmp2       = detail_of( cmp_item2 ).
-    cmp1_visible = xsdbool( cmp_item1 IS NOT INITIAL ).
-    cmp2_visible = xsdbool( cmp_item2 IS NOT INITIAL ).
-    cmp_placeholder = xsdbool( cmp_item1 IS INITIAL OR cmp_item2 IS INITIAL ).
+    
+    temp11 = boolc( cmp_item1 IS NOT INITIAL ).
+    cmp1_visible = temp11.
+    
+    temp12 = boolc( cmp_item2 IS NOT INITIAL ).
+    cmp2_visible = temp12.
+    
+    temp13 = boolc( cmp_item1 IS INITIAL OR cmp_item2 IS INITIAL ).
+    cmp_placeholder = temp13.
     nav_to( nav = `nav-mid` page = `page-comparison` ).
 
   ENDMETHOD.
@@ -3567,7 +3991,10 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " cart.addToCart of the original: the product's status decides before
     " anything is added - a discontinued product cannot be ordered, an
     " out-of-stock one only after the user confirms it
-    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_demo_004=>ty_s_product.
+        DATA temp80 TYPE string_table.
+        DATA temp82 TYPE string_table.
+    READ TABLE t_all WITH KEY productid = productid ASSIGNING <product>.
     IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
@@ -3578,18 +4005,25 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         " spelled `titles` there, so the box opens without a title. The
         " global call takes the option object 1:1, where message_box_display
         " would add the type's own title
+        
+        CLEAR temp80.
+        INSERT `MESSAGE_BOX` INTO TABLE temp80.
+        INSERT `show` INTO TABLE temp80.
+        INSERT `This product has been discontinued and cannot be ordered anymore` INTO TABLE temp80.
+        INSERT `{"icon":"ERROR","actions":["CLOSE"]}` INTO TABLE temp80.
         client->follow_up_action( val   = client->cs_event-control_global
-                                  t_arg = VALUE #( ( `MESSAGE_BOX` )
-                                                   ( `show` )
-                                                   ( `This product has been discontinued and cannot be ordered anymore` )
-                                                   ( `{"icon":"ERROR","actions":["CLOSE"]}` ) ) ).
+                                  t_arg = temp80 ).
       WHEN `O`.
         add_pending = productid.
+        
+        CLEAR temp82.
+        INSERT `OK` INTO TABLE temp82.
+        INSERT `CANCEL` INTO TABLE temp82.
         client->message_box_display( text    = `This product is currently out of stock, but you can order it. ` &&
                                                `It will be shipped as soon as it's available again`
                                      type    = `confirm`
                                      title   = `Confirmation`
-                                     actions = VALUE #( ( `OK` ) ( `CANCEL` ) )
+                                     actions = temp82
                                      onclose = `OUT_OF_STOCK_CLOSED` ).
       WHEN OTHERS.
         cart_add( productid ).
@@ -3601,12 +4035,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD cart_add.
 
     " cart._updateCartItem: a new entry with quantity 1, or one more of it
-    DATA(entry) = entry_of( productid ).
+    DATA entry TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+    FIELD-SYMBOLS <entry> TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+    entry = entry_of( productid ).
     IF entry-productid IS INITIAL.
       RETURN.
     ENDIF.
 
-    ASSIGN t_cart[ productid = productid ] TO FIELD-SYMBOL(<entry>).
+    
+    READ TABLE t_cart WITH KEY productid = productid ASSIGNING <entry>.
     IF <entry> IS ASSIGNED.
       <entry>-quantity = <entry>-quantity + 1.
     ELSE.
@@ -3624,9 +4061,33 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the DELETE of _deleteProduct's confirmation: out of the list it was
     " deleted from, and a toast naming it
-    DATA(name) = COND string( WHEN delete_list = `entryList`
-                              THEN VALUE #( t_cart[ productid = delete_pending ]-name OPTIONAL )
-                              ELSE VALUE #( t_saved[ productid = delete_pending ]-name OPTIONAL ) ).
+    DATA temp84 TYPE string.
+    DATA temp85 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+    DATA temp5 TYPE string.
+    DATA temp6 TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+    DATA temp2 TYPE string.
+    DATA name LIKE temp2.
+    CLEAR temp84.
+    
+    READ TABLE t_cart INTO temp85 WITH KEY productid = delete_pending.
+    IF sy-subrc = 0.
+      temp84 = temp85-name.
+    ENDIF.
+    
+    CLEAR temp5.
+    
+    READ TABLE t_saved INTO temp6 WITH KEY productid = delete_pending.
+    IF sy-subrc = 0.
+      temp5 = temp6-name.
+    ENDIF.
+    
+    IF delete_list = `entryList`.
+      temp2 = temp84.
+    ELSE.
+      temp2 = temp5.
+    ENDIF.
+    
+    name = temp2.
     IF delete_list = `entryList`.
       DELETE t_cart WHERE productid = delete_pending.
     ELSE.
@@ -3642,8 +4103,17 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " Cart._toggleCfgModel: Delete mode for both lists and the page title
     " that says so
-    in_delete  = xsdbool( in_delete = abap_false ).
-    cart_title = COND #( WHEN in_delete = abap_true THEN `Edit Cart` ELSE `Shopping Cart` ).
+    DATA temp14 TYPE xsdboolean.
+    DATA temp86 TYPE string.
+    temp14 = boolc( in_delete = abap_false ).
+    in_delete  = temp14.
+    
+    IF in_delete = abap_true.
+      temp86 = `Edit Cart`.
+    ELSE.
+      temp86 = `Shopping Cart`.
+    ENDIF.
+    cart_title = temp86.
 
   ENDMETHOD.
 
@@ -3652,7 +4122,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " Cart._showProduct on a desktop: the product, with the cart still open
     " if it is
-    product_route( productid = productid name = COND #( WHEN layout CP `Three*` THEN `productCart` ELSE `product` ) ).
+    DATA temp87 TYPE string.
+    IF layout CP `Three*`.
+      temp87 = `productCart`.
+    ELSE.
+      temp87 = `product`.
+    ENDIF.
+    product_route( productid = productid name = temp87 ).
 
   ENDMETHOD.
 
@@ -3664,21 +4140,31 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     FIELD-SYMBOLS <product> TYPE ty_s_product.
 
-    LOOP AT t_cart INTO DATA(entry).
+    DATA entry LIKE LINE OF t_cart.
+        DATA temp88 TYPE ty_amount.
+    DATA temp15 TYPE xsdboolean.
+    DATA temp16 TYPE xsdboolean.
+    LOOP AT t_cart INTO entry.
       " UNASSIGN first: inside a loop a field symbol stays assigned from the
       " previous round, so IS ASSIGNED alone would read the PREVIOUS row
       UNASSIGN <product>.
-      ASSIGN t_all[ productid = entry-productid ] TO <product>.
+      READ TABLE t_all WITH KEY productid = entry-productid ASSIGNING <product>.
       IF <product> IS ASSIGNED.
-        total = total + CONV ty_amount( <product>-price ) * entry-quantity.
+        
+        temp88 = <product>-price.
+        total = total + temp88 * entry-quantity.
       ENDIF.
     ENDLOOP.
 
     cart_total = |Total: { price_text( |{ total }| ) } EUR|.
 
     " formatter.hasItems - for Edit either list, for Proceed the cart
-    cart_any    = xsdbool( t_cart IS NOT INITIAL OR t_saved IS NOT INITIAL ).
-    cart_filled = xsdbool( t_cart IS NOT INITIAL ).
+    
+    temp15 = boolc( t_cart IS NOT INITIAL OR t_saved IS NOT INITIAL ).
+    cart_any    = temp15.
+    
+    temp16 = boolc( t_cart IS NOT INITIAL ).
+    cart_filled = temp16.
 
     " entryList and saveForLaterList both sort by Name in the original, and the
     " checkout's two cart lists bind the same table
@@ -3687,12 +4173,15 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " the mirror is what keeps the reading control quiet - it compares by
     " value and fires only on a difference
-    s_storage-value = VALUE #( cart = t_cart saved = t_saved ).
+    CLEAR s_storage-value.
+    s_storage-value-cart = t_cart.
+    s_storage-value-saved = t_saved.
 
   ENDMETHOD.
 
 
   METHOD cart_refresh.
+    DATA temp89 TYPE string_table.
 
     " the mirror plus the WRITE half: the same two tables into the browser's
     " local storage, under the key the original uses. Only a round-trip that
@@ -3716,8 +4205,11 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " MODEL PATH now and resolves it itself, so the binding form works from a
     " handler too; the payload stays composed here because a JSON argument is
     " the form that works on every pin this class has run on
+    
+    CLEAR temp89.
+    INSERT storage_json( ) INTO TABLE temp89.
     client->follow_up_action( val   = client->cs_event-store_data
-                              t_arg = VALUE #( ( storage_json( ) ) ) ).
+                              t_arg = temp89 ).
 
   ENDMETHOD.
 
@@ -3737,9 +4229,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD entries_json.
 
     " a JSON array of the fields the bound value carries back
-    DATA(rows) = ``.
+    DATA rows TYPE string.
+    DATA entry LIKE LINE OF entries.
+    rows = ``.
 
-    LOOP AT entries INTO DATA(entry).
+    
+    LOOP AT entries INTO entry.
       IF rows IS NOT INITIAL.
         rows = |{ rows },|.
       ENDIF.
@@ -3787,15 +4282,20 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " for. The stored payload is nested (two arrays of rows), and nested is
     " exactly the case a hand-written `find` walk does not answer: binding
     " the value is the answer instead.
-    DATA(stored) = s_storage-value.
+    DATA stored LIKE s_storage-value.
+    FIELD-SYMBOLS <entry> LIKE LINE OF t_cart.
+      DATA fresh TYPE z2ui5_cl_smpc_demo_004=>ty_s_entry.
+    stored = s_storage-value.
     t_cart  = stored-cart.
     t_saved = stored-saved.
 
     " the rows keep their product and quantity; what the lists show of a
     " product is taken from the catalogue again, which also fills the fields
     " a cart stored by an older version of this class does not carry
-    LOOP AT t_cart ASSIGNING FIELD-SYMBOL(<entry>).
-      DATA(fresh) = entry_of( <entry>-productid ).
+    
+    LOOP AT t_cart ASSIGNING <entry>.
+      
+      fresh = entry_of( <entry>-productid ).
       IF fresh-productid IS NOT INITIAL.
         fresh-quantity = <entry>-quantity.
         <entry> = fresh.
@@ -3822,19 +4322,21 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
   METHOD entry_of.
 
-    ASSIGN t_all[ productid = productid ] TO FIELD-SYMBOL(<product>).
+    FIELD-SYMBOLS <product> TYPE z2ui5_cl_smpc_demo_004=>ty_s_product.
+    READ TABLE t_all WITH KEY productid = productid ASSIGNING <product>.
     IF <product> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 
-    result = VALUE #( productid    = <product>-productid
-                      category     = <product>-category
-                      name         = <product>-name
-                      pictureurl   = picture_url( <product>-pictureurl )
-                      price_text   = price_text( <product>-price )
-                      currencycode = <product>-currencycode
-                      status_text  = status_text( <product>-status )
-                      status_state = status_state( <product>-status ) ).
+    CLEAR result.
+    result-productid = <product>-productid.
+    result-category = <product>-category.
+    result-name = <product>-name.
+    result-pictureurl = picture_url( <product>-pictureurl ).
+    result-price_text = price_text( <product>-price ).
+    result-currencycode = <product>-currencycode.
+    result-status_text = status_text( <product>-status ).
+    result-status_state = status_state( <product>-status ).
 
   ENDMETHOD.
 
@@ -3846,6 +4348,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the event argument, so an unknown name changes nothing
     FIELD-SYMBOLS <state> TYPE string.
     FIELD-SYMBOLS <text>  TYPE string.
+    DATA temp91 TYPE string.
 
     ASSIGN COMPONENT field OF STRUCTURE s_state TO <state>.
     IF sy-subrc <> 0.
@@ -3857,7 +4360,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     ENDIF.
 
     <text>  = input_error( field ).
-    <state> = COND #( WHEN <text> IS INITIAL THEN `None` ELSE `Error` ).
+    
+    IF <text> IS INITIAL.
+      temp91 = `None`.
+    ELSE.
+      temp91 = `Error`.
+    ENDIF.
+    <state> = temp91.
     messages_refresh( ).
 
   ENDMETHOD.
@@ -3919,19 +4428,35 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the message of the UI5 message bundle, and SimpleType.combineMessages
     " ends each with a period once there is more than one
     DATA messages TYPE string_table.
+      DATA temp92 LIKE LINE OF messages.
+      DATA temp93 LIKE LINE OF messages.
+      FIELD-SYMBOLS <temp94> LIKE LINE OF messages.
+      DATA temp95 LIKE sy-tabix.
 
     IF strlen( val ) < min.
-      INSERT |Enter a value with at least { min } characters| INTO TABLE messages.
+      
+      temp92 = |Enter a value with at least { min } characters|.
+      INSERT temp92 INTO TABLE messages.
     ENDIF.
     IF max > 0 AND strlen( val ) > max.
-      INSERT |Enter a value with no more than { max } characters| INTO TABLE messages.
+      
+      temp93 = |Enter a value with no more than { max } characters|.
+      INSERT temp93 INTO TABLE messages.
     ENDIF.
-    IF regex IS NOT INITIAL AND NOT matches( val = val regex = regex ) ##REGEX_POSIX.
+    IF regex IS NOT INITIAL AND NOT boolc( matches( val = val regex = regex ) ) = abap_true ##REGEX_POSIX.
       INSERT `Enter a valid value` INTO TABLE messages.
     ENDIF.
 
     IF lines( messages ) = 1.
-      result = messages[ 1 ].
+      
+      
+      temp95 = sy-tabix.
+      READ TABLE messages INDEX 1 ASSIGNING <temp94>.
+      sy-tabix = temp95.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      result = <temp94>.
     ELSEIF lines( messages ) > 1.
       result = concat_lines_of( table = messages sep = `. ` ) && `.`.
     ENDIF.
@@ -3940,10 +4465,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD step_valid.
+    DATA field LIKE LINE OF fields.
 
     " _checkInputFields: a step passes when no input of it fails its type
     result = abap_true.
-    LOOP AT fields INTO DATA(field).
+    
+    LOOP AT fields INTO field.
       IF input_error( field ) IS NOT INITIAL.
         result = abap_false.
         RETURN.
@@ -3957,10 +4484,37 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " _checkStep for all four steps at once: each flag is bound to its step's
     " `validated`, which is what shows or hides the step's Next button
-    cc_valid  = step_valid( VALUE #( ( `CC_NAME` ) ( `CC_NUMBER` ) ( `CC_CODE` ) ( `CC_EXPIRE` ) ) ).
-    cod_valid = step_valid( VALUE #( ( `COD_FIRSTNAME` ) ( `COD_LASTNAME` ) ( `COD_PHONE` ) ( `COD_EMAIL` ) ) ).
-    inv_valid = step_valid( VALUE #( ( `INV_ADDRESS` ) ( `INV_CITY` ) ( `INV_ZIP` ) ( `INV_COUNTRY` ) ) ).
-    del_valid = step_valid( VALUE #( ( `DEL_ADDRESS` ) ( `DEL_CITY` ) ( `DEL_ZIP` ) ( `DEL_COUNTRY` ) ) ).
+    DATA temp96 TYPE string_table.
+    DATA temp98 TYPE string_table.
+    DATA temp100 TYPE string_table.
+    DATA temp102 TYPE string_table.
+    CLEAR temp96.
+    INSERT `CC_NAME` INTO TABLE temp96.
+    INSERT `CC_NUMBER` INTO TABLE temp96.
+    INSERT `CC_CODE` INTO TABLE temp96.
+    INSERT `CC_EXPIRE` INTO TABLE temp96.
+    cc_valid  = step_valid( temp96 ).
+    
+    CLEAR temp98.
+    INSERT `COD_FIRSTNAME` INTO TABLE temp98.
+    INSERT `COD_LASTNAME` INTO TABLE temp98.
+    INSERT `COD_PHONE` INTO TABLE temp98.
+    INSERT `COD_EMAIL` INTO TABLE temp98.
+    cod_valid = step_valid( temp98 ).
+    
+    CLEAR temp100.
+    INSERT `INV_ADDRESS` INTO TABLE temp100.
+    INSERT `INV_CITY` INTO TABLE temp100.
+    INSERT `INV_ZIP` INTO TABLE temp100.
+    INSERT `INV_COUNTRY` INTO TABLE temp100.
+    inv_valid = step_valid( temp100 ).
+    
+    CLEAR temp102.
+    INSERT `DEL_ADDRESS` INTO TABLE temp102.
+    INSERT `DEL_CITY` INTO TABLE temp102.
+    INSERT `DEL_ZIP` INTO TABLE temp102.
+    INSERT `DEL_COUNTRY` INTO TABLE temp102.
+    del_valid = step_valid( temp102 ).
 
   ENDMETHOD.
 
@@ -3972,7 +4526,8 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " root is the demo kit's deployed copy of the folder (see c_base), so the
     " prefix is what gets replaced - a path without it is left alone rather
     " than silently prefixed, because then it is not a mock path
-    DATA(len) = strlen( c_mock_prefix ).
+    DATA len TYPE i.
+    len = strlen( c_mock_prefix ).
 
     result = val.
     IF strlen( result ) > len AND result(len) = c_mock_prefix.
@@ -3987,13 +4542,27 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " the price formatter of the original: two decimals, "." between the
     " thousands and "," before them - a NumberFormat in the browser there,
     " ABAP here, because a format is not a decision the frontend should make
-    DATA(amount) = CONV ty_amount( val ).
-    DATA(raw) = |{ amount DECIMALS = 2 NUMBER = RAW }|.
+    DATA temp104 TYPE ty_amount.
+    DATA amount LIKE temp104.
+    DATA raw TYPE string.
+    DATA whole TYPE string.
+    DATA fraction TYPE string.
+    DATA grouped TYPE string.
+      DATA cut TYPE i.
+    temp104 = val.
+    
+    amount = temp104.
+    
+    raw = |{ amount DECIMALS = 2 NUMBER = RAW }|.
 
-    SPLIT raw AT `.` INTO DATA(whole) DATA(fraction).
-    DATA(grouped) = ``.
+    
+    
+    SPLIT raw AT `.` INTO whole fraction.
+    
+    grouped = ``.
     WHILE strlen( whole ) > 3.
-      DATA(cut) = strlen( whole ) - 3.
+      
+      cut = strlen( whole ) - 3.
       grouped = |.{ substring( val = whole off = cut len = 3 ) }{ grouped }|.
       whole   = substring( val = whole len = cut ).
     ENDWHILE.
@@ -4012,24 +4581,33 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     FIELD-SYMBOLS <text>  TYPE string.
     FIELD-SYMBOLS <label> TYPE string.
 
-    DATA(labels) = VALUE ty_s_checks( cc_name       = `Cardholder's Name`
-                                      cc_number     = `Card Number`
-                                      cc_code       = `Security Code`
-                                      cc_expire     = `Expiration Date (MM/YYYY)`
-                                      cod_firstname = `First Name`
-                                      cod_lastname  = `Last Name`
-                                      cod_phone     = `Phone Number`
-                                      cod_email     = `E-mail Address`
-                                      inv_address   = `Address`
-                                      inv_city      = `City`
-                                      inv_zip       = `Zip Code`
-                                      inv_country   = `Country`
-                                      del_address   = `Address`
-                                      del_city      = `City`
-                                      del_zip       = `Zip Code`
-                                      del_country   = `Country` ).
+    DATA temp105 TYPE ty_s_checks.
+    DATA labels LIKE temp105.
+    DATA temp106 LIKE t_messages.
+        DATA temp107 TYPE z2ui5_cl_smpc_demo_004=>ty_s_message.
+    CLEAR temp105.
+    temp105-cc_name = `Cardholder's Name`.
+    temp105-cc_number = `Card Number`.
+    temp105-cc_code = `Security Code`.
+    temp105-cc_expire = `Expiration Date (MM/YYYY)`.
+    temp105-cod_firstname = `First Name`.
+    temp105-cod_lastname = `Last Name`.
+    temp105-cod_phone = `Phone Number`.
+    temp105-cod_email = `E-mail Address`.
+    temp105-inv_address = `Address`.
+    temp105-inv_city = `City`.
+    temp105-inv_zip = `Zip Code`.
+    temp105-inv_country = `Country`.
+    temp105-del_address = `Address`.
+    temp105-del_city = `City`.
+    temp105-del_zip = `Zip Code`.
+    temp105-del_country = `Country`.
+    
+    labels = temp105.
 
-    t_messages = VALUE #( ).
+    
+    CLEAR temp106.
+    t_messages = temp106.
     DO.
       ASSIGN COMPONENT sy-index OF STRUCTURE s_state TO <state>.
       IF sy-subrc <> 0.
@@ -4044,7 +4622,12 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
         EXIT.
       ENDIF.
       IF <state> = `Error`.
-        INSERT VALUE #( type = `Error` message = <text> additionaltext = <label> ) INTO TABLE t_messages.
+        
+        CLEAR temp107.
+        temp107-type = `Error`.
+        temp107-message = <text>.
+        temp107-additionaltext = <label>.
+        INSERT temp107 INTO TABLE t_messages.
       ENDIF.
     ENDDO.
     msg_count = lines( t_messages ).
@@ -4058,6 +4641,7 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " value states they put on the fields - a ValueState is an enum, so
     " `None`, never empty
     FIELD-SYMBOLS <state> TYPE string.
+    DATA temp108 TYPE z2ui5_cl_smpc_demo_004=>ty_s_checks.
 
     DO.
       ASSIGN COMPONENT sy-index OF STRUCTURE s_state TO <state>.
@@ -4066,7 +4650,9 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDIF.
       <state> = `None`.
     ENDDO.
-    s_state_text = VALUE #( ).
+    
+    CLEAR temp108.
+    s_state_text = temp108.
     messages_refresh( ).
 
   ENDMETHOD.
@@ -4099,29 +4685,54 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " here and re-issued on every render (sample z2ui5_cl_smp_app_202) -
     " sent as soon as the choice is made, because WizardStep._complete fires
     " complete and moves on in the same tick
+    DATA temp109 TYPE string_table.
+    DATA temp7 TYPE string.
+    DATA temp111 TYPE string_table.
+    DATA temp8 TYPE string.
+    CLEAR temp109.
+    INSERT `paymentTypeStep` INTO TABLE temp109.
+    INSERT `setNextStep` INTO TABLE temp109.
+    
+    CASE pay_type.
+      WHEN `Bank Transfer`.
+        temp7 = `bankAccountStep`.
+      WHEN `Cash on Delivery`.
+        temp7 = `cashOnDeliveryStep`.
+      WHEN OTHERS.
+        temp7 = `creditCardStep`.
+    ENDCASE.
+    INSERT temp7 INTO TABLE temp109.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `paymentTypeStep` )
-                                               ( `setNextStep` )
-                                               ( SWITCH #( pay_type
-                                                           WHEN `Bank Transfer`    THEN `bankAccountStep`
-                                                           WHEN `Cash on Delivery` THEN `cashOnDeliveryStep`
-                                                           ELSE `creditCardStep` ) ) ) ).
+                              t_arg = temp109 ).
+    
+    CLEAR temp111.
+    INSERT `invoiceStep` INTO TABLE temp111.
+    INSERT `setNextStep` INTO TABLE temp111.
+    
+    IF del_different = abap_true.
+      temp8 = `deliveryAddressStep`.
+    ELSE.
+      temp8 = `deliveryTypeStep`.
+    ENDIF.
+    INSERT temp8 INTO TABLE temp111.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `invoiceStep` )
-                                               ( `setNextStep` )
-                                               ( COND #( WHEN del_different = abap_true
-                                                         THEN `deliveryAddressStep`
-                                                         ELSE `deliveryTypeStep` ) ) ) ).
+                              t_arg = temp111 ).
 
   ENDMETHOD.
 
 
   METHOD wizard_to_step.
+    DATA temp113 TYPE string_table.
 
     " _navToWizardStep: back to the wizard page, then to the step
     nav_to( nav = `wizardNavContainer` page = `wizardContentPage` ).
+    
+    CLEAR temp113.
+    INSERT `shoppingCartWizard` INTO TABLE temp113.
+    INSERT `goToStep` INTO TABLE temp113.
+    INSERT step INTO TABLE temp113.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `shoppingCartWizard` ) ( `goToStep` ) ( step ) ) ).
+                              t_arg = temp113 ).
 
   ENDMETHOD.
 
@@ -4130,8 +4741,13 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
     " _handleSubmitOrCancel's reset: all progress discarded, back on the
     " first step, and the checkout model on its defaults again
+    DATA temp115 TYPE string_table.
+    CLEAR temp115.
+    INSERT `shoppingCartWizard` INTO TABLE temp115.
+    INSERT `discardProgress` INTO TABLE temp115.
+    INSERT `contentsStep` INTO TABLE temp115.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `shoppingCartWizard` ) ( `discardProgress` ) ( `contentsStep` ) ) ).
+                              t_arg = temp115 ).
     wizard_to_step( `contentsStep` ).
 
     pay_type      = `Credit Card`.
@@ -4152,18 +4768,22 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
 
 
   METHOD row_of.
+    DATA temp9 TYPE ty_amount.
 
-    result = VALUE #( productid    = product-productid
-                      category     = product-category
-                      name         = product-name
-                      suppliername = product-suppliername
-                      price        = CONV ty_amount( product-price )
-                      price_text   = price_text( product-price )
-                      currencycode = product-currencycode
-                      pictureurl   = picture_url( product-pictureurl )
-                      status       = product-status
-                      status_text  = status_text( product-status )
-                      status_state = status_state( product-status ) ).
+    CLEAR result.
+    result-productid = product-productid.
+    result-category = product-category.
+    result-name = product-name.
+    result-suppliername = product-suppliername.
+    
+    temp9 = product-price.
+    result-price = temp9.
+    result-price_text = price_text( product-price ).
+    result-currencycode = product-currencycode.
+    result-pictureurl = picture_url( product-pictureurl ).
+    result-status = product-status.
+    result-status_text = status_text( product-status ).
+    result-status_state = status_state( product-status ).
 
   ENDMETHOD.
 
@@ -4171,11 +4791,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD status_text.
 
     " formatter.statusText - the i18n texts statusA/O/D
-    result = SWITCH #( status
-                       WHEN `A` THEN `Available`
-                       WHEN `O` THEN `Out of Stock`
-                       WHEN `D` THEN `Discontinued`
-                       ELSE status ).
+    DATA temp117 TYPE string.
+    CASE status.
+      WHEN `A`.
+        temp117 = `Available`.
+      WHEN `O`.
+        temp117 = `Out of Stock`.
+      WHEN `D`.
+        temp117 = `Discontinued`.
+      WHEN OTHERS.
+        temp117 = status.
+    ENDCASE.
+    result = temp117.
 
   ENDMETHOD.
 
@@ -4183,11 +4810,18 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
   METHOD status_state.
 
     " formatter.statusState
-    result = SWITCH #( status
-                       WHEN `A` THEN `Success`
-                       WHEN `O` THEN `Warning`
-                       WHEN `D` THEN `Error`
-                       ELSE `None` ).
+    DATA temp118 TYPE string.
+    CASE status.
+      WHEN `A`.
+        temp118 = `Success`.
+      WHEN `O`.
+        temp118 = `Warning`.
+      WHEN `D`.
+        temp118 = `Error`.
+      WHEN OTHERS.
+        temp118 = `None`.
+    ENDCASE.
+    result = temp118.
 
   ENDMETHOD.
 
@@ -4199,545 +4833,2127 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
     " localService/mockdata/ProductCategories.json - the categoryList of the
     " original sorts by CategoryName, so the rows are seeded verbatim (see
     " data_fidelity) and sorted at the end of model_init
-    t_categories = VALUE #(
-        ( category = `AC`  categoryname = `Accessories`                 numberofproducts = 34 )
-        ( category = `DC`  categoryname = `Desktop Computers`           numberofproducts = 5 )
-        ( category = `FS`  categoryname = `Flat Screens`                numberofproducts = 3 )
-        ( category = `KB`  categoryname = `Keyboards`                   numberofproducts = 4 )
-        ( category = `LT`  categoryname = `Laptops`                     numberofproducts = 11 )
-        ( category = `PR`  categoryname = `Printers`                    numberofproducts = 9 )
-        ( category = `ST`  categoryname = `Smartphones and Tablets`     numberofproducts = 9 )
-        ( category = `MI`  categoryname = `Mice`                        numberofproducts = 7 )
-        ( category = `CSA` categoryname = `Computer System Accessories` numberofproducts = 7 )
-        ( category = `GC`  categoryname = `Graphics Card`               numberofproducts = 4 )
-        ( category = `SC`  categoryname = `Scanners`                    numberofproducts = 4 )
-        ( category = `SP`  categoryname = `Speakers`                    numberofproducts = 3 )
-        ( category = `SW`  categoryname = `Software`                    numberofproducts = 8 )
-        ( category = `TC`  categoryname = `Telecommunication`           numberofproducts = 3 )
-        ( category = `SV`  categoryname = `Servers`                     numberofproducts = 3 )
-        ( category = `FST` categoryname = `Flat Screen TVs`             numberofproducts = 3 ) ).
+    DATA temp119 LIKE t_categories.
+    DATA temp120 LIKE LINE OF temp119.
+    DATA temp121 LIKE t_featured.
+    DATA temp122 LIKE LINE OF temp121.
+    DATA temp123 LIKE t_all.
+    DATA temp124 LIKE LINE OF temp123.
+    DATA temp125 TYPE ty_t_row.
+    DATA promoted LIKE temp125.
+    DATA featured LIKE LINE OF t_featured.
+    DATA random TYPE REF TO cl_abap_random_int.
+    DATA second TYPE i.
+    DATA first LIKE second.
+    DATA temp126 TYPE z2ui5_cl_smpc_demo_004=>ty_t_row.
+    FIELD-SYMBOLS <temp10> LIKE LINE OF promoted.
+    DATA temp11 LIKE sy-tabix.
+    FIELD-SYMBOLS <temp12> LIKE LINE OF promoted.
+    DATA temp13 LIKE sy-tabix.
+    DATA temp128 TYPE string.
+    DATA product LIKE LINE OF t_all.
+      DATA temp129 LIKE sy-subrc.
+        DATA temp130 TYPE z2ui5_cl_smpc_demo_004=>ty_s_supplier.
+    CLEAR temp119.
+    
+    temp120-category = `AC`.
+    temp120-categoryname = `Accessories`.
+    temp120-numberofproducts = 34.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `DC`.
+    temp120-categoryname = `Desktop Computers`.
+    temp120-numberofproducts = 5.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `FS`.
+    temp120-categoryname = `Flat Screens`.
+    temp120-numberofproducts = 3.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `KB`.
+    temp120-categoryname = `Keyboards`.
+    temp120-numberofproducts = 4.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `LT`.
+    temp120-categoryname = `Laptops`.
+    temp120-numberofproducts = 11.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `PR`.
+    temp120-categoryname = `Printers`.
+    temp120-numberofproducts = 9.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `ST`.
+    temp120-categoryname = `Smartphones and Tablets`.
+    temp120-numberofproducts = 9.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `MI`.
+    temp120-categoryname = `Mice`.
+    temp120-numberofproducts = 7.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `CSA`.
+    temp120-categoryname = `Computer System Accessories`.
+    temp120-numberofproducts = 7.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `GC`.
+    temp120-categoryname = `Graphics Card`.
+    temp120-numberofproducts = 4.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `SC`.
+    temp120-categoryname = `Scanners`.
+    temp120-numberofproducts = 4.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `SP`.
+    temp120-categoryname = `Speakers`.
+    temp120-numberofproducts = 3.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `SW`.
+    temp120-categoryname = `Software`.
+    temp120-numberofproducts = 8.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `TC`.
+    temp120-categoryname = `Telecommunication`.
+    temp120-numberofproducts = 3.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `SV`.
+    temp120-categoryname = `Servers`.
+    temp120-numberofproducts = 3.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-category = `FST`.
+    temp120-categoryname = `Flat Screen TVs`.
+    temp120-numberofproducts = 3.
+    INSERT temp120 INTO TABLE temp119.
+    t_categories = temp119.
 
     " localService/mockdata/FeaturedProducts.json - the three panels of the
     " welcome page
-    t_featured = VALUE #(
-        ( productid = `HT-6132` type = `Promoted` )
-        ( productid = `HT-1000` type = `Promoted` )
-        ( productid = `HT-1113` type = `Promoted` )
-        ( productid = `HT-6130` type = `Promoted` )
-        ( productid = `HT-1040` type = `Promoted` )
-        ( productid = `HT-9992` type = `Viewed` )
-        ( productid = `HT-6130` type = `Viewed` )
-        ( productid = `HT-6110` type = `Viewed` )
-        ( productid = `HT-9997` type = `Viewed` )
-        ( productid = `HT-8000` type = `Favorite` )
-        ( productid = `HT-6100` type = `Favorite` )
-        ( productid = `HT-6111` type = `Favorite` )
-        ( productid = `HT-1041` type = `Favorite` ) ).
+    
+    CLEAR temp121.
+    
+    temp122-productid = `HT-6132`.
+    temp122-type = `Promoted`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-1000`.
+    temp122-type = `Promoted`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-1113`.
+    temp122-type = `Promoted`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-6130`.
+    temp122-type = `Promoted`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-1040`.
+    temp122-type = `Promoted`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-9992`.
+    temp122-type = `Viewed`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-6130`.
+    temp122-type = `Viewed`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-6110`.
+    temp122-type = `Viewed`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-9997`.
+    temp122-type = `Viewed`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-8000`.
+    temp122-type = `Favorite`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-6100`.
+    temp122-type = `Favorite`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-6111`.
+    temp122-type = `Favorite`.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-productid = `HT-1041`.
+    temp122-type = `Favorite`.
+    INSERT temp122 INTO TABLE temp121.
+    t_featured = temp121.
 
     " localService/mockdata/Products.json - the full 123-row mock, verbatim
-    t_all = VALUE #(
-        ( productid = `HT-1000` name = `Notebook Basic 15` category = `LT` suppliername = `Very Best Screens`
-          shortdescription = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1000.jpg` price = `956` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `30` dimensiondepth = `18` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1001` name = `Notebook Basic 17` category = `LT` suppliername = `Very Best Screens`
-          shortdescription = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1001.jpg` price = `1249` currencycode = `EUR` status = `A`
-          weight = `4.5` weightunit = `KG` dimensionwidth = `29` dimensiondepth = `17` dimensionheight = `3.1` dimensionunit = `cm` )
-        ( productid = `HT-1002` name = `Notebook Basic 18` category = `LT` suppliername = `Very Best Screens`
-          shortdescription = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1002.jpg` price = `1570` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `28` dimensiondepth = `19` dimensionheight = `2.5` dimensionunit = `cm` )
-        ( productid = `HT-1003` name = `Notebook Basic 19` category = `LT` suppliername = `Smartcards`
-          shortdescription = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1003.jpg` price = `1650` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `32` dimensiondepth = `21` dimensionheight = `4` dimensionunit = `cm` )
-        ( productid = `HT-1007` name = `ITelO Vault` category = `AC` suppliername = `Technocom`
-          shortdescription = `Digital Organizer with State-of-the-Art Storage Encryption`
-          pictureurl = `sap/ui/demo/mock/images/HT-1007.jpg` price = `299` currencycode = `EUR` status = `D`
-          weight = `0.2` weightunit = `KG` dimensionwidth = `32` dimensiondepth = `22` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1010` name = `Notebook Professional 15` category = `AC` suppliername = `Very Best Screens`
-          shortdescription = `Notebook Professional 15 with 2,80 GHz quad core, 15" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1010.jpg` price = `1999` currencycode = `EUR` status = `A`
-          weight = `4.3` weightunit = `KG` dimensionwidth = `33` dimensiondepth = `20` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1011` name = `Notebook Professional 17` category = `LT` suppliername = `Very Best Screens`
-          shortdescription = `Notebook Professional 17 with 2,80 GHz quad core, 17" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1011.jpg` price = `2299` currencycode = `EUR` status = `O`
-          weight = `4.1` weightunit = `KG` dimensionwidth = `33` dimensiondepth = `23` dimensionheight = `2` dimensionunit = `cm` )
-        ( productid = `HT-1020` name = `ITelO Vault Net` category = `AC` suppliername = `Technocom`
-          shortdescription = `Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications`
-          pictureurl = `sap/ui/demo/mock/images/HT-1020.jpg` price = `459` currencycode = `EUR` status = `O`
-          weight = `0.16` weightunit = `KG` dimensionwidth = `10` dimensiondepth = `1.8` dimensionheight = `17` dimensionunit = `cm` )
-        ( productid = `HT-1021` name = `ITelO Vault SAT` category = `AC` suppliername = `Technocom`
-          shortdescription = `Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link`
-          pictureurl = `sap/ui/demo/mock/images/HT-1021.jpg` price = `149` currencycode = `EUR` status = `D`
-          weight = `0.18` weightunit = `KG` dimensionwidth = `11` dimensiondepth = `1.7` dimensionheight = `18` dimensionunit = `cm` )
-        ( productid = `HT-1022` name = `Comfort Easy` category = `AC` suppliername = `Technocom`
-          shortdescription = `32 GB Digital Assistant with high-resolution color screen`
-          pictureurl = `sap/ui/demo/mock/images/HT-1022.jpg` price = `1679` currencycode = `EUR` status = `A`
-          weight = `0.2` weightunit = `KG` dimensionwidth = `84` dimensiondepth = `1.5` dimensionheight = `14` dimensionunit = `cm` )
-        ( productid = `HT-1023` name = `Comfort Senior` category = `AC` suppliername = `Technocom`
-          shortdescription = `64 GB Digital Assistant with high-resolution color screen and synthesized voice output`
-          pictureurl = `sap/ui/demo/mock/images/HT-1023.jpg` price = `512` currencycode = `EUR` status = `A`
-          weight = `0.8` weightunit = `KG` dimensionwidth = `80` dimensiondepth = `1.6` dimensionheight = `13` dimensionunit = `cm` )
-        ( productid = `HT-1030` name = `Ergo Screen E-I` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1030.jpg` price = `230` currencycode = `EUR` status = `D`
-          weight = `21` weightunit = `KG` dimensionwidth = `37` dimensiondepth = `12` dimensionheight = `36` dimensionunit = `cm` )
-        ( productid = `HT-1031` name = `Ergo Screen E-II` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 1920 x 1200 @ 85Hz, Dot Pitch: 0.26mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1031.jpg` price = `285` currencycode = `EUR` status = `O`
-          weight = `21` weightunit = `KG` dimensionwidth = `40.8` dimensiondepth = `19` dimensionheight = `43` dimensionunit = `cm` )
-        ( productid = `HT-1032` name = `Ergo Screen E-III` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 2560 x 1440 @ 85Hz, Dot Pitch: 0.25mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1032.jpg` price = `345` currencycode = `EUR` status = `A`
-          weight = `21` weightunit = `KG` dimensionwidth = `40.8` dimensiondepth = `19` dimensionheight = `43` dimensionunit = `cm` )
-        ( productid = `HT-1035` name = `Flat Basic` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1035.jpg` price = `399` currencycode = `EUR` status = `A`
-          weight = `14` weightunit = `KG` dimensionwidth = `39` dimensiondepth = `20` dimensionheight = `41` dimensionunit = `cm` )
-        ( productid = `HT-1036` name = `Flat Future` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.26mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1036.jpg` price = `430` currencycode = `EUR` status = `O`
-          weight = `15` weightunit = `KG` dimensionwidth = `45` dimensiondepth = `26` dimensionheight = `46` dimensionunit = `cm` )
-        ( productid = `HT-1037` name = `Flat XL` category = `FT` suppliername = `Very Best Screens`
-          shortdescription = `Optimum Hi-Resolution max. 2016 x 1512 @ 85Hz, Dot Pitch: 0.24mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1037.jpg` price = `1230` currencycode = `EUR` status = `A`
-          weight = `17` weightunit = `KG` dimensionwidth = `54.5` dimensiondepth = `22.1` dimensionheight = `39.1` dimensionunit = `cm` )
-        ( productid = `HT-1040` name = `Laser Professional Eco` category = `PR` suppliername = `Alpha Printers`
-          shortdescription = `Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory`
-          pictureurl = `sap/ui/demo/mock/images/HT-1040.jpg` price = `830` currencycode = `EUR` status = `A`
-          weight = `32` weightunit = `KG` dimensionwidth = `51` dimensiondepth = `46` dimensionheight = `30` dimensionunit = `cm` )
-        ( productid = `HT-1041` name = `Laser Basic` category = `PR` suppliername = `Alpha Printers`
-          shortdescription = `Up to 22 ppm color or 24 ppm monochrome A4/letter, powerful 500 MHz processor and 128MB of memory`
-          pictureurl = `sap/ui/demo/mock/images/HT-1041.jpg` price = `490` currencycode = `EUR` status = `A`
-          weight = `23` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `42` dimensionheight = `26` dimensionunit = `cm` )
-        ( productid = `HT-1042` name = `Laser Allround` category = `PR` suppliername = `Alpha Printers`
-          shortdescription = `Print up to 25 ppm letter and 24 ppm A4 color or monochrome, with a first-page-out-time of less than 13 seconds for monochrome and less than 15 seconds for color`
-          pictureurl = `sap/ui/demo/mock/images/HT-1042.jpg` price = `349` currencycode = `EUR` status = `A`
-          weight = `17` weightunit = `KG` dimensionwidth = `53` dimensiondepth = `50` dimensionheight = `65` dimensionunit = `cm` )
-        ( productid = `HT-1050` name = `Ultra Jet Super Color` category = `PR` suppliername = `Alpha Printers`
-          shortdescription = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB, Ethernet`
-          pictureurl = `sap/ui/demo/mock/images/HT-1050.jpg` price = `139` currencycode = `EUR` status = `A`
-          weight = `3` weightunit = `KG` dimensionwidth = `41` dimensiondepth = `41` dimensionheight = `28` dimensionunit = `cm` )
-        ( productid = `HT-1051` name = `Ultra Jet Mobile` category = `PR` suppliername = `Printer for All`
-          shortdescription = `1000 dpi x 1000 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB - excellent dimensions for the small office`
-          pictureurl = `sap/ui/demo/mock/images/HT-1051.jpg` price = `99` currencycode = `EUR` status = `A`
-          weight = `1.9` weightunit = `KG` dimensionwidth = `46` dimensiondepth = `32` dimensionheight = `25` dimensionunit = `cm` )
-        ( productid = `HT-1052` name = `Ultra Jet Super Highspeed` category = `PR` suppliername = `Printer for All`
-          shortdescription = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet`
-          pictureurl = `sap/ui/demo/mock/images/HT-1052.jpg` price = `170` currencycode = `EUR` status = `A`
-          weight = `18` weightunit = `KG` dimensionwidth = `41` dimensiondepth = `41` dimensionheight = `28` dimensionunit = `cm` )
-        ( productid = `HT-1055` name = `Multi Print` category = `PR` suppliername = `Printer for All`
-          shortdescription = `1000 dpi x 1000 dpi - up to 16 ppm (mono) / up to 15 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 1200dpi x 2400dpi)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1055.jpg` price = `99` currencycode = `EUR` status = `A`
-          weight = `6.3` weightunit = `KG` dimensionwidth = `55` dimensiondepth = `45` dimensionheight = `29` dimensionunit = `cm` )
-        ( productid = `HT-1056` name = `Multi Color` category = `PR` suppliername = `Printer for All`
-          shortdescription = `1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 2400dpi x 4800dpi, high resolution)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1056.jpg` price = `119` currencycode = `EUR` status = `A`
-          weight = `4.3` weightunit = `KG` dimensionwidth = `51` dimensiondepth = `41.3` dimensionheight = `22` dimensionunit = `cm` )
-        ( productid = `HT-1060` name = `Cordless Mouse` category = `MI` suppliername = `Oxynum`
-          shortdescription = `Cordless Optical USB MI, Laptop, Color: Black, Plug&Play`
-          pictureurl = `sap/ui/demo/mock/images/HT-1060.jpg` price = `9` currencycode = `EUR` status = `O`
-          weight = `0.09` weightunit = `KG` dimensionwidth = `6` dimensiondepth = `14.5` dimensionheight = `3.5` dimensionunit = `cm` )
-        ( productid = `HT-1061` name = `Speed Mouse` category = `MI` suppliername = `Oxynum`
-          shortdescription = `Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1061.jpg` price = `7` currencycode = `EUR` status = `D`
-          weight = `0.09` weightunit = `KG` dimensionwidth = `7` dimensiondepth = `15` dimensionheight = `3.1` dimensionunit = `cm` )
-        ( productid = `HT-1062` name = `Track Mouse` category = `MI` suppliername = `Oxynum`
-          shortdescription = `Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play`
-          pictureurl = `sap/ui/demo/mock/images/HT-1062.jpg` price = `11` currencycode = `EUR` status = `O`
-          weight = `0.03` weightunit = `KG` dimensionwidth = `3` dimensiondepth = `7` dimensionheight = `4` dimensionunit = `cm` )
-        ( productid = `HT-1063` name = `Ergonomic Keyboard` category = `KB` suppliername = `Oxynum`
-          shortdescription = `Ergonomic USB Keyboard for Desktop, Plug&Play`
-          pictureurl = `sap/ui/demo/mock/images/HT-1063.jpg` price = `14` currencycode = `EUR` status = `D`
-          weight = `2.1` weightunit = `KG` dimensionwidth = `50` dimensiondepth = `21` dimensionheight = `3.5` dimensionunit = `cm` )
-        ( productid = `HT-1064` name = `Internet Keyboard` category = `KB` suppliername = `Oxynum`
-          shortdescription = `Corded Keyboard with special keys for Internet Usability, USB`
-          pictureurl = `sap/ui/demo/mock/images/HT-1064.jpg` price = `16` currencycode = `EUR` status = `A`
-          weight = `1.8` weightunit = `KG` dimensionwidth = `52` dimensiondepth = `25` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1065` name = `Media Keyboard` category = `KB` suppliername = `Oxynum`
-          shortdescription = `Corded Ergonomic Keyboard with special keys for Media Usability, USB`
-          pictureurl = `sap/ui/demo/mock/images/HT-1065.jpg` price = `26` currencycode = `EUR` status = `A`
-          weight = `2.3` weightunit = `KG` dimensionwidth = `51.4` dimensiondepth = `23` dimensionheight = `4` dimensionunit = `cm` )
-        ( productid = `HT-1066` name = `Mousepad` category = `MI` suppliername = `Oxynum`
-          shortdescription = `Nice mouse pad with ITelO Logo`
-          pictureurl = `sap/ui/demo/mock/images/HT-1066.jpg` price = `6.99` currencycode = `EUR` status = `A`
-          weight = `80` weightunit = `G` dimensionwidth = `15` dimensiondepth = `6` dimensionheight = `0.2` dimensionunit = `cm` )
-        ( productid = `HT-1067` name = `Ergo Mousepad` category = `MI` suppliername = `Oxynum`
-          shortdescription = `Ergonomic mouse pad with ITelO Logo`
-          pictureurl = `sap/ui/demo/mock/images/HT-1067.jpg` price = `8.99` currencycode = `EUR` status = `O`
-          weight = `80` weightunit = `G` dimensionwidth = `15` dimensiondepth = `6` dimensionheight = `0.2` dimensionunit = `cm` )
-        ( productid = `HT-1068` name = `Designer Mousepad` category = `MI` suppliername = `Fasttech`
-          shortdescription = `ITelO Mousepad Special Edition`
-          pictureurl = `sap/ui/demo/mock/images/HT-1068.jpg` price = `12.99` currencycode = `EUR` status = `A`
-          weight = `90` weightunit = `G` dimensionwidth = `24` dimensiondepth = `24` dimensionheight = `0.6` dimensionunit = `cm` )
-        ( productid = `HT-1069` name = `Universal card reader` category = `CSA` suppliername = `Fasttech`
-          shortdescription = `Universal card reader`
-          pictureurl = `sap/ui/demo/mock/images/HT-1069.jpg` price = `14` currencycode = `EUR` status = `O`
-          weight = `45` weightunit = `G` dimensionwidth = `6` dimensiondepth = `6` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1070` name = `Proctra X` category = `GC` suppliername = `Ultrasonic United`
-          shortdescription = `Proctra X: PCI-E GDDR5 3072MB`
-          pictureurl = `sap/ui/demo/mock/images/HT-1070.jpg` price = `70.9` currencycode = `EUR` status = `A`
-          weight = `0.255` weightunit = `KG` dimensionwidth = `22` dimensiondepth = `35` dimensionheight = `17` dimensionunit = `cm` )
-        ( productid = `HT-1071` name = `Gladiator MX` category = `GC` suppliername = `Ultrasonic United`
-          shortdescription = `Gladiator XLN: PCI-E GDDR5 3072MB DVI Out, TV Out low-noise`
-          pictureurl = `sap/ui/demo/mock/images/HT-1071.jpg` price = `81.7` currencycode = `EUR` status = `A`
-          weight = `0.3` weightunit = `KG` dimensionwidth = `22` dimensiondepth = `35` dimensionheight = `17` dimensionunit = `cm` )
-        ( productid = `HT-1072` name = `Hurricane GX` category = `GC` suppliername = `Ultrasonic United`
-          shortdescription = `Hurricane GX: PCI-E 691 GFLOPS game-optimized`
-          pictureurl = `sap/ui/demo/mock/images/HT-1072.jpg` price = `101.2` currencycode = `EUR` status = `A`
-          weight = `0.4` weightunit = `KG` dimensionwidth = `22` dimensiondepth = `35` dimensionheight = `17` dimensionunit = `cm` )
-        ( productid = `HT-1073` name = `Hurricane GX/LN` category = `GC` suppliername = `Smartcards`
-          shortdescription = `Hurricane GX/LN: PCI-E 691 GFLOPS game-optimized, low-noise.`
-          pictureurl = `sap/ui/demo/mock/images/HT-1073.jpg` price = `139.99` currencycode = `EUR` status = `A`
-          weight = `0.4` weightunit = `KG` dimensionwidth = `22` dimensiondepth = `35` dimensionheight = `17` dimensionunit = `cm` )
-        ( productid = `HT-1080` name = `Photo Scan` category = `SC` suppliername = `Printer for All`
-          shortdescription = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - Hi-Speed USB - Bluetooth`
-          pictureurl = `sap/ui/demo/mock/images/HT-1080.jpg` price = `129` currencycode = `EUR` status = `A`
-          weight = `2.3` weightunit = `KG` dimensionwidth = `34` dimensiondepth = `48` dimensionheight = `5` dimensionunit = `cm` )
-        ( productid = `HT-1081` name = `Power Scan` category = `SC` suppliername = `Printer for All`
-          shortdescription = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - SCSI for backward compatibility`
-          pictureurl = `sap/ui/demo/mock/images/HT-1081.jpg` price = `89` currencycode = `EUR` status = `A`
-          weight = `2.4` weightunit = `KG` dimensionwidth = `31` dimensiondepth = `43` dimensionheight = `7` dimensionunit = `cm` )
-        ( productid = `HT-1082` name = `Jet Scan Professional` category = `SC` suppliername = `Printer for All`
-          shortdescription = `Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`
-          pictureurl = `sap/ui/demo/mock/images/HT-1082.jpg` price = `169` currencycode = `EUR` status = `A`
-          weight = `3.2` weightunit = `KG` dimensionwidth = `33` dimensiondepth = `41` dimensionheight = `12` dimensionunit = `cm` )
-        ( productid = `HT-1083` name = `Jet Scan Professional` category = `SC` suppliername = `Printer for All`
-          shortdescription = `Flatbed scanner - A4 - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`
-          pictureurl = `sap/ui/demo/mock/images/HT-1083.jpg` price = `189` currencycode = `EUR` status = `A`
-          weight = `3.2` weightunit = `KG` dimensionwidth = `35` dimensiondepth = `40` dimensionheight = `10` dimensionunit = `cm` )
-        ( productid = `HT-1085` name = `Copymaster` category = `PR` suppliername = `Alpha Printers`
-          shortdescription = `Copymaster`
-          pictureurl = `sap/ui/demo/mock/images/HT-1085.jpg` price = `1499` currencycode = `EUR` status = `A`
-          weight = `23.2` weightunit = `KG` dimensionwidth = `45` dimensiondepth = `42` dimensionheight = `22` dimensionunit = `cm` )
-        ( productid = `HT-1090` name = `Surround Sound` category = `SP` suppliername = `Speaker Experts`
-          shortdescription = `PC multimedia speakers - 5 Watt (Total)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1090.jpg` price = `39` currencycode = `EUR` status = `A`
-          weight = `3` weightunit = `KG` dimensionwidth = `12` dimensiondepth = `10` dimensionheight = `16` dimensionunit = `cm` )
-        ( productid = `HT-1091` name = `Blaster Extreme` category = `SP` suppliername = `Speaker Experts`
-          shortdescription = `PC multimedia speakers - 10 Watt (Total) - 2-way`
-          pictureurl = `sap/ui/demo/mock/images/HT-1091.jpg` price = `26` currencycode = `EUR` status = `A`
-          weight = `1.4` weightunit = `KG` dimensionwidth = `13` dimensiondepth = `11` dimensionheight = `17.5` dimensionunit = `cm` )
-        ( productid = `HT-1092` name = `Sound Booster` category = `SP` suppliername = `Speaker Experts`
-          shortdescription = `PC multimedia speakers - optimized for Blutooth/A2DP`
-          pictureurl = `sap/ui/demo/mock/images/HT-1092.jpg` price = `45` currencycode = `EUR` status = `A`
-          weight = `2.1` weightunit = `KG` dimensionwidth = `12.4` dimensiondepth = `10.4` dimensionheight = `18.1` dimensionunit = `cm` )
-        ( productid = `HT-1100` name = `Smart Office` category = `SW` suppliername = `Technocom`
-          shortdescription = `Complete package, 1 User, Office Applications (word processing, spreadsheet, presentations)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1100.jpg` price = `89.9` currencycode = `EUR` status = `D`
-          weight = `1.2` weightunit = `KG` dimensionwidth = `15` dimensiondepth = `6.5` dimensionheight = `2.1` dimensionunit = `cm` )
-        ( productid = `HT-1101` name = `Smart Design` category = `SW` suppliername = `Technocom`
-          shortdescription = `Complete package, 1 User, Image editing, processing`
-          pictureurl = `sap/ui/demo/mock/images/HT-1101.jpg` price = `79.9` currencycode = `EUR` status = `O`
-          weight = `0.8` weightunit = `KG` dimensionwidth = `14` dimensiondepth = `6.7` dimensionheight = `24` dimensionunit = `cm` )
-        ( productid = `HT-1102` name = `Smart Network` category = `SW` suppliername = `Technocom`
-          shortdescription = `Complete package, 1 User, Network Software Utilities, Useful Applications and Documentation`
-          pictureurl = `sap/ui/demo/mock/images/HT-1102.jpg` price = `69` currencycode = `EUR` status = `A`
-          weight = `0.8` weightunit = `KG` dimensionwidth = `16` dimensiondepth = `6` dimensionheight = `27` dimensionunit = `cm` )
-        ( productid = `HT-1103` name = `Smart Multimedia` category = `SW` suppliername = `Technocom`
-          shortdescription = `Complete package, 1 User, different Multimedia applications, playing music, watching DVDs, only with this Smart package`
-          pictureurl = `sap/ui/demo/mock/images/HT-1103.jpg` price = `77` currencycode = `EUR` status = `A`
-          weight = `0.8` weightunit = `KG` dimensionwidth = `11` dimensiondepth = `3.4` dimensionheight = `22` dimensionunit = `cm` )
-        ( productid = `HT-1104` name = `Smart Games` category = `SW` suppliername = `Technocom`
-          shortdescription = `Complete package, 1 User, various games for amusement, logic, action, jump&run`
-          pictureurl = `sap/ui/demo/mock/images/HT-1104.jpg` price = `55` currencycode = `EUR` status = `O`
-          weight = `1.1` weightunit = `KG` dimensionwidth = `10` dimensiondepth = `3` dimensionheight = `30` dimensionunit = `cm` )
-        ( productid = `HT-1105` name = `Smart Internet Antivirus` category = `SW` suppliername = `Brainsoft`
-          shortdescription = `Complete package, 1 User, highly recommended for internet users as anti-virus protection`
-          pictureurl = `sap/ui/demo/mock/images/HT-1105.jpg` price = `29` currencycode = `EUR` status = `A`
-          weight = `0.7` weightunit = `KG` dimensionwidth = `16` dimensiondepth = `4` dimensionheight = `21` dimensionunit = `cm` )
-        ( productid = `HT-1106` name = `Smart Firewall` category = `SW` suppliername = `Brainsoft`
-          shortdescription = `Complete package, 1 User, recommended for internet users, protect your PC against cyber-crime`
-          pictureurl = `sap/ui/demo/mock/images/HT-1106.jpg` price = `34` currencycode = `EUR` status = `A`
-          weight = `0.9` weightunit = `KG` dimensionwidth = `17.9` dimensiondepth = `4.2` dimensionheight = `23.1` dimensionunit = `cm` )
-        ( productid = `HT-1107` name = `Smart Money` category = `SW` suppliername = `Brainsoft`
-          shortdescription = `Complete package, 1 User, bring your money in your mind, see what you have and what you want`
-          pictureurl = `sap/ui/demo/mock/images/HT-1107.jpg` price = `29.9` currencycode = `EUR` status = `D`
-          weight = `0.5` weightunit = `KG` dimensionwidth = `12` dimensiondepth = `1.5` dimensionheight = `19` dimensionunit = `cm` )
-        ( productid = `HT-1110` name = `PC Lock` category = `CSA` suppliername = `Red Point Stores`
-          shortdescription = `Robust 3m anti-burglary protection for your laptop computer`
-          pictureurl = `sap/ui/demo/mock/images/HT-1110.jpg` price = `8.9` currencycode = `EUR` status = `A`
-          weight = `0.03` weightunit = `KG` dimensionwidth = `20` dimensiondepth = `8` dimensionheight = `4.3` dimensionunit = `cm` )
-        ( productid = `HT-1111` name = `Notebook Lock` category = `CSA` suppliername = `Red Point Stores`
-          shortdescription = `Robust 1m anti-burglary protection for your desktop computer`
-          pictureurl = `sap/ui/demo/mock/images/HT-1111.jpg` price = `6.9` currencycode = `EUR` status = `A`
-          weight = `0.02` weightunit = `KG` dimensionwidth = `31` dimensiondepth = `9` dimensionheight = `7` dimensionunit = `cm` )
-        ( productid = `HT-1112` name = `Web cam reality` category = `CSA` suppliername = `Red Point Stores`
-          shortdescription = `Color webcam, color, High-Speed USB`
-          pictureurl = `sap/ui/demo/mock/images/HT-1112.jpg` price = `39` currencycode = `EUR` status = `A`
-          weight = `0.075` weightunit = `KG` dimensionwidth = `9` dimensiondepth = `8.2` dimensionheight = `1.3` dimensionunit = `cm` )
-        ( productid = `HT-1113` name = `Screen clean` category = `CSA` suppliername = `Red Point Stores`
-          shortdescription = `10 separately packed screen wipes`
-          pictureurl = `sap/ui/demo/mock/images/HT-1113.jpg` price = `2.3` currencycode = `EUR` status = `A`
-          weight = `0.05` weightunit = `KG` dimensionwidth = `2` dimensiondepth = `2` dimensionheight = `0.1` dimensionunit = `cm` )
-        ( productid = `HT-1114` name = `Fabric bag professional` category = `CSA` suppliername = `Red Point Stores`
-          shortdescription = `Notebook bag, plenty of room for stationery and writing materials`
-          pictureurl = `sap/ui/demo/mock/images/HT-1114.jpg` price = `31` currencycode = `EUR` status = `A`
-          weight = `1.8` weightunit = `KG` dimensionwidth = `42` dimensiondepth = `32` dimensionheight = `7` dimensionunit = `cm` )
-        ( productid = `HT-1115` name = `Wireless DSL Router` category = `TC` suppliername = `Red Point Stores`
-          shortdescription = `Wireless DSL Router (available in blue, black and silver)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1115.jpg` price = `49` currencycode = `EUR` status = `O`
-          weight = `0.45` weightunit = `KG` dimensionwidth = `19.3` dimensiondepth = `18` dimensionheight = `5` dimensionunit = `cm` )
-        ( productid = `HT-1116` name = `Wireless DSL Router / Repeater` category = `TC` suppliername = `Red Point Stores`
-          shortdescription = `Wireless DSL Router / Repeater (available in blue, black and silver)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1116.jpg` price = `59` currencycode = `EUR` status = `A`
-          weight = `0.45` weightunit = `KG` dimensionwidth = `19.3` dimensiondepth = `18` dimensionheight = `5` dimensionunit = `cm` )
-        ( productid = `HT-1117` name = `Wireless DSL Router / Repeater and Print Server` category = `TC` suppliername = `Technocom`
-          shortdescription = `Wireless DSL Router / Repeater and Print Server (available in blue, black and silver)`
-          pictureurl = `sap/ui/demo/mock/images/HT-1117.jpg` price = `69` currencycode = `EUR` status = `O`
-          weight = `0.45` weightunit = `KG` dimensionwidth = `19.3` dimensiondepth = `18` dimensionheight = `5` dimensionunit = `cm` )
-        ( productid = `HT-1118` name = `USB Stick` category = `CSA` suppliername = `Technocom`
-          shortdescription = `USB 2.0 High-Speed 64 GB`
-          pictureurl = `sap/ui/demo/mock/images/HT-1118.jpg` price = `35` currencycode = `EUR` status = `A`
-          weight = `0.015` weightunit = `KG` dimensionwidth = `1.5` dimensiondepth = `8.7` dimensionheight = `1.2` dimensionunit = `cm` )
-        ( productid = `HT-1120` name = `Cordless Bluetooth Keyboard, english international` category = `KB` suppliername = `Technocom`
-          shortdescription = `Cordless Bluetooth Keyboard with English keys`
-          pictureurl = `sap/ui/demo/mock/images/HT-1120.jpg` price = `29` currencycode = `EUR` status = `A`
-          weight = `1` weightunit = `KG` dimensionwidth = `51.4` dimensiondepth = `23` dimensionheight = `4` dimensionunit = `cm` )
-        ( productid = `HT-1137` name = `Flat XXL` category = `FS` suppliername = `Technocom`
-          shortdescription = `Optimum Hi-Resolution max. 2048 × 1536 @ 85Hz, Dot Pitch: 0.24mm`
-          pictureurl = `sap/ui/demo/mock/images/HT-1137.jpg` price = `1430` currencycode = `EUR` status = `A`
-          weight = `18` weightunit = `KG` dimensionwidth = `54` dimensiondepth = `22` dimensionheight = `38` dimensionunit = `cm` )
-        ( productid = `HT-1138` name = `Pocket Mouse` category = `MI` suppliername = `Technocom`
-          shortdescription = `Portable pocket Mouse with retracting cord`
-          pictureurl = `sap/ui/demo/mock/images/HT-1138.jpg` price = `23` currencycode = `EUR` status = `A`
-          weight = `0.02` weightunit = `KG` dimensionwidth = `0.3` dimensiondepth = `0.5` dimensionheight = `1` dimensionunit = `cm` )
-        ( productid = `HT-1210` name = `PC Power Station` category = `DC` suppliername = `Technocom`
-          shortdescription = `PC Power Station with 3,4 Ghz quad-core, 32 GB DDR3 SDRAM, feels like a PC, Windows 8 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1210.jpg` price = `2399` currencycode = `EUR` status = `A`
-          weight = `2.3` weightunit = `KG` dimensionwidth = `28` dimensiondepth = `31` dimensionheight = `43` dimensionunit = `cm` )
-        ( productid = `HT-1500` name = `Server Basic` category = `SV` suppliername = `Technocom`
-          shortdescription = `Dual socket, quad-core processing server with 1333 MHz Front Side Bus with 10Gb connectivity`
-          pictureurl = `sap/ui/demo/mock/images/HT-1500.jpg` price = `5000` currencycode = `EUR` status = `A`
-          weight = `18` weightunit = `KG` dimensionwidth = `34` dimensiondepth = `35` dimensionheight = `23` dimensionunit = `cm` )
-        ( productid = `HT-1501` name = `Server Professional` category = `SV` suppliername = `Technocom`
-          shortdescription = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 10Gb connectivity`
-          pictureurl = `sap/ui/demo/mock/images/HT-1501.jpg` price = `15000` currencycode = `EUR` status = `O`
-          weight = `25` weightunit = `KG` dimensionwidth = `29` dimensiondepth = `30` dimensionheight = `27` dimensionunit = `cm` )
-        ( productid = `HT-1502` name = `Server Power Pro` category = `SV` suppliername = `Technocom`
-          shortdescription = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 100Gb connectivity`
-          pictureurl = `sap/ui/demo/mock/images/HT-1502.jpg` price = `25000` currencycode = `EUR` status = `A`
-          weight = `35` weightunit = `KG` dimensionwidth = `22` dimensiondepth = `27.3` dimensionheight = `37` dimensionunit = `cm` )
-        ( productid = `HT-6130` name = `Flat Watch HD32` category = `FST` suppliername = `Very Best Screens`
-          shortdescription = `32-inch, 1366x768 Pixel, 16:9, HDTV ready`
-          pictureurl = `sap/ui/demo/mock/images/HT-6130.jpg` price = `1459` currencycode = `EUR` status = `A`
-          weight = `2.6` weightunit = `KG` dimensionwidth = `78` dimensiondepth = `22.1` dimensionheight = `55` dimensionunit = `cm` )
-        ( productid = `HT-6131` name = `Flat Watch HD37` category = `FST` suppliername = `Very Best Screens`
-          shortdescription = `37-inch, 1366x768 Pixel, 16:9, HDTV ready`
-          pictureurl = `sap/ui/demo/mock/images/HT-6131.jpg` price = `1199` currencycode = `EUR` status = `A`
-          weight = `2.2` weightunit = `KG` dimensionwidth = `99.1` dimensiondepth = `26` dimensionheight = `61` dimensionunit = `cm` )
-        ( productid = `HT-6132` name = `Flat Watch HD41` category = `FST` suppliername = `Very Best Screens`
-          shortdescription = `41-inch, 1366x768 Pixel, 16:9, HDTV ready`
-          pictureurl = `sap/ui/demo/mock/images/HT-6132.jpg` price = `899` currencycode = `EUR` status = `A`
-          weight = `1.8` weightunit = `KG` dimensionwidth = `128` dimensiondepth = `23` dimensionheight = `79.1` dimensionunit = `cm` )
-        ( productid = `HT-7030` name = `Platinberry` category = `AC` suppliername = `Fasttech`
-          shortdescription = `Our new multifunctional Handheld with phone function in platinum`
-          pictureurl = `sap/ui/demo/mock/images/HT-7030.jpg` price = `549` currencycode = `EUR` status = `D`
-          weight = `0.5` weightunit = `KG` dimensionwidth = `8.1` dimensiondepth = `13` dimensionheight = `12.1` dimensionunit = `cm` )
-        ( productid = `HT-7020` name = `Goldberry` category = `AC` suppliername = `Fasttech`
-          shortdescription = `Our new multifunctional Handheld with phone function in gold`
-          pictureurl = `sap/ui/demo/mock/images/HT-7020.jpg` price = `549` currencycode = `EUR` status = `A`
-          weight = `0.5` weightunit = `KG` dimensionwidth = `8.1` dimensiondepth = `13` dimensionheight = `12.1` dimensionunit = `cm` )
-        ( productid = `HT-7010` name = `Silverberry` category = `AC` suppliername = `Fasttech`
-          shortdescription = `Our new multifunctional Handheld with phone function in silver`
-          pictureurl = `sap/ui/demo/mock/images/HT-7010.jpg` price = `549` currencycode = `EUR` status = `A`
-          weight = `0.5` weightunit = `KG` dimensionwidth = `8.1` dimensiondepth = `13` dimensionheight = `12.1` dimensionunit = `cm` )
-        ( productid = `HT-7000` name = `Copperberry` category = `AC` suppliername = `Fasttech`
-          shortdescription = `Our new multifunctional Handheld with phone function in copper`
-          pictureurl = `sap/ui/demo/mock/images/HT-7000.jpg` price = `549` currencycode = `EUR` status = `A`
-          weight = `0.5` weightunit = `KG` dimensionwidth = `8.1` dimensiondepth = `13` dimensionheight = `12.1` dimensionunit = `cm` )
-        ( productid = `HT-1095` name = `Lovely Sound 5.1 Wireless` category = `AC` suppliername = `Fasttech`
-          shortdescription = `5.1 Headset, 40 Hz-20 kHz, Wireless`
-          pictureurl = `sap/ui/demo/mock/images/HT-1095.jpg` price = `49` currencycode = `EUR` status = `A`
-          weight = `80` weightunit = `G` dimensionwidth = `24` dimensiondepth = `19` dimensionheight = `23` dimensionunit = `cm` )
-        ( productid = `HT-1096` name = `Lovely Sound 5.1` category = `AC` suppliername = `Fasttech`
-          shortdescription = `5.1 Headset, 40 Hz-20 kHz, 3m cable`
-          pictureurl = `sap/ui/demo/mock/images/HT-1096.jpg` price = `39` currencycode = `EUR` status = `A`
-          weight = `130` weightunit = `G` dimensionwidth = `25` dimensiondepth = `17` dimensionheight = `19` dimensionunit = `cm` )
-        ( productid = `HT-1097` name = `Lovely Sound Stereo` category = `AC` suppliername = `Fasttech`
-          shortdescription = `5.1 Headset, 40 Hz-20 kHz, 1m cable`
-          pictureurl = `sap/ui/demo/mock/images/HT-1097.jpg` price = `29` currencycode = `EUR` status = `A`
-          weight = `60` weightunit = `G` dimensionwidth = `21.3` dimensiondepth = `2.4` dimensionheight = `19.7` dimensionunit = `cm` )
-        ( productid = `HT-6123` name = `Power Pro Player 80` category = `AC` suppliername = `Fasttech`
-          shortdescription = `MP3-Player with 80 GB SSD and Color Display, can play movies`
-          pictureurl = `sap/ui/demo/mock/images/HT-6123.jpg` price = `299` currencycode = `EUR` status = `A`
-          weight = `267` weightunit = `G` dimensionwidth = `4` dimensiondepth = `6` dimensionheight = `0.8` dimensionunit = `cm` )
-        ( productid = `HT-6122` name = `Power Pro Player 40` category = `AC` suppliername = `Fasttech`
-          shortdescription = `MP3-Player with 40 GB HDD and Color Display, can play movies`
-          pictureurl = `sap/ui/demo/mock/images/HT-6122.jpg` price = `167` currencycode = `EUR` status = `A`
-          weight = `266` weightunit = `G` dimensionwidth = `5.1` dimensiondepth = `8` dimensionheight = `9.2` dimensionunit = `cm` )
-        ( productid = `HT-6121` name = `ITelo Jog-Mate` category = `AC` suppliername = `Fasttech`
-          shortdescription = `ITelo Jog-Mate 64 GB HDD and Color Display, can play movies`
-          pictureurl = `sap/ui/demo/mock/images/HT-6121.jpg` price = `63` currencycode = `EUR` status = `A`
-          weight = `134` weightunit = `G` dimensionwidth = `5.1` dimensiondepth = `8` dimensionheight = `9.2` dimensionunit = `cm` )
-        ( productid = `HT-6120` name = `ITelo MusicStick` category = `AC` suppliername = `Fasttech`
-          shortdescription = `64 GB USB Music-on-a-Stick`
-          pictureurl = `sap/ui/demo/mock/images/HT-6120.jpg` price = `45` currencycode = `EUR` status = `A`
-          weight = `134` weightunit = `G` dimensionwidth = `1.5` dimensiondepth = `6` dimensionheight = `1` dimensionunit = `cm` )
-        ( productid = `HT-6111` name = `Record Movie` category = `AC` suppliername = `Fasttech`
-          shortdescription = `160 GB HDD, CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`
-          pictureurl = `sap/ui/demo/mock/images/HT-6111.jpg` price = `288` currencycode = `EUR` status = `O`
-          weight = `3.1` weightunit = `KG` dimensionwidth = `38` dimensiondepth = `26` dimensionheight = `6.2` dimensionunit = `cm` )
-        ( productid = `HT-6110` name = `Play Movie` category = `AC` suppliername = `Fasttech`
-          shortdescription = `CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`
-          pictureurl = `sap/ui/demo/mock/images/HT-6110.jpg` price = `130` currencycode = `EUR` status = `O`
-          weight = `2.4` weightunit = `KG` dimensionwidth = `37` dimensiondepth = `24` dimensionheight = `6` dimensionunit = `cm` )
-        ( productid = `HT-6102` name = `Beam Breaker B-3` category = `AC` suppliername = `Technocom`
-          shortdescription = `1080p, DLP max. 12,3 Meter, 3D-ready`
-          pictureurl = `sap/ui/demo/mock/images/HT-6102.jpg` price = `889` currencycode = `EUR` status = `A`
-          weight = `2.5` weightunit = `KG` dimensionwidth = `30.4` dimensiondepth = `23.1` dimensionheight = `23` dimensionunit = `cm` )
-        ( productid = `HT-6101` name = `Beam Breaker B-2` category = `AC` suppliername = `Technocom`
-          shortdescription = `1080p, DLP max.9,34 Meter, 2D-ready`
-          pictureurl = `sap/ui/demo/mock/images/HT-6101.jpg` price = `679` currencycode = `EUR` status = `A`
-          weight = `2` weightunit = `KG` dimensionwidth = `30.4` dimensiondepth = `23.1` dimensionheight = `23` dimensionunit = `cm` )
-        ( productid = `HT-2002` name = `Portable DVD Player with 9" LCD Monitor` category = `AC` suppliername = `Technocom`
-          shortdescription = `9" LCD Screen, storage holds up to 8 hours, 2 speakers included`
-          pictureurl = `sap/ui/demo/mock/images/HT-2002.jpg` price = `853.99` currencycode = `EUR` status = `D`
-          weight = `0.72` weightunit = `KG` dimensionwidth = `21` dimensiondepth = `16.5` dimensionheight = `14` dimensionunit = `cm` )
-        ( productid = `HT-6100` name = `Beam Breaker B-1` category = `AC` suppliername = `Titanium`
-          shortdescription = `720p, DLP Projector max. 8,45 Meter, 2D`
-          pictureurl = `sap/ui/demo/mock/images/HT-6100.jpg` price = `469` currencycode = `EUR` status = `O`
-          weight = `1.7` weightunit = `KG` dimensionwidth = `30.4` dimensiondepth = `23.1` dimensionheight = `23` dimensionunit = `cm` )
-        ( productid = `HT-2027` name = `Removable CD/DVD Laser Labels` category = `AC` suppliername = `Titanium`
-          shortdescription = `Removable jewel case labels, zero residues (100)`
-          pictureurl = `sap/ui/demo/mock/images/HT-2027.jpg` price = `8.99` currencycode = `EUR` status = `A`
-          weight = `0.15` weightunit = `KG` dimensionwidth = `5.5` dimensiondepth = `2` dimensionheight = `2` dimensionunit = `cm` )
-        ( productid = `HT-2026` name = `Audio/Video Cable Kit - 4m` category = `AC` suppliername = `Titanium`
-          shortdescription = `Quality cables for notebooks and projectors`
-          pictureurl = `sap/ui/demo/mock/images/HT-2026.jpg` price = `29.99` currencycode = `EUR` status = `D`
-          weight = `0.2` weightunit = `KG` dimensionwidth = `21` dimensiondepth = `10.2` dimensionheight = `13` dimensionunit = `cm` )
-        ( productid = `HT-2025` name = `CD/DVD case: 264 sleeves` category = `AC` suppliername = `Titanium`
-          shortdescription = `Organizer and protective case for 264 CDs and DVDs`
-          pictureurl = `sap/ui/demo/mock/images/HT-2025.jpg` price = `44.99` currencycode = `EUR` status = `A`
-          weight = `0.65` weightunit = `KG` dimensionwidth = `13` dimensiondepth = `13` dimensionheight = `20` dimensionunit = `cm` )
-        ( productid = `HT-2001` name = `10" Portable DVD player` category = `AC` suppliername = `Titanium`
-          shortdescription = `10" LCD Screen, storage battery holds up to 8 hours`
-          pictureurl = `sap/ui/demo/mock/images/HT-2001.jpg` price = `449.99` currencycode = `EUR` status = `A`
-          weight = `0.84` weightunit = `KG` dimensionwidth = `24` dimensiondepth = `19.5` dimensionheight = `29` dimensionunit = `cm` )
-        ( productid = `HT-2000` name = `7" Widescreen Portable DVD Player w MP3` category = `AC` suppliername = `Titanium`
-          shortdescription = `7" LCD Screen, storage battery holds up to 6 hours!`
-          pictureurl = `sap/ui/demo/mock/images/HT-2000.jpg` price = `249.99` currencycode = `EUR` status = `O`
-          weight = `0.79` weightunit = `KG` dimensionwidth = `21.4` dimensiondepth = `19` dimensionheight = `27.6` dimensionunit = `cm` )
-        ( productid = `HT-1603` name = `Gaming Monster Pro` category = `DC` suppliername = `Titanium`
-          shortdescription = `3,4 Ghz quad core, 16 GB DDR3 SDRAM, 4000 GB Hard Disc, Graphic Card: Hurricane GX, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-1603.jpg` price = `1700` currencycode = `EUR` status = `A`
-          weight = `6.8` weightunit = `KG` dimensionwidth = `27` dimensiondepth = `28` dimensionheight = `42` dimensionunit = `cm` )
-        ( productid = `HT-1602` name = `Gaming Monster` category = `DC` suppliername = `Titanium`
-          shortdescription = `3,4 Ghz quad core, 8 GB DDR3 SDRAM, 2000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-1602.jpg` price = `1200` currencycode = `EUR` status = `A`
-          weight = `5.9` weightunit = `KG` dimensionwidth = `26.5` dimensiondepth = `34` dimensionheight = `47` dimensionunit = `cm` )
-        ( productid = `HT-1601` name = `Family PC Pro` category = `DC` suppliername = `Titanium`
-          shortdescription = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-1601.jpg` price = `900` currencycode = `EUR` status = `A`
-          weight = `5.3` weightunit = `KG` dimensionwidth = `25` dimensiondepth = `31.7` dimensionheight = `40.2` dimensionunit = `cm` )
-        ( productid = `HT-1600` name = `Family PC Basic` category = `DC` suppliername = `Titanium`
-          shortdescription = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Graphic Card: Proctra X, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-1600.jpg` price = `600` currencycode = `EUR` status = `O`
-          weight = `4.8` weightunit = `KG` dimensionwidth = `21.4` dimensiondepth = `29` dimensionheight = `38` dimensionunit = `cm` )
-        ( productid = `HT-1119` name = `Travel Adapter` category = `AC` suppliername = `Titanium`
-          shortdescription = `Universal Travel Adapter`
-          pictureurl = `sap/ui/demo/mock/images/HT-1119.jpg` price = `79` currencycode = `EUR` status = `A`
-          weight = `88` weightunit = `G` dimensionwidth = `2` dimensiondepth = `3.1` dimensionheight = `3.9` dimensionunit = `cm` )
-        ( productid = `HT-8000` name = `ITelO FlexTop I4000` category = `LT` suppliername = `Titanium`
-          shortdescription = `Notebook with 2,80 GHz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-8000.jpg` price = `799` currencycode = `EUR` status = `A`
-          weight = `4` weightunit = `KG` dimensionwidth = `31` dimensiondepth = `19` dimensionheight = `3.1` dimensionunit = `cm` )
-        ( productid = `HT-8001` name = `ITelO FlexTop I6300c` category = `LT` suppliername = `Titanium`
-          shortdescription = `Notebook with 2,80 GHz dual core, 8 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-8001.jpg` price = `799` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `32` dimensiondepth = `20` dimensionheight = `3.4` dimensionunit = `cm` )
-        ( productid = `HT-8002` name = `ITelO FlexTop I9100` category = `LT` suppliername = `Titanium`
-          shortdescription = `Notebook with 2,80 GHz quad core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-8002.jpg` price = `1199` currencycode = `EUR` status = `A`
-          weight = `3.5` weightunit = `KG` dimensionwidth = `38` dimensiondepth = `21` dimensionheight = `4.1` dimensionunit = `cm` )
-        ( productid = `HT-8003` name = `ITelO FlexTop I9800` category = `LT` suppliername = `Titanium`
-          shortdescription = `Notebook with 2,80 GHz quad core, 8 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`
-          pictureurl = `sap/ui/demo/mock/images/HT-8003.jpg` price = `1388` currencycode = `EUR` status = `A`
-          weight = `3.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `PF-1000` name = `Flyer` category = `AC` suppliername = `Titanium`
-          shortdescription = `Flyer for our product palette`
-          pictureurl = `sap/ui/demo/mock/images/PF-1000.jpg` price = `0` currencycode = `EUR` status = `A`
-          weight = `0.01` weightunit = `KG` dimensionwidth = `46` dimensiondepth = `30` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-9999` name = `Maxi Tablet` category = `ST` suppliername = `Titanium`
-          shortdescription = `10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`
-          pictureurl = `sap/ui/demo/mock/images/HT-9999.jpg` price = `749` currencycode = `EUR` status = `A`
-          weight = `3.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9998` name = `Smartphone Beta` category = `ST` suppliername = `Titanium`
-          shortdescription = `5 Megapixel Camera, Wi-Fi 802.11 b/g/n, Bluetooth, GPS A-GPS support`
-          pictureurl = `sap/ui/demo/mock/images/HT-9998.jpg` price = `699` currencycode = `EUR` status = `A`
-          weight = `0.75` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9997` name = `e-Book Reader ReadMe` category = `ST` suppliername = `Titanium`
-          shortdescription = `6-Inch E Ink Screen, Access To e-book Store, Adjustable Font Styles and Sizes, Stores Up To 1,000 Books`
-          pictureurl = `sap/ui/demo/mock/images/HT-9997.jpg` price = `633` currencycode = `EUR` status = `A`
-          weight = `3.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9996` name = `Tablet Pouch` category = `AC` suppliername = `Titanium`
-          shortdescription = `Stylish tablet pouch, protects from scratches, color: black`
-          pictureurl = `sap/ui/demo/mock/images/HT-9996.jpg` price = `20` currencycode = `EUR` status = `A`
-          weight = `0.03` weightunit = `KG` dimensionwidth = `25` dimensiondepth = `40` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9995` name = `Smartphone Cover` category = `AC` suppliername = `Titanium`
-          shortdescription = `Durable high quality plastic bump-sleeve, lightweight, protects from scratches, rubber coating, multiple colors available, Accurate design and cut-outs for your device, snap-on design`
-          pictureurl = `sap/ui/demo/mock/images/HT-9995.jpg` price = `15` currencycode = `EUR` status = `A`
-          weight = `0.02` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9994` name = `Camcorder View` category = `AC` suppliername = `Ultrasonic United`
-          shortdescription = `1920x1080 Full HD, image stabilization reduces blur, 27x Optical / 32x Extended Zoom, wide angle Lens, 2.7" wide LCD display`
-          pictureurl = `sap/ui/demo/mock/images/HT-9994.jpg` price = `1388` currencycode = `EUR` status = `A`
-          weight = `3.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `27` dimensionunit = `cm` )
-        ( productid = `HT-9993` name = `Mini Tablet` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage, 4325 mAh battery (Up to 8 hours of active use)`
-          pictureurl = `sap/ui/demo/mock/images/HT-9993.jpg` price = `833` currencycode = `EUR` status = `A`
-          weight = `3.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9992` name = `Smartphone Alpha` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`
-          pictureurl = `sap/ui/demo/mock/images/HT-9992.jpg` price = `599` currencycode = `EUR` status = `A`
-          weight = `0.75` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-9991` name = `Smartphone Leather Case` category = `AC` suppliername = `Ultrasonic United`
-          shortdescription = `Button Clasp, Quality Material, 100% Leather, compatible with many smartphone models`
-          pictureurl = `sap/ui/demo/mock/images/HT-9991.jpg` price = `25` currencycode = `EUR` status = `A`
-          weight = `0.02` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-1251` name = `Astro Laptop 1516` category = `LT` suppliername = `Ultrasonic United`
-          shortdescription = `Flexible Laptop with 2,5 GHz Quad Core, 15" HD TN, 16 GB DDR SDRAM, 256 GB SSD, Windows 10 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1251.jpg` price = `989` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `30` dimensiondepth = `18` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1252` name = `Astro Phone 6` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `6 inch 1280x800 HD display (216 ppi), Quad-core processor, 8 GB internal storage (actual formatted capacity will be less), 3050 mAh battery (Up to 8 hours of active use), grey or black`
-          pictureurl = `sap/ui/demo/mock/images/HT-1252.jpg` price = `649` currencycode = `EUR` status = `A`
-          weight = `0.75` weightunit = `KG` dimensionwidth = `8` dimensiondepth = `6` dimensionheight = `1.5` dimensionunit = `cm` )
-        ( productid = `HT-1253` name = `Benda Laptop 1408` category = `LT` suppliername = `Ultrasonic United`
-          shortdescription = `Flexible Laptop with 2,5 GHz Dual Core, 14" HD+ TN, 8 GB DDR SDRAM, 324 GB SSD, Windows 10 Pro`
-          pictureurl = `sap/ui/demo/mock/images/HT-1253.jpg` price = `976` currencycode = `EUR` status = `A`
-          weight = `4.2` weightunit = `KG` dimensionwidth = `30` dimensiondepth = `18` dimensionheight = `3` dimensionunit = `cm` )
-        ( productid = `HT-1254` name = `Bending Screen 21HD` category = `FS` suppliername = `Ultrasonic United`
-          shortdescription = `Optimum Hi-Resolution Widescreen max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, D-Sub`
-          pictureurl = `sap/ui/demo/mock/images/HT-1254.jpg` price = `250` currencycode = `EUR` status = `A`
-          weight = `15` weightunit = `KG` dimensionwidth = `37` dimensiondepth = `12` dimensionheight = `36` dimensionunit = `cm` )
-        ( productid = `HT-1255` name = `Broad Screen 22HD` category = `FS` suppliername = `Ultrasonic United`
-          shortdescription = `Optimum Hi-Resolution Widescreen max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, D-Sub`
-          pictureurl = `sap/ui/demo/mock/images/HT-1255.jpg` price = `270` currencycode = `EUR` status = `O`
-          weight = `16` weightunit = `KG` dimensionwidth = `39` dimensiondepth = `12` dimensionheight = `38` dimensionunit = `cm` )
-        ( productid = `HT-1256` name = `Cerdik Phone 7` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`
-          pictureurl = `sap/ui/demo/mock/images/HT-1256.jpg` price = `549` currencycode = `EUR` status = `A`
-          weight = `0.75` weightunit = `KG` dimensionwidth = `9` dimensiondepth = `15` dimensionheight = `1.5` dimensionunit = `cm` )
-        ( productid = `HT-1257` name = `Cepat Tablet 10.5` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `10.5-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`
-          pictureurl = `sap/ui/demo/mock/images/HT-1257.jpg` price = `549` currencycode = `EUR` status = `A`
-          weight = `2.8` weightunit = `KG` dimensionwidth = `48` dimensiondepth = `31` dimensionheight = `4.5` dimensionunit = `cm` )
-        ( productid = `HT-1258` name = `Cepat Tablet 8` category = `ST` suppliername = `Ultrasonic United`
-          shortdescription = `8-inch Multitouch HD Screen (2000 x 1500) 32GB Internal Memory, Wireless N Wi-Fi, Bluetooth, GPS Enabled, 1.5 GHz Quad-Core Processor`
-          pictureurl = `sap/ui/demo/mock/images/HT-1258.jpg` price = `529` currencycode = `EUR` status = `A`
-          weight = `2.5` weightunit = `KG` dimensionwidth = `38` dimensiondepth = `21` dimensionheight = `3.5` dimensionunit = `cm` )
-    ).
+    
+    CLEAR temp123.
+    
+    temp124-productid = `HT-1000`.
+    temp124-name = `Notebook Basic 15`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Notebook Basic 15 with 2,80 GHz quad core, 15" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1000.jpg`.
+    temp124-price = `956`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1001`.
+    temp124-name = `Notebook Basic 17`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Notebook Basic 17 with 2,80 GHz quad core, 17" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1001.jpg`.
+    temp124-price = `1249`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `29`.
+    temp124-dimensiondepth = `17`.
+    temp124-dimensionheight = `3.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1002`.
+    temp124-name = `Notebook Basic 18`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Notebook Basic 18 with 2,80 GHz quad core, 18" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1002.jpg`.
+    temp124-price = `1570`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `28`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `2.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1003`.
+    temp124-name = `Notebook Basic 19`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Smartcards`.
+    temp124-shortdescription = `Notebook Basic 19 with 2,80 GHz quad core, 19" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1003.jpg`.
+    temp124-price = `1650`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `32`.
+    temp124-dimensiondepth = `21`.
+    temp124-dimensionheight = `4`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1007`.
+    temp124-name = `ITelO Vault`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Digital Organizer with State-of-the-Art Storage Encryption`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1007.jpg`.
+    temp124-price = `299`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `32`.
+    temp124-dimensiondepth = `22`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1010`.
+    temp124-name = `Notebook Professional 15`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Notebook Professional 15 with 2,80 GHz quad core, 15" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1010.jpg`.
+    temp124-price = `1999`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `33`.
+    temp124-dimensiondepth = `20`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1011`.
+    temp124-name = `Notebook Professional 17`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Notebook Professional 17 with 2,80 GHz quad core, 17" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1011.jpg`.
+    temp124-price = `2299`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `4.1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `33`.
+    temp124-dimensiondepth = `23`.
+    temp124-dimensionheight = `2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1020`.
+    temp124-name = `ITelO Vault Net`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1020.jpg`.
+    temp124-price = `459`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.16`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `10`.
+    temp124-dimensiondepth = `1.8`.
+    temp124-dimensionheight = `17`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1021`.
+    temp124-name = `ITelO Vault SAT`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1021.jpg`.
+    temp124-price = `149`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.18`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `11`.
+    temp124-dimensiondepth = `1.7`.
+    temp124-dimensionheight = `18`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1022`.
+    temp124-name = `Comfort Easy`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `32 GB Digital Assistant with high-resolution color screen`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1022.jpg`.
+    temp124-price = `1679`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `84`.
+    temp124-dimensiondepth = `1.5`.
+    temp124-dimensionheight = `14`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1023`.
+    temp124-name = `Comfort Senior`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `64 GB Digital Assistant with high-resolution color screen and synthesized voice output`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1023.jpg`.
+    temp124-price = `512`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `80`.
+    temp124-dimensiondepth = `1.6`.
+    temp124-dimensionheight = `13`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1030`.
+    temp124-name = `Ergo Screen E-I`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1030.jpg`.
+    temp124-price = `230`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `21`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `37`.
+    temp124-dimensiondepth = `12`.
+    temp124-dimensionheight = `36`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1031`.
+    temp124-name = `Ergo Screen E-II`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 1920 x 1200 @ 85Hz, Dot Pitch: 0.26mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1031.jpg`.
+    temp124-price = `285`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `21`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `40.8`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `43`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1032`.
+    temp124-name = `Ergo Screen E-III`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 2560 x 1440 @ 85Hz, Dot Pitch: 0.25mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1032.jpg`.
+    temp124-price = `345`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `21`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `40.8`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `43`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1035`.
+    temp124-name = `Flat Basic`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1035.jpg`.
+    temp124-price = `399`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `14`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `39`.
+    temp124-dimensiondepth = `20`.
+    temp124-dimensionheight = `41`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1036`.
+    temp124-name = `Flat Future`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.26mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1036.jpg`.
+    temp124-price = `430`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `15`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `45`.
+    temp124-dimensiondepth = `26`.
+    temp124-dimensionheight = `46`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1037`.
+    temp124-name = `Flat XL`.
+    temp124-category = `FT`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 2016 x 1512 @ 85Hz, Dot Pitch: 0.24mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1037.jpg`.
+    temp124-price = `1230`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `17`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `54.5`.
+    temp124-dimensiondepth = `22.1`.
+    temp124-dimensionheight = `39.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1040`.
+    temp124-name = `Laser Professional Eco`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Alpha Printers`.
+    temp124-shortdescription = `Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1040.jpg`.
+    temp124-price = `830`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `32`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `51`.
+    temp124-dimensiondepth = `46`.
+    temp124-dimensionheight = `30`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1041`.
+    temp124-name = `Laser Basic`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Alpha Printers`.
+    temp124-shortdescription = `Up to 22 ppm color or 24 ppm monochrome A4/letter, powerful 500 MHz processor and 128MB of memory`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1041.jpg`.
+    temp124-price = `490`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `23`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `42`.
+    temp124-dimensionheight = `26`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1042`.
+    temp124-name = `Laser Allround`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Alpha Printers`.
+    temp124-shortdescription = `Print up to 25 ppm letter and 24 ppm A4 color or monochrome, with a first-page-out-time of less than 13 seconds for monochrome and less than 15 seconds for color`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1042.jpg`.
+    temp124-price = `349`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `17`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `53`.
+    temp124-dimensiondepth = `50`.
+    temp124-dimensionheight = `65`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1050`.
+    temp124-name = `Ultra Jet Super Color`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Alpha Printers`.
+    temp124-shortdescription = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB, Ethernet`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1050.jpg`.
+    temp124-price = `139`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `41`.
+    temp124-dimensiondepth = `41`.
+    temp124-dimensionheight = `28`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1051`.
+    temp124-name = `Ultra Jet Mobile`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `1000 dpi x 1000 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB - excellent dimensions for the small office`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1051.jpg`.
+    temp124-price = `99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1.9`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `46`.
+    temp124-dimensiondepth = `32`.
+    temp124-dimensionheight = `25`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1052`.
+    temp124-name = `Ultra Jet Super Highspeed`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1052.jpg`.
+    temp124-price = `170`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `18`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `41`.
+    temp124-dimensiondepth = `41`.
+    temp124-dimensionheight = `28`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1055`.
+    temp124-name = `Multi Print`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `1000 dpi x 1000 dpi - up to 16 ppm (mono) / up to 15 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 1200dpi x 2400dpi)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1055.jpg`.
+    temp124-price = `99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `6.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `55`.
+    temp124-dimensiondepth = `45`.
+    temp124-dimensionheight = `29`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1056`.
+    temp124-name = `Multi Color`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 2400dpi x 4800dpi, high resolution)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1056.jpg`.
+    temp124-price = `119`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `51`.
+    temp124-dimensiondepth = `41.3`.
+    temp124-dimensionheight = `22`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1060`.
+    temp124-name = `Cordless Mouse`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Cordless Optical USB MI, Laptop, Color: Black, Plug&Play`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1060.jpg`.
+    temp124-price = `9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.09`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `6`.
+    temp124-dimensiondepth = `14.5`.
+    temp124-dimensionheight = `3.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1061`.
+    temp124-name = `Speed Mouse`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1061.jpg`.
+    temp124-price = `7`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.09`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `7`.
+    temp124-dimensiondepth = `15`.
+    temp124-dimensionheight = `3.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1062`.
+    temp124-name = `Track Mouse`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1062.jpg`.
+    temp124-price = `11`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.03`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `3`.
+    temp124-dimensiondepth = `7`.
+    temp124-dimensionheight = `4`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1063`.
+    temp124-name = `Ergonomic Keyboard`.
+    temp124-category = `KB`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Ergonomic USB Keyboard for Desktop, Plug&Play`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1063.jpg`.
+    temp124-price = `14`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `2.1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `50`.
+    temp124-dimensiondepth = `21`.
+    temp124-dimensionheight = `3.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1064`.
+    temp124-name = `Internet Keyboard`.
+    temp124-category = `KB`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Corded Keyboard with special keys for Internet Usability, USB`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1064.jpg`.
+    temp124-price = `16`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `52`.
+    temp124-dimensiondepth = `25`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1065`.
+    temp124-name = `Media Keyboard`.
+    temp124-category = `KB`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Corded Ergonomic Keyboard with special keys for Media Usability, USB`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1065.jpg`.
+    temp124-price = `26`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `51.4`.
+    temp124-dimensiondepth = `23`.
+    temp124-dimensionheight = `4`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1066`.
+    temp124-name = `Mousepad`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Nice mouse pad with ITelO Logo`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1066.jpg`.
+    temp124-price = `6.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `80`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `15`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `0.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1067`.
+    temp124-name = `Ergo Mousepad`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Oxynum`.
+    temp124-shortdescription = `Ergonomic mouse pad with ITelO Logo`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1067.jpg`.
+    temp124-price = `8.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `80`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `15`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `0.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1068`.
+    temp124-name = `Designer Mousepad`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `ITelO Mousepad Special Edition`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1068.jpg`.
+    temp124-price = `12.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `90`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `24`.
+    temp124-dimensiondepth = `24`.
+    temp124-dimensionheight = `0.6`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1069`.
+    temp124-name = `Universal card reader`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `Universal card reader`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1069.jpg`.
+    temp124-price = `14`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `45`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `6`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1070`.
+    temp124-name = `Proctra X`.
+    temp124-category = `GC`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Proctra X: PCI-E GDDR5 3072MB`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1070.jpg`.
+    temp124-price = `70.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.255`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `22`.
+    temp124-dimensiondepth = `35`.
+    temp124-dimensionheight = `17`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1071`.
+    temp124-name = `Gladiator MX`.
+    temp124-category = `GC`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Gladiator XLN: PCI-E GDDR5 3072MB DVI Out, TV Out low-noise`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1071.jpg`.
+    temp124-price = `81.7`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `22`.
+    temp124-dimensiondepth = `35`.
+    temp124-dimensionheight = `17`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1072`.
+    temp124-name = `Hurricane GX`.
+    temp124-category = `GC`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Hurricane GX: PCI-E 691 GFLOPS game-optimized`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1072.jpg`.
+    temp124-price = `101.2`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `22`.
+    temp124-dimensiondepth = `35`.
+    temp124-dimensionheight = `17`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1073`.
+    temp124-name = `Hurricane GX/LN`.
+    temp124-category = `GC`.
+    temp124-suppliername = `Smartcards`.
+    temp124-shortdescription = `Hurricane GX/LN: PCI-E 691 GFLOPS game-optimized, low-noise.`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1073.jpg`.
+    temp124-price = `139.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `22`.
+    temp124-dimensiondepth = `35`.
+    temp124-dimensionheight = `17`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1080`.
+    temp124-name = `Photo Scan`.
+    temp124-category = `SC`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - Hi-Speed USB - Bluetooth`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1080.jpg`.
+    temp124-price = `129`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `34`.
+    temp124-dimensiondepth = `48`.
+    temp124-dimensionheight = `5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1081`.
+    temp124-name = `Power Scan`.
+    temp124-category = `SC`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - SCSI for backward compatibility`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1081.jpg`.
+    temp124-price = `89`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `31`.
+    temp124-dimensiondepth = `43`.
+    temp124-dimensionheight = `7`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1082`.
+    temp124-name = `Jet Scan Professional`.
+    temp124-category = `SC`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1082.jpg`.
+    temp124-price = `169`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `33`.
+    temp124-dimensiondepth = `41`.
+    temp124-dimensionheight = `12`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1083`.
+    temp124-name = `Jet Scan Professional`.
+    temp124-category = `SC`.
+    temp124-suppliername = `Printer for All`.
+    temp124-shortdescription = `Flatbed scanner - A4 - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1083.jpg`.
+    temp124-price = `189`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `35`.
+    temp124-dimensiondepth = `40`.
+    temp124-dimensionheight = `10`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1085`.
+    temp124-name = `Copymaster`.
+    temp124-category = `PR`.
+    temp124-suppliername = `Alpha Printers`.
+    temp124-shortdescription = `Copymaster`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1085.jpg`.
+    temp124-price = `1499`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `23.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `45`.
+    temp124-dimensiondepth = `42`.
+    temp124-dimensionheight = `22`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1090`.
+    temp124-name = `Surround Sound`.
+    temp124-category = `SP`.
+    temp124-suppliername = `Speaker Experts`.
+    temp124-shortdescription = `PC multimedia speakers - 5 Watt (Total)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1090.jpg`.
+    temp124-price = `39`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `12`.
+    temp124-dimensiondepth = `10`.
+    temp124-dimensionheight = `16`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1091`.
+    temp124-name = `Blaster Extreme`.
+    temp124-category = `SP`.
+    temp124-suppliername = `Speaker Experts`.
+    temp124-shortdescription = `PC multimedia speakers - 10 Watt (Total) - 2-way`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1091.jpg`.
+    temp124-price = `26`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1.4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `13`.
+    temp124-dimensiondepth = `11`.
+    temp124-dimensionheight = `17.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1092`.
+    temp124-name = `Sound Booster`.
+    temp124-category = `SP`.
+    temp124-suppliername = `Speaker Experts`.
+    temp124-shortdescription = `PC multimedia speakers - optimized for Blutooth/A2DP`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1092.jpg`.
+    temp124-price = `45`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `12.4`.
+    temp124-dimensiondepth = `10.4`.
+    temp124-dimensionheight = `18.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1100`.
+    temp124-name = `Smart Office`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Complete package, 1 User, Office Applications (word processing, spreadsheet, presentations)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1100.jpg`.
+    temp124-price = `89.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `1.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `15`.
+    temp124-dimensiondepth = `6.5`.
+    temp124-dimensionheight = `2.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1101`.
+    temp124-name = `Smart Design`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Complete package, 1 User, Image editing, processing`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1101.jpg`.
+    temp124-price = `79.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `14`.
+    temp124-dimensiondepth = `6.7`.
+    temp124-dimensionheight = `24`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1102`.
+    temp124-name = `Smart Network`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Complete package, 1 User, Network Software Utilities, Useful Applications and Documentation`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1102.jpg`.
+    temp124-price = `69`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `16`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `27`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1103`.
+    temp124-name = `Smart Multimedia`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Complete package, 1 User, different Multimedia applications, playing music, watching DVDs, only with this Smart package`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1103.jpg`.
+    temp124-price = `77`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `11`.
+    temp124-dimensiondepth = `3.4`.
+    temp124-dimensionheight = `22`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1104`.
+    temp124-name = `Smart Games`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Complete package, 1 User, various games for amusement, logic, action, jump&run`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1104.jpg`.
+    temp124-price = `55`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `1.1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `10`.
+    temp124-dimensiondepth = `3`.
+    temp124-dimensionheight = `30`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1105`.
+    temp124-name = `Smart Internet Antivirus`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Brainsoft`.
+    temp124-shortdescription = `Complete package, 1 User, highly recommended for internet users as anti-virus protection`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1105.jpg`.
+    temp124-price = `29`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.7`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `16`.
+    temp124-dimensiondepth = `4`.
+    temp124-dimensionheight = `21`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1106`.
+    temp124-name = `Smart Firewall`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Brainsoft`.
+    temp124-shortdescription = `Complete package, 1 User, recommended for internet users, protect your PC against cyber-crime`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1106.jpg`.
+    temp124-price = `34`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.9`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `17.9`.
+    temp124-dimensiondepth = `4.2`.
+    temp124-dimensionheight = `23.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1107`.
+    temp124-name = `Smart Money`.
+    temp124-category = `SW`.
+    temp124-suppliername = `Brainsoft`.
+    temp124-shortdescription = `Complete package, 1 User, bring your money in your mind, see what you have and what you want`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1107.jpg`.
+    temp124-price = `29.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `12`.
+    temp124-dimensiondepth = `1.5`.
+    temp124-dimensionheight = `19`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1110`.
+    temp124-name = `PC Lock`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Robust 3m anti-burglary protection for your laptop computer`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1110.jpg`.
+    temp124-price = `8.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.03`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `20`.
+    temp124-dimensiondepth = `8`.
+    temp124-dimensionheight = `4.3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1111`.
+    temp124-name = `Notebook Lock`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Robust 1m anti-burglary protection for your desktop computer`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1111.jpg`.
+    temp124-price = `6.9`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.02`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `31`.
+    temp124-dimensiondepth = `9`.
+    temp124-dimensionheight = `7`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1112`.
+    temp124-name = `Web cam reality`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Color webcam, color, High-Speed USB`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1112.jpg`.
+    temp124-price = `39`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.075`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `9`.
+    temp124-dimensiondepth = `8.2`.
+    temp124-dimensionheight = `1.3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1113`.
+    temp124-name = `Screen clean`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `10 separately packed screen wipes`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1113.jpg`.
+    temp124-price = `2.3`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.05`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `2`.
+    temp124-dimensiondepth = `2`.
+    temp124-dimensionheight = `0.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1114`.
+    temp124-name = `Fabric bag professional`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Notebook bag, plenty of room for stationery and writing materials`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1114.jpg`.
+    temp124-price = `31`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `42`.
+    temp124-dimensiondepth = `32`.
+    temp124-dimensionheight = `7`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1115`.
+    temp124-name = `Wireless DSL Router`.
+    temp124-category = `TC`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Wireless DSL Router (available in blue, black and silver)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1115.jpg`.
+    temp124-price = `49`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.45`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `19.3`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1116`.
+    temp124-name = `Wireless DSL Router / Repeater`.
+    temp124-category = `TC`.
+    temp124-suppliername = `Red Point Stores`.
+    temp124-shortdescription = `Wireless DSL Router / Repeater (available in blue, black and silver)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1116.jpg`.
+    temp124-price = `59`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.45`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `19.3`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1117`.
+    temp124-name = `Wireless DSL Router / Repeater and Print Server`.
+    temp124-category = `TC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Wireless DSL Router / Repeater and Print Server (available in blue, black and silver)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1117.jpg`.
+    temp124-price = `69`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.45`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `19.3`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1118`.
+    temp124-name = `USB Stick`.
+    temp124-category = `CSA`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `USB 2.0 High-Speed 64 GB`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1118.jpg`.
+    temp124-price = `35`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.015`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `1.5`.
+    temp124-dimensiondepth = `8.7`.
+    temp124-dimensionheight = `1.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1120`.
+    temp124-name = `Cordless Bluetooth Keyboard, english international`.
+    temp124-category = `KB`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Cordless Bluetooth Keyboard with English keys`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1120.jpg`.
+    temp124-price = `29`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `51.4`.
+    temp124-dimensiondepth = `23`.
+    temp124-dimensionheight = `4`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1137`.
+    temp124-name = `Flat XXL`.
+    temp124-category = `FS`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Optimum Hi-Resolution max. 2048 × 1536 @ 85Hz, Dot Pitch: 0.24mm`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1137.jpg`.
+    temp124-price = `1430`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `18`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `54`.
+    temp124-dimensiondepth = `22`.
+    temp124-dimensionheight = `38`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1138`.
+    temp124-name = `Pocket Mouse`.
+    temp124-category = `MI`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Portable pocket Mouse with retracting cord`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1138.jpg`.
+    temp124-price = `23`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.02`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `0.3`.
+    temp124-dimensiondepth = `0.5`.
+    temp124-dimensionheight = `1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1210`.
+    temp124-name = `PC Power Station`.
+    temp124-category = `DC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `PC Power Station with 3,4 Ghz quad-core, 32 GB DDR3 SDRAM, feels like a PC, Windows 8 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1210.jpg`.
+    temp124-price = `2399`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `28`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `43`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1500`.
+    temp124-name = `Server Basic`.
+    temp124-category = `SV`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Dual socket, quad-core processing server with 1333 MHz Front Side Bus with 10Gb connectivity`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1500.jpg`.
+    temp124-price = `5000`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `18`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `34`.
+    temp124-dimensiondepth = `35`.
+    temp124-dimensionheight = `23`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1501`.
+    temp124-name = `Server Professional`.
+    temp124-category = `SV`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 10Gb connectivity`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1501.jpg`.
+    temp124-price = `15000`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `25`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `29`.
+    temp124-dimensiondepth = `30`.
+    temp124-dimensionheight = `27`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1502`.
+    temp124-name = `Server Power Pro`.
+    temp124-category = `SV`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 100Gb connectivity`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1502.jpg`.
+    temp124-price = `25000`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `35`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `22`.
+    temp124-dimensiondepth = `27.3`.
+    temp124-dimensionheight = `37`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6130`.
+    temp124-name = `Flat Watch HD32`.
+    temp124-category = `FST`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `32-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6130.jpg`.
+    temp124-price = `1459`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.6`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `78`.
+    temp124-dimensiondepth = `22.1`.
+    temp124-dimensionheight = `55`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6131`.
+    temp124-name = `Flat Watch HD37`.
+    temp124-category = `FST`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `37-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6131.jpg`.
+    temp124-price = `1199`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `99.1`.
+    temp124-dimensiondepth = `26`.
+    temp124-dimensionheight = `61`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6132`.
+    temp124-name = `Flat Watch HD41`.
+    temp124-category = `FST`.
+    temp124-suppliername = `Very Best Screens`.
+    temp124-shortdescription = `41-inch, 1366x768 Pixel, 16:9, HDTV ready`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6132.jpg`.
+    temp124-price = `899`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `1.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `128`.
+    temp124-dimensiondepth = `23`.
+    temp124-dimensionheight = `79.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-7030`.
+    temp124-name = `Platinberry`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `Our new multifunctional Handheld with phone function in platinum`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-7030.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `8.1`.
+    temp124-dimensiondepth = `13`.
+    temp124-dimensionheight = `12.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-7020`.
+    temp124-name = `Goldberry`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `Our new multifunctional Handheld with phone function in gold`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-7020.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `8.1`.
+    temp124-dimensiondepth = `13`.
+    temp124-dimensionheight = `12.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-7010`.
+    temp124-name = `Silverberry`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `Our new multifunctional Handheld with phone function in silver`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-7010.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `8.1`.
+    temp124-dimensiondepth = `13`.
+    temp124-dimensionheight = `12.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-7000`.
+    temp124-name = `Copperberry`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `Our new multifunctional Handheld with phone function in copper`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-7000.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `8.1`.
+    temp124-dimensiondepth = `13`.
+    temp124-dimensionheight = `12.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1095`.
+    temp124-name = `Lovely Sound 5.1 Wireless`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `5.1 Headset, 40 Hz-20 kHz, Wireless`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1095.jpg`.
+    temp124-price = `49`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `80`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `24`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `23`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1096`.
+    temp124-name = `Lovely Sound 5.1`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `5.1 Headset, 40 Hz-20 kHz, 3m cable`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1096.jpg`.
+    temp124-price = `39`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `130`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `25`.
+    temp124-dimensiondepth = `17`.
+    temp124-dimensionheight = `19`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1097`.
+    temp124-name = `Lovely Sound Stereo`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `5.1 Headset, 40 Hz-20 kHz, 1m cable`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1097.jpg`.
+    temp124-price = `29`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `60`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `21.3`.
+    temp124-dimensiondepth = `2.4`.
+    temp124-dimensionheight = `19.7`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6123`.
+    temp124-name = `Power Pro Player 80`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `MP3-Player with 80 GB SSD and Color Display, can play movies`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6123.jpg`.
+    temp124-price = `299`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `267`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `4`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `0.8`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6122`.
+    temp124-name = `Power Pro Player 40`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `MP3-Player with 40 GB HDD and Color Display, can play movies`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6122.jpg`.
+    temp124-price = `167`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `266`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `5.1`.
+    temp124-dimensiondepth = `8`.
+    temp124-dimensionheight = `9.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6121`.
+    temp124-name = `ITelo Jog-Mate`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `ITelo Jog-Mate 64 GB HDD and Color Display, can play movies`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6121.jpg`.
+    temp124-price = `63`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `134`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `5.1`.
+    temp124-dimensiondepth = `8`.
+    temp124-dimensionheight = `9.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6120`.
+    temp124-name = `ITelo MusicStick`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `64 GB USB Music-on-a-Stick`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6120.jpg`.
+    temp124-price = `45`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `134`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `1.5`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6111`.
+    temp124-name = `Record Movie`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `160 GB HDD, CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6111.jpg`.
+    temp124-price = `288`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `3.1`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `38`.
+    temp124-dimensiondepth = `26`.
+    temp124-dimensionheight = `6.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6110`.
+    temp124-name = `Play Movie`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Fasttech`.
+    temp124-shortdescription = `CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6110.jpg`.
+    temp124-price = `130`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `2.4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `37`.
+    temp124-dimensiondepth = `24`.
+    temp124-dimensionheight = `6`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6102`.
+    temp124-name = `Beam Breaker B-3`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `1080p, DLP max. 12,3 Meter, 3D-ready`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6102.jpg`.
+    temp124-price = `889`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30.4`.
+    temp124-dimensiondepth = `23.1`.
+    temp124-dimensionheight = `23`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6101`.
+    temp124-name = `Beam Breaker B-2`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `1080p, DLP max.9,34 Meter, 2D-ready`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6101.jpg`.
+    temp124-price = `679`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30.4`.
+    temp124-dimensiondepth = `23.1`.
+    temp124-dimensionheight = `23`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2002`.
+    temp124-name = `Portable DVD Player with 9" LCD Monitor`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Technocom`.
+    temp124-shortdescription = `9" LCD Screen, storage holds up to 8 hours, 2 speakers included`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2002.jpg`.
+    temp124-price = `853.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.72`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `21`.
+    temp124-dimensiondepth = `16.5`.
+    temp124-dimensionheight = `14`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-6100`.
+    temp124-name = `Beam Breaker B-1`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `720p, DLP Projector max. 8,45 Meter, 2D`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-6100.jpg`.
+    temp124-price = `469`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `1.7`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30.4`.
+    temp124-dimensiondepth = `23.1`.
+    temp124-dimensionheight = `23`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2027`.
+    temp124-name = `Removable CD/DVD Laser Labels`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Removable jewel case labels, zero residues (100)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2027.jpg`.
+    temp124-price = `8.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.15`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `5.5`.
+    temp124-dimensiondepth = `2`.
+    temp124-dimensionheight = `2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2026`.
+    temp124-name = `Audio/Video Cable Kit - 4m`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Quality cables for notebooks and projectors`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2026.jpg`.
+    temp124-price = `29.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `D`.
+    temp124-weight = `0.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `21`.
+    temp124-dimensiondepth = `10.2`.
+    temp124-dimensionheight = `13`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2025`.
+    temp124-name = `CD/DVD case: 264 sleeves`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Organizer and protective case for 264 CDs and DVDs`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2025.jpg`.
+    temp124-price = `44.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.65`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `13`.
+    temp124-dimensiondepth = `13`.
+    temp124-dimensionheight = `20`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2001`.
+    temp124-name = `10" Portable DVD player`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `10" LCD Screen, storage battery holds up to 8 hours`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2001.jpg`.
+    temp124-price = `449.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.84`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `24`.
+    temp124-dimensiondepth = `19.5`.
+    temp124-dimensionheight = `29`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-2000`.
+    temp124-name = `7" Widescreen Portable DVD Player w MP3`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `7" LCD Screen, storage battery holds up to 6 hours!`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-2000.jpg`.
+    temp124-price = `249.99`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `0.79`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `21.4`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `27.6`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1603`.
+    temp124-name = `Gaming Monster Pro`.
+    temp124-category = `DC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `3,4 Ghz quad core, 16 GB DDR3 SDRAM, 4000 GB Hard Disc, Graphic Card: Hurricane GX, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1603.jpg`.
+    temp124-price = `1700`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `6.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `27`.
+    temp124-dimensiondepth = `28`.
+    temp124-dimensionheight = `42`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1602`.
+    temp124-name = `Gaming Monster`.
+    temp124-category = `DC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `3,4 Ghz quad core, 8 GB DDR3 SDRAM, 2000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1602.jpg`.
+    temp124-price = `1200`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `5.9`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `26.5`.
+    temp124-dimensiondepth = `34`.
+    temp124-dimensionheight = `47`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1601`.
+    temp124-name = `Family PC Pro`.
+    temp124-category = `DC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1601.jpg`.
+    temp124-price = `900`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `5.3`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `25`.
+    temp124-dimensiondepth = `31.7`.
+    temp124-dimensionheight = `40.2`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1600`.
+    temp124-name = `Family PC Basic`.
+    temp124-category = `DC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `2,8 Ghz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Graphic Card: Proctra X, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1600.jpg`.
+    temp124-price = `600`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `4.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `21.4`.
+    temp124-dimensiondepth = `29`.
+    temp124-dimensionheight = `38`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1119`.
+    temp124-name = `Travel Adapter`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Universal Travel Adapter`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1119.jpg`.
+    temp124-price = `79`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `88`.
+    temp124-weightunit = `G`.
+    temp124-dimensionwidth = `2`.
+    temp124-dimensiondepth = `3.1`.
+    temp124-dimensionheight = `3.9`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-8000`.
+    temp124-name = `ITelO FlexTop I4000`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Notebook with 2,80 GHz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-8000.jpg`.
+    temp124-price = `799`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `31`.
+    temp124-dimensiondepth = `19`.
+    temp124-dimensionheight = `3.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-8001`.
+    temp124-name = `ITelO FlexTop I6300c`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Notebook with 2,80 GHz dual core, 8 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-8001.jpg`.
+    temp124-price = `799`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `32`.
+    temp124-dimensiondepth = `20`.
+    temp124-dimensionheight = `3.4`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-8002`.
+    temp124-name = `ITelO FlexTop I9100`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Notebook with 2,80 GHz quad core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-8002.jpg`.
+    temp124-price = `1199`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `38`.
+    temp124-dimensiondepth = `21`.
+    temp124-dimensionheight = `4.1`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-8003`.
+    temp124-name = `ITelO FlexTop I9800`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Notebook with 2,80 GHz quad core, 8 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-8003.jpg`.
+    temp124-price = `1388`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `PF-1000`.
+    temp124-name = `Flyer`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Flyer for our product palette`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/PF-1000.jpg`.
+    temp124-price = `0`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.01`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `46`.
+    temp124-dimensiondepth = `30`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9999`.
+    temp124-name = `Maxi Tablet`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9999.jpg`.
+    temp124-price = `749`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9998`.
+    temp124-name = `Smartphone Beta`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `5 Megapixel Camera, Wi-Fi 802.11 b/g/n, Bluetooth, GPS A-GPS support`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9998.jpg`.
+    temp124-price = `699`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.75`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9997`.
+    temp124-name = `e-Book Reader ReadMe`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `6-Inch E Ink Screen, Access To e-book Store, Adjustable Font Styles and Sizes, Stores Up To 1,000 Books`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9997.jpg`.
+    temp124-price = `633`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9996`.
+    temp124-name = `Tablet Pouch`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Stylish tablet pouch, protects from scratches, color: black`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9996.jpg`.
+    temp124-price = `20`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.03`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `25`.
+    temp124-dimensiondepth = `40`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9995`.
+    temp124-name = `Smartphone Cover`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Titanium`.
+    temp124-shortdescription = `Durable high quality plastic bump-sleeve, lightweight, protects from scratches, rubber coating, multiple colors available, Accurate design and cut-outs for your device, snap-on design`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9995.jpg`.
+    temp124-price = `15`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.02`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9994`.
+    temp124-name = `Camcorder View`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `1920x1080 Full HD, image stabilization reduces blur, 27x Optical / 32x Extended Zoom, wide angle Lens, 2.7" wide LCD display`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9994.jpg`.
+    temp124-price = `1388`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `27`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9993`.
+    temp124-name = `Mini Tablet`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage, 4325 mAh battery (Up to 8 hours of active use)`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9993.jpg`.
+    temp124-price = `833`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `3.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9992`.
+    temp124-name = `Smartphone Alpha`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9992.jpg`.
+    temp124-price = `599`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.75`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-9991`.
+    temp124-name = `Smartphone Leather Case`.
+    temp124-category = `AC`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Button Clasp, Quality Material, 100% Leather, compatible with many smartphone models`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-9991.jpg`.
+    temp124-price = `25`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.02`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1251`.
+    temp124-name = `Astro Laptop 1516`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Flexible Laptop with 2,5 GHz Quad Core, 15" HD TN, 16 GB DDR SDRAM, 256 GB SSD, Windows 10 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1251.jpg`.
+    temp124-price = `989`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1252`.
+    temp124-name = `Astro Phone 6`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `6 inch 1280x800 HD display (216 ppi), Quad-core processor, 8 GB internal storage (actual formatted capacity will be less), 3050 mAh battery (Up to 8 hours of active use), grey or black`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1252.jpg`.
+    temp124-price = `649`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.75`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `8`.
+    temp124-dimensiondepth = `6`.
+    temp124-dimensionheight = `1.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1253`.
+    temp124-name = `Benda Laptop 1408`.
+    temp124-category = `LT`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Flexible Laptop with 2,5 GHz Dual Core, 14" HD+ TN, 8 GB DDR SDRAM, 324 GB SSD, Windows 10 Pro`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1253.jpg`.
+    temp124-price = `976`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `4.2`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `30`.
+    temp124-dimensiondepth = `18`.
+    temp124-dimensionheight = `3`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1254`.
+    temp124-name = `Bending Screen 21HD`.
+    temp124-category = `FS`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Optimum Hi-Resolution Widescreen max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, D-Sub`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1254.jpg`.
+    temp124-price = `250`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `15`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `37`.
+    temp124-dimensiondepth = `12`.
+    temp124-dimensionheight = `36`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1255`.
+    temp124-name = `Broad Screen 22HD`.
+    temp124-category = `FS`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `Optimum Hi-Resolution Widescreen max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.27mm, HDMI, D-Sub`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1255.jpg`.
+    temp124-price = `270`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `O`.
+    temp124-weight = `16`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `39`.
+    temp124-dimensiondepth = `12`.
+    temp124-dimensionheight = `38`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1256`.
+    temp124-name = `Cerdik Phone 7`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1256.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `0.75`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `9`.
+    temp124-dimensiondepth = `15`.
+    temp124-dimensionheight = `1.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1257`.
+    temp124-name = `Cepat Tablet 10.5`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `10.5-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1257.jpg`.
+    temp124-price = `549`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.8`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `48`.
+    temp124-dimensiondepth = `31`.
+    temp124-dimensionheight = `4.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    temp124-productid = `HT-1258`.
+    temp124-name = `Cepat Tablet 8`.
+    temp124-category = `ST`.
+    temp124-suppliername = `Ultrasonic United`.
+    temp124-shortdescription = `8-inch Multitouch HD Screen (2000 x 1500) 32GB Internal Memory, Wireless N Wi-Fi, Bluetooth, GPS Enabled, 1.5 GHz Quad-Core Processor`.
+    temp124-pictureurl = `sap/ui/demo/mock/images/HT-1258.jpg`.
+    temp124-price = `529`.
+    temp124-currencycode = `EUR`.
+    temp124-status = `A`.
+    temp124-weight = `2.5`.
+    temp124-weightunit = `KG`.
+    temp124-dimensionwidth = `38`.
+    temp124-dimensiondepth = `21`.
+    temp124-dimensionheight = `3.5`.
+    temp124-dimensionunit = `cm`.
+    INSERT temp124 INTO TABLE temp123.
+    t_all = temp123.
 
     " Welcome.controller: the three panels read FeaturedProducts by Type, and
     " _selectPromotedItems keeps TWO of the five Promoted rows, drawn at
     " random - drawn here, once per start, as the original draws them once
-    DATA(promoted) = VALUE ty_t_row( ).
-    LOOP AT t_featured INTO DATA(featured).
+    
+    CLEAR temp125.
+    
+    promoted = temp125.
+    
+    LOOP AT t_featured INTO featured.
       " UNASSIGN first - see cart_mirror
       UNASSIGN <featured_product>.
-      ASSIGN t_all[ productid = featured-productid ] TO <featured_product>.
+      READ TABLE t_all WITH KEY productid = featured-productid ASSIGNING <featured_product>.
       IF <featured_product> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
@@ -4751,31 +6967,66 @@ CLASS z2ui5_cl_smpc_demo_004 IMPLEMENTATION.
       ENDCASE.
     ENDLOOP.
 
-    DATA(random) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 1 max = lines( promoted ) ).
-    DATA(second) = random->get_next( ).
-    DATA(first) = second.
+    
+    random = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 1 max = lines( promoted ) ).
+    
+    second = random->get_next( ).
+    
+    first = second.
     WHILE first = second.
       first = random->get_next( ).
     ENDWHILE.
-    t_promoted = VALUE #( ( promoted[ first ] ) ( promoted[ second ] ) ).
+    
+    CLEAR temp126.
+    
+    
+    temp11 = sy-tabix.
+    READ TABLE promoted INDEX first ASSIGNING <temp10>.
+    sy-tabix = temp11.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    INSERT <temp10> INTO TABLE temp126.
+    
+    
+    temp13 = sy-tabix.
+    READ TABLE promoted INDEX second ASSIGNING <temp12>.
+    sy-tabix = temp13.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    INSERT <temp12> INTO TABLE temp126.
+    t_promoted = temp126.
 
     " Welcome.onInit: the carousel opens on one of its four pages, at random
-    carousel_page = SWITCH #( cl_abap_random_int=>create( seed = cl_abap_random=>seed( )
-                                                          min  = 1
-                                                          max  = 4 )->get_next( )
-                              WHEN 1 THEN `carouselShipping`
-                              WHEN 2 THEN `carouselInviteFriend`
-                              WHEN 3 THEN `carouselTablet`
-                              ELSE `carouselCreditCard` ).
+    
+    CASE cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 1 max = 4 )->get_next( ).
+      WHEN 1.
+        temp128 = `carouselShipping`.
+      WHEN 2.
+        temp128 = `carouselInviteFriend`.
+      WHEN 3.
+        temp128 = `carouselTablet`.
+      WHEN OTHERS.
+        temp128 = `carouselCreditCard`.
+    ENDCASE.
+    carousel_page = temp128.
 
     " the categoryList's own sorter
     SORT t_categories BY categoryname AS TEXT.
 
     " Category._loadSuppliers: every supplier of the catalogue once, sorted -
     " the Supplier items of the filter dialog
-    LOOP AT t_all INTO DATA(product).
-      IF NOT line_exists( t_suppliers[ suppliername = product-suppliername ] ).
-        INSERT VALUE #( suppliername = product-suppliername ) INTO TABLE t_suppliers.
+    
+    LOOP AT t_all INTO product.
+      
+      READ TABLE t_suppliers WITH KEY suppliername = product-suppliername TRANSPORTING NO FIELDS.
+      temp129 = sy-subrc.
+      IF NOT temp129 = 0.
+        
+        CLEAR temp130.
+        temp130-suppliername = product-suppliername.
+        INSERT temp130 INTO TABLE t_suppliers.
       ENDIF.
     ENDLOOP.
     SORT t_suppliers BY suppliername.
