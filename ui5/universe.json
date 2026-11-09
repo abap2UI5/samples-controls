@@ -1884,7 +1884,7 @@
     {
      "name": "OverflowToolbarTokenizer",
      "entity": "sap.m.OverflowToolbarTokenizer",
-     "since": null,
+     "since": "1.155",
      "deprecated": null
     },
     {

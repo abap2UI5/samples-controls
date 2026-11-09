@@ -1,8 +1,8 @@
 {
   "source": {
     "repo": "https://github.com/SAP/openui5",
-    "commit": "58efb49f68f6a5f722533d79eac81893a7f6e8e7",
-    "committed": "2026-11-02",
+    "commit": "c6d9599d49fcd0ec870b3b32d71d9697b01dede2",
+    "committed": "2026-11-09",
     "version": "1.155.0-SNAPSHOT",
     "from": "src/*/test/**/demokit/docuindex.json -> explored.samples[]",
     "libraries": 13,
@@ -442,8 +442,8 @@
       "description": "A dialog that can be toggled to fullscreen mode through a header button, by double-clicking the header, or by using the 'Shift+Ctrl+F' keyboard shortcut."
     },
     "sap.m.sample.DialogLandmarkInfo": {
-      "name": "Dialog - Landmark Roles",
-      "description": "Configuring the Dialog's Header, Content and Footer region landmarks with DialogAccessibleLandmarkInfo - suppressing the Content region when the content is a Page with its own landmarks, and suppressing all regions for a small dialog."
+      "name": "Dialog - Accessible Landmarks",
+      "description": "Embedding a Page inside a headerless Dialog with DialogAccessibleLandmarkInfo – the Dialog's Content region is suppressed so the Page's own landmarks are not nested, and the Page title labels the Dialog."
     },
     "sap.m.sample.DialogMessage": {
       "name": "Message Dialog",

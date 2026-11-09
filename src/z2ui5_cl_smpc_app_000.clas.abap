@@ -6145,7 +6145,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       ( module = `sap.m`              control = `sap.m.OverflowToolbarTokenizer`        name = `OverflowToolbarTokenizer`                                  class = `z2ui5_cl_smpc_app_203` path = `src/02/01/z2ui5_cl_smpc_app_203.clas.abap`
         score = 4
         score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
-        since = `1.139`
+        since = `1.155`
         since_post171 = abap_true
         is_post171 = abap_true
         notes = text1
