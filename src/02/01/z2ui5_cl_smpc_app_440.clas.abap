@@ -46,7 +46,7 @@ CLASS z2ui5_cl_smpc_app_440 IMPLEMENTATION.
                 " the controller's lazy Fragment.load / isOpen / close / openBy toggle,
                 " roundtrip-free and anchored to the pressed button
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `endContentMenu` ) ( `toggleBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = VALUE #( ( `endContentMenu` ) ( `toggleBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->ele( `dependents`
                     )->ele( `Menu`

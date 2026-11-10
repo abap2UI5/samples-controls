@@ -75,7 +75,7 @@ CLASS z2ui5_cl_smpc_app_497 IMPLEMENTATION.
                 )->tag( `Button`
                     )->a( n = `text`  v = client->_bind( swipe_text )
                     )->a( n = `type`  v = client->_bind( swipe_type )
-                    )->a( n = `press` v = client->_event( val = `REJECT` arg = `$event.oSource.getParent().indexOfItem($event.oSource.getParent().getSwipedItem())` ) ).
+                    )->a( n = `press` v = client->_event( val = `REJECT` arg = `$event.getSource().getParent().indexOfItem($event.getSource().getParent().getSwipedItem())` ) ).
 
     client->view_display( view->stringify( ) ).
 

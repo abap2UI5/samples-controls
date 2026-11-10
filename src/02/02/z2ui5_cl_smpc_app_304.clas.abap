@@ -80,9 +80,9 @@ CLASS z2ui5_cl_smpc_app_304 IMPLEMENTATION.
                 )->a( n = `selectedDates` v = client->_bind( t_selected )
                 )->a( n = `select`        v = client->_event( val   = `CAL_SELECT`
                                                               t_arg = VALUE #(
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                                ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                                                                ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
 
                 )->ele( n = `selectedDates` ns = `u`
                     )->tag( n = `DateRange` ns = `u`

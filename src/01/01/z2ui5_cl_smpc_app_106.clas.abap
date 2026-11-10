@@ -162,7 +162,7 @@ CLASS z2ui5_cl_smpc_app_106 IMPLEMENTATION.
                     )->ele( n = `messagesIndicator` ns = `semantic`
                         )->ele( n = `MessagesIndicator` ns = `semantic`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                            t_arg = VALUE #( ( `semMessagePopover` ) ( `toggleBy` ) ( `$event.oSource.sId` ) ) )
+                                                                            t_arg = VALUE #( ( `semMessagePopover` ) ( `toggleBy` ) ( `$event.getSource().getId()` ) ) )
 
                             " the original's controller-built MessagePopover over the
                             " message model, declared as a dependent of its anchor
@@ -190,11 +190,11 @@ CLASS z2ui5_cl_smpc_app_106 IMPLEMENTATION.
                         )->tag( `OverflowToolbarButton`
                             )->a( n = `icon`  v = `sap-icon://settings`
                             )->a( n = `text`  v = `Settings`
-                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.oSource.sId` )
+                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.getSource().getId()` )
                         )->tag( `OverflowToolbarButton`
                             )->a( n = `icon`  v = `sap-icon://video`
                             )->a( n = `text`  v = `Video`
-                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.oSource.sId` )
+                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.getSource().getId()` )
 
                     )->end(
                     )->ele( n = `content` ns = `semantic`
@@ -208,11 +208,11 @@ CLASS z2ui5_cl_smpc_app_106 IMPLEMENTATION.
                         )->tag( `Button`
                             )->a( n = `text`  v = `CustomShareBtn1`
                             )->a( n = `icon`  v = `sap-icon://color-fill`
-                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.oSource.sId` )
+                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.getSource().getId()` )
                         )->tag( `Button`
                             )->a( n = `text`  v = `CustomShareBtn2`
                             )->a( n = `icon`  v = `sap-icon://crop`
-                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.oSource.sId` ) ).
+                            )->a( n = `press` v = client->_event( val = `PRESS` arg = `$event.getSource().getId()` ) ).
 
     client->view_display( view->stringify( ) ).
 

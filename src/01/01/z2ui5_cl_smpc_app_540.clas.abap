@@ -101,7 +101,7 @@ CLASS z2ui5_cl_smpc_app_540 IMPLEMENTATION.
                                   t_arg = VALUE #(
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `$event.getSource().getSelectedAppointments().length` )
                                     ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
 
                 )->ele( `toolbarContent`

@@ -137,7 +137,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://text-color`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPalettePopoverFull` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPalettePopoverFull` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -147,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://color-fill`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPalettePopoverMin` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPalettePopoverMin` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://color-fill`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPalettePopoverCustom` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPalettePopoverCustom` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -167,7 +167,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://palette`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPalettePopoverMinDef` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPalettePopoverMinDef` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -177,7 +177,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://color-fill`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPaletteDisplayMode` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPaletteDisplayMode` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -188,7 +188,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://color-fill`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPaletteDisplayMode` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                           t_arg = VALUE #( ( `oColorPaletteDisplayMode` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
             )->end(
             )->ele( `ColumnListItem`
@@ -198,7 +198,7 @@ CLASS z2ui5_cl_smpc_app_250 IMPLEMENTATION.
                     )->a( n = `icon`         v = `sap-icon://cursor-arrow`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                           t_arg = VALUE #( ( `oColorPaletteSelectedColor` ) ( `openBy` ) ( `$event.oSource.sId` ) ) ) ).
+                                                                           t_arg = VALUE #( ( `oColorPaletteSelectedColor` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) ) ).
 
     client->view_display( view->stringify( ) ).
 

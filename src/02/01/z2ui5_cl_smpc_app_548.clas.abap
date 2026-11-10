@@ -629,7 +629,7 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `CREATE_CANCEL` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 
@@ -720,9 +720,6 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
         ENDIF.
         client->popup_destroy( ).
         client->message_toast_display( |Appointment '{ c_title }' created.| ).
-
-      WHEN `CREATE_CANCEL`.
-        client->popup_destroy( ).
 
       WHEN `APPT_DROP`.
         " onAppointmentDrop shifts the appointment by the dragged DELTA; the new

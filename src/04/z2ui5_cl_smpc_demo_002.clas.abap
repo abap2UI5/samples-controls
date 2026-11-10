@@ -566,19 +566,19 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
             )->a( n = `text`  v = client->_bind( det_customer )
         )->tag( `ObjectAttribute`
             )->a( n = `title` v = `Ordered`
-            )->a( n = `text`  v = |\{ path: '{ client->_bind( val = det_orderdate path = abap_true ) }', type: 'DateType', | &&
+            )->a( n = `text`  v = |\{ path: '{ client->_bind_path( det_orderdate ) }', type: 'DateType', | &&
                                   |formatOptions: \{ style: 'medium', source: \{ pattern: 'timestamp' \} \} \}|
         )->tag( `ObjectAttribute`
             )->a( n = `title` v = `Shipped`
-            )->a( n = `text`  v = |\{= ${ client->_bind( det_shippeddate ) } ? $\{ path: '{ client->_bind( val = det_shippeddate path = abap_true ) }', | &&
+            )->a( n = `text`  v = |\{= ${ client->_bind( det_shippeddate ) } ? $\{ path: '{ client->_bind_path( det_shippeddate ) }', | &&
                                   |type: 'DateType', formatOptions: \{ style: 'medium', source: \{ pattern: 'timestamp' \} \} \} : 'Not shipped yet' \}| ).
 
     header->ele( n = `VerticalLayout` ns = `l`
         )->tag( `Label`
             )->a( n = `text` v = `Price`
         )->tag( `ObjectNumber`
-            )->a( n = `number` v = |\{ parts: [ \{ path: '{ client->_bind( val = det_total path = abap_true ) }' \}, | &&
-                                   |\{ path: '{ client->_bind( val = det_currency path = abap_true ) }' \} ], | &&
+            )->a( n = `number` v = |\{ parts: [ \{ path: '{ client->_bind_path( det_total ) }' \}, | &&
+                                   |\{ path: '{ client->_bind_path( det_currency ) }' \} ], | &&
                                    |type: 'CurrencyType', formatOptions: \{ showMeasure: false \} \}|
             )->a( n = `unit`   v = client->_bind( det_currency ) ).
 
@@ -798,7 +798,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                 )->tag( `ObjectAttribute`
                     )->a( n = `text` v = `{QUANTITY}`
                 )->tag( `ObjectNumber`
-                    )->a( n = `number` v = |\{ parts: [ \{ path: 'ITEM_TOTAL' \}, \{ path: '{ client->_bind( val = det_currency path = abap_true ) }' \} ], | &&
+                    )->a( n = `number` v = |\{ parts: [ \{ path: 'ITEM_TOTAL' \}, \{ path: '{ client->_bind_path( det_currency ) }' \} ], | &&
                                            |type: 'CurrencyType', formatOptions: \{ showMeasure: false \} \}|
                     )->a( n = `unit`   v = client->_bind( det_currency ) ).
 

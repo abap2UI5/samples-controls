@@ -69,23 +69,23 @@ CLASS z2ui5_cl_smpc_app_448 IMPLEMENTATION.
             " prefix stripped - the class name travels, the strip happens in ABAP
             )->ele( n = `addAction` ns = `semantic`
                 )->tag( n = `AddAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.oSource.getMetadata().getName()` )
+                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.getSource().getMetadata().getName()` )
 
             )->end(
             )->ele( n = `flagAction` ns = `semantic`
                 )->tag( n = `FlagAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.oSource.getMetadata().getName()` )
+                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.getSource().getMetadata().getName()` )
 
             )->end(
             )->ele( n = `favoriteAction` ns = `semantic`
                 )->tag( n = `FavoriteAction` ns = `semantic`
-                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.oSource.getMetadata().getName()` )
+                    )->a( n = `press` v = client->_event( val = `SEMANTIC_PRESS` arg = `$event.getSource().getMetadata().getName()` )
 
             )->end(
             )->ele( n = `messagesIndicator` ns = `semantic`
                 )->ele( n = `MessagesIndicator` ns = `semantic`
                     )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                    t_arg = VALUE #( ( `draftMessagePopover` ) ( `toggleBy` ) ( `$event.oSource.sId` ) ) )
+                                                                    t_arg = VALUE #( ( `draftMessagePopover` ) ( `toggleBy` ) ( `$event.getSource().getId()` ) ) )
 
                     " the controller-built MessagePopover over the message model,
                     " declared as a dependent of its anchor (app 107 precedent)

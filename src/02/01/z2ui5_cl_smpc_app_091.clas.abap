@@ -47,7 +47,7 @@ CLASS z2ui5_cl_smpc_app_091 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Time Picker`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -58,7 +58,7 @@ CLASS z2ui5_cl_smpc_app_091 IMPLEMENTATION.
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `tooltip`      v = `Open Time Picker`
                 )->a( n = `icon`         v = `sap-icon://time-entry-request`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -68,7 +68,7 @@ CLASS z2ui5_cl_smpc_app_091 IMPLEMENTATION.
             )->tag( `Link`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Time Picker`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenTP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
 

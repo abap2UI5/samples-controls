@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_502 IMPLEMENTATION.
             " selector's domRef - the same popover is declared in dependents and opened
             " anchored to the pressed control
             )->a( n = `titleSelectorPress` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                         t_arg = VALUE #( ( `myPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                         t_arg = VALUE #( ( `myPopover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
             )->a( n = `number`             v = |\{ parts:[\{path:'{ client->_bind_path( sel_price ) }'\},| &&
                                                |\{path:'{ client->_bind_path( sel_currencycode ) }'\}],| &&
                                                | type: 'sap.ui.model.type.Currency', formatOptions: \{showMeasure: false\} \}|

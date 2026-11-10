@@ -143,13 +143,13 @@ CLASS z2ui5_cl_smpc_app_561 IMPLEMENTATION.
           )->tag( `Button`
               )->a( n = `type`  v = `Emphasized`
               )->a( n = `text`  v = `OK`
-              )->a( n = `press` v = client->_event( `DIALOG_CLOSE` ) ).
+              )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
     ENDIF.
 
     dialog->ele( `endButton`
         )->tag( `Button`
             )->a( n = `text`  v = `Close`
-            )->a( n = `press` v = client->_event( `DIALOG_CLOSE` ) ).
+            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     dialog->ele( `List`
         )->a( n = `items` v = client->_bind( t_products )
@@ -174,9 +174,6 @@ CLASS z2ui5_cl_smpc_app_561 IMPLEMENTATION.
 
       WHEN `DIALOG_DRAGGABLE`.
         popup_dialog_display( title = `Draggable Available Products` sized = abap_true draggable = abap_true ).
-
-      WHEN `DIALOG_CLOSE`.
-        client->popup_destroy( ).
 
     ENDCASE.
 

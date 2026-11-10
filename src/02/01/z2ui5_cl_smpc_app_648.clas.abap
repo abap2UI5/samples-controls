@@ -174,7 +174,7 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
                     |descending: { COND #( WHEN sorter-descending = abap_true THEN `true` ELSE `false` ) } \}|.
     ENDLOOP.
 
-    result = |\{ path: '{ client->_bind( val = t_items path = abap_true ) }', | &&
+    result = |\{ path: '{ client->_bind_path( t_items ) }', | &&
              |sorter: [{ shift_left( val = sorter_list sub = `, ` ) }] \}|.
 
   ENDMETHOD.
@@ -234,8 +234,8 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
             )->a( n = `id`    v = `p13nPopup`
             )->a( n = `close` v = client->_event( val   = `P13N_CLOSE`
                                                   t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` )
-                                                                   ( `$event.oSource.getPanels()[1].getP13nData(true)` ) ) )
+                                                                   ( `$event.getSource().getPanels()[0].getP13nData(true)` )
+                                                                   ( `$event.getSource().getPanels()[1].getP13nData(true)` ) ) )
 
             )->ele( n = `panels` ns = `p13n`
                 )->tag( n = `SelectionPanel` ns = `p13n`

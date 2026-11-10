@@ -50,7 +50,7 @@ CLASS z2ui5_cl_smpc_app_227 IMPLEMENTATION.
                 " for exactly this control (pr/unified-menu-open-anchored, 2026-07-27) -
                 " the "no-op today" this comment claimed until 2026-08-23 is long gone
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->ele( `dependents`
                     )->ele( n = `Menu` ns = `u`

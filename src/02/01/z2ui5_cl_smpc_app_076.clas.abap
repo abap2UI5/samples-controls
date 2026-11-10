@@ -63,7 +63,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )
@@ -93,7 +93,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )
@@ -113,7 +113,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`             v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                 t_arg = VALUE #( ( `notificationList` )
                                                                                                  ( `removeItem` )
-                                                                                                 ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                                 ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                       client->follow_up_action( val   = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                  ( `show` )
@@ -147,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`             v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                 t_arg = VALUE #( ( `notificationList` )
                                                                                                  ( `removeItem` )
-                                                                                                 ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                                 ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                       client->follow_up_action( val   = client->cs_event-control_global
                                                                                 t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                  ( `show` )
@@ -170,7 +170,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )
@@ -194,7 +194,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )
@@ -226,7 +226,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`              v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                  t_arg = VALUE #( ( `notificationList` )
                                                                                                   ( `removeItem` )
-                                                                                                  ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                                  ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                        client->follow_up_action( val   = client->cs_event-control_global
                                                                                  t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                   ( `show` )
@@ -257,7 +257,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )
@@ -293,7 +293,7 @@ CLASS z2ui5_cl_smpc_app_076 IMPLEMENTATION.
                     )->a( n = `close`           v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                               t_arg = VALUE #( ( `notificationList` )
                                                                                                ( `removeItem` )
-                                                                                               ( `$event.oSource.getId()` ) ) ) && `; ` &&
+                                                                                               ( `$event.getSource().getId()` ) ) ) && `; ` &&
                                                     client->follow_up_action( val   = client->cs_event-control_global
                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` )
                                                                                                ( `show` )

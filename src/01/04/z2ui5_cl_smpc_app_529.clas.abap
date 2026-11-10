@@ -328,7 +328,7 @@ CLASS z2ui5_cl_smpc_app_529 IMPLEMENTATION.
                     )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                     t_arg = VALUE #( ( `messagePopover` )
                                                                                      ( `toggleBy` )
-                                                                                     ( `$event.oSource.sId` ) ) )
+                                                                                     ( `$event.getSource().getId()` ) ) )
 
                     )->ele( n = `dependents` ns = `semantic`
                         )->ele( `MessagePopover`

@@ -149,7 +149,7 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Close`
-                    )->a( n = `press` v = client->_event( `DATE_CLOSE` )
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close )
 
             )->end(
 
@@ -158,9 +158,9 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
                 )->a( n = `select` v = client->_event(
                           val   = `CALENDAR_SELECT`
                           t_arg = VALUE #(
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getFullYear()` )
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1` )
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getDate()` ) ) ) ).
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getFullYear()` )
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getMonth() + 1` )
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getDate()` ) ) ) ).
 
     client->popup_display( popup->stringify( ) ).
 
@@ -190,9 +190,6 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
         LOOP AT t_products ASSIGNING FIELD-SYMBOL(<product>) WHERE selected = abap_true.
           <product>-dateofsale = selected_date.
         ENDLOOP.
-        client->popup_destroy( ).
-
-      WHEN `DATE_CLOSE`.
         client->popup_destroy( ).
 
     ENDCASE.

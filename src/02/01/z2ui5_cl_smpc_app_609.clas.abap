@@ -260,7 +260,7 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` )
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close )
 
             )->end(
 
@@ -470,8 +470,6 @@ CLASS z2ui5_cl_smpc_app_609 IMPLEMENTATION.
                           start_at = sel_start
                           end_at   = sel_end ) INTO TABLE t_appointments.
         ENDIF.
-        client->popup_destroy( ).
-      WHEN `DIALOG_CANCEL`.
         client->popup_destroy( ).
       WHEN `START_DATE_CHANGE`.
         client->message_toast_display(

@@ -171,17 +171,17 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
 
                             )->tag( `CheckBox`
                                 )->a( n = `text`     v = `include`
-                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.oSource.getId()` )
+                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.getSource().getId()` )
                                 )->a( n = `id`       v = `cbInclude`
                                 )->a( n = `selected` v = client->_bind( cb_include )
                             )->tag( `CheckBox`
                                 )->a( n = `text`     v = `exclude`
-                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.oSource.getId()` )
+                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.getSource().getId()` )
                                 )->a( n = `id`       v = `cbExclude`
                                 )->a( n = `selected` v = client->_bind( cb_exclude )
                             )->tag( `CheckBox`
                                 )->a( n = `text`     v = `override`
-                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.oSource.getId()` )
+                                )->a( n = `select`   v = client->_event( val = `MODE_SELECT` arg = `$event.getSource().getId()` )
                                 )->a( n = `id`       v = `cbOverride`
                                 )->a( n = `selected` v = client->_bind( cb_override )
 
@@ -223,7 +223,7 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                                                                                     omit_initial_paths = VALUE #( ( `IMAGEURL` )
                                                                                                                   ( `UPLOADSTATE` ) ) ) }', templateShareable: false \}|
                         )->a( n = `selectionChange` v = client->_event( val = `SELECTION`
-                                                                        arg = `$event.oSource.getSelectedContexts().join()` )
+                                                                        arg = `$event.getSource().getSelectedContexts().join()` )
 
                         )->ele( `headerToolbar`
                             )->ele( `OverflowToolbar`
@@ -440,7 +440,7 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                                 t_arg = VALUE #( ( `uploadSetPlugin` )
                                                                                                                  ( `openFilePreview` )
-                                                                                                                 ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                                 ( `$event.getSource().getBindingContext()` ) ) )
                                                 )->a( n = `class` v = `sapUiTinyMarginBottom`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -470,7 +470,7 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
                                         )->a( n = `type`  v = `Transparent`
                                         )->a( n = `icon`  v = `sap-icon://decline`
                                         )->a( n = `press` v = client->_event( val = `REMOVE_ROW`
-                                                                              arg = `$event.oSource.getBindingContext().getPath()` ) ).
+                                                                              arg = `$event.getSource().getBindingContext().getPath()` ) ).
 
     client->view_display( view->stringify( ) ).
 

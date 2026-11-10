@@ -193,7 +193,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                     )->a( n = `header`    v = `Sales Fulfillment Application Title`
                     )->a( n = `subheader` v = `Subtitle`
                     )->a( n = `press`     v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.oSource.getMetadata().getName()` ) ) )
+                                                                        t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.getSource().getMetadata().getName()` ) ) )
                     )->ele( `layoutData`
                         )->tag( n = `GridContainerItemLayoutData` ns = `f`
                             )->a( n = `minRows` v = `2`
@@ -247,7 +247,7 @@ CLASS z2ui5_cl_smpc_app_168 IMPLEMENTATION.
                             )->a( n = `subtitle` v = `Buy a single drive ticket for a date`
                             )->a( n = `iconSrc`  v = `sap-icon://bus-public-transport`
                             )->a( n = `press`    v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.oSource.getMetadata().getName()` ) ) )
+                                                                               t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Press was fired on - {0}` ) ( `$event.getSource().getMetadata().getName()` ) ) )
 
                     )->end(
                     )->ele( n = `content` ns = `f`

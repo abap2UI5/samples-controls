@@ -185,7 +185,7 @@ CLASS z2ui5_cl_smpc_app_167 IMPLEMENTATION.
                     )->ele( `Button`
                         )->a( n = `text`         v = `Alan Smith`
                         )->a( n = `type`         v = `Transparent`
-                        )->a( n = `press`        v = client->_event( val = `USER_POPOVER` arg = `$event.oSource.sId` )
+                        )->a( n = `press`        v = client->_event( val = `USER_POPOVER` arg = `$event.getSource().getId()` )
                         )->a( n = `ariaHasPopup` v = `Menu`
                         )->ele( `layoutData`
                             )->tag( `OverflowToolbarLayoutData`

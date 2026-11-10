@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_559 IMPLEMENTATION.
                     )->a( n = `status` v = `Error`
                     )->a( n = `design` v = `StatusIconHidden`
                     " onGenericTagPress anchors the card popover on the pressed tag
-                    )->a( n = `press`  v = client->_event( val = `GENERIC_TAG` arg = `$event.oSource.sId` )
+                    )->a( n = `press`  v = client->_event( val = `GENERIC_TAG` arg = `$event.getSource().getId()` )
 
                     )->tag( `ObjectNumber`
                         )->a( n = `number`     v = `2`

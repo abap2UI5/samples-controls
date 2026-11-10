@@ -109,9 +109,6 @@ CLASS z2ui5_cl_smpc_app_019 IMPLEMENTATION.
         client->message_toast_display( |Note is: { confirm_note }| ).
         client->popup_destroy( ).
 
-      WHEN `DIALOG_CANCEL`.
-        client->popup_destroy( ).
-
     ENDCASE.
 
   ENDMETHOD.
@@ -185,7 +182,7 @@ CLASS z2ui5_cl_smpc_app_019 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 
@@ -229,7 +226,7 @@ CLASS z2ui5_cl_smpc_app_019 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 
@@ -289,7 +286,7 @@ CLASS z2ui5_cl_smpc_app_019 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 

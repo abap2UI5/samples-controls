@@ -97,7 +97,7 @@ CLASS z2ui5_cl_smpc_app_542 IMPLEMENTATION.
                                   t_arg = VALUE #(
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `$event.getSource().getSelectedAppointments().length` )
                                     ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 )->a( n = `showEmptyIntervalHeaders`  v = `false`
                 )->a( n = `stickyHeader`              v = `true`
@@ -149,7 +149,7 @@ CLASS z2ui5_cl_smpc_app_542 IMPLEMENTATION.
                 )->a( n = `text` v = `Add available built-in views to the example:`
 
             )->ele( `MultiComboBox`
-                )->a( n = `selectionFinish` v = client->_event( val = `BUILT_IN_VIEWS` arg = `$event.oSource.getSelectedKeys().join(',')` )
+                )->a( n = `selectionFinish` v = client->_event( val = `BUILT_IN_VIEWS` arg = `$event.getSource().getSelectedKeys().join(',')` )
                 )->a( n = `width`           v = `230px`
                 )->a( n = `placeholder`     v = `Choose built-in views`
 

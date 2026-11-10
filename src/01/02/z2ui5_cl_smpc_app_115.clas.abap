@@ -262,7 +262,7 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
                                                   val   = `TOKEN_UPDATE`
                                                   t_arg = VALUE #( ( `${$parameters>/type}` )
                                                                    ( `${$parameters>/removedTokens}[0] ? ${$parameters>/removedTokens}[0].getKey() : ''` )
-                                                                   ( `$event.oSource.getBindingContext().getPath()` ) ) )
+                                                                   ( `$event.getSource().getBindingContext().getPath()` ) ) )
                                     )->a( n = `value`           v = `{ADDITIONALCATEGORY}`
                                     )->a( n = `tokens`          v = |\{ path: 'ADDITIONALCATEGORIESSELECTION', templateShareable: false \}|
                                     )->a( n = `suggestionItems` v = |\{ path: '{ client->_bind_path( categories ) }', templateShareable: false, sorter: \{ path: 'NAME' \} \}|

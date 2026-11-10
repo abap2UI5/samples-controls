@@ -369,7 +369,7 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` )
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close )
 
             )->end(
 
@@ -592,9 +592,6 @@ CLASS z2ui5_cl_smpc_app_549 IMPLEMENTATION.
         " CheckBox writes its selected state into allday BEFORE it fires
         " select (sap.m.CheckBox.ontap), so the flag already carries the new value
         all_day_hours( ).
-
-      WHEN `DIALOG_CANCEL`.
-        client->popup_destroy( ).
 
       WHEN `OPEN_LEGEND`.
         popup_legend_display( ).

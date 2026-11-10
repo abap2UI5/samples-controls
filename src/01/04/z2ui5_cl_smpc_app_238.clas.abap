@@ -127,7 +127,7 @@ CLASS z2ui5_cl_smpc_app_238 IMPLEMENTATION.
                             )->ele( `GenericTag`
                                 )->a( n = `text`   v = `SR`
                                 )->a( n = `status` v = `Error`
-                                )->a( n = `press`  v = client->_event( val = `GENERIC_TAG_PRESS` arg = `$event.oSource.sId` )
+                                )->a( n = `press`  v = client->_event( val = `GENERIC_TAG_PRESS` arg = `$event.getSource().getId()` )
                                 )->a( n = `design` v = `StatusIconHidden`
                                 )->tag( `ObjectNumber`
                                     )->a( n = `number`     v = `2`

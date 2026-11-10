@@ -100,7 +100,7 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
                                   t_arg = VALUE #(
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
                                     ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                                    ( `$event.oSource.getSelectedAppointments().length` )
+                                    ( `$event.getSource().getSelectedAppointments().length` )
                                     ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 " handleIntervalSelect pushes a new appointment ('new appointment',
                 " Type09) over the selected interval into the model - reproduced by

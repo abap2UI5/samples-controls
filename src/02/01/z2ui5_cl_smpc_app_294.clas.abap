@@ -105,9 +105,6 @@ CLASS z2ui5_cl_smpc_app_294 IMPLEMENTATION.
                                   view  = client->cs_view-popup
                                   t_arg = VALUE #( ( `messageView` ) ( `navigateBack` ) ) ).
 
-      WHEN `CLOSE`.
-        client->popup_destroy( ).
-
     ENDCASE.
 
   ENDMETHOD.
@@ -180,7 +177,7 @@ CLASS z2ui5_cl_smpc_app_294 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Close`
-                    )->a( n = `press` v = client->_event( `CLOSE` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 

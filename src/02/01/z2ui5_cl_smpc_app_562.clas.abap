@@ -323,7 +323,7 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
                     )->a( n = `text`         v = `Reject`
                     )->a( n = `type`         v = `Reject`
                     )->a( n = `ariaHasPopup` v = `Dialog`
-                    )->a( n = `press`        v = client->_event( `CLOSE_DIALOG` )
+                    )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-popup_close )
 
             )->end(
         )->end(
@@ -341,9 +341,6 @@ CLASS z2ui5_cl_smpc_app_562 IMPLEMENTATION.
       WHEN `OPEN_DIALOG`.
         popup_dialog_display( ).
         client->message_toast_display( `Press "Save" to trigger validation.` ).
-
-      WHEN `CLOSE_DIALOG`.
-        client->popup_destroy( ).
 
       WHEN `ACTIVE_TITLE`.
         " activeTitlePress scrolls to the message's target control, closes the popover

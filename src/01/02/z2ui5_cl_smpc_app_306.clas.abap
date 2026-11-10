@@ -66,17 +66,17 @@ CLASS z2ui5_cl_smpc_app_306 IMPLEMENTATION.
                 " shift the day east of Greenwich
                 )->a( n = `select`            v = client->_event( val   = `CAL_SELECT`
                                                                   t_arg = VALUE #(
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? ` &&
-                                                                      `$event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && ` &&
-                                                                      `$event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getStartDate() ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() ` &&
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && $event.getSource().getSelectedDates()[0].getStartDate() ? ` &&
+                                                                      `$event.getSource().getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && ` &&
+                                                                      `$event.getSource().getSelectedDates()[0].getStartDate() ? $event.getSource().getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && $event.getSource().getSelectedDates()[0].getStartDate() ? $event.getSource().getSelectedDates()[0].getStartDate().getDate() ` &&
                                                                       `: 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getFullYear() ` &&
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && $event.getSource().getSelectedDates()[0].getEndDate() ? $event.getSource().getSelectedDates()[0].getEndDate().getFullYear() ` &&
                                                                       `: 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && ` &&
-                                                                      `$event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getMonth() + 1 : 0` )
-                                                                    ( `$event.oSource.getSelectedDates().length > 0 && $event.oSource.getSelectedDates()[0].getEndDate() ? $event.oSource.getSelectedDates()[0].getEndDate().getDate() : ` &&
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && ` &&
+                                                                      `$event.getSource().getSelectedDates()[0].getEndDate() ? $event.getSource().getSelectedDates()[0].getEndDate().getMonth() + 1 : 0` )
+                                                                    ( `$event.getSource().getSelectedDates().length > 0 && $event.getSource().getSelectedDates()[0].getEndDate() ? $event.getSource().getSelectedDates()[0].getEndDate().getDate() : ` &&
                                                                       `0` ) ) )
                 )->a( n = `intervalSelection` v = `true`
                 " weekNumberSelect is @since 1.56 on Calendar (1.60 is the Month

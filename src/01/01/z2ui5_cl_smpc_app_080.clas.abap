@@ -53,7 +53,7 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                         )->tag( `ToggleButton`
                             )->a( n = `icon`  v = `sap-icon://edit`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
 
                     )->end(
                 )->end(
@@ -67,25 +67,25 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                             )->a( n = `enabled` v = `true`
                             )->a( n = `pressed` v = `true`
                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                         )->tag( `ToggleButton`
                             )->a( n = `text`    v = `Pressed & Disabled`
                             )->a( n = `enabled` v = `false`
                             )->a( n = `pressed` v = `true`
                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
 
                     )->end(
                     )->ele( `contentRight`
                         )->tag( `ToggleButton`
                             )->a( n = `icon`  v = `sap-icon://action`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                         )->tag( `ToggleButton`
                             )->a( n = `icon`    v = `sap-icon://home`
                             )->a( n = `enabled` v = `false`
                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
 
                     )->end(
                 )->end(
@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                     )->a( n = `text`    v = `Disabled`
                     )->a( n = `enabled` v = `false`
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
                             )->a( n = `growFactor` v = `1`
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                     )->a( n = `enabled` v = `true`
                     )->a( n = `pressed` v = `true`
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
                             )->a( n = `growFactor` v = `1`
@@ -119,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                     )->a( n = `icon`    v = `sap-icon://action`
                     )->a( n = `enabled` v = `true`
                     )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                     )->ele( `layoutData`
                         )->tag( `FlexItemData`
                             )->a( n = `growFactor` v = `1`
@@ -136,11 +136,11 @@ CLASS z2ui5_cl_smpc_app_080 IMPLEMENTATION.
                             )->a( n = `enabled` v = `false`
                             )->a( n = `pressed` v = `true`
                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                              t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
                         )->tag( `ToggleButton`
                             )->a( n = `icon`  v = `sap-icon://action`
                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.oSource.sId` ) ( `$event.oSource.getPressed()` ) ) )
+                                                                            t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} {1?Pressed:Unpressed}` ) ( `$event.getSource().getId()` ) ( `$event.getSource().getPressed()` ) ) )
 
                     )->end(
                 )->end(

@@ -47,7 +47,7 @@ CLASS z2ui5_cl_smpc_app_016 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Date Picker`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -59,7 +59,7 @@ CLASS z2ui5_cl_smpc_app_016 IMPLEMENTATION.
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `tooltip`      v = `Open Date Picker`
                 )->a( n = `icon`         v = `sap-icon://appointment-2`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -70,7 +70,7 @@ CLASS z2ui5_cl_smpc_app_016 IMPLEMENTATION.
             )->tag( `Link`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Date Picker`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDP` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->tag( `DatePicker`

@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_017 IMPLEMENTATION.
                                            | \{ 'type': 'sap.ui.model.type.Date', 'formatOptions': \{ 'source': \{ 'pattern': 'yyyy-MM-dd' \} \}, 'path': '{ client->_bind_path( drs1_start ) }' \},| &&
                                            | \{ 'type': 'sap.ui.model.type.Date', 'formatOptions': \{ 'source': \{ 'pattern': 'yyyy-MM-dd' \} \}, 'path': '{ client->_bind_path( drs1_end ) }' \} ] \}|
                 )->a( n = `change`     v = client->_event( val   = `CHANGE`
-                                                           t_arg = VALUE #( ( `$event.oSource.sId` )
+                                                           t_arg = VALUE #( ( `$event.getSource().getId()` )
                                                                             ( `${$parameters>/from}` )
                                                                             ( `${$parameters>/to}` )
                                                                             ( `${$parameters>/valid}` ) ) )
@@ -99,7 +99,7 @@ CLASS z2ui5_cl_smpc_app_017 IMPLEMENTATION.
             )->tag( `DateRangeSelection`
                 )->a( n = `id`         v = `DRS2`
                 )->a( n = `change`     v = client->_event( val   = `CHANGE`
-                                                           t_arg = VALUE #( ( `$event.oSource.sId` )
+                                                           t_arg = VALUE #( ( `$event.getSource().getId()` )
                                                                             ( `${$parameters>/from}` )
                                                                             ( `${$parameters>/to}` )
                                                                             ( `${$parameters>/valid}` ) ) )
@@ -118,7 +118,7 @@ CLASS z2ui5_cl_smpc_app_017 IMPLEMENTATION.
                 )->a( n = `showCurrentDateButton` v = `true`
                 )->a( n = `showFooter`            v = `true`
                 )->a( n = `change`                v = client->_event( val   = `CHANGE`
-                                                                      t_arg = VALUE #( ( `$event.oSource.sId` )
+                                                                      t_arg = VALUE #( ( `$event.getSource().getId()` )
                                                                                        ( `${$parameters>/from}` )
                                                                                        ( `${$parameters>/to}` )
                                                                                        ( `${$parameters>/valid}` ) ) )
@@ -132,7 +132,7 @@ CLASS z2ui5_cl_smpc_app_017 IMPLEMENTATION.
             )->tag( `DateRangeSelection`
                 )->a( n = `id`         v = `DRS4`
                 )->a( n = `change`     v = client->_event( val   = `CHANGE`
-                                                           t_arg = VALUE #( ( `$event.oSource.sId` )
+                                                           t_arg = VALUE #( ( `$event.getSource().getId()` )
                                                                             ( `${$parameters>/from}` )
                                                                             ( `${$parameters>/to}` )
                                                                             ( `${$parameters>/valid}` ) ) )
@@ -147,7 +147,7 @@ CLASS z2ui5_cl_smpc_app_017 IMPLEMENTATION.
                 )->a( n = `id`            v = `DRS5`
                 )->a( n = `displayFormat` v = `yyyy`
                 )->a( n = `change`        v = client->_event( val   = `CHANGE`
-                                                              t_arg = VALUE #( ( `$event.oSource.sId` )
+                                                              t_arg = VALUE #( ( `$event.getSource().getId()` )
                                                                                ( `${$parameters>/from}` )
                                                                                ( `${$parameters>/to}` )
                                                                                ( `${$parameters>/valid}` ) ) )
