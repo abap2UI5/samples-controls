@@ -320,8 +320,9 @@ a sample into a shared class, however often it repeats. Repetition across 125
 ports is the intended shape.
 
 Framework classes are the runtime and are not "another class":
-`z2ui5_cl_ui5_view_builder`, `z2ui5_cl_util` and the rest of abap2UI5 are
-installed before any sample is. The rule is about `z2ui5_cl_smpc_*` — the
+`z2ui5_cl_ui5_view_builder` and the rest of abap2UI5 are installed before any
+sample is. (The `z2ui5_cl_util*` classes are not among them since 2026-11-02:
+they ship in abap2UI5-ext, and no port may depend on them.) The rule is about `z2ui5_cl_smpc_*` — the
 classes this repository owns.
 
 `pattern-lint`'s `standalone-class` gates it. One class is exempt, and only
