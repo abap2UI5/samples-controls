@@ -145,7 +145,7 @@ CLASS z2ui5_cl_smpc_app_563 IMPLEMENTATION.
                         )->tag( `Button`
                             )->a( n = `text`  v = `Close`
                             )->a( n = `class` v = `sapUiTinyMarginEnd`
-                            )->a( n = `press` v = client->_event( `CLOSE` ) ).
+                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popover_close ) ).
 
     client->popover_display( xml = popup->stringify( ) by_id = by_id ).
 
@@ -174,9 +174,6 @@ CLASS z2ui5_cl_smpc_app_563 IMPLEMENTATION.
         client->follow_up_action( val   = client->cs_event-control_by_id
                                   view  = client->cs_view-popover
                                   t_arg = VALUE #( ( `messageView` ) ( `navigateBack` ) ) ).
-
-      WHEN `CLOSE`.
-        client->popover_destroy( ).
 
     ENDCASE.
 

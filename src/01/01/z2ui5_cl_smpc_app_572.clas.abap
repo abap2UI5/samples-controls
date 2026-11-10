@@ -185,7 +185,7 @@ CLASS z2ui5_cl_smpc_app_572 IMPLEMENTATION.
             )->ele( `beginButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Close`
-                    )->a( n = `press` v = client->_event( `CLOSE_DIALOG` ) ).
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close ) ).
 
     client->popup_display( popup->stringify( ) ).
 
@@ -194,15 +194,9 @@ CLASS z2ui5_cl_smpc_app_572 IMPLEMENTATION.
 
   METHOD on_event.
 
-    CASE client->get_event( ).
-
-      WHEN `OPEN_DIALOG`.
-        popup_display( ).
-
-      WHEN `CLOSE_DIALOG`.
-        client->popup_destroy( ).
-
-    ENDCASE.
+    IF client->check_on_event( `OPEN_DIALOG` ).
+      popup_display( ).
+    ENDIF.
 
   ENDMETHOD.
 

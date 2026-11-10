@@ -2885,7 +2885,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.DatePicker`                      name = `DatePickerMassEdit`                                        class = `z2ui5_cl_smpc_app_556` path = `src/01/01/z2ui5_cl_smpc_app_556.clas.abap`
         score = 5
-        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.22.0`
         notes = text1 ) ).
 
@@ -8820,7 +8821,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableLayout`                                               class = `z2ui5_cl_smpc_app_572` path = `src/01/01/z2ui5_cl_smpc_app_572.clas.abap`
         score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.16`
         notes = text1 ) ).
 

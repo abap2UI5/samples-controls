@@ -270,7 +270,7 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
             )->ele( `endButton`
                 )->tag( `Button`
                     )->a( n = `text`  v = `Cancel`
-                    )->a( n = `press` v = client->_event( `DIALOG_CANCEL` )
+                    )->a( n = `press` v = client->follow_up_action( val = client->cs_event-popup_close )
 
             )->end(
 
@@ -480,9 +480,6 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
           ENDIF.
           client->popup_destroy( ).
         ENDIF.
-
-      WHEN `DIALOG_CANCEL`.
-        client->popup_destroy( ).
 
     ENDCASE.
 
