@@ -496,6 +496,17 @@ re-joins a wrapped `t_arg`.
   `evt.getParameter(...)`), transport it with the `$event.…` arg above and read
   it back with `get_event_arg( )` — do **not** substitute a static placeholder
   (app 005's toast carries the real control id via `` `$event.getSource().getId()` ``).
+- **Which row was pressed.** Send the row's key field (`` `${ID}` ``) when
+  the handler needs the row's data; send the position
+  (`` `$event.getSource().getBindingContext().getPath().split('/').pop()` ``) only
+  when it needs the position itself — `cs_event-bind_element` (app 094),
+  `_bind_tab_row( )`, a drag and drop, a round-robin by item order (app 662). A
+  nested model (PlanningCalendar rows, UploadSet items) passes the whole path.
+- **A Close or Cancel that only closes** is wired roundtrip-free:
+  `client->follow_up_action( val = client->cs_event-popup_close )`
+  (`popover_close`). A backend branch that is nothing but `popup_destroy( )` is
+  the linter's `close-only-roundtrip`; keep the roundtrip only where the branch
+  does work, and say why in a comment where it is deliberate.
 - **A property computed from several bound values → a UI5 expression binding
   `{= … }`.** Write every `client->_bind( … )` call inline, embedded with
   `${ … }` — the never-capture rule above applies inside expression bindings
