@@ -61,7 +61,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent1`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Accent1`
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent2`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent2 / Accent2`
@@ -93,7 +93,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent3`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent3 / Accent3`
@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent4`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent4 / Accent4`
@@ -125,7 +125,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent5`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent5 / Accent5`
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent6`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent6 / Accent6`
@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent7`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent7 / Accent7`
@@ -173,7 +173,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent8`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent8 / Accent8`
@@ -189,7 +189,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent9`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent9 / Accent9`
@@ -205,7 +205,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Accent10`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent10 / Accent10`
@@ -232,7 +232,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication1`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Indication1`
@@ -248,7 +248,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication2`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent2 / Indication2`
@@ -264,7 +264,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication3`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent3 / Indication3`
@@ -280,7 +280,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication4`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent4 / Indication4`
@@ -296,7 +296,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication5`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent5 / Indication5`
@@ -312,7 +312,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication6`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent6 / Indication6`
@@ -328,7 +328,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication7`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent7 / Indication7`
@@ -344,7 +344,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication8`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent8 / Indication8`
@@ -360,7 +360,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication9`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent9 / Indication9`
@@ -376,7 +376,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeIconColor`  v = `Indication10`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent10 / Indication10`
@@ -403,7 +403,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeValueState` v = `Success`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Success`
@@ -419,7 +419,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeValueState` v = `Information`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Information`
@@ -435,7 +435,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeValueState` v = `Warning`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Warning`
@@ -451,7 +451,7 @@ CLASS z2ui5_cl_smpc_app_626 IMPLEMENTATION.
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                             )->a( n = `badgeValueState` v = `Error`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
                             )->a( n = `text`      v = `Accent1 / Error`

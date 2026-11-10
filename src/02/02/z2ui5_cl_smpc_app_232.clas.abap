@@ -180,7 +180,7 @@ CLASS z2ui5_cl_smpc_app_232 IMPLEMENTATION.
                         )->a( n = `text`         v = `Open Popover`
                         )->a( n = `ariaHasPopup` v = `Dialog`
                         )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                               t_arg = VALUE #( ( `popover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                               t_arg = VALUE #( ( `popover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->end(
 
@@ -191,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_232 IMPLEMENTATION.
                         )->a( n = `text`         v = `Open Popover`
                         )->a( n = `ariaHasPopup` v = `Dialog`
                         )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                               t_arg = VALUE #( ( `popoverCommand` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                               t_arg = VALUE #( ( `popoverCommand` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->end(
 

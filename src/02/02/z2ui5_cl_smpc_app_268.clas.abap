@@ -119,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_d )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `oColorPickerPopover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->end(
             )->end(
@@ -136,7 +136,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_l )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerLargePopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `oColorPickerLargePopover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->end(
             )->end(
@@ -153,7 +153,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_s )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerSimpplifiedPopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `oColorPickerSimpplifiedPopover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->end(
             )->end(
@@ -170,7 +170,7 @@ CLASS z2ui5_cl_smpc_app_268 IMPLEMENTATION.
                         )->a( n = `showValueHelp`    v = `true`
                         )->a( n = `value`            v = client->_bind( color_lc )
                         )->a( n = `valueHelpRequest` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                   t_arg = VALUE #( ( `oColorPickerLiveChangePopover` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `oColorPickerLiveChangePopover` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
                     )->tag( `Text`
                         )->a( n = `id`   v = `liveChangeText`
                         )->a( n = `text` v = client->_bind( live_change_text )

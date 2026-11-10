@@ -68,16 +68,16 @@ CLASS z2ui5_cl_smpc_app_435 IMPLEMENTATION.
                         )->a( n = `id`    v = `pi-with-animation-button0`
                         )->a( n = `class` v = `sapUiSmallMarginEnd`
                         )->a( n = `text`  v = `Set to 0%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` )
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` )
                     )->tag( `Button`
                         )->a( n = `id`    v = `pi-with-animation-button50`
                         )->a( n = `class` v = `sapUiSmallMarginEnd`
                         )->a( n = `text`  v = `Set to 50%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` )
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` )
                     )->tag( `Button`
                         )->a( n = `id`    v = `pi-with-animation-button100`
                         )->a( n = `text`  v = `Set to 100%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` )
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` )
 
                 )->end(
 
@@ -99,16 +99,16 @@ CLASS z2ui5_cl_smpc_app_435 IMPLEMENTATION.
                         )->a( n = `id`    v = `pi-without-animation-button0`
                         )->a( n = `class` v = `sapUiSmallMarginEnd`
                         )->a( n = `text`  v = `Set to 0%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` )
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` )
                     )->tag( `Button`
                         )->a( n = `id`    v = `pi-without-animation-button50`
                         )->a( n = `class` v = `sapUiSmallMarginEnd`
                         )->a( n = `text`  v = `Set to 50%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` )
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` )
                     )->tag( `Button`
                         )->a( n = `id`    v = `pi-without-animation-button100`
                         )->a( n = `text`  v = `Set to 100%`
-                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.oSource.sId` ) ).
+                        )->a( n = `press` v = client->_event( val = `SET_VALUE` arg = `$event.getSource().getId()` ) ).
 
     client->view_display( view->stringify( ) ).
 

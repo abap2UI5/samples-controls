@@ -49,7 +49,7 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
                         )->ele( `MenuItem`
                             )->a( n = `text`  v = `Edit`
                             )->a( n = `icon`  v = `sap-icon://edit`
-                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->ele( `customData`
                                 )->tag( n = `CustomData` ns = `core`
                                     )->a( n = `key`   v = `target`
@@ -60,11 +60,11 @@ CLASS z2ui5_cl_smpc_app_061 IMPLEMENTATION.
                         )->tag( `MenuItem`
                             )->a( n = `text`  v = `Save`
                             )->a( n = `icon`  v = `sap-icon://save`
-                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                         )->tag( `MenuItem`
                             )->a( n = `text`  v = `Open`
                             )->a( n = `icon`  v = `sap-icon://open-folder`
-                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                            )->a( n = `press` v = client->follow_up_action( val = client->cs_event-control_global t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
 
                     )->end(
                 )->end(

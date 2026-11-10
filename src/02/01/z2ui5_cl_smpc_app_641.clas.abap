@@ -50,7 +50,7 @@ CLASS z2ui5_cl_smpc_app_641 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Dynamic Date Range`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -62,7 +62,7 @@ CLASS z2ui5_cl_smpc_app_641 IMPLEMENTATION.
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `tooltip`      v = `Open Dynamic Date Range`
                 )->a( n = `icon`         v = `sap-icon://check-availability`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         )->ele( `VBox`
@@ -73,7 +73,7 @@ CLASS z2ui5_cl_smpc_app_641 IMPLEMENTATION.
             )->tag( `Link`
                 )->a( n = `ariaHasPopup` v = `Dialog`
                 )->a( n = `text`         v = `Open Dynamic Date Range`
-                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                )->a( n = `press`        v = client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `HiddenDDR` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
 
         )->end(
         " the values travel as the original's string concatenation renders them (a Date as its toString)

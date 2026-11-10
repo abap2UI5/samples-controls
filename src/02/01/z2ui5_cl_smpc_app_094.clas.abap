@@ -137,7 +137,7 @@ CLASS z2ui5_cl_smpc_app_094 IMPLEMENTATION.
                                         )->tag( `Link`
                                             )->a( n = `text`         v = `{PRODUCTID}`
                                             )->a( n = `press`        v = client->_event( val   = `POPOVER`
-                                                                                         t_arg = VALUE #( ( `$event.oSource.getBindingContext().getPath().split('/').pop()` ) ( `$event.oSource.sId` ) ) )
+                                                                                         t_arg = VALUE #( ( `$event.getSource().getBindingContext().getPath().split('/').pop()` ) ( `$event.getSource().getId()` ) ) )
                                             )->a( n = `ariaHasPopup` v = `Dialog`
                                         )->tag( `Input`
                                             )->a( n = `value`       v = `{QUANTITY}`

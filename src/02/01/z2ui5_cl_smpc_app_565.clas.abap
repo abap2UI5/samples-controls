@@ -82,7 +82,7 @@ CLASS z2ui5_cl_smpc_app_565 IMPLEMENTATION.
                     )->a( n = `text`         v = `Open Popover`
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     " onOpenPopover anchors the popover on the pressed button
-                    )->a( n = `press`        v = client->_event( val = `OPEN_POPOVER` arg = `$event.oSource.sId` ) ).
+                    )->a( n = `press`        v = client->_event( val = `OPEN_POPOVER` arg = `$event.getSource().getId()` ) ).
 
     client->view_display( view->stringify( ) ).
 

@@ -142,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
                                        ( `${$parameters>/endDate}.getDate()` )
                                        ( `${$parameters>/endDate}.getHours()` )
                                        ( `${$parameters>/endDate}.getMinutes()` )
-                                       ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                                       ( `${$parameters>/row} ? $event.getSource().indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

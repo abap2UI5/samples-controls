@@ -95,7 +95,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `XL`
                             )->a( n = `imageFitType` v = `Cover`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `badgeIcon`    v = `sap-icon://camera`
                             )->a( n = `badgeTooltip` v = `Sabine Mayer`
                         )->tag( `Text`
@@ -111,7 +111,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `M`
                             )->a( n = `displayShape` v = `Circle`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `src`          v = client->_bind( lowshutterstock )
                             )->a( n = `badgeIcon`    v = `sap-icon://edit`
                             )->a( n = `badgeTooltip` v = `Julie Armstrong`
@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `backgroundColor` v = `Accent7`
                             )->a( n = `initials`        v = `JD`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `badgeIcon`       v = `sap-icon://camera`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -150,7 +150,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`     v = `M`
                             )->a( n = `backgroundColor` v = `Accent3`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `displaySize`  v = `XL`
                             )->a( n = `displayShape` v = `Square`
                             )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                   t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `src`          v = client->_bind( shutterstock )
                             )->a( n = `badgeIcon`    v = `sap-icon://edit`
                         )->tag( `Text`
@@ -183,7 +183,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `src`             v = `sap-icon://soccer`
                             )->a( n = `displayShape`    v = `Square`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `badgeIcon`       v = `sap-icon://edit`
                         )->tag( `Text`
                             )->a( n = `textAlign` v = `Center`
@@ -199,7 +199,7 @@ CLASS z2ui5_cl_smpc_app_628 IMPLEMENTATION.
                             )->a( n = `backgroundColor` v = `Accent3`
                             )->a( n = `src`             v = `sap-icon://customer`
                             )->a( n = `press`           v = client->follow_up_action( val   = client->cs_event-control_global
-                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.oSource.sId` ) ) )
+                                                                                      t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `{0} Pressed` ) ( `$event.getSource().getId()` ) ) )
                             )->a( n = `badgeIcon`       v = `sap-icon://add`
                             )->a( n = `badgeTooltip`    v = `People`
                         )->tag( `Text`

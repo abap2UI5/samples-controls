@@ -89,9 +89,9 @@ CLASS z2ui5_cl_smpc_app_220 IMPLEMENTATION.
                 )->a( n = `showWeekNumbers` v = client->_bind( show_week_numbers )
                 )->a( n = `select`          v = client->_event( val   = `CAL_SELECT`
                                                                 t_arg = VALUE #(
-                                                                  ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getFullYear() : 0` )
-                                                                  ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
-                                                                  ( `$event.oSource.getSelectedDates().length > 0 ? $event.oSource.getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
+                                                                  ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getFullYear() : 0` )
+                                                                  ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getMonth() + 1 : 0` )
+                                                                  ( `$event.getSource().getSelectedDates().length > 0 ? $event.getSource().getSelectedDates()[0].getStartDate().getDate() : 0` ) ) )
 
                 )->ele( n = `disabledDates` ns = `u`
                     )->tag( n = `DateRange` ns = `u`

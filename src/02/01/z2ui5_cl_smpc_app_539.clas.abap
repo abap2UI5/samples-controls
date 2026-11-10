@@ -104,7 +104,7 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                           t_arg = VALUE #(
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
                             ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                            ( `$event.oSource.getSelectedAppointments().length` )
+                            ( `$event.getSource().getSelectedAppointments().length` )
                             ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
                 )->a( n = `intervalSelect`                v = client->_event(
                                          val   = `INTERVAL_SELECT`
@@ -119,7 +119,7 @@ CLASS z2ui5_cl_smpc_app_539 IMPLEMENTATION.
                                            ( `${$parameters>/endDate}.getDate()` )
                                            ( `${$parameters>/endDate}.getHours()` )
                                            ( `${$parameters>/endDate}.getMinutes()` )
-                                           ( `${$parameters>/row} ? $event.oSource.indexOfRow(${$parameters>/row}) : -1` ) ) )
+                                           ( `${$parameters>/row} ? $event.getSource().indexOfRow(${$parameters>/row}) : -1` ) ) )
 
                 )->ele( `toolbarContent`
                     )->tag( `Title`

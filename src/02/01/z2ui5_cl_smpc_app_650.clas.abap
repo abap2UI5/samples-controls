@@ -76,9 +76,9 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                                                                                        ( `${$parameters>/reason}` ) ) )
                 )->a( n = `warningText` v = `Are you sure?`
                 )->a( n = `open`        v = client->_event( val   = `POPUP_OPEN`
-                                                            t_arg = VALUE #( ( `$event.oSource.getPanels()[0].getP13nData()` )
-                                                                             ( `$event.oSource.getPanels()[1].getP13nData()` )
-                                                                             ( `$event.oSource.getPanels()[2].getP13nData()` ) ) )
+                                                            t_arg = VALUE #( ( `$event.getSource().getPanels()[0].getP13nData()` )
+                                                                             ( `$event.getSource().getPanels()[1].getP13nData()` )
+                                                                             ( `$event.getSource().getPanels()[2].getP13nData()` ) ) )
 
                 )->ele( n = `panels` ns = `p13n`
                     )->tag( n = `SelectionPanel` ns = `p13n`
@@ -88,19 +88,19 @@ CLASS z2ui5_cl_smpc_app_650 IMPLEMENTATION.
                         )->a( n = `showHeader`  v = `true`
                         )->a( n = `change`      v = client->_event( val   = `COLUMNS_CHANGE`
                                                                     t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                     ( `$event.oSource.getP13nData()` ) ) )
+                                                                                     ( `$event.getSource().getP13nData()` ) ) )
                     )->tag( n = `SortPanel` ns = `p13n`
                         )->a( n = `id`     v = `sortPanel`
                         )->a( n = `title`  v = `Sort`
                         )->a( n = `change` v = client->_event( val   = `SORT_CHANGE`
                                                                t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                ( `$event.oSource.getP13nData()` ) ) )
+                                                                                ( `$event.getSource().getP13nData()` ) ) )
                     )->tag( n = `GroupPanel` ns = `p13n`
                         )->a( n = `id`     v = `groupPanel`
                         )->a( n = `title`  v = `Group`
                         )->a( n = `change` v = client->_event( val   = `GROUP_CHANGE`
                                                                t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                                ( `$event.oSource.getP13nData()` ) ) )
+                                                                                ( `$event.getSource().getP13nData()` ) ) )
 
                 )->end(
             )->end(

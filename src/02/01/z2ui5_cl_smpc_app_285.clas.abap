@@ -66,7 +66,7 @@ CLASS z2ui5_cl_smpc_app_285 IMPLEMENTATION.
 
             )->tag( `Button`
                 )->a( n = `text`         v = `Show Popover With Image`
-                )->a( n = `press`        v = client->_event( val = `POPOVER_IMAGE` arg = `$event.oSource.sId` )
+                )->a( n = `press`        v = client->_event( val = `POPOVER_IMAGE` arg = `$event.getSource().getId()` )
                 )->a( n = `class`        v = `sapUiLargeMargin`
                 )->a( n = `ariaHasPopup` v = `Dialog`
 
@@ -80,7 +80,7 @@ CLASS z2ui5_cl_smpc_app_285 IMPLEMENTATION.
 
                 )->tag( `Button`
                     )->a( n = `text`         v = `Show Inside Popover`
-                    )->a( n = `press`        v = client->_event( val = `POPOVER_INNER` arg = `$event.oSource.sId` )
+                    )->a( n = `press`        v = client->_event( val = `POPOVER_INNER` arg = `$event.getSource().getId()` )
                     )->a( n = `ariaHasPopup` v = `Dialog`
 
                 )->ele( `layoutData`
@@ -98,7 +98,7 @@ CLASS z2ui5_cl_smpc_app_285 IMPLEMENTATION.
 
                 )->tag( `Button`
                     )->a( n = `text`         v = `Show Popover with List`
-                    )->a( n = `press`        v = client->_event( val = `POPOVER_LIST` arg = `$event.oSource.sId` )
+                    )->a( n = `press`        v = client->_event( val = `POPOVER_LIST` arg = `$event.getSource().getId()` )
                     )->a( n = `ariaHasPopup` v = `Dialog`
                     )->a( n = `class`        v = `sapUiLargeMargin` ).
 

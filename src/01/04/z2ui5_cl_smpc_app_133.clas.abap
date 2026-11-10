@@ -127,10 +127,10 @@ CLASS z2ui5_cl_smpc_app_133 IMPLEMENTATION.
             )->ele( n = `GridListItem` ns = `f`
                 )->a( n = `detailPress` v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Request details for item with ID {0}` )
-                                                                                       ( `$event.oSource.sId` ) ) )
+                                                                                       ( `$event.getSource().getId()` ) ) )
                 )->a( n = `press`       v = client->follow_up_action( val   = client->cs_event-control_global
                                                                       t_arg = VALUE #( ( `MESSAGE_TOAST` ) ( `show` ) ( `Pressed item with ID {0}` )
-                                                                                       ( `$event.oSource.sId` ) ) )
+                                                                                       ( `$event.getSource().getId()` ) ) )
                 )->a( n = `counter`     v = `{QUANTITY}`
                 )->a( n = `highlight`   v = `{STATUS}`
                 )->a( n = `type`        v = `{TYPE}`

@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
                                 )->a( n = `text`   v = `SR`
                                 )->a( n = `status` v = `Error`
                                 )->a( n = `design` v = `StatusIconHidden`
-                                )->a( n = `press`  v = client->_event( val = `OPEN_POPOVER` arg = `$event.oSource.sId` )
+                                )->a( n = `press`  v = client->_event( val = `OPEN_POPOVER` arg = `$event.getSource().getId()` )
                                 )->tag( `ObjectNumber`
                                     )->a( n = `number`     v = `2`
                                     )->a( n = `unit`       v = `M`
@@ -162,7 +162,7 @@ CLASS z2ui5_cl_smpc_app_170 IMPLEMENTATION.
                         )->ele( `Button`
                             )->a( n = `text`  v = `Button with layoutData`
                             )->a( n = `type`  v = `Transparent`
-                            )->a( n = `press` v = client->_event( val = `OPEN_POPOVER` arg = `$event.oSource.sId` )
+                            )->a( n = `press` v = client->_event( val = `OPEN_POPOVER` arg = `$event.getSource().getId()` )
                             )->ele( `layoutData`
                                 )->tag( `OverflowToolbarLayoutData`
                                     )->a( n = `priority`                   v = `AlwaysOverflow`

@@ -158,9 +158,9 @@ CLASS z2ui5_cl_smpc_app_556 IMPLEMENTATION.
                 )->a( n = `select` v = client->_event(
                           val   = `CALENDAR_SELECT`
                           t_arg = VALUE #(
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getFullYear()` )
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getMonth() + 1` )
-                            ( `$event.oSource.getSelectedDates()[0].getStartDate().getDate()` ) ) ) ).
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getFullYear()` )
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getMonth() + 1` )
+                            ( `$event.getSource().getSelectedDates()[0].getStartDate().getDate()` ) ) ) ).
 
     client->popup_display( popup->stringify( ) ).
 

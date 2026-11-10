@@ -79,7 +79,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `placeholder` v = `Enter Date`
                 )->a( n = `valueState`  v = client->_bind( vs_dtp1 )
                 )->a( n = `change`      v = client->_event( val   = `CHANGE`
-                                                            t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                            t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`       v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `With initialFocusedDateValue UI5Date.getInstance(2017, 5, 13, 11, 12, 13)`
@@ -91,7 +91,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `initialFocusedDateValue` v = |\{ path: '{ client->_bind_path( init_focus_dtp6 ) }', formatter: 'Formatter.DateCreateObject' \}|
                 )->a( n = `valueState`              v = client->_bind( vs_dtp6 )
                 )->a( n = `change`                  v = client->_event( val   = `CHANGE`
-                                                                        t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                        t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`                   v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with given Value, Formatter, and with shortcuts for current date and current time`
@@ -105,7 +105,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                          v = |\{ 'path': '{ client->_bind_path( value_dtp2 ) }', 'type': 'sap.ui.model.type.DateTime', 'formatOptions': \{ 'style': 'long', 'source': \{ 'pattern': 'yyyy-MM-dd HH:mm:ss' \} \} \}|
                 )->a( n = `valueState`            v = client->_bind( vs_dtp2 )
                 )->a( n = `change`                v = client->_event( val   = `CHANGE`
-                                                                      t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                      t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`                 v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with given Value and Formatter`
@@ -116,7 +116,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                          v = |\{ 'path': '{ client->_bind_path( value_dtp3 ) }', 'type': 'sap.ui.model.type.DateTime', 'formatOptions': \{ 'pattern': 'M/d/yy h:mm a', 'source': \{ 'pattern': 'yyyy-MM-dd HH:mm:ss' \} \} \}|
                 )->a( n = `valueState` v = client->_bind( vs_dtp3 )
                 )->a( n = `change`     v = client->_event( val   = `CHANGE`
-                                                           t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                           t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`      v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with Islamic date and secondary Gregorian date in calendar`
@@ -129,7 +129,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `secondaryCalendarType` v = `Gregorian`
                 )->a( n = `valueState`            v = client->_bind( vs_dtp4 )
                 )->a( n = `change`                v = client->_event( val   = `CHANGE`
-                                                                      t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                                      t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`                 v = `sapUiSmallMarginBottom`
             )->tag( `Label`
                 )->a( n = `text`     v = `DateTimePicker with steps for minutes and seconds sliders`
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_018 IMPLEMENTATION.
                 )->a( n = `secondsStep` v = `5`
                 )->a( n = `valueState`  v = client->_bind( vs_dtp7 )
                 )->a( n = `change`      v = client->_event( val   = `CHANGE`
-                                                            t_arg = VALUE #( ( `$event.oSource.sId` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
+                                                            t_arg = VALUE #( ( `$event.getSource().getId()` ) ( `${$parameters>/value}` ) ( `${$parameters>/valid}` ) ) )
                 )->a( n = `class`       v = `sapUiSmallMarginBottom`
             " the original handleChange writes the change event result into this text
             )->tag( `Text`

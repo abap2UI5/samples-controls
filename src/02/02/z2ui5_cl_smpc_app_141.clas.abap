@@ -54,8 +54,8 @@ CLASS z2ui5_cl_smpc_app_141 IMPLEMENTATION.
                     )->ele( `Button`
                         )->a( n = `text`  v = `Infromation`
                         )->a( n = `press` v = client->_event( val   = `PRESS`
-                                                              t_arg = VALUE #( ( `$event.oSource.getType()` )
-                                                                               ( `$event.oSource.getText()` ) ) )
+                                                              t_arg = VALUE #( ( `$event.getSource().getType()` )
+                                                                               ( `$event.getSource().getText()` ) ) )
                         )->ele( `layoutData`
                             )->tag( `FlexItemData`
                                 )->a( n = `growFactor` v = `1`
@@ -66,8 +66,8 @@ CLASS z2ui5_cl_smpc_app_141 IMPLEMENTATION.
                         )->a( n = `type`  v = `Accept`
                         )->a( n = `text`  v = `Success`
                         )->a( n = `press` v = client->_event( val   = `PRESS`
-                                                              t_arg = VALUE #( ( `$event.oSource.getType()` )
-                                                                               ( `$event.oSource.getText()` ) ) )
+                                                              t_arg = VALUE #( ( `$event.getSource().getType()` )
+                                                                               ( `$event.getSource().getText()` ) ) )
                         )->ele( `layoutData`
                             )->tag( `FlexItemData`
                                 )->a( n = `growFactor` v = `1`
@@ -78,8 +78,8 @@ CLASS z2ui5_cl_smpc_app_141 IMPLEMENTATION.
                         )->a( n = `type`  v = `Reject`
                         )->a( n = `text`  v = `Error`
                         )->a( n = `press` v = client->_event( val   = `PRESS`
-                                                              t_arg = VALUE #( ( `$event.oSource.getType()` )
-                                                                               ( `$event.oSource.getText()` ) ) )
+                                                              t_arg = VALUE #( ( `$event.getSource().getType()` )
+                                                                               ( `$event.getSource().getText()` ) ) )
                         )->ele( `layoutData`
                             )->tag( `FlexItemData`
                                 )->a( n = `growFactor` v = `1`
@@ -90,8 +90,8 @@ CLASS z2ui5_cl_smpc_app_141 IMPLEMENTATION.
                         )->a( n = `type`  v = `Emphasized`
                         )->a( n = `text`  v = `Emphasized`
                         )->a( n = `press` v = client->_event( val   = `PRESS`
-                                                              t_arg = VALUE #( ( `$event.oSource.getType()` )
-                                                                               ( `$event.oSource.getText()` ) ) )
+                                                              t_arg = VALUE #( ( `$event.getSource().getType()` )
+                                                                               ( `$event.getSource().getText()` ) ) )
 
                 )->end(
                 )->ele( `HBox`

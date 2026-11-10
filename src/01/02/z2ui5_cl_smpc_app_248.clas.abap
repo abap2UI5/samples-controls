@@ -122,7 +122,7 @@ CLASS z2ui5_cl_smpc_app_248 IMPLEMENTATION.
                             )->tag( n = `Button` ns = `m`
                                 )->a( n = `text`  v = `Collapse selection`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                t_arg = VALUE #( ( `TreeTableBasic` ) ( `collapse` ) ( `$event.oSource.getParent().getParent().getSelectedIndices()` ) ) )
+                                                                                t_arg = VALUE #( ( `TreeTableBasic` ) ( `collapse` ) ( `$event.getSource().getParent().getParent().getSelectedIndices()` ) ) )
                             )->tag( n = `Button` ns = `m`
                                 )->a( n = `text`  v = `Expand first level`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
@@ -130,7 +130,7 @@ CLASS z2ui5_cl_smpc_app_248 IMPLEMENTATION.
                             )->tag( n = `Button` ns = `m`
                                 )->a( n = `text`  v = `Expand selection`
                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                                t_arg = VALUE #( ( `TreeTableBasic` ) ( `expand` ) ( `$event.oSource.getParent().getParent().getSelectedIndices()` ) ) )
+                                                                                t_arg = VALUE #( ( `TreeTableBasic` ) ( `expand` ) ( `$event.getSource().getParent().getParent().getSelectedIndices()` ) ) )
 
                         )->end(
                     )->end(

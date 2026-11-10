@@ -144,13 +144,13 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
                                                              " in a JS string literal and never evaluated. The leading
                                                              " getValue( ) test is also the original's `if (sValue)` guard:
                                                              " an empty input clears the filter instead of filtering on ''
-                                                             ( `$event.oSource.getValue() ? '[[["PURCHASEID","Contains","' + $event.oSource.getValue() + '"],["SUPPLIERNAME","Contains","' + $event.oSource.getValue() + '"]]]' : ` &&
+                                                             ( `$event.getSource().getValue() ? '[[["PURCHASEID","Contains","' + $event.getSource().getValue() + '"],["SUPPLIERNAME","Contains","' + $event.getSource().getValue() + '"]]]' : ` &&
                                                                `'[]'` ) ) ) && `; ` &&
                                                   client->follow_up_action(
                                       val   = client->cs_event-control_by_id
                                       t_arg = VALUE #( ( `selectDialog` )
                                                        ( `open` )
-                                                       ( `$event.oSource.getValue()` ) ) )
+                                                       ( `$event.getSource().getValue()` ) ) )
                             )->a( n = `suggestionItems`        v = client->_bind( t_purchases )
                             )->a( n = `suggestionItemSelected` v = client->_event( val = `SUGGEST` arg = `${$parameters>/selectedItem}.getKey()` )
 

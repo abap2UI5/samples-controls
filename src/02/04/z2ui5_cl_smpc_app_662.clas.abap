@@ -136,7 +136,7 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
                 )->a( n = `tooltip`           v = `Avatar Group`
                 )->a( n = `avatarDisplaySize` v = `M`
                 )->a( n = `press`             v = client->_event( val = `GROUP_PRESS`
-                                                                  arg = `$event.oSource.sId` )
+                                                                  arg = `$event.getSource().getId()` )
                 )->a( n = `items`             v = client->_bind( t_content )
 
                 )->tag( `AvatarGroupItem`
@@ -327,7 +327,7 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
                                         )->a( n = `fallbackIcon`    v = client->_bind( s_person-fallbackicon )
                                         )->a( n = `backgroundColor` v = `{BACKGROUNDCOLOR}`
                                         )->a( n = `press`           v = client->_event( val = `AVATAR_PRESS`
-                                                                                        arg = `$event.oSource.getBindingContext().getPath().split('/').pop()` )
+                                                                                        arg = `$event.getSource().getBindingContext().getPath().split('/').pop()` )
 
                                 )->end(
 

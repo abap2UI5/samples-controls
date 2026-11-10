@@ -46,7 +46,7 @@ CLASS z2ui5_cl_smpc_app_311 IMPLEMENTATION.
                 " the openBy dispatch falls back to exactly that call for a
                 " sap.ui.unified.Menu, anchored on the pressed button
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = VALUE #( ( `theMenu` ) ( `openBy` ) ( `$event.getSource().getId()` ) ) )
                 )->a( n = `ariaHasPopup` v = `Menu`
 
                 " the controller adds the loaded fragment with addDependent; the

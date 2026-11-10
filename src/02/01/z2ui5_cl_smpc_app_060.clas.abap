@@ -45,7 +45,7 @@ CLASS z2ui5_cl_smpc_app_060 IMPLEMENTATION.
                 " toggle the menu anchored to the pressed button, roundtrip-free
                 " (1:1 with the sample's client-side isOpen()/openBy/close)
                 )->a( n = `press`        v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                       t_arg = VALUE #( ( `theMenu` ) ( `toggleBy` ) ( `$event.oSource.sId` ) ) )
+                                                                       t_arg = VALUE #( ( `theMenu` ) ( `toggleBy` ) ( `$event.getSource().getId()` ) ) )
 
                 )->ele( `dependents`
                     )->ele( `Menu`

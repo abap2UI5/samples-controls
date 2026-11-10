@@ -198,7 +198,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                                                                                     ( `UPLOADSTATE` ) ) )
                     )->a( n = `selectionMode`      v = `MultiToggle`
                     )->a( n = `rowSelectionChange` v = client->_event( val = `SELECTION`
-                                                                       arg = `$event.oSource.getBinding('rows').getSelectedContexts().join()` )
+                                                                       arg = `$event.getSource().getBinding('rows').getSelectedContexts().join()` )
 
                     )->ele( `extension`
                         )->ele( n = `OverflowToolbar` ns = `m`
@@ -354,7 +354,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                             )->a( n = `press`   v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                               t_arg = VALUE #( ( `uploadSetPlugin` )
                                                                                                                ( `openFilePreview` )
-                                                                                                               ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                               ( `$event.getSource().getBindingContext()` ) ) )
                                             )->a( n = `class`   v = `sapUiTinyMarginBottom`
                                             )->a( n = `visible` v = `{= ${ISDIRECTORY} === false }`
                                         )->tag( n = `Text` ns = `m`
@@ -407,7 +407,7 @@ CLASS z2ui5_cl_smpc_app_660 IMPLEMENTATION.
                                     )->a( n = `type`    v = `Transparent`
                                     )->a( n = `icon`    v = `sap-icon://decline`
                                     )->a( n = `press`   v = client->_event( val = `REMOVE_ROW`
-                                                                            arg = `$event.oSource.getBindingContext().getPath()` )
+                                                                            arg = `$event.getSource().getBindingContext().getPath()` )
                                     )->a( n = `visible` v = `{= ${ISDIRECTORY} === false }` ).
 
     client->view_display( view->stringify( ) ).

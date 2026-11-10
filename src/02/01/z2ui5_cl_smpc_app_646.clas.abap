@@ -361,7 +361,7 @@ CLASS z2ui5_cl_smpc_app_646 IMPLEMENTATION.
       filters = |{ filters }, \{ path: '{ condition-path }', operator: 'EQ', value1: '{ condition-value }' \}|.
     ENDLOOP.
 
-    result = |\{ path: '{ client->_bind( val = t_items path = abap_true ) }', | &&
+    result = |\{ path: '{ client->_bind_path( t_items ) }', | &&
              |filters: [{ shift_left( val = filters sub = `, ` ) }] \}|.
 
   ENDMETHOD.

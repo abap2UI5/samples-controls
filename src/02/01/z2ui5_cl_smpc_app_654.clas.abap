@@ -142,7 +142,7 @@ CLASS z2ui5_cl_smpc_app_654 IMPLEMENTATION.
                                                                                                     ( `UPLOADSTATE` ) ) )
                     )->a( n = `selectionMode`      v = `MultiToggle`
                     )->a( n = `rowSelectionChange` v = client->_event( val = `SELECTION`
-                                                                       arg = `$event.oSource.getSelectedIndices().join()` )
+                                                                       arg = `$event.getSource().getSelectedIndices().join()` )
 
                     )->ele( `extension`
                         )->ele( n = `OverflowToolbar` ns = `m`
@@ -291,7 +291,7 @@ CLASS z2ui5_cl_smpc_app_654 IMPLEMENTATION.
                                             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                             t_arg = VALUE #( ( `uploadSetPlugin` )
                                                                                                              ( `openFilePreview` )
-                                                                                                             ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                             ( `$event.getSource().getBindingContext()` ) ) )
                                             )->a( n = `class` v = `sapUiTinyMarginBottom`
                                         )->tag( n = `Text` ns = `m`
                                             )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -363,7 +363,7 @@ CLASS z2ui5_cl_smpc_app_654 IMPLEMENTATION.
                                     )->a( n = `type`  v = `Transparent`
                                     )->a( n = `icon`  v = `sap-icon://decline`
                                     )->a( n = `press` v = client->_event( val = `REMOVE_ROW`
-                                                                          arg = `$event.oSource.getBindingContext().getPath()` ) ).
+                                                                          arg = `$event.getSource().getBindingContext().getPath()` ) ).
 
     client->view_display( view->stringify( ) ).
 

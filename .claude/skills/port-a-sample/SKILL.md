@@ -398,13 +398,13 @@ re-joins a wrapped `t_arg`.
 #### Data binding & events
 
 - **A binding path always comes from a binding method — never hard-code it as
-  text.** `client->_bind( var )` (and `client->_bind( val = var path = abap_true )`
+  text.** `client->_bind( var )` (and `client->_bind_path( var )`
   for the raw path) derives the model path *from the ABAP variable*, so renaming
   the variable moves the binding with it. Writing the path literally instead
   (`'/T_ITEMS'`, `` `{/T_ITEMS}` ``, `items = '{/T_ITEMS}'`, `path: '/T_ITEMS'`)
   silently breaks on the next rename and is not allowed. This holds **everywhere a
   method can produce the path**: the aggregation / model-root path
-  (`_bind( … path = abap_true )`), a slot element binding
+  (`_bind_path( … )`), a slot element binding
   (`follow_up_action( val = cs_event-bind_element … t_arg = VALUE #( ( idx ) ( client->_bind( tab ) ) ) )`
   — pass `client->_bind( tab )`, never the text path), a `binding_call` target, etc.
   `pattern-lint`'s `hardcoded-binding-path` rule flags ports still writing a
@@ -486,14 +486,16 @@ re-joins a wrapped `t_arg`.
   correct **property** binding as `` `{NOTES}` `` in an attribute
   (`)->a( n = \`tooltip\` v = \`{NOTES}\``) must be written `` `${NOTES}` `` in a
   `t_arg` (`t_arg = VALUE #( ( \`${NOTES}\` ) )`). The same `$`-prefix rule
-  covers the UI5 event object: `` `$event.oSource.sId` `` (the pressed
+  covers the UI5 event object through its public getters: `` `$event.getSource().getId()` `` (the pressed
   control's id — app 005), `` `${$source>/text}` `` (a bound property of the
-  event source — app 003), `` `$event.mParameters.selectedItems` `` (app 022).
+  event source — app 003), `` `$event.getParameters().selectedItems` `` (app 022).
+  Never a private field (`$event.oSource.sId`, `$event.mParameters`): the linter's
+  `ui5-internal-access` reports it and its `--fix` writes the getter.
 - **Don't fake a value you can actually read from the event.** When the original
   controller reads something off the event/source (`evt.getSource().getId()`,
   `evt.getParameter(...)`), transport it with the `$event.…` arg above and read
   it back with `get_event_arg( )` — do **not** substitute a static placeholder
-  (app 005's toast carries the real control id via `` `$event.oSource.sId` ``).
+  (app 005's toast carries the real control id via `` `$event.getSource().getId()` ``).
 - **A property computed from several bound values → a UI5 expression binding
   `{= … }`.** Write every `client->_bind( … )` call inline, embedded with
   `${ … }` — the never-capture rule above applies inside expression bindings
@@ -712,7 +714,7 @@ these entries.
   one-shot wire using `check_queue_last` to survive the busy guard during the
   initial render (demo_004's `Storage`/`finished`) keeps its overlay, because
   there the app really is loading.
-- **Event args need the `$`-prefixed form** (`${COL}`, `$event.oSource.sId`), not
+- **Event args need the `$`-prefixed form** (`${COL}`, `$event.getSource().getId()`), not
   a bare `{COL}` — see "Data binding & events" in this guide.
 - **A UI5 *association* cannot be data-bound** — only properties and
   aggregations can, so the scalar-literal->two-way-binding move (this guide) does not
@@ -727,7 +729,7 @@ these entries.
   control source for `associations:`.
 - **abap2UI5 has only one default model** — flatten any named-model binding into
   it — see "`model_init` — the model" in this guide.
-- **`_bind( val = x path = abap_true )` returns the bare model path**
+- **`_bind_path( x )` returns the bare model path**
   (no braces) — use it when composing raw binding-info strings
   (`{ path: '...', sorter: ... }`); never reconstruct the path with substring
   tricks (app 039).

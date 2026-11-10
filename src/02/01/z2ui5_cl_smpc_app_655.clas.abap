@@ -124,8 +124,8 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                     omit_initial_paths = VALUE #( ( `IMAGEURL` )
                                                                                                                   ( `UPLOADSTATE` ) ) ) }', templateShareable: false \}|
                         )->a( n = `selectionChange` v = client->_event( val   = `SELECTION`
-                                                                        t_arg = VALUE #( ( `$event.oSource.getId()` )
-                                                                                         ( `$event.oSource.getSelectedContexts().length` ) ) )
+                                                                        t_arg = VALUE #( ( `$event.getSource().getId()` )
+                                                                                         ( `$event.getSource().getSelectedContexts().length` ) ) )
 
                         )->ele( `headerToolbar`
                             )->ele( `OverflowToolbar`
@@ -176,7 +176,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                        t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
                                                                                                          ( `${$parameters>/item}.getMediaType()` )
                                                                                                          ( `${$parameters>/item}.getFileObject().size` )
-                                                                                                         ( `$event.oSource.data('itemsPath')` ) )
+                                                                                                         ( `$event.getSource().data('itemsPath')` ) )
                                                                                        s_ctrl = VALUE #( check_prevent_default = abap_true
                                                                                                          check_queue_last      = abap_true ) )
                                 )->a( n = `cloudFilePickerEnabled` v = `true`
@@ -285,7 +285,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                                 t_arg = VALUE #( ( `uploadSetPlugin` )
                                                                                                                  ( `openFilePreview` )
-                                                                                                                 ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                                 ( `$event.getSource().getBindingContext()` ) ) )
                                                 )->a( n = `class` v = `sapUiTinyMarginBottom`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -314,7 +314,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                         )->a( n = `type`  v = `Transparent`
                                         )->a( n = `icon`  v = `sap-icon://decline`
                                         )->a( n = `press` v = client->_event( val   = `REMOVE_ROW`
-                                                                              t_arg = VALUE #( ( `$event.oSource.getBindingContext().getPath()` )
+                                                                              t_arg = VALUE #( ( `$event.getSource().getBindingContext().getPath()` )
                                                                                                ( `${FILENAME}` ) ) )
 
                                 )->end(
@@ -335,8 +335,8 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                     omit_initial_paths = VALUE #( ( `IMAGEURL` )
                                                                                                                   ( `UPLOADSTATE` ) ) ) }', templateShareable: false \}|
                         )->a( n = `selectionChange` v = client->_event( val   = `SELECTION`
-                                                                        t_arg = VALUE #( ( `$event.oSource.getId()` )
-                                                                                         ( `$event.oSource.getSelectedContexts().length` ) ) )
+                                                                        t_arg = VALUE #( ( `$event.getSource().getId()` )
+                                                                                         ( `$event.getSource().getSelectedContexts().length` ) ) )
 
                         )->ele( `headerToolbar`
                             )->ele( `OverflowToolbar`
@@ -387,7 +387,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                        t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
                                                                                                          ( `${$parameters>/item}.getMediaType()` )
                                                                                                          ( `${$parameters>/item}.getFileObject().size` )
-                                                                                                         ( `$event.oSource.data('itemsPath')` ) )
+                                                                                                         ( `$event.getSource().data('itemsPath')` ) )
                                                                                        s_ctrl = VALUE #( check_prevent_default = abap_true
                                                                                                          check_queue_last      = abap_true ) )
                                 )->a( n = `cloudFilePickerEnabled` v = `true`
@@ -496,7 +496,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                                 t_arg = VALUE #( ( `uploadSetPlugin-instance2` )
                                                                                                                  ( `openFilePreview` )
-                                                                                                                 ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                                 ( `$event.getSource().getBindingContext()` ) ) )
                                                 )->a( n = `class` v = `sapUiTinyMarginBottom`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -525,7 +525,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                         )->a( n = `type`  v = `Transparent`
                                         )->a( n = `icon`  v = `sap-icon://decline`
                                         )->a( n = `press` v = client->_event( val   = `REMOVE_ROW`
-                                                                              t_arg = VALUE #( ( `$event.oSource.getBindingContext().getPath()` )
+                                                                              t_arg = VALUE #( ( `$event.getSource().getBindingContext().getPath()` )
                                                                                                ( `${FILENAME}` ) ) )
 
                                 )->end(
@@ -546,8 +546,8 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                     omit_initial_paths = VALUE #( ( `IMAGEURL` )
                                                                                                                   ( `UPLOADSTATE` ) ) ) }', templateShareable: false \}|
                         )->a( n = `selectionChange` v = client->_event( val   = `SELECTION`
-                                                                        t_arg = VALUE #( ( `$event.oSource.getId()` )
-                                                                                         ( `$event.oSource.getSelectedContexts().length` ) ) )
+                                                                        t_arg = VALUE #( ( `$event.getSource().getId()` )
+                                                                                         ( `$event.getSource().getSelectedContexts().length` ) ) )
 
                         )->ele( `headerToolbar`
                             )->ele( `OverflowToolbar`
@@ -598,7 +598,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                                                        t_arg  = VALUE #( ( `${$parameters>/item}.getFileName()` )
                                                                                                          ( `${$parameters>/item}.getMediaType()` )
                                                                                                          ( `${$parameters>/item}.getFileObject().size` )
-                                                                                                         ( `$event.oSource.data('itemsPath')` ) )
+                                                                                                         ( `$event.getSource().data('itemsPath')` ) )
                                                                                        s_ctrl = VALUE #( check_prevent_default = abap_true
                                                                                                          check_queue_last      = abap_true ) )
                                 )->a( n = `cloudFilePickerEnabled` v = `true`
@@ -707,7 +707,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
                                                                                                 t_arg = VALUE #( ( `uploadSetPlugin-instance3` )
                                                                                                                  ( `openFilePreview` )
-                                                                                                                 ( `$event.oSource.getBindingContext()` ) ) )
+                                                                                                                 ( `$event.getSource().getBindingContext()` ) ) )
                                                 )->a( n = `class` v = `sapUiTinyMarginBottom`
                                             )->tag( `Text`
                                                 )->a( n = `text` v = `{DOCUMENTTYPE}`
@@ -736,7 +736,7 @@ CLASS z2ui5_cl_smpc_app_655 IMPLEMENTATION.
                                         )->a( n = `type`  v = `Transparent`
                                         )->a( n = `icon`  v = `sap-icon://decline`
                                         )->a( n = `press` v = client->_event( val   = `REMOVE_ROW`
-                                                                              t_arg = VALUE #( ( `$event.oSource.getBindingContext().getPath()` )
+                                                                              t_arg = VALUE #( ( `$event.getSource().getBindingContext().getPath()` )
                                                                                                ( `${FILENAME}` ) ) ) ).
 
     client->view_display( view->stringify( ) ).

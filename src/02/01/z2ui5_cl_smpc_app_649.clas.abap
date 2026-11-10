@@ -228,7 +228,7 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
             )->a( n = `id`    v = `columnsPopup`
             )->a( n = `close` v = client->_event( val   = `COLUMNS_CLOSE`
                                                   t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
+                                                                   ( `$event.getSource().getPanels()[0].getP13nData(true)` ) ) )
 
             )->ele( n = `panels` ns = `p13n`
                 )->tag( n = `SelectionPanel` ns = `p13n`
@@ -279,7 +279,7 @@ CLASS z2ui5_cl_smpc_app_649 IMPLEMENTATION.
             )->a( n = `id`    v = `rowsPopup`
             )->a( n = `close` v = client->_event( val   = `ROWS_CLOSE`
                                                   t_arg = VALUE #( ( `${$parameters>/reason}` )
-                                                                   ( `$event.oSource.getPanels()[0].getP13nData(true)` ) ) )
+                                                                   ( `$event.getSource().getPanels()[0].getP13nData(true)` ) ) )
 
             )->ele( n = `panels` ns = `p13n`
                 )->tag( n = `SelectionPanel` ns = `p13n`
