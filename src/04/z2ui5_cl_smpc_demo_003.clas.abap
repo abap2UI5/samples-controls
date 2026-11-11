@@ -457,6 +457,10 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " VIEW_CHANGE rebuilds the view: the single-member and the team calendar
+    " are two branches of view_display( ), chosen from view_key - a different
+    " control, not a different value
+
     CASE client->get_event( ).
 
       WHEN `SELECT_MEMBER` OR `ROW_SELECT`.

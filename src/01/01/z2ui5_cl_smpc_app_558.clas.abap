@@ -451,6 +451,10 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " the branches below that call view_display( ) do so on purpose: the
+    " TabContainer's items and the page the NavContainer shows are written at
+    " render time - view_display( ) says which page is re-issued and why
+
     CASE client->get_event( ).
 
       WHEN `SELECTION_CHANGE`.

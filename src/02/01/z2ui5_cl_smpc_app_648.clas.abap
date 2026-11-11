@@ -182,6 +182,10 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " every branch that changes columns or sorters rebuilds the view: the
+    " columns are emitted in a LOOP over t_columns, order and sort indicator
+    " included - nothing a model push could move
+
     CASE client->get_event( ).
 
       WHEN `OPEN_PERSO`.

@@ -180,6 +180,10 @@ CLASS z2ui5_cl_smpc_app_644 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " a rebuild after each added view, not a model push: the container's views
+    " are emitted in a LOOP over t_dialog_views / t_popover_views, so a new
+    " view needs new XML
+
     CASE client->get_event( ).
 
       WHEN `SELECT_LAYOUT`.
