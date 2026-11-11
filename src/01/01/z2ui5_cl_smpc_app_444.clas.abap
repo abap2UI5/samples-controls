@@ -125,9 +125,10 @@ CLASS z2ui5_cl_smpc_app_444 IMPLEMENTATION.
         DELETE t_notifications WHERE id = closed_id.
 
       WHEN `GROUP_CLOSE`.
+        " group_visible is BOUND to the group's visible property, so the
+        " automatic model push is the whole update - no view_display( )
         group_visible = abap_false.
         client->message_toast_display( `Item Closed: Notification Group` ).
-        view_display( ).
 
     ENDCASE.
 
