@@ -218,6 +218,10 @@ CLASS z2ui5_cl_smpc_app_570 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " EDIT, SAVE and CANCEL rebuild the view on purpose: edit_mode picks the row
+    " template in view_display( ) - Input cells or Text cells - and a binding
+    " cannot swap a template
+
     " the first row SAVE could not parse, if any - see the SAVE branch
     DATA bad TYPE string.
 

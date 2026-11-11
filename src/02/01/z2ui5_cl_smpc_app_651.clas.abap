@@ -159,6 +159,9 @@ CLASS z2ui5_cl_smpc_app_651 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " MANAGE and a new SAVE rebuild the view: the VariantItems are emitted in a
+    " LOOP over t_items, so a changed or added item needs new XML
+
     CASE client->get_event( ).
 
       WHEN `TOGGLE_MODIFIED`.
