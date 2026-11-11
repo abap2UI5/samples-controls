@@ -11,7 +11,7 @@ CLASS z2ui5_cl_smpc_app_635 DEFINITION PUBLIC.
         key  TYPE string,
         text TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
 
     DATA sizetypes TYPE ty_t_item.
     DATA sselectedsize TYPE string.
@@ -31,10 +31,10 @@ CLASS z2ui5_cl_smpc_app_635 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -43,7 +43,8 @@ CLASS z2ui5_cl_smpc_app_635 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
@@ -96,15 +97,41 @@ CLASS z2ui5_cl_smpc_app_635 IMPLEMENTATION.
 
   METHOD model_init.
 
-    sizetypes = VALUE #(
-        ( key = `Auto`       text = `Auto` )
-        ( key = `Base`       text = `Base` )
-        ( key = `ExtraSmall` text = `ExtraSmall` )
-        ( key = `Small`      text = `Small` )
-        ( key = `Medium`     text = `Medium` )
-        ( key = `Large`      text = `Large` ) ).
+    DATA temp1 TYPE z2ui5_cl_smpc_app_635=>ty_t_item.
+    DATA temp2 LIKE LINE OF temp1.
+    FIELD-SYMBOLS <temp3> LIKE LINE OF sizetypes.
+    DATA temp4 LIKE sy-tabix.
+    CLEAR temp1.
+    
+    temp2-key = `Auto`.
+    temp2-text = `Auto`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Base`.
+    temp2-text = `Base`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `ExtraSmall`.
+    temp2-text = `ExtraSmall`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Small`.
+    temp2-text = `Small`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Medium`.
+    temp2-text = `Medium`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-key = `Large`.
+    temp2-text = `Large`.
+    INSERT temp2 INTO TABLE temp1.
+    sizetypes = temp1.
 
-    sselectedsize = sizetypes[ 1 ]-key.
+    
+    
+    temp4 = sy-tabix.
+    READ TABLE sizetypes INDEX 1 ASSIGNING <temp3>.
+    sy-tabix = temp4.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    sselectedsize = <temp3>-key.
 
   ENDMETHOD.
 

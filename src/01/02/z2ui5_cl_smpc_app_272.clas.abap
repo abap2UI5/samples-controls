@@ -53,12 +53,12 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -67,7 +67,8 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the original controller element-binds the whole model (bindElement('/')),
     " so its {BillingName} & co are relative to the root; the port seeds the
@@ -373,6 +374,21 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA group TYPE string.
+        DATA temp1 TYPE string.
+        DATA temp2 TYPE string.
+        DATA temp3 TYPE string.
+        DATA temp4 TYPE string.
+        DATA temp5 TYPE string.
+        DATA temp6 TYPE string.
+        DATA temp7 TYPE string.
+        DATA temp8 TYPE string.
+        DATA temp9 TYPE string.
+        DATA temp10 TYPE string.
+        DATA temp11 TYPE string.
+        DATA temp12 TYPE string.
+        DATA temp13 TYPE string.
+        DATA temp14 TYPE string.
 
     CASE client->get_event( ).
 
@@ -380,7 +396,8 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onValidateFieldGroup: mMessageMapping resolves the group to its own
         " strip + type, the strip shows "Group '<g>' Validation:<type>" and
         " the toast names the validated group
-        DATA(group) = client->get_event_arg( ).
+        
+        group = client->get_event_arg( ).
         CASE group.
           WHEN `Billing Information`.
             billing_type    = `Error`.
@@ -425,20 +442,48 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
         " onReset: hide the messages and setData({}) - every bound field back
         " to its initial (empty) value
         hide_messages( ).
-        billingname              = VALUE #( ).
-        billingstreet            = VALUE #( ).
-        billingstreetnumber      = VALUE #( ).
-        billingzipcode           = VALUE #( ).
-        billingcity              = VALUE #( ).
-        billingcountry           = VALUE #( ).
-        discountcode             = VALUE #( ).
-        creditcardvendor         = VALUE #( ).
-        creditcardnumber         = VALUE #( ).
-        creditcardmonth          = VALUE #( ).
-        creditcardyear           = VALUE #( ).
-        creditcardvalidationcode = VALUE #( ).
-        onlinemail               = VALUE #( ).
-        onlinetwitter            = VALUE #( ).
+        
+        CLEAR temp1.
+        billingname              = temp1.
+        
+        CLEAR temp2.
+        billingstreet            = temp2.
+        
+        CLEAR temp3.
+        billingstreetnumber      = temp3.
+        
+        CLEAR temp4.
+        billingzipcode           = temp4.
+        
+        CLEAR temp5.
+        billingcity              = temp5.
+        
+        CLEAR temp6.
+        billingcountry           = temp6.
+        
+        CLEAR temp7.
+        discountcode             = temp7.
+        
+        CLEAR temp8.
+        creditcardvendor         = temp8.
+        
+        CLEAR temp9.
+        creditcardnumber         = temp9.
+        
+        CLEAR temp10.
+        creditcardmonth          = temp10.
+        
+        CLEAR temp11.
+        creditcardyear           = temp11.
+        
+        CLEAR temp12.
+        creditcardvalidationcode = temp12.
+        
+        CLEAR temp13.
+        onlinemail               = temp13.
+        
+        CLEAR temp14.
+        onlinetwitter            = temp14.
         client->message_toast_display( text = `Reset triggered` duration = `500` ).
 
     ENDCASE.
@@ -457,6 +502,7 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA default_text TYPE string.
 
     " the sample's SampleData.json carries a single Email field the view never
     " binds, so every bound input starts empty; the four MessageStrips start
@@ -467,7 +513,8 @@ CLASS z2ui5_cl_smpc_app_272 IMPLEMENTATION.
     credit_type   = `Information`.
     online_type   = `Information`.
 
-    DATA(default_text) = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
+    
+    default_text = `Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit.`.
     billing_text  = default_text.
     discount_text = default_text.
     credit_text   = default_text.

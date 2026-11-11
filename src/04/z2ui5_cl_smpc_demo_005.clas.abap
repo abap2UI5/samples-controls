@@ -83,7 +83,7 @@ CLASS z2ui5_cl_smpc_demo_005 DEFINITION PUBLIC.
         description TYPE string,
       END OF ty_s_post_view.
 
-    DATA t_rows        TYPE STANDARD TABLE OF ty_s_row WITH EMPTY KEY.
+    DATA t_rows        TYPE STANDARD TABLE OF ty_s_row WITH DEFAULT KEY.
     DATA s_post        TYPE ty_s_post_view.
     " the worklistView model of Worklist.onInit
     DATA table_title   TYPE string.
@@ -110,13 +110,13 @@ CLASS z2ui5_cl_smpc_demo_005 DEFINITION PUBLIC.
       END OF ty_s_route.
 
     DATA client       TYPE REF TO z2ui5_if_client.
-    DATA t_all        TYPE STANDARD TABLE OF ty_s_post WITH EMPTY KEY.
+    DATA t_all        TYPE STANDARD TABLE OF ty_s_post WITH DEFAULT KEY.
     " the query of the last search (onFilterPosts)
     DATA search_query TYPE string.
     " the route on show and the ones before it - what the browser history
     " holds there, walked by the Back button
     DATA s_route      TYPE ty_s_route.
-    DATA t_history    TYPE STANDARD TABLE OF ty_s_route WITH EMPTY KEY.
+    DATA t_history    TYPE STANDARD TABLE OF ty_s_route WITH DEFAULT KEY.
     " the page the App shows, re-issued after a rebuilt view
     DATA page_current TYPE string VALUE `worklistPage`.
 
@@ -163,14 +163,14 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
     me->client = client.
 
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       list_refresh( ).
       route_to( `worklist` ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -182,7 +182,10 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
     " App.view.xml, with the two routing targets - Worklist.view.xml and
     " Post.view.xml - as the App's pages. The core:require is the curated
     " formatter module the post's Timestamp goes through
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA app TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `displayBlock`   v = `true`
             )->a( n = `height`         v = `100%`
@@ -193,7 +196,8 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
             )->a( n = `xmlns:form`     v = `sap.ui.layout.form`
             )->a( n = `core:require`   v = `{Formatter: 'z2ui5/model/formatter'}` ).
 
-    DATA(app) = view->ele( `Shell`
+    
+    app = view->ele( `Shell`
         )->ele( `App`
             )->a( n = `id`                 v = `app`
             )->a( n = `busyIndicatorDelay` v = `0` ).
@@ -206,8 +210,13 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
     " a rebuilt App starts on its first page while the route on show
     " survives as class state - re-issue it
     IF page_current <> `worklistPage`.
+      
+      CLEAR temp1.
+      INSERT `app` INTO TABLE temp1.
+      INSERT `to` INTO TABLE temp1.
+      INSERT page_current INTO TABLE temp1.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `app` ) ( `to` ) ( page_current ) ) ).
+                                t_arg = temp1 ).
     ENDIF.
 
   ENDMETHOD.
@@ -216,13 +225,18 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
   METHOD page_worklist.
 
     " Worklist.view.xml
-    DATA(page) = parent->ele( n = `FullscreenPage` ns = `semantic`
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA table TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA share TYPE string.
+    DATA temp3 TYPE string_table.
+    page = parent->ele( n = `FullscreenPage` ns = `semantic`
         )->a( n = `id`    v = `worklistPage`
         )->a( n = `title` v = `Bulletin Board` ).
 
     " the growing table over /Posts, sorted by Title; the header counts the
     " rows (onUpdateFinished, done in list_refresh)
-    DATA(table) = page->ele( n = `content` ns = `semantic`
+    
+    table = page->ele( n = `content` ns = `semantic`
         )->ele( `Table`
             )->a( n = `id`      v = `table`
             )->a( n = `width`   v = `auto`
@@ -308,14 +322,19 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
     " onShareEmailPress: URLHelper.triggerEmail(null, subject, message) with
     " the two texts of the worklistView model - in the browser, no round-trip
-    DATA(share) = |\{ SUBJECT: $\{{ client->_bind_path( share_subject ) }\}, | &&
+    
+    share = |\{ SUBJECT: $\{{ client->_bind_path( share_subject ) }\}, | &&
                   |BODY: $\{{ client->_bind_path( share_message ) }\} \}|.
 
+    
+    CLEAR temp3.
+    INSERT `TRIGGER_EMAIL` INTO TABLE temp3.
+    INSERT share INTO TABLE temp3.
     page->ele( n = `sendEmailAction` ns = `semantic`
         )->tag( n = `SendEmailAction` ns = `semantic`
             )->a( n = `id`    v = `shareEmail`
             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-urlhelper
-                                                            t_arg = VALUE #( ( `TRIGGER_EMAIL` ) ( share ) ) ) ).
+                                                            t_arg = temp3 ) ).
 
   ENDMETHOD.
 
@@ -323,7 +342,9 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
   METHOD page_post.
 
     " Post.view.xml
-    DATA(content) = parent->ele( n = `FullscreenPage` ns = `semantic`
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA tabs TYPE REF TO z2ui5_cl_ui5_view_builder.
+    content = parent->ele( n = `FullscreenPage` ns = `semantic`
         )->a( n = `id`                 v = `postPage`
         )->a( n = `busyIndicatorDelay` v = `0`
         )->a( n = `navButtonPress`     v = client->_event( `BACK` )
@@ -339,7 +360,8 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
         )->a( n = `numberUnit`       v = client->_bind( s_post-currency )
         )->a( n = `backgroundDesign` v = `Translucent` ).
 
-    DATA(tabs) = content->ele( `IconTabBar`
+    
+    tabs = content->ele( `IconTabBar`
         )->a( n = `id`       v = `iconTabBar`
         )->a( n = `expanded` v = `{= !${device>/system/phone} }`
         )->a( n = `class`    v = `sapUiNoContentPadding`
@@ -407,7 +429,9 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
     IF s_route-name IS NOT INITIAL AND replace = abap_false.
       INSERT s_route INTO TABLE t_history.
     ENDIF.
-    s_route = VALUE #( name = name postid = postid ).
+    CLEAR s_route.
+    s_route-name = name.
+    s_route-postid = postid.
 
     CASE name.
       WHEN `post`.
@@ -422,6 +446,10 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
 
   METHOD nav_back.
+    DATA previous LIKE LINE OF t_history.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF t_history.
+    DATA temp2 LIKE sy-tabix.
+    DATA temp5 TYPE z2ui5_cl_smpc_demo_005=>ty_s_route.
 
     " BaseController.myNavBack("worklist"): back in the history if there is
     " a previous entry, otherwise to the worklist, replacing the entry
@@ -430,15 +458,28 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(previous) = t_history[ lines( t_history ) ].
+    
+    
+    
+    temp2 = sy-tabix.
+    READ TABLE t_history INDEX lines( t_history ) ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    previous = <temp1>.
     DELETE t_history INDEX lines( t_history ).
-    s_route = VALUE #( ).
+    
+    CLEAR temp5.
+    s_route = temp5.
     route_to( name = previous-name postid = previous-postid replace = abap_true ).
 
   ENDMETHOD.
 
 
   METHOD nav_to.
+    DATA temp6 TYPE string_table.
+    DATA temp3 TYPE string.
 
     " the targets' levels decide the direction, as sap.m.routing does: the
     " post (level 2) slides in with to( ), the worklist (level 1) comes
@@ -448,10 +489,19 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
     ENDIF.
     page_current = page.
 
+    
+    CLEAR temp6.
+    INSERT `app` INTO TABLE temp6.
+    
+    IF page = `postPage`.
+      temp3 = `to`.
+    ELSE.
+      temp3 = `backToPage`.
+    ENDIF.
+    INSERT temp3 INTO TABLE temp6.
+    INSERT page INTO TABLE temp6.
     client->follow_up_action( val   = client->cs_event-control_by_id
-                              t_arg = VALUE #( ( `app` )
-                                               ( COND #( WHEN page = `postPage` THEN `to` ELSE `backToPage` ) )
-                                               ( page ) ) ).
+                              t_arg = temp6 ).
 
   ENDMETHOD.
 
@@ -459,13 +509,31 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
   METHOD post_bind.
 
     " bindElement("/Posts('<postId>')") - an unknown id leaves the page empty
-    DATA(post) = VALUE ty_s_post( t_all[ postid = postid ] OPTIONAL ).
+    DATA temp8 TYPE ty_s_post.
+    DATA temp9 TYPE z2ui5_cl_smpc_demo_005=>ty_s_post.
+    DATA post LIKE temp8.
+    DATA temp4 TYPE z2ui5_cl_smpc_demo_005=>ty_s_post_view-price_text.
+    CLEAR temp8.
+    
+    READ TABLE t_all INTO temp9 WITH KEY postid = postid.
+    IF sy-subrc = 0.
+      temp8 = temp9.
+    ENDIF.
+    
+    post = temp8.
 
-    s_post = VALUE #( title       = post-title
-                      price_text  = COND #( WHEN post-postid IS NOT INITIAL THEN number_unit( post-price ) )
-                      currency    = post-currency
-                      timestamp   = post-timestamp
-                      description = post-description ).
+    CLEAR s_post.
+    s_post-title = post-title.
+    
+    IF post-postid IS NOT INITIAL.
+      temp4 = number_unit( post-price ).
+    ELSE.
+      CLEAR temp4.
+    ENDIF.
+    s_post-price_text = temp4.
+    s_post-currency = post-currency.
+    s_post-timestamp = post-timestamp.
+    s_post-description = post-description.
 
   ENDMETHOD.
 
@@ -474,26 +542,51 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
     " the flag is bound two-way, so a toggle is already back in the rows -
     " carry it into the posts first, so a row the new filter hides keeps it
-    LOOP AT t_all ASSIGNING FIELD-SYMBOL(<post>).
-      IF line_exists( t_rows[ postid = <post>-postid ] ).
-        <post>-flagged = t_rows[ postid = <post>-postid ]-flagged.
+    FIELD-SYMBOLS <post> LIKE LINE OF t_all.
+      DATA temp10 LIKE sy-subrc.
+        FIELD-SYMBOLS <temp11> LIKE LINE OF t_rows.
+        DATA temp12 LIKE sy-tabix.
+    DATA temp13 LIKE t_rows.
+    DATA post LIKE LINE OF t_all.
+      DATA temp14 TYPE z2ui5_cl_smpc_demo_005=>ty_s_row.
+    DATA temp15 TYPE string.
+    LOOP AT t_all ASSIGNING <post>.
+      
+      READ TABLE t_rows WITH KEY postid = <post>-postid TRANSPORTING NO FIELDS.
+      temp10 = sy-subrc.
+      IF temp10 = 0.
+        
+        
+        temp12 = sy-tabix.
+        READ TABLE t_rows WITH KEY postid = <post>-postid ASSIGNING <temp11>.
+        sy-tabix = temp12.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        <post>-flagged = <temp11>-flagged.
       ENDIF.
     ENDLOOP.
 
-    t_rows = VALUE #( ).
-    LOOP AT t_all INTO DATA(post).
+    
+    CLEAR temp13.
+    t_rows = temp13.
+    
+    LOOP AT t_all INTO post.
       " the Contains filter on Title - the mock server's substringof, which
       " is case-sensitive
       IF search_query IS NOT INITIAL AND find( val = post-title sub = search_query ) < 0.
         CONTINUE.
       ENDIF.
-      INSERT VALUE #( postid      = post-postid
-                      title       = post-title
-                      category    = post-category
-                      price_text  = number_unit( post-price )
-                      price_state = price_state( post-price )
-                      currency    = post-currency
-                      flagged     = post-flagged ) INTO TABLE t_rows.
+      
+      CLEAR temp14.
+      temp14-postid = post-postid.
+      temp14-title = post-title.
+      temp14-category = post-category.
+      temp14-price_text = number_unit( post-price ).
+      temp14-price_state = price_state( post-price ).
+      temp14-currency = post-currency.
+      temp14-flagged = post-flagged.
+      INSERT temp14 INTO TABLE t_rows.
     ENDLOOP.
 
     " the sorter on Title, ascending - binary, like the mock server's `<`
@@ -501,7 +594,13 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
     " onUpdateFinished takes the counted title only when the table HAS rows and
     " falls back to the plain worklistTableTitle when it is empty
-    table_title = COND #( WHEN t_rows IS INITIAL THEN `Posts` ELSE |Posts ({ lines( t_rows ) })| ).
+    
+    IF t_rows IS INITIAL.
+      temp15 = `Posts`.
+    ELSE.
+      temp15 = |Posts ({ lines( t_rows ) })|.
+    ENDIF.
+    table_title = temp15.
 
   ENDMETHOD.
 
@@ -517,10 +616,17 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
   METHOD price_state.
 
     " formatter.priceState: the four price bands
-    result = COND #( WHEN price < 50 THEN `Success`
-                     WHEN price < 250 THEN `None`
-                     WHEN price < 2000 THEN `Warning`
-                     ELSE `Error` ).
+    DATA temp16 TYPE string.
+    IF price < 50.
+      temp16 = `Success`.
+    ELSEIF price < 250.
+      temp16 = `None`.
+    ELSEIF price < 2000.
+      temp16 = `Warning`.
+    ELSE.
+      temp16 = `Error`.
+    ENDIF.
+    result = temp16.
 
   ENDMETHOD.
 
@@ -529,84 +635,227 @@ CLASS z2ui5_cl_smpc_demo_005 IMPLEMENTATION.
 
     " Worklist.onInit: the worklistView model's share texts - the message
     " carries the app's URL (window.location.href)
-    DATA(config) = client->get( )-s_config.
+    DATA config TYPE z2ui5_if_client=>ty_s_get-s_config.
+    DATA temp17 LIKE t_all.
+    DATA temp18 LIKE LINE OF temp17.
+    config = client->get( )-s_config.
     share_subject = `<Email subject PLEASE REPLACE ACCORDING TO YOUR USE CASE>`.
     share_message = |<Email body PLEASE REPLACE ACCORDING TO YOUR USE CASE> | &&
                     |{ config-origin }{ config-pathname }{ config-search }{ config-hash }|.
 
     " localService/mockdata/Posts.json - the full row set, the OData
     " /Date(ms)/ timestamps converted to the instant they carry
-    t_all = VALUE #(
-        ( postid = `PostID_1` title = `29'er Mountain Bike (red)` category = `Bicycles`
-          price = 81 currency = `USD` flagged = abap_false timestamp = `2015-04-05T08:49:40Z`
-          description = `A great mountainbike, barely used and good as new. Pedals and saddle included` )
-        ( postid = `PostID_2` title = `Football (rare with signatures)` category = `Sports`
-          price = 420 currency = `EUR` flagged = abap_false timestamp = `2015-04-08T14:46:22Z`
-          description = `A trophy for collectors, 2014 football with original signatures from the german national soccer team and the spirit of the world cup.` )
-        ( postid = `PostID_3` title = `Video Games` category = `Multimedia`
-          price = 27 currency = `USD` flagged = abap_false timestamp = `2015-06-03T18:49:53Z`
-          description = `A collection of 22 classic video games from 1986 to 1992, old but still a lot of fun` )
-        ( postid = `PostID_4` title = `Fluffy Teddy Bear` category = `Toys`
-          price = 13 currency = `USD` flagged = abap_true timestamp = `2015-04-24T16:27:57Z`
-          description = `This little companion is looking for a new friend, it is brown and has black eyes. One ear is missing.` )
-        ( postid = `PostID_5` title = `Car Tires, 22 Inch` category = `Car parts`
-          price = 121 currency = `USD` flagged = abap_false timestamp = `2015-02-10T14:46:02Z`
-          description = `Spare winter tires for a compact-size car, 4 tires with good profile.` )
-        ( postid = `PostID_6` title = `Garage Door with Blue Stripes, 4m x 2,2m` category = `Car parts`
-          price = 481 currency = `USD` flagged = abap_true timestamp = `2015-05-14T11:46:11Z`
-          description = `Good as new, a garage door for a standard double garage, keeps cars dry and carjackers away.` )
-        ( postid = `PostID_7` title = `Kids Toys, a Whole Box of Stuff` category = `Toys`
-          price = 63 currency = `USD` flagged = abap_false timestamp = `2015-06-29T18:43:35Z`
-          description = `Best suited for kids aged from 4-10, a whole box of toys including model cars, marble balls, toy figures, and much more.` )
-        ( postid = `PostID_8` title = `Screwdrivers` category = `Miscellaneous`
-          price = 28 currency = `USD` flagged = abap_false timestamp = `2015-08-11T06:08:54Z`
-          description = `20-Piece Multibit Ratcheting Screwdriver Set` )
-        ( postid = `PostID_9` title = `Comfortable Bike Saddle` category = `Bicycles`
-          price = 25 currency = `USD` flagged = abap_false timestamp = `2015-03-17T15:35:23Z`
-          description = `A brand-new, unused bike saddle with black covering` )
-        ( postid = `PostID_10` title = `Bike Rack` category = `Bicycles`
-          price = 106 currency = `USD` flagged = abap_true timestamp = `2015-04-24T10:23:41Z`
-          description = `Suitable for camper or RV, used` )
-        ( postid = `PostID_11` title = `DVD: Trains of Europe` category = `Multimedia`
-          price = 61 currency = `USD` flagged = abap_false timestamp = `2015-03-04T05:14:18Z`
-          description = `An amazing collection of train models all around Europe, total runtime 412 minutes.` )
-        ( postid = `PostID_12` title = `Matress` category = `Miscellaneous`
-          price = 306 currency = `USD` flagged = abap_false timestamp = `2015-06-29T21:18:30Z`
-          description = `Bed Mattress 30 x 70 inch, filled with natural fibers, barely used` )
-        ( postid = `PostID_13` title = `High-End Gamer PC` category = `Furniture`
-          price = 256 currency = `USD` flagged = abap_false timestamp = `2015-07-09T09:47:42Z`
-          description = `3Ghz dual core, 16gb RAM, high tower. Great for playing the latest games.` )
-        ( postid = `PostID_14` title = `Cooking Pot Set` category = `Miscellaneous`
-          price = 234 currency = `USD` flagged = abap_false timestamp = `2015-04-02T01:32:28Z`
-          description = `Stainless steel cooking pots (10 pcs) with a matching lid each.` )
-        ( postid = `PostID_15` title = `Jeans` category = `Clothing`
-          price = 34 currency = `EUR` flagged = abap_false timestamp = `2015-07-19T04:27:48Z`
-          description = `Used-look Jeans european size 32x34, only worn once.` )
-        ( postid = `PostID_16` title = `Moving Boxes` category = `Miscellaneous`
-          price = 60 currency = `USD` flagged = abap_false timestamp = `2015-02-23T01:06:33Z`
-          description = `100 Cardboard boxes perfect for relocating, only used once and in a pretty good shape.` )
-        ( postid = `PostID_17` title = `Car VW Golf (white)` category = `Car Parts`
-          price = 3006 currency = `USD` flagged = abap_false timestamp = `2015-07-15T02:23:39Z`
-          description = `Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.` )
-        ( postid = `PostID_18` title = `Swimming Pool` category = `Miscellaneous`
-          price = 4587 currency = `USD` flagged = abap_false timestamp = `2015-07-09T00:44:01Z`
-          description = `Perfect for your very own pool parties in the garden, measures: 5x10m, fill with ~500.000l water and enjoy.` )
-        ( postid = `PostID_19` title = `Travel Suitcases` category = `Miscellaneous`
-          price = 560 currency = `USD` flagged = abap_false timestamp = `2015-03-20T07:52:18Z`
-          description = `New and in original packaging, a set of 5 high-quality suitcases from small to large sizes.` )
-        ( postid = `PostID_20` title = `Rainbow Stickers` category = `Miscellaneous`
-          price = 45 currency = `USD` flagged = abap_true timestamp = `2015-05-07T01:22:13Z`
-          description = `A vast collection of rainbow stickers for collectors, about 2.000 individual pieces in all shapes and sizes` )
-        ( postid = `PostID_21` title = `Notebook` category = `Multimedia`
-          price = 23 currency = `USD` flagged = abap_false timestamp = `2015-07-30T20:05:26Z`
-          description = `Used notebook with broken display, needs repair. A bargain for the DIY tech guy.` )
-        ( postid = `PostID_22` title = `Plasma TV 60"!` category = `Multimedia`
-          price = 360 currency = `USD` flagged = abap_false timestamp = `2015-03-04T20:37:48Z`
-          description = `I got a larger one, so selling this one cheap for all the movie lovers out there` )
-        ( postid = `PostID_23` title = `Cheap Boat` category = `Miscellaneous`
-          price = 26263 currency = `USD` flagged = abap_false timestamp = `2015-08-14T14:08:33Z`
-          description = `Living close to a lake or the ocean? This dream of a yacht (30ft long!) comes with lots of extras. Get it and fulfill yourself a dream.` )
-    ).
+    
+    CLEAR temp17.
+    
+    temp18-postid = `PostID_1`.
+    temp18-title = `29'er Mountain Bike (red)`.
+    temp18-category = `Bicycles`.
+    temp18-price = 81.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-04-05T08:49:40Z`.
+    temp18-description = `A great mountainbike, barely used and good as new. Pedals and saddle included`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_2`.
+    temp18-title = `Football (rare with signatures)`.
+    temp18-category = `Sports`.
+    temp18-price = 420.
+    temp18-currency = `EUR`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-04-08T14:46:22Z`.
+    temp18-description = `A trophy for collectors, 2014 football with original signatures from the german national soccer team and the spirit of the world cup.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_3`.
+    temp18-title = `Video Games`.
+    temp18-category = `Multimedia`.
+    temp18-price = 27.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-06-03T18:49:53Z`.
+    temp18-description = `A collection of 22 classic video games from 1986 to 1992, old but still a lot of fun`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_4`.
+    temp18-title = `Fluffy Teddy Bear`.
+    temp18-category = `Toys`.
+    temp18-price = 13.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_true.
+    temp18-timestamp = `2015-04-24T16:27:57Z`.
+    temp18-description = `This little companion is looking for a new friend, it is brown and has black eyes. One ear is missing.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_5`.
+    temp18-title = `Car Tires, 22 Inch`.
+    temp18-category = `Car parts`.
+    temp18-price = 121.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-02-10T14:46:02Z`.
+    temp18-description = `Spare winter tires for a compact-size car, 4 tires with good profile.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_6`.
+    temp18-title = `Garage Door with Blue Stripes, 4m x 2,2m`.
+    temp18-category = `Car parts`.
+    temp18-price = 481.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_true.
+    temp18-timestamp = `2015-05-14T11:46:11Z`.
+    temp18-description = `Good as new, a garage door for a standard double garage, keeps cars dry and carjackers away.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_7`.
+    temp18-title = `Kids Toys, a Whole Box of Stuff`.
+    temp18-category = `Toys`.
+    temp18-price = 63.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-06-29T18:43:35Z`.
+    temp18-description = `Best suited for kids aged from 4-10, a whole box of toys including model cars, marble balls, toy figures, and much more.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_8`.
+    temp18-title = `Screwdrivers`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 28.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-08-11T06:08:54Z`.
+    temp18-description = `20-Piece Multibit Ratcheting Screwdriver Set`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_9`.
+    temp18-title = `Comfortable Bike Saddle`.
+    temp18-category = `Bicycles`.
+    temp18-price = 25.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-03-17T15:35:23Z`.
+    temp18-description = `A brand-new, unused bike saddle with black covering`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_10`.
+    temp18-title = `Bike Rack`.
+    temp18-category = `Bicycles`.
+    temp18-price = 106.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_true.
+    temp18-timestamp = `2015-04-24T10:23:41Z`.
+    temp18-description = `Suitable for camper or RV, used`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_11`.
+    temp18-title = `DVD: Trains of Europe`.
+    temp18-category = `Multimedia`.
+    temp18-price = 61.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-03-04T05:14:18Z`.
+    temp18-description = `An amazing collection of train models all around Europe, total runtime 412 minutes.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_12`.
+    temp18-title = `Matress`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 306.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-06-29T21:18:30Z`.
+    temp18-description = `Bed Mattress 30 x 70 inch, filled with natural fibers, barely used`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_13`.
+    temp18-title = `High-End Gamer PC`.
+    temp18-category = `Furniture`.
+    temp18-price = 256.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-07-09T09:47:42Z`.
+    temp18-description = `3Ghz dual core, 16gb RAM, high tower. Great for playing the latest games.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_14`.
+    temp18-title = `Cooking Pot Set`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 234.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-04-02T01:32:28Z`.
+    temp18-description = `Stainless steel cooking pots (10 pcs) with a matching lid each.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_15`.
+    temp18-title = `Jeans`.
+    temp18-category = `Clothing`.
+    temp18-price = 34.
+    temp18-currency = `EUR`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-07-19T04:27:48Z`.
+    temp18-description = `Used-look Jeans european size 32x34, only worn once.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_16`.
+    temp18-title = `Moving Boxes`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 60.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-02-23T01:06:33Z`.
+    temp18-description = `100 Cardboard boxes perfect for relocating, only used once and in a pretty good shape.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_17`.
+    temp18-title = `Car VW Golf (white)`.
+    temp18-category = `Car Parts`.
+    temp18-price = 3006.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-07-15T02:23:39Z`.
+    temp18-description = `Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_18`.
+    temp18-title = `Swimming Pool`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 4587.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-07-09T00:44:01Z`.
+    temp18-description = `Perfect for your very own pool parties in the garden, measures: 5x10m, fill with ~500.000l water and enjoy.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_19`.
+    temp18-title = `Travel Suitcases`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 560.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-03-20T07:52:18Z`.
+    temp18-description = `New and in original packaging, a set of 5 high-quality suitcases from small to large sizes.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_20`.
+    temp18-title = `Rainbow Stickers`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 45.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_true.
+    temp18-timestamp = `2015-05-07T01:22:13Z`.
+    temp18-description = `A vast collection of rainbow stickers for collectors, about 2.000 individual pieces in all shapes and sizes`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_21`.
+    temp18-title = `Notebook`.
+    temp18-category = `Multimedia`.
+    temp18-price = 23.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-07-30T20:05:26Z`.
+    temp18-description = `Used notebook with broken display, needs repair. A bargain for the DIY tech guy.`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_22`.
+    temp18-title = `Plasma TV 60"!`.
+    temp18-category = `Multimedia`.
+    temp18-price = 360.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-03-04T20:37:48Z`.
+    temp18-description = `I got a larger one, so selling this one cheap for all the movie lovers out there`.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-postid = `PostID_23`.
+    temp18-title = `Cheap Boat`.
+    temp18-category = `Miscellaneous`.
+    temp18-price = 26263.
+    temp18-currency = `USD`.
+    temp18-flagged = abap_false.
+    temp18-timestamp = `2015-08-14T14:08:33Z`.
+    temp18-description = `Living close to a lake or the ocean? This dream of a yacht (30ft long!) comes with lots of extras. Get it and fulfill yourself a dream.`.
+    INSERT temp18 INTO TABLE temp17.
+    t_all = temp17.
 
   ENDMETHOD.
 

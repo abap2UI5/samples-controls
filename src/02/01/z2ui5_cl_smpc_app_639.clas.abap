@@ -13,7 +13,7 @@ CLASS z2ui5_cl_smpc_app_639 DEFINITION PUBLIC.
         amount          TYPE p LENGTH 8 DECIMALS 2,
         currencycode    TYPE string,
       END OF ty_s_payment.
-    DATA t_payments TYPE STANDARD TABLE OF ty_s_payment WITH EMPTY KEY.
+    DATA t_payments TYPE STANDARD TABLE OF ty_s_payment WITH DEFAULT KEY.
     DATA filterinputwidth TYPE string.
     DATA value_state TYPE string.
 
@@ -40,12 +40,12 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -54,8 +54,16 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/valid}` INTO TABLE temp1.
+    INSERT `${$parameters>/value/operator}` INTO TABLE temp1.
+    INSERT `${$parameters>/value} ? ${$source>}.toDates(${$parameters>/value})[0].getJSDate() : ''` INTO TABLE temp1.
+    INSERT `${$parameters>/value} ? (${$source>}.toDates(${$parameters>/value})[1] ? ${$source>}.toDates(${$parameters>/value})[1].getJSDate() : '') : ''` INTO TABLE temp1.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `height`    v = `100%`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -85,10 +93,7 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
                             )->a( n = `valueState`  v = client->_bind( value_state )
                             )->a( n = `change`      v = client->_event(
                                                             val   = `CHANGE`
-                                                            t_arg = VALUE #( ( `${$parameters>/valid}` )
-                                                                             ( `${$parameters>/value/operator}` )
-                                                                             ( `${$parameters>/value} ? ${$source>}.toDates(${$parameters>/value})[0].getJSDate() : ''` )
-                                                                             ( `${$parameters>/value} ? (${$source>}.toDates(${$parameters>/value})[1] ? ${$source>}.toDates(${$parameters>/value})[1].getJSDate() : '') : ''` ) ) )
+                                                            t_arg = temp1 )
                             )->a( n = `width`       v = client->_bind( filterinputwidth )
 
                     )->end(
@@ -147,6 +152,9 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp3 TYPE string.
+      DATA operator LIKE temp3.
+      DATA temp4 TYPE string_table.
 
     IF client->get_event( ) = `CHANGE`.
       IF client->get_event_arg( ) = abap_false.
@@ -155,18 +163,28 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
       ENDIF.
       value_state = `None`.
       " the controller's _createFilter - an empty value clears the filter
-      DATA(operator) = SWITCH string( client->get_event_arg( 2 )
-          WHEN `FROM` OR `FROMDATETIME` THEN `GT`
-          WHEN `TO` OR `TODATETIME` THEN `LT`
-          ELSE `BT` ).
+      
+      CASE client->get_event_arg( 2 ).
+        WHEN `FROM` OR `FROMDATETIME`.
+          temp3 = `GT`.
+        WHEN `TO` OR `TODATETIME`.
+          temp3 = `LT`.
+        WHEN OTHERS.
+          temp3 = `BT`.
+      ENDCASE.
+      
+      operator = temp3.
+      
+      CLEAR temp4.
+      INSERT `payments-table` INTO TABLE temp4.
+      INSERT `items` INTO TABLE temp4.
+      INSERT `filter` INTO TABLE temp4.
+      INSERT `PERFOMDATETIME` INTO TABLE temp4.
+      INSERT operator INTO TABLE temp4.
+      INSERT client->get_event_arg( 3 ) INTO TABLE temp4.
+      INSERT client->get_event_arg( 4 ) INTO TABLE temp4.
       client->follow_up_action( val   = client->cs_event-binding_call
-                                t_arg = VALUE #( ( `payments-table` )
-                                                 ( `items` )
-                                                 ( `filter` )
-                                                 ( `PERFOMDATETIME` )
-                                                 ( operator )
-                                                 ( client->get_event_arg( 3 ) )
-                                                 ( client->get_event_arg( 4 ) ) ) ).
+                                t_arg = temp4 ).
     ENDIF.
 
   ENDMETHOD.
@@ -175,11 +193,33 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
   METHOD shifted_now.
 
     " getIcrementedDateFromToday: years and months first, the day offset overflows like JS setDate
-    DATA(month) = CONV i( sy-datum+4(2) ) - 1 + months.
-    DATA(year) = CONV i( sy-datum(4) ) + years + month DIV 12.
+    DATA temp6 TYPE i.
+    DATA month TYPE i.
+    DATA temp7 TYPE i.
+    DATA year TYPE i.
+    DATA temp8 TYPE d.
+    DATA first LIKE temp8.
+    DATA temp9 TYPE d.
+    DATA temp1 TYPE i.
+    DATA day LIKE temp9.
+    temp6 = sy-datum+4(2).
+    
+    month = temp6 - 1 + months.
+    
+    temp7 = sy-datum(4).
+    
+    year = temp7 + years + month DIV 12.
     month = month MOD 12 + 1.
-    DATA(first) = CONV d( |{ year WIDTH = 4 ALIGN = RIGHT PAD = `0` }{ month WIDTH = 2 ALIGN = RIGHT PAD = `0` }01| ).
-    DATA(day) = CONV d( first + CONV i( sy-datum+6(2) ) - 1 + days ).
+    
+    temp8 = |{ year WIDTH = 4 ALIGN = RIGHT PAD = `0` }{ month WIDTH = 2 ALIGN = RIGHT PAD = `0` }01|.
+    
+    first = temp8.
+    
+    
+    temp1 = sy-datum+6(2).
+    temp9 = first + temp1 - 1 + days.
+    
+    day = temp9.
     result = |{ day DATE = ISO }T{ sy-uzeit TIME = ISO }|.
 
   ENDMETHOD.
@@ -187,28 +227,101 @@ CLASS z2ui5_cl_smpc_app_639 IMPLEMENTATION.
 
   METHOD model_init.
 
-    filterinputwidth = COND #( WHEN client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-phone
-                               THEN `auto`
-                               ELSE `300px` ).
+    DATA temp10 TYPE string.
+    DATA temp11 LIKE t_payments.
+    DATA temp12 LIKE LINE OF temp11.
+    IF client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-phone.
+      temp10 = `auto`.
+    ELSE.
+      temp10 = `300px`.
+    ENDIF.
+    filterinputwidth = temp10.
     value_state = `None`.
 
-    t_payments = VALUE #(
-        ( transactiontype = `ATM withdrawal`          perfomdatetime = shifted_now( days = -1 months = 0 years = 0 )  amount = `100.00` currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -2 months = 0 years = 0 )  amount = `18.00`  currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -3 months = 0 years = 0 )  amount = `54.05`  currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -4 months = 0 years = 0 )  amount = `30.00`  currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -5 months = 0 years = 0 )  amount = `105.50` currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -3 months = 0 years = 0 )  amount = `74.35`  currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -3 months = -1 years = 0 ) amount = `9.50`   currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -1 months = -1 years = 0 ) amount = `3.90`   currencycode = `EUR` )
-        ( transactiontype = `ATM withdrawal`          perfomdatetime = shifted_now( days = -5 months = -2 years = 0 ) amount = `200.00` currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -4 months = -2 years = 0 ) amount = `153.80` currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -9 months = 0 years = 0 )  amount = `5.30`   currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = -8 months = 0 years = 0 )  amount = `1.60`   currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = shifted_now( days = 0 months = -1 years = -1 ) amount = `95.60`  currencycode = `EUR` )
-        ( transactiontype = `ATM withdrawal`          perfomdatetime = shifted_now( days = 0 months = 0 years = 0 )   amount = `400.00` currencycode = `EUR` )
-        ( transactiontype = `ATM withdrawal`          perfomdatetime = `2021-06-09T15:15:00`                          amount = `50.00`  currencycode = `EUR` )
-        ( transactiontype = `payment on POS terminal` perfomdatetime = `2021-06-08T10:15:00`                          amount = `22.34`  currencycode = `EUR` ) ).
+    
+    CLEAR temp11.
+    
+    temp12-transactiontype = `ATM withdrawal`.
+    temp12-perfomdatetime = shifted_now( days = -1 months = 0 years = 0 ).
+    temp12-amount = `100.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -2 months = 0 years = 0 ).
+    temp12-amount = `18.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -3 months = 0 years = 0 ).
+    temp12-amount = `54.05`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -4 months = 0 years = 0 ).
+    temp12-amount = `30.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -5 months = 0 years = 0 ).
+    temp12-amount = `105.50`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -3 months = 0 years = 0 ).
+    temp12-amount = `74.35`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -3 months = -1 years = 0 ).
+    temp12-amount = `9.50`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -1 months = -1 years = 0 ).
+    temp12-amount = `3.90`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `ATM withdrawal`.
+    temp12-perfomdatetime = shifted_now( days = -5 months = -2 years = 0 ).
+    temp12-amount = `200.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -4 months = -2 years = 0 ).
+    temp12-amount = `153.80`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -9 months = 0 years = 0 ).
+    temp12-amount = `5.30`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = -8 months = 0 years = 0 ).
+    temp12-amount = `1.60`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = shifted_now( days = 0 months = -1 years = -1 ).
+    temp12-amount = `95.60`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `ATM withdrawal`.
+    temp12-perfomdatetime = shifted_now( days = 0 months = 0 years = 0 ).
+    temp12-amount = `400.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `ATM withdrawal`.
+    temp12-perfomdatetime = `2021-06-09T15:15:00`.
+    temp12-amount = `50.00`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    temp12-transactiontype = `payment on POS terminal`.
+    temp12-perfomdatetime = `2021-06-08T10:15:00`.
+    temp12-amount = `22.34`.
+    temp12-currencycode = `EUR`.
+    INSERT temp12 INTO TABLE temp11.
+    t_payments = temp11.
 
   ENDMETHOD.
 
