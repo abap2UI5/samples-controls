@@ -105,6 +105,8 @@ CLASS z2ui5_cl_smpc_app_492 IMPLEMENTATION.
 
     IF client->get_event( ) = `TOGGLE_CONTEXT_MENU`.
       menu_on = client->get_event_arg( ).
+      " a rebuild, not a model push: the contextMenu aggregation is emitted
+      " or left out in view_display( ), and a binding cannot add or remove it
       view_display( ).
     ENDIF.
 
