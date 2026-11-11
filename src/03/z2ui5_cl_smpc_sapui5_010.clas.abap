@@ -48,6 +48,11 @@ CLASS z2ui5_cl_smpc_sapui5_010 DEFINITION PUBLIC.
     DATA mt_legend TYPE STANDARD TABLE OF ty_s_legend WITH EMPTY KEY.
 
   PROTECTED SECTION.
+    DATA client TYPE REF TO z2ui5_if_client.
+
+    METHODS view_display.
+    METHODS model_init.
+
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -55,23 +60,18 @@ CLASS z2ui5_cl_smpc_sapui5_010 IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
 
-    " No check_on_navigated( ) branch, and that is not an oversight: the view
-    " below is built and displayed OUTSIDE the lifecycle IF, so every
-    " roundtrip re-displays it - including the navigated one. The IF only
-    " seeds the model, which has to happen once.
+    me->client = client.
     IF client->check_on_init( ).
-      mt_spot = VALUE #(
-        ( pos = `9.98336;53.55024;0`         contentoffset = `0;-6` scale = `1;1;1` key = `Hamburg`     tooltip = `Hamburg`     type = `Default` icon = `factory` )
-        ( pos = `11.5820;48.1351;0`          contentoffset = `0;-5` scale = `1;1;1` key = `Munich`      tooltip = `Munich`      type = `Default` icon = `factory` )
-        ( pos = `8.683340000;50.112000000;0` contentoffset = `0;-6` scale = `1;1;1` key = `Frankfurt`   tooltip = `Frankfurt`   type = `Default` icon = `factory` ) ).
-
-      mt_route = VALUE #(
-        (  position = `2.3522219;48.856614;0; -74.0059731;40.7143528;0`   routetype = `Geodesic` linedash = `10;5` color = `92,186,230` colorborder = `rgb(255,255,255)` linewidth = `25` ) ).
-
-      mt_legend = VALUE #(
-        (   text = `Dashed flight route` color = `rgb(92,186,230)` )
-        (   text = `Flight route` color = `rgb(92,186,35)` ) ).
+      model_init( ).
+      view_display( ).
+    ELSEIF client->check_on_navigated( ).
+      view_display( ).
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD view_display.
 
     DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
 
@@ -139,6 +139,23 @@ CLASS z2ui5_cl_smpc_sapui5_010 IMPLEMENTATION.
                                                 )->a( n = `color` v = `{COLOR}` ).
 
     client->view_display( view->stringify( ) ).
+
+  ENDMETHOD.
+
+
+  METHOD model_init.
+
+    mt_spot = VALUE #(
+      ( pos = `9.98336;53.55024;0`         contentoffset = `0;-6` scale = `1;1;1` key = `Hamburg`     tooltip = `Hamburg`     type = `Default` icon = `factory` )
+      ( pos = `11.5820;48.1351;0`          contentoffset = `0;-5` scale = `1;1;1` key = `Munich`      tooltip = `Munich`      type = `Default` icon = `factory` )
+      ( pos = `8.683340000;50.112000000;0` contentoffset = `0;-6` scale = `1;1;1` key = `Frankfurt`   tooltip = `Frankfurt`   type = `Default` icon = `factory` ) ).
+
+    mt_route = VALUE #(
+      (  position = `2.3522219;48.856614;0; -74.0059731;40.7143528;0`   routetype = `Geodesic` linedash = `10;5` color = `92,186,230` colorborder = `rgb(255,255,255)` linewidth = `25` ) ).
+
+    mt_legend = VALUE #(
+      (   text = `Dashed flight route` color = `rgb(92,186,230)` )
+      (   text = `Flight route` color = `rgb(92,186,35)` ) ).
 
   ENDMETHOD.
 
