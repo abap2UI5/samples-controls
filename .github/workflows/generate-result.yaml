@@ -134,6 +134,12 @@ jobs:
     - name: Regenerate catalogue.json
       run: node scripts/generate-catalogue.mjs
 
+    # catalogue-derived.json reads ui5/universe.json (the release the linter
+    # checks against), refreshed above - and meta-valid.yaml regenerates and
+    # `git diff --exit-code`s it like the two above.
+    - name: Regenerate catalogue-derived.json
+      run: node scripts/generate-derived.mjs --quiet
+
     - name: Drop OpenUI5 checkout
       run: rm -rf openui5
 
@@ -158,6 +164,7 @@ jobs:
           STATUS.md
           SAMPLES.md
           catalogue.json
+          catalogue-derived.json
           ui5/universe.json
           ui5/properties.json
           ui5/descriptions.json
