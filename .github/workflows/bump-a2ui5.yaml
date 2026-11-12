@@ -1,10 +1,10 @@
 # The framework the reproducible builds run against is fixed at the commit in
 # A2UI5_PIN (node-setup and the web/Pages build check it out; the nightly e2e
 # deliberately stays on main tip as the upstream canary). This workflow moves
-# the pin: once a week it resolves abap2UI5 main, rebuilds the full backend at
-# that commit, runs the e2e smoke over every port, and opens a PR — so a
-# breaking framework change arrives as a red bump PR instead of a broken
-# Pages deploy.
+# the pin: on a manual dispatch it resolves abap2UI5 main, rebuilds the full
+# backend at that commit, runs the e2e smoke over every port, and opens a PR —
+# so a breaking framework change arrives as a red bump PR instead of a broken
+# Pages deploy. The monthly move is bump-deps.yaml's (see `on:` below).
 #
 # The RED half of that promise is the whole point, so the pull request opens on
 # the smoke's verdict rather than only on its success: create-pull-request is
@@ -33,8 +33,8 @@ name: bump-a2ui5
 on:
   workflow_dispatch:
 
-# one run at a time: a manual dispatch that overlaps the weekly cron would
-# open two pull requests for the same bump
+# one run at a time: two overlapping manual dispatches would open two pull
+# requests for the same bump
 concurrency:
   group: bump-a2ui5
 
@@ -99,7 +99,7 @@ jobs:
         # Every step below is gated on this, and it is written only once the
         # resolve has succeeded: a run that dies in the resolve leaves it
         # UNSET, so no `!cancelled()` step below can mistake a broken run for a
-        # no-op one, and a genuine no-op week still opens nothing.
+        # no-op one, and a genuine no-op run still opens nothing.
         if git diff --quiet; then
           echo "changed=false" >> "$GITHUB_OUTPUT"
         else
@@ -182,7 +182,7 @@ jobs:
         # every printf format is SINGLE-quoted: the body is full of backticks
         # and none of them may reach the shell as a command substitution
         {
-          printf 'Weekly re-resolve of `A2UI5_PIN` against abap2UI5 main (`%s`) —\n' "$SHA"
+          printf 'Manual re-resolve of `A2UI5_PIN` against abap2UI5 main (`%s`) —\n' "$SHA"
           printf 'what node-setup, the Pages build and the e2e smoke run against.\n'
           printf 'The abaplint configs resolve main directly (unpinned), and the\n'
           printf 'nightly e2e keeps testing main tip as the canary.\n\n'
