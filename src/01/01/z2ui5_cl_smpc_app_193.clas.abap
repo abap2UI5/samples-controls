@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m combobox2columns listitem
 " @summary Use the combo box dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems.
-" @origin sap.m.sample.ComboBox2Columns - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBox2Columns (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ComboBox2Columns - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBox2Columns (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_193 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

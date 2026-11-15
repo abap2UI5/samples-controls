@@ -1,6 +1,6 @@
 " @keywords toolheader tool header sap.tnt app shell scrollcontainer button overflowtoolbarlayoutdata image title text
 " @summary ToolHeader that mimics the content of the Shell.
-" @origin sap.tnt.sample.ToolHeader - https://sdk.openui5.org/entity/sap.tnt.ToolHeader/sample/sap.tnt.sample.ToolHeader (status: reviewed - read against the original, not run)
+" @origin sap.tnt.sample.ToolHeader - https://sdk.openui5.org/entity/sap.tnt.ToolHeader/sample/sap.tnt.sample.ToolHeader (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_134 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

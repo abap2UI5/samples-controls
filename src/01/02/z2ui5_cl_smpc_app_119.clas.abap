@@ -1,6 +1,6 @@
 " @keywords fixflex fix flex sap.ui.layout layout html image text
 " @summary Shows a FixFlex control with a vertical layout.
-" @origin sap.ui.layout.sample.FixFlexVertical - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexVertical (status: reviewed - read against the original, not run)
+" @origin sap.ui.layout.sample.FixFlexVertical - https://sdk.openui5.org/entity/sap.ui.layout.FixFlex/sample/sap.ui.layout.sample.FixFlexVertical (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_119 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

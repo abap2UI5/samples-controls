@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the 24 Avatars toast client-side via control_global MESSAGE_TOAST.show with '{0} Pressed' filled by $event.oSource.sId (roundtrip-free) - the app has no on_event"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

@@ -1,6 +1,6 @@
 " @keywords messagepopover message popover sap.m async handling overflowtoolbar button messageitem link toolbarspacer
 " @summary The message handling concept sample shows how you can use callback functions for resolving a promise after a link or descriptions have been asynchronously validated.
-" @origin sap.m.sample.MessagePopoverAsyncMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverAsyncMessageHandling (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.MessagePopoverAsyncMessageHandling - https://sdk.openui5.org/entity/sap.m.MessagePopover/sample/sap.m.sample.MessagePopoverAsyncMessageHandling (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_067 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

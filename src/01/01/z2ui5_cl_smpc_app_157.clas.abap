@@ -1,6 +1,6 @@
 " @keywords headercontainer header container sap.m vertical numericcontent tilecontent
 " @summary The Header Container with a vertical layout and with divider lines.
-" @origin sap.m.sample.HeaderContainerVM - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerVM (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.HeaderContainerVM - https://sdk.openui5.org/entity/sap.m.HeaderContainer/sample/sap.m.sample.HeaderContainerVM (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_157 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

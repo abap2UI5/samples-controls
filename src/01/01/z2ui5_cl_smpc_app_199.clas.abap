@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m comboboxgrouping item
 " @summary Items in the ComboBox could be grouped by a property
-" @origin sap.m.sample.ComboBoxGrouping - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxGrouping (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ComboBoxGrouping - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxGrouping (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_199 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

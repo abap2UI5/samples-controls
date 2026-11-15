@@ -1,6 +1,6 @@
 " @keywords generictile generic tile sap.m generictileasmonitortile html tilecontent numericcontent
 " @summary Shows Monitor Tile samples that can contain header, subheader, icon, key value, unit, and a footer.
-" @origin sap.m.sample.GenericTileAsMonitorTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsMonitorTile (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.GenericTileAsMonitorTile - https://sdk.openui5.org/entity/sap.m.GenericTile/sample/sap.m.sample.GenericTileAsMonitorTile (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_389 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords tree sap.m treeodata standardtreeitem
 " @summary This example shows Tree with OData service.
-" @origin sap.m.sample.TreeOData - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeOData (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.TreeOData - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeOData (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_603 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

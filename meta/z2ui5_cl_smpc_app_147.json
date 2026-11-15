@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "all three button presses ROUND-TRIP and the backend answers with follow_up_action( control_global, BUSY_INDICATOR show/hide ) plus cs_event-start_timer - the global BusyIndicator reproduced 1:1. Corrected 2026-08-21: the note still described the pre-rework MESSAGE_TOAST substitution, which the port's own deviation says is gone."
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "NOTE",

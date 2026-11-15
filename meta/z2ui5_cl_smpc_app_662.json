@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the Slider's liveChange round-trips (check_queue_last + check_no_busy) and the backend sets the VerticalLayout width; both AvatarGroup presses round-trip and on_event builds the individual or the group popover (popover_display anchored at the pressed control's id); the group popover's NavContainer is driven by control_by_id to/back in the popover slot."
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "NOTE",

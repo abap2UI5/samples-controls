@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageonjsonwithlazyloading objectpagedynamicheadertitle title button overflowtoolbarbutton objectpagesubsection grid verticallayout
 " @summary Object Page with LazyLoading
-" @origin sap.uxap.sample.ObjectPageOnJSONWithLazyLoading - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageOnJSONWithLazyLoading (status: generated - machine-written, not yet reviewed)
+" @origin sap.uxap.sample.ObjectPageOnJSONWithLazyLoading - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageOnJSONWithLazyLoading (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_593 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

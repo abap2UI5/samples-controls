@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m vbox title select item planningcalendarrow customdata calendarappointment label
 " @summary PlanningCalendar with single row selection that illustrates the built-in views.
-" @origin sap.m.sample.PlanningCalendar - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendar (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.PlanningCalendar - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendar (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_536 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

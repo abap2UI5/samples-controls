@@ -1,6 +1,6 @@
 " @keywords dynamicdaterange dynamic date range sap.m dynamicdaterangeandcalendarweeknumbering table overflowtoolbar title toolbarspacer label column
 " @summary This example shows the Dynamic Date Range control with Middle Eastern calendar week numbering.
-" @origin sap.m.sample.DynamicDateRangeAndCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.DynamicDateRange/sample/sap.m.sample.DynamicDateRangeAndCalendarWeekNumbering (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.DynamicDateRangeAndCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.DynamicDateRange/sample/sap.m.sample.DynamicDateRangeAndCalendarWeekNumbering (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_640 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

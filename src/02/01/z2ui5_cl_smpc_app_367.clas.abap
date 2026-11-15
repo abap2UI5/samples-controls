@@ -1,6 +1,6 @@
 " @keywords input sap.m inputdescription verticallayout invisibletext
 " @summary This sample illustrates the usage of the description with input fields, e.g. description for units of measurements and currencies.
-" @origin sap.m.sample.InputDescription - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputDescription (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.InputDescription - https://sdk.openui5.org/entity/sap.m.Input/sample/sap.m.sample.InputDescription (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_367 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

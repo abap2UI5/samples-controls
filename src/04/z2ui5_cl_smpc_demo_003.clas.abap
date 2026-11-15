@@ -1,6 +1,6 @@
 " @keywords team calendar app dynamicpagetitle title verticallayout responsivepopover planningcalendarlegend calendarlegenditem planningcalendar select button
 " @summary Calendar demo app for team and team members. - the UI5 demo app "Team Calendar", rebuilt as one self-contained abap2UI5 class.
-" @origin demo app Team Calendar (sap.m/teamCalendar) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
+" @origin demo app Team Calendar (sap.m/teamCalendar) - https://sdk.openui5.org/demoapps (status: checked - verified in a running system)
 "! <p class="shorttext">demo app - Team Calendar</p>
 "!
 "! The UI5 demo app Team Calendar, rebuilt as ONE abap2UI5 class and 1:1 with

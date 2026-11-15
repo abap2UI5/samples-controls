@@ -1,6 +1,6 @@
 " @keywords shopping cart app flexiblecolumnlayout navcontainer viewsettingsfilteritem viewsettingsitem viewsettingscustomitem verticallayout rangeslider messageitem link
 " @summary The classic business process of finding and ordering products. - the UI5 demo app "Shopping Cart", rebuilt as one self-contained abap2UI5 class.
-" @origin demo app Shopping Cart (sap.m/cart) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
+" @origin demo app Shopping Cart (sap.m/cart) - https://sdk.openui5.org/demoapps (status: checked - verified in a running system)
 "! <p class="shorttext">demo app - Shopping Cart</p>
 "!
 "! The UI5 demo app Shopping Cart - the demo kit's showcase application -

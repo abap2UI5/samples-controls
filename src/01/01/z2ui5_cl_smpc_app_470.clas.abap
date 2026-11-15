@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m comboboxfilteringcontains vbox label listitem
 " @summary You can override the default filtering "Starts with per term" with your own filter function using the setFilterFunction method. The "Contains" approach searches everywhere in the entries.
-" @origin sap.m.sample.ComboBoxFilteringContains - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringContains (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.ComboBoxFilteringContains - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxFilteringContains (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_470 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

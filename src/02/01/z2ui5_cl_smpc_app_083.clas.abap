@@ -1,6 +1,6 @@
 " @keywords standardlistitem standard list item sap.m avatar index bindings
 " @summary This list item offers a standardized user interface for list content with title, description, and avatar.
-" @origin sap.m.sample.StandardListItemAvatar - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemAvatar (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.StandardListItemAvatar - https://sdk.openui5.org/entity/sap.m.StandardListItem/sample/sap.m.sample.StandardListItemAvatar (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_083 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords illustratedmessage illustrated message sap.m illustratedmessageincardnoemail card header
 " @summary IllustratedMessage as content of sap.f.Card. 'NoEmail' illustration type is being used for the Illustrated Message.
-" @origin sap.m.sample.IllustratedMessageInCardNoEmail - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInCardNoEmail (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.IllustratedMessageInCardNoEmail - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInCardNoEmail (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_632 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

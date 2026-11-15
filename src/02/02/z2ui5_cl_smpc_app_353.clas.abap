@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table dnd hbox overflowtoolbar title contextmenusetting menu menuitem column text draginfo
 " @summary Shows various drag-and-drop capabilities along with custom context menu alternatives for each action.
-" @origin sap.ui.table.sample.DnD - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.DnD (status: reviewed - read against the original, not run)
+" @origin sap.ui.table.sample.DnD - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.DnD (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_353 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

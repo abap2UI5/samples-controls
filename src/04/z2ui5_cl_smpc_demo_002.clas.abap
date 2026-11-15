@@ -1,6 +1,6 @@
 " @keywords browse orders app flexiblecolumnlayout viewsettingsdialog viewsettingsfilteritem viewsettingsitem title list toolbar overflowtoolbar searchfield
 " @summary Master-detail app for browsing orders. - the UI5 demo app "Browse Orders", rebuilt as one self-contained abap2UI5 class.
-" @origin demo app Browse Orders (sap.m/orderbrowser) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
+" @origin demo app Browse Orders (sap.m/orderbrowser) - https://sdk.openui5.org/demoapps (status: checked - verified in a running system)
 "! <p class="shorttext">demo app - Browse Orders</p>
 "!
 "! The UI5 demo app Browse Orders - the master-detail showcase of the demo kit

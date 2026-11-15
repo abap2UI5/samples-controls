@@ -8,8 +8,8 @@
     "frontend_action": false,
     "event_t_arg": false
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     { "type": "IMPROVISED", "what": "The original model value is a JS Date object (UI5Date.getInstance()) and every TimeType binding has NO source formatOption (the type's default model format is a Date object). abap2UI5 cannot hold a JS Date object in the JSON model, so a source formatOption { source: { pattern: 'HH:mm:ss' } } is added to each TimeType binding and the field is a parseable time string ('13:30:00') - the abap2UI5 equivalent of the Date-object model. Without it view creation crashes ('Time must be a Date object'). Same idiom applies to any TypeTime/TypeDateTime sample whose model is an object; a plain string binding is not enough (CAPABILITIES date-object row)." },
     { "type": "NOTE", "what": "The original seeds the current time; a fixed time (13:30:00) is used here so the port is deterministic - a client-only display value." }

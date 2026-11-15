@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the anchor-bar section index and the columnResize beginColumn flag travel with the events; the section re-selection rides a control_by_id follow-up action addressing the section as an aggregation item"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

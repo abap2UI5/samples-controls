@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f selection modes html hbox segmentedbutton segmentedbuttonitem gridbasiclayout gridlistitem
 " @summary This is a sample for GridList with different modes of selection.
-" @origin sap.f.sample.GridListModes - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListModes (status: reviewed - read against the original, not run)
+" @origin sap.f.sample.GridListModes - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListModes (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_133 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

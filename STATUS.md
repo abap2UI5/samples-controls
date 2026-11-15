@@ -17,7 +17,7 @@ TRAINING.md; for what abap2UI5 can express see CAPABILITIES.md._
 |---|---|
 | Ports | **670** sidecars in `meta/` (src/01 OpenUI5 <= 1.71: 401 · src/02 OpenUI5 > 1.71: 269) |
 | Per library | sap.f: 46 · sap.m: 431 · sap.tnt: 17 · sap.ui: 131 · sap.uxap: 45 |
-| Status ladder | 256 `generated` · 355 `reviewed` · 59 `checked` (live-verified) |
+| Status ladder | 0 `generated` · 12 `reviewed` · 658 `checked` (live-verified) |
 | Deviations | 10 DROPPED_171 · 214 IMPROVISED · 2068 NOTE · 396 POST_171 |
 | Open LIVE_TESTs | **0 ports** carry at least one `LIVE_TEST` deviation — the automated close path is the e2e interaction harness (AGENTS §6 `e2e_smoke`) |
 | Declared gate skips | 2 structural-diff · 8 render-smoke · 0 data-fidelity · 1 property-gate (each re-verified per run — a stale skip FAILS) |
@@ -36,23 +36,6 @@ the nine `[x]` entries that had accumulated in this list (10 of 15 at the
 looking for what is left had to skip past what is done to find it. They moved
 verbatim to [docs/history.md](docs/history.md) under "closed findings" — the
 same cut AGENTS §10 already makes between the rule and the war story._
-
-- [ ] **The `checked` rung is thinning, and only a human on a real system can
-  thicken it (standing).** 59 of 622 ports (9.5%) are `checked`, against 355
-  `reviewed` and 208 `generated`, and the share falls with every batch because
-  a batch adds ports and a live check does not scale with it. Nothing in this
-  repository can close this: `checked` certifies that a person ran the port on
-  a real SAP system, which no gate, probe or headless harness stands in for —
-  and AGENTS §10 makes it worse in the right direction, because a behavioural
-  change to a `checked` port RESETS it.
-  Two things do reduce the cost of the check without replacing it, and both
-  are worth doing first: the e2e interaction modules (see the advisory
-  `validate-meta` prints — 42 of the 59 `checked` ports had none until
-  2026-09-12, so the rung with the most claimed verification carried the
-  least automated proof of it; every one of the 42 has a module now, run
-  against the transpiled backend), and keeping the sidecar's `checked.note`
-  specific enough that a re-check knows what to re-check. Neither promotes a
-  port; both make a live session shorter.
 
 - [x] **The per-keystroke wires carry `check_queue_last` AND `check_no_busy`
   (queue half 2026-09-19, overlay half 2026-09-21).** 26 wires in 14 ports -

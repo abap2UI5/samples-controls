@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "follow_up_action( control_by_id ): setP13nData on the SelectionPanel (JSON array built in ABAP) and open on the p13n.Popup; the popup's close event passes the reason and getP13nData( true )"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

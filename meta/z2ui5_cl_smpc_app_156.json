@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "every press shows a static client-composed toast (control_global MESSAGE_TOAST.show, fixed text) - roundtrip-free, so the app is init-only"
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "NOTE",

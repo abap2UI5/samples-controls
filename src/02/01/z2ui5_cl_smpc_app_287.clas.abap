@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarbadges panel simpleform label radiobuttongroup radiobutton icontabfilter
 " @summary This sample illustrates the possibility to add badges to the icon tab filters.
-" @origin sap.m.sample.IconTabBarBadges - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBadges (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.IconTabBarBadges - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarBadges (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_287 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

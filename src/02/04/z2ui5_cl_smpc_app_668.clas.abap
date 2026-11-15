@@ -1,6 +1,6 @@
 " @keywords herobanner hero banner sap.f herobannercolumnsratio html title vbox button text card header
 " @summary Demonstrates the three columnsRatio options: single column (no endContent), Equal, and FirstWider.
-" @origin sap.f.sample.HeroBannerColumnsRatio - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerColumnsRatio (status: generated - machine-written, not yet reviewed)
+" @origin sap.f.sample.HeroBannerColumnsRatio - https://sdk.openui5.org/entity/sap.f.HeroBanner/sample/sap.f.sample.HeroBannerColumnsRatio (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_668 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

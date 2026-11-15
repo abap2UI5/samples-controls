@@ -1,6 +1,6 @@
 " @keywords objectpageheadercontent object header content sap.uxap headercontent verticallayout objectstatus text objectnumber progressindicator label
 " @summary This is an example of an ObjectPageHeaderContent.
-" @origin sap.uxap.sample.HeaderContent - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.HeaderContent (status: reviewed - read against the original, not run)
+" @origin sap.uxap.sample.HeaderContent - https://sdk.openui5.org/entity/sap.uxap.ObjectPageHeaderContent/sample/sap.uxap.sample.HeaderContent (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_216 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

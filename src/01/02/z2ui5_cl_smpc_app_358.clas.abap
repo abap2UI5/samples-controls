@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table odata2 overflowtoolbar title busyindicator column label text currency
 " @summary Shows an example how an OData metadata driven table creation can look like.
-" @origin sap.ui.table.sample.OData2 - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData2 (status: reviewed - read against the original, not run)
+" @origin sap.ui.table.sample.OData2 - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData2 (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_358 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

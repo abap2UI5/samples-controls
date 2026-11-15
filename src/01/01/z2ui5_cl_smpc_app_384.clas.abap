@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m comboboxwrapping verticallayout label item
 " @summary Suggestions wrap automatically when longer then the dropdown width
-" @origin sap.m.sample.ComboBoxWrapping - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxWrapping (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ComboBoxWrapping - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxWrapping (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_384 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

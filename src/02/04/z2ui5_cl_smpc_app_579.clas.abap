@@ -1,6 +1,6 @@
 " @keywords flexiblecolumnlayout flexible column layout sap.f flexiblecolumnlayoutwithonecolumnstart flexiblecolumnlayoutdata flexiblecolumnlayoutdatafordesktop flexiblecolumnlayoutdatafortablet dynamicpage dynamicpagetitle title
 " @summary Flexible Column Layout as an app with routing that starts with a single initial column.
-" @origin sap.f.sample.FlexibleColumnLayoutWithOneColumnStart - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutWithOneColumnStart (status: generated - machine-written, not yet reviewed)
+" @origin sap.f.sample.FlexibleColumnLayoutWithOneColumnStart - https://sdk.openui5.org/entity/sap.f.FlexibleColumnLayout/sample/sap.f.sample.FlexibleColumnLayoutWithOneColumnStart (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_579 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords tree sap.m treejsonlazyloading standardtreeitem
 " @summary Shows how lazy loading with a JSON model can be done using the toggleOpenState event.
-" @origin sap.m.sample.TreeJSONLazyLoading - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeJSONLazyLoading (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.TreeJSONLazyLoading - https://sdk.openui5.org/entity/sap.m.Tree/sample/sap.m.sample.TreeJSONLazyLoading (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_496 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

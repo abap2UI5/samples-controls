@@ -1,6 +1,6 @@
 " @keywords overflowtoolbar overflow toolbar sap.m responsive text toolbarspacer button actionsheet
 " @summary Toolbar items can be displayed depending on the current device.
-" @origin sap.m.sample.ToolbarResponsive - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.ToolbarResponsive (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ToolbarResponsive - https://sdk.openui5.org/entity/sap.m.OverflowToolbar/sample/sap.m.sample.ToolbarResponsive (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_163 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the section the user tried to reach travels with beforeNavigate; the confirmed navigation goes back through control_by_id / setSelectedSection - issued from TWO places since 2026-08-27: the OK button, and again at the end of view_display( ), because selectedSection is an ASSOCIATION that a rebuilt ObjectPageLayout resets while selected_section survives as class state"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "IMPROVISED",

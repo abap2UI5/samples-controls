@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarweeknumbering vbox title select item planningcalendarrow customdata calendarappointment
 " @summary Demonstrates PlanningCalendar with different week numbering (only Date Picker, 1 Week and 1 Month views are affected).
-" @origin sap.m.sample.PlanningCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWeekNumbering (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.PlanningCalendarWeekNumbering - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarWeekNumbering (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_544 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

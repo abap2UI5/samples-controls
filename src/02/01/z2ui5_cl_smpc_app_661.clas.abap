@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins treetablewithfolderhierarchy dynamicpage treetable overflowtoolbar breadcrumbs link actionsplaceholder
 " @summary This example demonstrates the usage of UploadSetwithTable plugin with a tree table featuring folder hierarchy, folder creation, folder uploads, folder navigation with breadcrumbs and folder management
-" @origin sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.TreeTableWithFolderHierarchy (status: checked)
 CLASS z2ui5_cl_smpc_app_661 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

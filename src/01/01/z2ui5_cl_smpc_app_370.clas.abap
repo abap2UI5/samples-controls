@@ -1,6 +1,6 @@
 " @keywords textarea text area sap.m textareagrowing verticallayout messagestrip simpleform label
 " @summary Since 1.38 the growing property of sap.m.TextArea gives the ability of a control to automatically grow and shrink dynamically with its content.
-" @origin sap.m.sample.TextAreaGrowing - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaGrowing (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.TextAreaGrowing - https://sdk.openui5.org/entity/sap.m.TextArea/sample/sap.m.sample.TextAreaGrowing (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_370 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

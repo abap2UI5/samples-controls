@@ -1,6 +1,6 @@
 " @keywords searchfield search field sap.m searchfieldsuggestions label suggestionitem
 " @summary Add suggestion capabilities to a basic Search Field.
-" @origin sap.m.sample.SearchFieldSuggestions - https://sdk.openui5.org/entity/sap.m.SearchField/sample/sap.m.sample.SearchFieldSuggestions (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.SearchFieldSuggestions - https://sdk.openui5.org/entity/sap.m.SearchField/sample/sap.m.sample.SearchFieldSuggestions (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_420 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

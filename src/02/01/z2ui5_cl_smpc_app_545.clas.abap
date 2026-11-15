@@ -1,6 +1,6 @@
 " @keywords planningcalendar planning calendar sap.m planningcalendarrelativeviews vbox title planningcalendarview planningcalendarrow customdata calendarappointment
 " @summary PlanningCalendar with relative views. The relative periods are not directly related to dates, but periods with pre-defined duration.
-" @origin sap.m.sample.PlanningCalendarRelativeViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRelativeViews (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.PlanningCalendarRelativeViews - https://sdk.openui5.org/entity/sap.m.PlanningCalendar/sample/sap.m.sample.PlanningCalendarRelativeViews (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_545 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

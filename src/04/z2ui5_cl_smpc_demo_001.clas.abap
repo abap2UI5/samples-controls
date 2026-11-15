@@ -1,6 +1,6 @@
 " @keywords manage products app title icontabbar icontabfilter icontabseparator table toolbar toolbarspacer searchfield column
 " @summary Created with the 'Worklist App' tutorial. - the UI5 demo app "Manage Products", rebuilt as one self-contained abap2UI5 class.
-" @origin demo app Manage Products (sap.m/tutorial/worklist) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
+" @origin demo app Manage Products (sap.m/tutorial/worklist) - https://sdk.openui5.org/demoapps (status: checked - verified in a running system)
 "! <p class="shorttext">demo app - Manage Products</p>
 "!
 "! The UI5 demo app Manage Products (the "Worklist App" tutorial, step 07) -

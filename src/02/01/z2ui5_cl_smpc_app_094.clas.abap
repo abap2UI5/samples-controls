@@ -1,6 +1,6 @@
 " @keywords popover sap.m controlling click behavior html app table toolbar title column text
 " @summary In some cases the closing behavior of the Popover can lead to drill down navigation. This sample demonstrates how you can control this.
-" @origin sap.m.sample.PopoverControllingCloseBehavior - https://sdk.openui5.org/entity/sap.m.Popover/sample/sap.m.sample.PopoverControllingCloseBehavior (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.PopoverControllingCloseBehavior - https://sdk.openui5.org/entity/sap.m.Popover/sample/sap.m.sample.PopoverControllingCloseBehavior (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_094 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

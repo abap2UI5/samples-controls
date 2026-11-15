@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablefilepreview dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
 " @summary This example showcases how uploaded files can be previewed with FilePreviewDialog control and its related configuration. UploadSetwithTable plugin creates and uses default instance of FilePreviewDialog, if not defined.
-" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview (status: checked)
 CLASS z2ui5_cl_smpc_app_657 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

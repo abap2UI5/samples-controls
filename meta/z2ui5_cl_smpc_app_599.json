@@ -9,8 +9,8 @@
     "event_t_arg": false,
     "note": "the two toggles write two bound properties - no frontend action, no event argument"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "IMPROVISED",

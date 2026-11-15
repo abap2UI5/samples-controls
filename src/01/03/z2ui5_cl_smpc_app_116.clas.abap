@@ -1,6 +1,6 @@
 " @keywords objectpagelayout object layout sap.uxap objectpageheader objectpagesection objectpagesubsection simpleform label text
 " @summary This example shows subsections in expanded and collapsed mode.
-" @origin sap.uxap.sample.ObjectPageSubSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageSubSection (status: reviewed - read against the original, not run)
+" @origin sap.uxap.sample.ObjectPageSubSection - https://sdk.openui5.org/entity/sap.uxap.ObjectPageLayout/sample/sap.uxap.sample.ObjectPageSubSection (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_116 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

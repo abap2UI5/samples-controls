@@ -1,6 +1,6 @@
 " @keywords currency sap.ui.unified grid list customlistitem
 " @summary Display Currencies with proper Alignment
-" @origin sap.ui.unified.sample.Currency - https://sdk.openui5.org/entity/sap.ui.unified.Currency/sample/sap.ui.unified.sample.Currency (status: reviewed - read against the original, not run)
+" @origin sap.ui.unified.sample.Currency - https://sdk.openui5.org/entity/sap.ui.unified.Currency/sample/sap.ui.unified.sample.Currency (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_196 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

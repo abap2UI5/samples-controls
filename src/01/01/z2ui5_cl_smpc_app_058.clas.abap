@@ -1,6 +1,6 @@
 " @keywords label sap.m properties wrapping hyphenation simpleform switch slider scrollcontainer input panel messagestrip
 " @summary This sample shows the different behaviors of a label.
-" @origin sap.m.sample.LabelProperties - https://sdk.openui5.org/entity/sap.m.Label/sample/sap.m.sample.LabelProperties (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.LabelProperties - https://sdk.openui5.org/entity/sap.m.Label/sample/sap.m.sample.LabelProperties (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_058 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

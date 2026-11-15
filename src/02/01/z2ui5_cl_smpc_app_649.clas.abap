@@ -1,6 +1,6 @@
 " @keywords engine sap.m.p13n p13n.enginemultiplecontroller table overflowtoolbar title toolbarseparator toolbarspacer button menu actionitem dragdropinfo
 " @summary Personalization for Reponsive Table using multiple SelectionControllers
-" @origin sap.m.sample.p13n.EngineMultipleController - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineMultipleController (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.p13n.EngineMultipleController - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineMultipleController (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_649 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

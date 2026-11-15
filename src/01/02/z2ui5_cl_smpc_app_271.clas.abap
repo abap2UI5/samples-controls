@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid gridresponsiveness html togglebutton slider panel overflowtoolbar title text hbox segmentedbutton
 " @summary Example of setting customLayout for different layout (screen) sizes.
-" @origin sap.ui.layout.sample.GridResponsiveness - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveness (status: reviewed - read against the original, not run)
+" @origin sap.ui.layout.sample.GridResponsiveness - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridResponsiveness (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_271 DEFINITION PUBLIC.
 
   PUBLIC SECTION.
