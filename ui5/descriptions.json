@@ -1,9 +1,9 @@
 {
   "source": {
     "repo": "https://github.com/SAP/openui5",
-    "commit": "c6d9599d49fcd0ec870b3b32d71d9697b01dede2",
-    "committed": "2026-11-09",
-    "version": "1.155.0-SNAPSHOT",
+    "commit": "d2739211cc25849d44b16ed1509c036ddb3abe20",
+    "committed": "2026-11-16",
+    "version": "1.156.0-SNAPSHOT",
     "from": "src/*/test/**/demokit/docuindex.json -> explored.samples[]",
     "libraries": 13,
     "licence": "Apache-2.0 (OpenUI5). Held verbatim, like the sample sources under ui5/<lib>/<Sample>/."
@@ -2475,7 +2475,19 @@
     },
     "sap.ui.geomap.sample.basic": {
       "name": "Basic usage",
-      "description": "Basic usage of Geomap displaying spot."
+      "description": "Basic usage of Geomap displaying a spot."
+    },
+    "sap.ui.geomap.sample.draw": {
+      "name": "Draw a polygon",
+      "description": "Click the map to place corner points and close a polygon. Drag corners to reshape it."
+    },
+    "sap.ui.geomap.sample.drive": {
+      "name": "Drive on a map",
+      "description": "Animate a marker driving along a predefined route from Heidelberg to Walldorf."
+    },
+    "sap.ui.geomap.sample.dynamic": {
+      "name": "Dynamic data",
+      "description": "Live earthquake data updated every second using GeomapSource and layer expressions."
     },
     "sap.ui.integration.sample.CardExplorer": {
       "name": "Card Explorer",
