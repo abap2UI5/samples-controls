@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "follow_up_action( control_by_id ): setP13nData on the SelectionPanel of whichever of the two p13n.Popup fragments popup_display shows (JSON arrays built in ABAP, view = POPUP); the popups' close events pass the reason and getP13nData( true ); the column drop passes the dragged/dropped p13nKey and the drop position"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

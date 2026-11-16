@@ -1,6 +1,6 @@
 " @keywords integer sap.ui.model.type data type simpleform label input text
 " @summary Formats and parses only the integer digits. The decimal digits are ignored.
-" @origin sap.ui.core.sample.TypeInteger - https://sdk.openui5.org/entity/sap.ui.model.type.Integer/sample/sap.ui.core.sample.TypeInteger (status: reviewed - read against the original, not run)
+" @origin sap.ui.core.sample.TypeInteger - https://sdk.openui5.org/entity/sap.ui.model.type.Integer/sample/sap.ui.core.sample.TypeInteger (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_129 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

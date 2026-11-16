@@ -1,6 +1,6 @@
 " @keywords productswitch product switch sap.f productswitchnavigation verticallayout button text responsivepopover productswitchitem
 " @summary This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer.
-" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: reviewed - read against the original, not run)
+" @origin sap.f.sample.ProductSwitchNavigation - https://sdk.openui5.org/entity/sap.f.ProductSwitch/sample/sap.f.sample.ProductSwitchNavigation (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_165 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

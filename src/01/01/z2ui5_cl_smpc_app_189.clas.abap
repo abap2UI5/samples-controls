@@ -1,6 +1,6 @@
 " @keywords bar sap.m toolbarvsbar button toolbar toolbarspacer title messagestrip label toolbarlayoutdata overflowtoolbar
 " @summary Toolbar handles overflow by shrinking items. OverflowToolbar provides an overflow menu. Bar is able to perfectly center a text if nothing overflows.
-" @origin sap.m.sample.ToolbarVsBar - https://sdk.openui5.org/entity/sap.m.Bar/sample/sap.m.sample.ToolbarVsBar (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ToolbarVsBar - https://sdk.openui5.org/entity/sap.m.Bar/sample/sap.m.sample.ToolbarVsBar (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_189 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

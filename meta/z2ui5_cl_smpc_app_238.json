@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "GENERIC_TAG_PRESS carries $event.oSource.sId and builds the Card popover fragment shown anchored via client->popover_display( xml = ... by_id = ... ); TOGGLE_FOOTER flips the showFooter model flag and re-renders"
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "NOTE",

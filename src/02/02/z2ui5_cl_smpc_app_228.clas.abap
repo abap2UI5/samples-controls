@@ -1,6 +1,6 @@
 " @keywords menu sap.ui.unified menumenueventing horizontallayout button menuitem menutextfielditem
 " @summary Menu with Menu Eventing
-" @origin sap.ui.unified.sample.MenuMenuEventing - https://sdk.openui5.org/entity/sap.ui.unified.Menu/sample/sap.ui.unified.sample.MenuMenuEventing (status: reviewed - read against the original, not run)
+" @origin sap.ui.unified.sample.MenuMenuEventing - https://sdk.openui5.org/entity/sap.ui.unified.Menu/sample/sap.ui.unified.sample.MenuMenuEventing (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_228 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

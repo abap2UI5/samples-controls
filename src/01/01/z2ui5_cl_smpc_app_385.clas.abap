@@ -1,6 +1,6 @@
 " @keywords multicombobox multi combo box sap.m multicomboboxwrapping verticallayout label item
 " @summary Suggestions wrap automatically when longer then the dropdown width
-" @origin sap.m.sample.MultiComboBoxWrapping - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxWrapping (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.MultiComboBoxWrapping - https://sdk.openui5.org/entity/sap.m.MultiComboBox/sample/sap.m.sample.MultiComboBoxWrapping (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_385 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

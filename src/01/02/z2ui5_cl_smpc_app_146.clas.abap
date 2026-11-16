@@ -1,6 +1,6 @@
 " @keywords hyphenation sap.ui.core.hyphenation api html simpleform label slider panel
 " @summary This sample demonstrates usage of the Hyphenation API
-" @origin sap.ui.core.sample.HyphenationAPI - https://sdk.openui5.org/entity/sap.ui.core.hyphenation.Hyphenation/sample/sap.ui.core.sample.HyphenationAPI (status: reviewed - read against the original, not run)
+" @origin sap.ui.core.sample.HyphenationAPI - https://sdk.openui5.org/entity/sap.ui.core.hyphenation.Hyphenation/sample/sap.ui.core.sample.HyphenationAPI (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_146 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

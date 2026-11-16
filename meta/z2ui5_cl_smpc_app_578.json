@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "control_by_id 'to' swaps the begin column between the categories and the products page; the pressed category / product / supplier travels with the events"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

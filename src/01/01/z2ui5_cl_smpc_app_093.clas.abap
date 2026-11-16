@@ -1,6 +1,6 @@
 " @keywords tabcontainer tab container sap.m editable employee tabs tabcontaineritem label input
 " @summary The sap.m.TabContainer allows for working with multiple tabs.
-" @origin sap.m.sample.TabContainer - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainer (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.TabContainer - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainer (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_093 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

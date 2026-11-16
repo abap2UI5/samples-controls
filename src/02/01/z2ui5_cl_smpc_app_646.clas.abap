@@ -1,6 +1,6 @@
 " @keywords engine sap.m.p13n p13n.enginecustomfilters table overflowtoolbar title toolbarseparator toolbarspacer button columnresizer menu quicksort
 " @summary Filtering using the personalization Engine
-" @origin sap.m.sample.p13n.EngineCustomFilters - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineCustomFilters (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.p13n.EngineCustomFilters - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineCustomFilters (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_646 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

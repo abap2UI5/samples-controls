@@ -1,6 +1,6 @@
 " @keywords link sap.m variants verticallayout label
 " @summary Here are some links. Typically links are used in user interfaces to trigger navigation to related content inside or outside of the current application.
-" @origin sap.m.sample.Link - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.Link (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.Link - https://sdk.openui5.org/entity/sap.m.Link/sample/sap.m.sample.Link (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_160 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

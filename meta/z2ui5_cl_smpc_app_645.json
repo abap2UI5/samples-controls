@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "follow_up_action( control_by_id ): setP13nData on the Selection/Sort/GroupPanel of the p13n.Popup fragment shown with popup_display (JSON arrays built in ABAP, view = POPUP); the popup's close passes the reason and the three panels' getP13nData( true ); the column menu, QuickSort/QuickGroup, ColumnResizer and drop wires pass p13nKey custom data and item getters"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

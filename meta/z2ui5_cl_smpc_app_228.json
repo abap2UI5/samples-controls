@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the button press wires control_by_id openBy anchored to the button ($event.oSource.sId), roundtrip-free. The Menu-level itemSelect DOES round-trip since 2026-08-23: the toast text is still composed on the client, but whether to toast at all is the original's submenu skip, which a client action cannot express (an empty message still pops an empty toast) - so the flag and the message travel as event args and on_event decides."
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

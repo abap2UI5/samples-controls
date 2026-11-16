@@ -1,6 +1,6 @@
 " @keywords form sap.ui.layout.form toolbars vbox toolbar title toolbarspacer button responsivegridlayout formcontainer formelement input
 " @summary A form that uses Toolbars as Form header and FormContainer headers.
-" @origin sap.ui.layout.sample.FormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.FormToolbar (status: reviewed - read against the original, not run)
+" @origin sap.ui.layout.sample.FormToolbar - https://sdk.openui5.org/entity/sap.ui.layout.form.Form/sample/sap.ui.layout.sample.FormToolbar (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_142 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

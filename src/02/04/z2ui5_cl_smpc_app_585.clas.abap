@@ -1,6 +1,6 @@
 " @keywords shellbar shell bar sap.f shellbarwithsplitapp toolpage menu menuitem avatar searchmanager sidenavigation navcontainer
 " @summary Example of Shell Bar in combination with Split App.
-" @origin sap.f.sample.ShellBarWithSplitApp - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarWithSplitApp (status: generated - machine-written, not yet reviewed)
+" @origin sap.f.sample.ShellBarWithSplitApp - https://sdk.openui5.org/entity/sap.f.ShellBar/sample/sap.f.sample.ShellBarWithSplitApp (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_585 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

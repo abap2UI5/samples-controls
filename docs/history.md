@@ -7,7 +7,30 @@ same-change discipline as AGENTS.md §10). The current point-in-time state
 [STATUS.md](../STATUS.md). Numbers quoted inside these sections are snapshots
 of their date and are NOT kept current._
 
-## 2026-10-26 (latest) — e2e-nightly red since 2026-10-14: the boot wait counted the framework's shell
+## 2026-11-15 (latest) — the `checked` rung holds every port: one collective live check on ABAP Cloud
+
+**Statement (maintainer).** Every sample of this repository has been run on a
+BTP ABAP environment (ABAP Cloud). The ladder had said otherwise - 59
+`checked` against 355 `reviewed` and 256 `generated` - because a live check
+was only ever recorded port by port, and the runs that were not written down
+port by port counted as not done. An outside reading of STATUS.md took the
+9.5% for the share of ports anybody had seen in a system.
+
+599 sidecars were promoted to `checked` with one shared note that says what it
+is: a collective check, recorded on the maintainer's statement, naming no
+per-port interaction path. The 59 ports checked before keep their own dated
+notes, which stay the more specific evidence. The five demo apps in
+`ui5/demoapps.json` moved with them. The 12 spent hold-out ports (098, 100,
+101, 103, 153, 154, 210, 212, 229, 237, 242, 243) stay `reviewed`:
+`validate-meta` refuses a `checked` hold-out sample, and that rule is about
+the generator's yardstick, not about whether the port ran.
+
+The standing backlog item "the `checked` rung is thinning" is closed with
+this. What it said about cost still holds for the next batch: a new port
+enters as `generated`, and a behavioural change to a `checked` port resets it
+(AGENTS section 10).
+
+## 2026-10-26 — e2e-nightly red since 2026-10-14: the boot wait counted the framework's shell
 
 The overview app failed every nightly from 2026-10-14 (`the control never
 appeared — tried 0 overflow popover(s)`) while it passed against the pin -

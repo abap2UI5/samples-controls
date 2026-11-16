@@ -1,6 +1,6 @@
 " @keywords messagestrip message strip sap.m dynamicmessagestripgenerator verticallayout button
 " @summary Generates MessageStrips with random properties.
-" @origin sap.m.sample.DynamicMessageStripGenerator - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.DynamicMessageStripGenerator (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.DynamicMessageStripGenerator - https://sdk.openui5.org/entity/sap.m.MessageStrip/sample/sap.m.sample.DynamicMessageStripGenerator (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_289 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

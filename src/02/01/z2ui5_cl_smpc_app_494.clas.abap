@@ -1,6 +1,6 @@
 " @keywords combobox combo box sap.m comboboxmaxpickerheight verticallayout label item
 " @summary Limit the picker popup height using maxPickerHeight property
-" @origin sap.m.sample.ComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxMaxPickerHeight (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.ComboBoxMaxPickerHeight - https://sdk.openui5.org/entity/sap.m.ComboBox/sample/sap.m.sample.ComboBoxMaxPickerHeight (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_494 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

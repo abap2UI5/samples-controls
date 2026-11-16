@@ -1,6 +1,6 @@
 " @keywords datetimepicker date time picker sap.m datetimepickervaluestate flexbox vbox label
 " @summary This example shows different DateTimePicker value states.
-" @origin sap.m.sample.DateTimePickerValueState - https://sdk.openui5.org/entity/sap.m.DateTimePicker/sample/sap.m.sample.DateTimePickerValueState (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.DateTimePickerValueState - https://sdk.openui5.org/entity/sap.m.DateTimePicker/sample/sap.m.sample.DateTimePickerValueState (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_255 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

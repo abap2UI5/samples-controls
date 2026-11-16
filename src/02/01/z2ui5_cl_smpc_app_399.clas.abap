@@ -1,6 +1,6 @@
 " @keywords image sap.m vbox hbox text
 " @summary Images are faster than words and attract people's attention. Images can also have an active state or be used in SVG format.
-" @origin sap.m.sample.Image - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.Image (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.Image - https://sdk.openui5.org/entity/sap.m.Image/sample/sap.m.sample.Image (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_399 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

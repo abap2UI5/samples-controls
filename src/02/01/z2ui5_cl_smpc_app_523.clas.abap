@@ -1,6 +1,6 @@
 " @keywords table sap.m tableselectcopy cellselector copyprovider overflowtoolbar title toolbarspacer checkbox overflowtoolbarbutton column text
 " @summary This example demonstrates how the Table data can be copied to the clipboard via CopyProvider plugin.
-" @origin sap.m.sample.TableSelectCopy - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableSelectCopy (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.TableSelectCopy - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableSelectCopy (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_523 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

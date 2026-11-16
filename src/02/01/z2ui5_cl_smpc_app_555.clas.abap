@@ -1,6 +1,6 @@
 " @keywords singleplanningcalendar single planning calendar sap.m singleplanningcalendarrecurringitem vbox overflowtoolbar button toolbarseparator recurringnonworkingperiod timerange
 " @summary SinglePlanningCalendar with recurring calendar items
-" @origin sap.m.sample.SinglePlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarRecurringItem (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.SinglePlanningCalendarRecurringItem - https://sdk.openui5.org/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarRecurringItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_555 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

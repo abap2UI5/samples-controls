@@ -1,6 +1,6 @@
 " @keywords navigationlist navigation list sap.tnt overflowtoolbar button navigationlistitem
 " @summary Navigation List in a Page
-" @origin sap.tnt.sample.NavigationList - https://sdk.openui5.org/entity/sap.tnt.NavigationList/sample/sap.tnt.sample.NavigationList (status: reviewed - read against the original, not run)
+" @origin sap.tnt.sample.NavigationList - https://sdk.openui5.org/entity/sap.tnt.NavigationList/sample/sap.tnt.sample.NavigationList (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_123 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

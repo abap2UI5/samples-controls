@@ -1,6 +1,6 @@
 " @keywords icontabbar icon tab bar sap.m icontabbarmulti icontabfilter text
 " @summary In this example, the Icon Tab Bar tabs display icons only.
-" @origin sap.m.sample.IconTabBarMulti - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarMulti (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.IconTabBarMulti - https://sdk.openui5.org/entity/sap.m.IconTabBar/sample/sap.m.sample.IconTabBarMulti (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_380 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

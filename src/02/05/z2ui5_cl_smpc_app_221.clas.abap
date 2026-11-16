@@ -1,6 +1,6 @@
 " @keywords toolheader tool header sap.tnt toolheadericontabheader text button overflowtoolbarlayoutdata icontabheader icontabfilter menubutton menu
 " @summary ToolHeader can contain IconTabHeader. When both controls are combined, the IconTabHeader supports only inline text. No icons can be used.
-" @origin sap.tnt.sample.ToolHeaderIconTabHeader - https://sdk.openui5.org/entity/sap.tnt.ToolHeader/sample/sap.tnt.sample.ToolHeaderIconTabHeader (status: reviewed - read against the original, not run)
+" @origin sap.tnt.sample.ToolHeaderIconTabHeader - https://sdk.openui5.org/entity/sap.tnt.ToolHeader/sample/sap.tnt.sample.ToolHeaderIconTabHeader (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_221 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

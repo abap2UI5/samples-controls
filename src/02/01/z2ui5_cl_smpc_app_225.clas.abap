@@ -1,6 +1,6 @@
 " @keywords table sap.m tablestrictlayout columnresizer column text columnlistitem objectidentifier objectnumber
 " @summary This example demonstrates the Strict layout and the column resizing of the table.
-" @origin sap.m.sample.TableStrictLayout - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableStrictLayout (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.TableStrictLayout - https://sdk.openui5.org/entity/sap.m.Table/sample/sap.m.sample.TableStrictLayout (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_225 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords viewsettingsdialog settings dialog sap.m viewsettingsdialogcustomtabs html viewsettingsitem viewsettingsfilteritem viewsettingscustomtab panel label segmentedbutton
 " @summary You can have custom tabs with your own defined content in the View Settings Dialog, as shown in this example.
-" @origin sap.m.sample.ViewSettingsDialogCustomTabs - https://sdk.openui5.org/entity/sap.m.ViewSettingsDialog/sample/sap.m.sample.ViewSettingsDialogCustomTabs (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.ViewSettingsDialogCustomTabs - https://sdk.openui5.org/entity/sap.m.ViewSettingsDialog/sample/sap.m.sample.ViewSettingsDialogCustomTabs (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_297 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

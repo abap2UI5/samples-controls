@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins responsivetableprogressindicator dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
 " @summary This example demonstrates the progress or termination of the items that are being uploaded. The upload progress is displayed for each item that is being uploaded. The users can terminate the upload process at any time.
-" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator (status: checked)
 CLASS z2ui5_cl_smpc_app_658 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

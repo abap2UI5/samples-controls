@@ -1,6 +1,6 @@
 " @keywords segmentedbutton segmented button sap.m segmentedbuttoncontentmodes segmentedbuttonitem
 " @summary Segmented Button different Content Modes
-" @origin sap.m.sample.SegmentedButtonContentModes - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonContentModes (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.SegmentedButtonContentModes - https://sdk.openui5.org/entity/sap.m.SegmentedButton/sample/sap.m.sample.SegmentedButtonContentModes (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_423 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

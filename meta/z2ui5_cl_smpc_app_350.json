@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "control_global ICON_POOL registerFont in the init branch registers the SAP-icons-TNT collection"
   },
-  "status": "reviewed",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "render_smoke": {
     "skip": true,
     "reason": "the Group2 tile uses an icon from the SAP-icons-TNT collection (sap-icon://SAP-icons-TNT/application-service, verbatim from the sample) and the render harness has no registration for it - 'The font configuration for collection SAP-icons-TNT is not registered'. The view itself reconstructs and the rest of it renders. Rewritten 2026-08-28: this is now a HARNESS boundary and no longer a defect. The port registers the collection through the ICON_POOL global target in its init branch (see the deviation), which is a follow_up_action - and the linter's render harness reconstructs the VIEW and does not execute frontend actions, so it cannot see the registration and never will. The registration is proven where it can be: the e2e interaction module resolves sap-icon://SAP-icons-TNT/application-service through IconPool against the real backend and the real frontend. Before 2026-08-28 this skip said the icon was missing in a real system too, which was true and is not any more."

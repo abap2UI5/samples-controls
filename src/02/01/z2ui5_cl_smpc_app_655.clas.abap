@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.multipleplugininstances dynamicpage vbox overflowtoolbar title toolbarspacer searchfield
 " @summary This example demonstrates the usage of multiple plugin instances with multiple tables. The plugin instances are created for each table and the uploaded files are displayed in their respective tables.
-" @origin sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_655 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

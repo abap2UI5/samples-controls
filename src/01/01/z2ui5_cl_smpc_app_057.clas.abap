@@ -1,6 +1,6 @@
 " @keywords inputlistitem input list item sap.m items hosting switch checkbox radiobutton select hbox
 " @summary Use the Input List Item on phones to build form like user interfaces.
-" @origin sap.m.sample.InputListItem - https://sdk.openui5.org/entity/sap.m.InputListItem/sample/sap.m.sample.InputListItem (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.InputListItem - https://sdk.openui5.org/entity/sap.m.InputListItem/sample/sap.m.sample.InputListItem (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_057 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

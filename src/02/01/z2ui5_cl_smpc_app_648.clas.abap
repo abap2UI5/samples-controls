@@ -1,6 +1,6 @@
 " @keywords engine sap.m.p13n p13n.enginegridtable table overflowtoolbar title toolbarseparator toolbarspacer button menu illustratedmessage label
 " @summary Grid Table using the personalization Engine
-" @origin sap.m.sample.p13n.EngineGridTable - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineGridTable (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.p13n.EngineGridTable - https://sdk.openui5.org/entity/sap.m.p13n.Engine/sample/sap.m.sample.p13n.EngineGridTable (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_648 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

@@ -1,6 +1,6 @@
 " @keywords bulletin board app table toolbar label toolbarspacer searchfield column text columnlistitem objectidentifier
 " @summary Worklist app created with the 'Testing' tutorial. - the UI5 demo app "Bulletin Board", rebuilt as one self-contained abap2UI5 class.
-" @origin demo app Bulletin Board (sap.m/tutorial/testing) - https://sdk.openui5.org/demoapps (status: generated - machine-written, not yet reviewed)
+" @origin demo app Bulletin Board (sap.m/tutorial/testing) - https://sdk.openui5.org/demoapps (status: checked - verified in a running system)
 "! <p class="shorttext">demo app - Bulletin Board</p>
 "!
 "! The UI5 demo app Bulletin Board - the app the demo kit's "Testing"

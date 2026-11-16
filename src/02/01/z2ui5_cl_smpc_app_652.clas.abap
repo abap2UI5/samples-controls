@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.filenamevalidationsample dynamicpage vbox messagestrip text hbox checkbox
 " @summary This example demonstrates the usage of fileNameValidationConfig property to configure file name validation for renaming a file.
-" @origin sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample (status: checked)
 CLASS z2ui5_cl_smpc_app_652 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

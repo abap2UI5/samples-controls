@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table multiselectionplugin overflowtoolbar title toolbarspacer label select item input toolbarseparator togglebutton
 " @summary Example showing the behavior of MultiSelectionPlugin
-" @origin sap.ui.table.sample.MultiSelectionPlugin - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiSelectionPlugin (status: reviewed - read against the original, not run)
+" @origin sap.ui.table.sample.MultiSelectionPlugin - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.MultiSelectionPlugin (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_356 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

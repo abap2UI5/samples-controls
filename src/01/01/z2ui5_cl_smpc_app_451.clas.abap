@@ -1,6 +1,6 @@
 " @keywords tabcontainer tab container sap.m tabcontainericons tabcontaineritem form title responsivegridlayout formcontainer formelement text
 " @summary This example shows how you can add additional text and an Icon to the tabs in TabContainer.
-" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.TabContainerIcons - https://sdk.openui5.org/entity/sap.m.TabContainer/sample/sap.m.sample.TabContainerIcons (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_451 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

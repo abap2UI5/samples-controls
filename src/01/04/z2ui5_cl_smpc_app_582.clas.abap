@@ -1,6 +1,6 @@
 " @keywords gridlist grid list sap.f gridlistkeyboardarrowsnavigation app slider gridresponsivelayout gridsettings gridbasiclayout gridlistitem griditemlayoutdata
 " @summary This sample demonstrates the keyboard navigation between multiple grids
-" @origin sap.f.sample.GridListKeyboardArrowsNavigation - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListKeyboardArrowsNavigation (status: generated - machine-written, not yet reviewed)
+" @origin sap.f.sample.GridListKeyboardArrowsNavigation - https://sdk.openui5.org/entity/sap.f.GridList/sample/sap.f.sample.GridListKeyboardArrowsNavigation (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_582 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

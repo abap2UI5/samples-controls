@@ -1,6 +1,6 @@
 " @keywords notificationlistgroup notification list group sap.m maxnumberofnotificationsreached vbox flexitemdata button notificationlistitem
 " @summary Notification List Group with max number of notifications reached. The group will render the max amount of notificatons, depending on device type allowed and then show a warning messge.
-" @origin sap.m.sample.MaxNumberOfNotificationsReached - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.MaxNumberOfNotificationsReached (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.MaxNumberOfNotificationsReached - https://sdk.openui5.org/entity/sap.m.NotificationListGroup/sample/sap.m.sample.MaxNumberOfNotificationsReached (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_444 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

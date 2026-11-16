@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablefiledialogs dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
 " @summary This example demonstrates usage of itemValidationHandler callback to leverage additional validations and configurations for the items that are to be uploaded, and also the manual trigger of the upload process.
-" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs (status: checked)
 CLASS z2ui5_cl_smpc_app_656 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

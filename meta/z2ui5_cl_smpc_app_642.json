@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the change handler round-trips the valid flag, the operator and the two toDates dates; on_event applies the filter with follow_up_action( binding_call ) on the table's items"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "POST_171",

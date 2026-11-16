@@ -1,6 +1,6 @@
 " @keywords daterangeselection date range selection sap.m daterangeselectionvaluestate flexbox vbox label
 " @summary This example shows different DateRangeSelection value states.
-" @origin sap.m.sample.DateRangeSelectionValueState - https://sdk.openui5.org/entity/sap.m.DateRangeSelection/sample/sap.m.sample.DateRangeSelectionValueState (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.DateRangeSelectionValueState - https://sdk.openui5.org/entity/sap.m.DateRangeSelection/sample/sap.m.sample.DateRangeSelectionValueState (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_254 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

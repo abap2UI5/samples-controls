@@ -1,6 +1,6 @@
 " @keywords tilecontent tile content sap.m numeric feed news grid numericcontent feedcontent newscontent
 " @summary Shows the universal container for different content types and context information in the footer area.
-" @origin sap.m.sample.TileContent - https://sdk.openui5.org/entity/sap.m.TileContent/sample/sap.m.sample.TileContent (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.TileContent - https://sdk.openui5.org/entity/sap.m.TileContent/sample/sap.m.sample.TileContent (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_078 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

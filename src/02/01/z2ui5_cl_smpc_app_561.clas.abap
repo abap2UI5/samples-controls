@@ -1,6 +1,6 @@
 " @keywords dialog sap.m dialogwithinarea hbox verticallayout button flexitemdata standardlistitem
 " @summary Within area of sap.ui.core.Popup determines where all popups (including dialogs) are positioned and where they can be dragged.
-" @origin sap.m.sample.DialogWithinArea - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogWithinArea (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.DialogWithinArea - https://sdk.openui5.org/entity/sap.m.Dialog/sample/sap.m.sample.DialogWithinArea (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_561 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

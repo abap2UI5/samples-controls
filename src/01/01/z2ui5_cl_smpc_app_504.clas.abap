@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputtokenupdate vbox text token
 " @summary MultiInput fires several tokenUpdate events depending on when the tokens were validated.
-" @origin sap.m.sample.MultiInputTokenUpdate - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputTokenUpdate (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.MultiInputTokenUpdate - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputTokenUpdate (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_504 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

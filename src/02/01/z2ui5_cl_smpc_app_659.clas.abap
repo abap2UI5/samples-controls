@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins uploadsetwithtableplugin.responsivetablesimple dynamicpage overflowtoolbar title toolbarspacer searchfield overflowtoolbarlayoutdata
 " @summary This example demonstrates the usage of UploadSetwithTable plugin for responsive table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table.
-" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_659 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

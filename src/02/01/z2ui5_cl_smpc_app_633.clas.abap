@@ -1,6 +1,6 @@
 " @keywords illustratedmessage illustrated message sap.m illustratedmessageindialog button dialog
 " @summary IllustratedMessage as content of sap.m.Dialog.
-" @origin sap.m.sample.IllustratedMessageInDialog - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInDialog (status: generated - machine-written, not yet reviewed)
+" @origin sap.m.sample.IllustratedMessageInDialog - https://sdk.openui5.org/entity/sap.m.IllustratedMessage/sample/sap.m.sample.IllustratedMessageInDialog (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_633 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

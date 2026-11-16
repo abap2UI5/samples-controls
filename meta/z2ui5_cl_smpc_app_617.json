@@ -9,8 +9,8 @@
     "event_t_arg": true,
     "note": "the picked tab's key travels with select; the two design groups only write bound fields"
   },
-  "status": "generated",
-  "checked": null,
+  "status": "checked",
+  "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
   "deviations": [
     {
       "type": "NOTE",

@@ -1,6 +1,6 @@
 " @keywords cssgrid sap.ui.layout.cssgrid css grid autoflow html togglebutton panel overflowtoolbar title radiobuttongroup radiobutton
 " @summary Example of setting the gridAutoFlow property.
-" @origin sap.ui.layout.sample.GridAutoFlow - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridAutoFlow (status: reviewed - read against the original, not run)
+" @origin sap.ui.layout.sample.GridAutoFlow - https://sdk.openui5.org/entity/sap.ui.layout.cssgrid.CSSGrid/sample/sap.ui.layout.sample.GridAutoFlow (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_145 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

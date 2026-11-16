@@ -1,6 +1,6 @@
 " @keywords uploadsetwithtable upload setwith table sap.m.plugins filepreviewcustompagecontent dynamicpage vbox messagestrip overflowtoolbar title toolbarspacer
 " @summary This example showcases how to display custom page content for non supported file types in the FilePreviewDialog control.
-" @origin sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent (status: generated)
+" @origin sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent - https://sdk.openui5.org/entity/sap.m.plugins.UploadSetwithTable/sample/sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent (status: checked)
 CLASS z2ui5_cl_smpc_app_653 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

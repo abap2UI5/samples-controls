@@ -1,6 +1,6 @@
 " @keywords multiinput multi input sap.m multiinputvaluehelp selectdialog standardlistitem verticallayout label token item
 " @summary MultiInput that includes a SelectDialog as a value help dialog
-" @origin sap.m.sample.MultiInputValueHelp - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputValueHelp (status: reviewed - read against the original, not run)
+" @origin sap.m.sample.MultiInputValueHelp - https://sdk.openui5.org/entity/sap.m.MultiInput/sample/sap.m.sample.MultiInputValueHelp (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_290 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

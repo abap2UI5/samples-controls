@@ -1,6 +1,6 @@
 " @keywords table sap.ui.table odata busyindicator overflowtoolbar title toolbarspacer button column label text currency
 " @summary OData related example
-" @origin sap.ui.table.sample.OData - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData (status: reviewed - read against the original, not run)
+" @origin sap.ui.table.sample.OData - https://sdk.openui5.org/entity/sap.ui.table.Table/sample/sap.ui.table.sample.OData (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_357 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

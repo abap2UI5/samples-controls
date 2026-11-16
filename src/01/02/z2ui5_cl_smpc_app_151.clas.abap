@@ -1,6 +1,6 @@
 " @keywords calendar sap.ui.unified types verticallayout horizontallayout button label text
 " @summary islamic Calendar with secondary gregorian type
-" @origin sap.ui.unified.sample.CalendarCalendarType - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarCalendarType (status: reviewed - read against the original, not run)
+" @origin sap.ui.unified.sample.CalendarCalendarType - https://sdk.openui5.org/entity/sap.ui.unified.Calendar/sample/sap.ui.unified.sample.CalendarCalendarType (status: checked - verified in a running system)
 CLASS z2ui5_cl_smpc_app_151 DEFINITION PUBLIC.
 
   PUBLIC SECTION.

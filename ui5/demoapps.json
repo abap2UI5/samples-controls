@@ -100,23 +100,23 @@
   "ports": {
     "z2ui5_cl_smpc_demo_001": {
       "app": "sap.m/tutorial/worklist",
-      "status": "generated"
+      "status": "checked"
     },
     "z2ui5_cl_smpc_demo_002": {
       "app": "sap.m/orderbrowser",
-      "status": "generated"
+      "status": "checked"
     },
     "z2ui5_cl_smpc_demo_003": {
       "app": "sap.m/teamCalendar",
-      "status": "generated"
+      "status": "checked"
     },
     "z2ui5_cl_smpc_demo_004": {
       "app": "sap.m/cart",
-      "status": "generated"
+      "status": "checked"
     },
     "z2ui5_cl_smpc_demo_005": {
       "app": "sap.m/tutorial/testing",
-      "status": "generated"
+      "status": "checked"
     }
   },
   "skipped": {
