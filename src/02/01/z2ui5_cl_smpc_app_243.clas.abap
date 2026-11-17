@@ -28,12 +28,12 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -42,7 +42,8 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`   v = `sap.ui.layout`
@@ -74,6 +75,8 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+        DATA footer TYPE REF TO z2ui5_cl_ui5_view_builder.
 
     CASE client->get_event( ).
 
@@ -82,7 +85,8 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
         " built server-side and shown anchored to the pressed button
         " ($event.oSource.sId); bindElement("/ProductCollection/0") is folded to
         " the root-seeded fields (relative {NAME}/{PRODUCTPICURL} resolve there)
-        DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        popover = z2ui5_cl_ui5_view_builder=>factory( ).
         popover->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -120,7 +124,8 @@ CLASS z2ui5_cl_smpc_app_243 IMPLEMENTATION.
       WHEN `SHOW_POPOVER_FOOTER`.
         " PopoverFooter.fragment.xml: a ResponsivePopover with a custom footer
         " OverflowToolbar (OK / Cancel), same anchoring + root-seeded record
-        DATA(footer) = z2ui5_cl_ui5_view_builder=>factory( ).
+        
+        footer = z2ui5_cl_ui5_view_builder=>factory( ).
         footer->ele( n = `FragmentDefinition` ns = `core`
             )->a( n = `xmlns`      v = `sap.m`
             )->a( n = `xmlns:core` v = `sap.ui.core`

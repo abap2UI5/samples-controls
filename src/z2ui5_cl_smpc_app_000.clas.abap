@@ -1717,8 +1717,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` ${$parameters>/layout}) reproducing onLayoutChange 1:1 without a backend round-trip. The layoutChange attribute itself is kept, so structural-diff sees no difference.`.
     result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.GridList`                        name = `GridListBreakPoints`                                       class = `z2ui5_cl_smpc_app_213` path = `src/01/04/z2ui5_cl_smpc_app_213.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.60`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
@@ -1788,8 +1788,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` 4 archive gap) and reaches the view through a core:HTML style leaf.`.
     result = VALUE #( BASE result
       ( module = `sap.f`              control = `sap.f.GridList`                        name = `GridListModes`                                             class = `z2ui5_cl_smpc_app_133` path = `src/01/04/z2ui5_cl_smpc_app_133.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.60`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -2364,8 +2364,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` nothing travels to the backend. The class therefore has no on_event and no model at all.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Breadcrumbs`                     name = `BreadcrumbsWithCurrentPageLink`                            class = `z2ui5_cl_smpc_app_286` path = `src/02/01/z2ui5_cl_smpc_app_286.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
                  ` close look.`
         since = `1.34`
         is_post171 = abap_true
@@ -2428,8 +2428,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Button`                          name = `Button`                                                    class = `z2ui5_cl_smpc_app_005` path = `src/01/01/z2ui5_cl_smpc_app_005.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-07-15): manually verified in a running system - each press toasts the pressed button's client-side control id, read via the event arg $event.oSource.sId, exactly like the original.`
         notes = `NOTE: the toast was switched from a message_toast_display round-trip to a roundtrip-free client-composed toast on 2026-07-22 (control_global MESSAGE_TOAST.show, template ``{0} Pressed`` filled by` &&
                  ` $event.oSource.sId; the app is now init-only) - re-verify each button still toasts "<id> Pressed". **e2e-verified 2026-07-30** (transpiled-framework interaction, scripts/e2e-smoke.mjs): the 'Default'` &&
@@ -2716,18 +2716,18 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBox`                                                  class = `z2ui5_cl_smpc_app_011` path = `src/01/01/z2ui5_cl_smpc_app_011.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBox2Columns`                                          class = `z2ui5_cl_smpc_app_193` path = `src/01/01/z2ui5_cl_smpc_app_193.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxClearIcon`                                         class = `z2ui5_cl_smpc_app_455` path = `src/02/01/z2ui5_cl_smpc_app_455.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         is_post171 = abap_true
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -2736,13 +2736,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxDefaultFiltering`                                  class = `z2ui5_cl_smpc_app_463` path = `src/01/01/z2ui5_cl_smpc_app_463.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxFilteringContains`                                 class = `z2ui5_cl_smpc_app_470` path = `src/01/01/z2ui5_cl_smpc_app_470.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -2753,8 +2753,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxFilteringStartsWith`                               class = `z2ui5_cl_smpc_app_471` path = `src/01/01/z2ui5_cl_smpc_app_471.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -2763,15 +2763,15 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` binds to {KEY} - that is the sample's or-key half. One residual difference stays: UI5's wordStartsWithValue anchors at ANY word start, the sample's regex only at the string start, so 'Herzegovina'` &&
                  ` matches 'Bosnia and Herzegovina' here and does not in the original.` )
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxGrouping`                                          class = `z2ui5_cl_smpc_app_199` path = `src/01/01/z2ui5_cl_smpc_app_199.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxLazyLoading`                                       class = `z2ui5_cl_smpc_app_493` path = `src/01/01/z2ui5_cl_smpc_app_493.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: The sample runs a MockServer and an ODataModel, suspends the items binding and resumes it in handleLoadItems. abap2UI5 has no OData model, so the port binds an ABAP table that is EMPTY until the` &&
@@ -2791,8 +2791,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxSearchBoth`                                        class = `z2ui5_cl_smpc_app_479` path = `src/01/01/z2ui5_cl_smpc_app_479.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: fnFormatter joins the ComboBox value and key into 'text (key)' (or whichever one is set). A formatter is business logic, so the text is composed in ABAP and bound; the port adds a change wire on` &&
@@ -2806,8 +2806,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` pass), and the selectedKey binding (drop it and selected_key stays initial, the error branch still fires and the assertion still passes).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ComboBox`                        name = `ComboBoxValidation`                                        class = `z2ui5_cl_smpc_app_475` path = `src/01/01/z2ui5_cl_smpc_app_475.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
@@ -3441,8 +3441,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.ExpandableText`                  name = `ExpandableText`                                            class = `z2ui5_cl_smpc_app_643` path = `src/02/01/z2ui5_cl_smpc_app_643.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.87`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -3595,7 +3595,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.FeedContent`                     name = `FeedContent`                                               class = `z2ui5_cl_smpc_app_023` path = `src/01/01/z2ui5_cl_smpc_app_023.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.34`
         checked = `CHECKED (2026-07-20): verified in a running system - human pass 2026-07-20: app starts and renders like the original; no interaction paths were open for this port. **e2e-verified 2026-09-12**` &&
                  ` (interaction module meta/interactions/z2ui5_cl_smpc_app_023.mjs: clicking the first FeedContent raises the client-composed 'The feed content is pressed.' toast, and the second renders its value 999)` ) ).
@@ -3772,8 +3772,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` asset-URL rule, so the images resolve against the OpenUI5 host exactly as in the demo kit.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.GenericTile`                     name = `GenericTileAsFeedTile`                                     class = `z2ui5_cl_smpc_app_388` path = `src/01/01/z2ui5_cl_smpc_app_388.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.34.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
@@ -3891,8 +3891,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` covered - it sits in the sample's option area and needs a human check. **e2e-verified 2026-08-04** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_029.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.HeaderContainer`                 name = `HeaderContainer`                                           class = `z2ui5_cl_smpc_app_029` path = `src/01/01/z2ui5_cl_smpc_app_029.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.44.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -4219,7 +4219,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInAppCustom`                             class = `z2ui5_cl_smpc_app_630` path = `src/02/01/z2ui5_cl_smpc_app_630.clas.abap`
         score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -4303,8 +4304,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` global target with registerIllustrationSet( setFamily, setURI ), the exact analogue of ICON_POOL.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.IllustratedMessage`              name = `IllustratedMessageInPageCustom`                            class = `z2ui5_cl_smpc_app_635` path = `src/02/01/z2ui5_cl_smpc_app_635.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+                 ` look.`
         since = `1.98`
         since_post171 = abap_true
         is_post171 = abap_true
@@ -4586,8 +4588,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputAssistedTwoValues`                                    class = `z2ui5_cl_smpc_app_456` path = `src/01/01/z2ui5_cl_smpc_app_456.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     text1 = `NOTE: the Name input's binding carries a sap.ui.model.type.String with minLength 1 / maxLength 10 constraints, and UI5 checks those in the BROWSER on every parse. The port keeps the binding exactly as` &&
@@ -4700,8 +4702,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Input`                           name = `InputSuggestionsCustomFilter`                              class = `z2ui5_cl_smpc_app_460` path = `src/01/01/z2ui5_cl_smpc_app_460.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `IMPROVISED: onInit calls productInput.setFilterFunction( ) with a JavaScript callback - a case-insensitive 'string contains' filter on the item text, which is the sample's entire subject. An` &&
@@ -4884,8 +4886,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.List`                            name = `ListCounter`                                               class = `z2ui5_cl_smpc_app_034` path = `src/02/01/z2ui5_cl_smpc_app_034.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         is_post171 = abap_true
         checked = `CHECKED (2026-07-21): verified in a running system - human visual check 2026-07-21: the Products list renders all 123 rows with their Quantity counters (display-only app, no interaction to exercise).` &&
                  ` **e2e-verified 2026-09-12** (interaction module meta/interactions/z2ui5_cl_smpc_app_034.mjs: the first rendered row's counter equals the QUANTITY its binding context carries, with a counter per row` &&
@@ -4900,8 +4902,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` 17 found by re-counting the corpus-wide claim that every port doing it had a declaration.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.List`                            name = `ListDeletion`                                              class = `z2ui5_cl_smpc_app_524` path = `src/01/01/z2ui5_cl_smpc_app_524.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
 
@@ -4988,8 +4990,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.List`                            name = `ListNavType`                                               class = `z2ui5_cl_smpc_app_429` path = `src/01/01/z2ui5_cl_smpc_app_429.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: The sample's asset paths are host-absolutized. The demo kit serves them relative (test-resources/...), which an abap2UI5 app has no document root to resolve against, so the port points at` &&
                  ` https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Added 2026-08-23: this port did the rewrite without declaring it, one of 17 found by re-counting the corpus-wide claim` &&
@@ -5596,23 +5598,23 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxCustomFiltering`                              class = `z2ui5_cl_smpc_app_481` path = `src/01/01/z2ui5_cl_smpc_app_481.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `IMPROVISED: onInit gives both MultiComboBoxes a JavaScript setFilterFunction - a case-insensitive starts-with on the first, a contains on the second. A JS filter callback has no bindable or backend` &&
                  ` equivalent (the app-authored-JS-function boundary), so both carry UI5's default filtering and the contrast the sample demonstrates is lost.` )
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxDefaultFiltering`                             class = `z2ui5_cl_smpc_app_459` path = `src/01/01/z2ui5_cl_smpc_app_459.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxGrouping`                                     class = `z2ui5_cl_smpc_app_039` path = `src/01/01/z2ui5_cl_smpc_app_039.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22.0`
         checked = `CHECKED (2026-07-20): verified in a running system - human live check 2026-07-20 following the interaction checklist (all listed checks passed) **e2e-verified 2026-09-12** (interaction module` &&
                  ` meta/interactions/z2ui5_cl_smpc_app_039.mjs: F4 on the MultiComboBox opens the picker with 11 GroupHeaderListItems in SUPPLIERNAME order from Alpha Printers to Ultrasonic United, with the products` &&
@@ -5672,8 +5674,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         post171 = `MultiComboBox has no formattedValueStateText aggregation before 1.78 - newer than the 1.71 floor. The two FormattedText value states with their links are the point of the sample, so the aggregation is` &&
                  ` kept and the port is filed under src/02.` )
       ( module = `sap.m`              control = `sap.m.MultiComboBox`                   name = `MultiComboBoxTwoColumnsLayout`                             class = `z2ui5_cl_smpc_app_458` path = `src/01/01/z2ui5_cl_smpc_app_458.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.22.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
@@ -5714,8 +5716,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         notes = `IMPROVISED: onInit gives both MultiInputs a JavaScript setFilterFunction - a case-insensitive starts-with on the first, a contains on the second. A JS filter callback has no bindable or backend` &&
                  ` equivalent (the app-authored-JS-function boundary), so both suggestion lists carry UI5's default filtering and the difference between the two MultiInputs the sample demonstrates is lost.` )
       ( module = `sap.m`              control = `sap.m.MultiInput`                      name = `MultiInputDatabinding`                                     class = `z2ui5_cl_smpc_app_457` path = `src/01/01/z2ui5_cl_smpc_app_457.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     text1 = `POST-1.71: sap.m.MultiInput (through sap.m.InputBase) has the formattedValueStateText aggregation only @since 1.78 - newer than the 1.71 floor, but the third MultiInput exists to demonstrate exactly` &&
@@ -5772,8 +5774,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.MultiInput`                      name = `MultiInputMaxTokens`                                       class = `z2ui5_cl_smpc_app_461` path = `src/01/01/z2ui5_cl_smpc_app_461.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     text1 = `NOTE: the port adds one invisible control the original view does not declare - z2ui5:MultiInputExt (xmlns:z2ui5="z2ui5.cc"), which structural-diff reports as control extra z2ui5:MultiInputExt. It is` &&
@@ -5901,8 +5903,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` module asserts only that some .sapMNLI rendered, which a 100-row render passes just as happily.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.NotificationListGroup`           name = `MaxNumberOfNotificationsReached`                           class = `z2ui5_cl_smpc_app_444` path = `src/01/01/z2ui5_cl_smpc_app_444.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.34`
         is_deprecated = abap_true
@@ -6048,7 +6050,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.ObjectAttribute`                 name = `ObjectAttributeInTable`                                    class = `z2ui5_cl_smpc_app_191` path = `src/01/01/z2ui5_cl_smpc_app_191.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.12`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: the JSONModel is defined inline in the original controller's onInit (an array of {product, supplier} rows under /modelData); it is moved verbatim into ABAP model_init (all 10 rows kept) and` &&
@@ -6444,8 +6446,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` device'. The justification given for the seeding ('a client-only decision') named a limitation the framework does not have.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.OverflowToolbar`                 name = `ToolbarResponsive`                                         class = `z2ui5_cl_smpc_app_163` path = `src/01/01/z2ui5_cl_smpc_app_163.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
                  ` close look.`
         since = `1.16`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -8119,8 +8121,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` template outlives its binding.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.QuickViewCard`                   name = `QuickViewCard`                                             class = `z2ui5_cl_smpc_app_099` path = `src/02/01/z2ui5_cl_smpc_app_099.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth` &&
                  ` a close look.`
         since = `1.28.11`
         is_post171 = abap_true
@@ -8332,19 +8334,19 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Select`                          name = `SelectValueState`                                          class = `z2ui5_cl_smpc_app_373` path = `src/01/01/z2ui5_cl_smpc_app_373.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: the original controller assigns one and the same aProducts array to four model keys (/ErrorProductCollection, /WarningProductCollection, /SuccessProductCollection, /InformationProductCollection)` &&
                  ` and binds one Select to each; the port folds them into the single shared table /T_PRODUCTS feeding all four Selects - same 16 rows, same sorter on NAME, each Select keeps its own two-way selectedKey,` &&
                  ` so rendering and behaviour are identical (app 048 precedent).` )
       ( module = `sap.m`              control = `sap.m.Select`                          name = `SelectWithIcons`                                           class = `z2ui5_cl_smpc_app_205` path = `src/01/01/z2ui5_cl_smpc_app_205.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.Select`                          name = `SelectWithWrappedItemText`                                 class = `z2ui5_cl_smpc_app_374` path = `src/01/01/z2ui5_cl_smpc_app_374.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
     text1 = `NOTE: The original configures one shared SelectDialog imperatively per button (oButton.data() CustomData ->` &&
@@ -8405,13 +8407,13 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.SelectList`                      name = `SelectList`                                                class = `z2ui5_cl_smpc_app_075` path = `src/01/01/z2ui5_cl_smpc_app_075.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.26.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.SelectList`                      name = `SelectListWithIcons`                                       class = `z2ui5_cl_smpc_app_211` path = `src/01/01/z2ui5_cl_smpc_app_211.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.26.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` ) ).
 
@@ -8893,12 +8895,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.StandardListItem`                name = `StandardListItemDescription`                               class = `z2ui5_cl_smpc_app_202` path = `src/01/01/z2ui5_cl_smpc_app_202.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note` )
       ( module = `sap.m`              control = `sap.m.StandardListItem`                name = `StandardListItemIcon`                                      class = `z2ui5_cl_smpc_app_468` path = `src/01/01/z2ui5_cl_smpc_app_468.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: The sample's asset paths are host-absolutized. The demo kit serves them relative (test-resources/...), which an abap2UI5 app has no document root to resolve against, so the port points at` &&
                  ` https://sdk.openui5.org/... instead. The values are otherwise the mock's own. Added 2026-08-23: this port did the rewrite without declaring it, one of 17 found by re-counting the corpus-wide claim` &&
@@ -8906,8 +8908,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.StandardListItem`                name = `StandardListItemInfo`                                      class = `z2ui5_cl_smpc_app_208` path = `src/01/01/z2ui5_cl_smpc_app_208.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: the original binds infoState via the presentation-only formatter '.formatter.status' (maps the already-classified Status Available->Success / Out of Stock->Warning / Discontinued->Error / else` &&
                  ` None to a ValueState). abap2UI5 being a thin frontend, the info state is derived in the backend into the INFOSTATE field and bound directly (infoState="{INFOSTATE}"); same output, no loss. All 123` &&
@@ -8978,8 +8980,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` wire, which is what is under test, but it is not the keyboard path. The assertion is also toContainText("Value changed to") only, so the quoted <value> and its quotes are NOT asserted.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.StepInput`                       name = `StepInput`                                                 class = `z2ui5_cl_smpc_app_049` path = `src/01/01/z2ui5_cl_smpc_app_049.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 2 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.40`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
@@ -9200,8 +9202,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Table`                           name = `TableContextualWidthStatic`                                class = `z2ui5_cl_smpc_app_568` path = `src/01/01/z2ui5_cl_smpc_app_568.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.16`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: onPress calls oTable.setContextualWidth('100px'). Table.contextualWidth is a bindable property, so - per the prefer-a-bindable-property rule - it is bound to a field seeded with the view's own` &&
@@ -9865,7 +9867,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` a client-side expression binding {= slider + '%' } on each Toolbar width - no event round-trip, resizes instantly like the original; the documented preferred path (CAPABILITIES.md), not a workaround.` )
       ( module = `sap.m`              control = `sap.m.Tree`                            name = `Tree`                                                      class = `z2ui5_cl_smpc_app_054` path = `src/01/01/z2ui5_cl_smpc_app_054.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.42`
         checked = `CHECKED (2026-07-19): verified in a running system - human visual pass 2026-07-19 over all apps: the nested-table hierarchy renders as an expandable Tree like the original. **e2e-verified 2026-09-12**` &&
                  ` (interaction module meta/interactions/z2ui5_cl_smpc_app_054.mjs: the two root nodes render and dispatching the mouse sequence on Node1's expander reveals the nested Node1-1)` ) ).
@@ -9958,8 +9960,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` so the three-line toast wraps in the default 15em.`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Tree`                            name = `TreeJSONLazyLoading`                                       class = `z2ui5_cl_smpc_app_496` path = `src/01/01/z2ui5_cl_smpc_app_496.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.42`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
@@ -10826,8 +10828,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` it on the 'Joule' OverflowToolbarButton. Newer than the 1.71 floor: there IconPool resolves nothing and the button renders with NO icon, silently - the app needs a UI5 release >= 1.96 to show it.`.
     result = VALUE #( BASE result
       ( module = `sap.tnt`            control = `sap.tnt.ToolHeader`                    name = `ToolHeader`                                                class = `z2ui5_cl_smpc_app_134` path = `src/02/05/z2ui5_cl_smpc_app_134.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 3 noted, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth a` &&
                  ` close look.`
         since = `1.34`
         is_post171 = abap_true
@@ -11187,8 +11189,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.ui.core`        control = `sap.ui.core.InvisibleText`             name = `InvisibleText`                                             class = `z2ui5_cl_smpc_app_127` path = `src/01/02/z2ui5_cl_smpc_app_127.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 4
+        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.27.0`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: onPress toasts evt.getSource().getId() + ' Pressed'. All twelve presses reproduce that client-side and roundtrip-free (control_global MESSAGE_TOAST.show) with the template '{0} Pressed' filled` &&
@@ -11352,7 +11354,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                  ` view-root require attributes).` )
       ( module = `sap.ui.core`        control = `sap.ui.model.type.Integer`             name = `TypeInteger`                                               class = `z2ui5_cl_smpc_app_129` path = `src/01/02/z2ui5_cl_smpc_app_129.clas.abap`
         score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = `NOTE: Data-type binding paradigm: the Integer type module is pulled in with core:require='{IntegerType: sap/ui/model/type/Integer}' and the Input/Text bindings carry type:'IntegerType' plus` &&
                  ` formatOptions (min/maxIntegerDigits) 1:1. The single model field 'number' (initial '123') is serialized by abap2UI5 as /NUMBER, so the original raw '/number' paths are written as '/NUMBER'.` ) ).
@@ -12957,8 +12959,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` undefined on every row: sorting a no-op, filtering empty. Same convention as app 357.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.table`       control = `sap.ui.table.Table`                    name = `MultiHeader`                                               class = `z2ui5_cl_smpc_app_137` path = `src/01/02/z2ui5_cl_smpc_app_137.clas.abap`
-        score = 2
-        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 3
+        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 1 noted, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
         notes = text1 ) ).
 
@@ -13515,8 +13517,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` additionally answers null for a non-date - so the ternary guard the empty ``end`` needed in the view is gone with it.`.
     result = VALUE #( BASE result
       ( module = `sap.ui.unified`     control = `sap.ui.unified.Calendar`               name = `CalendarMinMax`                                            class = `z2ui5_cl_smpc_app_220` path = `src/02/02/z2ui5_cl_smpc_app_220.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close` &&
                  ` look.`
         since = `1.22.0`
         is_post171 = abap_true
@@ -13900,8 +13902,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` 2026-08-23: the module clicks the button and asserts 'My 1st Item' is visible; it never selects an item, so the item-select toasts named just above stay unexercised.)`.
     result = VALUE #( BASE result
       ( module = `sap.ui.unified`     control = `sap.ui.unified.Menu`                   name = `MenuItemEventing`                                          class = `z2ui5_cl_smpc_app_227` path = `src/02/02/z2ui5_cl_smpc_app_227.clas.abap`
-        score = 4
-        score_tip = `Rating 4 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth` &&
+        score = 5
+        score_tip = `Rating 5 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, 0 reworked, reviewed, live-test). 1 = simple faithful 1:1, 5 = complex / reworked / worth` &&
                  ` a close look.`
         since = `1.21.0`
         is_post171 = abap_true
