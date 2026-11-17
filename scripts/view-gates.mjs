@@ -311,7 +311,9 @@ const ADVISORY_BUDGET = {
   // raised 2026-09-27 to 17 with the 0.8.0 bump: the same four ports read
   // above (273, 445 x5, 452 x10, 454), counted per control instead of per
   // port - no fifth port, so nothing new to read
-  'unresolved-attribute-value': 17,
+  // ratcheted down 2026-11-17 to 1 with the 0.11.0 bump: the linter now
+  // follows 16 of the 17 values itself, so only one is still unresolved
+  'unresolved-attribute-value': 1,
 
   // The five below are rules 0.8.0 is the first pinned release to carry,
   // budgeted at the counts NEXT_LINTER_BUDGET measured on 2026-09-24 and
