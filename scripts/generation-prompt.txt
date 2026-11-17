@@ -109,10 +109,11 @@ Rules:
   `val`).
 - Map controller event handlers to check_on_event( ) branches. To pass a value
   into an event, use the `$`-prefixed form in t_arg (a model column as
-  `${COL}`, the event object as `$event.oSource.sId` / `${$source>/text}`) and
-  read it back with get_event_arg( ) - a bare `{COL}` (the attribute
-  property-binding form) is NOT resolved there. Transport real event/source
-  values this way instead of faking a static placeholder.
+  `${COL}`, the event object as `$event.getSource().getId()` /
+  `${$source>/text}`) and read it back with get_event_arg( ) - a bare
+  `{COL}` (the attribute property-binding form) is NOT resolved there.
+  Transport real event/source values this way instead of faking a static
+  placeholder.
 - The sample's CONTROL must not be deprecated (out-of-scope samples are never
   ported). A control newer than 1.71 is in scope: keep it 1:1 and declare it
   as a POST_171 deviation naming the control. Members newer than 1.71 are KEPT

@@ -910,7 +910,7 @@ ${columnsBlock}
                                     )->a( n = \`tooltip\` v = \`{SCORE_TIP}\`
 
                                 " Open column: three buttons, each anchored to its own runtime
-                                " id (\$event.oSource.sId). First opens the links popover (the
+                                " id (\$event.getSource().getId()). First opens the links popover (the
                                 " four reference targets); second launches the abap2UI5 app
                                 " directly in a new tab (open_new_tab - the start URL is
                                 " same-origin, so it passes isValidRedirectURL), leaving the
@@ -927,7 +927,7 @@ ${columnsBlock}
                                         " and out of the persisted draft), plus the button's own
                                         " runtime id as the popover anchor
                                         )->a( n = \`press\`   v = client->_event( val = \`LINKS\` t_arg = VALUE #(
-                                            ( \`\${CLASS}\` ) ( \`\$event.oSource.sId\` ) ) )
+                                            ( \`\${CLASS}\` ) ( \`\$event.getSource().getId()\` ) ) )
                                     )->tag( \`Button\`
                                         )->a( n = \`icon\`    v = \`sap-icon://action\`
                                         )->a( n = \`type\`    v = \`Transparent\`
@@ -942,7 +942,7 @@ ${columnsBlock}
                                         " close it mid-way. Nothing here needs interpolation anyway.
                                         )->a( n = \`visible\` v = \`{= \${HAS_CHECK} || \${HAS_P171} || \${HAS_NOTES} }\`
                                         )->a( n = \`press\`   v = client->_event( val = \`INFO\` t_arg = VALUE #(
-                                            ( \`\${CLASS}\` ) ( \`\$event.oSource.sId\` ) ) )
+                                            ( \`\${CLASS}\` ) ( \`\$event.getSource().getId()\` ) ) )
 
                                 )->end(
                             )->end(
