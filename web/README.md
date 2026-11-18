@@ -4,7 +4,7 @@ This directory used to hold this repository's GitHub Pages site: a searchable
 catalogue of every port at `https://abap2ui5.github.io/samples-controls/`.
 **That site is gone.** One catalogue over all three sample repositories is
 published from the playground instead —
-[abap2ui5.github.io/playground/samples/](https://abap2ui5.github.io/playground/samples/) —
+[abap2ui5.github.io/browser-playground/samples/](https://abap2ui5.github.io/browser-playground/samples/) —
 and this repository feeds it rather than publishing its own.
 
 What it feeds it with is [`catalogue-derived.json`](../catalogue-derived.json),

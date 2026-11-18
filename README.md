@@ -47,7 +47,7 @@ how to express a control in ABAP? Its sample is already here — or on its way.
    one click starts the app right in your system.
 
 No ABAP system at hand? Open the
-[sample catalogue](https://abap2ui5.github.io/playground/samples/) — every port
+[sample catalogue](https://abap2ui5.github.io/browser-playground/samples/) — every port
 here, every sample of the other two repositories, filtered by control or by the
 UI5 release your system runs, each one a click from its source and from running
 in the browser playground.
@@ -143,7 +143,7 @@ levels are derived from the port's `meta/` sidecar, never chosen — see AGENTS
 recorded in its `meta/<class>.json`, not in the tree. This repository publishes
 no page of its own any more: the searchable catalogue over all three sample
 repositories lives in the
-[playground](https://abap2ui5.github.io/playground/samples/) and is built from
+[playground](https://abap2ui5.github.io/browser-playground/samples/) and is built from
 [`catalogue-derived.json`](catalogue-derived.json); see
 [`web/README.md`](web/README.md) for what went where.
 
