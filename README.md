@@ -270,4 +270,4 @@ For bug reports or feature requests, please open an issue in the [abap2UI5 repos
 
 ---
 
-_Last generated: <!-- last-run -->2026-11-16 10:53 UTC<!-- /last-run -->_
+_Last generated: <!-- last-run -->2026-11-23 12:05 UTC<!-- /last-run -->_

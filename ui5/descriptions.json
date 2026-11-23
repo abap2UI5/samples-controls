@@ -1,8 +1,8 @@
 {
   "source": {
     "repo": "https://github.com/SAP/openui5",
-    "commit": "d2739211cc25849d44b16ed1509c036ddb3abe20",
-    "committed": "2026-11-16",
+    "commit": "c586680fda4fa2c4b0bdc055a00ea39ff51e30c2",
+    "committed": "2026-11-18",
     "version": "1.156.0-SNAPSHOT",
     "from": "src/*/test/**/demokit/docuindex.json -> explored.samples[]",
     "libraries": 13,
