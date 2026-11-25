@@ -664,7 +664,7 @@ For what is NOT here — which demo kit samples are still unported and why — s
 | **sap.m.Panel** — Panel - Expand / Collapse<br>Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]<br><sub>panel sap.m panels possibility text overflowtoolbar title toolbarspacer button</sub><br><sub>✓ checked · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_043`](src/01/01/z2ui5_cl_smpc_app_043.clas.abap) |
 | **sap.m.Panel**<br>Panels are helpful to group custom content. They can be decorated with header and info toolbars.<br><sub>panel sap.m overflowtoolbar title horizontallayout image text toolbarspacer button</sub><br><sub>✓ checked · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_397`](src/01/01/z2ui5_cl_smpc_app_397.clas.abap) |
 | **sap.m.Panel** — Panel - Background Design<br>Panels support different background designs for better visual distinction inside containers. [since rel. 1.150]<br><sub>panel sap.m panelbackgrounddesign verticallayout horizontallayout label select item text messagestrip</sub><br><sub>✓ checked · 2 deviations</sub> | [`Z2UI5_CL_SMPC_APP_292`](src/02/01/z2ui5_cl_smpc_app_292.clas.abap) |
-| **sap.m.Panel** — Panel - Sticky header<br>Panels can also have a sticky header. [since rel. 1.117]<br><sub>panel sap.m panelsticky text</sub><br><sub>✓ checked · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_487`](src/02/01/z2ui5_cl_smpc_app_487.clas.abap) |
+| **sap.m.Panel** — Panel - Sticky header<br>Panels can also have a sticky header. [since rel. 1.117]<br><sub>panel sap.m panelsticky</sub><br><sub>✓ checked · 1 deviation</sub> | [`Z2UI5_CL_SMPC_APP_487`](src/02/01/z2ui5_cl_smpc_app_487.clas.abap) |
 
 #### sap.m.PDFViewer
 
