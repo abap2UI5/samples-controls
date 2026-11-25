@@ -68,6 +68,11 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " the option objects are plain assignments, not VALUE #( ) rows: the 702
+    " downport joins a row onto one line, and past 255 characters the import
+    " cuts the literal (#3048)
+    DATA options TYPE string.
+
     CASE client->get_event( ).
 
       WHEN `INITIAL_FOCUS_ON_ACTION`.
@@ -77,26 +82,28 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
         " its method and the UI5 option object as its last argument.
         " dependentOn ties the box to the view's layout lifecycle (original:
         " this.getView())
+        options = `{"icon":"WARNING","title":"Focus on a Button","actions":["OK","CANCEL"],` &&
+                  `"emphasizedAction":"OK","initialFocus":"CANCEL","dependentOn":"messageBoxHost",` &&
+                  `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}`.
         client->follow_up_action(
             val   = client->cs_event-control_global
             t_arg = VALUE #( ( `MESSAGE_BOX` )
                              ( `warning` )
                              ( |Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL| )
-                             ( `{"icon":"WARNING","title":"Focus on a Button","actions":["OK","CANCEL"],` &&
-                               `"emphasizedAction":"OK","initialFocus":"CANCEL","dependentOn":"messageBoxHost",` &&
-                               `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}` ) ) ).
+                             ( options ) ) ).
 
       WHEN `INITIAL_FOCUS_ON_CUSTOM_ACTION`.
 
         " icon and dependentOn as above
+        options = `{"icon":"WARNING","title":"Focus on a Custom Action","actions":["YES","NO","Custom Action"],` &&
+                  `"emphasizedAction":"Custom Action","initialFocus":"Custom Action","dependentOn":"messageBoxHost",` &&
+                  `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}`.
         client->follow_up_action(
             val   = client->cs_event-control_global
             t_arg = VALUE #( ( `MESSAGE_BOX` )
                              ( `show` )
                              ( |Initial button focus is set by attribute \n initialFocus: "Custom button" \n Note: The name is not case sensitive| )
-                             ( `{"icon":"WARNING","title":"Focus on a Custom Action","actions":["YES","NO","Custom Action"],` &&
-                               `"emphasizedAction":"Custom Action","initialFocus":"Custom Action","dependentOn":"messageBoxHost",` &&
-                               `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}` ) ) ).
+                             ( options ) ) ).
 
     ENDCASE.
 

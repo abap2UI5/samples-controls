@@ -84,3 +84,7 @@ jobs:
       if: steps.scope.outputs.run == 'true'
     - run: npx abaplint .github/abaplint/abap_702.jsonc
       if: steps.scope.outputs.run == 'true'
+    # the 28 KB statement limit of a 7.40 kernel, which abaplint does not
+    # model - judged on the downported tree, see the script's header (#3048)
+    - run: node scripts/check-statement-size-702.mjs
+      if: steps.scope.outputs.run == 'true'
