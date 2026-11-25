@@ -1251,7 +1251,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
   METHOD utc_date.
 
     " the calendar day of an epoch millisecond value, in UTC
-    result = CONV d( `19700101` ).
+    result = `19700101`.
     result = result + val DIV 86400000.
 
   ENDMETHOD.

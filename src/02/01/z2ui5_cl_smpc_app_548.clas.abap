@@ -706,11 +706,11 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
                                                        ELSE 0 ).
             ELSE.
               new_appointment-ruleweekofmonth = c_rule_wom.
-              new_appointment-ruledayofweek   = CONV i( c_rule_dow ).
+              new_appointment-ruledayofweek   = c_rule_dow.
             ENDIF.
           ENDIF.
           IF c_rec_type = `Yearly`.
-            new_appointment-rulemonth = CONV i( c_rule_month ).
+            new_appointment-rulemonth = c_rule_month.
           ENDIF.
         ENDIF.
 
