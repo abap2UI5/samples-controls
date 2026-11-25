@@ -25,12 +25,12 @@ CLASS z2ui5_cl_smpc_app_625 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -39,7 +39,8 @@ CLASS z2ui5_cl_smpc_app_625 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -126,25 +127,41 @@ CLASS z2ui5_cl_smpc_app_625 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA temp1 TYPE string_table.
+          DATA temp3 TYPE string_table.
+        DATA temp5 TYPE string_table.
 
     CASE client->get_event( ).
       WHEN `AVATAR_PRESS`.
         " onPress: toggle the active state, close the menu if it was active, else open it by the Avatar
         IF active = abap_true.
           active = abap_false.
+          
+          CLEAR temp1.
+          INSERT `userMenu` INTO TABLE temp1.
+          INSERT `close` INTO TABLE temp1.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `userMenu` ) ( `close` ) ) ).
+                                    t_arg = temp1 ).
         ELSE.
           active = abap_true.
+          
+          CLEAR temp3.
+          INSERT `userMenu` INTO TABLE temp3.
+          INSERT `openBy` INTO TABLE temp3.
+          INSERT `myAvatar` INTO TABLE temp3.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `userMenu` ) ( `openBy` ) ( `myAvatar` ) ) ).
+                                    t_arg = temp3 ).
         ENDIF.
       WHEN `POPOVER_CLOSE`.
         active = abap_false.
       WHEN `LIST_ITEM_PRESS`.
         active = abap_false.
+        
+        CLEAR temp5.
+        INSERT `userMenu` INTO TABLE temp5.
+        INSERT `close` INTO TABLE temp5.
         client->follow_up_action( val   = client->cs_event-control_by_id
-                                  t_arg = VALUE #( ( `userMenu` ) ( `close` ) ) ).
+                                  t_arg = temp5 ).
     ENDCASE.
 
   ENDMETHOD.

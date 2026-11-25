@@ -24,7 +24,7 @@ CLASS z2ui5_cl_smpc_app_487 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
     ENDIF.
 
@@ -33,15 +33,23 @@ CLASS z2ui5_cl_smpc_app_487 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA page TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA sticky_content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA plain_content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA texts TYPE string_table.
+      DATA text LIKE LINE OF texts.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
-    DATA(page) = view->ele( n = `View` ns = `mvc`
+    
+    page = view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:l`    v = `sap.ui.layout`
         )->a( n = `xmlns:core` v = `sap.ui.core`
         )->a( n = `xmlns:mvc`  v = `sap.ui.core.mvc`
         )->a( n = `xmlns`      v = `sap.m` ).
 
-    DATA(sticky_content) = page->ele( `Panel`
+    
+    sticky_content = page->ele( `Panel`
         )->a( n = `expandable`   v = `true`
         )->a( n = `expanded`     v = `true`
         )->a( n = `stickyHeader` v = `true`
@@ -51,7 +59,8 @@ CLASS z2ui5_cl_smpc_app_487 IMPLEMENTATION.
         )->a( n = `class`        v = `sapUiResponsiveMargin`
         )->ele( `content` ).
 
-    DATA(plain_content) = page->ele( `Panel`
+    
+    plain_content = page->ele( `Panel`
         )->a( n = `id`         v = `expandablePanel`
         )->a( n = `expanded`   v = `true`
         )->a( n = `expandable` v = `true`
@@ -63,9 +72,11 @@ CLASS z2ui5_cl_smpc_app_487 IMPLEMENTATION.
     " both panels show the same five paragraphs four times over (as the
     " original sample does) - looped instead of written out, because the
     " unrolled view was one statement over the 28 KB the kernel allows (#3048)
-    DATA(texts) = paragraphs( ).
+    
+    texts = paragraphs( ).
     DO 4 TIMES.
-      LOOP AT texts INTO DATA(text).
+      
+      LOOP AT texts INTO text.
         sticky_content->tag( `Text`
             )->a( n = `class` v = `sapUiResponsiveMargin`
             )->a( n = `text`  t = text ).

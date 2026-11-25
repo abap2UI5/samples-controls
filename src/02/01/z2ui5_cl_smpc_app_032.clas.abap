@@ -21,9 +21,9 @@ CLASS z2ui5_cl_smpc_app_032 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -32,11 +32,14 @@ CLASS z2ui5_cl_smpc_app_032 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(warning_text) = `Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. ` &&
+    DATA warning_text TYPE string.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    warning_text = `Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. ` &&
                          `Extra long text used as a warning message - 3. Extra long text used as a warning message - 4. ` &&
                          `Extra long text used as a warning message - 5.`.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -122,17 +125,21 @@ CLASS z2ui5_cl_smpc_app_032 IMPLEMENTATION.
 
 
   METHOD on_event.
+      DATA temp1 TYPE string_table.
 
     IF client->get_event( ) = `LINK_PRESS`.
       " docked at CenterCenter 1:1 - my/at are sap.m.MessageToast options, so
       " they are set on the control: the whitelisted global call takes the
       " option object of MessageToast.show( ) as its last argument
+      
+      CLEAR temp1.
+      INSERT `MESSAGE_TOAST` INTO TABLE temp1.
+      INSERT `show` INTO TABLE temp1.
+      INSERT `You have pressed a link in value state message` INTO TABLE temp1.
+      INSERT `{"my":"center center","at":"center center"}` INTO TABLE temp1.
       client->follow_up_action(
           val   = client->cs_event-control_global
-          t_arg = VALUE #( ( `MESSAGE_TOAST` )
-                           ( `show` )
-                           ( `You have pressed a link in value state message` )
-                           ( `{"my":"center center","at":"center center"}` ) ) ).
+          t_arg = temp1 ).
     ENDIF.
 
   ENDMETHOD.
