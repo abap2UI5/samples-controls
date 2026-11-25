@@ -34,6 +34,15 @@
     "check_syntax": true,
     "global_class": true,
     "implement_methods": true,
+    // the 7.02 editor stores 255 characters a line and cuts the rest on
+    // import - a cut literal fails activation ("Literals that take up more
+    // than one line are not permitted", #3048; the framework's #2947). The
+    // root abaplint.jsonc checks this on main, but the downport is what MAKES
+    // such lines: it joins a multi-line && chain inside a VALUE #( ) row into
+    // one line, so only a check on the downported tree can see them
+    "line_length": {
+      "length": 255
+    },
     "method_implemented_twice": true,
     "parser_error": true,
     "superclass_final": true,

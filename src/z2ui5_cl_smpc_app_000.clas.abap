@@ -6826,8 +6826,8 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
 
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.m.Panel`                           name = `PanelSticky`                                               class = `z2ui5_cl_smpc_app_487` path = `src/02/01/z2ui5_cl_smpc_app_487.clas.abap`
-        score = 3
-        score_tip = `Rating 3 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
+        score = 2
+        score_tip = `Rating 2 of 5 - how much attention this port deserves (complexity + rework + review + test-priority: complex, reviewed). 1 = simple faithful 1:1, 5 = complex / reworked / worth a close look.`
         since = `1.16`
         is_post171 = abap_true
         checked = `CHECKED (2026-11-15): verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note`
