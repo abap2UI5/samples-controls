@@ -406,7 +406,7 @@ A knowledge store, so:
 - **classes are `z2ui5_cl_smpc_sapui5_<nnn>`**, in the samples style (dispatch
   inline on `CASE client->get_event( ).`). They were written on the framework's
   own `z2ui5_cl_xml_view` and were **migrated to `z2ui5_cl_ui5_view_builder` on
-  2026-08-15**: `z2ui5_cl_xml_view` is frozen legacy in `src/99` that abap2UI5's
+  2026-08-15**: `z2ui5_cl_xml_view` is legacy that left abap2UI5 for abap2UI5-ext and abap2UI5's
   own removal plan wants gone, these 14 were the last classes anywhere in the
   ecosystem still using it, and — the reason that decided it — *no view check
   can read it*. The linter reconstructs the current builder and answered

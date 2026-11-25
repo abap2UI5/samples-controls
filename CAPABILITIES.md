@@ -210,4 +210,4 @@ was the single biggest first-try error of the 2026-07-19 hold-out probe
 (`z2ui5.cc`: Timer, Storage, Focus, Geolocation, History, Tree,
 FileUploader, CameraPicture, MultiInputExt / SmartMultiInputExt,
 UploadSetExt, …). Details: the abap2UI5/abap2UI5 sources
-`z2ui5_if_client` + `z2ui5_cl_ui5f_frontact_js`.
+`z2ui5_if_client` + `bundle/webapp/core/FrontendAction.js`.
