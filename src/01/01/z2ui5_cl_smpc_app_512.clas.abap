@@ -124,10 +124,10 @@ CLASS z2ui5_cl_smpc_app_512 IMPLEMENTATION.
       LOOP AT t_added INTO DATA(added).
         IF NOT line_exists( t_items[ key = added-key ] ).
           " _textFormatter / _keyFormatter, computed in the backend
-          APPEND VALUE #( key       = added-key
+          INSERT VALUE #( key       = added-key
                           text      = added-text
                           list_text = |text: { added-text }|
-                          list_info = |key: { added-key }| ) TO t_items.
+                          list_info = |key: { added-key }| ) INTO TABLE t_items.
         ENDIF.
       ENDLOOP.
     ENDIF.

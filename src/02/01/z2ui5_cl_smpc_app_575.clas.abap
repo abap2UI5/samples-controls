@@ -444,9 +444,8 @@ CLASS z2ui5_cl_smpc_app_575 IMPLEMENTATION.
         " oItem.getParent( )->indexOfItem( oItem ) - the index of the pressed row
         " in the RENDERED items, which the items binding sorts on NAME
         press_index = row_index( client->get_event_arg( ) ).
-        READ TABLE t_products WITH KEY productid = client->get_event_arg( ) TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          product_ix = sy-tabix - 1.
+        IF line_exists( t_products[ productid = client->get_event_arg( ) ] ).
+          product_ix = line_index( t_products[ productid = client->get_event_arg( ) ] ) - 1.
         ENDIF.
         route  = `detail`.
         layout = `TwoColumnsMidExpanded`.
@@ -507,7 +506,7 @@ CLASS z2ui5_cl_smpc_app_575 IMPLEMENTATION.
           t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
-              APPEND product TO t_rows.
+              INSERT product INTO TABLE t_rows.
             ENDIF.
           ENDLOOP.
         ENDIF.
@@ -528,7 +527,7 @@ CLASS z2ui5_cl_smpc_app_575 IMPLEMENTATION.
     IF path CS `#`.
       path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT path LEFT DELETING LEADING `/`.
+    path = shift_left( val = path sub = `/` ).
     SPLIT path AT `/` INTO TABLE DATA(t_seg).
     DELETE t_seg WHERE table_line IS INITIAL.
 

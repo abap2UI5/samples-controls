@@ -215,15 +215,15 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
       CASE cur_level.
         WHEN 1.
           IF node-level = 1.
-            APPEND node TO t_rows.
+            INSERT node INTO TABLE t_rows.
           ENDIF.
         WHEN 2.
           IF node-level = 2 AND node-supplier = cur_supplier.
-            APPEND node TO t_rows.
+            INSERT node INTO TABLE t_rows.
           ENDIF.
         WHEN OTHERS.
           IF node-level = 3 AND node-supplier = cur_supplier AND node-category = cur_category.
-            APPEND node TO t_rows.
+            INSERT node INTO TABLE t_rows.
           ENDIF.
       ENDCASE.
     ENDLOOP.
@@ -231,10 +231,10 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
     " the breadcrumb carries one link per level already visited
     t_crumbs = VALUE #( ( text = `Suppliers` level = 1 ) ).
     IF cur_level >= 2.
-      APPEND VALUE #( text = cur_supplier level = 2 ) TO t_crumbs.
+      INSERT VALUE #( text = cur_supplier level = 2 ) INTO TABLE t_crumbs.
     ENDIF.
     IF cur_level >= 3.
-      APPEND VALUE #( text = cur_category level = 3 ) TO t_crumbs.
+      INSERT VALUE #( text = cur_category level = 3 ) INTO TABLE t_crumbs.
     ENDIF.
 
   ENDMETHOD.

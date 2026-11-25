@@ -548,8 +548,8 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
       WHEN `PANEL_EXPANDED`.
         DATA(prop_key) = client->get_event_arg( ).
         DATA(expanded) = client->get_event_arg( 2 ).
-        READ TABLE t_comp_props ASSIGNING FIELD-SYMBOL(<s_prop>) WITH KEY key = prop_key.
-        IF sy-subrc = 0.
+        ASSIGN t_comp_props[ key = prop_key ] TO FIELD-SYMBOL(<s_prop>).
+        IF <s_prop> IS ASSIGNED.
           LOOP AT <s_prop>-values ASSIGNING FIELD-SYMBOL(<s_value>).
             <s_value>-visible = expanded.
           ENDLOOP.
@@ -564,7 +564,7 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
 
     t_comp_products = VALUE #( ).
     LOOP AT t_products INTO DATA(s_product) WHERE selected = abap_true.
-      APPEND s_product TO t_comp_products.
+      INSERT s_product INTO TABLE t_comp_products.
     ENDLOOP.
 
     " the original's ResizeHandler-driven _getPagesCount (600/1024 thresholds), computed once from the reported device width
@@ -635,12 +635,12 @@ CLASS z2ui5_cl_smpc_app_012 IMPLEMENTATION.
       LOOP AT t_comp_products FROM from_item TO last_item INTO DATA(s_product).
         ASSIGN COMPONENT s_key-field OF STRUCTURE s_product TO FIELD-SYMBOL(<value>).
         IF sy-subrc = 0.
-          APPEND VALUE #( text        = |<strong>{ <value> }</strong>|
+          INSERT VALUE #( text        = |<strong>{ <value> }</strong>|
                           description = `Some description of the property here`
-                          visible     = abap_false ) TO s_prop-values.
+                          visible     = abap_false ) INTO TABLE s_prop-values.
         ENDIF.
       ENDLOOP.
-      APPEND s_prop TO t_comp_props.
+      INSERT s_prop INTO TABLE t_comp_props.
     ENDLOOP.
 
   ENDMETHOD.

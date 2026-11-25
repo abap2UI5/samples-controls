@@ -441,7 +441,7 @@ CLASS z2ui5_cl_smpc_app_353 IMPLEMENTATION.
       RETURN.
     ENDLOOP.
 
-    APPEND row TO t_available.
+    INSERT row INTO TABLE t_available.
 
   ENDMETHOD.
 

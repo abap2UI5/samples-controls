@@ -157,7 +157,7 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
         " validator 2 then rewrites its text to "#: <text>"
         DATA(text1) = client->get_event_arg( ).
         IF validate = abap_true AND text1 IS NOT INITIAL.
-          APPEND VALUE #( key = text1 text = |#: { text1 }| ) TO t_tokens1.
+          INSERT VALUE #( key = text1 text = |#: { text1 }| ) INTO TABLE t_tokens1.
         ENDIF.
         value1 = VALUE #( ).
       WHEN `VALIDATE2`.
@@ -172,13 +172,13 @@ CLASS z2ui5_cl_smpc_app_501 IMPLEMENTATION.
 
       WHEN `VALIDATE2_DECIDE`.
         IF client->get_event_arg( ) = `OK`.
-          APPEND VALUE #( key = pending text = pending ) TO t_tokens2.
+          INSERT VALUE #( key = pending text = pending ) INTO TABLE t_tokens2.
         ENDIF.
         pending = VALUE #( ).
       WHEN `VALIDATE3`.
         DATA(text3) = client->get_event_arg( ).
         IF text3 IS NOT INITIAL.
-          APPEND VALUE #( text = text3 ) TO t_tokens3.
+          INSERT VALUE #( text = text3 ) INTO TABLE t_tokens3.
         ENDIF.
         value3 = VALUE #( ).
     ENDCASE.

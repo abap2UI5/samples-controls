@@ -312,7 +312,7 @@ CLASS z2ui5_cl_smpc_app_577 IMPLEMENTATION.
     IF path CS `#`.
       path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT path LEFT DELETING LEADING `/`.
+    path = shift_left( val = path sub = `/` ).
     SPLIT path AT `/` INTO TABLE DATA(t_seg).
     DELETE t_seg WHERE table_line IS INITIAL.
 

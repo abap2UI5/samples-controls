@@ -130,7 +130,7 @@ CLASS z2ui5_cl_smpc_app_496 IMPLEMENTATION.
       SPLIT item_path AT `/` INTO TABLE segments.
       LOOP AT segments INTO DATA(segment).
         IF segment IS NOT INITIAL AND segment CO `0123456789`.
-          APPEND CONV i( segment ) + 1 TO indices.
+          INSERT CONV i( segment ) + 1 INTO TABLE indices.
         ENDIF.
       ENDLOOP.
 

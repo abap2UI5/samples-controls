@@ -147,10 +147,10 @@ CLASS z2ui5_cl_smpc_app_451 IMPLEMENTATION.
 
       WHEN `ADD`.
         " addNewButtonPressHandler adds a new employee tab
-        APPEND VALUE #( name     = `New employee`
+        INSERT VALUE #( name     = `New employee`
                         position = `Developer`
                         icon     = `sap-icon://group`
-                        modified = abap_false ) TO t_employees.
+                        modified = abap_false ) INTO TABLE t_employees.
 
       WHEN `CLOSE`.
         close_name  = client->get_event_arg( ).

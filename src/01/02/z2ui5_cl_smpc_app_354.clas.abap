@@ -321,7 +321,7 @@ CLASS z2ui5_cl_smpc_app_354 IMPLEMENTATION.
       DATA(t_keep) = VALUE ty_t_product( ).
       LOOP AT t_products INTO DATA(s_row).
         IF to_upper( s_row-name ) CS query OR to_upper( s_row-category ) CS query.
-          APPEND s_row TO t_keep.
+          INSERT s_row INTO TABLE t_keep.
         ENDIF.
       ENDLOOP.
       t_products = t_keep.

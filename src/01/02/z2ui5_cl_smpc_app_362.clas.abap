@@ -70,7 +70,7 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
       " list starts with NAME in it rather than empty
       SORT t_products BY name ASCENDING.
       sort_name = `Ascending`.
-      APPEND VALUE #( field = `NAME` descending = abap_false ) TO t_sortkeys.
+      INSERT VALUE #( field = `NAME` descending = abap_false ) INTO TABLE t_sortkeys.
       view_display( ).
     ELSEIF client->check_on_navigated( ).
       view_display( ).
@@ -296,7 +296,7 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
         " Ascending. Exactly the header-lies-about-the-rows defect the
         " SORT_CATEGORIES branch below was fixed for on 2026-08-21, still live
         " on the menu path.
-        APPEND VALUE #( field = property descending = xsdbool( ascending = abap_false ) ) TO t_sortkeys.
+        INSERT VALUE #( field = property descending = xsdbool( ascending = abap_false ) ) INTO TABLE t_sortkeys.
 
       WHEN `SORT_CATEGORIES_AND_NAME`.
         " sortCategoriesAndName: Category ascending, then Name ascending
@@ -315,11 +315,11 @@ CLASS z2ui5_cl_smpc_app_362 IMPLEMENTATION.
         " header claimed Name-ascending while the rows were Category-ascending.
         " The button's own tooltip says "in addition to current sorting".
         DATA(s_cat) = VALUE ty_s_sortkey( field = `CATEGORY` descending = category_descending ).
-        READ TABLE t_sortkeys TRANSPORTING NO FIELDS WITH KEY field = `CATEGORY`.
-        IF sy-subrc = 0.
-          t_sortkeys[ sy-tabix ] = s_cat.
+        ASSIGN t_sortkeys[ field = `CATEGORY` ] TO FIELD-SYMBOL(<s_sortkey>).
+        IF <s_sortkey> IS ASSIGNED.
+          <s_sortkey> = s_cat.
         ELSE.
-          APPEND s_cat TO t_sortkeys.
+          INSERT s_cat INTO TABLE t_sortkeys.
         ENDIF.
         sort_category       = COND #( WHEN category_descending = abap_true THEN `Descending` ELSE `Ascending` ).
         category_descending = xsdbool( category_descending = abap_false ).

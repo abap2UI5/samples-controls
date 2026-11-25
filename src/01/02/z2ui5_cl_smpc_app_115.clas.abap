@@ -329,8 +329,8 @@ CLASS z2ui5_cl_smpc_app_115 IMPLEMENTATION.
       " place, and the 702 parser rejects it
       DATA(row_no) = row_index + 1.
       IF update_type = `removed`.
-        READ TABLE productcollection INDEX row_no ASSIGNING FIELD-SYMBOL(<product>).
-        IF sy-subrc = 0.
+        ASSIGN productcollection[ row_no ] TO FIELD-SYMBOL(<product>).
+        IF <product> IS ASSIGNED.
           DELETE <product>-additionalcategoriesselection WHERE key = removed_key.
         ENDIF.
       ENDIF.

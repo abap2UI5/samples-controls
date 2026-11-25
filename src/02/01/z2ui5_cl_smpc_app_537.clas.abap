@@ -286,6 +286,10 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " declared here, not inline at the ASSIGN below, so it can be UNASSIGNed
+    " before each one
+    FIELD-SYMBOLS <person> TYPE ty_s_person.
+
     CASE client->get_event( ).
 
       WHEN `APPT_SELECT`.
@@ -313,7 +317,7 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
           IF line_exists( t_special[ start_at = iso_start ] ).
             DELETE t_special WHERE start_at = iso_start.
           ELSE.
-            APPEND VALUE #( start_at = iso_start type = `NonWorking` ) TO t_special.
+            INSERT VALUE #( start_at = iso_start type = `NonWorking` ) INTO TABLE t_special.
           ENDIF.
         ELSE.
           DATA(iso_end) = |{ client->get_event_arg( 6 ) }-{ CONV i( client->get_event_arg( 7 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
@@ -332,11 +336,11 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
           " grammar - it threw and lost the whole handler
           DATA(rows) = VALUE ty_t_int( ).
           IF row_index >= 0.
-            APPEND row_index TO rows.
+            INSERT row_index INTO TABLE rows.
           ELSE.
             LOOP AT t_people INTO DATA(person_sel).
               IF person_sel-selected = abap_true.
-                APPEND sy-tabix - 1 TO rows.
+                INSERT sy-tabix - 1 INTO TABLE rows.
               ENDIF.
             ENDLOOP.
           ENDIF.
@@ -344,8 +348,10 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
           " abaplint's downport leaves an itab[ ] TARGET of INSERT/DELETE in
           " place, and the 702 parser rejects it
           LOOP AT rows INTO DATA(index).
-            READ TABLE t_people INDEX index + 1 ASSIGNING FIELD-SYMBOL(<person>).
-            IF sy-subrc = 0.
+            " UNASSIGN first: a failed ASSIGN keeps the previous round's row
+            UNASSIGN <person>.
+            ASSIGN t_people[ index + 1 ] TO <person>.
+            IF <person> IS ASSIGNED.
               INSERT appointment INTO TABLE <person>-t_appointments.
             ENDIF.
           ENDLOOP.

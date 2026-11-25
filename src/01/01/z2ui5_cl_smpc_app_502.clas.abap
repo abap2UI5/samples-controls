@@ -116,17 +116,17 @@ CLASS z2ui5_cl_smpc_app_502 IMPLEMENTATION.
     IF client->get_event( ) = `ITEM_SELECT`.
 
       DATA(title) = client->get_event_arg( ).
-      READ TABLE t_products INTO DATA(product) WITH KEY name = title.
-      IF sy-subrc = 0.
-        sel_name          = product-name.
-        sel_price         = product-price.
-        sel_currencycode  = product-currencycode.
-        sel_weightmeasure = product-weightmeasure.
-        sel_weightunit    = product-weightunit.
-        sel_width         = product-width.
-        sel_depth         = product-depth.
-        sel_height        = product-height.
-        sel_dimunit       = product-dimunit.
+      ASSIGN t_products[ name = title ] TO FIELD-SYMBOL(<product>).
+      IF <product> IS ASSIGNED.
+        sel_name          = <product>-name.
+        sel_price         = <product>-price.
+        sel_currencycode  = <product>-currencycode.
+        sel_weightmeasure = <product>-weightmeasure.
+        sel_weightunit    = <product>-weightunit.
+        sel_width         = <product>-width.
+        sel_depth         = <product>-depth.
+        sel_height        = <product>-height.
+        sel_dimunit       = <product>-dimunit.
       ENDIF.
 
       " the original closes the popover from the same handler

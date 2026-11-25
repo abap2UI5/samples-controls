@@ -131,8 +131,8 @@ CLASS z2ui5_cl_smpc_app_218 IMPLEMENTATION.
         json_groups = `[]`.
       ELSE.
         DATA(search_val) = suggest_value.
-        REPLACE ALL OCCURRENCES OF `\` IN search_val WITH `\\`.
-        REPLACE ALL OCCURRENCES OF `"` IN search_val WITH `\"`.
+        search_val = replace( val = search_val sub = `\` with = `\\` occ = 0 ).
+        search_val = replace( val = search_val sub = `"` with = `\"` occ = 0 ).
         json_groups = |[[["PRODUCTID","Contains","{ search_val }"],["NAME","Contains","{ search_val }"]]]|.
       ENDIF.
       client->follow_up_action( val   = client->cs_event-binding_call

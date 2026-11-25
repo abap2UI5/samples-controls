@@ -447,10 +447,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
           SPLIT notes AT ` // ` INTO TABLE DATA(t_line).
           DATA(html) = `<ul>`.
           LOOP AT t_line INTO DATA(line).
-            DATA(esc) = line.
-            REPLACE ALL OCCURRENCES OF `&` IN esc WITH `&amp;`.
-            REPLACE ALL OCCURRENCES OF `<` IN esc WITH `&lt;`.
-            REPLACE ALL OCCURRENCES OF `>` IN esc WITH `&gt;`.
+            DATA(esc) = replace( val = line sub = `&` with = `&amp;` occ = 0 ).
+            esc = replace( val = esc sub = `<` with = `&lt;` occ = 0 ).
+            esc = replace( val = esc sub = `>` with = `&gt;` occ = 0 ).
             DATA(col) = find( val = esc sub = `:` ).
             IF col > 0.
               html = |{ html }<li><strong>{ substring( val = esc len = col + 1 ) }</strong>{ substring( val = esc off = col + 1 ) }</li>|.
@@ -500,13 +499,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
   METHOD row_of.
 
     " the catalog row behind a pressed table row, by its class name (the only
-    " thing the press event carries). READ TABLE, not a table expression: the
-    " 702 downport turns `tab[ … ]` into a raise the transpiled runtime maps to
-    " an uncatchable ASSERT.
+    " thing the press event carries). OPTIONAL, not a bare table expression:
+    " the 702 downport turns `tab[ … ]` into a raise the transpiled runtime
+    " maps to an uncatchable ASSERT.
     DATA(catalog) = get_catalog( ).
-    READ TABLE catalog INTO result WITH KEY class = val.
-    IF sy-subrc <> 0.
-      CLEAR result.
+    result = VALUE #( catalog[ class = val ] OPTIONAL ).
+    IF result IS INITIAL.
       RETURN.
     ENDIF.
 
@@ -526,7 +524,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       " only the columns the table renders, sorts or filters on go into the
       " bound model - the notes, the live-check text and the four URLs stay in
       " the catalog and are fetched per row in on_event (see ty_s_row)
-      APPEND VALUE #( module        = <app>-module
+      INSERT VALUE #( module        = <app>-module
                       ctrl_name     = <app>-ctrl_name
                       name          = <app>-name
                       class         = <app>-class
@@ -543,7 +541,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                       ctrl_html     = <app>-ctrl_html
                       score         = <app>-score
                       score_tip     = <app>-score_tip
-                      filter        = <app>-filter ) TO t_app.
+                      filter        = <app>-filter ) INTO TABLE t_app.
 
     ENDLOOP.
 

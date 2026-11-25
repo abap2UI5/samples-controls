@@ -714,8 +714,8 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
           ENDIF.
         ENDIF.
 
-        READ TABLE t_people INDEX CONV i( c_person ) + 1 ASSIGNING FIELD-SYMBOL(<person>).
-        IF sy-subrc = 0.
+        ASSIGN t_people[ CONV i( c_person ) + 1 ] TO FIELD-SYMBOL(<person>).
+        IF <person> IS ASSIGNED.
           INSERT new_appointment INTO TABLE <person>-t_appointments.
         ENDIF.
         client->popup_destroy( ).
@@ -741,22 +741,22 @@ CLASS z2ui5_cl_smpc_app_548 IMPLEMENTATION.
           DATA(appt_idx) = CONV i( parts[ lines( parts ) ] ).
           DATA(dest_row) = index_of( row_path ).
 
-          READ TABLE t_people INDEX src_row + 1 ASSIGNING FIELD-SYMBOL(<source>).
-          IF sy-subrc = 0 AND appt_idx >= 0 AND appt_idx < lines( <source>-t_appointments ).
+          ASSIGN t_people[ src_row + 1 ] TO FIELD-SYMBOL(<source>).
+          IF <source> IS ASSIGNED AND appt_idx >= 0 AND appt_idx < lines( <source>-t_appointments ).
             DATA(moved) = <source>-t_appointments[ appt_idx + 1 ].
             moved-start_at = drop_start.
             moved-end_at   = drop_end.
 
             IF is_copy = abap_true.
-              READ TABLE t_people INDEX dest_row + 1 ASSIGNING FIELD-SYMBOL(<copy_to>).
-              IF sy-subrc = 0.
+              ASSIGN t_people[ dest_row + 1 ] TO FIELD-SYMBOL(<copy_to>).
+              IF <copy_to> IS ASSIGNED.
                 INSERT moved INTO TABLE <copy_to>-t_appointments.
               ENDIF.
               client->message_toast_display( |Appointment copied to { row_title }.| ).
             ELSEIF src_row <> dest_row.
               DELETE <source>-t_appointments INDEX appt_idx + 1.
-              READ TABLE t_people INDEX dest_row + 1 ASSIGNING FIELD-SYMBOL(<move_to>).
-              IF sy-subrc = 0.
+              ASSIGN t_people[ dest_row + 1 ] TO FIELD-SYMBOL(<move_to>).
+              IF <move_to> IS ASSIGNED.
                 INSERT moved INTO TABLE <move_to>-t_appointments.
               ENDIF.
               client->message_toast_display( |Appointment moved to { row_title }.| ).

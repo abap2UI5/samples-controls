@@ -250,10 +250,10 @@ CLASS z2ui5_cl_smpc_app_185 IMPLEMENTATION.
       text       = |Text with { repeat( val = ` ` occ = i - 1 ) }{ i } whitespaces|.
       additional = |Additional text with { repeat( val = ` ` occ = inverted - 1 ) }{ inverted } whitespaces|.
 
-      REPLACE ALL OCCURRENCES OF `  ` IN text WITH repl.
-      REPLACE ALL OCCURRENCES OF `  ` IN additional WITH repl.
+      text       = replace( val = text sub = `  ` with = repl occ = 0 ).
+      additional = replace( val = additional sub = `  ` with = repl occ = 0 ).
 
-      APPEND VALUE #( key = i text = text additionaltext = additional ) TO t_items.
+      INSERT VALUE #( key = i text = text additionaltext = additional ) INTO TABLE t_items.
     ENDDO.
 
   ENDMETHOD.

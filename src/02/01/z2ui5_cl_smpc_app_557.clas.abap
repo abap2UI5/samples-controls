@@ -378,7 +378,7 @@ CLASS z2ui5_cl_smpc_app_557 IMPLEMENTATION.
       DATA(kept) = VALUE ty_t_value( ).
       LOOP AT group->values INTO DATA(candidate).
         IF to_upper( candidate-text ) CS to_upper( term ).
-          APPEND candidate TO kept.
+          INSERT candidate INTO TABLE kept.
         ENDIF.
       ENDLOOP.
       group->values = kept.
