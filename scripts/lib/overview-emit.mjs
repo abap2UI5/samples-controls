@@ -24,7 +24,16 @@
  * @param {string}   o.CLASS  the generated class name
  * @returns {{ abap: string, xml: string }}
  */
-export function emitOverview({ apps, demos, CLASS }) {
+export function emitOverview({ apps, demos: demosIn, CLASS }) {
+// Every class name the overview NAMES is written without the z2ui5_ prefix
+// and gets the installation's prefix at run time (own_prefix( )): the
+// namespace rename (npm run rename) rewrites references, never a literal, so
+// a literal z2ui5_cl_smpc_app_001 would start the ORIGINAL class in a renamed
+// installation. Written out it is also what .github/scripts/rename.mjs
+// refuses.
+const unprefixed = (cls) => cls.replace(/^z2ui5_/i, '');
+apps = apps.map((a) => ({ ...a, cls: unprefixed(a.cls) }));
+const demos = demosIn.map((d) => ({ ...d, cls: unprefixed(d.cls) }));
 // aligned VALUE #( ) rows — only the generation-time facts; the URLs are built
 // at runtime in view_display (the abap2UI5 start URL needs the system origin)
 const w = (k) => Math.max(...apps.map((a) => a[k].length));
@@ -438,20 +447,22 @@ CLASS ${CLASS} DEFINITION PUBLIC.
         inactive TYPE string VALUE \`Neutral\`,
       END OF cs_color.
 
+    " the overview apps of the three sample repositories, without the
+    " installation's prefix - header_button( ) puts it in front (own_prefix)
     CONSTANTS:
       BEGIN OF cs_overview,
-        samples      TYPE string VALUE \`z2ui5_cl_smp_app_000\`,
-        samples_old  TYPE string VALUE \`z2ui5_cl_demo_app_g00\`,
-        controls     TYPE string VALUE \`z2ui5_cl_smpc_app_000\`,
+        samples      TYPE string VALUE \`cl_smp_app_000\`,
+        samples_old  TYPE string VALUE \`cl_demo_app_g00\`,
+        controls     TYPE string VALUE \`cl_smpc_app_000\`,
         " this overview app before its 2026-08 rename to the three-digit
         " number scheme - an installation that predates it still answers to
         " this name (the dmo-era name is older still and no longer tried)
-        controls_old TYPE string VALUE \`z2ui5_cl_smpc_app_overview\`,
-        stack        TYPE string VALUE \`z2ui5_cl_smps_app_000\`,
+        controls_old TYPE string VALUE \`cl_smpc_app_overview\`,
+        stack        TYPE string VALUE \`cl_smps_app_000\`,
         " the overview app of samples-stack before its 2026-08 rename to
         " three-digit app numbers - an installation that predates it still
         " answers to this name
-        stack_old    TYPE string VALUE \`z2ui5_cl_smps_app_00\`,
+        stack_old    TYPE string VALUE \`cl_smps_app_00\`,
       END OF cs_overview.
 
     CONSTANTS:
@@ -525,6 +536,10 @@ CLASS ${CLASS} DEFINITION PUBLIC.
         val           TYPE string
       RETURNING
         VALUE(result) TYPE abap_bool.
+    " the prefix this installation's classes carry - see the method
+    METHODS own_prefix
+      RETURNING
+        VALUE(result) TYPE string.
     METHODS link_press
       IMPORTING
         url           TYPE string
@@ -1110,6 +1125,12 @@ ${catalogStatements}
 
     " abap2ui5lint-enable
 
+    " the class names above are written without the installation's prefix
+    DATA(prefix) = own_prefix( ).
+    LOOP AT result ASSIGNING FIELD-SYMBOL(<row>).
+      <row>-class = prefix && <row>-class.
+    ENDLOOP.
+
   ENDMETHOD.
 
 
@@ -1119,6 +1140,12 @@ ${catalogStatements}
     " block maps each class to the demo kit app it rebuilds (a demo app has
     " no meta sidecar, AGENTS section 3)
 ${demoStatement}
+
+    " written without the installation's prefix, as in get_catalog( )
+    DATA(prefix) = own_prefix( ).
+    LOOP AT result ASSIGNING FIELD-SYMBOL(<row>).
+      <row>-class = prefix && <row>-class.
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -1255,6 +1282,9 @@ ${demoStatement}
     DATA press  TYPE string.
 
     DATA(tooltip) = |{ name } - { descr }|.
+    " cs_overview names the apps without the installation's prefix
+    DATA(app)     = COND string( WHEN class IS NOT INITIAL THEN own_prefix( ) && class ).
+    DATA(app_old) = COND string( WHEN class_old IS NOT INITIAL THEN own_prefix( ) && class_old ).
 
     IF here = abap_true.
 
@@ -1267,10 +1297,10 @@ ${demoStatement}
 
       color = cs_color-active.
 
-      IF class IS NOT INITIAL AND class_installed( class ) = abap_true.
-        target = class.
-      ELSEIF class_old IS NOT INITIAL AND class_installed( class_old ) = abap_true.
-        target = class_old.
+      IF app IS NOT INITIAL AND class_installed( app ) = abap_true.
+        target = app.
+      ELSEIF app_old IS NOT INITIAL AND class_installed( app_old ) = abap_true.
+        target = app_old.
       ENDIF.
 
       IF target IS NOT INITIAL.
@@ -1291,7 +1321,7 @@ ${demoStatement}
         " instead of dropping the user on GitHub without a word
         hint  = |{ tooltip } - not installed on this system|.
         press = client->_event( val   = \`${EV_INSTALL}\`
-                                t_arg = VALUE #( ( class )
+                                t_arg = VALUE #( ( app )
                                                  ( href )
                                                  ( name ) ) ).
       ENDIF.
@@ -1371,6 +1401,19 @@ ${demoStatement}
       CATCH cx_root ##CATCH_ALL.
         result = abap_false.
     ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD own_prefix.
+
+    " z2ui5_ - or, in an installation renamed into another namespace (npm run
+    " rename), the customer name or namespace that took its place: the part of
+    " this class's own name in front of CL_SMPC_APP_000. Every class name the
+    " overview starts, looks up or links to is written without it, because the
+    " rename rewrites references and never a literal.
+    DATA(name) = substring_after( val = cl_abap_classdescr=>get_class_name( me ) sub = \`=\` ).
+    result = to_lower( substring_before( val = name sub = \`CL_SMPC_APP_000\` ) ).
 
   ENDMETHOD.
 

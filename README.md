@@ -200,6 +200,7 @@ actually broken:
 | `check-pins` | the abap2UI5 pin policy (`A2UI5_PIN`, no stray dependency branch) |
 | `check-app-rules`, `check-keywords`, `check-summary`, `check-prose-names` | the shared abaplint app rules, the `@keywords`/`@summary` lines, and every class name written in prose |
 | `tooling-tests` | the gate/generator tooling's own fixture tests |
+| `check-rename` | `npm run rename`: the namespace rename (abap2UI5 renamed along, every name fits, no literal names a renamed class) - `build-rename` pushes a renamed branch `rename_<name>` |
 | `e2e-nightly` | every port booted as the real app in headless Chromium (scheduled) |
 
 Every port also carries a machine-readable sidecar `meta/<class>.json`

@@ -56,6 +56,7 @@ const INERT = [
   '.claude/',
   '.githooks/',
   '.github/badges/',
+  '.github/scripts/',           // rename.mjs and update-deps.mjs - tooling, no ABAP
   '.github/workflows/',         // every OTHER workflow - the two above matched first
   '.github/dependabot.yml',
   '.gitattributes',

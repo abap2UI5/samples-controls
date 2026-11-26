@@ -10,3 +10,9 @@ src/zz_dev
 # the linter's README badges: every run rewrites them, CI publishes them to
 # the `badges` branch - never committed here
 .github/badges/
+
+# npm run rename: the renamed tree, the clones it renames along, its config
+.github/out/
+.github/abaplint/output/
+.github/abaplint/rename-deps/
+.github/abaplint/rename_run.json

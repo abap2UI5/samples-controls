@@ -844,6 +844,23 @@ the ABAP on main. `abap-702` and `auto-downport` now ask
   never reports blocks the merge — which is why this is a guard inside the job
   rather than a `paths:` filter on the trigger.
 
+**Namespace rename.** `npm run rename` (`check-rename` on every pull request)
+and the manual `build-rename` workflow are abap2UI5's namespace rename for
+this corpus - `.github/scripts/rename.mjs`, the same file in every repository
+that has one. Every `z2ui5_` object becomes `<name>_...` (a customer name such
+as `ZMYUI5`) or `/<ns>/...` (a registered namespace), at most 10 characters,
+and so does every reference to abap2UI5, which is renamed along: the branch
+`rename_<name>` runs on an abap2UI5 renamed with the same name by its own
+`build-rename`. The check renames with the longest name allowed and fails
+when a renamed name does not fit its object type (so a class name has at most
+25 characters - the longest today has 24) or when a **literal names a renamed
+object**: the rename rewrites references, never a literal, so such a literal
+would start the ORIGINAL class in a renamed installation. That is why the
+overview app writes every class name without its `z2ui5_` prefix and puts the
+installation's in front at run time (`own_prefix( )`, from its own name) - a
+change to `scripts/lib/overview-emit.mjs` that writes a class name out in full
+turns `check-rename` red.
+
 **Workflow files are `lower-kebab-case.yaml`, and the file name and the `name:`
 are the same string.** The repository mixed three styles
 (`ABAP_702.yaml`, `auto_downport.yaml`, `check-app-rules.yaml`) until
@@ -887,6 +904,7 @@ up to 24 hours later:
 | `check-mcp-contract.yaml` | `check-mcp-contract` | the file paths and shapes abap2UI5/mcp-server reads out of this checkout (§5, the generation prompt) |
 | `e2e-pr.yaml` | `e2e_pr` | the ports and demo apps this pull request touches, booted as the real app (transpiled backend + headless Chromium) |
 | `check-app-rules.yaml`, `check-keywords.yaml`, `check-summary.yaml` | same | the shared abaplint app rules, the `@keywords` and the `@summary` lines |
+| `check-rename.yaml` | `check-rename` | the namespace rename (`npm run rename`, see "Namespace rename" below) |
 
 What each gate checks, what a failure means and every legitimate escape hatch
 is in **`.claude/skills/run-the-gates/SKILL.md`** — read it the moment a gate
