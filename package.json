@@ -30,6 +30,7 @@
     "syfixes": "find src -type f -name '*.abap' -exec sed -i -e 's/ RAISE EXCEPTION TYPE cx_sy_itab_line_not_found/ ASSERT 1 = 0/g' {} + ",
     "abaplintpathfix": "sed -i 's|\"files\": \"/\\.\\.\\/\\.\\.\\/src\\/\\*\\*\\/\\*\\.\\*\"|\"files\": \"/src/**/*.*\"|g' abaplint.jsonc",
     "downport": "node scripts/downport-guard.mjs && abaplint --fix .github/abaplint/abap_702.jsonc && npm run syfixes && cp -f .github/abaplint/abap_702.jsonc abaplint.jsonc && npm run abaplintpathfix",
+    "rename": "node .github/scripts/rename.mjs",
     "check:app-rules": "node scripts/check-app-rules.mjs",
     "check:prose": "node scripts/check-prose-names.mjs",
     "keywords": "node scripts/generate-keywords.mjs",
