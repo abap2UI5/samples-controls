@@ -791,8 +791,7 @@ CLASS z2ui5_cl_smpc_app_652 IMPLEMENTATION.
 
     " _validateAddOrEditUrlDialog's URL half - the sample's regex is unanchored,
     " so a scheme followed by one non-blank character is what it requires
-    FIND REGEX `(ftp|http|https)://\S` IN url_input.
-    IF sy-subrc <> 0.
+    IF NOT contains( val = url_input regex = `(ftp|http|https)://\S` ).
       url_state      = `Error`.
       url_state_text = `Enter Valid URL`.
     ELSE.

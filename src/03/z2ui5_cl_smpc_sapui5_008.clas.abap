@@ -232,11 +232,11 @@ CLASS z2ui5_cl_smpc_sapui5_008 IMPLEMENTATION.
       WHEN `DETAIL_POPOVER`.
         DATA(t_arg) = client->get( )-t_event_arg.
 
-        READ TABLE mt_data-nodes INTO DATA(s_node) WITH KEY id = t_arg[ 2 ].
+        ASSIGN mt_data-nodes[ id = t_arg[ 2 ] ] TO FIELD-SYMBOL(<s_node>).
 
-        IF sy-subrc = 0.
+        IF <s_node> IS ASSIGNED.
           detail_popover( id   = t_arg[ 1 ]
-                          node = s_node ).
+                          node = <s_node> ).
         ENDIF.
     ENDCASE.
 

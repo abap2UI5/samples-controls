@@ -228,7 +228,7 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query
                 OR to_upper( product-suppliername ) CS query OR to_upper( product-productid ) CS query.
-              APPEND product TO t_rows.
+              INSERT product INTO TABLE t_rows.
             ENDIF.
           ENDLOOP.
         ENDIF.
@@ -258,8 +258,8 @@ CLASS z2ui5_cl_smpc_app_574 IMPLEMENTATION.
             depth        = |{ 10 + new_counter MOD 50 }|
             height       = |{ 10 + new_counter MOD 50 }|
             dimunit      = `cm` ).
-        APPEND new_row TO t_products.
-        APPEND new_row TO t_rows.
+        INSERT new_row INTO TABLE t_products.
+        INSERT new_row INTO TABLE t_rows.
         counts_refresh( ).
         client->message_toast_display( |New product added: { new_row-name }| ).
 

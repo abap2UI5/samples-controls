@@ -928,7 +928,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     IF hash CS `#`.
       hash = substring_after( val = hash sub = `#` ).
     ENDIF.
-    SHIFT hash LEFT DELETING LEADING `/`.
+    hash = shift_left( val = hash sub = `/` ).
     " the framework's own app-state hash is none of the app's routes
     IF hash CP `z2ui5-*`.
       RETURN.

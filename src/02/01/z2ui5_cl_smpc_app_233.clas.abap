@@ -466,8 +466,8 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
         " pr/binding-call-compound-filters)
         DATA(search_value) = client->get_event_arg( ).
         " free text spliced into a JSON string literal - backslash first, then the quote (app 218/420)
-        REPLACE ALL OCCURRENCES OF `\` IN search_value WITH `\\`.
-        REPLACE ALL OCCURRENCES OF `"` IN search_value WITH `\"`.
+        search_value = replace( val = search_value sub = `\` with = `\\` occ = 0 ).
+        search_value = replace( val = search_value sub = `"` with = `\"` occ = 0 ).
         client->follow_up_action(
             val   = client->cs_event-binding_call
             t_arg = VALUE #( ( `selectDialog` )
@@ -492,21 +492,21 @@ CLASS z2ui5_cl_smpc_app_233 IMPLEMENTATION.
     " selection" so the IllustratedMessage "not found" state shows
     inputpopulated = abap_true.
 
-    READ TABLE t_purchases INTO DATA(purchase) WITH KEY purchaseid = key.
-    IF sy-subrc = 0.
+    ASSIGN t_purchases[ purchaseid = key ] TO FIELD-SYMBOL(<purchase>).
+    IF <purchase> IS ASSIGNED.
       " the original resolves the purchase with Input.setSelectedKey, and under
       " textFormatMode="KeyValue" the input then shows "(<key>) <text>" - the
       " same composition, since the port re-renders and would otherwise put the
       " bare key back into the field
-      input_value        = |({ key }) { purchase-suppliername }|.
+      input_value        = |({ key }) { <purchase>-suppliername }|.
       has_selection      = abap_true.
-      sel_category       = purchase-category.
-      sel_subcategory    = purchase-subcategory.
-      sel_suppliername   = purchase-suppliername.
-      sel_paymenttype    = purchase-paymenttype.
-      sel_deliverystatus = purchase-deliverystatus.
-      sel_delivery_state = purchase-deliverystatus_state.
-      sel_products       = purchase-productcollection.
+      sel_category       = <purchase>-category.
+      sel_subcategory    = <purchase>-subcategory.
+      sel_suppliername   = <purchase>-suppliername.
+      sel_paymenttype    = <purchase>-paymenttype.
+      sel_deliverystatus = <purchase>-deliverystatus.
+      sel_delivery_state = <purchase>-deliverystatus_state.
+      sel_products       = <purchase>-productcollection.
     ELSE.
       has_selection      = abap_false.
       sel_delivery_state = `None`.

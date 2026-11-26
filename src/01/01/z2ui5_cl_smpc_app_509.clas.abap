@@ -89,7 +89,7 @@ CLASS z2ui5_cl_smpc_app_509 IMPLEMENTATION.
       IF term IS NOT INITIAL.
         LOOP AT products_all( ) INTO DATA(product).
           IF to_upper( product-name ) CS term.
-            APPEND product TO t_suggestions.
+            INSERT product INTO TABLE t_suggestions.
           ENDIF.
         ENDLOOP.
       ENDIF.

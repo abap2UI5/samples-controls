@@ -464,7 +464,7 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " openSelectedItems: one tab per selected row, filtered by ProductId
         t_tabs = VALUE #( ).
         LOOP AT t_products INTO DATA(product) WHERE selected = abap_true.
-          APPEND CORRESPONDING #( product ) TO t_tabs.
+          INSERT CORRESPONDING #( product ) INTO TABLE t_tabs.
         ENDLOOP.
         selected_tab = VALUE #( t_tabs[ 1 ]-productid OPTIONAL ).
         buttons_state( edit = abap_true ).
@@ -533,11 +533,11 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
         " gets selected in the table, opens as a tab and starts in edit mode
         new_counter = new_counter + 1.
         DATA(new_id) = |ProductId-{ new_counter }|.
-        APPEND VALUE #( productid    = new_id
+        INSERT VALUE #( productid    = new_id
                         currencycode = `EUR`
                         selected     = abap_true
-                        unsaved      = abap_true ) TO t_products.
-        APPEND VALUE #( productid = new_id currencycode = `EUR` modified = abap_true ) TO t_tabs.
+                        unsaved      = abap_true ) INTO TABLE t_products.
+        INSERT VALUE #( productid = new_id currencycode = `EUR` modified = abap_true ) INTO TABLE t_tabs.
         selected_tab = new_id.
         buttons_state( save = abap_true cancel = abap_true ).
         view_display( ).
@@ -557,12 +557,12 @@ CLASS z2ui5_cl_smpc_app_558 IMPLEMENTATION.
 
       WHEN `NEW_ITEM_SAVE`.
         " handleNewItemSave: the form's data joins the collection
-        APPEND VALUE #( productid    = add_product_id
+        INSERT VALUE #( productid    = add_product_id
                         name         = add_name
                         suppliername = add_supplier
                         description  = add_description
                         price        = add_price
-                        currencycode = `EUR` ) TO t_products.
+                        currencycode = `EUR` ) INTO TABLE t_products.
         add_mode = abap_false.
         nav_to_table( ).
 

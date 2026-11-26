@@ -736,7 +736,7 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
     " the slashes around it - `#/Products/1` reads `Products/1`
     DATA(get) = client->get( ).
     DATA(hash) = get-s_config-hash.
-    SHIFT hash LEFT DELETING LEADING `#`.
+    hash = shift_left( val = hash sub = `#` ).
     DATA(shell) = find( val = hash sub = `&/` ).
     IF shell >= 0.
       hash = substring( val = hash off = shell + 2 ).
@@ -911,8 +911,8 @@ CLASS z2ui5_cl_smpc_demo_001 IMPLEMENTATION.
 
     " a string as the inside of a JSON string literal
     result = val.
-    REPLACE ALL OCCURRENCES OF `\` IN result WITH `\\`.
-    REPLACE ALL OCCURRENCES OF `"` IN result WITH `\"`.
+    result = replace( val = result sub = `\` with = `\\` occ = 0 ).
+    result = replace( val = result sub = `"` with = `\"` occ = 0 ).
 
   ENDMETHOD.
 

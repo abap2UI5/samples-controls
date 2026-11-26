@@ -589,9 +589,8 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
         category_apply( client->get_event_arg( ) ).
         IF t_rows IS NOT INITIAL.
           detail_bind( t_rows[ 1 ]-productid ).
-          READ TABLE t_products WITH KEY productid = t_rows[ 1 ]-productid TRANSPORTING NO FIELDS.
-          IF sy-subrc = 0.
-            product_ix = sy-tabix - 1.
+          IF line_exists( t_products[ productid = t_rows[ 1 ]-productid ] ).
+            product_ix = line_index( t_products[ productid = t_rows[ 1 ]-productid ] ) - 1.
           ENDIF.
         ENDIF.
         route  = `detailDetail`.
@@ -603,9 +602,8 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
         " product - the route carries its index into the FULL collection
         " (the bindingContext path index of the original)
         detail_bind( client->get_event_arg( ) ).
-        READ TABLE t_products WITH KEY productid = client->get_event_arg( ) TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          product_ix = sy-tabix - 1.
+        IF line_exists( t_products[ productid = client->get_event_arg( ) ] ).
+          product_ix = line_index( t_products[ productid = client->get_event_arg( ) ] ) - 1.
         ENDIF.
         route  = `detailDetail`.
         layout = `TwoColumnsMidExpanded`.
@@ -614,9 +612,8 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
       WHEN `SUPPLIER_ITEM`.
         " handleItemPress: level 2 opens the end column
         dd_text = client->get_event_arg( ).
-        READ TABLE t_suppliers WITH KEY text = dd_text TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          supplier_ix = sy-tabix - 1.
+        IF line_exists( t_suppliers[ text = dd_text ] ).
+          supplier_ix = line_index( t_suppliers[ text = dd_text ] ) - 1.
         ENDIF.
         route  = `detailDetailDetail`.
         layout = `ThreeColumnsMidExpanded`.
@@ -681,7 +678,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
           t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
-              APPEND product TO t_rows.
+              INSERT product INTO TABLE t_rows.
             ENDIF.
           ENDLOOP.
         ENDIF.
@@ -721,7 +718,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     DATA(sel_category) = category.
     t_rows = VALUE #( ).
     LOOP AT t_products INTO DATA(row) WHERE category = sel_category.
-      APPEND row TO t_rows.
+      INSERT row INTO TABLE t_rows.
     ENDLOOP.
     " park it too, so a later view_display( ) can put the column back
     begin_page = `dynamicPageId`.
@@ -746,7 +743,7 @@ CLASS z2ui5_cl_smpc_app_578 IMPLEMENTATION.
     IF path CS `#`.
       path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT path LEFT DELETING LEADING `/`.
+    path = shift_left( val = path sub = `/` ).
     SPLIT path AT `/` INTO TABLE DATA(t_seg).
     DELETE t_seg WHERE table_line IS INITIAL.
 

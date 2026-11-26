@@ -123,7 +123,7 @@ CLASS z2ui5_cl_smpc_app_085 IMPLEMENTATION.
       WHEN `ADD`.
         " onAddToken: append a Token from the input value (default text if empty), then clear the input
         DATA(text) = COND #( WHEN input_value IS NOT INITIAL THEN input_value ELSE `One more token` ).
-        APPEND VALUE #( text = text key = text ) TO t_tokens.
+        INSERT VALUE #( text = text key = text ) INTO TABLE t_tokens.
         client->message_toast_display( |Token added: { text }| ).
         input_value = ``.
       WHEN `DELETE`.

@@ -452,7 +452,7 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
 
     " onInit adds thirty tabs to idIconTabBar0 ('Tab n' / 'Content n')
     DO 30 TIMES.
-      APPEND VALUE #( key = |{ sy-index }| text = |Tab { sy-index }| content = |Content { sy-index }| ) TO t_tabs.
+      INSERT VALUE #( key = |{ sy-index }| text = |Tab { sy-index }| content = |Content { sy-index }| ) INTO TABLE t_tabs.
     ENDDO.
 
     " and twelve to iconTabBarInlineIcons, each with an icon picked at RANDOM
@@ -460,10 +460,10 @@ CLASS z2ui5_cl_smpc_app_620 IMPLEMENTATION.
     " cycle instead (see sidecar)
     DATA(icons) = VALUE string_table( ( `sap-icon://history` ) ( `sap-icon://home` ) ( `sap-icon://employee` ) ).
     DO 12 TIMES.
-      APPEND VALUE #( key     = |{ sy-index }|
+      INSERT VALUE #( key     = |{ sy-index }|
                       text    = |Tab { sy-index }|
                       icon    = icons[ ( sy-index - 1 ) MOD 3 + 1 ]
-                      content = |IconTabBar inline header mode with icons Content { sy-index }| ) TO t_inline_tabs.
+                      content = |IconTabBar inline header mode with icons Content { sy-index }| ) INTO TABLE t_inline_tabs.
     ENDDO.
 
   ENDMETHOD.

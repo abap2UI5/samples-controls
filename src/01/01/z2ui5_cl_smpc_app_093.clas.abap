@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_093 IMPLEMENTATION.
     CASE client->get_event( ).
       WHEN `ADD`.
         " addNewButtonPressHandler: add a new, empty employee tab
-        APPEND VALUE #( name = `New employee` modified = abap_false ) TO t_employees.
+        INSERT VALUE #( name = `New employee` modified = abap_false ) INTO TABLE t_employees.
       WHEN `CLOSE`.
         " itemCloseHandler: confirm before closing; the answer comes back as
         " the CLOSE_DECIDE event's action argument

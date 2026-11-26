@@ -221,8 +221,8 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
         DATA(appt_idx)  = index_of( appt_path ).
         DATA(dest_row)  = index_of( row_path ).
 
-        READ TABLE t_people INDEX src_row + 1 ASSIGNING FIELD-SYMBOL(<source>).
-        IF sy-subrc = 0 AND appt_idx >= 0 AND appt_idx < lines( <source>-t_appointments ).
+        ASSIGN t_people[ src_row + 1 ] TO FIELD-SYMBOL(<source>).
+        IF <source> IS ASSIGNED AND appt_idx >= 0 AND appt_idx < lines( <source>-t_appointments ).
           DATA(moved) = <source>-t_appointments[ appt_idx + 1 ].
           DATA(title) = moved-title.
           moved-start_at = drop_start.
@@ -231,8 +231,8 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
           IF is_copy = abap_false.
             DELETE <source>-t_appointments INDEX appt_idx + 1.
           ENDIF.
-          READ TABLE t_people INDEX dest_row + 1 ASSIGNING FIELD-SYMBOL(<dest>).
-          IF sy-subrc = 0.
+          ASSIGN t_people[ dest_row + 1 ] TO FIELD-SYMBOL(<dest>).
+          IF <dest> IS ASSIGNED.
             INSERT moved INTO TABLE <dest>-t_appointments.
           ENDIF.
 
@@ -247,8 +247,8 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
         DATA(res_row)   = index_of( path = res_path last = abap_false ).
         DATA(res_idx)   = index_of( res_path ).
 
-        READ TABLE t_people INDEX res_row + 1 ASSIGNING FIELD-SYMBOL(<row>).
-        IF sy-subrc = 0 AND res_idx >= 0 AND res_idx < lines( <row>-t_appointments ).
+        ASSIGN t_people[ res_row + 1 ] TO FIELD-SYMBOL(<row>).
+        IF <row> IS ASSIGNED AND res_idx >= 0 AND res_idx < lines( <row>-t_appointments ).
           " isAppointmentOverlap only ever refuses for the MANAGER role
           IF overlaps( row_index  = res_row
                        skip_index = res_idx
@@ -269,8 +269,8 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
         DATA(new_end)   = iso_of( 6 ).
         DATA(new_row)   = index_of( client->get_event_arg( 11 ) ).
 
-        READ TABLE t_people INDEX new_row + 1 ASSIGNING FIELD-SYMBOL(<target>).
-        IF sy-subrc = 0.
+        ASSIGN t_people[ new_row + 1 ] TO FIELD-SYMBOL(<target>).
+        IF <target> IS ASSIGNED.
           " type must be seeded: an ABAP field is never absent, so an unset type
           " reaches CalendarAppointment.type as "" - not a CalendarDayType member,
           " so validateProperty throws and the binding update takes the view down.
@@ -328,8 +328,8 @@ CLASS z2ui5_cl_smpc_app_546 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    READ TABLE t_people INDEX row_index + 1 ASSIGNING FIELD-SYMBOL(<row>).
-    IF sy-subrc <> 0.
+    ASSIGN t_people[ row_index + 1 ] TO FIELD-SYMBOL(<row>).
+    IF <row> IS NOT ASSIGNED.
       RETURN.
     ENDIF.
 

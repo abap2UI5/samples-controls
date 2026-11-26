@@ -185,9 +185,9 @@ CLASS z2ui5_cl_smpc_app_520 IMPLEMENTATION.
                                             datetime = times[ index MOD 3 + 1 ]
                                             priority = priorities[ index MOD 4 + 1 ] ).
       IF group = 1.
-        APPEND item TO t_group1.
+        INSERT item INTO TABLE t_group1.
       ELSE.
-        APPEND item TO t_group2.
+        INSERT item INTO TABLE t_group2.
       ENDIF.
     ENDDO.
 

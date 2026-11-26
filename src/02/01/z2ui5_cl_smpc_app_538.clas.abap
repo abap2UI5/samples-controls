@@ -143,6 +143,10 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
 
   METHOD on_event.
 
+    " declared here, not inline at the ASSIGN below, so it can be UNASSIGNed
+    " before each one
+    FIELD-SYMBOLS <person> TYPE ty_s_person.
+
     CASE client->get_event( ).
 
       WHEN `APPT_SELECT`.
@@ -179,11 +183,11 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
         " is not in the UI5 expression grammar - it threw and lost the whole handler
         DATA(rows) = VALUE string_table( ).
         IF row_index >= 0.
-          APPEND |{ row_index }| TO rows.
+          INSERT |{ row_index }| INTO TABLE rows.
         ELSE.
           LOOP AT t_people INTO DATA(person_sel).
             IF person_sel-selected = abap_true.
-              APPEND |{ sy-tabix - 1 }| TO rows.
+              INSERT |{ sy-tabix - 1 }| INTO TABLE rows.
             ENDIF.
           ENDLOOP.
         ENDIF.
@@ -191,8 +195,10 @@ CLASS z2ui5_cl_smpc_app_538 IMPLEMENTATION.
         " abaplint's downport leaves an itab[ ] TARGET of INSERT/DELETE in
         " place, and the 702 parser rejects it
         LOOP AT rows INTO DATA(index).
-          READ TABLE t_people INDEX CONV i( index ) + 1 ASSIGNING FIELD-SYMBOL(<person>).
-          IF sy-subrc = 0.
+          " UNASSIGN first: a failed ASSIGN keeps the previous round's row
+          UNASSIGN <person>.
+          ASSIGN t_people[ CONV i( index ) + 1 ] TO <person>.
+          IF <person> IS ASSIGNED.
             INSERT appointment INTO TABLE <person>-t_appointments.
           ENDIF.
         ENDLOOP.

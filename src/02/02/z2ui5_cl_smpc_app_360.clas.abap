@@ -288,9 +288,9 @@ CLASS z2ui5_cl_smpc_app_360 IMPLEMENTATION.
         " never sees upstream; stripping them reproduces the coercion, the same
         " way the sibling port 361 declares it for its index array.
         DATA(pasted) = client->get_event_arg( ).
-        REPLACE ALL OCCURRENCES OF `"` IN pasted WITH ``.
-        REPLACE ALL OCCURRENCES OF `[` IN pasted WITH ``.
-        REPLACE ALL OCCURRENCES OF `]` IN pasted WITH ``.
+        pasted = replace( val = pasted sub = `"` with = `` occ = 0 ).
+        pasted = replace( val = pasted sub = `[` with = `` occ = 0 ).
+        pasted = replace( val = pasted sub = `]` with = `` occ = 0 ).
         client->message_toast_display( |Pasted Data (on Table Level):\n\n{ pasted }| ).
 
     ENDCASE.

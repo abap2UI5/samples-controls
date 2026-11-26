@@ -286,7 +286,7 @@ CLASS z2ui5_cl_smpc_app_617 IMPLEMENTATION.
                                      WHEN `Overweight` THEN xsdbool( measure > 5 )
                                      ELSE abap_true ).
       IF keep = abap_true.
-        APPEND row TO t_keep.
+        INSERT row INTO TABLE t_keep.
       ENDIF.
     ENDLOOP.
     t_products = t_keep.

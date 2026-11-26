@@ -198,8 +198,8 @@ CLASS z2ui5_cl_smpc_app_108 IMPLEMENTATION.
         " the row is addressed through a field symbol, not a table expression:
         " abaplint's downport leaves an itab[ ] TARGET of INSERT/DELETE in
         " place, and the 702 parser rejects it
-        READ TABLE t_people INDEX 1 ASSIGNING FIELD-SYMBOL(<person>).
-        IF sy-subrc = 0.
+        ASSIGN t_people[ 1 ] TO FIELD-SYMBOL(<person>).
+        IF <person> IS ASSIGNED.
           INSERT VALUE #( start_at = iso_start
                           end_at   = iso_end
                           title    = `new appointment`

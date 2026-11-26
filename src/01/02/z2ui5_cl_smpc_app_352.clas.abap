@@ -303,7 +303,7 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
       DATA(t_keep) = VALUE ty_t_product( ).
       LOOP AT t_products INTO DATA(s_row).
         IF to_upper( s_row-name ) CS query OR to_upper( s_row-status ) CS query.
-          APPEND s_row TO t_keep.
+          INSERT s_row INTO TABLE t_keep.
         ENDIF.
       ENDLOOP.
       t_products = t_keep.
@@ -322,7 +322,7 @@ CLASS z2ui5_cl_smpc_app_352 IMPLEMENTATION.
                                       THEN s_product-category
                                       ELSE s_product-suppliername ).
         IF line_exists( t_selected[ table_line = row_value ] ).
-          APPEND s_product TO t_facet_keep.
+          INSERT s_product INTO TABLE t_facet_keep.
         ENDIF.
       ENDLOOP.
       t_products = t_facet_keep.

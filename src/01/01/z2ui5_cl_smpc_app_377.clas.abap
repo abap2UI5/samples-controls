@@ -234,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
       ENDCASE.
 
       IF keep = abap_true.
-        APPEND row TO t_products.
+        INSERT row INTO TABLE t_products.
       ENDIF.
     ENDLOOP.
 

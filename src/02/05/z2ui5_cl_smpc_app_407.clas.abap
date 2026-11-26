@@ -558,7 +558,7 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
     t_fixed = VALUE #( ).
     LOOP AT t_fixed_full INTO DATA(s_fixed).
       IF s_fixed-title CS search_value OR s_fixed-tagtext CS search_value.
-        APPEND s_fixed TO t_fixed.
+        INSERT s_fixed INTO TABLE t_fixed.
       ENDIF.
     ENDLOOP.
 
@@ -569,18 +569,18 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
 
     LOOP AT t_items INTO DATA(s_item).
       IF s_item-title CS search_value OR s_item-tagtext CS search_value.
-        APPEND s_item TO result.
+        INSERT s_item INTO TABLE result.
         CONTINUE.
       ENDIF.
       DATA(t_children) = VALUE ty_t_sub_item( ).
       LOOP AT s_item-items INTO DATA(s_child).
         IF s_child-title CS search_value OR s_child-tagtext CS search_value.
-          APPEND s_child TO t_children.
+          INSERT s_child INTO TABLE t_children.
         ENDIF.
       ENDLOOP.
       IF t_children IS NOT INITIAL.
         s_item-items = t_children.
-        APPEND s_item TO result.
+        INSERT s_item INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
@@ -601,7 +601,7 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
       result = result + 1.
     ENDIF.
     DATA(t_grouped) = t_group1_full.
-    APPEND LINES OF t_group2_full TO t_grouped.
+    INSERT LINES OF t_group2_full INTO TABLE t_grouped.
     LOOP AT t_grouped INTO DATA(s_item).
       IF s_item-title CS search_value.
         result = result + 1.

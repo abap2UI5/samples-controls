@@ -141,7 +141,7 @@ CLASS z2ui5_cl_smpc_app_504 IMPLEMENTATION.
     IF line_exists( t_tokens[ key = text ] ).
       RETURN.
     ENDIF.
-    APPEND VALUE #( key = text text = text ) TO t_tokens.
+    INSERT VALUE #( key = text text = text ) INTO TABLE t_tokens.
 
   ENDMETHOD.
 

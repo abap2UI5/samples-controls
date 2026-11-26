@@ -472,7 +472,7 @@ CLASS z2ui5_cl_smpc_app_298 IMPLEMENTATION.
                                        WHEN `BT` THEN xsdbool( compare >= low AND compare <= high )
                                        ELSE abap_true ).
         IF keep = abap_true.
-          APPEND s_row TO t_keep.
+          INSERT s_row INTO TABLE t_keep.
         ENDIF.
       ENDLOOP.
       t_products = t_keep.

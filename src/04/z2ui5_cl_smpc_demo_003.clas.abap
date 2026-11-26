@@ -502,8 +502,8 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     t_selected = VALUE #( ).
     IF is_single( ) = abap_true.
       DATA(index) = CONV i( member ) + 1.
-      READ TABLE t_team INDEX index ASSIGNING FIELD-SYMBOL(<person>).
-      IF sy-subrc = 0.
+      ASSIGN t_team[ index ] TO FIELD-SYMBOL(<person>).
+      IF <person> IS ASSIGNED.
         t_selected = <person>-t_appointments.
       ENDIF.
     ENDIF.

@@ -447,10 +447,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
           SPLIT notes AT ` // ` INTO TABLE DATA(t_line).
           DATA(html) = `<ul>`.
           LOOP AT t_line INTO DATA(line).
-            DATA(esc) = line.
-            REPLACE ALL OCCURRENCES OF `&` IN esc WITH `&amp;`.
-            REPLACE ALL OCCURRENCES OF `<` IN esc WITH `&lt;`.
-            REPLACE ALL OCCURRENCES OF `>` IN esc WITH `&gt;`.
+            DATA(esc) = replace( val = line sub = `&` with = `&amp;` occ = 0 ).
+            esc = replace( val = esc sub = `<` with = `&lt;` occ = 0 ).
+            esc = replace( val = esc sub = `>` with = `&gt;` occ = 0 ).
             DATA(col) = find( val = esc sub = `:` ).
             IF col > 0.
               html = |{ html }<li><strong>{ substring( val = esc len = col + 1 ) }</strong>{ substring( val = esc off = col + 1 ) }</li>|.
@@ -500,13 +499,12 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
   METHOD row_of.
 
     " the catalog row behind a pressed table row, by its class name (the only
-    " thing the press event carries). READ TABLE, not a table expression: the
-    " 702 downport turns `tab[ … ]` into a raise the transpiled runtime maps to
-    " an uncatchable ASSERT.
+    " thing the press event carries). OPTIONAL, not a bare table expression:
+    " the 702 downport turns `tab[ … ]` into a raise the transpiled runtime
+    " maps to an uncatchable ASSERT.
     DATA(catalog) = get_catalog( ).
-    READ TABLE catalog INTO result WITH KEY class = val.
-    IF sy-subrc <> 0.
-      CLEAR result.
+    result = VALUE #( catalog[ class = val ] OPTIONAL ).
+    IF result IS INITIAL.
       RETURN.
     ENDIF.
 
@@ -526,7 +524,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
       " only the columns the table renders, sorts or filters on go into the
       " bound model - the notes, the live-check text and the four URLs stay in
       " the catalog and are fetched per row in on_event (see ty_s_row)
-      APPEND VALUE #( module        = <app>-module
+      INSERT VALUE #( module        = <app>-module
                       ctrl_name     = <app>-ctrl_name
                       name          = <app>-name
                       class         = <app>-class
@@ -543,7 +541,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
                       ctrl_html     = <app>-ctrl_html
                       score         = <app>-score
                       score_tip     = <app>-score_tip
-                      filter        = <app>-filter ) TO t_app.
+                      filter        = <app>-filter ) INTO TABLE t_app.
 
     ENDLOOP.
 
@@ -5780,7 +5778,7 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
             ` where the original's onInit lives; the app 040 shape. Until 2026-08-26 the extra control here was a Token template instead, because the port bound the tokens aggregation to the model - it no longer` &&
             ` does, so the port's MultiInput now declares exactly what the sample's does (width, id, suggestionItems + core:Item, showValueHelp). // NOTE: onInit's addValidator( function(args){ return new` &&
             ` Token({key: args.text, text: args.text}); } ) and its attachTokenUpdate handler are both wired through the bundled invisible companion control z2ui5.cc.MultiInputExt (app 040 idiom): MultiInputId` &&
-            ` points it at the input, and it installs that validator VERBATIM - z2ui5_cl_ui5f_multiinp_js.clas.abap:154 is input.addValidator((args) => ... new Token({ key: args.text, text: args.text })), the same` &&
+            ` points it at the input, and it installs that validator VERBATIM - bundle/webapp/cc/MultiInputExt.js:217 is input.addValidator((args) => ... new Token({ key: args.text, text: args.text })), the same` &&
             ` free-text branch this sample registers. This deviation used to read "abap2UI5 cannot register a validator", which was wrong (CAPABILITIES.md marks addValidator expressible, apps 040/612/613 use it,`.
     text1 = text1 && ` and apps 501/504 already carried the corrected wording), and it protected two defects: the port improvised token creation over a change round-trip, so a token only appeared AFTER the server answered,` &&
             ` and its tokenUpdate wire read ${$parameters>/removedTokens}[0].getKey() - only the FIRST key of a multi-token removal. The companion mirrors the WHOLE added / removed list into the bindable` &&
@@ -10338,9 +10336,9 @@ CLASS z2ui5_cl_smpc_app_000 IMPLEMENTATION.
     text1 = `NOTE: The controller loads Dialog.fragment.xml lazily and calls syncStyleClass('sapUiSizeCompact', view, dialog) before open(). The port builds the same fragment in its own chain and shows it with` &&
             ` popup_display; the compact-density sync is dropped. Re-verified 2026-08-23 with a better reason than the one that stood here ('has no equivalent ... abap2UI5 sets the density on the shell, not per` &&
             ` popup'): it is a NO-OP in abap2UI5, not an inexpressible call. syncStyleClass copies sapUiSizeCompact from the view onto the dialog because a UI5 dialog renders in the static area outside the view;` &&
-            ` abap2UI5 puts that class on the <body> itself (z2ui5_cl_ui5_http_handler / z2ui5_cl_ui5f_index_html both emit class='sapUiBody sapUiSizeCompact'), so the static area is already inside it and the` &&
-            ` dialog is already compact. addStyleClass is whitelisted, so the call COULD be made - it would just set a class that is already in effect. // NOTE: onDialogCloseButton on both buttons is reproduced by` &&
-            ` the client-side follow_up_action popup_close, so closing the dialog needs no round-trip. // NOTE: The popup_display of the fragment and both popup_close wires are unverified in a running system.`.
+            ` abap2UI5 puts that class on the <body> itself (z2ui5_cl_ui5_http_handler and the BSP's index.html both emit class='sapUiBody sapUiSizeCompact'), so the static area is already inside it and the dialog` &&
+            ` is already compact. addStyleClass is whitelisted, so the call COULD be made - it would just set a class that is already in effect. // NOTE: onDialogCloseButton on both buttons is reproduced by the` &&
+            ` client-side follow_up_action popup_close, so closing the dialog needs no round-trip. // NOTE: The popup_display of the fragment and both popup_close wires are unverified in a running system.`.
     text1 = text1 && ` **e2e-verified 2026-08-22** (nightly e2e interaction, meta/interactions/z2ui5_cl_smpc_app_434.mjs).`.
     result = VALUE #( BASE result
       ( module = `sap.m`              control = `sap.ui.core.ContainerPadding`          name = `ContainerPadding`                                          class = `z2ui5_cl_smpc_app_434` path = `src/01/01/z2ui5_cl_smpc_app_434.clas.abap`

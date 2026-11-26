@@ -384,9 +384,9 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
           DELETE parts WHERE table_line IS INITIAL.
           sel_row   = parts[ 2 ].
           sel_index = parts[ lines( parts ) ].
-          READ TABLE t_people INDEX sel_row + 1 INTO DATA(person).
-          IF sy-subrc = 0 AND sel_index >= 0 AND sel_index < lines( person-t_appointments ).
-            DATA(appointment) = person-t_appointments[ sel_index + 1 ].
+          ASSIGN t_people[ sel_row + 1 ] TO FIELD-SYMBOL(<person>).
+          IF <person> IS ASSIGNED AND sel_index >= 0 AND sel_index < lines( <person>-t_appointments ).
+            DATA(appointment) = <person>-t_appointments[ sel_index + 1 ].
             sel_title = appointment-title.
             sel_info  = appointment-info.
             sel_start = appointment-start_at.
@@ -439,8 +439,8 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
 
       WHEN `DELETE`.
         " handleDeleteAppointment removes the appointment behind the popover
-        READ TABLE t_people INDEX sel_row + 1 ASSIGNING FIELD-SYMBOL(<person>).
-        IF sy-subrc = 0 AND sel_index >= 0 AND sel_index < lines( <person>-t_appointments ).
+        ASSIGN t_people[ sel_row + 1 ] TO <person>.
+        IF <person> IS ASSIGNED AND sel_index >= 0 AND sel_index < lines( <person>-t_appointments ).
           DELETE <person>-t_appointments INDEX sel_index + 1.
         ENDIF.
         client->popover_destroy( ).
@@ -461,8 +461,8 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
           ELSE.
             " _addNewAppointment appends to the picked person's appointments, or
             " to their interval HEADERS when the checkbox is set
-            READ TABLE t_people INDEX target_row + 1 ASSIGNING FIELD-SYMBOL(<target>).
-            IF sy-subrc = 0.
+            ASSIGN t_people[ target_row + 1 ] TO FIELD-SYMBOL(<target>).
+            IF <target> IS ASSIGNED.
               IF d_interval = abap_true.
                 INSERT VALUE #( title    = d_title
                                 start_at = d_start
@@ -490,8 +490,8 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
 
     " _editAppointment rewrites the row in place, moving it to the picked owner
     " when the Select changed
-    READ TABLE t_people INDEX sel_row + 1 ASSIGNING FIELD-SYMBOL(<source>).
-    IF sy-subrc <> 0 OR sel_index < 0 OR sel_index >= lines( <source>-t_appointments ).
+    ASSIGN t_people[ sel_row + 1 ] TO FIELD-SYMBOL(<source>).
+    IF <source> IS NOT ASSIGNED OR sel_index < 0 OR sel_index >= lines( <source>-t_appointments ).
       RETURN.
     ENDIF.
 
@@ -507,8 +507,8 @@ CLASS z2ui5_cl_smpc_app_547 IMPLEMENTATION.
     ENDIF.
 
     DELETE <source>-t_appointments INDEX sel_index + 1.
-    READ TABLE t_people INDEX target_row + 1 ASSIGNING FIELD-SYMBOL(<owner>).
-    IF sy-subrc = 0.
+    ASSIGN t_people[ target_row + 1 ] TO FIELD-SYMBOL(<owner>).
+    IF <owner> IS ASSIGNED.
       INSERT edited INTO TABLE <owner>-t_appointments.
     ENDIF.
 

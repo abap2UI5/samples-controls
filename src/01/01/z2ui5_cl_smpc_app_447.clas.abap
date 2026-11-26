@@ -152,8 +152,8 @@ CLASS z2ui5_cl_smpc_app_447 IMPLEMENTATION.
     "     embedded as a plain string - the box would open with no options at
     "     all, quietly.
     DATA(escaped) = details.
-    REPLACE ALL OCCURRENCES OF `\` IN escaped WITH `\\`.
-    REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `\"`.
+    escaped = replace( val = escaped sub = `\` with = `\\` occ = 0 ).
+    escaped = replace( val = escaped sub = `"` with = `\"` occ = 0 ).
 
     client->follow_up_action(
         val   = client->cs_event-control_global

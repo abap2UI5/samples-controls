@@ -359,7 +359,15 @@ const ADVISORY_BUDGET = {
  * moves them into ADVISORY_BUDGET above.
  * The eleven counts measured 2026-09-24 (linter 1248a22) were what 0.8.0
  * shipped, and they moved up with that bump on 2026-09-27. */
-const NEXT_LINTER_BUDGET = {};
+const NEXT_LINTER_BUDGET = {
+  // measured 2026-11-26 (linter 17dac02, abap2UI5/linter#205): two hints the
+  // next release adds - a ValueState/enum cell bound without a fallback on rows
+  // the source does not show, and the run-time shape of a namespaced column
+  // read from the model root. Advisory backlog, moved into ADVISORY_BUDGET by
+  // the bump that pins that release.
+  'enum-binding-no-fallback': 21,
+  'namespaced-row-binding': 2,
+};
 const budgetOf = (type) => (NEXT_LINTER && type in NEXT_LINTER_BUDGET
   ? NEXT_LINTER_BUDGET[type]
   : ADVISORY_BUDGET[type] ?? 0);

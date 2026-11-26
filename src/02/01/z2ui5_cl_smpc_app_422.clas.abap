@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_422 IMPLEMENTATION.
       DATA(idx) = lines( t_products ) - 1.
       DATA(upper) = nmin( val1 = idx + 30 val2 = 1001 ).
       WHILE idx < upper.
-        APPEND VALUE #( name = |Name { idx }| description = |Description { idx }| ) TO t_products.
+        INSERT VALUE #( name = |Name { idx }| description = |Description { idx }| ) INTO TABLE t_products.
         idx = idx + 1.
       ENDWHILE.
     ENDIF.
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_smpc_app_422 IMPLEMENTATION.
 
     " the original seeds productCollection with a generation loop (1..31), not a mock file
     DO 31 TIMES.
-      APPEND VALUE #( name = |Name { sy-index }| description = |Description { sy-index }| ) TO t_products.
+      INSERT VALUE #( name = |Name { sy-index }| description = |Description { sy-index }| ) INTO TABLE t_products.
     ENDDO.
 
   ENDMETHOD.

@@ -567,9 +567,8 @@ CLASS z2ui5_cl_smpc_app_584 IMPLEMENTATION.
         " onListItemPress: navTo('detail') - the helper's next state for
         " level 1 opens the mid column, the route carries the product INDEX
         detail_bind( client->get_event_arg( ) ).
-        READ TABLE t_products WITH KEY productid = client->get_event_arg( ) TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          product_ix = sy-tabix - 1.
+        IF line_exists( t_products[ productid = client->get_event_arg( ) ] ).
+          product_ix = line_index( t_products[ productid = client->get_event_arg( ) ] ) - 1.
         ENDIF.
         route  = `detail`.
         layout = `TwoColumnsMidExpanded`.
@@ -578,9 +577,8 @@ CLASS z2ui5_cl_smpc_app_584 IMPLEMENTATION.
       WHEN `SUPPLIER_ITEM`.
         " handleItemPress: navTo('detailDetail') - level 2 opens the end column
         dd_text = client->get_event_arg( ).
-        READ TABLE t_suppliers WITH KEY text = dd_text TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          supplier_ix = sy-tabix - 1.
+        IF line_exists( t_suppliers[ text = dd_text ] ).
+          supplier_ix = line_index( t_suppliers[ text = dd_text ] ) - 1.
         ENDIF.
         route  = `detailDetail`.
         layout = `ThreeColumnsMidExpanded`.
@@ -651,7 +649,7 @@ CLASS z2ui5_cl_smpc_app_584 IMPLEMENTATION.
           t_rows = VALUE #( ).
           LOOP AT t_products INTO DATA(product).
             IF to_upper( product-name ) CS query.
-              APPEND product TO t_rows.
+              INSERT product INTO TABLE t_rows.
             ENDIF.
           ENDLOOP.
         ENDIF.
@@ -689,7 +687,7 @@ CLASS z2ui5_cl_smpc_app_584 IMPLEMENTATION.
     IF path CS `#`.
       path = substring_after( val = path sub = `#` ).
     ENDIF.
-    SHIFT path LEFT DELETING LEADING `/`.
+    path = shift_left( val = path sub = `/` ).
     SPLIT path AT `/` INTO TABLE DATA(t_seg).
     DELETE t_seg WHERE table_line IS INITIAL.
 
