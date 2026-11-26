@@ -1178,7 +1178,7 @@ DSAG Leitfaden, then the samples style. Essentials:
   | `History` | `client->hash_set( )` / `app_state_set_active( )` |
 
   The live companions (`Storage`, `MessageManager`, `MultiInputExt`, …) are
-  not on that list. The source is abap2UI5's `app/webapp/cc/*.js` headers and
+  not on that list. The source is abap2UI5's `bundle/webapp/cc/*.js` headers and
   `docs/removal-plan.md` §3. A replacement is not always a drop-in: the Timer
   ran in the browser, `START_TIMER` is a round-trip that every other
   round-trip cancels, so each response has to re-arm it (demo_004's
