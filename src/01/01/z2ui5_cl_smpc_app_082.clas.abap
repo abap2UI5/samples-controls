@@ -21,9 +21,9 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -32,10 +32,13 @@ CLASS z2ui5_cl_smpc_app_082 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA img TYPE string.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " the sample's images are served from the demo kit sample folder; resolved to absolute OpenUI5 URLs
-    DATA(img) = `https://sdk.openui5.org/test-resources/sap/m/demokit/sample/SlideTile/images/`.
+    
+    img = `https://sdk.openui5.org/test-resources/sap/m/demokit/sample/SlideTile/images/`.
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`

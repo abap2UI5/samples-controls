@@ -35,12 +35,12 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -49,7 +49,9 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+      DATA temp1 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -339,14 +341,24 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
     " because an untouched key and the key the initialPage already shows both
     " need no action
     IF selectedkey IS NOT INITIAL AND selectedkey <> `home`.
+      
+      CLEAR temp1.
+      INSERT `pageContainer` INTO TABLE temp1.
+      INSERT `to` INTO TABLE temp1.
+      INSERT selectedkey INTO TABLE temp1.
       client->follow_up_action( val   = client->cs_event-control_by_id
-                                t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( selectedkey ) ) ).
+                                t_arg = temp1 ).
     ENDIF.
 
   ENDMETHOD.
 
 
   METHOD on_event.
+        DATA key TYPE string.
+        DATA temp3 TYPE abap_bool.
+        DATA selectable LIKE temp3.
+          DATA text TYPE string.
+          DATA temp4 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -358,21 +370,31 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
       WHEN `ITEM_SELECT`.
         " original onItemSelect: reads the item key, writes the target page's
         " Text and navigates the NavContainer there, then closes the popover
-        DATA(key) = client->get_event_arg( ).
-        DATA(selectable) = CONV abap_bool( client->get_event_arg( 2 ) ).
+        
+        key = client->get_event_arg( ).
+        
+        temp3 = client->get_event_arg( 2 ).
+        
+        selectable = temp3.
 
         IF key IS NOT INITIAL AND selectable = abap_true.
           " the highlight has to survive the popover being rebuilt on the next
           " open, so the key goes into the model the fragment binds
           selectedkey = key.
-          DATA(text) = |Fired event to load page { replace( val = key sub = `page` with = `` ) }|.
+          
+          text = |Fired event to load page { replace( val = key sub = `page` with = `` ) }|.
           IF key = `home`.
             home_text = text.
           ELSE.
             page_text = text.
           ENDIF.
+          
+          CLEAR temp4.
+          INSERT `pageContainer` INTO TABLE temp4.
+          INSERT `to` INTO TABLE temp4.
+          INSERT key INTO TABLE temp4.
           client->follow_up_action( val   = client->cs_event-control_by_id
-                                    t_arg = VALUE #( ( `pageContainer` ) ( `to` ) ( key ) ) ).
+                                    t_arg = temp4 ).
         ENDIF.
 
         client->popover_destroy( ).
@@ -395,8 +417,14 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
 
     " Popover.fragment.xml rebuilt 1:1 and shown anchored to the ShellBar menu
     " button - the Fragment.load + openBy equivalent
-    DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp6 TYPE string_table.
+    popover = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp6.
+    INSERT `${$parameters>/item}.getKey()` INTO TABLE temp6.
+    INSERT `${$parameters>/item}.getSelectable()` INTO TABLE temp6.
     popover->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns`      v = `sap.m`
         )->a( n = `xmlns:core` v = `sap.ui.core`
@@ -421,7 +449,7 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
                 )->a( n = `id`          v = `sideNav`
                 )->a( n = `width`       v = `17rem`
                 )->a( n = `itemSelect`  v = client->_event( val   = `ITEM_SELECT`
-                                                            t_arg = VALUE #( ( `${$parameters>/item}.getKey()` ) ( `${$parameters>/item}.getSelectable()` ) ) )
+                                                            t_arg = temp6 )
                 )->a( n = `selectedKey` v = client->_bind( selectedkey )
                 )->a( n = `design`      v = `Plain`
 
@@ -538,7 +566,8 @@ CLASS z2ui5_cl_smpc_app_301 IMPLEMENTATION.
 
     " original onQuickActionPress builds this Dialog imperatively (new Dialog({...}).open());
     " expressed as a core:FragmentDefinition shown via popup_display (declared deviation)
-    DATA(popup) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popup TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popup = z2ui5_cl_ui5_view_builder=>factory( ).
 
     popup->ele( n = `FragmentDefinition` ns = `core`
         )->a( n = `xmlns:core` v = `sap.ui.core`
