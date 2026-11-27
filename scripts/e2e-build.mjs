@@ -239,7 +239,11 @@ function main() {
   sh(`npx abap_transpile ./e2e-transpile.json`);
   fs.rmSync(tcfgPath, { force: true });
 
-  const built = fs.readdirSync(output).filter((f) => /^z2ui5_cl_smpc_app_\d+\.clas\.mjs$/.test(f)).length;
+  // transpiler-cli >= 2.14 writes project classes to output/project/, older pins to output/.
+  const isPort = (f) => /^z2ui5_cl_smpc_app_\d+\.clas\.mjs$/.test(f);
+  const project = path.join(output, 'project');
+  const built = fs.readdirSync(output).filter(isPort).length
+    + (fs.existsSync(project) ? fs.readdirSync(project).filter(isPort).length : 0);
   console.log(`e2e-build: done — ${built} ports transpiled into node/output`);
 }
 
