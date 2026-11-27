@@ -19,6 +19,7 @@ The short version:
 
 ```sh
 npm ci
+npm run setup-hooks  # once per clone: the pre-commit hook that regenerates the artefacts
 npm run gates        # the offline gate set, fail-fast
 npm run gates:full   # + abaplint and the view gates (needs the browser)
 npm test             # fixture tests for the gate/generator tooling itself

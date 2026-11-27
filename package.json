@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Generated abap2UI5 ports of the official UI5 demo kit samples.",
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks || true",
+    "setup-hooks": "git config core.hooksPath .githooks",
     "overview": "node scripts/generate-overview.mjs",
     "coverage": "node scripts/generate-coverage.mjs",
     "check:chains": "abap2ui5lint --config abap2ui5lint-chains.jsonc",

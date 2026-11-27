@@ -15,8 +15,8 @@
  *
  * This makes the overview generator - and with it the pre-commit hook that
  * runs it - need node_modules. That is not a new requirement in practice:
- * the hook is installed by `prepare`, which only runs on `npm install`, so a
- * checkout that has the hook has the dependencies too.
+ * the hook is installed by `npm run setup-hooks`, the step after `npm ci` in
+ * CONTRIBUTING.md, so a checkout that has the hook has the dependencies too.
  *
  * `applyFixes` defers an edit that overlaps one already applied, so a chain
  * whose repair needs two passes is reported by `deferred`. The generator runs

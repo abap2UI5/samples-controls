@@ -1047,8 +1047,10 @@ could not activate.
 Artefact regeneration is automated by the tracked **`.githooks/pre-commit`**
 hook: on every commit it regenerates the overview app, the coverage docs and
 the STATUS.md state block and stages them, so they never drift from `meta/`
-(which the `meta_valid` CI job enforces on PRs). It is enabled with `git config core.hooksPath .githooks`,
-which `npm ci` / `npm install` runs automatically via the `prepare` script.
+(which the `meta_valid` CI job enforces on PRs). It is enabled once per clone
+with **`npm run setup-hooks`** (`git config core.hooksPath .githooks`). It is
+an explicit step on purpose: `npm ci` / `npm install` no longer rewrite a
+contributor's git configuration through a `prepare` script.
 
 ### abapGit file format (all serialized files)
 
