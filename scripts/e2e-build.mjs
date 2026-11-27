@@ -79,9 +79,17 @@ function main() {
   //    z2ui5_if_exit alive as a compatibility member of z2ui5_cl_ui5_user_exit
   //    (and its test double), so dropping it fails the transpile validate for
   //    every port ("Implemented interface Z2UI5_IF_EXIT not found")
+  //    Since 2026-11-17 (abap2UI5 1.151.0) there is no src/99 at all: the
+  //    frozen package moved to abap2UI5-ext and z2ui5_if_exit was deleted
+  //    with the compatibility member that needed it. A pin from before that
+  //    still has the folder, so it is handled only where it exists - reading
+  //    it unconditionally killed every e2e build against the 1.151.0 pin.
   fs.cpSync(path.join(A2, 'src'), downport, { recursive: true });
-  for (const keep of fs.readdirSync(path.join(A2, 'src/99'))) {
-    if (/^z2ui5_if_exit\.intf\./.test(keep)) fs.copyFileSync(path.join(A2, 'src/99', keep), path.join(downport, keep));
+  const legacy = path.join(A2, 'src/99');
+  if (fs.existsSync(legacy)) {
+    for (const keep of fs.readdirSync(legacy)) {
+      if (/^z2ui5_if_exit\.intf\./.test(keep)) fs.copyFileSync(path.join(legacy, keep), path.join(downport, keep));
+    }
   }
   fs.rmSync(path.join(downport, '99'), { recursive: true, force: true });
   for (const f of fs.readdirSync(path.join(A2, 'node/srv'))) {
