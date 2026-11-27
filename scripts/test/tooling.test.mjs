@@ -2231,3 +2231,36 @@ test('check-clean: a modified, a deleted and an UNTRACKED file fail; a clean tre
   fs.rmSync(path.join(root, 'src', 'a.abap'));
   assert.equal(clean(), 1, 'deleted');
 });
+
+/* --------------------------------------------------- downport-fixes.mjs */
+
+/*
+ * The downport's text rewrites were `sed -i -e …` / `sed -i 's|…|'`, which
+ * BSD and macOS sed read differently (the argument after -i is a backup
+ * suffix there). The node version has to do what GNU sed did: per line,
+ * every *.abap under the folder and nothing else, a symlink left alone.
+ */
+test('downport-fixes: syfixes, strip-ws and pathfix rewrite what the sed did, and nothing else', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'downport-fixes-'));
+  const run = (...a) => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'downport-fixes.mjs'), ...a],
+    { cwd: root, encoding: 'utf8' });
+  fs.mkdirSync(path.join(root, 'src', 'sub'), { recursive: true });
+  const raise = ' RAISE EXCEPTION TYPE cx_sy_itab_line_not_found';
+  fs.writeFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), `  IF x.${raise}.${raise} \t\r\n  ENDIF.  \nlast\t`);
+  fs.writeFileSync(path.join(root, 'src', 'note.txt'), `${raise}  \n`);
+  fs.writeFileSync(path.join(root, 'abaplint.jsonc'), '{ "files": "/../../src/**/*.*", "x": "/src/**/*.*" }\n');
+
+  assert.equal(run('syfixes', 'src').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), 'utf8'),
+    '  IF x. ASSERT 1 = 0. ASSERT 1 = 0 \t\r\n  ENDIF.  \nlast\t');
+  assert.equal(run('strip-ws', 'src').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), 'utf8'),
+    '  IF x. ASSERT 1 = 0. ASSERT 1 = 0\n  ENDIF.\nlast', 'a \\r is whitespace too; no final newline is added');
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'note.txt'), 'utf8'), `${raise}  \n`, 'only *.abap');
+
+  assert.equal(run('pathfix', 'abaplint.jsonc').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'abaplint.jsonc'), 'utf8'), '{ "files": "/src/**/*.*", "x": "/src/**/*.*" }\n');
+
+  assert.equal(run('sed', 'src').status, 2, 'an unknown command is a usage error');
+  assert.equal(run('syfixes').status, 2, 'so is a missing target');
+});
