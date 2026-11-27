@@ -519,6 +519,22 @@ test('abap-scope: a path in neither list, and an empty list, run the downport', 
   assert.equal(reachesAbap(['']).run, true, 'an empty line is not a file list either');
 });
 
+/*
+ * The CLI half answers on stdout, and the two workflows read that answer into
+ * $GITHUB_OUTPUT. Its main guard compared import.meta.url with a hand-built
+ * `file://${argv[1]}`, which a path with a space never matches (the URL is
+ * percent-encoded) - the script printed nothing and the empty `run` read as
+ * "skip". Run from a directory with a space in its name.
+ */
+test('abap-scope: the CLI answers from a path with a space in it', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'abap scope '));
+  fs.copyFileSync(path.join(REPO, 'scripts', 'abap-scope.mjs'), path.join(dir, 'abap-scope.mjs'));
+  const r = spawnSync(process.execPath, [path.join(dir, 'abap-scope.mjs')], { encoding: 'utf8', input: 'src/x.clas.abap\n' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /^run=true$/m);
+  assert.match(r.stdout, /^reason=src\/x\.clas\.abap is ABAP/m);
+});
+
 /* ------------------------------------------------- json-to-abap.mjs */
 
 /*

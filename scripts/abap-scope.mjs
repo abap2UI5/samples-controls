@@ -33,6 +33,7 @@
  * on stdin - a range CI could not work out - it answers `run=true`, for the
  * same reason unclassified paths do.
  */
+import { pathToFileURL } from 'url';
 
 /** Prefixes and exact paths the 702 verdict is computed from. */
 const REACHES = [
@@ -95,7 +96,11 @@ export function reachesAbap(files) {
 
 /* ------------------------------------------------------------------ cli */
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+/* pathToFileURL, not `file://${argv[1]}`: a path with a space or a % in it
+ * is percent-encoded in import.meta.url and never matched the hand-built
+ * string, so the script printed nothing and the workflows read the empty
+ * answer as "skip" (they now refuse a run without a run= line, too). */
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const stdin = await new Promise((resolve) => {
     let buf = '';
     if (process.stdin.isTTY) return resolve('');

@@ -64,7 +64,16 @@ jobs:
         else
           files=''   # no range to work out - abap-scope.mjs answers "run"
         fi
-        printf '%s\n' "$files" | node scripts/abap-scope.mjs | tee -a "$GITHUB_OUTPUT"
+        scope=$(printf '%s\n' "$files" | node scripts/abap-scope.mjs)
+        printf '%s\n' "$scope"
+        # no run= line means the script did not answer (its main guard did not
+        # fire, it crashed after printing nothing) - and an empty `run` output
+        # reads as "skip" below, so the gate would stop gating without a word
+        if ! printf '%s\n' "$scope" | grep -qxE 'run=(true|false)'; then
+          echo "::error::scripts/abap-scope.mjs printed no run= line - refusing to guess"
+          exit 1
+        fi
+        printf '%s\n' "$scope" >> "$GITHUB_OUTPUT"
 
     - name: Nothing the 702 lint reads
       if: steps.scope.outputs.run != 'true'
