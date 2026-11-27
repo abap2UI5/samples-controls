@@ -8,6 +8,8 @@
  *
  * Importable:
  *   import { rowsToAbapValue, inferFields } from './json-to-abap.mjs';
+ *   (field names are valid, distinct ABAP component names of at most 30
+ *   characters; a number literal is written without an exponent)
  *   const fields = inferFields(rows);               // [{ json, abap, type }]
  *   const abap = rowsToAbapValue(rows, fields);     // "VALUE #( ( … ) … )"
  *
@@ -28,11 +30,39 @@
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+// ABAP's identifier limit for a structure component
+export const MAX_NAME = 30;
+
 // a single-token ABAP field name derived from a JSON key: lowercased, non
 // [a-z0-9_] stripped, capped at 30 chars (ABAP identifier limit). Lowercasing
 // matches structural-diff's last-segment comparison ({ProductPicUrl}~{PRODUCTPICURL}).
-export const abapName = (key) =>
-  String(key).replace(/[^A-Za-z0-9_]/g, '').toLowerCase().slice(0, 30);
+// A component name has to start with a letter or an underscore, so a key
+// that starts with a digit ("2ndPrice") gets an `f_` in front, and a key with
+// nothing left after the stripping ("€", "") is named `field` - an empty name
+// was a TYPES line with no component on it.
+export const abapName = (key) => {
+  const bare = String(key).replace(/[^A-Za-z0-9_]/g, '').toLowerCase();
+  const name = !bare ? 'field' : /^[0-9]/.test(bare) ? `f_${bare}` : bare;
+  return name.slice(0, MAX_NAME);
+};
+
+// Two keys can map to one name ("Product-Id" and "ProductId" both become
+// `productid`; two 31-character keys that differ in the last one are cut to
+// the same 30) - and a structure with a component twice does not activate.
+// The first keeps its name, every later one gets `_2`, `_3`, ... with the
+// stem cut so the whole stays within 30 characters.
+export function uniqueNames(fields) {
+  const taken = new Set();
+  return fields.map((f) => {
+    let name = f.abap;
+    for (let n = 2; taken.has(name); n++) {
+      const suffix = `_${n}`;
+      name = f.abap.slice(0, MAX_NAME - suffix.length) + suffix;
+    }
+    taken.add(name);
+    return name === f.abap ? f : { ...f, abap: name };
+  });
+}
 
 // ABAP `i` is a 4-byte integer. A JSON integer outside its range would
 // overflow on assignment, so it is inferred as a string - emitted as a
@@ -72,7 +102,7 @@ export function inferFields(rows) {
       `string literals to avoid truncation or overflow of TYPE i; declare each TYPE p LENGTH n DECIMALS m ` +
       `in ABAP (a backtick literal converts to packed).\n`);
   }
-  return fields;
+  return uniqueNames(fields);
 }
 
 // a backtick ABAP string literal: content is passed verbatim, so an embedded
@@ -80,10 +110,27 @@ export function inferFields(rows) {
 // (backtick literals cannot span lines).
 const abapStr = (s) => '`' + String(s ?? '').replace(/`/g, '``').replace(/[\r\n]+/g, ' ') + '`';
 
+// A number as plain decimal digits. String(n) switches to exponent notation
+// from 1e21 up and below 1e-6 ("1e+21", "1.5e-7"), and the literal of a
+// TYPE p field does not convert from that - it is exactly the value the
+// out-of-range route above sends here. The digits are the ones String(n)
+// shows, only the decimal point is moved.
+export function plainNumber(n) {
+  const s = String(n);
+  const m = /^(-?)(\d)(?:\.(\d+))?e([+-]\d+)$/.exec(s);
+  if (!m) return s;
+  const [, sign, lead, frac = '', exp] = m;
+  const digits = lead + frac;
+  const point = 1 + Number(exp); // position of the decimal point in `digits`
+  if (point <= 0) return `${sign}0.${'0'.repeat(-point)}${digits}`;
+  if (point >= digits.length) return sign + digits + '0'.repeat(point - digits.length);
+  return `${sign}${digits.slice(0, point)}.${digits.slice(point)}`;
+}
+
 const cell = (v, type) =>
   type === 'i' ? String(Math.trunc(Number(v) || 0))
     : type === 'abap_bool' ? (v === true || v === 'true' || v === 'X' || v === 1 ? 'abap_true' : 'abap_false')
-      : abapStr(v);
+      : abapStr(typeof v === 'number' ? plainNumber(v) : v);
 
 export function rowsToAbapValue(rows, fields = inferFields(rows), { indent = 6, var: varName } = {}) {
   // clamped like the closing line below: String.repeat throws on a negative
@@ -154,7 +201,7 @@ function inferTypeForKey(rows, json) {
 
 function parseFieldsSpec(spec, rows) {
   if (!spec) return inferFields(rows);
-  return spec.split(',').map((token) => {
+  return uniqueNames(spec.split(',').map((token) => {
     const [json, name, type] = token.split(':');
     const inferred = type || inferTypeForKey(rows, json);
     if (!type && inferred === 'string'
@@ -162,7 +209,7 @@ function parseFieldsSpec(spec, rows) {
       process.stderr.write(`json-to-abap: WARNING — column '${json}' has decimal or out-of-range integer value(s), emitted as string literals to avoid truncation or overflow of TYPE i; declare it TYPE p LENGTH n DECIMALS m.\n`);
     }
     return { json, abap: name ? abapName(name) : abapName(json), type: inferred };
-  });
+  }));
 }
 
 function main() {

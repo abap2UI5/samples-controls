@@ -56,4 +56,7 @@ jobs:
     # for the playground's catalogue page to build its index from. Seven
     # seconds over 636 ports; the install above is already paid for.
     - run: node scripts/generate-derived.mjs --quiet
-    - run: git diff --exit-code -- src README.md api.md STATUS.md SAMPLES.md catalogue.json catalogue-derived.json
+    # `git status`, not `git diff --exit-code`: a regenerated file that is not
+    # committed yet is UNTRACKED, and a diff of tracked files passes it
+    # (scripts/check-clean.mjs; the path list is the one in package.json)
+    - run: npm run check:clean

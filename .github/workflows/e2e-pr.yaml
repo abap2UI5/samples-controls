@@ -51,7 +51,8 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        # the merge-base has to be reachable to diff against it
+        # the merge-base has to be reachable to diff against it (the scope
+        # step diffs BASE...HEAD): a full history, not the shallow default
         fetch-depth: 0
 
     - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -66,7 +67,11 @@ jobs:
         HEAD: ${{ github.event.pull_request.head.sha }}
       run: |
         set -euo pipefail
-        git diff --name-only "$BASE" "$HEAD" > "$RUNNER_TEMP/changed.txt"
+        # three dots: what the PR changed since it forked (the merge-base),
+        # not the two-dot difference to the base tip - that one also lists
+        # every file main changed since, and maps them to ports the PR never
+        # touched (as abap-702's scope step does)
+        git diff --name-only "$BASE...$HEAD" > "$RUNNER_TEMP/changed.txt"
         # --from, not xargs: xargs splits a long list across invocations and a
         # per-chunk verdict is wrong in the one direction that matters
         ports="$(node scripts/e2e-changed.mjs --from "$RUNNER_TEMP/changed.txt")"

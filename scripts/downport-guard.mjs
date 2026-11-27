@@ -3,7 +3,7 @@
  * downport-guard — refuse to start `npm run downport` on a tree with work in it.
  *
  * `npm run downport` REWRITES THE WORKING TREE. It runs `abaplint --fix` over
- * every `src/**` file, `sed -i`s all of them again (`npm run syfixes`), and
+ * every `src/**` file, rewrites all of them again (`npm run syfixes`), and
  * `cp -f`s the 702 config over the root `abaplint.jsonc`. Nothing about that
  * is reversible except `git checkout -- .`, which throws away whatever else
  * was in the tree.
@@ -69,7 +69,7 @@ console.error(`downport-guard: REFUSING — ${dirty.length} uncommitted change(s
 for (const p of dirty.slice(0, 20)) console.error(`    ${p}`);
 if (dirty.length > 20) console.error(`    … and ${dirty.length - 20} more`);
 console.error(`
-\`npm run downport\` runs \`abaplint --fix\` over every src/**/*.abap, sed -i's
+\`npm run downport\` runs \`abaplint --fix\` over every src/**/*.abap, rewrites
 them all again and overwrites abaplint.jsonc with the 702 config. On a dirty
 tree that is destructive with no undo but \`git checkout -- .\`, which would
 take the changes above with it.

@@ -34,6 +34,11 @@ import { libraryOf, descriptLibrary } from './lib/ui5-libs.mjs';
 import { loadUniverseSnapshot } from './lib-universe.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'catalogue.json');
 const CHECK = process.argv.includes('--check');
@@ -81,7 +86,7 @@ for (const file of walkFiles(path.join(ROOT, 'src'), '.clas.abap')) {
     deviations: [...new Set((meta?.deviations || []).map((d) => d.type))].sort(),
   });
 }
-entries.sort((a, b) => a.class.localeCompare(b.class));
+entries.sort((a, b) => collate(a.class, b.class));
 
 const byStatus = {};
 for (const e of entries) byStatus[e.status] = (byStatus[e.status] || 0) + 1;

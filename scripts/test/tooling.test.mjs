@@ -519,6 +519,22 @@ test('abap-scope: a path in neither list, and an empty list, run the downport', 
   assert.equal(reachesAbap(['']).run, true, 'an empty line is not a file list either');
 });
 
+/*
+ * The CLI half answers on stdout, and the two workflows read that answer into
+ * $GITHUB_OUTPUT. Its main guard compared import.meta.url with a hand-built
+ * `file://${argv[1]}`, which a path with a space never matches (the URL is
+ * percent-encoded) - the script printed nothing and the empty `run` read as
+ * "skip". Run from a directory with a space in its name.
+ */
+test('abap-scope: the CLI answers from a path with a space in it', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'abap scope '));
+  fs.copyFileSync(path.join(REPO, 'scripts', 'abap-scope.mjs'), path.join(dir, 'abap-scope.mjs'));
+  const r = spawnSync(process.execPath, [path.join(dir, 'abap-scope.mjs')], { encoding: 'utf8', input: 'src/x.clas.abap\n' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /^run=true$/m);
+  assert.match(r.stdout, /^reason=src\/x\.clas\.abap is ABAP/m);
+});
+
 /* ------------------------------------------------- json-to-abap.mjs */
 
 /*
@@ -562,6 +578,49 @@ test('json-to-abap: an integer outside the range of TYPE i is not inferred as i'
   const value = rowsToAbapValue(rows);
   assert.match(value, /big = `2147483648`/, 'the out-of-range value travels verbatim, as a literal');
   assert.match(value, /small = 2147483647/, 'the in-range maximum stays a bare integer');
+});
+
+/*
+ * The names are ABAP component names and have to activate: distinct (two keys
+ * that lowercase/strip to one name were the same component twice), starting
+ * with a letter or underscore, never empty, at most 30 characters - also
+ * after a de-duplicating suffix. --fields names go through the same rule.
+ */
+test('json-to-abap: field names are distinct, valid ABAP names of at most 30 characters', async () => {
+  const { inferFields, abapName } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const long = 'x'.repeat(40);
+  const names = inferFields([{ 'Product-Id': 1, ProductId: 2, productid: 3, '2ndPrice': 4, '€': 5, '': 6,
+    [`${long}a`]: 7, [`${long}b`]: 8 }]).map((f) => f.abap);
+  assert.deepEqual(names, ['productid', 'productid_2', 'productid_3', 'f_2ndprice', 'field', 'field_2',
+    'x'.repeat(30), `${'x'.repeat(28)}_2`]);
+  assert.equal(new Set(names).size, names.length);
+  for (const n of names) assert.match(n, /^[a-z_][a-z0-9_]{0,29}$/);
+  assert.equal(abapName('12345678901234567890123456789012'), 'f_1234567890123456789012345678', 'the prefix counts against the 30');
+
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'json-to-abap-'));
+  fs.writeFileSync(path.join(tmp, 'rows.json'), JSON.stringify([{ a: 'x', b: 'y' }]));
+  const spec = spawnSync(process.execPath, [path.join(REPO, 'scripts', 'json-to-abap.mjs'), path.join(tmp, 'rows.json'),
+    '--fields', 'a:Name,b:name'], { encoding: 'utf8' });
+  assert.equal(spec.status, 0, spec.stderr);
+  assert.match(spec.stdout, /\( name = `x` name_2 = `y` \)/, 'two --fields names that collide are told apart too');
+});
+
+/*
+ * The out-of-range and decimal route writes a number as a literal for a
+ * TYPE p field, and String(n) writes 1e21 as "1e+21" and 1.5e-7 as "1.5e-7" -
+ * which does not convert to packed. Plain digits, the same value.
+ */
+test('json-to-abap: a number literal never carries an exponent', async () => {
+  const { plainNumber, rowsToAbapValue } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const cases = { 1e21: '1000000000000000000000', '-1e21': '-1000000000000000000000', 1.5e-7: '0.00000015',
+    1.2345e25: '12345000000000000000000000', '-2.5e-10': '-0.00000000025', 123.45: '123.45', 0.000001: '0.000001' };
+  for (const [n, want] of Object.entries(cases)) {
+    assert.equal(plainNumber(Number(n)), want, n);
+    assert.equal(Number(want), Number(n), `${n}: the same value`);
+  }
+  const value = rowsToAbapValue([{ big: 1e21, tiny: 1.5e-7, ok: 1 }, { big: 1, tiny: 0.5, ok: 2 }]);
+  assert.doesNotMatch(value, /e[+-]\d/);
+  assert.match(value, /big = `1000000000000000000000` tiny = `0.00000015`/);
 });
 
 /* ------------------------------------------- form-family-to-abap.mjs */
@@ -2116,4 +2175,92 @@ test('lib-smoke: the CSP gets eval and the dev bootstrap hashes, and keeps an op
   // a pin before #2778 that still carries both: returned as is
   const old = `content="script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self'"`;
   assert.equal(allowEvalForSourceUi5(old), old);
+});
+
+/* ------------------------------------------------- locale-free sorting */
+
+/*
+ * A bare localeCompare( ) collates in the locale of whoever runs the
+ * generator, so the committed order of a generated file would depend on the
+ * machine that wrote it. Every generator sorts with Intl.Collator('en')
+ * instead. check-prose-names.mjs is a pulled copy whose source is abap2UI5
+ * (shared-file-gate), so it is not this repository's to change.
+ */
+test('no generator sorts with a bare localeCompare( )', () => {
+  const offenders = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'test' && e.name !== 'node_modules') walk(p); continue; }
+      if (!e.name.endsWith('.mjs') || e.name === 'check-prose-names.mjs') continue;
+      fs.readFileSync(p, 'utf8').split('\n').forEach((l, i) => {
+        if (/\.localeCompare\(/.test(l)) offenders.push(`${path.relative(REPO, p)}:${i + 1}`);
+      });
+    }
+  };
+  walk(path.join(REPO, 'scripts'));
+  assert.deepEqual(offenders, []);
+});
+
+/* ------------------------------------------------------ check-clean.mjs */
+
+test('check-clean: a modified, a deleted and an UNTRACKED file fail; a clean tree passes', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'check-clean-test-'));
+  const git = (...a) => spawnSync('git', a, { cwd: root, encoding: 'utf8' });
+  git('init', '-q');
+  fs.mkdirSync(path.join(root, 'src'));
+  fs.writeFileSync(path.join(root, 'src', 'a.abap'), 'a\n');
+  fs.writeFileSync(path.join(root, 'README.md'), 'r\n');
+  git('add', '-A');
+  git('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'init');
+  const clean = () => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'check-clean.mjs'), 'src', 'README.md'],
+    { cwd: root, encoding: 'utf8' }).status;
+
+  assert.equal(clean(), 0, 'clean tree');
+  fs.writeFileSync(path.join(root, 'other.txt'), 'outside the listed paths\n');
+  assert.equal(clean(), 0, 'a file outside the paths is not this gate\'s business');
+
+  fs.writeFileSync(path.join(root, 'src', 'b.abap'), 'b\n');
+  assert.equal(clean(), 1, 'an untracked regenerated file — git diff --exit-code passed this');
+  fs.rmSync(path.join(root, 'src', 'b.abap'));
+
+  fs.writeFileSync(path.join(root, 'README.md'), 'changed\n');
+  assert.equal(clean(), 1, 'modified');
+  git('checkout', '-q', '--', 'README.md');
+
+  fs.rmSync(path.join(root, 'src', 'a.abap'));
+  assert.equal(clean(), 1, 'deleted');
+});
+
+/* --------------------------------------------------- downport-fixes.mjs */
+
+/*
+ * The downport's text rewrites were `sed -i -e …` / `sed -i 's|…|'`, which
+ * BSD and macOS sed read differently (the argument after -i is a backup
+ * suffix there). The node version has to do what GNU sed did: per line,
+ * every *.abap under the folder and nothing else, a symlink left alone.
+ */
+test('downport-fixes: syfixes, strip-ws and pathfix rewrite what the sed did, and nothing else', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'downport-fixes-'));
+  const run = (...a) => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'downport-fixes.mjs'), ...a],
+    { cwd: root, encoding: 'utf8' });
+  fs.mkdirSync(path.join(root, 'src', 'sub'), { recursive: true });
+  const raise = ' RAISE EXCEPTION TYPE cx_sy_itab_line_not_found';
+  fs.writeFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), `  IF x.${raise}.${raise} \t\r\n  ENDIF.  \nlast\t`);
+  fs.writeFileSync(path.join(root, 'src', 'note.txt'), `${raise}  \n`);
+  fs.writeFileSync(path.join(root, 'abaplint.jsonc'), '{ "files": "/../../src/**/*.*", "x": "/src/**/*.*" }\n');
+
+  assert.equal(run('syfixes', 'src').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), 'utf8'),
+    '  IF x. ASSERT 1 = 0. ASSERT 1 = 0 \t\r\n  ENDIF.  \nlast\t');
+  assert.equal(run('strip-ws', 'src').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'sub', 'a.clas.abap'), 'utf8'),
+    '  IF x. ASSERT 1 = 0. ASSERT 1 = 0\n  ENDIF.\nlast', 'a \\r is whitespace too; no final newline is added');
+  assert.equal(fs.readFileSync(path.join(root, 'src', 'note.txt'), 'utf8'), `${raise}  \n`, 'only *.abap');
+
+  assert.equal(run('pathfix', 'abaplint.jsonc').status, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'abaplint.jsonc'), 'utf8'), '{ "files": "/src/**/*.*", "x": "/src/**/*.*" }\n');
+
+  assert.equal(run('sed', 'src').status, 2, 'an unknown command is a usage error');
+  assert.equal(run('syfixes').status, 2, 'so is a missing target');
 });

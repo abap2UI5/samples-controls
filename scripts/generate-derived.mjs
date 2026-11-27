@@ -56,6 +56,11 @@ import { checkAbapSource } from '@abap2ui5/linter';
 import { walkFiles } from './lib/src-tree.mjs';
 import { loadUniverseSnapshot, cmpVersion, MIN_UI5 } from './lib-universe.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'catalogue-derived.json');
 const CHECK = process.argv.includes('--check');
@@ -151,7 +156,7 @@ for (const file of files) {
     minUi5,
     /* What made it that release — the tooltip behind the badge, so a filter
      * result can be argued with rather than only believed. */
-    needs: tooNew.sort((a, b) => cmpVersion(b.since, a.since) || a.name.localeCompare(b.name)),
+    needs: tooNew.sort((a, b) => cmpVersion(b.since, a.since) || collate(a.name, b.name)),
     /* Every control type the port BUILDS, as indices into the dictionary
      * below. Which LIBRARY each of those ships in is deliberately not
      * answered here: it is one UI5 taxonomy question, and answering it in
@@ -196,7 +201,7 @@ const top = {
  * catalogue.json and SAMPLES.md are one row per port. */
 const head = JSON.stringify(top, null, 2);
 const body = ports
-  .sort((a, b) => a.class.localeCompare(b.class))
+  .sort((a, b) => collate(a.class, b.class))
   .map((p) => `    ${JSON.stringify(p)}`)
   .join(',\n');
 const page = `${head.slice(0, -2)},\n  "ports": [\n${body}\n  ]\n}\n`;

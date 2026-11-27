@@ -126,7 +126,7 @@ jobs:
     # SAMPLES.md reads the ports, the meta/ sidecars AND ui5/descriptions.json;
     # catalogue.json carries `ui5Snapshot: universe.release` plus every port's
     # summary. Both are therefore stale the moment this workflow runs, and
-    # meta-valid.yaml regenerates and `git diff --exit-code`s them - so leaving
+    # meta-valid.yaml regenerates and compares them (check:clean) - so leaving
     # them out opened a pull request that failed its own meta_valid gate.
     - name: Regenerate SAMPLES.md
       run: node scripts/generate-samples-md.mjs
@@ -136,7 +136,7 @@ jobs:
 
     # catalogue-derived.json reads ui5/universe.json (the release the linter
     # checks against), refreshed above - and meta-valid.yaml regenerates and
-    # `git diff --exit-code`s it like the two above.
+    # compares it (check:clean) like the two above.
     - name: Regenerate catalogue-derived.json
       run: node scripts/generate-derived.mjs --quiet
 

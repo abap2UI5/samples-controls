@@ -69,6 +69,11 @@ import { walkFiles } from './lib/src-tree.mjs';
 import { isDemoApp, demoAppOf, loadDemoApps } from './lib/demoapps.mjs';
 import { sampleNames } from './lib/sample-names.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'SAMPLES.md');
 const CHECK = process.argv.includes('--check');
@@ -198,7 +203,7 @@ for (const s of ports) {
   if (!byLib.has(s.lib)) byLib.set(s.lib, []);
   byLib.get(s.lib).push(s);
 }
-const libs = [...byLib].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+const libs = [...byLib].sort((a, b) => b[1].length - a[1].length || collate(a[0], b[0]));
 
 const anchor = (t) => t.toLowerCase().replace(/[^\w\- ]/g, '').replace(/ /g, '-');
 const jump = libs.map(([lib]) => `[${lib}](#${anchor(lib)})`).join(' · ');
@@ -217,7 +222,7 @@ const byControl = (items) => {
     if (!groups.has(s.title)) groups.set(s.title, []);
     groups.get(s.title).push(s);
   }
-  return [...groups].sort((a, b) => a[0].localeCompare(b[0]));
+  return [...groups].sort((a, b) => collate(a[0], b[0]));
 };
 const section = (lib, items) => {
   if (items.length <= SPLIT_ABOVE) return `### ${lib}\n\n${items.length} port(s).\n\n${table(items)}`;

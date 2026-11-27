@@ -41,6 +41,11 @@ import {
   enrichFromProperties as enrichSample,
 } from './lib-universe.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
 const OPENUI5_DIR = process.env.OPENUI5_DIR || path.join(ROOT, 'openui5');
@@ -244,7 +249,7 @@ if (fs.existsSync(OPENUI5_DIR)) {
       }
     }
     const samples = names
-      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      .sort((a, b) => collate(a.toLowerCase(), b.toLowerCase()))
       .map((name) => {
         const entity = entOf.get(`${lib}.sample.${name}`) || null;
         const m = (entity && api.meta.get(entity)) || {};
@@ -375,7 +380,7 @@ if (process.argv.includes('--backlog')) {
   // ports the control already has — a control with one port still yields
   // more new idioms than one with five (AGENTS §1 depth criteria)
   rows.sort((a, b) => (a.covered - b.covered)
-    || a.entity.localeCompare(b.entity) || a.name.localeCompare(b.name));
+    || collate(a.entity, b.entity) || collate(a.name, b.name));
   for (const r of rows) {
     console.log(`${r.lib}\t${r.entity}\t${r.name}\t${r.covered === 0 ? 'NEW-CONTROL' : `covered-control(${r.covered})`}${r.holdout ? '\tHOLDOUT' : ''}`);
   }
@@ -429,7 +434,7 @@ const summary = libs
   .sort((a, b) => {
     // a lib with toPort 0 must sort deterministically, not on NaN
     const r = (s) => (s.toPort ? s.ported / s.toPort : -1);
-    return (r(b) - r(a)) || a.lib.localeCompare(b.lib);
+    return (r(b) - r(a)) || collate(a.lib, b.lib);
   });
 
 let totalSamples = 0;
@@ -504,10 +509,10 @@ function controlLines() {
   // without a known control sort last within their module
   const rows = libs.flatMap((e) => e.samples.map((s) => ({ ...s, lib: e.lib })));
   rows.sort((a, b) =>
-    a.lib.toLowerCase().localeCompare(b.lib.toLowerCase()) ||
+    collate(a.lib.toLowerCase(), b.lib.toLowerCase()) ||
     (a.entity ? 0 : 1) - (b.entity ? 0 : 1) ||
-    (a.entity || '').toLowerCase().localeCompare((b.entity || '').toLowerCase()) ||
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    collate((a.entity || '').toLowerCase(), (b.entity || '').toLowerCase()) ||
+    collate(a.name.toLowerCase(), b.name.toLowerCase()));
 
   for (const s of rows) {
     const label = s.entity ? bareControl(s.entity) : null;

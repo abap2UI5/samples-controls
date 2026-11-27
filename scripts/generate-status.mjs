@@ -24,6 +24,11 @@ import {
 } from './lib-universe.mjs';
 import { CAT_CTEXT, LIB_CTEXT } from './lib-packages.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const META = path.join(ROOT, 'meta');
 const STATUS = path.join(ROOT, 'STATUS.md');
@@ -102,7 +107,7 @@ for (const p of ports) {
 // hold-out probe headings). None of them was visible anywhere.
 const HOLDOUT = path.join(ROOT, 'ui5', 'holdout.json');
 const holdout = fs.existsSync(HOLDOUT) ? (JSON.parse(fs.readFileSync(HOLDOUT, 'utf8')).samples || []) : [];
-const spent = ports.filter((p) => holdout.includes(p.sample)).sort((a, b) => a.class.localeCompare(b.class));
+const spent = ports.filter((p) => holdout.includes(p.sample)).sort((a, b) => collate(a.class, b.class));
 const spentChecked = spent.filter((p) => p.status === 'checked');
 const HISTORY = path.join(ROOT, 'docs', 'history.md');
 const probeSections = fs.existsSync(HISTORY)

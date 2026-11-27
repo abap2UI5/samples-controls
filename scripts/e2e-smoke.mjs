@@ -190,6 +190,11 @@ function resolveLocal(pathname) {
 import { benign, allowEvalForSourceUi5 } from './lib-smoke.mjs';
 import { appRendered } from './lib-e2e.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 function startBackend() {
   return new Promise((resolve, reject) => {
     // --stack-size: the view builder's chain transpiles to ONE deeply nested
@@ -380,7 +385,7 @@ const metas = fs.readdirSync(META).filter((f) => f.endsWith('.json'))
   .map((f) => JSON.parse(fs.readFileSync(path.join(META, f), 'utf8')))
   .filter((m) => /^z2ui5_cl_smpc_app_\d+$/.test(m.class))
   .filter((m) => !ONLY || ONLY.some((o) => m.class.endsWith(o)));
-metas.sort((a, b) => a.class.localeCompare(b.class));
+metas.sort((a, b) => collate(a.class, b.class));
 
 /* the shard is taken AFTER the sort, so the slice is a property of the corpus
  * and not of readdir order.

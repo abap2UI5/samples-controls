@@ -990,9 +990,11 @@ It chains: chain-format → check-prose-names → pattern-lint → check-pins �
 check-archive → validate-meta → structural-diff → data-fidelity →
 check-mcp-contract →
 regenerate overview/coverage/status/SAMPLES.md/catalogue.json →
-`git diff --exit-code -- src README.md api.md STATUS.md SAMPLES.md catalogue.json`
-(regenerated artefacts must leave the tree clean, exactly as the `meta_valid`
-CI job checks). **Every step here has a CI job with the same name** — the
+`npm run check:clean` (`scripts/check-clean.mjs` over `src README.md api.md
+STATUS.md SAMPLES.md catalogue.json catalogue-derived.json` — regenerated
+artefacts must leave the tree clean, exactly as the `meta_valid` CI job checks;
+it reads `git status`, not `git diff --exit-code`, so a regenerated file that
+is untracked fails it too). **Every step here has a CI job with the same name** — the
 chain and the workflows are one list, and a step that runs only locally is a
 gate nobody enforces (chain-format was exactly that until 2026-08-18).
 
