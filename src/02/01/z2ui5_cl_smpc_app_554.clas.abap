@@ -146,7 +146,7 @@ CLASS z2ui5_cl_smpc_app_554 IMPLEMENTATION.
                         )->tag( n = `DateTypeRange` ns = `u`
                             )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
                             )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
-                            )->a( n = `type`      v = `{TYPE}`
+                            )->a( n = `type`      v = `{= ${TYPE} || 'None' }`
                             )->a( n = `color`     v = `{COLOR}`
 
                     )->end(

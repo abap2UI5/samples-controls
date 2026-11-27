@@ -430,7 +430,7 @@ CLASS z2ui5_cl_smpc_demo_003 IMPLEMENTATION.
     spc->ele( `appointments`
         )->tag( n = `CalendarAppointment` ns = `u`
             )->a( n = `title`     v = `{TITLE}`
-            )->a( n = `type`      v = `{TYPE}`
+            )->a( n = `type`      v = `{= ${TYPE} || 'None' }`
             )->a( n = `startDate` v = `{ path: 'START_AT', formatter: 'Formatter.DateCreateObject' }`
             )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }` ).
 

@@ -325,7 +325,7 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
                                         )->a( n = `initials`        v = `{INITIALS}`
                                         )->a( n = `tooltip`         v = `{INITIALS}`
                                         )->a( n = `fallbackIcon`    v = client->_bind( s_person-fallbackicon )
-                                        )->a( n = `backgroundColor` v = `{BACKGROUNDCOLOR}`
+                                        )->a( n = `backgroundColor` v = `{= ${BACKGROUNDCOLOR} || 'Accent1' }`
                                         )->a( n = `press`           v = client->_event( val = `AVATAR_PRESS`
                                                                                         arg = `$event.getSource().getBindingContext().getPath().split('/').pop()` )
 

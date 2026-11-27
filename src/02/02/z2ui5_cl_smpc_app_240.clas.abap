@@ -96,7 +96,7 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
 
                 )->ele( n = `items` ns = `u`
                     )->tag( n = `CalendarLegendItem` ns = `u`
-                        )->a( n = `type` v = `{TYPE}`
+                        )->a( n = `type` v = `{= ${TYPE} || 'None' }`
                         )->a( n = `text` v = `{TEXT}` ).
 
     client->view_display( view->stringify( ) ).
