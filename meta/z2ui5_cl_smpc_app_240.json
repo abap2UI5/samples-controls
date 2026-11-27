@@ -10,10 +10,6 @@
   },
   "status": "checked",
   "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
-  "render_smoke": {
-    "skip": true,
-    "reason": "The 20 DateTypeRange rows are COMPUTED in model_init (a DO loop over sy-datum building 'yyyy-MM-dd' strings into VALUE #( BASE t_special )), so the static reconstruction cannot resolve START_DATE and the row reaches the harness without it - Formatter.DateAbapDateToDateObject then gets undefined and XMLView.create fails with 'Date must be a JavaScript or UI5Date date object'. It is the harness's row, not the port's: at runtime every row carries a real ISO date. Verified against the render each run - the skip is honoured only while it still errors. (Reason re-stated 2026-08-23: the port has bound DateAbapDateToDateObject since the 2026-08-21 rewrite, and that formatter returns null rather than an Invalid Date for a non-date, so the failure mode named here no longer describes this class - the skip stands on the harness not carrying the row, not on the formatter.)"
-  },
   "deviations": [
     {
       "type": "POST_171",

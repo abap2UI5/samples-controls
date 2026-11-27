@@ -84,7 +84,7 @@ CLASS z2ui5_cl_smpc_app_240 IMPLEMENTATION.
                 )->ele( n = `specialDates` ns = `u`
                     )->tag( n = `DateTypeRange` ns = `u`
                         )->a( n = `startDate` v = `{ path: 'START_DATE', formatter: 'Formatter.DateAbapDateToDateObject' }`
-                        )->a( n = `type`      v = `{TYPE}`
+                        )->a( n = `type`      v = `{= ${TYPE} || 'None' }`
                         )->a( n = `tooltip`   v = `{TOOLTIP}`
 
                 )->end(
