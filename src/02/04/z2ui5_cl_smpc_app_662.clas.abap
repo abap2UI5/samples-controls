@@ -17,7 +17,7 @@ CLASS z2ui5_cl_smpc_app_662 DEFINITION PUBLIC.
         src          TYPE string,
         fallbackicon TYPE string,
       END OF ty_s_item.
-    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_person,
         src             TYPE string,
@@ -30,7 +30,7 @@ CLASS z2ui5_cl_smpc_app_662 DEFINITION PUBLIC.
         phone           TYPE string,
         email           TYPE string,
       END OF ty_s_person.
-    TYPES ty_t_person TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
+    TYPES ty_t_person TYPE STANDARD TABLE OF ty_s_person WITH DEFAULT KEY.
 
     DATA viewportpercentwidth TYPE i.
     DATA vl_width             TYPE string.
@@ -70,12 +70,12 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -84,8 +84,21 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-check_queue_last = abap_true.
+    temp1-check_no_busy = abap_true.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/overflowButtonPressed}` INTO TABLE temp2.
+    INSERT `${$parameters>/avatarsDisplayed}` INTO TABLE temp2.
+    INSERT `${$parameters>/eventSource}.getId()` INTO TABLE temp2.
+    INSERT `${$parameters>/overflowButtonPressed} ? '' : ${$parameters>/eventSource}.getBindingContext().getPath().split('/').pop()` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.f`
         )->a( n = `xmlns:m`   v = `sap.m`
@@ -97,7 +110,7 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
             )->a( n = `id`         v = `slider`
             )->a( n = `value`      v = client->_bind( viewportpercentwidth )
             )->a( n = `liveChange` v = client->_event( val    = `SLIDER_MOVED`
-                                                       s_ctrl = VALUE #( check_queue_last = abap_true check_no_busy = abap_true ) )
+                                                       s_ctrl = temp1 )
 
         )->ele( n = `VerticalLayout` ns = `l`
             )->a( n = `id`    v = `vl1`
@@ -113,10 +126,7 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
                 )->a( n = `groupType`         v = `Individual`
                 )->a( n = `avatarDisplaySize` v = `S`
                 )->a( n = `press`             v = client->_event( val   = `INDIVIDUAL_PRESS`
-                                                                  t_arg = VALUE #( ( `${$parameters>/overflowButtonPressed}` )
-                                                                                   ( `${$parameters>/avatarsDisplayed}` )
-                                                                                   ( `${$parameters>/eventSource}.getId()` )
-                                                                                   ( `${$parameters>/overflowButtonPressed} ? '' : ${$parameters>/eventSource}.getBindingContext().getPath().split('/').pop()` ) ) )
+                                                                  t_arg = temp2 )
                 )->a( n = `items`             v = client->_bind( t_content )
 
                 )->tag( `AvatarGroupItem`
@@ -150,6 +160,15 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
 
   METHOD on_event.
+          DATA temp2 TYPE i.
+          DATA temp3 TYPE i.
+          DATA index LIKE temp3.
+        DATA temp4 TYPE i.
+        DATA idx TYPE i.
+        FIELD-SYMBOLS <temp5> LIKE LINE OF t_grouped.
+        DATA temp6 LIKE sy-tabix.
+        DATA temp7 TYPE string_table.
+        DATA temp9 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -160,10 +179,15 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
       WHEN `INDIVIDUAL_PRESS`.
         IF client->get_event_arg( ) = abap_true.
           " the overflow button: onGroupPress for the avatars that did not fit
+          
+          temp2 = client->get_event_arg( 2 ).
           group_popover_display( anchor    = client->get_event_arg( 3 )
-                                 displayed = CONV #( client->get_event_arg( 2 ) ) ).
+                                 displayed = temp2 ).
         ELSE.
-          DATA(index) = CONV i( client->get_event_arg( 4 ) ).
+          
+          temp3 = client->get_event_arg( 4 ).
+          
+          index = temp3.
           IF index < 0 OR index >= lines( t_content ).
             RETURN.
           ENDIF.
@@ -176,21 +200,41 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
       WHEN `AVATAR_PRESS`.
         " onAvatarPress: show the pressed team member's card on the detail page
-        DATA(idx) = CONV i( client->get_event_arg( ) ) + 1.
+        
+        temp4 = client->get_event_arg( ).
+        
+        idx = temp4 + 1.
         IF idx < 1 OR idx > lines( t_grouped ).
           RETURN.
         ENDIF.
-        s_person       = t_grouped[ idx ].
+        
+        
+        temp6 = sy-tabix.
+        READ TABLE t_grouped INDEX idx ASSIGNING <temp5>.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        s_person       = <temp5>.
         popover_height = `375px`.
+        
+        CLEAR temp7.
+        INSERT `navCon` INTO TABLE temp7.
+        INSERT `to` INTO TABLE temp7.
+        INSERT `detail` INTO TABLE temp7.
         client->follow_up_action( val   = client->cs_event-control_by_id
                                   view  = client->cs_view-popover
-                                  t_arg = VALUE #( ( `navCon` ) ( `to` ) ( `detail` ) ) ).
+                                  t_arg = temp7 ).
 
       WHEN `NAV_BACK`.
         popover_height = group_height.
+        
+        CLEAR temp9.
+        INSERT `navCon` INTO TABLE temp9.
+        INSERT `back` INTO TABLE temp9.
         client->follow_up_action( val   = client->cs_event-control_by_id
                                   view  = client->cs_view-popover
-                                  t_arg = VALUE #( ( `navCon` ) ( `back` ) ) ).
+                                  t_arg = temp9 ).
 
     ENDCASE.
 
@@ -199,7 +243,8 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
   METHOD individual_popover_display.
 
-    DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+    popover = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " IndividualPopover.fragment.xml with Card.fragment.xml inlined; openBy( ) adds
     " the sapFAvatarGroupPopover style class, declared on the Popover here
@@ -268,8 +313,14 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
     " onGroupPress / _getContent: the avatars past the ones displayed (all of
     " them for the Group type), each with the color its AvatarGroupItem got
-    t_grouped = VALUE #( ).
-    DATA(index) = displayed.
+    DATA temp11 TYPE z2ui5_cl_smpc_app_662=>ty_t_person.
+    DATA index LIKE displayed.
+    DATA count TYPE i.
+    DATA popover TYPE REF TO z2ui5_cl_ui5_view_builder.
+    CLEAR temp11.
+    t_grouped = temp11.
+    
+    index = displayed.
     WHILE index < lines( t_content ).
       INSERT person_of( index ) INTO TABLE t_grouped.
       index = index + 1.
@@ -278,11 +329,13 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
     popovertitle = |Team Members ({ totalcount - displayed })|.
 
     " every cell is 68px high, plus 40px header and 8px top margin
-    DATA(count) = lines( t_grouped ).
+    
+    count = lines( t_grouped ).
     group_height   = |{ ( count DIV 2 + count MOD 2 ) * 68 + 48 }px|.
     popover_height = group_height.
 
-    DATA(popover) = z2ui5_cl_ui5_view_builder=>factory( ).
+    
+    popover = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " GroupPopover.fragment.xml with Card.fragment.xml inlined on the detail page
     popover->ele( n = `FragmentDefinition` ns = `core`
@@ -400,38 +453,152 @@ CLASS z2ui5_cl_smpc_app_662 IMPLEMENTATION.
 
     " _getAvatarModel: the row's data plus the AvatarGroupItem's own color -
     " AvatarGroup.addItem hands out Accent1..Accent10 in item order, round robin
-    result = CORRESPONDING #( t_content[ idx + 1 ] ).
+    FIELD-SYMBOLS <temp4> LIKE LINE OF t_content.
+    DATA temp5 LIKE sy-tabix.
+    temp5 = sy-tabix.
+    READ TABLE t_content INDEX idx + 1 ASSIGNING <temp4>.
+    sy-tabix = temp5.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    MOVE-CORRESPONDING <temp4> TO result.
     result-backgroundcolor = |Accent{ idx MOD 10 + 1 }|.
 
   ENDMETHOD.
 
 
   METHOD model_init.
+    DATA temp12 TYPE z2ui5_cl_smpc_app_662=>ty_t_item.
+    DATA temp13 LIKE LINE OF temp12.
 
     viewportpercentwidth = 100.
     vl_width             = `100%`.
 
     " model/avatargroup.json
     totalcount = 15.
-    t_content = VALUE #(
-      mobile = `+89181818181`
-      phone  = `+2828282828`
-      email  = `blabla@blabla`
-      ( initials = `JD` name = `John Doe` jobposition = `Marketing Manager` )
-      ( initials = `SP` name = `Sarah Parker` jobposition = `Visual Designer` )
-      ( initials = `JG` name = `Jason Goldwell` jobposition = `Software Developer` )
-      ( name = `Christian Bow` jobposition = `Marketing Manager` )
-      ( src = `https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_01.png` name = `Jessica Parker` jobposition = `Visual Designer` )
-      ( initials = `JB` name = `Jonathan Bale` jobposition = `Software Developer` )
-      ( initials = `GS` name = `Gordon Smith` jobposition = `Marketing Manager` )
-      ( fallbackicon = `sap-icon://person-placeholder` name = `Simon Jason` jobposition = `Visual Designer` )
-      ( initials = `JS` name = `Jason Swan` jobposition = `Software Developer` )
-      ( initials = `JC` name = `John Carter` jobposition = `Marketing Manager` )
-      ( src = `https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_02.png` name = `Whitney Parker` jobposition = `Visual Designer` )
-      ( fallbackicon = `sap-icon://person-placeholder` name = `Jason Goldwell` jobposition = `Software Developer` )
-      ( initials = `CD` name = `Chris Doe` jobposition = `Marketing Manager` )
-      ( initials = `SS` name = `Sarah Smith` jobposition = `Visual Designer` )
-      ( initials = `DC` name = `David Copper` jobposition = `Software Developer` ) ).
+    
+    CLEAR temp12.
+    
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `JD`.
+    temp13-name = `John Doe`.
+    temp13-jobposition = `Marketing Manager`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `SP`.
+    temp13-name = `Sarah Parker`.
+    temp13-jobposition = `Visual Designer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `JG`.
+    temp13-name = `Jason Goldwell`.
+    temp13-jobposition = `Software Developer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-name = `Christian Bow`.
+    temp13-jobposition = `Marketing Manager`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-src = `https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_01.png`.
+    temp13-name = `Jessica Parker`.
+    temp13-jobposition = `Visual Designer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `JB`.
+    temp13-name = `Jonathan Bale`.
+    temp13-jobposition = `Software Developer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `GS`.
+    temp13-name = `Gordon Smith`.
+    temp13-jobposition = `Marketing Manager`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-fallbackicon = `sap-icon://person-placeholder`.
+    temp13-name = `Simon Jason`.
+    temp13-jobposition = `Visual Designer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `JS`.
+    temp13-name = `Jason Swan`.
+    temp13-jobposition = `Software Developer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `JC`.
+    temp13-name = `John Carter`.
+    temp13-jobposition = `Marketing Manager`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-src = `https://sdk.openui5.org/test-resources/sap/f/images/Woman_avatar_02.png`.
+    temp13-name = `Whitney Parker`.
+    temp13-jobposition = `Visual Designer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-fallbackicon = `sap-icon://person-placeholder`.
+    temp13-name = `Jason Goldwell`.
+    temp13-jobposition = `Software Developer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `CD`.
+    temp13-name = `Chris Doe`.
+    temp13-jobposition = `Marketing Manager`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `SS`.
+    temp13-name = `Sarah Smith`.
+    temp13-jobposition = `Visual Designer`.
+    INSERT temp13 INTO TABLE temp12.
+    CLEAR temp13.
+    temp13-mobile = `+89181818181`.
+    temp13-phone = `+2828282828`.
+    temp13-email = `blabla@blabla`.
+    temp13-initials = `DC`.
+    temp13-name = `David Copper`.
+    temp13-jobposition = `Software Developer`.
+    INSERT temp13 INTO TABLE temp12.
+    t_content = temp12.
 
     " the personData model starts empty; its Avatar.backgroundColor falls back
     " to the control default, which an empty enum string would not

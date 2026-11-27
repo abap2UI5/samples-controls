@@ -21,9 +21,9 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_navigated( ).
+    IF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -32,7 +32,8 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
@@ -72,6 +73,10 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
     " downport joins a row onto one line, and past 255 characters the import
     " cuts the literal (#3048)
     DATA options TYPE string.
+        DATA temp1 TYPE string_table.
+        DATA temp2 LIKE LINE OF temp1.
+        DATA temp3 TYPE string_table.
+        DATA temp4 LIKE LINE OF temp3.
 
     CASE client->get_event( ).
 
@@ -85,12 +90,17 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
         options = `{"icon":"WARNING","title":"Focus on a Button","actions":["OK","CANCEL"],` &&
                   `"emphasizedAction":"OK","initialFocus":"CANCEL","dependentOn":"messageBoxHost",` &&
                   `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}`.
+        
+        CLEAR temp1.
+        INSERT `MESSAGE_BOX` INTO TABLE temp1.
+        INSERT `warning` INTO TABLE temp1.
+        
+        temp2 = |Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL|.
+        INSERT temp2 INTO TABLE temp1.
+        INSERT options INTO TABLE temp1.
         client->follow_up_action(
             val   = client->cs_event-control_global
-            t_arg = VALUE #( ( `MESSAGE_BOX` )
-                             ( `warning` )
-                             ( |Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL| )
-                             ( options ) ) ).
+            t_arg = temp1 ).
 
       WHEN `INITIAL_FOCUS_ON_CUSTOM_ACTION`.
 
@@ -98,12 +108,17 @@ CLASS z2ui5_cl_smpc_app_036 IMPLEMENTATION.
         options = `{"icon":"WARNING","title":"Focus on a Custom Action","actions":["YES","NO","Custom Action"],` &&
                   `"emphasizedAction":"Custom Action","initialFocus":"Custom Action","dependentOn":"messageBoxHost",` &&
                   `"styleClass":"sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"}`.
+        
+        CLEAR temp3.
+        INSERT `MESSAGE_BOX` INTO TABLE temp3.
+        INSERT `show` INTO TABLE temp3.
+        
+        temp4 = |Initial button focus is set by attribute \n initialFocus: "Custom button" \n Note: The name is not case sensitive|.
+        INSERT temp4 INTO TABLE temp3.
+        INSERT options INTO TABLE temp3.
         client->follow_up_action(
             val   = client->cs_event-control_global
-            t_arg = VALUE #( ( `MESSAGE_BOX` )
-                             ( `show` )
-                             ( |Initial button focus is set by attribute \n initialFocus: "Custom button" \n Note: The name is not case sensitive| )
-                             ( options ) ) ).
+            t_arg = temp3 ).
 
     ENDCASE.
 

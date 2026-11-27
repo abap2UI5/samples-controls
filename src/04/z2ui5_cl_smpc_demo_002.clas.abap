@@ -108,7 +108,8 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
 
     " the master list - JSON composed in rows_build( ), see the header
     DATA rows_json          TYPE string VALUE `[]`.
-    DATA t_items            TYPE STANDARD TABLE OF ty_s_item WITH EMPTY KEY.
+    TYPES temp1_0d301326e8 TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY.
+DATA t_items            TYPE temp1_0d301326e8.
     " appView>/layout and appView>/actionButtonsInfo/midColumn/fullScreen
     DATA layout             TYPE string VALUE `OneColumn`.
     DATA check_fullscreen   TYPE abap_bool.
@@ -164,7 +165,7 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
         shippostal   TYPE string,
         shipcountry  TYPE string,
       END OF ty_s_order.
-    TYPES ty_t_order TYPE STANDARD TABLE OF ty_s_order WITH EMPTY KEY.
+    TYPES ty_t_order TYPE STANDARD TABLE OF ty_s_order WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_customer,
         customerid  TYPE string,
@@ -193,10 +194,14 @@ CLASS z2ui5_cl_smpc_demo_002 DEFINITION PUBLIC.
 
     DATA client          TYPE REF TO z2ui5_if_client.
     DATA t_orders        TYPE ty_t_order.
-    DATA t_customers     TYPE STANDARD TABLE OF ty_s_customer WITH EMPTY KEY.
-    DATA t_employees     TYPE STANDARD TABLE OF ty_s_employee WITH EMPTY KEY.
-    DATA t_products      TYPE STANDARD TABLE OF ty_s_product WITH EMPTY KEY.
-    DATA t_details       TYPE STANDARD TABLE OF ty_s_detail WITH EMPTY KEY.
+    TYPES temp2_0d301326e8 TYPE STANDARD TABLE OF ty_s_customer WITH DEFAULT KEY.
+DATA t_customers     TYPE temp2_0d301326e8.
+    TYPES temp3_0d301326e8 TYPE STANDARD TABLE OF ty_s_employee WITH DEFAULT KEY.
+DATA t_employees     TYPE temp3_0d301326e8.
+    TYPES temp4_0d301326e8 TYPE STANDARD TABLE OF ty_s_product WITH DEFAULT KEY.
+DATA t_products      TYPE temp4_0d301326e8.
+    TYPES temp5_0d301326e8 TYPE STANDARD TABLE OF ty_s_detail WITH DEFAULT KEY.
+DATA t_details       TYPE temp5_0d301326e8.
     " Master.controller's _oListFilterState and the binding's sorters
     DATA search_term     TYPE string.
     DATA filter_key      TYPE string.
@@ -295,12 +300,12 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     me->client = client.
 
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -314,14 +319,20 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     " below may already rewrite the hash, and without the listener in place
     " the frontend would append that value instead of writing it. The
     " registration dies with an app switch, so it is re-issued per render
-    client->follow_up_action( val = client->cs_event-hash_attach_changed t_arg = VALUE #( ( `HASH_CHANGED` ) ) ).
+    DATA temp1 TYPE string_table.
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA fcl TYPE REF TO z2ui5_cl_ui5_view_builder.
+    CLEAR temp1.
+    INSERT `HASH_CHANGED` INTO TABLE temp1.
+    client->follow_up_action( val = client->cs_event-hash_attach_changed t_arg = temp1 ).
 
     " a start, a reload or a shared link: the live hash is matched like the
     " router's initialize( ) matches it
     route_hash( ).
     rows_build( ).
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory(
+    
+    view = z2ui5_cl_ui5_view_builder=>factory(
         )->ele( n = `View` ns = `mvc`
             )->a( n = `displayBlock`   v = `true`
             )->a( n = `height`         v = `100%`
@@ -337,7 +348,8 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " App.view.xml. The layout is bound two-way, as appView>/layout is: the
     " FCL's own arrows change it, and toggleFullScreen stores what they left
-    DATA(fcl) = view->ele( `App`
+    
+    fcl = view->ele( `App`
         )->a( n = `id` v = `app`
 
         )->ele( n = `FlexibleColumnLayout` ns = `f`
@@ -369,15 +381,18 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     " round-trip. The confirm hands over what _onConfirm reads: the text and
     " key of the filter item, the group item's key and the group order. The
     " selections are bound as well, so a rebuilt view restores them
+    DATA temp3 TYPE string_table.
+    CLEAR temp3.
+    INSERT `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getText() : ''` INTO TABLE temp3.
+    INSERT `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getKey() : ''` INTO TABLE temp3.
+    INSERT `${$parameters>/groupItem} ? ${$parameters>/groupItem}.getKey() : ''` INTO TABLE temp3.
+    INSERT `${$parameters>/groupDescending} ? 'X' : ''` INTO TABLE temp3.
     view->ele( n = `dependents` ns = `mvc`
         )->ele( `ViewSettingsDialog`
             )->a( n = `id`              v = `viewSettingsDialog`
             )->a( n = `groupDescending` v = client->_bind( group_descending )
             )->a( n = `confirm`         v = client->_event( val   = `VIEW_SETTINGS`
-                                                            t_arg = VALUE #( ( `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getText() : ''` )
-                                                                             ( `${$parameters>/filterItems}.length ? ${$parameters>/filterItems}[0].getKey() : ''` )
-                                                                             ( `${$parameters>/groupItem} ? ${$parameters>/groupItem}.getKey() : ''` )
-                                                                             ( `${$parameters>/groupDescending} ? 'X' : ''` ) ) )
+                                                            t_arg = temp3 )
 
             )->ele( `filterItems`
                 )->ele( `ViewSettingsFilterItem`
@@ -420,13 +435,26 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
   METHOD view_master.
 
-    DATA(open_filter) = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                  t_arg = VALUE #( ( `viewSettingsDialog` ) ( `open` ) ( `filter` ) ) ).
+    DATA temp5 TYPE string_table.
+    DATA open_filter TYPE string.
+    DATA column TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA list TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp7 TYPE string_table.
+    DATA temp1 TYPE string_table.
+    CLEAR temp5.
+    INSERT `viewSettingsDialog` INTO TABLE temp5.
+    INSERT `open` INTO TABLE temp5.
+    INSERT `filter` INTO TABLE temp5.
+    
+    open_filter = client->follow_up_action( val   = client->cs_event-control_by_id
+                                                  t_arg = temp5 ).
 
     " the begin column: Master.view.xml and the NotFound target
-    DATA(column) = fcl->ele( n = `beginColumnPages` ns = `f` ).
+    
+    column = fcl->ele( n = `beginColumnPages` ns = `f` ).
 
-    DATA(list) = column->ele( n = `SemanticPage` ns = `semantic`
+    
+    list = column->ele( n = `SemanticPage` ns = `semantic`
         )->a( n = `id`           v = `page`
         )->a( n = `core:require` v = `{DateType: 'sap/ui/model/type/Date'}`
 
@@ -465,6 +493,15 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                 )->a( n = `id`   v = `filterBarLabel`
                 )->a( n = `text` v = client->_bind( filter_bar_label ) ).
 
+    
+    CLEAR temp7.
+    INSERT `${$parameters>/query}` INTO TABLE temp7.
+    INSERT `${$parameters>/refreshButtonPressed} ? 'X' : ''` INTO TABLE temp7.
+    
+    CLEAR temp1.
+    INSERT `viewSettingsDialog` INTO TABLE temp1.
+    INSERT `open` INTO TABLE temp1.
+    INSERT `group` INTO TABLE temp1.
     list->ele( `headerToolbar`
         )->ele( `OverflowToolbar`
 
@@ -475,8 +512,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                 )->a( n = `width`             v = `100%`
                 )->a( n = `value`             v = client->_bind( search_value )
                 )->a( n = `search`            v = client->_event( val   = `SEARCH`
-                                                                  t_arg = VALUE #( ( `${$parameters>/query}` )
-                                                                                   ( `${$parameters>/refreshButtonPressed} ? 'X' : ''` ) ) )
+                                                                  t_arg = temp7 )
 
                 )->ele( `layoutData`
                     )->tag( `OverflowToolbarLayoutData`
@@ -496,7 +532,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
             )->tag( `Button`
                 )->a( n = `id`    v = `groupButton`
                 )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-control_by_id
-                                                                t_arg = VALUE #( ( `viewSettingsDialog` ) ( `open` ) ( `group` ) ) )
+                                                                t_arg = temp1 )
                 )->a( n = `icon`  v = `sap-icon://group-2`
                 )->a( n = `type`  v = `Transparent` ).
 
@@ -545,9 +581,16 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
     " the mid column: Detail.view.xml and the DetailObjectNotFound target
-    DATA(column) = fcl->ele( n = `midColumnPages` ns = `f` ).
+    DATA column TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA detail TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA header TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA content TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp9 TYPE string_table.
+    DATA temp3 LIKE LINE OF temp9.
+    column = fcl->ele( n = `midColumnPages` ns = `f` ).
 
-    DATA(detail) = column->ele( n = `SemanticPage` ns = `semantic`
+    
+    detail = column->ele( n = `SemanticPage` ns = `semantic`
         )->a( n = `id`           v = `detailPage`
         )->a( n = `core:require` v = `{DateType: 'sap/ui/model/type/Date', CurrencyType: 'sap/ui/model/type/Currency'}` ).
 
@@ -555,7 +598,8 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
         )->tag( `Title`
             )->a( n = `text` v = client->_bind( det_title ) ).
 
-    DATA(header) = detail->ele( n = `headerContent` ns = `semantic`
+    
+    header = detail->ele( n = `headerContent` ns = `semantic`
         )->ele( n = `HorizontalLayout` ns = `l` ).
 
     header->ele( n = `VerticalLayout` ns = `l`
@@ -582,18 +626,25 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                                    |type: 'CurrencyType', formatOptions: \{ showMeasure: false \} \}|
             )->a( n = `unit`   v = client->_bind( det_currency ) ).
 
-    DATA(content) = detail->ele( n = `content` ns = `semantic`
+    
+    content = detail->ele( n = `content` ns = `semantic`
         )->ele( n = `VerticalLayout` ns = `l` ).
     view_detail_tabs( content ).
     view_detail_items( content ).
 
     " the share action is URLHelper.triggerEmail - a frontend action that
     " reads the bound mail structure when it is pressed, no round-trip
+    
+    CLEAR temp9.
+    INSERT `TRIGGER_EMAIL` INTO TABLE temp9.
+    
+    temp3 = |${ client->_bind( s_mail ) }|.
+    INSERT temp3 INTO TABLE temp9.
     detail->ele( n = `sendEmailAction` ns = `semantic`
         )->tag( n = `SendEmailAction` ns = `semantic`
             )->a( n = `id`    v = `shareEmail`
             )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-urlhelper
-                                                            t_arg = VALUE #( ( `TRIGGER_EMAIL` ) ( |${ client->_bind( s_mail ) }| ) ) ) ).
+                                                            t_arg = temp9 ) ).
 
     detail->ele( n = `closeAction` ns = `semantic`
         )->tag( n = `CloseAction` ns = `semantic`
@@ -633,7 +684,10 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " the shipping and processor targets are displayed INTO these two tabs;
     " a tab switch is onTabSelect, which rewrites the route's ?tab= query
-    DATA(tabs) = column->ele( `IconTabBar`
+    DATA tabs TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp11 TYPE string_table.
+    DATA temp4 LIKE LINE OF temp11.
+    tabs = column->ele( `IconTabBar`
         )->a( n = `id`                     v = `iconTabBar`
         )->a( n = `headerBackgroundDesign` v = `Transparent`
         )->a( n = `select`                 v = client->_event( val = `TAB_SELECT` arg = `${$parameters>/selectedKey}` )
@@ -685,6 +739,12 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " Processor.view.xml. The phone link is URLHelper.triggerTel - a frontend
     " action reading the bound number, no round-trip
+    
+    CLEAR temp11.
+    INSERT `TRIGGER_TEL` INTO TABLE temp11.
+    
+    temp4 = |${ client->_bind( s_tel ) }|.
+    INSERT temp4 INTO TABLE temp11.
     tabs->ele( `IconTabFilter`
         )->a( n = `id`      v = `iconTabFilterProcessor`
         )->a( n = `icon`    v = `sap-icon://employee`
@@ -724,7 +784,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
                     )->tag( `Link`
                         )->a( n = `text`  v = client->_bind( s_tel-tel )
                         )->a( n = `press` v = client->follow_up_action( val   = client->cs_event-urlhelper
-                                                                        t_arg = VALUE #( ( `TRIGGER_TEL` ) ( |${ client->_bind( s_tel ) }| ) ) )
+                                                                        t_arg = temp11 )
                     )->tag( n = `Title` ns = `core`
                         )->a( n = `text` v = `Picture`
                     )->tag( `Image`
@@ -737,7 +797,8 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
   METHOD view_detail_items.
 
-    DATA(items) = column->ele( `Table`
+    DATA items TYPE REF TO z2ui5_cl_ui5_view_builder.
+    items = column->ele( `Table`
         )->a( n = `id`         v = `lineItemsList`
         )->a( n = `class`      v = `sapUiSmallMarginTop`
         )->a( n = `width`      v = `auto`
@@ -806,6 +867,7 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD on_event.
+        DATA temp13 TYPE string_table.
 
     CASE client->get_event( ).
 
@@ -840,7 +902,10 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
       WHEN `NAV_BACK`.
         " BaseController.onNavBack: one step back in the history, or - when
         " the app has none of its own - navTo( "master", {}, true )
-        client->follow_up_action( val = client->cs_event-hash_back t_arg = VALUE #( ( `/` ) ) ).
+        
+        CLEAR temp13.
+        INSERT `/` INTO TABLE temp13.
+        client->follow_up_action( val = client->cs_event-hash_back t_arg = temp13 ).
 
     ENDCASE.
 
@@ -851,13 +916,15 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD on_select.
+    DATA hash TYPE string.
 
     " Master._showDetail: two columns, and navTo( "object" ) - replacing the
     " hash on a desktop, pushing it on a phone. The object route has no ?tab=
     " then, so _onObjectMatched rewrites it to tab=shipping in place: the net
     " effect is one write of the final hash
     layout = `TwoColumnsMidExpanded`.
-    DATA(hash) = |/Orders/{ orderid }/?tab=shipping|.
+    
+    hash = |/Orders/{ orderid }/?tab=shipping|.
     IF client->get( )-s_device-system = z2ui5_if_client=>cs_device-system-phone.
       client->hash_set( hash ).
     ELSE.
@@ -882,22 +949,43 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD on_view_settings.
+    DATA temp1 TYPE xsdboolean.
+    DATA temp2 TYPE xsdboolean.
+    DATA temp3 TYPE xsdboolean.
+    DATA temp4 TYPE xsdboolean.
+    DATA temp5 TYPE xsdboolean.
+    DATA temp6 TYPE xsdboolean.
+    DATA temp7 TYPE xsdboolean.
 
     " onConfirmViewSettingsDialog: the filter and the info bar - which shows
     " only while a filter is set, but is labelled either way
     filter_bar_label   = |Filtered by { client->get_event_arg( ) }|.
     filter_key         = client->get_event_arg( 2 ).
-    filter_bar_visible = xsdbool( filter_key IS NOT INITIAL ).
-    flt_shipped        = xsdbool( filter_key = `Shipped` ).
-    flt_not_shipped    = xsdbool( filter_key = `NotShipped` ).
+    
+    temp1 = boolc( filter_key IS NOT INITIAL ).
+    filter_bar_visible = temp1.
+    
+    temp2 = boolc( filter_key = `Shipped` ).
+    flt_shipped        = temp2.
+    
+    temp3 = boolc( filter_key = `NotShipped` ).
+    flt_not_shipped    = temp3.
 
     " _applyGrouper: the grouper's sorter REPLACES the binding's sorters -
     " the OrderID sorter of the view is gone after the first confirm
     group_key        = client->get_event_arg( 3 ).
-    group_descending = xsdbool( client->get_event_arg( 4 ) = `X` ).
-    grp_customer     = xsdbool( group_key = `CompanyName` ).
-    grp_order        = xsdbool( group_key = `OrderDate` ).
-    grp_shipped      = xsdbool( group_key = `ShippedDate` ).
+    
+    temp4 = boolc( client->get_event_arg( 4 ) = `X` ).
+    group_descending = temp4.
+    
+    temp5 = boolc( group_key = `CompanyName` ).
+    grp_customer     = temp5.
+    
+    temp6 = boolc( group_key = `OrderDate` ).
+    grp_order        = temp6.
+    
+    temp7 = boolc( group_key = `ShippedDate` ).
+    grp_shipped      = temp7.
     check_sorted     = abap_true.
     group_sync( abap_true ).
 
@@ -908,7 +996,9 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " toggleFullScreen: remember the layout on the way in, restore it on the
     " way out
-    check_fullscreen = xsdbool( check_fullscreen = abap_false ).
+    DATA temp8 TYPE xsdboolean.
+    temp8 = boolc( check_fullscreen = abap_false ).
+    check_fullscreen = temp8.
     IF check_fullscreen = abap_true.
       previous_layout = layout.
       layout = `MidColumnFullScreen`.
@@ -924,7 +1014,14 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     " the router's parse of the hash, against the patterns of manifest.json:
     " "" -> master, "Orders/{objectId}/:?query:" -> object, else bypassed.
     " crossroads ignores the case of the pattern's literals, as CP does
-    DATA(hash) = client->get( )-s_config-hash.
+    DATA hash TYPE z2ui5_if_client=>ty_s_get-s_config-hash.
+    DATA objectid TYPE string.
+    DATA query TYPE string.
+    DATA tab TYPE string.
+    TYPES temp6 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA t_param TYPE temp6.
+    DATA param LIKE LINE OF t_param.
+    hash = client->get( )-s_config-hash.
     IF hash CS `#`.
       hash = substring_after( val = hash sub = `#` ).
     ENDIF.
@@ -943,8 +1040,10 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(objectid) = substring_after( val = hash sub = `/` ).
-    DATA(query) = ``.
+    
+    objectid = substring_after( val = hash sub = `/` ).
+    
+    query = ``.
     IF objectid CS `?`.
       query    = substring_after( val = objectid sub = `?` ).
       objectid = substring_before( val = objectid sub = `?` ).
@@ -957,9 +1056,13 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(tab) = ``.
-    SPLIT query AT `&` INTO TABLE DATA(t_param).
-    LOOP AT t_param INTO DATA(param).
+    
+    tab = ``.
+    
+
+    SPLIT query AT `&` INTO TABLE t_param.
+    
+    LOOP AT t_param INTO param.
       IF substring_before( val = param sub = `=` ) = `tab`.
         tab = substring_after( val = param sub = `=` ).
       ENDIF.
@@ -979,6 +1082,11 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD route_object.
+    DATA temp15 TYPE ty_s_order.
+    DATA order LIKE temp15.
+      DATA temp16 TYPE z2ui5_cl_smpc_demo_002=>ty_s_order.
+      DATA temp5 TYPE i.
+      DATA temp17 TYPE z2ui5_cl_smpc_demo_002=>ty_s_order.
 
     " the targets master and object, and Detail._onObjectMatched: two columns
     " unless the detail is in full screen
@@ -998,9 +1106,21 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " _bindView and _onBindingChange: the order, or - for an id the service
     " does not have - the DetailObjectNotFound target and no selection
-    DATA(order) = VALUE ty_s_order( ).
+    
+    CLEAR temp15.
+    
+    order = temp15.
     IF objectid CO `0123456789` AND strlen( objectid ) <= 9.
-      order = VALUE #( t_orders[ orderid = CONV i( objectid ) ] OPTIONAL ).
+      
+      CLEAR temp16.
+      
+      temp5 = objectid.
+      
+      READ TABLE t_orders INTO temp17 WITH KEY orderid = temp5.
+      IF sy-subrc = 0.
+        temp16 = temp17.
+      ENDIF.
+      order = temp16.
     ENDIF.
     IF order IS INITIAL.
       page_mid       = `detailObjectNotFoundPage`.
@@ -1029,6 +1149,16 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     DATA total      TYPE ty_amount.
     DATA line_total TYPE ty_amount.
+    DATA temp18 TYPE ty_s_employee.
+    DATA temp19 TYPE z2ui5_cl_smpc_demo_002=>ty_s_employee.
+    DATA employee LIKE temp18.
+    DATA temp20 LIKE t_items.
+    DATA item LIKE LINE OF t_details.
+      DATA temp21 TYPE z2ui5_cl_smpc_demo_002=>ty_s_item.
+      DATA temp6 TYPE z2ui5_cl_smpc_demo_002=>ty_s_item-productname.
+      DATA temp7 TYPE z2ui5_cl_smpc_demo_002=>ty_s_product.
+    DATA temp22 TYPE string.
+    DATA config TYPE z2ui5_if_client=>ty_s_get-s_config.
 
     order_shown     = order-orderid.
     det_title       = |Order { order-orderid }|.
@@ -1041,7 +1171,15 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     det_shipregion  = order-shipregion.
     det_shipcountry = order-shipcountry.
 
-    DATA(employee) = VALUE ty_s_employee( t_employees[ employeeid = order-employeeid ] OPTIONAL ).
+    
+    CLEAR temp18.
+    
+    READ TABLE t_employees INTO temp19 WITH KEY employeeid = order-employeeid.
+    IF sy-subrc = 0.
+      temp18 = temp19.
+    ENDIF.
+    
+    employee = temp18.
     det_employee   = |{ employee-firstname } { employee-lastname }|.
     det_employeeid = |{ employee-employeeid }|.
     det_jobtitle   = employee-title.
@@ -1051,21 +1189,41 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     det_photo = `https://sdk.openui5.org/test-resources/sap/m/demokit/orderbrowser/webapp/images/Employee.png`.
 
     " the line items, and onListUpdateFinished's title and order total
-    t_items = VALUE #( ).
-    LOOP AT t_details INTO DATA(item) WHERE orderid = order-orderid.
+    
+    CLEAR temp20.
+    t_items = temp20.
+    
+    LOOP AT t_details INTO item WHERE orderid = order-orderid.
       line_total = item-unitprice * item-quantity.
       total = total + line_total.
-      INSERT VALUE #( productname = VALUE #( t_products[ productid = item-productid ]-productname OPTIONAL )
-                      productid   = |{ item-productid }|
-                      unitprice   = amount( item-unitprice )
-                      quantity    = |{ item-quantity }|
-                      item_total  = line_total ) INTO TABLE t_items.
+      
+      CLEAR temp21.
+      
+      CLEAR temp6.
+      
+      READ TABLE t_products INTO temp7 WITH KEY productid = item-productid.
+      IF sy-subrc = 0.
+        temp6 = temp7-productname.
+      ENDIF.
+      temp21-productname = temp6.
+      temp21-productid = |{ item-productid }|.
+      temp21-unitprice = amount( item-unitprice ).
+      temp21-quantity = |{ item-quantity }|.
+      temp21-item_total = line_total.
+      INSERT temp21 INTO TABLE t_items.
     ENDLOOP.
     det_total       = total.
-    det_items_title = COND #( WHEN t_items IS INITIAL THEN `Line Items` ELSE |Line Items ({ lines( t_items ) })| ).
+    
+    IF t_items IS INITIAL.
+      temp22 = `Line Items`.
+    ELSE.
+      temp22 = |Line Items ({ lines( t_items ) })|.
+    ENDIF.
+    det_items_title = temp22.
 
     " _onBindingChange: the share texts, with the link to this order
-    DATA(config) = client->get( )-s_config.
+    
+    config = client->get( )-s_config.
     s_mail-subject = |Order { order-orderid }|.
     s_mail-body    = |Please take a look at order { order-orderid } (id: { order-orderid }) | &&
                      |{ config-origin }{ config-pathname }{ config-search }#/Orders/{ order-orderid }/?tab={ selected_tab } | &&
@@ -1076,15 +1234,27 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD pages_sync.
+      DATA temp23 TYPE string_table.
+      DATA temp25 TYPE string_table.
 
     " the router's target display: FlexibleColumnLayout.to( ) moves the
     " column that owns the page - issued only where the page changes
     IF page_begin <> page_begin_live.
-      client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `layout` ) ( `to` ) ( page_begin ) ) ).
+      
+      CLEAR temp23.
+      INSERT `layout` INTO TABLE temp23.
+      INSERT `to` INTO TABLE temp23.
+      INSERT page_begin INTO TABLE temp23.
+      client->follow_up_action( val = client->cs_event-control_by_id t_arg = temp23 ).
       page_begin_live = page_begin.
     ENDIF.
     IF page_mid <> page_mid_live.
-      client->follow_up_action( val = client->cs_event-control_by_id t_arg = VALUE #( ( `layout` ) ( `to` ) ( page_mid ) ) ).
+      
+      CLEAR temp25.
+      INSERT `layout` INTO TABLE temp25.
+      INSERT `to` INTO TABLE temp25.
+      INSERT page_mid INTO TABLE temp25.
+      client->follow_up_action( val = client->cs_event-control_by_id t_arg = temp25 ).
       page_mid_live = page_mid.
     ENDIF.
 
@@ -1092,6 +1262,8 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
 
   METHOD group_sync.
+        DATA temp27 TYPE string_table.
+      DATA temp29 TYPE string_table.
 
     " the grouper's sorter on the LIST BINDING: sorting on each row's group
     " object with group = X draws the original's group headers, and keeps the
@@ -1099,12 +1271,26 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     " position takes the headers away again - the original's sort( [] )
     IF group_key IS INITIAL.
       IF group_live IS NOT INITIAL.
+        
+        CLEAR temp27.
+        INSERT `list` INTO TABLE temp27.
+        INSERT `items` INTO TABLE temp27.
+        INSERT `sort` INTO TABLE temp27.
+        INSERT `pos` INTO TABLE temp27.
         client->follow_up_action( val   = client->cs_event-binding_call
-                                  t_arg = VALUE #( ( `list` ) ( `items` ) ( `sort` ) ( `pos` ) ) ).
+                                  t_arg = temp27 ).
       ENDIF.
     ELSEIF group_key <> group_live OR check_force = abap_true.
+      
+      CLEAR temp29.
+      INSERT `list` INTO TABLE temp29.
+      INSERT `items` INTO TABLE temp29.
+      INSERT `sort` INTO TABLE temp29.
+      INSERT `grp` INTO TABLE temp29.
+      INSERT `` INTO TABLE temp29.
+      INSERT `X` INTO TABLE temp29.
       client->follow_up_action( val   = client->cs_event-binding_call
-                                t_arg = VALUE #( ( `list` ) ( `items` ) ( `sort` ) ( `grp` ) ( `` ) ( `X` ) ) ).
+                                t_arg = temp29 ).
     ENDIF.
     group_live = group_key.
 
@@ -1117,7 +1303,10 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " _applyFilterSearch: the search and the filter, ANDed as the binding
     " ANDs filters on different paths
-    LOOP AT t_orders INTO DATA(order).
+    DATA order LIKE LINE OF t_orders.
+    DATA json TYPE string.
+      DATA pos LIKE sy-tabix.
+    LOOP AT t_orders INTO order.
       IF    ( filter_key = `Shipped` AND order-shippeddate IS INITIAL )
          OR ( filter_key = `NotShipped` AND order-shippeddate IS NOT INITIAL ).
         CONTINUE.
@@ -1129,9 +1318,11 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     ENDLOOP.
     rows_sort( CHANGING t_order = t_order ).
 
-    DATA(json) = ``.
+    
+    json = ``.
     LOOP AT t_order INTO order.
-      DATA(pos) = sy-tabix.
+      
+      pos = sy-tabix.
       IF pos > 1.
         json = json && `,`.
       ENDIF.
@@ -1191,8 +1382,19 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     " the deliveryState / deliveryText formatters: an unshipped order has
     " none, a delivery up to five days before the required date is urgent,
     " one after it too late
-    DATA(state) = `None`.
-    DATA(text) = `None`.
+    DATA state TYPE string.
+    DATA text TYPE string.
+    DATA key TYPE string.
+    DATA group TYPE string.
+        DATA ordered TYPE d.
+        DATA temp31 TYPE i.
+          DATA shipped TYPE d.
+          DATA temp32 TYPE i.
+    DATA temp33 TYPE string.
+    DATA temp8 TYPE string.
+    state = `None`.
+    
+    text = `None`.
     IF order-shippeddate IS NOT INITIAL.
       margin = order-requireddate - order-shippeddate.
       IF margin > 0 AND margin <= 432000000.
@@ -1208,32 +1410,52 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
     ENDIF.
 
     " the group the original's group function returns for the row
-    DATA(key) = ``.
-    DATA(group) = ``.
+    
+    key = ``.
+    
+    group = ``.
     CASE group_key.
       WHEN `CompanyName`.
         key   = order-companyname.
         group = order-companyname.
       WHEN `OrderDate`.
-        DATA(ordered) = utc_date( order-orderdate ).
-        key   = |{ ordered(4) }-{ CONV i( ordered+4(2) ) }|.
+        
+        ordered = utc_date( order-orderdate ).
+        
+        temp31 = ordered+4(2).
+        key   = |{ ordered(4) }-{ temp31 }|.
         group = |Ordered in { month_name( ordered ) } { ordered(4) }|.
       WHEN `ShippedDate`.
         IF order-shippeddate IS INITIAL.
           key   = `0`.
           group = `Not Shipped Yet`.
         ELSE.
-          DATA(shipped) = utc_date( order-shippeddate ).
-          key   = |{ shipped(4) }-{ CONV i( shipped+4(2) ) }|.
+          
+          shipped = utc_date( order-shippeddate ).
+          
+          temp32 = shipped+4(2).
+          key   = |{ shipped(4) }-{ temp32 }|.
           group = |Shipped in { month_name( shipped ) } { shipped(4) }|.
         ENDIF.
     ENDCASE.
 
+    
+    IF order-shippeddate IS INITIAL.
+      temp33 = `null`.
+    ELSE.
+      temp33 = |{ order-shippeddate }|.
+    ENDIF.
+    
+    IF order-orderid = order_selected.
+      temp8 = `true`.
+    ELSE.
+      temp8 = `false`.
+    ENDIF.
     result = |\{"pos":{ pos },"orderid":{ order-orderid },"title":{ json_text( |Order { order-orderid }| ) },| &&
              |"orderdate":{ order-orderdate },| &&
-             |"shippeddate":{ COND string( WHEN order-shippeddate IS INITIAL THEN `null` ELSE |{ order-shippeddate }| ) },| &&
+             |"shippeddate":{ temp33 },| &&
              |"companyname":{ json_text( order-companyname ) },"state":"{ state }","text":"{ text }",| &&
-             |"selected":{ COND string( WHEN order-orderid = order_selected THEN `true` ELSE `false` ) },| &&
+             |"selected":{ temp8 },| &&
              |"grp":\{"key":{ json_text( key ) },"text":{ json_text( group ) }\}\}|.
 
   ENDMETHOD.
@@ -1242,7 +1464,8 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
   METHOD json_text.
 
     " a JSON string literal: the backslash and the quote escaped
-    DATA(escaped) = replace( val = val sub = `\` with = `\\` occ = 0 ).
+    DATA escaped TYPE string.
+    escaped = replace( val = val sub = `\` with = `\\` occ = 0 ).
     result = |"{ replace( val = escaped sub = `"` with = `\"` occ = 0 ) }"|.
 
   ENDMETHOD.
@@ -1261,10 +1484,37 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " the month name the original's DateFormat "MMMM" writes into a group
     " header
-    DATA(months) = VALUE string_table( ( `January` ) ( `February` ) ( `March` ) ( `April` )
-                                       ( `May` ) ( `June` ) ( `July` ) ( `August` )
-                                       ( `September` ) ( `October` ) ( `November` ) ( `December` ) ).
-    result = months[ CONV i( val+4(2) ) ].
+    DATA temp34 TYPE string_table.
+    DATA months LIKE temp34.
+    DATA temp36 TYPE i.
+    FIELD-SYMBOLS <temp9> LIKE LINE OF months.
+    DATA temp10 LIKE sy-tabix.
+    CLEAR temp34.
+    INSERT `January` INTO TABLE temp34.
+    INSERT `February` INTO TABLE temp34.
+    INSERT `March` INTO TABLE temp34.
+    INSERT `April` INTO TABLE temp34.
+    INSERT `May` INTO TABLE temp34.
+    INSERT `June` INTO TABLE temp34.
+    INSERT `July` INTO TABLE temp34.
+    INSERT `August` INTO TABLE temp34.
+    INSERT `September` INTO TABLE temp34.
+    INSERT `October` INTO TABLE temp34.
+    INSERT `November` INTO TABLE temp34.
+    INSERT `December` INTO TABLE temp34.
+    
+    months = temp34.
+    
+    temp36 = val+4(2).
+    
+    
+    temp10 = sy-tabix.
+    READ TABLE months INDEX temp36 ASSIGNING <temp9>.
+    sy-tabix = temp10.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = <temp9>.
 
   ENDMETHOD.
 
@@ -1281,122 +1531,466 @@ CLASS z2ui5_cl_smpc_demo_002 IMPLEMENTATION.
 
     " localService/mockdata/Orders.json - the Edm.DateTime values are the
     " mock's /Date(ms)/ milliseconds, CustomerName the order's own column
-    t_orders = VALUE #(
-        ( orderid = 7918 customerid = `TORTU` customername = `Tortuga Restaurante` employeeid = 7424
-          orderdate = `1474149600000` requireddate = `1475186400000` shippeddate = `1474840800000`
-          shipname = `ExcellentParcel` shipaddress = `Tottenham Court Road`
-          shipcity = `London` shipregion = `Greater London` shippostal = `N170AA` shipcountry = `United Kingdom` )
-        ( orderid = 7311 customerid = `ALFKI` customername = `Alfreds Futterkiste` employeeid = 7827
-          orderdate = `1479682800000` requireddate = `1481151600000` shippeddate = `1480028400000`
-          shipname = `ExcellentParcel` shipaddress = `Tottenham Court Road`
-          shipcity = `London` shipregion = `Greater London` shippostal = `N170AA` shipcountry = `United Kingdom` )
-        ( orderid = 7375 customerid = `AROUT` customername = `Around the Horn` employeeid = 7424
-          orderdate = `1475704800000` requireddate = `1479337200000` shippeddate = `1476396000000`
-          shipname = `ExcellentParcel` shipaddress = `Tottenham Court Road`
-          shipcity = `London` shipregion = `Greater London` shippostal = `N170AA` shipcountry = `United Kingdom` )
-        ( orderid = 6189 customerid = `BERGS` customername = `Berglunds snabbköp` employeeid = 7829
-          orderdate = `1480287600000` requireddate = `1482274800000` shippeddate = `1480460400000`
-          shipname = `1A Paket- und Lieferservice` shipaddress = `Bismarckstraße 5`
-          shipcity = `Berlin` shipregion = `Berlin` shippostal = `10179` shipcountry = `Deutschland` )
-        ( orderid = 3115 customerid = `BERGS` customername = `` employeeid = 7830
-          orderdate = `1480806000000` requireddate = `1480978800000` shippeddate = `1482447600000`
-          shipname = `1A Paket- und Lieferservice` shipaddress = `Bismarckstraße 5`
-          shipcity = `Berlin` shipregion = `Berlin` shippostal = `10179` shipcountry = `Deutschland` )
-        ( orderid = 2686 customerid = `BOTTM` customername = `Bottom-Dollar Markets` employeeid = 7840
-          orderdate = `1477519200000` requireddate = `1478646000000` shippeddate = `1477954800000`
-          shipname = `1A Paket- und Lieferservice` shipaddress = `Bismarckstraße 5`
-          shipcity = `Berlin` shipregion = `Berlin` shippostal = `10179` shipcountry = `Deutschland` )
-        ( orderid = 6858 customerid = `TORTU` customername = `Tortuga Restaurante` employeeid = 7840
-          orderdate = `1478991600000` requireddate = `1480460400000` shippeddate = `1479078000000`
-          shipname = `ExcellentParcel` shipaddress = `Tottenham Court Road`
-          shipcity = `London` shipregion = `Greater London` shippostal = `N170AA` shipcountry = `United Kingdom` )
-        ( orderid = 6368 customerid = `ALFKI` customername = `Alfreds Futterkiste` employeeid = 7424
-          orderdate = `1478991600000` requireddate = `1480460400000` shippeddate = `1479510000000`
-          shipname = `ExcellentParcel` shipaddress = `Tottenham Court Road`
-          shipcity = `London` shipregion = `Greater London` shippostal = `N170AA` shipcountry = `United Kingdom` )
-        ( orderid = 828  customerid = `AROUT` customername = `Around the Horn` employeeid = 7829
-          orderdate = `1479682800000` requireddate = `1481151600000` shippeddate = `1480028400000`
-          shipname = `ShipEx` shipaddress = `5th Avenue 610`
-          shipcity = `New York` shipregion = `New Jersey` shippostal = `10020` shipcountry = `United Stated of America` )
-        ( orderid = 7991 customerid = `BERGS` customername = `Berglunds snabbköp` employeeid = 7830
-          orderdate = `1479682800000` requireddate = `1481151600000` shippeddate = `1480028400000`
-          shipname = `ShipEx` shipaddress = `5th Avenue 610`
-          shipcity = `New York` shipregion = `New Jersey` shippostal = `10020` shipcountry = `United Stated of America` ) ).
+    DATA temp37 TYPE z2ui5_cl_smpc_demo_002=>ty_t_order.
+    DATA temp38 LIKE LINE OF temp37.
+    DATA temp39 LIKE t_customers.
+    DATA temp40 LIKE LINE OF temp39.
+    DATA temp41 LIKE LINE OF t_orders.
+    DATA order LIKE REF TO temp41.
+      DATA temp42 TYPE z2ui5_cl_smpc_demo_002=>ty_s_order-companyname.
+      DATA temp43 TYPE z2ui5_cl_smpc_demo_002=>ty_s_customer.
+    DATA temp44 LIKE t_employees.
+    DATA temp45 LIKE LINE OF temp44.
+    DATA temp46 LIKE t_products.
+    DATA temp47 LIKE LINE OF temp46.
+    DATA temp48 LIKE t_details.
+    DATA temp49 LIKE LINE OF temp48.
+    CLEAR temp37.
+    
+    temp38-orderid = 7918.
+    temp38-customerid = `TORTU`.
+    temp38-customername = `Tortuga Restaurante`.
+    temp38-employeeid = 7424.
+    temp38-orderdate = `1474149600000`.
+    temp38-requireddate = `1475186400000`.
+    temp38-shippeddate = `1474840800000`.
+    temp38-shipname = `ExcellentParcel`.
+    temp38-shipaddress = `Tottenham Court Road`.
+    temp38-shipcity = `London`.
+    temp38-shipregion = `Greater London`.
+    temp38-shippostal = `N170AA`.
+    temp38-shipcountry = `United Kingdom`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 7311.
+    temp38-customerid = `ALFKI`.
+    temp38-customername = `Alfreds Futterkiste`.
+    temp38-employeeid = 7827.
+    temp38-orderdate = `1479682800000`.
+    temp38-requireddate = `1481151600000`.
+    temp38-shippeddate = `1480028400000`.
+    temp38-shipname = `ExcellentParcel`.
+    temp38-shipaddress = `Tottenham Court Road`.
+    temp38-shipcity = `London`.
+    temp38-shipregion = `Greater London`.
+    temp38-shippostal = `N170AA`.
+    temp38-shipcountry = `United Kingdom`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 7375.
+    temp38-customerid = `AROUT`.
+    temp38-customername = `Around the Horn`.
+    temp38-employeeid = 7424.
+    temp38-orderdate = `1475704800000`.
+    temp38-requireddate = `1479337200000`.
+    temp38-shippeddate = `1476396000000`.
+    temp38-shipname = `ExcellentParcel`.
+    temp38-shipaddress = `Tottenham Court Road`.
+    temp38-shipcity = `London`.
+    temp38-shipregion = `Greater London`.
+    temp38-shippostal = `N170AA`.
+    temp38-shipcountry = `United Kingdom`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 6189.
+    temp38-customerid = `BERGS`.
+    temp38-customername = `Berglunds snabbköp`.
+    temp38-employeeid = 7829.
+    temp38-orderdate = `1480287600000`.
+    temp38-requireddate = `1482274800000`.
+    temp38-shippeddate = `1480460400000`.
+    temp38-shipname = `1A Paket- und Lieferservice`.
+    temp38-shipaddress = `Bismarckstraße 5`.
+    temp38-shipcity = `Berlin`.
+    temp38-shipregion = `Berlin`.
+    temp38-shippostal = `10179`.
+    temp38-shipcountry = `Deutschland`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 3115.
+    temp38-customerid = `BERGS`.
+    temp38-customername = ``.
+    temp38-employeeid = 7830.
+    temp38-orderdate = `1480806000000`.
+    temp38-requireddate = `1480978800000`.
+    temp38-shippeddate = `1482447600000`.
+    temp38-shipname = `1A Paket- und Lieferservice`.
+    temp38-shipaddress = `Bismarckstraße 5`.
+    temp38-shipcity = `Berlin`.
+    temp38-shipregion = `Berlin`.
+    temp38-shippostal = `10179`.
+    temp38-shipcountry = `Deutschland`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 2686.
+    temp38-customerid = `BOTTM`.
+    temp38-customername = `Bottom-Dollar Markets`.
+    temp38-employeeid = 7840.
+    temp38-orderdate = `1477519200000`.
+    temp38-requireddate = `1478646000000`.
+    temp38-shippeddate = `1477954800000`.
+    temp38-shipname = `1A Paket- und Lieferservice`.
+    temp38-shipaddress = `Bismarckstraße 5`.
+    temp38-shipcity = `Berlin`.
+    temp38-shipregion = `Berlin`.
+    temp38-shippostal = `10179`.
+    temp38-shipcountry = `Deutschland`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 6858.
+    temp38-customerid = `TORTU`.
+    temp38-customername = `Tortuga Restaurante`.
+    temp38-employeeid = 7840.
+    temp38-orderdate = `1478991600000`.
+    temp38-requireddate = `1480460400000`.
+    temp38-shippeddate = `1479078000000`.
+    temp38-shipname = `ExcellentParcel`.
+    temp38-shipaddress = `Tottenham Court Road`.
+    temp38-shipcity = `London`.
+    temp38-shipregion = `Greater London`.
+    temp38-shippostal = `N170AA`.
+    temp38-shipcountry = `United Kingdom`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 6368.
+    temp38-customerid = `ALFKI`.
+    temp38-customername = `Alfreds Futterkiste`.
+    temp38-employeeid = 7424.
+    temp38-orderdate = `1478991600000`.
+    temp38-requireddate = `1480460400000`.
+    temp38-shippeddate = `1479510000000`.
+    temp38-shipname = `ExcellentParcel`.
+    temp38-shipaddress = `Tottenham Court Road`.
+    temp38-shipcity = `London`.
+    temp38-shipregion = `Greater London`.
+    temp38-shippostal = `N170AA`.
+    temp38-shipcountry = `United Kingdom`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 828.
+    temp38-customerid = `AROUT`.
+    temp38-customername = `Around the Horn`.
+    temp38-employeeid = 7829.
+    temp38-orderdate = `1479682800000`.
+    temp38-requireddate = `1481151600000`.
+    temp38-shippeddate = `1480028400000`.
+    temp38-shipname = `ShipEx`.
+    temp38-shipaddress = `5th Avenue 610`.
+    temp38-shipcity = `New York`.
+    temp38-shipregion = `New Jersey`.
+    temp38-shippostal = `10020`.
+    temp38-shipcountry = `United Stated of America`.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-orderid = 7991.
+    temp38-customerid = `BERGS`.
+    temp38-customername = `Berglunds snabbköp`.
+    temp38-employeeid = 7830.
+    temp38-orderdate = `1479682800000`.
+    temp38-requireddate = `1481151600000`.
+    temp38-shippeddate = `1480028400000`.
+    temp38-shipname = `ShipEx`.
+    temp38-shipaddress = `5th Avenue 610`.
+    temp38-shipcity = `New York`.
+    temp38-shipregion = `New Jersey`.
+    temp38-shippostal = `10020`.
+    temp38-shipcountry = `United Stated of America`.
+    INSERT temp38 INTO TABLE temp37.
+    t_orders = temp37.
 
     " localService/mockdata/Customer.json - the list's expand of Customer
-    t_customers = VALUE #(
-        ( customerid = `TORTU` companyname = `Tortuga Restaurante` )
-        ( customerid = `ALFKI` companyname = `Alfreds Futterkiste` )
-        ( customerid = `AROUT` companyname = `Around the Horn` )
-        ( customerid = `BERGS` companyname = `Berglunds snabbköp` )
-        ( customerid = `BOTTM` companyname = `Bottom-Dollar Markets` ) ).
-    LOOP AT t_orders REFERENCE INTO DATA(order).
-      order->companyname = VALUE #( t_customers[ customerid = order->customerid ]-companyname OPTIONAL ).
+    
+    CLEAR temp39.
+    
+    temp40-customerid = `TORTU`.
+    temp40-companyname = `Tortuga Restaurante`.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-customerid = `ALFKI`.
+    temp40-companyname = `Alfreds Futterkiste`.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-customerid = `AROUT`.
+    temp40-companyname = `Around the Horn`.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-customerid = `BERGS`.
+    temp40-companyname = `Berglunds snabbköp`.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-customerid = `BOTTM`.
+    temp40-companyname = `Bottom-Dollar Markets`.
+    INSERT temp40 INTO TABLE temp39.
+    t_customers = temp39.
+    
+    
+    LOOP AT t_orders REFERENCE INTO order.
+      
+      CLEAR temp42.
+      
+      READ TABLE t_customers INTO temp43 WITH KEY customerid = order->customerid.
+      IF sy-subrc = 0.
+        temp42 = temp43-companyname.
+      ENDIF.
+      order->companyname = temp42.
     ENDLOOP.
 
     " localService/mockdata/Employee.json - the Photo column is empty in the
     " mock for every row
-    t_employees = VALUE #(
-        ( employeeid = 7424 firstname = `Jack`   lastname = `Smith`     title = `Developer` homephone = `01781163487` )
-        ( employeeid = 7827 firstname = `Loura`  lastname = `Hajjar`    title = `Developer` homephone = `01781237845` )
-        ( employeeid = 7829 firstname = `Steven` lastname = `Buchanan`  title = `Manager`   homephone = `01787650439` )
-        ( employeeid = 7830 firstname = `Andrew` lastname = `Fuller`    title = `Designer`  homephone = `01781234598` )
-        ( employeeid = 7840 firstname = `Anne`   lastname = `Dodsworth` title = `Developer` homephone = `01796577660` ) ).
+    
+    CLEAR temp44.
+    
+    temp45-employeeid = 7424.
+    temp45-firstname = `Jack`.
+    temp45-lastname = `Smith`.
+    temp45-title = `Developer`.
+    temp45-homephone = `01781163487`.
+    INSERT temp45 INTO TABLE temp44.
+    temp45-employeeid = 7827.
+    temp45-firstname = `Loura`.
+    temp45-lastname = `Hajjar`.
+    temp45-title = `Developer`.
+    temp45-homephone = `01781237845`.
+    INSERT temp45 INTO TABLE temp44.
+    temp45-employeeid = 7829.
+    temp45-firstname = `Steven`.
+    temp45-lastname = `Buchanan`.
+    temp45-title = `Manager`.
+    temp45-homephone = `01787650439`.
+    INSERT temp45 INTO TABLE temp44.
+    temp45-employeeid = 7830.
+    temp45-firstname = `Andrew`.
+    temp45-lastname = `Fuller`.
+    temp45-title = `Designer`.
+    temp45-homephone = `01781234598`.
+    INSERT temp45 INTO TABLE temp44.
+    temp45-employeeid = 7840.
+    temp45-firstname = `Anne`.
+    temp45-lastname = `Dodsworth`.
+    temp45-title = `Developer`.
+    temp45-homephone = `01796577660`.
+    INSERT temp45 INTO TABLE temp44.
+    t_employees = temp44.
 
     " localService/mockdata/Product.json
-    t_products = VALUE #(
-        ( productid = 1412 productname = `Aniseed Syrup` )
-        ( productid = 5267 productname = `Uncle Bob's Organic Dried Pears` )
-        ( productid = 5046 productname = `Northwoods Cranberry Sauce` )
-        ( productid = 1114 productname = `Grandma's Boysenberry Spread` )
-        ( productid = 5079 productname = `Chef Anton's Cajun Seasoning` )
-        ( productid = 4008 productname = `Sir Rodney's Marmalade` )
-        ( productid = 5672 productname = `Tunnbröd` )
-        ( productid = 8486 productname = `Mascarpone Fabioli` )
-        ( productid = 9505 productname = `Camembert Pierrot` )
-        ( productid = 4663 productname = `Louisiana Hot Spiced Okra` ) ).
+    
+    CLEAR temp46.
+    
+    temp47-productid = 1412.
+    temp47-productname = `Aniseed Syrup`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 5267.
+    temp47-productname = `Uncle Bob's Organic Dried Pears`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 5046.
+    temp47-productname = `Northwoods Cranberry Sauce`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 1114.
+    temp47-productname = `Grandma's Boysenberry Spread`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 5079.
+    temp47-productname = `Chef Anton's Cajun Seasoning`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 4008.
+    temp47-productname = `Sir Rodney's Marmalade`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 5672.
+    temp47-productname = `Tunnbröd`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 8486.
+    temp47-productname = `Mascarpone Fabioli`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 9505.
+    temp47-productname = `Camembert Pierrot`.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-productid = 4663.
+    temp47-productname = `Louisiana Hot Spiced Okra`.
+    INSERT temp47 INTO TABLE temp46.
+    t_products = temp46.
 
     " localService/mockdata/Order_Details.json - the Discount column is in
     " the mock and in no view of the app
-    t_details = VALUE #(
-        ( orderid = 7918 productid = 1412 unitprice = `65.89` quantity = 899 )
-        ( orderid = 7918 productid = 5672 unitprice = `14.77` quantity = 2367 )
-        ( orderid = 7918 productid = 5046 unitprice = `61.69` quantity = 867 )
-        ( orderid = 7918 productid = 9505 unitprice = `3.07`  quantity = 1060 )
-        ( orderid = 2686 productid = 5267 unitprice = `24.34` quantity = 7783 )
-        ( orderid = 2686 productid = 1114 unitprice = `20.50` quantity = 523 )
-        ( orderid = 2686 productid = 5046 unitprice = `61.69` quantity = 336 )
-        ( orderid = 6858 productid = 1114 unitprice = `20.50` quantity = 2960 )
-        ( orderid = 6858 productid = 4663 unitprice = `9.31`  quantity = 9491 )
-        ( orderid = 6858 productid = 5672 unitprice = `14.77` quantity = 547 )
-        ( orderid = 6858 productid = 4008 unitprice = `47.10` quantity = 5780 )
-        ( orderid = 7311 productid = 5046 unitprice = `61.69` quantity = 6636 )
-        ( orderid = 7311 productid = 1412 unitprice = `65.89` quantity = 3436 )
-        ( orderid = 7311 productid = 5672 unitprice = `14.77` quantity = 8076 )
-        ( orderid = 7991 productid = 4663 unitprice = `9.31`  quantity = 9491 )
-        ( orderid = 7991 productid = 5672 unitprice = `14.77` quantity = 547 )
-        ( orderid = 7991 productid = 4008 unitprice = `47.10` quantity = 5780 )
-        ( orderid = 7991 productid = 9505 unitprice = `3.07`  quantity = 3239 )
-        ( orderid = 7991 productid = 8486 unitprice = `6.31`  quantity = 5039 )
-        ( orderid = 6189 productid = 5672 unitprice = `14.77` quantity = 552 )
-        ( orderid = 6189 productid = 4663 unitprice = `9.31`  quantity = 1052 )
-        ( orderid = 6189 productid = 5267 unitprice = `24.34` quantity = 852 )
-        ( orderid = 6189 productid = 1412 unitprice = `65.89` quantity = 6752 )
-        ( orderid = 828  productid = 8486 unitprice = `6.31`  quantity = 1204 )
-        ( orderid = 828  productid = 1114 unitprice = `20.50` quantity = 2960 )
-        ( orderid = 828  productid = 4663 unitprice = `9.31`  quantity = 9491 )
-        ( orderid = 828  productid = 5672 unitprice = `14.77` quantity = 547 )
-        ( orderid = 828  productid = 4008 unitprice = `47.10` quantity = 5780 )
-        ( orderid = 3115 productid = 1114 unitprice = `20.50` quantity = 1530 )
-        ( orderid = 3115 productid = 5079 unitprice = `62.40` quantity = 2370 )
-        ( orderid = 3115 productid = 8486 unitprice = `6.31`  quantity = 2567 )
-        ( orderid = 3115 productid = 4663 unitprice = `9.31`  quantity = 1809 )
-        ( orderid = 3115 productid = 4008 unitprice = `47.10` quantity = 1310 )
-        ( orderid = 7375 productid = 4008 unitprice = `47.10` quantity = 5780 )
-        ( orderid = 7375 productid = 9505 unitprice = `3.07`  quantity = 3239 )
-        ( orderid = 7375 productid = 8486 unitprice = `6.31`  quantity = 5039 )
-        ( orderid = 6368 productid = 9505 unitprice = `3.07`  quantity = 3239 )
-        ( orderid = 6368 productid = 8486 unitprice = `6.31`  quantity = 5039 ) ).
+    
+    CLEAR temp48.
+    
+    temp49-orderid = 7918.
+    temp49-productid = 1412.
+    temp49-unitprice = `65.89`.
+    temp49-quantity = 899.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7918.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 2367.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7918.
+    temp49-productid = 5046.
+    temp49-unitprice = `61.69`.
+    temp49-quantity = 867.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7918.
+    temp49-productid = 9505.
+    temp49-unitprice = `3.07`.
+    temp49-quantity = 1060.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 2686.
+    temp49-productid = 5267.
+    temp49-unitprice = `24.34`.
+    temp49-quantity = 7783.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 2686.
+    temp49-productid = 1114.
+    temp49-unitprice = `20.50`.
+    temp49-quantity = 523.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 2686.
+    temp49-productid = 5046.
+    temp49-unitprice = `61.69`.
+    temp49-quantity = 336.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6858.
+    temp49-productid = 1114.
+    temp49-unitprice = `20.50`.
+    temp49-quantity = 2960.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6858.
+    temp49-productid = 4663.
+    temp49-unitprice = `9.31`.
+    temp49-quantity = 9491.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6858.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 547.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6858.
+    temp49-productid = 4008.
+    temp49-unitprice = `47.10`.
+    temp49-quantity = 5780.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7311.
+    temp49-productid = 5046.
+    temp49-unitprice = `61.69`.
+    temp49-quantity = 6636.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7311.
+    temp49-productid = 1412.
+    temp49-unitprice = `65.89`.
+    temp49-quantity = 3436.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7311.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 8076.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7991.
+    temp49-productid = 4663.
+    temp49-unitprice = `9.31`.
+    temp49-quantity = 9491.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7991.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 547.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7991.
+    temp49-productid = 4008.
+    temp49-unitprice = `47.10`.
+    temp49-quantity = 5780.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7991.
+    temp49-productid = 9505.
+    temp49-unitprice = `3.07`.
+    temp49-quantity = 3239.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7991.
+    temp49-productid = 8486.
+    temp49-unitprice = `6.31`.
+    temp49-quantity = 5039.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6189.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 552.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6189.
+    temp49-productid = 4663.
+    temp49-unitprice = `9.31`.
+    temp49-quantity = 1052.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6189.
+    temp49-productid = 5267.
+    temp49-unitprice = `24.34`.
+    temp49-quantity = 852.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6189.
+    temp49-productid = 1412.
+    temp49-unitprice = `65.89`.
+    temp49-quantity = 6752.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 828.
+    temp49-productid = 8486.
+    temp49-unitprice = `6.31`.
+    temp49-quantity = 1204.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 828.
+    temp49-productid = 1114.
+    temp49-unitprice = `20.50`.
+    temp49-quantity = 2960.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 828.
+    temp49-productid = 4663.
+    temp49-unitprice = `9.31`.
+    temp49-quantity = 9491.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 828.
+    temp49-productid = 5672.
+    temp49-unitprice = `14.77`.
+    temp49-quantity = 547.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 828.
+    temp49-productid = 4008.
+    temp49-unitprice = `47.10`.
+    temp49-quantity = 5780.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 3115.
+    temp49-productid = 1114.
+    temp49-unitprice = `20.50`.
+    temp49-quantity = 1530.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 3115.
+    temp49-productid = 5079.
+    temp49-unitprice = `62.40`.
+    temp49-quantity = 2370.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 3115.
+    temp49-productid = 8486.
+    temp49-unitprice = `6.31`.
+    temp49-quantity = 2567.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 3115.
+    temp49-productid = 4663.
+    temp49-unitprice = `9.31`.
+    temp49-quantity = 1809.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 3115.
+    temp49-productid = 4008.
+    temp49-unitprice = `47.10`.
+    temp49-quantity = 1310.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7375.
+    temp49-productid = 4008.
+    temp49-unitprice = `47.10`.
+    temp49-quantity = 5780.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7375.
+    temp49-productid = 9505.
+    temp49-unitprice = `3.07`.
+    temp49-quantity = 3239.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 7375.
+    temp49-productid = 8486.
+    temp49-unitprice = `6.31`.
+    temp49-quantity = 5039.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6368.
+    temp49-productid = 9505.
+    temp49-unitprice = `3.07`.
+    temp49-quantity = 3239.
+    INSERT temp49 INTO TABLE temp48.
+    temp49-orderid = 6368.
+    temp49-productid = 8486.
+    temp49-unitprice = `6.31`.
+    temp49-quantity = 5039.
+    INSERT temp49 INTO TABLE temp48.
+    t_details = temp48.
 
   ENDMETHOD.
 

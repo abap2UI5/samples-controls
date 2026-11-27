@@ -6,7 +6,7 @@ CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
 
-    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    TYPES ty_t_int TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_appointment,
         start_at  TYPE string,
@@ -18,7 +18,7 @@ CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
         tentative TYPE abap_bool,
         aria      TYPE string,
       END OF ty_s_appointment.
-    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH EMPTY KEY.
+    TYPES ty_t_appointment TYPE STANDARD TABLE OF ty_s_appointment WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_header,
         start_at TYPE string,
@@ -27,7 +27,7 @@ CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
         type     TYPE string,
         pic      TYPE string,
       END OF ty_s_header.
-    TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH EMPTY KEY.
+    TYPES ty_t_header TYPE STANDARD TABLE OF ty_s_header WITH DEFAULT KEY.
     TYPES:
       BEGIN OF ty_s_person,
         pic            TYPE string,
@@ -42,14 +42,14 @@ CLASS z2ui5_cl_smpc_app_537 DEFINITION PUBLIC.
         t_headers      TYPE ty_t_header,
         selected       TYPE abap_bool,
       END OF ty_s_person.
-    DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH EMPTY KEY.
+    DATA t_people TYPE STANDARD TABLE OF ty_s_person WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_special,
         start_at TYPE string,
         type     TYPE string,
       END OF ty_s_special.
-    DATA t_special TYPE STANDARD TABLE OF ty_s_special WITH EMPTY KEY.
+    DATA t_special TYPE STANDARD TABLE OF ty_s_special WITH DEFAULT KEY.
 
     DATA start_date  TYPE string.
     DATA view_key    TYPE string.
@@ -72,12 +72,12 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -86,10 +86,32 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE string_table.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
     " calendar date properties are typed "object" and demand a real JS Date;
     " the model keeps ISO strings and Formatter.DateCreateObject converts them
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` INTO TABLE temp1.
+    INSERT `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` INTO TABLE temp1.
+    INSERT `$event.getSource().getSelectedAppointments().length` INTO TABLE temp1.
+    INSERT `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` INTO TABLE temp1.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/startDate}.getFullYear()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getMonth() + 1` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getDate()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getHours()` INTO TABLE temp2.
+    INSERT `${$parameters>/startDate}.getMinutes()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getFullYear()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getMonth() + 1` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getDate()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getHours()` INTO TABLE temp2.
+    INSERT `${$parameters>/endDate}.getMinutes()` INTO TABLE temp2.
+    INSERT `${$parameters>/row} ? $event.getSource().indexOfRow(${$parameters>/row}) : -1` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns:mvc`    v = `sap.ui.core.mvc`
         )->a( n = `xmlns:u`      v = `sap.ui.unified`
@@ -118,29 +140,14 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
                 )->a( n = `builtInViews`              v = client->_bind( t_built_in )
                 )->a( n = `appointmentSelect`         v = client->_event(
                                   val   = `APPT_SELECT`
-                                  t_arg = VALUE #(
-                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getTitle() : ''` )
-                                    ( `${$parameters>/appointment} ? ${$parameters>/appointment}.getSelected() : false` )
-                                    ( `$event.getSource().getSelectedAppointments().length` )
-                                    ( `${$parameters>/appointments} ? ${$parameters>/appointments}.length : 0` ) ) )
+                                  t_arg = temp1 )
                 " handleIntervalSelect: in the nonWorking view it toggles the special
                 " date, otherwise it pushes a 'new appointment' into the row it hit
                 " (or into every selected row). The interval's start/end travel as
                 " their LOCAL parts - a UTC toISOString( ) would shift the day
                 )->a( n = `intervalSelect`            v = client->_event(
                                      val   = `INTERVAL_SELECT`
-                                     t_arg = VALUE #(
-                                       ( `${$parameters>/startDate}.getFullYear()` )
-                                       ( `${$parameters>/startDate}.getMonth() + 1` )
-                                       ( `${$parameters>/startDate}.getDate()` )
-                                       ( `${$parameters>/startDate}.getHours()` )
-                                       ( `${$parameters>/startDate}.getMinutes()` )
-                                       ( `${$parameters>/endDate}.getFullYear()` )
-                                       ( `${$parameters>/endDate}.getMonth() + 1` )
-                                       ( `${$parameters>/endDate}.getDate()` )
-                                       ( `${$parameters>/endDate}.getHours()` )
-                                       ( `${$parameters>/endDate}.getMinutes()` )
-                                       ( `${$parameters>/row} ? $event.getSource().indexOfRow(${$parameters>/row}) : -1` ) ) )
+                                     t_arg = temp2 )
                 )->a( n = `showEmptyIntervalHeaders`  v = `false`
 
                 )->ele( `toolbarContent`
@@ -289,15 +296,47 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
     " declared here, not inline at the ASSIGN below, so it can be UNASSIGNed
     " before each one
     FIELD-SYMBOLS <person> TYPE ty_s_person.
+        DATA appt_title TYPE string.
+          DATA temp3 TYPE string.
+          DATA selected LIKE temp3.
+        DATA temp4 TYPE i.
+        DATA temp14 TYPE i.
+        DATA temp1 TYPE i.
+        DATA temp16 TYPE i.
+        DATA iso_start TYPE string.
+          DATA temp5 LIKE sy-subrc.
+          DATA temp6 LIKE sy-tabix.
+            DATA temp7 TYPE z2ui5_cl_smpc_app_537=>ty_s_special.
+          DATA temp8 TYPE i.
+          DATA temp15 TYPE i.
+          DATA temp2 TYPE i.
+          DATA temp17 TYPE i.
+          DATA iso_end TYPE string.
+          DATA temp9 TYPE ty_s_appointment.
+          DATA appointment LIKE temp9.
+          DATA temp10 TYPE i.
+          DATA row_index LIKE temp10.
+          DATA temp11 TYPE ty_t_int.
+          DATA rows LIKE temp11.
+            DATA person_sel LIKE LINE OF t_people.
+                DATA temp12 LIKE LINE OF rows.
+          DATA index LIKE LINE OF rows.
+        DATA temp13 TYPE string_table.
 
     CASE client->get_event( ).
 
       WHEN `APPT_SELECT`.
-        DATA(appt_title) = client->get_event_arg( ).
+        
+        appt_title = client->get_event_arg( ).
         IF appt_title IS NOT INITIAL.
-          DATA(selected) = COND string( WHEN client->get_event_arg( 2 ) = abap_true
-                                        THEN `selected`
-                                        ELSE `deselected` ).
+          
+          IF client->get_event_arg( 2 ) = abap_true.
+            temp3 = `selected`.
+          ELSE.
+            temp3 = `deselected`.
+          ENDIF.
+          
+          selected = temp3.
           client->message_box_display(
               text = |'{ appt_title }' { selected }. \n Selected appointments: { client->get_event_arg( 3 ) }|
               type = `show` ).
@@ -307,50 +346,92 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
         ENDIF.
 
       WHEN `INTERVAL_SELECT`.
-        DATA(iso_start) = |{ client->get_event_arg( ) }-{ CONV i( client->get_event_arg( 2 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |-{ CONV i( client->get_event_arg( 3 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |T{ CONV i( client->get_event_arg( 4 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |:{ CONV i( client->get_event_arg( 5 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
+        
+        temp4 = client->get_event_arg( 2 ).
+        
+        temp14 = client->get_event_arg( 3 ).
+        
+        temp1 = client->get_event_arg( 4 ).
+        
+        temp16 = client->get_event_arg( 5 ).
+        
+        iso_start = |{ client->get_event_arg( ) }-{ temp4 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |-{ temp14 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |T{ temp1 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |:{ temp16 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
 
         IF view_key = `nonWorking`.
           " the special date toggles: first select marks it, the second clears it
-          IF line_exists( t_special[ start_at = iso_start ] ).
+          
+          
+          temp6 = sy-tabix.
+          READ TABLE t_special WITH KEY start_at = iso_start TRANSPORTING NO FIELDS.
+          temp5 = sy-subrc.
+          sy-tabix = temp6.
+          IF temp5 = 0.
             DELETE t_special WHERE start_at = iso_start.
           ELSE.
-            INSERT VALUE #( start_at = iso_start type = `NonWorking` ) INTO TABLE t_special.
+            
+            CLEAR temp7.
+            temp7-start_at = iso_start.
+            temp7-type = `NonWorking`.
+            INSERT temp7 INTO TABLE t_special.
           ENDIF.
         ELSE.
-          DATA(iso_end) = |{ client->get_event_arg( 6 ) }-{ CONV i( client->get_event_arg( 7 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |-{ CONV i( client->get_event_arg( 8 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |T{ CONV i( client->get_event_arg( 9 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
-                          |:{ CONV i( client->get_event_arg( 10 ) ) WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
-          DATA(appointment) = VALUE ty_s_appointment( start_at = iso_start
-                                                      end_at   = iso_end
-                                                      title    = `new appointment`
-                                                      type     = `Type09`
-                                                      aria     = `None` ).
-          DATA(row_index) = CONV i( client->get_event_arg( 11 ) ).
+          
+          temp8 = client->get_event_arg( 7 ).
+          
+          temp15 = client->get_event_arg( 8 ).
+          
+          temp2 = client->get_event_arg( 9 ).
+          
+          temp17 = client->get_event_arg( 10 ).
+          
+          iso_end = |{ client->get_event_arg( 6 ) }-{ temp8 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |-{ temp15 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |T{ temp2 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                          |:{ temp17 WIDTH = 2 ALIGN = RIGHT PAD = '0' }:00|.
+          
+          CLEAR temp9.
+          temp9-start_at = iso_start.
+          temp9-end_at = iso_end.
+          temp9-title = `new appointment`.
+          temp9-type = `Type09`.
+          temp9-aria = `None`.
+          
+          appointment = temp9.
+          
+          temp10 = client->get_event_arg( 11 ).
+          
+          row_index = temp10.
           " the selected rows are read from the model, not transported:
           " PlanningCalendarRow has a bindable `selected`, and a JS callback
           " (getSelectedRows().map(function...)) is not in the UI5 expression
           " grammar - it threw and lost the whole handler
-          DATA(rows) = VALUE ty_t_int( ).
+          
+          CLEAR temp11.
+          
+          rows = temp11.
           IF row_index >= 0.
             INSERT row_index INTO TABLE rows.
           ELSE.
-            LOOP AT t_people INTO DATA(person_sel).
+            
+            LOOP AT t_people INTO person_sel.
               IF person_sel-selected = abap_true.
-                INSERT sy-tabix - 1 INTO TABLE rows.
+                
+                temp12 = sy-tabix - 1.
+                INSERT temp12 INTO TABLE rows.
               ENDIF.
             ENDLOOP.
           ENDIF.
           " the row is addressed through a field symbol, not a table expression:
           " abaplint's downport leaves an itab[ ] TARGET of INSERT/DELETE in
           " place, and the 702 parser rejects it
-          LOOP AT rows INTO DATA(index).
+          
+          LOOP AT rows INTO index.
             " UNASSIGN first: a failed ASSIGN keeps the previous round's row
             UNASSIGN <person>.
-            ASSIGN t_people[ index + 1 ] TO <person>.
+            READ TABLE t_people INDEX index + 1 ASSIGNING <person>.
             IF <person> IS ASSIGNED.
               INSERT appointment INTO TABLE <person>-t_appointments.
             ENDIF.
@@ -359,7 +440,9 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
 
       WHEN `BUILT_IN_VIEWS`.
         " handleSelectionFinish: the picked keys become the calendar's built-in views
-        t_built_in = VALUE #( ).
+        
+        CLEAR temp13.
+        t_built_in = temp13.
         IF client->get_event_arg( ) IS NOT INITIAL.
           SPLIT client->get_event_arg( ) AT `,` INTO TABLE t_built_in.
         ENDIF.
@@ -370,53 +453,321 @@ CLASS z2ui5_cl_smpc_app_537 IMPLEMENTATION.
 
 
   METHOD model_init.
+    DATA temp14 LIKE t_people.
+    DATA temp15 LIKE LINE OF temp14.
+    DATA temp16 TYPE z2ui5_cl_smpc_app_537=>ty_t_int.
+    DATA temp18 TYPE z2ui5_cl_smpc_app_537=>ty_t_int.
+    DATA temp20 TYPE z2ui5_cl_smpc_app_537=>ty_t_appointment.
+    DATA temp21 LIKE LINE OF temp20.
+    DATA temp22 TYPE z2ui5_cl_smpc_app_537=>ty_t_header.
+    DATA temp23 LIKE LINE OF temp22.
+    DATA temp24 TYPE z2ui5_cl_smpc_app_537=>ty_t_int.
+    DATA temp26 TYPE z2ui5_cl_smpc_app_537=>ty_t_int.
+    DATA temp28 TYPE z2ui5_cl_smpc_app_537=>ty_t_appointment.
+    DATA temp29 LIKE LINE OF temp28.
+    DATA temp30 TYPE z2ui5_cl_smpc_app_537=>ty_t_header.
+    DATA temp31 LIKE LINE OF temp30.
 
     start_date = `2017-02-08T08:00:00`.
     view_key   = `D`.
     group_mode = `Collapsed`.
 
-    t_people = VALUE #(
-      ( pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/John_Miller.png` name = `John Miller` role = `team member`
-        t_free_days  = VALUE #( ( 5 ) ( 6 ) )
-        t_free_hours = VALUE #( ( 0 ) ( 1 ) ( 2 ) ( 3 ) ( 4 ) ( 5 ) ( 6 ) ( 17 ) ( 19 ) ( 20 ) ( 21 ) ( 22 ) ( 23 ) )
-        t_appointments = VALUE #(
-          ( start_at = `2016-12-02T11:30:00` end_at = `2016-12-02T13:30:00` title = `Online Meeting` type = `Type03` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-01-15T13:30:00` end_at = `2017-01-29T17:30:00` title = `Discussion with clients` info = `online meeting` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-07T00:01:00` end_at = `2017-02-07T23:59:00` title = `Vacation` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-08T08:30:00` end_at = `2017-02-08T15:00:00` title = `Meeting` type = `Type05` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-08T08:00:00` end_at = `2017-02-08T17:00:00` title = `Team meeting` info = `room 106` type = `Type01` pic = `sap-icon://sap-ui5` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-09T07:30:00` end_at = `2017-02-09T16:30:00` title = `Meet Donna Moore` info = `regular` type = `Type08` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-10T00:00:00` end_at = `2017-02-11T23:29:00` title = `Private appointment` type = `Type06` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-04-17T08:30:00` end_at = `2017-04-17T15:30:00` title = `Meet Max Mustermann` type = `Type02` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-04-03T10:00:00` end_at = `2017-04-03T12:00:00` title = `Team meeting` info = `room 1` type = `Type01` pic = `sap-icon://sap-ui5` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-03-04T11:30:00` end_at = `0201-03-04T13:30:00` title = `Online Meeting` type = `Type03` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-01-15T13:30:00` end_at = `2017-01-29T17:30:00` title = `Discussion with clients` info = `online meeting` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-07T00:01:00` end_at = `2017-02-07T23:59:00` title = `Vacation` type = `Type02` tentative = abap_false aria = `Dialog` )
-        )
-        t_headers = VALUE #(
-          ( start_at = `2017-02-09T11:30:00` end_at = `2017-02-09T14:00:00` title = `Lunch` type = `Type03` )
-        ) )
-      ( pic = `sap-icon://employee` name = `Max Mustermann` role = `team member`
-        t_free_days  = VALUE #( ( 0 ) ( 6 ) )
-        t_free_hours = VALUE #( ( 0 ) ( 1 ) ( 2 ) ( 3 ) ( 4 ) ( 5 ) ( 6 ) ( 7 ) ( 18 ) ( 19 ) ( 20 ) ( 21 ) ( 22 ) ( 23 ) )
-        t_appointments = VALUE #(
-          ( start_at = `2017-01-02T11:30:00` end_at = `2017-01-02T13:30:00` title = `Online Meeting` type = `Type03` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-01-15T13:30:00` end_at = `2017-01-29T11:30:00` title = `Meeting with managers` info = `online meeting` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-05T00:01:00` end_at = `2017-02-05T23:59:00` title = `Education` type = `Type03` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-08T08:00:00` end_at = `2017-02-08T17:00:00` title = `Team meeting` info = `room 106` type = `Type01` pic = `sap-icon://sap-ui5` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-09T10:00:00` end_at = `2017-02-09T16:30:00` title = `Meeting` info = `phone` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-10T00:00:00` end_at = `2017-01-31T23:59:00` title = `Blocker` type = `Type04` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-10T07:30:00` end_at = `2017-02-10T16:30:00` title = `Meet Donna Moore` info = `regular` type = `Type08` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-02-12T00:01:00` end_at = `2017-02-12T23:59:00` title = `New Product` info = `room 105` type = `Type04` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-03-02T11:30:00` end_at = `2017-03-02T13:30:00` title = `Online Meeting` type = `Type03` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-03-15T13:30:00` end_at = `2017-03-29T17:30:00` title = `Meeting with managers` info = `online meeting` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-05-02T11:30:00` end_at = `2017-05-02T13:30:00` title = `Online Meeting` type = `Type03` tentative = abap_true aria = `Dialog` )
-          ( start_at = `2017-03-15T13:30:00` end_at = `2017-03-29T17:30:00` title = `Discussion with clients` info = `online meeting` type = `Type02` tentative = abap_false aria = `Dialog` )
-          ( start_at = `2017-04-07T00:01:00` end_at = `2017-04-07T23:59:00` title = `Vacation` type = `Type02` tentative = abap_false aria = `Dialog` )
-        )
-        t_headers = VALUE #(
-          ( start_at = `2017-02-14T00:00:00` end_at = `2017-02-14T23:59:00` title = `Valentine's Day` type = `Type03` )
-        ) ) ).
+    
+    CLEAR temp14.
+    
+    temp15-pic = `https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/John_Miller.png`.
+    temp15-name = `John Miller`.
+    temp15-role = `team member`.
+    
+    CLEAR temp16.
+    INSERT 5 INTO TABLE temp16.
+    INSERT 6 INTO TABLE temp16.
+    temp15-t_free_days = temp16.
+    
+    CLEAR temp18.
+    INSERT 0 INTO TABLE temp18.
+    INSERT 1 INTO TABLE temp18.
+    INSERT 2 INTO TABLE temp18.
+    INSERT 3 INTO TABLE temp18.
+    INSERT 4 INTO TABLE temp18.
+    INSERT 5 INTO TABLE temp18.
+    INSERT 6 INTO TABLE temp18.
+    INSERT 17 INTO TABLE temp18.
+    INSERT 19 INTO TABLE temp18.
+    INSERT 20 INTO TABLE temp18.
+    INSERT 21 INTO TABLE temp18.
+    INSERT 22 INTO TABLE temp18.
+    INSERT 23 INTO TABLE temp18.
+    temp15-t_free_hours = temp18.
+    
+    CLEAR temp20.
+    
+    CLEAR temp21.
+    temp21-start_at = `2016-12-02T11:30:00`.
+    temp21-end_at = `2016-12-02T13:30:00`.
+    temp21-title = `Online Meeting`.
+    temp21-type = `Type03`.
+    temp21-tentative = abap_true.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-01-15T13:30:00`.
+    temp21-end_at = `2017-01-29T17:30:00`.
+    temp21-title = `Discussion with clients`.
+    temp21-info = `online meeting`.
+    temp21-type = `Type02`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-07T00:01:00`.
+    temp21-end_at = `2017-02-07T23:59:00`.
+    temp21-title = `Vacation`.
+    temp21-type = `Type02`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-08T08:30:00`.
+    temp21-end_at = `2017-02-08T15:00:00`.
+    temp21-title = `Meeting`.
+    temp21-type = `Type05`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-08T08:00:00`.
+    temp21-end_at = `2017-02-08T17:00:00`.
+    temp21-title = `Team meeting`.
+    temp21-info = `room 106`.
+    temp21-type = `Type01`.
+    temp21-pic = `sap-icon://sap-ui5`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-09T07:30:00`.
+    temp21-end_at = `2017-02-09T16:30:00`.
+    temp21-title = `Meet Donna Moore`.
+    temp21-info = `regular`.
+    temp21-type = `Type08`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-10T00:00:00`.
+    temp21-end_at = `2017-02-11T23:29:00`.
+    temp21-title = `Private appointment`.
+    temp21-type = `Type06`.
+    temp21-tentative = abap_true.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-04-17T08:30:00`.
+    temp21-end_at = `2017-04-17T15:30:00`.
+    temp21-title = `Meet Max Mustermann`.
+    temp21-type = `Type02`.
+    temp21-tentative = abap_true.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-04-03T10:00:00`.
+    temp21-end_at = `2017-04-03T12:00:00`.
+    temp21-title = `Team meeting`.
+    temp21-info = `room 1`.
+    temp21-type = `Type01`.
+    temp21-pic = `sap-icon://sap-ui5`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-03-04T11:30:00`.
+    temp21-end_at = `0201-03-04T13:30:00`.
+    temp21-title = `Online Meeting`.
+    temp21-type = `Type03`.
+    temp21-tentative = abap_true.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-01-15T13:30:00`.
+    temp21-end_at = `2017-01-29T17:30:00`.
+    temp21-title = `Discussion with clients`.
+    temp21-info = `online meeting`.
+    temp21-type = `Type02`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    CLEAR temp21.
+    temp21-start_at = `2017-02-07T00:01:00`.
+    temp21-end_at = `2017-02-07T23:59:00`.
+    temp21-title = `Vacation`.
+    temp21-type = `Type02`.
+    temp21-tentative = abap_false.
+    temp21-aria = `Dialog`.
+    INSERT temp21 INTO TABLE temp20.
+    temp15-t_appointments = temp20.
+    
+    CLEAR temp22.
+    
+    temp23-start_at = `2017-02-09T11:30:00`.
+    temp23-end_at = `2017-02-09T14:00:00`.
+    temp23-title = `Lunch`.
+    temp23-type = `Type03`.
+    INSERT temp23 INTO TABLE temp22.
+    temp15-t_headers = temp22.
+    INSERT temp15 INTO TABLE temp14.
+    temp15-pic = `sap-icon://employee`.
+    temp15-name = `Max Mustermann`.
+    temp15-role = `team member`.
+    
+    CLEAR temp24.
+    INSERT 0 INTO TABLE temp24.
+    INSERT 6 INTO TABLE temp24.
+    temp15-t_free_days = temp24.
+    
+    CLEAR temp26.
+    INSERT 0 INTO TABLE temp26.
+    INSERT 1 INTO TABLE temp26.
+    INSERT 2 INTO TABLE temp26.
+    INSERT 3 INTO TABLE temp26.
+    INSERT 4 INTO TABLE temp26.
+    INSERT 5 INTO TABLE temp26.
+    INSERT 6 INTO TABLE temp26.
+    INSERT 7 INTO TABLE temp26.
+    INSERT 18 INTO TABLE temp26.
+    INSERT 19 INTO TABLE temp26.
+    INSERT 20 INTO TABLE temp26.
+    INSERT 21 INTO TABLE temp26.
+    INSERT 22 INTO TABLE temp26.
+    INSERT 23 INTO TABLE temp26.
+    temp15-t_free_hours = temp26.
+    
+    CLEAR temp28.
+    
+    CLEAR temp29.
+    temp29-start_at = `2017-01-02T11:30:00`.
+    temp29-end_at = `2017-01-02T13:30:00`.
+    temp29-title = `Online Meeting`.
+    temp29-type = `Type03`.
+    temp29-tentative = abap_true.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-01-15T13:30:00`.
+    temp29-end_at = `2017-01-29T11:30:00`.
+    temp29-title = `Meeting with managers`.
+    temp29-info = `online meeting`.
+    temp29-type = `Type02`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-05T00:01:00`.
+    temp29-end_at = `2017-02-05T23:59:00`.
+    temp29-title = `Education`.
+    temp29-type = `Type03`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-08T08:00:00`.
+    temp29-end_at = `2017-02-08T17:00:00`.
+    temp29-title = `Team meeting`.
+    temp29-info = `room 106`.
+    temp29-type = `Type01`.
+    temp29-pic = `sap-icon://sap-ui5`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-09T10:00:00`.
+    temp29-end_at = `2017-02-09T16:30:00`.
+    temp29-title = `Meeting`.
+    temp29-info = `phone`.
+    temp29-type = `Type02`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-10T00:00:00`.
+    temp29-end_at = `2017-01-31T23:59:00`.
+    temp29-title = `Blocker`.
+    temp29-type = `Type04`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-10T07:30:00`.
+    temp29-end_at = `2017-02-10T16:30:00`.
+    temp29-title = `Meet Donna Moore`.
+    temp29-info = `regular`.
+    temp29-type = `Type08`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-02-12T00:01:00`.
+    temp29-end_at = `2017-02-12T23:59:00`.
+    temp29-title = `New Product`.
+    temp29-info = `room 105`.
+    temp29-type = `Type04`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-03-02T11:30:00`.
+    temp29-end_at = `2017-03-02T13:30:00`.
+    temp29-title = `Online Meeting`.
+    temp29-type = `Type03`.
+    temp29-tentative = abap_true.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-03-15T13:30:00`.
+    temp29-end_at = `2017-03-29T17:30:00`.
+    temp29-title = `Meeting with managers`.
+    temp29-info = `online meeting`.
+    temp29-type = `Type02`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-05-02T11:30:00`.
+    temp29-end_at = `2017-05-02T13:30:00`.
+    temp29-title = `Online Meeting`.
+    temp29-type = `Type03`.
+    temp29-tentative = abap_true.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-03-15T13:30:00`.
+    temp29-end_at = `2017-03-29T17:30:00`.
+    temp29-title = `Discussion with clients`.
+    temp29-info = `online meeting`.
+    temp29-type = `Type02`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    CLEAR temp29.
+    temp29-start_at = `2017-04-07T00:01:00`.
+    temp29-end_at = `2017-04-07T23:59:00`.
+    temp29-title = `Vacation`.
+    temp29-type = `Type02`.
+    temp29-tentative = abap_false.
+    temp29-aria = `Dialog`.
+    INSERT temp29 INTO TABLE temp28.
+    temp15-t_appointments = temp28.
+    
+    CLEAR temp30.
+    
+    temp31-start_at = `2017-02-14T00:00:00`.
+    temp31-end_at = `2017-02-14T23:59:00`.
+    temp31-title = `Valentine's Day`.
+    temp31-type = `Type03`.
+    INSERT temp31 INTO TABLE temp30.
+    temp15-t_headers = temp30.
+    INSERT temp15 INTO TABLE temp14.
+    t_people = temp14.
 
   ENDMETHOD.
 

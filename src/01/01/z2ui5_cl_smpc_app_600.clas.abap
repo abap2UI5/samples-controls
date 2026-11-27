@@ -15,26 +15,26 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
       BEGIN OF ty_s_great_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_leaf WITH EMPTY KEY,
+        nodes TYPE STANDARD TABLE OF ty_s_leaf WITH DEFAULT KEY,
       END OF ty_s_great_grandchild,
       BEGIN OF ty_s_grandchild,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_great_grandchild WITH EMPTY KEY,
+        nodes TYPE STANDARD TABLE OF ty_s_great_grandchild WITH DEFAULT KEY,
       END OF ty_s_grandchild,
       BEGIN OF ty_s_child,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_grandchild WITH EMPTY KEY,
+        nodes TYPE STANDARD TABLE OF ty_s_grandchild WITH DEFAULT KEY,
       END OF ty_s_child,
       BEGIN OF ty_s_root,
         text  TYPE string,
         ref   TYPE string,
-        nodes TYPE STANDARD TABLE OF ty_s_child WITH EMPTY KEY,
+        nodes TYPE STANDARD TABLE OF ty_s_child WITH DEFAULT KEY,
       END OF ty_s_root.
 
     " what the view binds - rebuilt from the flat table after every drop
-    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH EMPTY KEY.
+    DATA t_nodes TYPE STANDARD TABLE OF ty_s_root WITH DEFAULT KEY.
 
     " the hierarchy the drop rewrites: one row per node, parent by text
     TYPES:
@@ -46,7 +46,7 @@ CLASS z2ui5_cl_smpc_app_600 DEFINITION PUBLIC.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
-    DATA t_flat TYPE STANDARD TABLE OF ty_s_flat WITH EMPTY KEY.
+    DATA t_flat TYPE STANDARD TABLE OF ty_s_flat WITH DEFAULT KEY.
 
     METHODS view_display.
     METHODS on_event.
@@ -66,12 +66,12 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     me->client = client.
-    IF client->check_on_init( ).
+    IF client->check_on_init( ) IS NOT INITIAL.
       model_init( ).
       view_display( ).
-    ELSEIF client->check_on_navigated( ).
+    ELSEIF client->check_on_navigated( ) IS NOT INITIAL.
       view_display( ).
-    ELSEIF client->check_on_event( ).
+    ELSEIF client->check_on_event( ) IS NOT INITIAL.
       on_event( ).
     ENDIF.
 
@@ -80,8 +80,18 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA(view) = z2ui5_cl_ui5_view_builder=>factory( ).
+    DATA view TYPE REF TO z2ui5_cl_ui5_view_builder.
+    DATA temp1 TYPE z2ui5_if_client=>ty_s_event_control.
+    DATA temp2 TYPE string_table.
+    view = z2ui5_cl_ui5_view_builder=>factory( ).
 
+    
+    CLEAR temp1.
+    temp1-prevent_default_expr = `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` && `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1`.
+    
+    CLEAR temp2.
+    INSERT `${$parameters>/draggedControl}.getTitle()` INTO TABLE temp2.
+    INSERT `${$parameters>/droppedControl}.getTitle()` INTO TABLE temp2.
     view->ele( n = `View` ns = `mvc`
         )->a( n = `xmlns`     v = `sap.m`
         )->a( n = `xmlns:mvc` v = `sap.ui.core.mvc`
@@ -107,14 +117,11 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
                     " Tree, so the selection is reachable inline
                     )->a( n = `dragStart`         v = client->_event(
                         val    = `DRAG_START`
-                        s_ctrl = VALUE #( prevent_default_expr =
-                                                      `${$parameters>/target}.getParent().getSelectedItems().length > 0 && ` &&
-                                                      `${$parameters>/target}.getParent().getSelectedItems().indexOf(${$parameters>/target}) === -1` ) )
+                        s_ctrl = temp1 )
                     " onDrop moves the dragged node under the dropped one; the two
                     " node texts are what travels (app 569 idiom)
                     )->a( n = `drop`              v = client->_event( val   = `DROP_NODE`
-                                                                      t_arg = VALUE #( ( `${$parameters>/draggedControl}.getTitle()` )
-                                                                                       ( `${$parameters>/droppedControl}.getTitle()` ) ) )
+                                                                      t_arg = temp2 )
 
             )->end(
 
@@ -140,8 +147,12 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
   METHOD node_drop.
 
-    DATA(dragged_text) = client->get_event_arg( ).
-    DATA(dropped_text) = client->get_event_arg( 2 ).
+    DATA dragged_text TYPE string.
+    DATA dropped_text TYPE string.
+    FIELD-SYMBOLS <flat> LIKE LINE OF t_flat.
+    dragged_text = client->get_event_arg( ).
+    
+    dropped_text = client->get_event_arg( 2 ).
 
     IF dragged_text IS INITIAL OR dropped_text IS INITIAL OR dragged_text = dropped_text.
       RETURN.
@@ -153,7 +164,8 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
     ENDIF.
 
     " "Copy the data to the new parent" plus "remove the data" - one reparenting
-    LOOP AT t_flat ASSIGNING FIELD-SYMBOL(<flat>) WHERE text = dragged_text.
+    
+    LOOP AT t_flat ASSIGNING <flat> WHERE text = dragged_text.
       <flat>-parent = dropped_text.
     ENDLOOP.
 
@@ -164,15 +176,23 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
   METHOD is_descendant.
 
-    DATA(walker) = node.
+    DATA walker LIKE node.
+      DATA current LIKE walker.
+      DATA temp2 TYPE string.
+      DATA row LIKE LINE OF t_flat.
+    walker = node.
     WHILE walker IS NOT INITIAL.
       IF walker = ancestor.
         result = abap_true.
         RETURN.
       ENDIF.
-      DATA(current) = walker.
-      walker = VALUE #( ).
-      LOOP AT t_flat INTO DATA(row) WHERE text = current.
+      
+      current = walker.
+      
+      CLEAR temp2.
+      walker = temp2.
+      
+      LOOP AT t_flat INTO row WHERE text = current.
         walker = row-parent.
       ENDLOOP.
     ENDWHILE.
@@ -182,25 +202,78 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
 
   METHOD nodes_rebuild.
 
-    t_nodes = VALUE #( ).
-    LOOP AT t_flat INTO DATA(row1) WHERE parent IS INITIAL.
-      DATA(node1) = VALUE ty_s_root( text = row1-text ref = row1-ref ).
-      DATA(parent1) = row1-text.
+    DATA temp3 LIKE t_nodes.
+    DATA row1 LIKE LINE OF t_flat.
+      DATA temp4 TYPE ty_s_root.
+      DATA node1 LIKE temp4.
+      DATA parent1 LIKE row1-text.
+      DATA row2 LIKE LINE OF t_flat.
+        DATA temp5 TYPE ty_s_child.
+        DATA node2 LIKE temp5.
+        DATA parent2 LIKE row2-text.
+        DATA row3 LIKE LINE OF t_flat.
+          DATA temp6 TYPE ty_s_grandchild.
+          DATA node3 LIKE temp6.
+          DATA parent3 LIKE row3-text.
+          DATA row4 LIKE LINE OF t_flat.
+            DATA temp7 TYPE ty_s_great_grandchild.
+            DATA node4 LIKE temp7.
+            DATA parent4 LIKE row4-text.
+            DATA row5 LIKE LINE OF t_flat.
+              DATA temp8 TYPE z2ui5_cl_smpc_app_600=>ty_s_leaf.
+    CLEAR temp3.
+    t_nodes = temp3.
+    
+    LOOP AT t_flat INTO row1 WHERE parent IS INITIAL.
+      
+      CLEAR temp4.
+      temp4-text = row1-text.
+      temp4-ref = row1-ref.
+      
+      node1 = temp4.
+      
+      parent1 = row1-text.
 
-      LOOP AT t_flat INTO DATA(row2) WHERE parent = parent1.
-        DATA(node2) = VALUE ty_s_child( text = row2-text ref = row2-ref ).
-        DATA(parent2) = row2-text.
+      
+      LOOP AT t_flat INTO row2 WHERE parent = parent1.
+        
+        CLEAR temp5.
+        temp5-text = row2-text.
+        temp5-ref = row2-ref.
+        
+        node2 = temp5.
+        
+        parent2 = row2-text.
 
-        LOOP AT t_flat INTO DATA(row3) WHERE parent = parent2.
-          DATA(node3) = VALUE ty_s_grandchild( text = row3-text ref = row3-ref ).
-          DATA(parent3) = row3-text.
+        
+        LOOP AT t_flat INTO row3 WHERE parent = parent2.
+          
+          CLEAR temp6.
+          temp6-text = row3-text.
+          temp6-ref = row3-ref.
+          
+          node3 = temp6.
+          
+          parent3 = row3-text.
 
-          LOOP AT t_flat INTO DATA(row4) WHERE parent = parent3.
-            DATA(node4) = VALUE ty_s_great_grandchild( text = row4-text ref = row4-ref ).
-            DATA(parent4) = row4-text.
+          
+          LOOP AT t_flat INTO row4 WHERE parent = parent3.
+            
+            CLEAR temp7.
+            temp7-text = row4-text.
+            temp7-ref = row4-ref.
+            
+            node4 = temp7.
+            
+            parent4 = row4-text.
 
-            LOOP AT t_flat INTO DATA(row5) WHERE parent = parent4.
-              INSERT VALUE #( text = row5-text ref = row5-ref ) INTO TABLE node4-nodes.
+            
+            LOOP AT t_flat INTO row5 WHERE parent = parent4.
+              
+              CLEAR temp8.
+              temp8-text = row5-text.
+              temp8-ref = row5-ref.
+              INSERT temp8 INTO TABLE node4-nodes.
             ENDLOOP.
 
             INSERT node4 INTO TABLE node3-nodes.
@@ -221,18 +294,51 @@ CLASS z2ui5_cl_smpc_app_600 IMPLEMENTATION.
   METHOD model_init.
 
     " Tree.json, flattened: text, icon and the parent each node hangs under
-    t_flat = VALUE #(
-      ( text = `Node1`         ref = `sap-icon://attachment-audio`              parent = `` )
-      ( text = `Node1-1`       ref = `sap-icon://attachment-e-pub`              parent = `Node1` )
-      ( text = `Node1-1-1`     ref = `sap-icon://attachment-html`               parent = `Node1-1` )
-      ( text = `Node1-1-2`     ref = `sap-icon://attachment-photo`              parent = `Node1-1` )
-      ( text = `Node1-1-2-1`   ref = `sap-icon://attachment-text-file`          parent = `Node1-1-2` )
-      ( text = `Node1-1-2-1-1` ref = `sap-icon://attachment-video`              parent = `Node1-1-2-1` )
-      ( text = `Node1-1-2-1-2` ref = `sap-icon://attachment-zip-file`           parent = `Node1-1-2-1` )
-      ( text = `Node1-1-2-1-3` ref = `sap-icon://course-program`                parent = `Node1-1-2-1` )
-      ( text = `Node1-2`       ref = `sap-icon://create`                        parent = `Node1` )
-      ( text = `Node2`         ref = `sap-icon://customer-financial-fact-sheet` parent = `` )
-    ).
+    DATA temp9 LIKE t_flat.
+    DATA temp10 LIKE LINE OF temp9.
+    CLEAR temp9.
+    
+    temp10-text = `Node1`.
+    temp10-ref = `sap-icon://attachment-audio`.
+    temp10-parent = ``.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1`.
+    temp10-ref = `sap-icon://attachment-e-pub`.
+    temp10-parent = `Node1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-1`.
+    temp10-ref = `sap-icon://attachment-html`.
+    temp10-parent = `Node1-1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-2`.
+    temp10-ref = `sap-icon://attachment-photo`.
+    temp10-parent = `Node1-1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-2-1`.
+    temp10-ref = `sap-icon://attachment-text-file`.
+    temp10-parent = `Node1-1-2`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-2-1-1`.
+    temp10-ref = `sap-icon://attachment-video`.
+    temp10-parent = `Node1-1-2-1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-2-1-2`.
+    temp10-ref = `sap-icon://attachment-zip-file`.
+    temp10-parent = `Node1-1-2-1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-1-2-1-3`.
+    temp10-ref = `sap-icon://course-program`.
+    temp10-parent = `Node1-1-2-1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node1-2`.
+    temp10-ref = `sap-icon://create`.
+    temp10-parent = `Node1`.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-text = `Node2`.
+    temp10-ref = `sap-icon://customer-financial-fact-sheet`.
+    temp10-parent = ``.
+    INSERT temp10 INTO TABLE temp9.
+    t_flat = temp9.
 
     nodes_rebuild( ).
 
