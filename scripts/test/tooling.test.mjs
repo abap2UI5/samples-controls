@@ -2142,3 +2142,33 @@ test('no generator sorts with a bare localeCompare( )', () => {
   walk(path.join(REPO, 'scripts'));
   assert.deepEqual(offenders, []);
 });
+
+/* ------------------------------------------------------ check-clean.mjs */
+
+test('check-clean: a modified, a deleted and an UNTRACKED file fail; a clean tree passes', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'check-clean-test-'));
+  const git = (...a) => spawnSync('git', a, { cwd: root, encoding: 'utf8' });
+  git('init', '-q');
+  fs.mkdirSync(path.join(root, 'src'));
+  fs.writeFileSync(path.join(root, 'src', 'a.abap'), 'a\n');
+  fs.writeFileSync(path.join(root, 'README.md'), 'r\n');
+  git('add', '-A');
+  git('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'init');
+  const clean = () => spawnSync(process.execPath, [path.join(REPO, 'scripts', 'check-clean.mjs'), 'src', 'README.md'],
+    { cwd: root, encoding: 'utf8' }).status;
+
+  assert.equal(clean(), 0, 'clean tree');
+  fs.writeFileSync(path.join(root, 'other.txt'), 'outside the listed paths\n');
+  assert.equal(clean(), 0, 'a file outside the paths is not this gate\'s business');
+
+  fs.writeFileSync(path.join(root, 'src', 'b.abap'), 'b\n');
+  assert.equal(clean(), 1, 'an untracked regenerated file — git diff --exit-code passed this');
+  fs.rmSync(path.join(root, 'src', 'b.abap'));
+
+  fs.writeFileSync(path.join(root, 'README.md'), 'changed\n');
+  assert.equal(clean(), 1, 'modified');
+  git('checkout', '-q', '--', 'README.md');
+
+  fs.rmSync(path.join(root, 'src', 'a.abap'));
+  assert.equal(clean(), 1, 'deleted');
+});
