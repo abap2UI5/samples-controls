@@ -5,8 +5,9 @@
 # meta_valid job fails a PR otherwise). This hook keeps that in sync locally on
 # every commit and stages the regenerated files into the same commit.
 #
-# Enable it with:  git config core.hooksPath .githooks
-# (npm ci / npm install does this automatically via the "prepare" script.)
+# Enable it once per clone with:  npm run setup-hooks
+# (= git config core.hooksPath .githooks - an explicit step, npm ci and
+# npm install do not touch git's configuration.)
 set -e
 
 if ! command -v node >/dev/null 2>&1; then

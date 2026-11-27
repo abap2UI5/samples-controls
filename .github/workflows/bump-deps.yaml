@@ -59,14 +59,18 @@ jobs:
       with:
         node-version: '22'
 
+    # the token reaches only this step (its `gh` calls - update-deps.mjs
+    # hands npm an environment without it) and create-pull-request; every
+    # other step sees at most whether DEPS_TOKEN is set. No checkout keeps
+    # credentials in .git/config, so nothing here can push
     - name: npm dependencies and GitHub Actions
       if: steps.when.outputs.go == 'true'
       env:
-        DEPS_TOKEN: ${{ secrets.DEPS_TOKEN }}
+        HAS_DEPS_TOKEN: ${{ secrets.DEPS_TOKEN != '' }}
         GH_TOKEN: ${{ secrets.DEPS_TOKEN || github.token }}
       run: |
         flags=""
-        if [ -n "$DEPS_TOKEN" ]; then flags="--actions"; fi
+        if [ "$HAS_DEPS_TOKEN" = "true" ]; then flags="--actions"; fi
         node .github/scripts/update-deps.mjs $flags --summary "$RUNNER_TEMP/summary.md"
 
     # the abap2UI5 commit the reproducible builds run against (was
@@ -117,9 +121,9 @@ jobs:
     - name: Without DEPS_TOKEN, leave workflow files out
       if: steps.when.outputs.go == 'true'
       env:
-        DEPS_TOKEN: ${{ secrets.DEPS_TOKEN }}
+        HAS_DEPS_TOKEN: ${{ secrets.DEPS_TOKEN != '' }}
       run: |
-        if [ -z "$DEPS_TOKEN" ] && ! git diff --quiet -- .github/workflows; then
+        if [ "$HAS_DEPS_TOKEN" != "true" ] && ! git diff --quiet -- .github/workflows; then
           git checkout -- .github/workflows
           printf -- '- left out: changes to .github/workflows (they need the DEPS_TOKEN secret)\n' >> "$RUNNER_TEMP/summary.md"
         fi
