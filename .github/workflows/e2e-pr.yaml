@@ -120,17 +120,26 @@ jobs:
       if: steps.scope.outputs.run == 'true'
       env:
         A2UI5_HOME: ${{ github.workspace }}/.abap2UI5
-      run: node scripts/e2e-smoke.mjs --strict --only "${{ steps.scope.outputs.only }}"
+        # step outputs reach the shell as variables, never spliced into the
+        # script: they are built from the pull request's file names
+        ONLY: ${{ steps.scope.outputs.only }}
+      run: node scripts/e2e-smoke.mjs --strict --only "$ONLY"
 
     - name: Report
       if: ${{ !cancelled() }}
+      env:
+        REASON: ${{ steps.scope.outputs.reason }}
+        RUN: ${{ steps.scope.outputs.run }}
+        ONLY: ${{ steps.scope.outputs.only }}
       run: |
         set -euo pipefail
+        # the backticks are Markdown, not a shell expansion
+        # shellcheck disable=SC2016
         {
           printf '## e2e-pr\n\n'
-          printf '%s\n\n' "${{ steps.scope.outputs.reason }}"
-          if [ "${{ steps.scope.outputs.run }}" = "true" ]; then
-            printf 'Ran: `%s`\n' "${{ steps.scope.outputs.only }}"
+          printf '%s\n\n' "$REASON"
+          if [ "$RUN" = "true" ]; then
+            printf 'Ran: `%s`\n' "$ONLY"
           else
             printf 'Nothing was booted here. The full-corpus run is `e2e-nightly`.\n'
           fi
