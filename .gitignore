@@ -16,3 +16,4 @@ src/zz_dev
 .github/abaplint/output/
 .github/abaplint/rename-deps/
 .github/abaplint/rename_run.json
+/.rename_run.json

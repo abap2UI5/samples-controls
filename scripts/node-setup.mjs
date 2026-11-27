@@ -13,7 +13,7 @@
  * a build today and a build next week run against the same framework. Setting
  * A2UI5_BRANCH (or removing the pin file) tracks a branch tip instead.
  */
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import fs from 'fs';
 import { IN_REPO_A2UI5, REPO_ROOT, readA2UI5Pin } from './lib-a2ui5.mjs';
 
@@ -21,9 +21,17 @@ const REPO = process.env.A2UI5_REPO || 'https://github.com/abap2UI5/abap2UI5';
 const BRANCH = process.env.A2UI5_BRANCH || '';
 const PIN = BRANCH ? null : readA2UI5Pin();
 
-const run = (cmd, cwd = REPO_ROOT) => {
-  console.log(`\n$ ${cmd}   (in ${cwd})`);
-  execSync(cmd, { cwd, stdio: 'inherit' });
+// an argument array, never a shell string: the pin, the branch and the repo
+// URL come from files and the environment, and a path may contain a space
+const run = (args, cwd = REPO_ROOT) => {
+  console.log(`\n$ ${args.join(' ')}   (in ${cwd})`);
+  // npm is a .cmd on Windows, which needs a shell; under `npm run` the CLI's
+  // own entry point is known and runs on this node directly
+  if (args[0] === 'npm' && process.env.npm_execpath) {
+    execFileSync(process.execPath, [process.env.npm_execpath, ...args.slice(1)], { cwd, stdio: 'inherit' });
+  } else {
+    execFileSync(args[0], args.slice(1), { cwd, stdio: 'inherit', shell: process.platform === 'win32' && args[0] === 'npm' });
+  }
 };
 
 // 1. clone (or update) abap2UI5 into .abap2UI5
@@ -31,28 +39,28 @@ if (fs.existsSync(`${IN_REPO_A2UI5}/node/srv/express.mjs`)) {
   console.log('node-setup: .abap2UI5 already present — updating');
   if (PIN) {
     try {
-      run(`git fetch --depth 1 origin ${PIN}`, IN_REPO_A2UI5);
-      run(`git checkout --detach ${PIN}`, IN_REPO_A2UI5);
+      run(['git', 'fetch', '--depth', '1', 'origin', PIN], IN_REPO_A2UI5);
+      run(['git', 'checkout', '--detach', PIN], IN_REPO_A2UI5);
     } catch { console.log('node-setup: pin checkout failed (offline / local changes) — using existing checkout'); }
   } else {
-    try { run('git pull --ff-only', IN_REPO_A2UI5); } catch { console.log('node-setup: git pull skipped (local changes / detached) — using existing checkout'); }
+    try { run(['git', 'pull', '--ff-only'], IN_REPO_A2UI5); } catch { console.log('node-setup: git pull skipped (local changes / detached) — using existing checkout'); }
   }
 } else {
   fs.rmSync(IN_REPO_A2UI5, { recursive: true, force: true });
-  const branch = BRANCH ? `--branch ${BRANCH} ` : '';
-  run(`git clone --depth 1 ${branch}${REPO} .abap2UI5`);
+  const branch = BRANCH ? ['--branch', BRANCH] : [];
+  run(['git', 'clone', '--depth', '1', ...branch, REPO, '.abap2UI5']);
   if (PIN) {
-    run(`git fetch --depth 1 origin ${PIN}`, IN_REPO_A2UI5);
-    run(`git checkout --detach ${PIN}`, IN_REPO_A2UI5);
+    run(['git', 'fetch', '--depth', '1', 'origin', PIN], IN_REPO_A2UI5);
+    run(['git', 'checkout', '--detach', PIN], IN_REPO_A2UI5);
   }
 }
 
 // 2. install deps — the framework (transpiler, express, runtime) and this repo
-run('npm ci', IN_REPO_A2UI5);
-run('npm ci');
+run(['npm', 'ci'], IN_REPO_A2UI5);
+run(['npm', 'ci']);
 
 // 3. build the backend (downport + transpile framework + all ports)
-run('node scripts/e2e-build.mjs');
+run([process.execPath, 'scripts/e2e-build.mjs']);
 
 console.log('\nnode-setup: done ✔');
 console.log('Start the server with:   npm run node:serve');
