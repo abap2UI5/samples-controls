@@ -2117,3 +2117,28 @@ test('lib-smoke: the CSP gets eval and the dev bootstrap hashes, and keeps an op
   const old = `content="script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self'"`;
   assert.equal(allowEvalForSourceUi5(old), old);
 });
+
+/* ------------------------------------------------- locale-free sorting */
+
+/*
+ * A bare localeCompare( ) collates in the locale of whoever runs the
+ * generator, so the committed order of a generated file would depend on the
+ * machine that wrote it. Every generator sorts with Intl.Collator('en')
+ * instead. check-prose-names.mjs is a pulled copy whose source is abap2UI5
+ * (shared-file-gate), so it is not this repository's to change.
+ */
+test('no generator sorts with a bare localeCompare( )', () => {
+  const offenders = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'test' && e.name !== 'node_modules') walk(p); continue; }
+      if (!e.name.endsWith('.mjs') || e.name === 'check-prose-names.mjs') continue;
+      fs.readFileSync(p, 'utf8').split('\n').forEach((l, i) => {
+        if (/\.localeCompare\(/.test(l)) offenders.push(`${path.relative(REPO, p)}:${i + 1}`);
+      });
+    }
+  };
+  walk(path.join(REPO, 'scripts'));
+  assert.deepEqual(offenders, []);
+});

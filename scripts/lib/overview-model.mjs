@@ -13,6 +13,11 @@ import path from 'path';
 import { cmpVersion, MIN_UI5 } from '../lib-universe.mjs';
 import { DEMO_FOLDER, demoAppOf } from './demoapps.mjs';
 
+/* Text order from a FIXED locale: a bare localeCompare( ) collates in the
+ * locale of whoever runs the generator (sv_SE puts 'Ä' after 'z'), so the
+ * committed output would depend on the machine that wrote it. */
+const collate = new Intl.Collator('en').compare;
+
 // the larger of two dotted UI5 versions; '' (unknown / since forever) is lowest
 const verMax = (a, b) => (!a ? b : !b ? a : cmpVersion(a, b) >= 0 ? a : b);
 
@@ -152,9 +157,9 @@ for (const mf of fs.readdirSync(META)) {
 }
 // order by module, then control, then sample name (case-insensitive)
 apps.sort((a, b) =>
-  a.module.toLowerCase().localeCompare(b.module.toLowerCase()) ||
-  a.control.toLowerCase().localeCompare(b.control.toLowerCase()) ||
-  a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  collate(a.module.toLowerCase(), b.module.toLowerCase()) ||
+  collate(a.control.toLowerCase(), b.control.toLowerCase()) ||
+  collate(a.name.toLowerCase(), b.name.toLowerCase()));
 
 return apps;
 }
