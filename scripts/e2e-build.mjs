@@ -23,7 +23,7 @@
  * framework's own `npm run auto_downport` — but on the copy, so the working
  * tree stays clean.
  */
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -172,7 +172,8 @@ function main() {
   // So the framework's own runtime pin is the discriminator, not the file.
   const runtimeShim = path.join(A2, 'node/setup/patch-abaplint-runtime-assign.mjs');
   if (fs.existsSync(runtimeShim)) {
-    execSync(`node ${runtimeShim}`, { stdio: 'inherit' });
+    // argument array, not a shell string: A2UI5_HOME may contain a space
+    execFileSync(process.execPath, [runtimeShim], { stdio: 'inherit' });
   } else {
     const RT_FIXED = [2, 13, 83];   // the release carrying BOTH blocks upstream
     const raw = JSON.parse(fs.readFileSync(path.join(A2, 'package.json'), 'utf8'));
@@ -217,7 +218,7 @@ function main() {
   if (!fs.existsSync(path.join(lib, 'src'))) {
     fs.rmSync(lib, { recursive: true, force: true });
     console.log('e2e-build: cloning open-abap-core …');
-    sh(`git clone --quiet --depth=1 https://github.com/open-abap/open-abap-core ${lib}`);
+    execFileSync('git', ['clone', '--quiet', '--depth=1', 'https://github.com/open-abap/open-abap-core', lib], { cwd: A2, stdio: 'inherit' });
   }
   patchOpenAbapXml(lib);
 
