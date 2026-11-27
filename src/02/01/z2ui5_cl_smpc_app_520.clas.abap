@@ -109,7 +109,7 @@ CLASS z2ui5_cl_smpc_app_520 IMPLEMENTATION.
               )->a( n = `unread`          v = `true`
               )->a( n = `showCloseButton` v = `true`
               )->a( n = `datetime`        v = `{DATETIME}`
-              )->a( n = `priority`        v = `{PRIORITY}`
+              )->a( n = `priority`        v = `{= ${PRIORITY} || 'None' }`
               )->a( n = `close`           v = client->_event( val   = `ITEM_CLOSE`
                                                               t_arg = VALUE #( ( |{ group }| ) ( `${ID}` ) ) )
 

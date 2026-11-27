@@ -179,7 +179,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
             )->ele( `items`
                 )->ele( `ColumnListItem`
                     )->a( n = `vAlign`   v = `Middle`
-                    )->a( n = `type`     v = `{ROW_TYPE}`
+                    )->a( n = `type`     v = `{= ${ROW_TYPE} || 'Inactive' }`
                     )->a( n = `selected` v = `{SELECTED}`
 
                     )->ele( `cells`
@@ -191,7 +191,7 @@ CLASS z2ui5_cl_smpc_app_566 IMPLEMENTATION.
                         )->tag( `ObjectNumber`
                             )->a( n = `number` v = `{WEIGHTMEASURE}`
                             )->a( n = `unit`   v = `{WEIGHTUNIT}`
-                            )->a( n = `state`  v = `{WEIGHT_STATE}`
+                            )->a( n = `state`  v = `{= ${WEIGHT_STATE} || 'None' }`
                         )->tag( `ObjectNumber`
                             )->a( n = `number` v = `{PRICE}`
                             )->a( n = `unit`   v = `{CURRENCYCODE}`

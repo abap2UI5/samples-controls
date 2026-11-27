@@ -234,7 +234,7 @@ CLASS z2ui5_cl_smpc_app_645 IMPLEMENTATION.
         )->ele( `ColumnListItem` ).
     LOOP AT t_columns INTO column.
       cells->tag( `Text`
-          )->a( n = `text` v = |\{{ column-path }\}| ).
+          )->a( n = `text` v = |\{{ z2ui5_cl_ui5_view_builder=>component_path( column-path ) }\}| ).
     ENDLOOP.
 
     client->view_display( view->stringify( ) ).

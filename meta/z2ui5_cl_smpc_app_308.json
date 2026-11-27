@@ -10,10 +10,6 @@
   },
   "status": "checked",
   "checked": {"date": "2026-11-15", "note": "verified in a running system - collective check on a BTP ABAP environment (ABAP Cloud), recorded on the maintainer's statement; no per-port note"},
-  "render_smoke": {
-    "skip": true,
-    "reason": "the render gate mocks the model, so the DateTypeRange/CalendarLegendItem row template resolves {TYPE} to the empty string and XMLView.create rejects it on the enum-typed CalendarDayType property - the same static-harness limit app 240 declares for the identical specialDates/legend binding."
-  },
   "deviations": [
     {
       "type": "NOTE",

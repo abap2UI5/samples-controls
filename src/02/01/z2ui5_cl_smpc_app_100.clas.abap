@@ -173,7 +173,7 @@ CLASS z2ui5_cl_smpc_app_100 IMPLEMENTATION.
                 )->ele( `avatar`
                     )->tag( `Avatar`
                         )->a( n = `src`          v = `{ICON}`
-                        )->a( n = `displayShape` v = `{DISPLAYSHAPE}`
+                        )->a( n = `displayShape` v = `{= ${DISPLAYSHAPE} || 'Circle' }`
 
                 )->end(
                 )->ele( `QuickViewGroup`

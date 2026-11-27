@@ -136,7 +136,7 @@ CLASS z2ui5_cl_smpc_app_540 IMPLEMENTATION.
                                 )->a( n = `endDate`   v = `{ path: 'END_AT', formatter: 'Formatter.DateCreateObject' }`
                                 )->a( n = `icon`      v = `{PIC}`
                                 )->a( n = `title`     v = `{TITLE}`
-                                )->a( n = `type`      v = `{TYPE}` ).
+                                )->a( n = `type`      v = `{= ${TYPE} || 'None' }` ).
 
     client->view_display( view->stringify( ) ).
 

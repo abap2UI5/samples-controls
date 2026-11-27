@@ -233,8 +233,8 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
                                     )->a( n = `key`          v = `{KEY}`
                                     )->a( n = `href`         v = `{HREF}`
                                     )->a( n = `target`       v = `{TARGET}`
-                                    )->a( n = `ariaHasPopup` v = `{ARIAHASPOPUP}`
-                                    )->a( n = `design`       v = `{DESIGN}`
+                                    )->a( n = `ariaHasPopup` v = `{= ${ARIAHASPOPUP} || 'None' }`
+                                    )->a( n = `design`       v = `{= ${DESIGN} || 'Default' }`
                                     )->a( n = `items`        v = `{ITEMS}`
                                     )->a( n = `press`        v = client->_event( val   = `ITEM_PRESS`
                                                                                  t_arg = VALUE #( ( `${$source>/key}` ) ( `${$source>/selectable}` ) ) )
@@ -287,8 +287,8 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
                                     )->a( n = `key`          v = `{KEY}`
                                     )->a( n = `href`         v = `{HREF}`
                                     )->a( n = `target`       v = `{TARGET}`
-                                    )->a( n = `ariaHasPopup` v = `{ARIAHASPOPUP}`
-                                    )->a( n = `design`       v = `{DESIGN}`
+                                    )->a( n = `ariaHasPopup` v = `{= ${ARIAHASPOPUP} || 'None' }`
+                                    )->a( n = `design`       v = `{= ${DESIGN} || 'Default' }`
                                     )->a( n = `items`        v = `{ITEMS}`
                                     )->a( n = `press`        v = client->_event( val   = `ITEM_PRESS`
                                                                                  t_arg = VALUE #( ( `${$source>/key}` ) ( `${$source>/selectable}` ) ) )
@@ -338,8 +338,8 @@ CLASS z2ui5_cl_smpc_app_407 IMPLEMENTATION.
                                 )->a( n = `key`          v = `{KEY}`
                                 )->a( n = `href`         v = `{HREF}`
                                 )->a( n = `target`       v = `{TARGET}`
-                                )->a( n = `ariaHasPopup` v = `{ARIAHASPOPUP}`
-                                )->a( n = `design`       v = `{DESIGN}`
+                                )->a( n = `ariaHasPopup` v = `{= ${ARIAHASPOPUP} || 'None' }`
+                                )->a( n = `design`       v = `{= ${DESIGN} || 'Default' }`
                                 )->a( n = `press`        v = client->_event( val   = `ITEM_PRESS`
                                                                              t_arg = VALUE #( ( `${$source>/key}` ) ( `${$source>/selectable}` ) ) )
 

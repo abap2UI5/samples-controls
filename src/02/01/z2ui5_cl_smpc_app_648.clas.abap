@@ -158,7 +158,7 @@ CLASS z2ui5_cl_smpc_app_648 IMPLEMENTATION.
               )->a( n = `text` t = column-label
           )->ele( `template`
               )->tag( n = `Text` ns = `m`
-                  )->a( n = `text` v = |\{{ column-path }\}| ).
+                  )->a( n = `text` v = |\{{ z2ui5_cl_ui5_view_builder=>component_path( column-path ) }\}| ).
     ENDLOOP.
 
     client->view_display( view->stringify( ) ).

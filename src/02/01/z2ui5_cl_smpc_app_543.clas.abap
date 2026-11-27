@@ -201,7 +201,7 @@ CLASS z2ui5_cl_smpc_app_543 IMPLEMENTATION.
                                 )->a( n = `title`       v = `{TITLE}`
                                 )->a( n = `text`        v = `{TEXT}`
                                 )->a( n = `description` v = `{DESCRIPTION}`
-                                )->a( n = `type`        v = `{TYPE}` ).
+                                )->a( n = `type`        v = `{= ${TYPE} || 'None' }` ).
 
     client->view_display( view->stringify( ) ).
 

@@ -186,7 +186,7 @@ CLASS z2ui5_cl_smpc_app_377 IMPLEMENTATION.
                                     )->a( n = `number` v = `{WEIGHTMEASURE}`
                                     )->a( n = `unit`   v = `{WEIGHTUNIT}`
                                     " Formatter.weightState computed in ABAP, bound as a finished value
-                                    )->a( n = `state`  v = `{WEIGHT_STATE}`
+                                    )->a( n = `state`  v = `{= ${WEIGHT_STATE} || 'None' }`
                                 )->tag( `ObjectNumber`
                                     )->a( n = `number` v = |\{ parts: [\{ path: 'PRICE' \}, \{ path: 'CURRENCYCODE' \}], type: 'sap.ui.model.type.Currency', formatOptions: \{ showMeasure: false \} \}|
                                     )->a( n = `unit`   v = `{CURRENCYCODE}` ).
