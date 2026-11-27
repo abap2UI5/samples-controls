@@ -564,6 +564,49 @@ test('json-to-abap: an integer outside the range of TYPE i is not inferred as i'
   assert.match(value, /small = 2147483647/, 'the in-range maximum stays a bare integer');
 });
 
+/*
+ * The names are ABAP component names and have to activate: distinct (two keys
+ * that lowercase/strip to one name were the same component twice), starting
+ * with a letter or underscore, never empty, at most 30 characters - also
+ * after a de-duplicating suffix. --fields names go through the same rule.
+ */
+test('json-to-abap: field names are distinct, valid ABAP names of at most 30 characters', async () => {
+  const { inferFields, abapName } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const long = 'x'.repeat(40);
+  const names = inferFields([{ 'Product-Id': 1, ProductId: 2, productid: 3, '2ndPrice': 4, '€': 5, '': 6,
+    [`${long}a`]: 7, [`${long}b`]: 8 }]).map((f) => f.abap);
+  assert.deepEqual(names, ['productid', 'productid_2', 'productid_3', 'f_2ndprice', 'field', 'field_2',
+    'x'.repeat(30), `${'x'.repeat(28)}_2`]);
+  assert.equal(new Set(names).size, names.length);
+  for (const n of names) assert.match(n, /^[a-z_][a-z0-9_]{0,29}$/);
+  assert.equal(abapName('12345678901234567890123456789012'), 'f_1234567890123456789012345678', 'the prefix counts against the 30');
+
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'json-to-abap-'));
+  fs.writeFileSync(path.join(tmp, 'rows.json'), JSON.stringify([{ a: 'x', b: 'y' }]));
+  const spec = spawnSync(process.execPath, [path.join(REPO, 'scripts', 'json-to-abap.mjs'), path.join(tmp, 'rows.json'),
+    '--fields', 'a:Name,b:name'], { encoding: 'utf8' });
+  assert.equal(spec.status, 0, spec.stderr);
+  assert.match(spec.stdout, /\( name = `x` name_2 = `y` \)/, 'two --fields names that collide are told apart too');
+});
+
+/*
+ * The out-of-range and decimal route writes a number as a literal for a
+ * TYPE p field, and String(n) writes 1e21 as "1e+21" and 1.5e-7 as "1.5e-7" -
+ * which does not convert to packed. Plain digits, the same value.
+ */
+test('json-to-abap: a number literal never carries an exponent', async () => {
+  const { plainNumber, rowsToAbapValue } = await import(path.join(REPO, 'scripts', 'json-to-abap.mjs'));
+  const cases = { 1e21: '1000000000000000000000', '-1e21': '-1000000000000000000000', 1.5e-7: '0.00000015',
+    1.2345e25: '12345000000000000000000000', '-2.5e-10': '-0.00000000025', 123.45: '123.45', 0.000001: '0.000001' };
+  for (const [n, want] of Object.entries(cases)) {
+    assert.equal(plainNumber(Number(n)), want, n);
+    assert.equal(Number(want), Number(n), `${n}: the same value`);
+  }
+  const value = rowsToAbapValue([{ big: 1e21, tiny: 1.5e-7, ok: 1 }, { big: 1, tiny: 0.5, ok: 2 }]);
+  assert.doesNotMatch(value, /e[+-]\d/);
+  assert.match(value, /big = `1000000000000000000000` tiny = `0.00000015`/);
+});
+
 /* ------------------------------------------- form-family-to-abap.mjs */
 
 /*
